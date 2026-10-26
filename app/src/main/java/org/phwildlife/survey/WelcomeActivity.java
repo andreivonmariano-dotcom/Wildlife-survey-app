@@ -281,11 +281,27 @@ public class WelcomeActivity extends Activity {
     private void updateStations(){
         if(stationEntry==null)return;
         ArrayList<String> ids=new ArrayList<>();
+        ArrayList<String> choices=new ArrayList<>();
         try(FieldDb db=new FieldDb(this);
-            Cursor c=db.getReadableDatabase().rawQuery("SELECT id FROM sites WHERE project_id=? ORDER BY id",new String[]{projectId()})){
-            while(c.moveToNext())ids.add(c.getString(0));
+            Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT id,name FROM sites WHERE project_id=? ORDER BY name,id",
+                new String[]{projectId()})){
+            while(c.moveToNext()){
+                String id=c.getString(0),name=c.getString(1);
+                ids.add(id);choices.add(name+"  ["+id+"]");
+            }
         }
-        stationEntry.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,ids));
+        stationEntry.setHint("Search station by name or choose from list");
+        stationEntry.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_dropdown_item_1line,choices));
+        stationEntry.setOnItemClickListener((p,view,index,rowId)->{
+            if(index>=0&&index<ids.size()){
+                String selectedId=ids.get(index);
+                stationEntry.setText(selectedId,false);
+                stationEntry.setSelection(selectedId.length());
+                stationEntry.dismissDropDown();
+            }
+        });
         stationEntry.setText("");
     }
     private void suggestBoundary(){

@@ -42,10 +42,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="v0.13.0-beta"
+          TAG="v0.13.1-beta"
           FILE="app/build/outputs/apk/debug/app-debug.apk"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$FILE" --clobber
           else
-            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.13" --notes "Android beta with 2026 Q3 offline province polygons, researcher-importable checklist, favorite taxa, identification confidence, and photo evidence in ZIP exports." --prerelease --target "$GITHUB_SHA"
+            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.13.1" --notes "Hotfix: prevent bird survey launch crash when no province was detected, automatically assign permanent unique IDs to projects and stations, and select stations by name." --prerelease --target "$GITHUB_SHA"
           fi

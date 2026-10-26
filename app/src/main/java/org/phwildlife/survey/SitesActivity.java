@@ -30,7 +30,7 @@ public class SitesActivity extends Activity {
     private void render(){
         LinearLayout root=column();root.setPadding(dp(16),dp(16),dp(16),dp(16));root.setBackgroundColor(Color.rgb(246,249,246));
         root.addView(label("Projects & sampling stations",23));
-        root.addView(label("Save stations once. Reuse their IDs for repeat visits and spatial analysis.",13));
+        root.addView(label("Projects and station IDs are generated automatically. Names remain editable. Saved IDs stay fixed for repeat visits and spatial analysis.",13));
         Button back=btn("← Home");back.setOnClickListener(v->finish());root.addView(back);
         Spinner previous=projectSpinner;String selected=previous==null?"default":selectedProject();
         projectSpinner=new Spinner(this);pids.clear();ArrayList<String> projects=new ArrayList<>();
@@ -67,20 +67,45 @@ public class SitesActivity extends Activity {
             }
         }
     }
+    /** Permanent device-independent identifiers, checked again by SQLite's primary key. */
+    private String newId(String prefix,String table){
+        SQLiteDatabase db=helper.getReadableDatabase();
+        for(int tries=0;tries<12;tries++){
+            String random=UUID.randomUUID().toString().replace("-","").substring(0,12).toUpperCase(Locale.US);
+            String id=prefix+"-"+random;
+            try(Cursor c=db.rawQuery("SELECT COUNT(*) FROM "+table+" WHERE id=?",new String[]{id})){
+                if(c.moveToFirst()&&c.getInt(0)==0)return id;
+            }
+        }
+        throw new IllegalStateException("Unable to allocate a unique identifier");
+    }
     private void newProject(){
+        final String proposed=newId("PRJ","projects");
         LinearLayout form=column();form.setPadding(dp(16),0,dp(16),0);
-        EditText id=edit("Project ID (unique, e.g. EAGLE-2026)","");
-        EditText name=edit("Project name","");
-        form.addView(id);form.addView(name);
-        new AlertDialog.Builder(this).setTitle("New project").setView(form).setNegativeButton("Cancel",null)
-          .setPositiveButton("Save",(dlg,w)->{
-              String i=id.getText().toString().trim(),n=name.getText().toString().trim();
-              if(i.isEmpty()||n.isEmpty()){Toast.makeText(this,"Project ID and name required",Toast.LENGTH_LONG).show();return;}
-              ContentValues v=new ContentValues();v.put("id",i);v.put("name",n);v.put("created_at",now());
-              long res=helper.getWritableDatabase().insertWithOnConflict("projects",null,v,SQLiteDatabase.CONFLICT_IGNORE);
-              if(res<0)Toast.makeText(this,"Project ID already exists",Toast.LENGTH_SHORT).show();
-              render();int at=pids.indexOf(i);if(at>=0)projectSpinner.setSelection(at);
-          }).show();
+        form.addView(label("Permanent project ID · generated automatically",12));
+        TextView idLabel=label(proposed,14);
+        idLabel.setTextIsSelectable(true);form.addView(idLabel);
+        EditText name=edit("Project name (required)","");
+        form.addView(name);
+        form.addView(label("Name the project. The ID stays unchanged so observations and stations keep their original links.",12));
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("New project").setView(form)
+            .setNegativeButton("Cancel",null).setPositiveButton("Create project",null).create();
+        dialog.setOnShowListener(w->dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
+            String n=name.getText().toString().trim();
+            if(n.isEmpty()){name.setError("Project name is required");name.requestFocus();return;}
+            ContentValues values=new ContentValues();
+            values.put("id",proposed);values.put("name",n);values.put("created_at",now());
+            long result=helper.getWritableDatabase().insertWithOnConflict(
+                "projects",null,values,SQLiteDatabase.CONFLICT_IGNORE);
+            if(result<0){
+                Toast.makeText(this,"The ID already exists. Reopen New project to generate another.",Toast.LENGTH_LONG).show();
+                return;
+            }
+            dialog.dismiss();
+            render();
+            int at=pids.indexOf(proposed);if(at>=0)projectSpinner.setSelection(at);
+        }));
+        dialog.show();
     }
     private static Double num(String s){try{return s.trim().isEmpty()?null:Double.valueOf(s.trim());}catch(Exception e){return null;}}
     private void siteDialog(String siteId){
@@ -92,8 +117,13 @@ public class SitesActivity extends Activity {
             }
         }
         LinearLayout form=column();form.setPadding(dp(16),0,dp(16),0);
+        if(siteId==null)original[0]=newId("STN","sites");
+        form.addView(label("Permanent sampling station ID · generated automatically",12));
+        TextView generatedId=label(original[0],14);
+        generatedId.setTextIsSelectable(true);
+        form.addView(generatedId);
         EditText[] entries={
-            edit("Station ID (unique)",original[0]),
+            edit("Station ID (permanent)",original[0]),
             edit("Site / station name",original[1]),
             edit("Habitat",original[2]),
             edit("Latitude (decimal degrees)",original[3]),
@@ -101,8 +131,9 @@ public class SitesActivity extends Activity {
             edit("Notes",original[5])};
         entries[3].setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED);
         entries[4].setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED);
+        // A station ID is stable from creation onward. Observers never type or change it.
+        entries[0].setVisibility(View.GONE);
         for(EditText e:entries)form.addView(e);
-        if(siteId!=null)entries[0].setEnabled(false);
         ScrollView scroll=new ScrollView(this);scroll.addView(form);
         AlertDialog dialog=new AlertDialog.Builder(this).setTitle(siteId==null?"New sampling station":"Edit sampling station")
             .setView(scroll).setNegativeButton("Cancel",null).setPositiveButton("Save",null).create();

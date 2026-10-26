@@ -129,12 +129,12 @@ public class MainActivity extends Activity implements LocationListener {
             if(regionLabel==null)regionLabel="";
             geographicRegion=launch.getStringExtra("geographic_region_id");
             if(geographicRegion==null)geographicRegion="PH";
-            adminProvince=launch.getStringExtra("admin_province");
-            adminPsgc=launch.getStringExtra("admin_province_psgc");
-            adminBoundaryStatus=launch.getStringExtra("admin_boundary_status");
-            adminBoundaryVersion=launch.getStringExtra("admin_boundary_version");
-            geographicSelectionMethod=launch.getStringExtra("geographic_selection_method");
-            if(geographicSelectionMethod==null)geographicSelectionMethod=GeoRegions.BOUNDARY_METHOD;
+            adminProvince=nonNull(launch.getStringExtra("admin_province"));
+            adminPsgc=nonNull(launch.getStringExtra("admin_province_psgc"));
+            adminBoundaryStatus=nonNull(launch.getStringExtra("admin_boundary_status"));
+            adminBoundaryVersion=nonNull(launch.getStringExtra("admin_boundary_version"));
+            geographicSelectionMethod=nonNull(launch.getStringExtra("geographic_selection_method"));
+            if(geographicSelectionMethod.isEmpty())geographicSelectionMethod=GeoRegions.BOUNDARY_METHOD;
             double area=launch.getDoubleExtra("stratum_area_km2",Double.NaN);
             stratumAreaKm2=Double.isNaN(area)?null:area;
             double radius=launch.getDoubleExtra("point_radius_m",Double.NaN);
@@ -519,6 +519,7 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
     private void refreshAutocomplete(){updateTaxaSuggestions(true);}
+    private static String nonNull(String value){return value==null?"":value;}
     private void updateTaxaSuggestions(boolean clear){
         if(taxonEntry==null)return;
         java.util.LinkedHashSet<String> items=new java.util.LinkedHashSet<>();
@@ -538,9 +539,9 @@ public class MainActivity extends Activity implements LocationListener {
                 String common=cat.isNull(0)?"":cat.getString(0);
                 String scientific=cat.getString(1);
                 String codes=cat.isNull(2)?"":cat.getString(2);
-                boolean matched=!geographicRegion.equals("PH")&&
+                boolean matched=!"PH".equals(geographicRegion)&&
                     (("|"+codes+"|").contains("|"+geographicRegion+"|")||
-                     (!adminPsgc.isEmpty()&&("|"+codes+"|").contains("|P:"+adminPsgc+"|")))&&
+                     (!nonNull(adminPsgc).isEmpty()&&("|"+codes+"|").contains("|P:"+adminPsgc+"|")))&&
                     cat.getString(3).equals("reviewed");
                 if(!regional||matched)items.add(common.isEmpty()?scientific:common+" · "+scientific);
             }
@@ -561,14 +562,14 @@ public class MainActivity extends Activity implements LocationListener {
         taxonEntry.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_dropdown_item_1line,
             new java.util.ArrayList<>(items)));
         if(checklistNote!=null)checklistNote.setText(
-            (adminProvince.isEmpty()?"":adminProvince+" · ")+
+            (nonNull(adminProvince).isEmpty()?"":adminProvince+" · ")+
             (geographicRegion.equals("PH")?"Philippines · all starter taxa":GeoRegions.label(geographicRegion))+
             (regional?" · documented regional subset only":" · includes unassessed taxa")+
             "\nRegional tags are incomplete; typing another species remains allowed.");
         taxonEntry.setHint(group.equals("Birds")?"Bird name or unidentified bird":
             "Name or unidentified "+group.toLowerCase(Locale.US).replace("s",""));
         if(clear)taxonEntry.setText("");
-        distanceEntry.setHint(group.equals("Birds")?"Horizontal distance (m)":"Distance (m, optional)");
+        if(distanceEntry!=null)distanceEntry.setHint(group.equals("Birds")?"Horizontal distance (m)":"Distance (m, optional)");
         if(birdMeasurements!=null&&!group.equals("Birds"))birdMeasurements.setVisibility(View.GONE);
         if(herpPanel!=null&&!profile.equals("Herpetofauna"))herpPanel.setVisibility(View.GONE);
         if(mammalPanel!=null&&!profile.equals("Mammals"))mammalPanel.setVisibility(View.GONE);

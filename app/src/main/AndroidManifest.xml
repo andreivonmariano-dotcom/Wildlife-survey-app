@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
-    <application android:label="Wildlife Survey Beta 0.13" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
+    <application android:label="Wildlife Survey Beta 0.13.1" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
         <service android:name=".TrackService" android:exported="false" android:foregroundServiceType="location" />
         <activity android:name=".CameraActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".MainActivity" android:screenOrientation="portrait" android:exported="false" />

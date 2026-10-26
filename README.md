@@ -1,3 +1,24 @@
+# Wildlife Survey Beta v0.13.1: Crash Fix & Automatic IDs
+
+**Android hotfix released after v0.13.0.** This version addresses the bird-survey launch crash reported on October 26, 2026. The crash came from calling `String.isEmpty()` on a null `adminProvince` when survey setup had no GPS-derived administrative province. All optional province strings are now normalized to empty strings and guarded before use.
+
+### Improvements
+- Bird, mammal, and herpetofauna survey screens can open with either a selected geographic area or no detected province.
+- New projects automatically receive permanent `PRJ-<12-hex-characters>` identifiers.
+- New stations automatically receive permanent `STN-<12-hex-characters>` identifiers.
+- Generated IDs are checked against the local database and protected by the primary-key unique constraint.
+- Existing project and station IDs are retained, never replaced. Station editing does not change the ID.
+- New project creation requires only the project name. Blank names keep the dialog open and display an error.
+- In survey setup, station search shows friendly station names and fills the station ID after selection.
+
+### Installation and quality checks
+- Export v0.13.0 records before installing. Install the v0.13.1 APK *over* the existing app.
+- Application ID is unchanged (`org.phwildlife.survey.beta08`), and the GitHub build uses the prior signing cache key.
+- See [v0.13.1 QA](docs/QA_v0_13_1.md) for targeted regression steps.
+- GitHub compilation alone does not establish that the app has passed physical handset tests.
+
+---
+
 # Philippine Wildlife Survey Beta v0.13
 
 Offline Android application for bird, reptile, amphibian and mammal fieldwork. The application is independent of SMART and KALUMBATA.

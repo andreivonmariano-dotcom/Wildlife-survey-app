@@ -20,7 +20,8 @@ public class WelcomeActivity extends Activity {
     private final int BG=Color.rgb(245,249,245),INK=Color.rgb(23,58,39),GREEN=Color.rgb(34,102,72),MUTED=Color.rgb(99,116,104);
     private LinearLayout main,root; private String profile="Birds";
     private boolean custom=false;
-    private EditText stationEntry,durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry;
+    private AutoCompleteTextView stationEntry;
+    private EditText durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry;
     private Spinner projectChoice;
     private ArrayList<String> projectKeys=new ArrayList<>();
     private RadioGroup methodChoices;

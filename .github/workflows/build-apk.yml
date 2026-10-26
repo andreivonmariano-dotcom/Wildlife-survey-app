@@ -1,8 +1,8 @@
 name: Build Android Debug APK
 on:
-  workflow_dispatch:
   push:
     branches: [main]
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,34 +10,20 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - name: Extract uploaded Android source archive
-        run: |
-          if [ -f BirdSurveyCamera_v0.2_GitHub_Build_Ready.zip ]; then
-            unzip -oq BirdSurveyCamera_v0.2_GitHub_Build_Ready.zip -d .
-            if [ -d BirdSurveyCamera_v0.2_GitHub_Build_Ready ]; then
-              shopt -s dotglob
-              cp -R BirdSurveyCamera_v0.2_GitHub_Build_Ready/* .
-            fi
-          fi
-          test -f app/build.gradle || { echo 'Android source ZIP has not been uploaded'; exit 1; }
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - name: Install Android SDK
-        uses: android-actions/setup-android@v3
-      - name: Install SDK platform
+      - uses: android-actions/setup-android@v3
+      - name: Install required Android SDK
         run: sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0' 'platform-tools'
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.11.1'
-      - name: Build APK
+      - name: Build debug APK
         run: gradle --no-daemon :app:assembleDebug
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: bird-survey-debug-apk
+          name: wildlife-survey-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error

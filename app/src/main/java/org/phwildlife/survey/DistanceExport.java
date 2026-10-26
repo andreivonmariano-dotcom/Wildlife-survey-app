@@ -69,9 +69,19 @@ public final class DistanceExport {
                         sample.metadataReady?"1":"0",sample.metadataReady?"candidate_only":"missing_effort_or_stratum_metadata");
                 }
             }
-            if(found==0)row(z,taxon,sample.method,sample.region,num(sample.area),sample.id,num(sample.effort),
-                "","","",sample.station,sample.metadataReady?"1":"0",
-                sample.metadataReady?"zero_eligible_detections":"missing_effort_or_stratum_metadata");
+            // A detection lacking distance is NOT a nondetection. Do not code it as zero.
+            if(found==0){
+                boolean speciesObserved=false;
+                try(Cursor all=database.rawQuery(
+                    "SELECT COUNT(*) FROM field_records WHERE event_id=? AND raw_identification=? "+
+                    "AND taxon_group='Birds' AND deleted_at IS NULL",
+                    new String[]{sample.id,taxon})){
+                    if(all.moveToFirst())speciesObserved=all.getInt(0)>0;
+                }
+                if(!speciesObserved)row(z,taxon,sample.method,sample.region,num(sample.area),sample.id,num(sample.effort),
+                    "","","",sample.station,sample.metadataReady?"1":"0",
+                    sample.metadataReady?"zero_detections":"missing_effort_or_stratum_metadata");
+            }
         }
         z.closeEntry();
     }

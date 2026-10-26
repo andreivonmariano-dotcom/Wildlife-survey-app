@@ -12,7 +12,7 @@ Independent offline field collection for Philippine Birds, Herpetofauna and Mamm
 - Fieldwork Dashboard displays survey counts, completion statuses, observation totals and counts grouped by taxon. **No density estimation is attempted.** The dashboard runs SQLite \`PRAGMA quick_check\` upon user request.
 - Bird survey setup supports a point count radius, duration, station, observer, strata label and study area. Line transects require a matching **magnetic** line bearing.
 - Bird observations capture estimated/measured distance, distance to initial detected position, and movement. Point count radius and line-direction availability affect the candidate analysis flag.
-- Export includes linked CSV data, distance sample effort, a **species-specific draft flatfile** with rows for sampled events with zero eligible detections, and the audit trail. The flatfile must be filtered by one species and one protocol before R Distance analysis. Missing stratum area or length are left empty, never fabricated.
+- Export includes linked CSV data, distance sample effort, a **species-specific draft flatfile** with zero-detection sample rows only where that taxon was not recorded at all. Events with sightings lacking valid distance are not mislabelled as zero detections, and the audit trail. The flatfile must be filtered by one species and one protocol before R Distance analysis. Missing stratum area or length are left empty, never fabricated.
 - A dedicated **Import v0.7 backup** screen imports the previous Beta's exported CSV ZIP into a fresh, empty v0.8 database transactionally. Read the migration warning below.
 
 ## Installation and preservation of earlier data

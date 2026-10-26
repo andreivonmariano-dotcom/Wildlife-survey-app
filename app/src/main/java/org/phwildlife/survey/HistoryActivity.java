@@ -20,7 +20,7 @@ public class HistoryActivity extends Activity {
     private int dp(int value){return (int)(value*getResources().getDisplayMetrics().density+0.5f);}
     private LinearLayout column(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;}
     private TextView text(String val,int size){TextView t=new TextView(this);t.setText(val);t.setTextSize(size);t.setTextColor(INK);t.setPadding(dp(5),dp(7),dp(5),dp(7));return t;}
-    private Button btn(String val){Button b=new Button(this);b.setText(val);b.setAllCaps(false);b.setMinHeight(dp(45));return b;}
+    private Button btn(String val){return UiKit.button(this,val,"secondary");}
     private EditText field(String hint,String init){EditText v=new EditText(this);v.setHint(hint);v.setText(init==null?"":init);v.setSingleLine(true);return v;}
     @Override public void onCreate(Bundle b){super.onCreate(b);db=new FieldDb(this);eventFilter=getIntent().getStringExtra("event_id");draw();}
     @Override protected void onDestroy(){super.onDestroy();db.close();}
@@ -146,16 +146,20 @@ public class HistoryActivity extends Activity {
                 values.put("initial_position",first.getSelectedItem().toString());
                 values.put("movement_status",movement.getSelectedItem().toString());
                 String event=before.optString("event_id");
-                String[] survey=new String[]{"",""};
-                try(Cursor c=writable.rawQuery("SELECT method,transect_az FROM surveys WHERE id=?",new String[]{event})){
-                    if(c.moveToFirst()){survey[0]=c.getString(0);survey[1]=c.isNull(1)?"":c.getString(1);}
+                String[] survey=new String[]{"","",""};
+                try(Cursor c=writable.rawQuery("SELECT method,transect_az,point_radius_m FROM surveys WHERE id=?",new String[]{event})){
+                    if(c.moveToFirst()){
+                        survey[0]=c.getString(0);survey[1]=c.isNull(1)?"":c.getString(1);
+                        survey[2]=c.isNull(2)?"":c.getString(2);
+                    }
                 }
                 boolean candidate=d!=null&&first.getSelectedItem().toString().equals("Yes")
                     &&!type.getSelectedItem().toString().equals("Unknown")
                     &&(survey[0].equals("point_count")||survey[0].equals("line_transect"))
                     &&!movement.getSelectedItem().toString().equals("Flyover")
                     &&!movement.getSelectedItem().toString().equals("Entering after start")
-                    &&(!survey[0].equals("line_transect")||(!survey[1].isEmpty()&&!before.isNull("bearing_magnetic")));
+                    &&(!survey[0].equals("line_transect")||(!survey[1].isEmpty()&&!before.isNull("bearing_magnetic")))
+                    &&(!survey[0].equals("point_count")||survey[2].isEmpty()||d<=Double.parseDouble(survey[2]));
                 values.put("distance_eligible",candidate?1:0);
                 if(d!=null&&survey[0].equals("line_transect")&&!survey[1].isEmpty()&&!before.isNull("bearing_magnetic"))
                     values.put("perpendicular_m",Geometry.perpendicular(d,before.getDouble("bearing_magnetic"),Double.parseDouble(survey[1])));

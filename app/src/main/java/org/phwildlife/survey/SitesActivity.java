@@ -21,7 +21,7 @@ public class SitesActivity extends Activity {
     private static String now(){return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US){{setTimeZone(TimeZone.getTimeZone("UTC"));}}.format(new Date());}
     private int dp(int v){return (int)(v*getResources().getDisplayMetrics().density+0.5);}
     private TextView label(String t,int size){TextView x=new TextView(this);x.setText(t);x.setTextSize(size);x.setTextColor(Color.rgb(24,53,40));x.setPadding(dp(5),dp(8),dp(5),dp(8));return x;}
-    private Button btn(String t){Button b=new Button(this);b.setText(t);b.setAllCaps(false);return b;}
+    private Button btn(String t){return UiKit.button(this,t,"secondary");}
     private EditText edit(String hint,String value){EditText x=new EditText(this);x.setHint(hint);x.setText(value==null?"":value);x.setSingleLine(true);x.setTextSize(15);return x;}
     private LinearLayout column(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
     @Override public void onCreate(Bundle b){super.onCreate(b);helper=new FieldDb(this);render();}
@@ -41,8 +41,8 @@ public class SitesActivity extends Activity {
         int selectedIndex=pids.indexOf(selected);if(selectedIndex>=0)projectSpinner.setSelection(selectedIndex);
         root.addView(label("Active project",15));
         root.addView(projectSpinner);
-        Button project=btn("＋ Add project");project.setOnClickListener(v->newProject());root.addView(project);
-        Button site=btn("＋ Add sampling station");site.setOnClickListener(v->siteDialog(null));root.addView(site);
+        Button project=UiKit.button(this,"＋ Add project","primary");project.setOnClickListener(v->newProject());root.addView(project);
+        Button site=UiKit.button(this,"＋ Add sampling station","primary");site.setOnClickListener(v->siteDialog(null));root.addView(site);
         ScrollView scroll=new ScrollView(this);content=column();scroll.addView(content);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         projectSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){

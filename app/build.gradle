@@ -3,7 +3,7 @@ android {
     namespace 'org.phwildlife.survey'
     compileSdk 35
     defaultConfig {
-        applicationId 'org.phwildlife.survey'
+        applicationId 'org.phwildlife.survey.beta'
         minSdk 26
         targetSdk 34
         versionCode 4

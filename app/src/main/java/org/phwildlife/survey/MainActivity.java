@@ -46,6 +46,12 @@ public class MainActivity extends Activity implements LocationListener {
     private static final int EXPORT_DOC=22, CAMERA_REQ=23;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final Runnable delayedDraftSave=()->persistDraft();
+    private final Runnable visibleTimer=new Runnable(){
+        @Override public void run(){
+            status();
+            handler.postDelayed(this,1000);
+        }
+    };
     private final int BACK=Color.rgb(247,249,246),INK=Color.rgb(22,51,38),GREEN=Color.rgb(37,104,74),MUTED=Color.rgb(95,116,101);
     private FieldDb db; private LocationManager locations;
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView;
@@ -119,7 +125,7 @@ public class MainActivity extends Activity implements LocationListener {
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},71);
         }
-        handler.postDelayed(new Runnable(){public void run(){status();handler.postDelayed(this,1000);}},1000);
+        // Screen timer starts in onResume and stops in onPause. Elapsed time comes from stored timestamps.
     }
     private TextView label(String text,int size,boolean bold) {
         TextView t=new TextView(this);t.setText(text);t.setTextSize(size);t.setTextColor(INK);
@@ -1086,6 +1092,9 @@ public class MainActivity extends Activity implements LocationListener {
     }
     @Override protected void onResume(){
         super.onResume();
+        handler.removeCallbacks(visibleTimer);
+        status();
+        handler.postDelayed(visibleTimer,1000);
         if(active&&(method.equals("line_transect")||method.equals("ves_transect")))startTracking();
         if(active)getSharedPreferences("field_resume",MODE_PRIVATE).edit().putString("screen","survey").commit();
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
@@ -1093,6 +1102,8 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
     @Override protected void onPause(){
+        handler.removeCallbacks(visibleTimer);
+        handler.removeCallbacks(delayedDraftSave);
         persistDraft();
         super.onPause();
         try{locations.removeUpdates(this);}catch(Exception ignored){}

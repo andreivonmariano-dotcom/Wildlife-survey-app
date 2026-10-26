@@ -1,67 +1,50 @@
-# Wildlife Survey Beta v0.13.1: Crash Fix & Automatic IDs
+# Philippine Wildlife Survey Beta v0.14.0
 
-**Android hotfix released after v0.13.0.** This version addresses the bird-survey launch crash reported on October 26, 2026. The crash came from calling `String.isEmpty()` on a null `adminProvince` when survey setup had no GPS-derived administrative province. All optional province strings are now normalized to empty strings and guarded before use.
+Offline field records for birds, amphibians, reptiles and mammals. Standalone from SMART and KALUMBATA.
 
-### Improvements
-- Bird, mammal, and herpetofauna survey screens can open with either a selected geographic area or no detected province.
-- New projects automatically receive permanent `PRJ-<12-hex-characters>` identifiers.
-- New stations automatically receive permanent `STN-<12-hex-characters>` identifiers.
-- Generated IDs are checked against the local database and protected by the primary-key unique constraint.
-- Existing project and station IDs are retained, never replaced. Station editing does not change the ID.
-- New project creation requires only the project name. Blank names keep the dialog open and display an error.
-- In survey setup, station search shows friendly station names and fills the station ID after selection.
+## A project is not a station
+The setup screen now selects a **project** and the **survey method/design**. It no longer requires selecting a sampling station before starting a survey. Stations are sampling units within a survey, not substitutes for project membership.
 
-### Installation and quality checks
-- Export v0.13.0 records before installing. Install the v0.13.1 APK *over* the existing app.
-- Application ID is unchanged (`org.phwildlife.survey.beta08`), and the GitHub build uses the prior signing cache key.
-- See [v0.13.1 QA](docs/QA_v0_13_1.md) for targeted regression steps.
-- GitHub compilation alone does not establish that the app has passed physical handset tests.
+### Bird point counts: automatically planned stations
+Enter the proposed route length in **km** and the point spacing in **meters** (100, 250, 500, or a custom spacing from 50 to 2,000 m). A live preview reports the number of stations.
 
----
+Stations are placed at chainage 0, interval, 2×interval ... through the **last full spacing interval** no greater than route length. For a 2,000 m route and 250 m intervals: **9 stations**, at 0, 250, 500, 750, 1000, 1250, 1500, 1750 and 2000 m. Ten points at 250 m separation would require 2,250 m between the first and last point. A non-divisible route length does not add a closely spaced endpoint station. The residual route distance is shown in setup.
 
-# Philippine Wildlife Survey Beta v0.13
+When the survey session starts:
+1. The app records the survey's project, route design, length, spacing and planned count.
+2. It creates distinct permanent `STN-` identifiers for all planned stations and links them to the survey.
+3. Station GPS fields are **blank at planning time**. These offsets are route chainages, not geographic coordinates.
+4. Once physically at Point 1, tap **Start point 1 · 0 m**. A fresh device GPS position is captured along with time and uncertainty, and its own point-count timer begins.
+5. Press **Finish point** when that stationary sample is complete. Travel to Point 2, then tap **Start point 2 · 250 m**. The whole-session clock runs throughout travel, but the point-count timer begins anew at each point.
+6. Repeat through the last planned station. The next-station button is disabled after all points are visited. Finishing the survey early flags incomplete coverage.
 
-Offline Android application for bird, reptile, amphibian and mammal fieldwork. The application is independent of SMART and KALUMBATA.
+Only GPS fixes from the previous 30 seconds with accuracy at most 75 m and a non-mock source are accepted for an automatically recorded station coordinate. If no acceptable fix exists, the app asks the observer to wait for GPS or explicitly begin with **GPS missing** status. GPS is never inferred from station number or assumed from a route bearing.
 
-## What changed
+The existing bird point-count timing, overtime, pause handling, bird detections linked to point IDs, and Not Counted exclusion controls are preserved. Legacy surveys without a route plan keep their older manually selected station workflow.
 
-### Q1. Offline taxonomic reference and versioned import
-- New **Offline species checklist** screen under Home. The local database includes the original small starter list, explicitly classified **unreviewed**.
-- Import up to 45,000 rows from a researcher-prepared, UTF-8 CSV. Required columns: `taxon_key,taxon_group,common_name,scientific_name,family,source,source_version,region_codes,review_status`.
-- Taxon groups: Birds, Reptiles, Amphibians, Mammals. Every taxon has an externally traceable ID, a source, and source version. Import is all-or-nothing. Existing field observation rows are not rewritten.
-- A reviewed province occurrence can be marked with `P:<province_PSGC>`, e.g. `P:1102400000`. For broader evidence use `MINDANAO`, `VISAYAS`, `LUZON`, `PALAWAN`, `MINDORO` or `SULU`. Multiple codes use `|`, and a blank value means **not assessed**.
-- Only `reviewed` imported taxon-region rows enter the restricted regional dropdown. Imported names without regional evidence remain accessible with the regional filter off. Users can always type a taxon absent from the shortlist.
-- **Important:** this release does NOT contain a complete vetted Philippine biodiversity checklist. The species database supports substantial imports, with taxonomy and occurrence evidence kept separate. Do not equate unreviewed starter names with accepted current taxonomy or a comprehensive regional checklist.
+### Transect methods
+Bird line-transect and herpetofauna VES setup accept a **planned route length in km**, such as 1 km. Those methods record a continuous GPS path, not automatically generated point-count stations. The track displays estimated walked distance alongside planned route length. Its GPS path estimate remains different from measured survey effort.
 
-Recommended 2026 bird-name backbone: AviList v2026, released 20 October 2026 and licensed CC BY 4.0, https://www.avilist.org/checklist/v2026/ . Regional distribution requires separate documented occurrence evidence. Reptile/amphibian/mammal taxonomies need separate specialist source review.
+Other standardized herpetofauna and mammal station visits can start under a project and select an existing station or **Create new station here**, generating an ID and saving a GPS fix if available. No station is required to launch the overall survey session.
 
-### Q2. Real offline Philippine province polygons
-- Bundled offline low-resolution GeoJSON from `faeldon/philippines-json-maps`, PSGC **Q3 2026**, MIT-licensed. The app uses 88 province/province-equivalent features. It retains province names and PSGC codes.
-- Source: https://github.com/faeldon/philippines-json-maps
-- Polygon data have been rounded to four decimal places for small APK size. Geographic source revision: `PSGC-2026-Q3-lowres-v1`. Attribution required by project terms.
-- Survey setup adds **Suggest province & checklist area from station/GPS**. It first uses registered station coordinates with known uncertainty. If not available, it tries a recent (under 5 minutes) accurate phone GPS fix. The location suggestion remains **opt-in** and never changes the selected area without confirmation.
-- Point-in-polygon tests include holes and multipolygons, multiple matches, outside-data regions and near-boundary caution. GPS fixes worse than 200 meters and points less than 700 meters from boundaries are not automatically accepted as reliable assignments.
-- Manual selection remains available. A geographic administrative polygon is NOT a faunal region or proof of species occurrence. Some archipelagos have special classification rules. Administrative province and manual island-checklist preference stay separate.
-- `surveys.csv` exports the province, PSGC, geometry version, status and selection method when present.
+## Database migration
+Schema 10 adds `surveys.planned_route_m`, `planned_station_spacing_m`, `planned_station_count` and `route_design`, `survey_stations` containing planned chainages and actual GPS fix status, and a point-count GPS snapshot. It adds optional GPS fields to other sampling-unit visits. Existing data tables are **not dropped or rewritten**.
 
-### Q3. Faster wildlife entry and photographs
-- Star ☆ beside the taxon entry saves locally favorite species or unidentified labels for fast retrieval.
-- New **identification confidence** choice: Field-identified (not expert verified), Probable, Uncertain, Unidentified. Raw observations export confidence and supporting notes. Uncertain and unidentified sightings are excluded from preliminary species-level model candidates.
-- Bird distance-quality, reptile/amphibian environment and mammal evidence sections are collapsible to reduce scrolling. Critical species, count, distance, and Save Observation remain accessible.
-- **Attach photo from phone** opens Android's document picker. The selected image is immediately copied into private app storage (maximum 15MB per image), preserving it when the source file moves or permission expires.
-- After the observation is saved, the photo is linked to its record ID. Survey History has **View photo evidence**. The ZIP export includes `photo_evidence_index.csv` and actual image files in `photos/`.
-- Draft restoration retains the pending photograph, identification confidence and interpretation note.
+### ZIP exports
+- `surveys.csv`: project, survey method, planned route length, spacing and count
+- `survey_stations.csv`: every generated station, sequence, chainage, visit state, GPS coordinates and accuracy/status
+- `point_counts.csv`: actual start/end, target and achieved count interval, point ID, station ID, planned chainage, actual station GPS/time/accuracy/status
+- `sites.csv`: permanent station IDs and GPS coordinates when captured
+- `track_points.csv` and `transect_tracks.geojson`: continuous GPS-tracked transects
+- Previous archival, research, and photo ZIP exports remain available
 
-### Scientific retention
-Not Counted surveys are still archived but omitted from scientific/monitoring datasets. Survey effort pauses, two clocks, distance candidate flags, source provenance and station-level sampling history remain intact.
+## Methodological considerations
+A 250 m station spacing is supported by USFS bird point-count guidance as a common minimum, but open-country and highly mobile bird communities can require larger separation, and survey independence cannot be guaranteed solely from chainage. Point-count detections belong to stationary visits. Transit time is **not** point-count sampling time. GPS coordinates are measured separately from planned route chainage. A polyline or real-time distance-to-next-station navigation will require an explicit route geometry, not just route length and nominal spacing.
 
-## Installation
-v0.13 shares the Android application ID `org.phwildlife.survey.beta08` and cached signing key with v0.12. **Export a full backup ZIP before upgrading.** Install v0.13 over v0.12 without uninstalling. The migration upgrades the SQLite database to schema version 9 without dropping survey observations.
+- Ralph et al., *Managing and Monitoring Birds Using Point Counts*: https://www.fs.usda.gov/psw/publications/documents/wild/gtr149/pg161_168.pdf
+- BC amphibian/reptile visual encounter survey protocol: https://www2.gov.bc.ca/assets/gov/environment/plants-animals-and-ecosystems/wildlife-wildlife-habitat/amphibians-reptiles-and-turtles/visual-survey-protocol-and-data-sheet-oct312014.pdf
 
-## Planned for future scientific maturity
-- A vetted, country-wide species and synonym database based on accepted specialist checklists, including up-to-date sources and regional distribution records
-- Fresh GPS fixes with documented uncertainty and multiple boundary products, including islands/biogeographic divisions
-- More species-level validation checks, photo metadata/exif retention policy and direct camera capture with controlled evidence chains
-- Detailed accessibility/field usability tests on small Android screens
+## Install and verification
+Android application ID and signing cache remain the same as v0.13.1 (`org.phwildlife.survey.beta08`). **Export a v0.13.1 backup before installing v0.14.0 as an update.** Do not uninstall the previous Beta. Compilation does not validate field GPS behaviour on a handset.
 
-See `docs/QA_v0_13.md` for device validation and `docs/TAXON_AND_BOUNDARY_FORMAT_v0_13.md` for import format and source provenance.
+See `docs/QA_v0_14.md` for regression tests.

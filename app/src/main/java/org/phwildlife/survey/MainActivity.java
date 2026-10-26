@@ -93,6 +93,8 @@ public class MainActivity extends Activity implements LocationListener {
     private TextView trackingView;
     private Double stratumAreaKm2=null,lineBearing=null,pointRadiusM=null;
     private int pointTargetSeconds=600;
+    private double plannedRouteMeters=0,plannedSpacingMeters=0;
+    private int plannedStationCount=0;
     private boolean basicLogOnly=false;
     private boolean active=false,detailShown=false;
     private long startedAt=0,markedAt=0;
@@ -140,6 +142,10 @@ public class MainActivity extends Activity implements LocationListener {
             double radius=launch.getDoubleExtra("point_radius_m",Double.NaN);
             pointRadiusM=Double.isNaN(radius)?null:radius;
             plannedDurationSeconds=launch.getIntExtra("planned_duration_s",0);
+            plannedRouteMeters=launch.getDoubleExtra("planned_route_m",0);
+            plannedSpacingMeters=launch.getDoubleExtra("planned_spacing_m",0);
+            if(method.equals("point_count")&&plannedSpacingMeters>0)
+                plannedStationCount=RoutePlan.count(plannedRouteMeters,plannedSpacingMeters);
         }
         if(!active&&!newEvent){finish();return;}
         draw();
@@ -440,6 +446,7 @@ public class MainActivity extends Activity implements LocationListener {
         saveButton.setEnabled(active&&(!method.equals("point_count")||pointCountId!=null));
         if(pointNextButton!=null&&pointCountId==null&&method.equals("point_count"))
             pointNextButton.setText("Start next point count");
+        if(plannedStationCount>0&&method.equals("point_count"))refreshPlannedPointButton();
         if(pointNextButton!=null&&requiresGenericUnit()&&samplingUnitId==null)
             pointNextButton.setText("Start next station");
         if(requiresGenericUnit()&&samplingUnitId==null)saveButton.setEnabled(false);
@@ -625,8 +632,14 @@ public class MainActivity extends Activity implements LocationListener {
                     unitStartedAt=parseIso(c.getString(3));
                 }
             }catch(Exception ignored){}
-            try(Cursor c=db.getReadableDatabase().rawQuery("SELECT COALESCE(planned_duration_s,0) FROM surveys WHERE id=?",new String[]{eventId})){
-                if(c.moveToFirst())plannedDurationSeconds=c.getInt(0);
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT COALESCE(planned_duration_s,0),COALESCE(planned_route_m,0),"+
+                "COALESCE(planned_station_spacing_m,0),COALESCE(planned_station_count,0) "+
+                "FROM surveys WHERE id=?",new String[]{eventId})){
+                if(c.moveToFirst()){
+                    plannedDurationSeconds=c.getInt(0);plannedRouteMeters=c.getDouble(1);
+                    plannedSpacingMeters=c.getDouble(2);plannedStationCount=c.getInt(3);
+                }
             }catch(Exception ignored){}
         }
     }
@@ -640,16 +653,51 @@ public class MainActivity extends Activity implements LocationListener {
         eventId="SV-"+System.currentTimeMillis();startedAt=System.currentTimeMillis();pointNotice=false;
         int target=method.equals("point_count")?pointTargetSeconds:0;
         lineBearing=SurveyMethods.isBirdLine(profile,method)?line:null;
-        db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,planned_duration_s,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-          new Object[]{eventId,method,iso(startedAt),lineBearing,group,target,profile,stationId,observerName,basicLogOnly?"basic_log_only":"beta_standardized",projectId,regionLabel,stratumAreaKm2,pointRadiusM,plannedDurationSeconds,geographicRegion,geographicSelectionMethod,GeoRegions.DATASET,adminProvince,adminPsgc,adminBoundaryVersion,adminBoundaryStatus});
-        if(method.equals("point_count"))startPoint(stationId);
-        else if(requiresGenericUnit())startUnit(stationId);
-
-        active=true;beginButton.setText("Finish survey");saveButton.setEnabled(true);
+        SQLiteDatabase database=db.getWritableDatabase();
+        database.beginTransaction();
+        try{
+            database.execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s,"+
+              "survey_profile,station_id,observer_name,protocol_status,project_id,region_label,"+
+              "area_km2,point_radius_m,planned_duration_s,geographic_region_id,"+
+              "geographic_selection_method,regional_taxa_version,admin_province_name,"+
+              "admin_province_psgc,admin_boundary_version,admin_boundary_status,"+
+              "planned_route_m,planned_station_spacing_m,planned_station_count,route_design) "+
+              "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+              new Object[]{eventId,method,iso(startedAt),lineBearing,group,target,profile,
+                "",observerName,basicLogOnly?"basic_log_only":"beta_standardized",projectId,
+                regionLabel,stratumAreaKm2,pointRadiusM,plannedDurationSeconds,geographicRegion,
+                geographicSelectionMethod,GeoRegions.DATASET,adminProvince,adminPsgc,
+                adminBoundaryVersion,adminBoundaryStatus,plannedRouteMeters,
+                method.equals("point_count")?plannedSpacingMeters:null,
+                method.equals("point_count")?plannedStationCount:null,
+                method.equals("point_count")?"planned_chainage_point_route":
+                method.equals("line_transect")||method.equals("ves_transect")?
+                    "continuous_planned_route":"unsegmented_method"});
+            if(method.equals("point_count")&&plannedStationCount>0){
+                int created=RoutePlan.create(database,eventId,projectId,
+                    plannedRouteMeters,plannedSpacingMeters,startedAt);
+                if(created!=plannedStationCount)throw new IllegalStateException("Planned station count mismatch");
+            }
+            database.setTransactionSuccessful();
+        }finally{database.endTransaction();}
+        // No station is visited at survey launch. The first GPS point is captured on arrival.
+        if(method.equals("point_count")&&plannedStationCount>0)
+            stationId="";
+        else if(requiresGenericUnit())
+            stationId="";
+        active=true;beginButton.setText("Finish survey");
+        saveButton.setEnabled(!hasStationUnits());
+        if(hasStationUnits()&&pointNextButton!=null){
+            if(method.equals("point_count")&&plannedStationCount>0)
+                pointNextButton.setText("Start point 1 · 0 m");
+            else pointNextButton.setText("Start first sampling station");
+            pointNextButton.setEnabled(true);
+        }
         surveyPaused=false;pauseStartedAt=0;accumulatedPausedMs=0;unitPausedMs=0;
         if(method.equals("line_transect")||method.equals("ves_transect"))startTracking();
         methodSpinner.setEnabled(false);lineEntry.setEnabled(false);showGroups();status();
-        toast("Survey started");
+        toast(method.equals("point_count")&&plannedStationCount>0?
+            plannedStationCount+" stations planned. Start the first count on arrival.":"Survey started");
     }
 
     /** Wall-clock total is never paused. Pauses affect active effort and interval time only. */
@@ -865,6 +913,15 @@ public class MainActivity extends Activity implements LocationListener {
         }
         if(method.equals("point_count")){
             if(pointCountId!=null)closePoint();
+            if(plannedStationCount>0){
+                int remaining=0;
+                try(Cursor planned=db.getReadableDatabase().rawQuery(
+                    "SELECT COUNT(*) FROM survey_stations WHERE event_id=? AND visit_state='planned'",
+                    new String[]{eventId})){
+                    if(planned.moveToFirst())remaining=planned.getInt(0);
+                }
+                if(remaining>0){complete=false;toast(remaining+" planned points not yet visited; survey marked incomplete");}
+            }
             try(Cursor c=db.getReadableDatabase().rawQuery(
                 "SELECT COUNT(*) FROM point_counts WHERE event_id=? AND COALESCE(completed,0)=0",
                 new String[]{eventId})){
@@ -925,10 +982,21 @@ public class MainActivity extends Activity implements LocationListener {
         samplingUnitId="UNIT-"+eventId+"-"+unitSequence;
         unitStartedAt=System.currentTimeMillis();
         stationId=station;nearEndNotified=false;pointNotice=false;
+        boolean gpsValid=RoutePlan.acceptable(location,unitStartedAt);
+        Object lat=gpsValid?location.getLatitude():null,lon=gpsValid?location.getLongitude():null,
+            accuracy=gpsValid?location.getAccuracy():null;
         db.getWritableDatabase().execSQL(
-            "INSERT INTO sampling_units(id,event_id,station_id,sequence_number,method,started,target_seconds) VALUES(?,?,?,?,?,?,?)",
+            "INSERT INTO sampling_units(id,event_id,station_id,sequence_number,method,started,target_seconds,"+
+            "gps_latitude,gps_longitude,gps_accuracy_m,gps_recorded_at,gps_status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{samplingUnitId,eventId,station,unitSequence,method,iso(unitStartedAt),
-                plannedDurationSeconds>0?plannedDurationSeconds:null});
+                plannedDurationSeconds>0?plannedDurationSeconds:null,lat,lon,accuracy,
+                gpsValid?iso(location.getTime()):null,
+                gpsValid?"gps_fix_at_visit_start":"missing_or_weak_gps_at_start"});
+        if(gpsValid)db.getWritableDatabase().execSQL(
+            "UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=? "+
+            "WHERE id=? AND latitude IS NULL AND longitude IS NULL",
+            new Object[]{lat,lon,accuracy,iso(unitStartedAt),station});
+        else toast("Sampling unit started without reliable GPS · flagged");
         if(pointNextButton!=null)pointNextButton.setText("Finish visit · Next station");
         if(saveButton!=null)saveButton.setEnabled(active);
     }
@@ -960,9 +1028,26 @@ public class MainActivity extends Activity implements LocationListener {
         }
         genericUnitPicker();
     }
+    /** One-off station generated on site for non-point standardized methods. */
+    private String createFieldStation(){
+        String id=RoutePlan.newSiteId();
+        long now=System.currentTimeMillis();
+        boolean ok=RoutePlan.acceptable(location,now);
+        db.getWritableDatabase().execSQL(
+            "INSERT INTO sites(id,project_id,name,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at) "+
+            "VALUES(?,?,?,?,?,?,?,?,?)",
+            new Object[]{id,projectId,"Field station "+(unitSequence+1),
+                ok?location.getLatitude():null,ok?location.getLongitude():null,
+                ok?location.getAccuracy():null,
+                "Auto-created during "+profile+" survey "+eventId+
+                (ok?" · GPS captured":" · GPS missing at creation"),
+                iso(now),iso(now)});
+        return id;
+    }
     private void genericUnitPicker(){
-        String[] list=stationSuggestions();
-        if(list.length==0){toast("Register a station from Home → Projects & stations");return;}
+        String[] existing=stationSuggestions();
+        String[] list=java.util.Arrays.copyOf(existing,existing.length+1);
+        list[existing.length]="＋ Create new station here (automatic ID)";
         LinearLayout panel=vertical();panel.setPadding(dp(16),0,dp(16),0);
         TextView title=label("Next station, unvisited stations first",13,true);panel.addView(title);
         Spinner stations=new Spinner(this);
@@ -1036,7 +1121,9 @@ public class MainActivity extends Activity implements LocationListener {
                           cd,tn,rh,down,effortNotes.getText().toString().trim(),finished});
                 }
                 if(w==dialog.getButton(AlertDialog.BUTTON_POSITIVE)){
-                    startUnit(list[stations.getSelectedItemPosition()]);
+                    int selected=stations.getSelectedItemPosition();
+                    String chosen=selected==existing.length?createFieldStation():list[selected];
+                    startUnit(chosen);
                     taxonEntry.setText("");distanceEntry.setText("");clearMark();
                     toast("Visit "+unitSequence+" · "+stationId);
                 }
@@ -1075,6 +1162,68 @@ public class MainActivity extends Activity implements LocationListener {
         }catch(Exception ignored){}
         return stations.toArray(new String[0]);
     }
+    /**
+     * Planned bird surveys visit each generated station exactly once. Distances
+     * are chainages, never interpolated coordinates. Fresh GPS is captured here.
+     */
+    private void plannedPointAction(){
+        if(!active||!method.equals("point_count")||eventId==null)return;
+        if(pointCountId!=null){
+            new AlertDialog.Builder(this).setTitle("Finish point "+pointSequence+"?")
+                .setMessage("Closes this stationary count and records its completion status. "+
+                    "Travel to the next point, then tap Start point there. The total session timer keeps running.")
+                .setNegativeButton("Continue this count",null)
+                .setPositiveButton("Finish this point",(d,w)->{
+                    closePoint();persistDraft();status();refreshPlannedPointButton();
+                }).show();
+            return;
+        }
+        RoutePlan.Next next=RoutePlan.next(db.getReadableDatabase(),eventId);
+        if(next==null){toast("All planned points have been visited");refreshPlannedPointButton();return;}
+        if(surveyPaused){toast("Resume effort before starting the point count");return;}
+        long now=System.currentTimeMillis();
+        if(RoutePlan.acceptable(location,now)){
+            beginPlannedPoint(next,location);return;
+        }
+        new AlertDialog.Builder(this).setTitle("Station GPS not ready")
+            .setMessage("Point "+next.sequence+" at planned chainage "+Math.round(next.chainage)+" m.\n"+
+                "The app needs a GPS fix from the last 30 seconds, accuracy 75 m or better. "+
+                "You can start without coordinates, but that station will be flagged in exports.")
+            .setNegativeButton("Wait for fresh GPS",null)
+            .setPositiveButton("Start, flag GPS missing",(d,w)->beginPlannedPoint(next,null)).show();
+    }
+    private void beginPlannedPoint(RoutePlan.Next next,Location fresh){
+        if(!active||pointCountId!=null||!method.equals("point_count"))return;
+        if(surveyPaused){toast("Resume effort first");return;}
+        RoutePlan.Next expected=RoutePlan.next(db.getReadableDatabase(),eventId);
+        if(expected==null||!expected.stationId.equals(next.stationId)){
+            toast("Station plan has changed. Reopen Start point.");return;
+        }
+        long now=System.currentTimeMillis();
+        int newSequence=next.sequence;
+        String id="PC-"+eventId+"-"+newSequence;
+        RoutePlan.start(db.getWritableDatabase(),eventId,next,id,pointTargetSeconds,now,fresh);
+        stationId=next.stationId;pointSequence=newSequence;pointCountId=id;pointStartedAt=now;
+        pointNotice=false;nearEndNotified=false;clearMark();
+        if(saveButton!=null)saveButton.setEnabled(true);
+        refreshPlannedPointButton();status();persistDraft();
+        toast(fresh==null?"Point "+pointSequence+" started · GPS missing":"Point "+
+            pointSequence+" GPS saved · ±"+Math.round(fresh.getAccuracy())+" m");
+    }
+    private void refreshPlannedPointButton(){
+        if(pointNextButton==null||!method.equals("point_count")||plannedStationCount<=0)return;
+        if(pointCountId!=null){
+            pointNextButton.setText("Finish point "+pointSequence+" · then travel");
+            pointNextButton.setEnabled(true);
+        }else{
+            RoutePlan.Next next=eventId==null?null:RoutePlan.next(db.getReadableDatabase(),eventId);
+            if(next==null){pointNextButton.setText("All planned points visited");pointNextButton.setEnabled(false);}
+            else{
+                pointNextButton.setText("Start point "+next.sequence+" · "+Math.round(next.chainage)+" m");
+                pointNextButton.setEnabled(true);
+            }
+        }
+    }
     private void startPoint(String station){
         SQLiteDatabase d=db.getWritableDatabase();
         int sequence=1;
@@ -1096,6 +1245,8 @@ public class MainActivity extends Activity implements LocationListener {
             System.currentTimeMillis())>=pointTargetSeconds*1000L?1:0;
         db.getWritableDatabase().execSQL("UPDATE point_counts SET ended=?,completed=? WHERE id=?",
             new Object[]{iso(System.currentTimeMillis()),complete,pointCountId});
+        if(plannedStationCount>0&&eventId!=null)
+            RoutePlan.close(db.getWritableDatabase(),eventId,stationId,complete==1);
         pointCountId=null;
         if(pointNextButton!=null)pointNextButton.setText("Start next point count");
         if(saveButton!=null)saveButton.setEnabled(false);
@@ -1112,6 +1263,7 @@ public class MainActivity extends Activity implements LocationListener {
                 }).show();
             return;
         }
+        if(plannedStationCount>0){plannedPointAction();return;}
         pointPicker();
     }
     private void pointPicker(){
@@ -1154,7 +1306,8 @@ public class MainActivity extends Activity implements LocationListener {
         try(Cursor c=db.getReadableDatabase().rawQuery(
             "SELECT COALESCE(gps_track_m,0),COALESCE(gps_track_status,'waiting') FROM surveys WHERE id=?",new String[]{eventId})){
             if(c.moveToFirst())trackingView.setText(String.format(Locale.US,
-                "GPS walked path ~%.0f m · %s",c.getDouble(0),c.getString(1)));
+                "GPS walked path ~%.0f m · planned %.0f m · %s (route estimate only)",
+                c.getDouble(0),plannedRouteMeters,c.getString(1)));
         }catch(Exception ignored){}
     }
     private void markDetection(){
@@ -1345,7 +1498,12 @@ public class MainActivity extends Activity implements LocationListener {
             pointNotice=true;toast("Sampling interval ended · recording continues in overtime");
             vibrateIfEnabled(300);
         }
-        if(hasStationUnits()){
+        if(method.equals("point_count")&&plannedStationCount>0){
+            int counted=RoutePlan.recordedCount(db.getReadableDatabase(),eventId);
+            int[] visits=visitProgress();
+            progressView.setText("Planned "+plannedStationCount+" stations · "+counted+
+                " visited · "+visits[1]+" complete. Travel and point effort are separate.");
+        }else if(hasStationUnits()){
             int[] counts=visitProgress();
             progressView.setText(counts[1]+" completed / "+counts[0]+" started visits · "+
                 counts[2]+" distinct stations. Open Station progress for details.");
@@ -1391,17 +1549,20 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at FROM sites",
               "station_id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at");
             csv(z,"surveys.csv",
-              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status FROM surveys",
-              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status");
+              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design FROM surveys",
+              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design");
             csv(z,"observations.csv",
               "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,COALESCE(s.outcome,'active'),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection,r.identification_confidence,r.identification_review_note FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
               "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection,identification_confidence,identification_review_note");
             csv(z,"sampling_units.csv",
-              "SELECT u.id,u.event_id,u.station_id,u.sequence_number,u.method,u.started,u.ended,u.target_seconds,u.completed,u.effort_minutes,u.effort_area_m2,u.effort_length_m,u.noise_score,u.wind_score,u.rain_condition,u.equipment_id,u.number_devices,u.trap_effort_hours,u.unit_paused_ms,u.camera_days_verified,u.trap_nights_verified,u.recorder_hours_verified,u.deployment_started_utc,u.deployment_ended_utc,u.downtime_hours,u.effort_remarks,COALESCE(s.outcome,'active') FROM sampling_units u JOIN surveys s ON s.id=u.event_id ORDER BY u.event_id,u.sequence_number",
-              "sampling_unit_id,event_id,station_id,sequence,method,start_utc,end_utc,target_seconds,completed,active_effort_minutes,searched_area_m2,searched_length_m,noise_score,wind_score,rain_condition,equipment_id,number_devices,device_hours,unit_paused_ms,verified_camera_days,verified_trap_nights,verified_recorder_hours,deployment_start_utc,deployment_end_utc,downtime_hours,effort_notes,survey_outcome");
+              "SELECT u.id,u.event_id,u.station_id,u.sequence_number,u.method,u.started,u.ended,u.target_seconds,u.completed,u.effort_minutes,u.effort_area_m2,u.effort_length_m,u.noise_score,u.wind_score,u.rain_condition,u.equipment_id,u.number_devices,u.trap_effort_hours,u.unit_paused_ms,u.camera_days_verified,u.trap_nights_verified,u.recorder_hours_verified,u.deployment_started_utc,u.deployment_ended_utc,u.downtime_hours,u.effort_remarks,COALESCE(s.outcome,'active'),u.gps_latitude,u.gps_longitude,u.gps_accuracy_m,u.gps_recorded_at,u.gps_status FROM sampling_units u JOIN surveys s ON s.id=u.event_id ORDER BY u.event_id,u.sequence_number",
+              "sampling_unit_id,event_id,station_id,sequence,method,start_utc,end_utc,target_seconds,completed,active_effort_minutes,searched_area_m2,searched_length_m,noise_score,wind_score,rain_condition,equipment_id,number_devices,device_hours,unit_paused_ms,verified_camera_days,verified_trap_nights,verified_recorder_hours,deployment_start_utc,deployment_end_utc,downtime_hours,effort_notes,survey_outcome,station_gps_lat,station_gps_lon,station_accuracy_m,gps_fix_at_utc,gps_status");
             csv(z,"point_counts.csv",
-              "SELECT p.id,p.event_id,p.station_id,p.sequence_number,p.started,p.ended,p.target_seconds,p.completed,p.notes,p.unit_paused_ms,COALESCE(s.outcome,'active') FROM point_counts p JOIN surveys s ON s.id=p.event_id ORDER BY p.event_id,p.sequence_number",
-              "point_count_id,event_id,station_id,sequence,start_utc,end_utc,target_seconds,completed,notes,unit_paused_ms,survey_outcome");
+              "SELECT p.id,p.event_id,p.station_id,p.sequence_number,p.started,p.ended,p.target_seconds,p.completed,p.notes,p.unit_paused_ms,COALESCE(s.outcome,'active'),p.planned_chainage_m,p.gps_latitude,p.gps_longitude,p.gps_accuracy_m,p.gps_recorded_at,p.gps_status FROM point_counts p JOIN surveys s ON s.id=p.event_id ORDER BY p.event_id,p.sequence_number",
+              "point_count_id,event_id,station_id,sequence,start_utc,end_utc,target_seconds,completed,notes,unit_paused_ms,survey_outcome,planned_chainage_m,station_gps_lat,station_gps_lon,station_gps_accuracy_m,gps_fix_at_utc,gps_status");
+            csv(z,"survey_stations.csv",
+              "SELECT r.event_id,r.station_id,r.sequence_number,r.planned_chainage_m,r.visit_state,r.captured_at,r.gps_latitude,r.gps_longitude,r.gps_accuracy_m,r.gps_status,COALESCE(s.outcome,'active') FROM survey_stations r JOIN surveys s ON s.id=r.event_id ORDER BY r.event_id,r.sequence_number",
+              "event_id,station_id,sequence_number,planned_chainage_m,visit_state,count_started_at_utc,station_lat,station_lon,station_gps_accuracy_m,gps_status,survey_outcome");
             csv(z,"survey_outcome_audit.csv",
               "SELECT id,event_id,previous_outcome,new_outcome,changed_at_utc,reason,record_count FROM survey_outcome_audit",
               "audit_id,event_id,previous_outcome,new_outcome,changed_utc,reason,record_count");

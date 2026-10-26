@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /** Shared offline schema, versioned migrations. Never drop a user observation table. */
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
-    public FieldDb(Context context){super(context,NAME,null,9);}
+    public FieldDb(Context context){super(context,NAME,null,10);}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -19,6 +19,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeSeven(d);
         upgradeEight(d);
         upgradeNine(d);
+        upgradeTen(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -42,6 +43,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<7)upgradeSeven(d);
         if(oldVersion<8)upgradeEight(d);
         if(oldVersion<9)upgradeNine(d);
+        if(oldVersion<10)upgradeTen(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -183,5 +185,33 @@ public final class FieldDb extends SQLiteOpenHelper {
                    new Object[]{key,group,parts[0],parts[1],"v0.12 offline starter","legacy_v0.12","","unreviewed"});
             }
         }
+    }
+    /**
+     * Survey plans describe chainage, not pre-calculated geographic positions.
+     * A station coordinate is observed when the count starts, not interpolated.
+     */
+    private void upgradeTen(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE surveys ADD COLUMN planned_route_m REAL");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN planned_station_spacing_m REAL");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN planned_station_count INTEGER");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN route_design TEXT");
+        d.execSQL("ALTER TABLE point_counts ADD COLUMN gps_latitude REAL");
+        d.execSQL("ALTER TABLE point_counts ADD COLUMN gps_longitude REAL");
+        d.execSQL("ALTER TABLE point_counts ADD COLUMN gps_accuracy_m REAL");
+        d.execSQL("ALTER TABLE point_counts ADD COLUMN gps_recorded_at TEXT");
+        d.execSQL("ALTER TABLE point_counts ADD COLUMN gps_status TEXT");
+        d.execSQL("ALTER TABLE point_counts ADD COLUMN planned_chainage_m REAL");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN gps_latitude REAL");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN gps_longitude REAL");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN gps_accuracy_m REAL");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN gps_recorded_at TEXT");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN gps_status TEXT");
+        d.execSQL("CREATE TABLE IF NOT EXISTS survey_stations("+
+            "event_id TEXT NOT NULL,station_id TEXT NOT NULL,sequence_number INTEGER NOT NULL,"+
+            "planned_chainage_m REAL NOT NULL,visit_state TEXT NOT NULL DEFAULT 'planned',"+
+            "captured_at TEXT,gps_latitude REAL,gps_longitude REAL,gps_accuracy_m REAL,"+
+            "gps_status TEXT NOT NULL DEFAULT 'pending',"+
+            "PRIMARY KEY(event_id,sequence_number),UNIQUE(event_id,station_id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS survey_station_event ON survey_stations(event_id,visit_state)");
     }
 }

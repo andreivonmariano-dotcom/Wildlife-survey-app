@@ -41,6 +41,14 @@ public final class StationProgressActivity extends Activity {
    if(method.equals("line_transect")||method.equals("ves_transect")||method.equals("opportunistic")){
      list.addView(label("Continuous method: sampling time and location belong to one survey event.",14));return;
    }
+   if(method.equals("point_count")){
+     int planned=0;
+     try(Cursor c=store.getReadableDatabase().rawQuery(
+         "SELECT COUNT(*) FROM survey_stations WHERE event_id=?",new String[]{event})){
+       if(c.moveToFirst())planned=c.getInt(0);
+     }
+     if(planned>0){showPlannedStations();return;}
+   }
    String table=method.equals("point_count")?"point_counts":"sampling_units";
    Map<String,List<String>> stations=new LinkedHashMap<>();
    int finished=0,unfinished=0,running=0;
@@ -68,6 +76,41 @@ public final class StationProgressActivity extends Activity {
    if(missing==0)list.addView(label("All registered stations have been visited.",12));
    list.addView(label("Stations with recorded visits",15));
    for(Map.Entry<String,List<String>> e:stations.entrySet())card(e.getKey(),e.getKey(),e.getValue());
+ }
+ private void showPlannedStations(){
+   int done=0,started=0,missing=0;
+   try(Cursor c=store.getReadableDatabase().rawQuery(
+       "SELECT visit_state,COUNT(*) FROM survey_stations WHERE event_id=? GROUP BY visit_state",
+       new String[]{event})){
+     while(c.moveToNext()){
+       String state=c.getString(0);int n=c.getInt(1);
+       if(state.equals("completed"))done+=n;
+       else if(state.equals("planned"))missing+=n;
+       else started+=n;
+     }
+   }
+   list.addView(label(done+" completed · "+started+" active/incomplete · "+missing+" not visited",17));
+   list.addView(label("Planned chainage is distance along the proposed route, not a GPS position. "+
+       "Actual station coordinates are captured on arrival and stored with each point count.",13));
+   try(Cursor c=store.getReadableDatabase().rawQuery(
+       "SELECT r.sequence_number,r.station_id,r.planned_chainage_m,r.visit_state,"+
+       "r.gps_latitude,r.gps_longitude,r.gps_accuracy_m,r.gps_status,"+
+       "COALESCE(p.completed,-1) FROM survey_stations r "+
+       "LEFT JOIN point_counts p ON p.event_id=r.event_id AND p.station_id=r.station_id "+
+       "WHERE r.event_id=? ORDER BY r.sequence_number",new String[]{event})){
+     while(c.moveToNext()){
+       LinearLayout box=column();box.setPadding(dp(8),dp(8),dp(8),dp(8));
+       box.setBackground(UiKit.surface(this));
+       box.addView(label("Point "+c.getInt(0)+" · "+Math.round(c.getDouble(2))+" m",16));
+       box.addView(label("ID "+c.getString(1)+" · "+c.getString(3).toUpperCase(Locale.US),12));
+       if(!c.isNull(4)&&!c.isNull(5))
+         box.addView(label(String.format(Locale.US,"GPS %.5f, %.5f · ±%.0f m",
+             c.getDouble(4),c.getDouble(5),c.getDouble(6)),12));
+       else box.addView(label("GPS not recorded · "+c.getString(7),12));
+       LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,-2);
+       p.bottomMargin=dp(10);list.addView(box,p);
+     }
+   }
  }
  private void card(String id,String name,List<String> visits){
    LinearLayout item=column();item.setBackground(UiKit.surface(this));

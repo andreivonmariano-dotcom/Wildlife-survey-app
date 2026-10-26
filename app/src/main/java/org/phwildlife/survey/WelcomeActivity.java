@@ -22,7 +22,9 @@ public class WelcomeActivity extends Activity {
     private boolean custom=false;
     private String currentScreen="home";
     private AutoCompleteTextView stationEntry;
-    private EditText durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry,radiusEntry,transectDurationEntry;
+    private EditText durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry,radiusEntry,transectDurationEntry,routeLengthEntry,customSpacingEntry;
+    private Spinner spacingChoice;
+    private TextView stationCountPreview;
     private Spinner projectChoice, geographicChoice;
     private BoundaryLookup.Match suggested;
     private String geographicMethod=GeoRegions.BOUNDARY_METHOD;
@@ -196,7 +198,7 @@ public class WelcomeActivity extends Activity {
                 }
             }
         });
-        Button detect=UiKit.button(this,"Suggest province & checklist area from station/GPS","secondary");
+        Button detect=UiKit.button(this,"Suggest province from recent GPS","secondary");
         main.addView(detect);
         boundaryMessage=text("Offline provincial polygons: PSGC 3Q 2026. Tap to compare a station position or recent precise GPS fix. This never verifies a species distribution.",12,false);
         boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
@@ -207,15 +209,12 @@ public class WelcomeActivity extends Activity {
         stationEntry=new AutoCompleteTextView(this);stationEntry.setThreshold(1);
         stationEntry.setTextSize(16);stationEntry.setSingleLine(true);
         stationEntry.setHint("Registered station ID");
-        main.addView(stationEntry);
+        // Survey setup selects a project. Sampling stations are assigned after starting.
         projectChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
             public void onNothingSelected(android.widget.AdapterView<?> p){}
             public void onItemSelected(android.widget.AdapterView<?> p,View v,int i,long id){updateStations();}
         });
-        Button manage=UiKit.button(this,"Manage stations","secondary");
-        manage.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
-        main.addView(manage);
-        TextView note=text("Registered stations are required for structured surveys.",12,false);
+        TextView note=text("Select the project and survey design here. Point-count stations will be generated for this survey, then their GPS locations recorded as you reach them. Transect methods record a continuous route.",12,false);
         note.setTextColor(MUTED);main.addView(note);
         observerEntry=new EditText(this);
         observerEntry.setTextSize(16);observerEntry.setSingleLine(true);
@@ -236,6 +235,41 @@ public class WelcomeActivity extends Activity {
         radiusEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         radiusEntry.setHint("Fixed point-count radius (m, optional)");
         main.addView(radiusEntry);
+        main.addView(text("Planned survey route",17,true));
+        routeLengthEntry=new EditText(this);
+        routeLengthEntry.setSingleLine(true);routeLengthEntry.setTextSize(17);
+        routeLengthEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        routeLengthEntry.setHint("Planned route length (km)");routeLengthEntry.setText("2");
+        main.addView(routeLengthEntry);
+        spacingChoice=new Spinner(this);
+        spacingChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+            new String[]{"100 m","250 m","500 m","Custom spacing"}));
+        main.addView(text("Distance between point-count stations",13,false));
+        main.addView(spacingChoice);
+        spacingChoice.setSelection(1);
+        customSpacingEntry=new EditText(this);
+        customSpacingEntry.setHint("Custom spacing (meters)");
+        customSpacingEntry.setSingleLine(true);customSpacingEntry.setTextSize(16);
+        customSpacingEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        customSpacingEntry.setVisibility(View.GONE);main.addView(customSpacingEntry);
+        stationCountPreview=text("",13,true);stationCountPreview.setTextColor(GREEN);main.addView(stationCountPreview);
+        routeLengthEntry.addTextChangedListener(new android.text.TextWatcher(){
+            public void beforeTextChanged(CharSequence s,int st,int c,int af){}
+            public void onTextChanged(CharSequence s,int st,int before,int c){updateRoutePreview();}
+            public void afterTextChanged(android.text.Editable s){}
+        });
+        customSpacingEntry.addTextChangedListener(new android.text.TextWatcher(){
+            public void beforeTextChanged(CharSequence s,int st,int c,int af){}
+            public void onTextChanged(CharSequence s,int st,int before,int c){updateRoutePreview();}
+            public void afterTextChanged(android.text.Editable s){}
+        });
+        spacingChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+            public void onNothingSelected(android.widget.AdapterView<?> a){}
+            public void onItemSelected(android.widget.AdapterView<?> a,View v,int idx,long id){
+                customSpacingEntry.setVisibility(idx==3?View.VISIBLE:View.GONE);updateRoutePreview();
+            }
+        });
+
         lineBearingEntry=new EditText(this);
         lineBearingEntry.setSingleLine(true);
         lineBearingEntry.setTextSize(16);
@@ -254,12 +288,14 @@ public class WelcomeActivity extends Activity {
                 else if(choices[choice].code.equals("spotlight")||choices[choice].code.equals("bat_acoustic"))transectDurationEntry.setText("60");
                 else transectDurationEntry.setText("120");
                 lineBearingEntry.setVisibility(profile.equals("Birds")&&choices[choice].code.equals("line_transect")?View.VISIBLE:View.GONE);
+                updateRoutePreview();
             }
         });
         durationEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
         radiusEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
         transectDurationEntry.setVisibility(!choices[0].code.equals("point_count")&&SurveyMethods.timedInterval(choices[0].code)?View.VISIBLE:View.GONE);
         lineBearingEntry.setVisibility(View.GONE);
+        updateRoutePreview();
         regionEntry=new EditText(this);regionEntry.setSingleLine(true);
         regionEntry.setHint("Stratum / region label (optional)");
         main.addView(regionEntry);
@@ -352,25 +388,49 @@ public class WelcomeActivity extends Activity {
                 geographicMethod="gps_station_polygon_suggested_confirmed";
             }).show();
     }
+    private boolean supportsRoute(String code){
+        return code.equals("point_count")||code.equals("line_transect")||code.equals("ves_transect");
+    }
+    private double spacingMeters(){
+        int pos=spacingChoice==null?1:spacingChoice.getSelectedItemPosition();
+        if(pos==0)return 100;
+        if(pos==1)return 250;
+        if(pos==2)return 500;
+        try{return Double.parseDouble(customSpacingEntry.getText().toString().trim());}
+        catch(Exception ignored){return -1;}
+    }
+    private void updateRoutePreview(){
+        if(stationCountPreview==null||routeLengthEntry==null||methodChoices==null)return;
+        int choice=methodChoices.getCheckedRadioButtonId()-1000;
+        if(choice<0||choice>=choices.length)return;
+        String method=choices[choice].code;
+        boolean route=supportsRoute(method);
+        routeLengthEntry.setVisibility(route?View.VISIBLE:View.GONE);
+        if(spacingChoice!=null)spacingChoice.setVisibility(method.equals("point_count")?View.VISIBLE:View.GONE);
+        if(customSpacingEntry!=null)customSpacingEntry.setVisibility(
+            method.equals("point_count")&&spacingChoice.getSelectedItemPosition()==3?View.VISIBLE:View.GONE);
+        stationCountPreview.setVisibility(route?View.VISIBLE:View.GONE);
+        double length=-1;
+        try{length=Double.parseDouble(routeLengthEntry.getText().toString().trim())*1000.0;}
+        catch(Exception ignored){}
+        if(length<=0){stationCountPreview.setText("Enter a planned route length.");return;}
+        if(method.equals("point_count")){
+            double spacing=spacingMeters();
+            if(spacing<=0){stationCountPreview.setText("Select a positive station spacing.");return;}
+            int stations=(int)Math.floor((length+1e-7)/spacing)+1;
+            double last=(stations-1)*spacing;
+            stationCountPreview.setText(stations+" planned points at 0, "+(int)spacing+
+                " ... "+(int)last+" m. Remaining route beyond final point: "+
+                Math.max(0,(int)Math.round(length-last))+" m.");
+        }else stationCountPreview.setText(String.format(Locale.US,
+            "Continuous %.2f km transect. No point-count stations will be generated.",length/1000.0));
+    }
     private void startSelected(){
         int choice=methodChoices.getCheckedRadioButtonId()-1000;
         if(choice<0||choice>=choices.length){Toast.makeText(this,"Select survey method",Toast.LENGTH_SHORT).show();return;}
         SurveyMethods.Method m=choices[choice];
-        String station=stationEntry.getText().toString().trim();
-        if(suggested!=null&&!station.equals(suggestedStationId)){
-            suggested=null;
-            geographicMethod=GeoRegions.BOUNDARY_METHOD;
-            Toast.makeText(this,"Station changed: previous province suggestion cleared. Select a new suggestion or continue manually.",Toast.LENGTH_LONG).show();
-        }
-        if(SurveyMethods.structured(m.code)){
-            if(station.isEmpty()){stationEntry.setError("Select a registered station ID");stationEntry.requestFocus();return;}
-            int found=0;
-            try(FieldDb db=new FieldDb(this);
-                Cursor c=db.getReadableDatabase().rawQuery("SELECT COUNT(*) FROM sites WHERE id=? AND project_id=?",new String[]{station,projectId()})){
-                if(c.moveToFirst())found=c.getInt(0);
-            }
-            if(found==0){stationEntry.setError("Register station in Projects & stations first");stationEntry.requestFocus();return;}
-        }
+        // A survey belongs to its project. Station selection occurs within the field session.
+        String station="";
         Double area=null;
         try{if(!areaEntry.getText().toString().trim().isEmpty())area=Double.parseDouble(areaEntry.getText().toString().trim());}catch(Exception ignored){}
         if(!areaEntry.getText().toString().trim().isEmpty()&&(area==null||area<=0)){
@@ -409,6 +469,24 @@ public class WelcomeActivity extends Activity {
                 lineBearingEntry.requestFocus();return;
             }
         }
+        double routeLengthM=0,spacingM=0;
+        if(supportsRoute(m.code)){
+            try{routeLengthM=Double.parseDouble(routeLengthEntry.getText().toString().trim())*1000.0;}
+            catch(Exception ignored){routeLengthM=-1;}
+            if(!Double.isFinite(routeLengthM)||routeLengthM<100||routeLengthM>50000){
+                routeLengthEntry.setError("Route length: 0.1 to 50 km");routeLengthEntry.requestFocus();return;
+            }
+            if(m.code.equals("point_count")){
+                spacingM=spacingMeters();
+                if(!Double.isFinite(spacingM)||spacingM<50||spacingM>2000){
+                    customSpacingEntry.setError("Spacing: 50 to 2000 m");return;
+                }
+                int points=(int)Math.floor((routeLengthM+1e-7)/spacingM)+1;
+                if(points<2||points>201){
+                    routeLengthEntry.setError("Choose a route/spacing combination yielding 2–201 stations");return;
+                }
+            }
+        }
         Intent i=new Intent(this,MainActivity.class);
         i.putExtra("transect_bearing",lineBearingEntry.getText().toString().trim());
         i.putExtra("create_new",true);
@@ -430,6 +508,8 @@ public class WelcomeActivity extends Activity {
         i.putExtra("point_target_s",duration);
         i.putExtra("point_radius_m",radius==null?Double.NaN:radius);
         i.putExtra("planned_duration_s",plannedDuration);
+        i.putExtra("planned_route_m",routeLengthM);
+        i.putExtra("planned_spacing_m",spacingM);
         i.putExtra("custom_survey",custom);
         i.putExtra("basic_log_only",m.basicLog);
         currentScreen="home";homeVisible=true;
@@ -448,6 +528,9 @@ public class WelcomeActivity extends Activity {
              .putString("region",regionEntry.getText().toString())
              .putString("radius",radiusEntry.getText().toString())
              .putString("transectDuration",transectDurationEntry.getText().toString())
+             .putString("routeLength",routeLengthEntry.getText().toString())
+             .putString("customSpacing",customSpacingEntry.getText().toString())
+             .putInt("spacingChoice",spacingChoice.getSelectedItemPosition())
              .putInt("methodChoice",methodChoices.getCheckedRadioButtonId()-1000)
              .putInt("projectChoice",projectChoice.getSelectedItemPosition())
              .putInt("geographicChoice",geographicChoice.getSelectedItemPosition())
@@ -460,7 +543,7 @@ public class WelcomeActivity extends Activity {
         if(methodChoices==null)return;
         int choice=p.getInt("methodChoice",0);
         if(choice>=0&&choice<choices.length)methodChoices.check(1000+choice);
-        stationEntry.setText(p.getString("station",""));
+        stationEntry.setText("");
         observerEntry.setText(p.getString("observer",""));
         durationEntry.setText(p.getString("duration","10"));
         lineBearingEntry.setText(p.getString("line",""));
@@ -468,6 +551,10 @@ public class WelcomeActivity extends Activity {
         regionEntry.setText(p.getString("region",""));
         radiusEntry.setText(p.getString("radius",""));
         transectDurationEntry.setText(p.getString("transectDuration","120"));
+        routeLengthEntry.setText(p.getString("routeLength","2"));
+        customSpacingEntry.setText(p.getString("customSpacing",""));
+        spacingChoice.setSelection(p.getInt("spacingChoice",1));
+        updateRoutePreview();
         int project=p.getInt("projectChoice",0);
         if(project>=0&&project<projectChoice.getCount())projectChoice.setSelection(project);
         int geo=p.getInt("geographicChoice",0);

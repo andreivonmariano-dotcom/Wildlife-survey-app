@@ -51,7 +51,9 @@ public class MainActivity extends Activity implements LocationListener {
     private Button beginButton,markButton,saveButton;
     private LinearLayout groupBar,advancedPanel,lineRow;
     private final String[] groups=Taxa.GROUPS;
-    private String group="Birds",eventId=null,method="point";
+    private String group="Birds",eventId=null,method="point_count",profile="Birds",stationId="",observerName="";
+    private int pointTargetSeconds=600;
+    private boolean basicLogOnly=false;
     private boolean active=false,detailShown=false;
     private long startedAt=0,markedAt=0;
     private int count=1,sensorQuality=-1;
@@ -66,7 +68,29 @@ public class MainActivity extends Activity implements LocationListener {
         db=new SurveyDb();
         locations=(LocationManager)getSystemService(LOCATION_SERVICE);
         restoreEvent();
+        Intent launch=getIntent();
+        boolean newEvent=!active&&launch.getBooleanExtra("create_new",false);
+        if(newEvent){
+            profile=launch.getStringExtra("survey_profile");
+            if(profile==null)profile="Birds";
+            group=profile.equals("Herpetofauna")?"Reptiles":profile;
+            method=launch.getStringExtra("survey_method");
+            if(method==null)method="opportunistic";
+            if(method.equals("amphibian_calls"))group="Amphibians";
+            stationId=launch.getStringExtra("station_id");
+            if(stationId==null)stationId="";
+            observerName=launch.getStringExtra("observer_name");
+            if(observerName==null)observerName="";
+            pointTargetSeconds=launch.getIntExtra("point_target_s",600);
+            basicLogOnly=launch.getBooleanExtra("basic_log_only",false);
+        }
+        if(!active&&!newEvent){finish();return;}
         draw();
+        if(newEvent){
+            String initialAz=launch.getStringExtra("transect_bearing");
+            if(initialAz!=null&&!initialAz.isEmpty())lineEntry.setText(initialAz);
+            toggleEvent();
+        }
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},71);
         }
@@ -91,7 +115,7 @@ public class MainActivity extends Activity implements LocationListener {
     private void draw(){
         LinearLayout root=vertical();root.setBackgroundColor(BACK);root.setPadding(dp(12),dp(5),dp(12),dp(7));
         LinearLayout top=horizontal();
-        TextView title=label("Wildlife Survey",22,true);top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
+        TextView title=label(profile+" Survey",20,true);top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
         Button export=button("Export");top.addView(export);export.setOnClickListener(v->exportZip());
         root.addView(top);
         eventView=label("Offline · ready",12,false);eventView.setTextColor(MUTED);root.addView(eventView);
@@ -174,28 +198,26 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void showGroups(){
         groupBar.removeAllViews();
-        for(String name:groups){
+        boolean canSwitch=profile.equals("Herpetofauna")&&!method.equals("amphibian_calls");
+        groupBar.setVisibility(canSwitch?View.VISIBLE:View.GONE);
+        if(!canSwitch)return;
+        for(String name:new String[]{"Reptiles","Amphibians"}){
             Button b=button(name);
-            b.setTextSize(11);b.setPadding(0,0,0,0);
+            b.setTextSize(14);
             b.setBackgroundTintList(ColorStateList.valueOf(name.equals(group)?GREEN:MUTED));
-            b.setEnabled(!active || name.equals(group));
             groupBar.addView(b,new LinearLayout.LayoutParams(0,dp(45),1));
-            b.setOnClickListener(v->{if(active)return;group=name;showGroups();updateMethods();refreshAutocomplete();});
+            b.setOnClickListener(v->{group=name;showGroups();refreshAutocomplete();});
         }
     }
     private void updateMethods(){
-        String[] methods=group.equals("Birds")?new String[]{"Point count","Line transect","Opportunistic"}:new String[]{"Visual encounter","Opportunistic"};
-        methodSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,methods));
+        String[] names=SurveyMethods.displayNames(profile);
+        methodSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,names));
         int idx=0;
-        for(int i=0;i<methods.length;i++)if(methods[i].equalsIgnoreCase(method.replace('_',' ')))idx=i;
+        SurveyMethods.Method[] all=SurveyMethods.forProfile(profile);
+        for(int i=0;i<all.length;i++)if(all[i].code.equals(method))idx=i;
         methodSpinner.setSelection(idx);
-        methodSpinner.setEnabled(!active);
-        methodSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            public void onNothingSelected(android.widget.AdapterView<?> a){}
-            public void onItemSelected(android.widget.AdapterView<?> a,View v,int pos,long id){
-                lineRow.setVisibility(group.equals("Birds") && pos==1?View.VISIBLE:View.GONE);
-            }
-        });
+        methodSpinner.setEnabled(false);
+        lineRow.setVisibility(SurveyMethods.isBirdLine(profile,method)?View.VISIBLE:View.GONE);
     }
     private void refreshAutocomplete(){
         java.util.LinkedHashSet<String> all=new java.util.LinkedHashSet<>();
@@ -212,31 +234,34 @@ public class MainActivity extends Activity implements LocationListener {
         distanceEntry.setHint(group.equals("Birds")?"Horizontal distance (m)":"Distance (m, optional)");
     }
     private void restoreEvent(){
-        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id,method,started,COALESCE(taxon_group,'Birds') FROM surveys WHERE ended IS NULL ORDER BY started DESC LIMIT 1",null)){
+        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id,method,started,COALESCE(taxon_group,'Birds'),COALESCE(survey_profile,'Birds'),COALESCE(station_id,''),COALESCE(observer_name,''),COALESCE(point_target_s,600),COALESCE(protocol_status,'legacy') FROM surveys WHERE ended IS NULL ORDER BY started DESC LIMIT 1",null)){
             if(c.moveToFirst()){
                 eventId=c.getString(0);method=c.getString(1);String time=c.getString(2);
-                group=c.getString(3);startedAt=parseIso(time);active=true;
+                group=c.getString(3);profile=c.getString(4);stationId=c.getString(5);
+                observerName=c.getString(6);pointTargetSeconds=c.getInt(7);
+                basicLogOnly="basic_log_only".equals(c.getString(8));
+                startedAt=parseIso(time);active=true;
             }
         }catch(Exception ignored){}
     }
     private void toggleEvent(){
         if(active){finishPrompt();return;}
-        String selected=methodSpinner.getSelectedItem().toString();
-        method=selected.toLowerCase(Locale.US).replace(' ','_');
+        method=SurveyMethods.codeForIndex(profile,methodSpinner.getSelectedItemPosition());
         Double line=number(lineEntry.getText().toString());
-        if(method.equals("line_transect") && (line==null||line<0||line>=360)){
+        if(SurveyMethods.isBirdLine(profile,method) && (line==null||line<0||line>=360)){
             toast("Enter transect MAGNETIC bearing from 0 to 359°");return;
         }
         eventId="SV-"+System.currentTimeMillis();startedAt=System.currentTimeMillis();pointNotice=false;
-        int target=method.equals("point_count")?600:0;
-        db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s) VALUES(?,?,?,?,?,?)",
-          new Object[]{eventId,method,iso(startedAt),method.equals("line_transect")?line:null,group,target});
+        int target=method.equals("point_count")?pointTargetSeconds:0;
+        db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s,survey_profile,station_id,observer_name,protocol_status) VALUES(?,?,?,?,?,?,?,?,?,?)",
+          new Object[]{eventId,method,iso(startedAt),SurveyMethods.isBirdLine(profile,method)?line:null,group,target,profile,stationId,observerName,basicLogOnly?"basic_log_only":"beta_standardized"});
+
         active=true;beginButton.setText("Finish survey");saveButton.setEnabled(true);
         methodSpinner.setEnabled(false);lineEntry.setEnabled(false);showGroups();status();
         toast("Survey started");
     }
     private void finishPrompt(){
-        if(method.equals("line_transect")||method.equals("visual_encounter")){
+        if(SurveyMethods.needsRouteLength(method)){
             EditText effort=edit("Actual surveyed length (meters)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
             new AlertDialog.Builder(this).setTitle("Finish survey").setMessage("Enter actual surveyed route length if known. Leave blank if not measured.")
             .setView(effort).setNegativeButton("Cancel",null)
@@ -252,8 +277,9 @@ public class MainActivity extends Activity implements LocationListener {
           new Object[]{iso(System.currentTimeMillis()),length,complete?1:0,eventId});
         active=false;eventId=null;clearMark();
         beginButton.setText("Start survey");
-        saveButton.setEnabled(false);methodSpinner.setEnabled(true);lineEntry.setEnabled(true);showGroups();status();
-        toast(complete?"Survey completed, including any nondetections":"Survey saved as incomplete");
+        saveButton.setEnabled(false);methodSpinner.setEnabled(false);lineEntry.setEnabled(false);showGroups();status();
+        toast(complete?"Survey completed":"Survey saved as incomplete");
+        finish();
     }
     private void markDetection(){
         if(!active){toast("Start a survey first");return;}
@@ -285,7 +311,7 @@ public class MainActivity extends Activity implements LocationListener {
         Double distance=number(distanceEntry.getText().toString());
         if(distance!=null && (distance<0||distance>10000)){toast("Check distance value");return;}
         Double perp=null,line=number(lineEntry.getText().toString());
-        if(group.equals("Birds")&&method.equals("line_transect")&&markedBearing!=null&&distance!=null&&line!=null)
+        if(SurveyMethods.isBirdLine(profile,method)&&markedBearing!=null&&distance!=null&&line!=null)
             perp=Geometry.perpendicular(distance,markedBearing,line);
         Location loc=location;
         Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),acc=loc==null?null:loc.getAccuracy();
@@ -307,7 +333,7 @@ public class MainActivity extends Activity implements LocationListener {
         if(active){
             long elapsed=Math.max(0,(System.currentTimeMillis()-startedAt)/1000);
             if(method.equals("point_count")){
-                long left=600-elapsed;eventView.setText(left>0?"● "+group+" · Point count · "+(left/60)+":"+String.format(Locale.US,"%02d",left%60)+" remaining":
+                long left=pointTargetSeconds-elapsed;eventView.setText(left>0?"● "+group+" · Point count · "+(left/60)+":"+String.format(Locale.US,"%02d",left%60)+" remaining":
                      "● "+group+" · Point count target reached");
                 if(left<=0&&!pointNotice){pointNotice=true;toast("10-minute point-count target reached");}
             }else eventView.setText("● "+group+" · "+method.replace('_',' ')+" · "+(elapsed/60)+" min");
@@ -335,8 +361,8 @@ public class MainActivity extends Activity implements LocationListener {
         if(req!=EXPORT_DOC||result!=RESULT_OK||data==null)return;
         try(OutputStream os=getContentResolver().openOutputStream(data.getData());ZipOutputStream z=new ZipOutputStream(os)){
             csv(z,"surveys.csv",
-              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete FROM surveys",
-              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,taxon_group,point_target_seconds,actual_route_length_m,completed");
+              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status FROM surveys",
+              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status");
             csv(z,"observations.csv",
               "SELECT event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source FROM field_records "+
               "UNION ALL SELECT event_id,seen_at,'Birds',NULL,NULL,taxon,individual_count,detection,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,lat,lon,gps_accuracy_m,NULL,NULL,NULL,NULL,NULL FROM sightings",
@@ -384,9 +410,9 @@ public class MainActivity extends Activity implements LocationListener {
     private void toast(String s){Toast.makeText(this,s,Toast.LENGTH_SHORT).show();}
 
     final class SurveyDb extends SQLiteOpenHelper {
-        SurveyDb(){super(MainActivity.this,"wildlife_field_v03.db",null,2);}
+        SurveyDb(){super(MainActivity.this,"wildlife_field_v03.db",null,3);}
         @Override public void onCreate(SQLiteDatabase d){
-            d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER)");
+            d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
             d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
             createRecords(d);
         }
@@ -401,6 +427,13 @@ public class MainActivity extends Activity implements LocationListener {
                 d.execSQL("ALTER TABLE surveys ADD COLUMN effort_length_m REAL");
                 d.execSQL("ALTER TABLE surveys ADD COLUMN complete INTEGER");
                 createRecords(d);
+            }
+            if(from<3){
+                d.execSQL("ALTER TABLE surveys ADD COLUMN survey_profile TEXT");
+                d.execSQL("ALTER TABLE surveys ADD COLUMN station_id TEXT");
+                d.execSQL("ALTER TABLE surveys ADD COLUMN observer_name TEXT");
+                d.execSQL("ALTER TABLE surveys ADD COLUMN protocol_status TEXT");
+                d.execSQL("UPDATE surveys SET survey_profile=COALESCE(taxon_group,'Birds'),protocol_status='legacy' WHERE survey_profile IS NULL");
             }
         }
     }

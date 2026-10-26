@@ -1,32 +1,40 @@
-# Philippine Wildlife Survey — v0.5 Beta
+# Wildlife Survey Beta v0.6: Welcome and protocol-specific survey setup
 
-An Android offline field survey prototype for **birds, reptiles, amphibians and mammals**, independent of SMART and KALUMBATA.
+Standalone offline Android prototype focused on Philippine vertebrate taxa. No SMART, KALUMBATA, or Bluetooth integration.
 
-## Changes in v0.5
-- **Camera closed by default.** The main form no longer activates or displays the camera.
-- **Mark now** captures the first-detection timestamp without using the camera, suitable for auditory detections.
-- **Open camera** launches a dedicated bearing/pitch view, and **Capture bearing** returns to the observation form.
-- Portrait camera preview uses a 4:3 compatible camera mode where available. The app fits the preview **without stretching** and centers any unused screen space as black margins.
-- The camera is released on close or switching away from the camera screen. The orientation sensor is registered only in the camera screen.
-- Offline bird-name starter search, four taxon groups, site-event timers, ecology notes, and CSV exports are retained.
+## Welcome screen
+The launcher opens **WelcomeActivity** instead of the field entry form.
+- **Bird survey**: point count, line transect, area search, opportunistic.
+- **Herpetofauna survey**: visual encounter survey (VES), transect VES, amphibian call survey, cover-board inspection, pitfall/drift fence check, opportunistic. Reptiles and amphibians can both be recorded during VES surveys. Calling surveys are restricted to Amphibians.
+- **Mammal survey**: line transect, track/sign, spotlight, camera-trap checks, bat acoustic, live-trap checks, opportunistic.
+- **Custom survey**: select ONE of these three groups and then set the relevant method, station, observer and bird point-count duration. No All Taxa mode.
 
-## Install / retain existing data
-The Android Beta application ID remains `org.phwildlife.survey.beta`. New Beta updates should preserve existing v0.4 Beta data if the APKs have the same signature. The build workflow caches a testing debug-signing key. Export observations before updating as a safeguard. The earlier v0.3 app remains a separate installation with separate storage.
+The method setup screen records site/station identifiers and makes method-specific controls visible. Bird line transects require a magnetic line bearing. A point count uses a configurable timer.
 
-## Instructions
-1. Select a taxon group and survey method, then press **Start survey**.
-2. For a heard bird, press **Mark now** immediately. Enter the species and estimated horizontal distance, then save.
-3. For a visual detection, press **Open camera** and aim the central crosshair toward the initial detected position. Press **Capture bearing** to return to the form.
-4. Enter the taxon, number observed and manual horizontal distance, then save. **Clear mark** discards a mistaken direction/time capture.
-5. End survey and export zipped `surveys.csv` and `observations.csv`.
+## Survey screen
+Only relevant taxon-group controls appear. A herpetofauna VES survey lets observers switch between **Reptiles** and **Amphibians**, with both groups stored in one linked survey event. A completed event returns to the welcome screen. Active sessions can be resumed through the welcome screen. The camera remains hidden unless explicitly opened.
 
-## Scientific caveats
-The camera provides **magnetic azimuth and inclination**, not range. It does not determine a bird's GPS coordinates, height, or distance on its own. Estimates of bird distances must be made manually. Perpendicular distances computed for straight line transects require a matching **magnetic** transect bearing. Smartphone compass readings require device-specific field calibration. The first-detection timestamp should be marked at the actual first encounter, even if the camera is opened later. Distance-sampling readiness needs site/station metadata, survey-design information, detection records and survey effort beyond what this preliminary app captures. The embedded checklist remains an **unreviewed starter list**, not a complete or authoritative Philippine checklist.
+## Research readiness
+Method choices are drawn from published bird monitoring, USGS amphibian inventories and published mammal monitoring literature, but **basic log** options are NOT complete scientific protocols in the current Beta. Acoustic/camera/trap deployments need protocol-specific sensor, number-of-traps, duration, uptime and effort records. The basic-log flag is present in the survey export. Point counts, line transects and VES also require appropriate sampling designs, calibration and effort to support inferential analyses.
 
-## Next validation
-- Confirm the camera stays OFF on app launch and activates only after **Open camera**.
-- Confirm visual aspect ratio and crosshair alignment on the actual phone.
-- Confirm **Mark now** timestamp is preserved after a later camera bearing capture.
-- Test closing the camera without saving a bearing.
-- Export v0.4 Beta data before installing v0.5. Check that observations persist after upgrade.
-- Verify survey CSV exports and calculated perpendicular distance against reference values.
+## Storage and installation
+App ID `org.phwildlife.survey.beta` is unchanged. This build upgrades the offline database to schema version 3, adding profile, station ID, observer name and protocol status while retaining existing Beta records. Export from the old Beta before installing this update. GitHub's cached debug-signing key should permit updating without uninstalling the prior Beta.
+
+## GitHub APK
+See Actions → Build Android Debug APK → latest successful build → artifact `wildlife-survey-debug-apk`, extract `app-debug.apk`.
+
+## References for method choices
+- Cornell Lab of Ornithology Bird Monitoring Methods: https://www.birds.cornell.edu/landtrust/bird-monitoring-methods/
+- US Forest Service multiple species inventory guide: https://www.fs.usda.gov/psw/publications/wo/wo_gtr073.pdf
+- USGS amphibian calling monitoring: https://www.usgs.gov/centers/eesc/science/north-american-amphibian-monitoring-program
+- USGS pitfall/drift-fence surveys: https://www.usgs.gov/publications/straight-line-drift-fences-and-pitfall-traps
+- USGS NABat acoustic transect SOP: https://pubs.usgs.gov/publication/tm2C3/full
+
+## Test priorities
+- Launch → Welcome screen (not a survey).
+- Start a bird point count and verify timer is configurable.
+- Complete survey → returns to Welcome.
+- Start herpetofauna VES → switch reptiles / amphibians in same session.
+- Attempt amphibian calls → only amphibians appear.
+- Start custom mammal sign survey → survey event captures mammal profile and method.
+- Confirm existing Beta records persist, with correct data exports.

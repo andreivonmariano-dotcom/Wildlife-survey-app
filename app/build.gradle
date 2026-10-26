@@ -3,11 +3,22 @@ android {
     namespace 'org.phwildlife.survey'
     compileSdk 35
     defaultConfig {
-        applicationId 'org.phwildlife.survey.beta'
+        applicationId 'org.phwildlife.survey.beta08'
         minSdk 26
         targetSdk 34
-        versionCode 7
-        versionName '0.7.0-beta'
+        versionCode 8
+        versionName '0.8.0-beta'
+    }
+    signingConfigs {
+        debug {
+            storeFile file("${rootProject.projectDir}/.signing/wildlife-beta08.keystore")
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+    buildTypes {
+        debug { signingConfig signingConfigs.debug }
     }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }

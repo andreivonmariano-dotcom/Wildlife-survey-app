@@ -4,10 +4,12 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
-    <application android:label="Wildlife Survey Beta" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
+    <application android:label="Wildlife Survey Beta 0.8" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
         <activity android:name=".CameraActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".MainActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".SitesActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".ImportActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".DashboardActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".HistoryActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".WelcomeActivity" android:screenOrientation="portrait" android:exported="true">
             <intent-filter>

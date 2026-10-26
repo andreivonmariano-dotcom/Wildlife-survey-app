@@ -20,11 +20,17 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.11.1'
-      - name: Preserve beta debug signing key
+      - name: Restore persistent v0.8 Beta signing key
         uses: actions/cache@v4
         with:
-          path: ~/.android/debug.keystore
-          key: wildlife-beta-debug-signing-key-v1
+          path: .signing/wildlife-beta08.keystore
+          key: wildlife-v08-beta-debug-signing-v1
+      - name: Create signing key when new
+        run: |
+          mkdir -p .signing
+          if [ ! -f .signing/wildlife-beta08.keystore ]; then
+            keytool -genkeypair -keystore .signing/wildlife-beta08.keystore -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Wildlife Survey Beta Debug, O=Field Research, C=PH" -noprompt
+          fi
       - name: Build debug APK
         run: gradle --no-daemon :app:assembleDebug
       - uses: actions/upload-artifact@v4
@@ -36,10 +42,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="v0.7.0-beta"
+          TAG="v0.8.0-beta"
           FILE="app/build/outputs/apk/debug/app-debug.apk"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$FILE" --clobber
           else
-            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.7" --notes "Android beta with survey history, project/site register, bird distance quality, CSV and audit exports. Experimental field build, not yet field-validated." --prerelease --target "$GITHUB_SHA"
+            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.8" --notes "Android beta with background draft recovery, survey dashboard, clearer navigation, candidate distance exports and a v0.7 backup importer. Separate install, not field-validated." --prerelease --target "$GITHUB_SHA"
           fi

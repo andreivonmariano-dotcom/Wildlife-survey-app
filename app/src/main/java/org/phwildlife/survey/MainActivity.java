@@ -39,13 +39,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
-public class MainActivity extends Activity implements SensorEventListener, SurfaceHolder.Callback, LocationListener {
-    private static final int EXPORT_DOC=22;
+public class MainActivity extends Activity implements LocationListener {
+    private static final int EXPORT_DOC=22, CAMERA_REQ=23;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final int BACK=Color.rgb(247,249,246),INK=Color.rgb(22,51,38),GREEN=Color.rgb(37,104,74),MUTED=Color.rgb(95,116,101);
-    private SurveyDb db; private SensorManager sensors; private LocationManager locations;
-    private SurfaceView cameraView; private Camera camera;
-    private TextView headingView,gpsView,eventView,countView,hintView,detailToggle;
+    private SurveyDb db; private LocationManager locations;
+    private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle;
     private Spinner methodSpinner,detectionSpinner,substrateSpinner;
     private AutoCompleteTextView taxonEntry;
     private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry;
@@ -65,13 +64,11 @@ public class MainActivity extends Activity implements SensorEventListener, Surfa
     @Override public void onCreate(Bundle b) {
         super.onCreate(b);
         db=new SurveyDb();
-        sensors=(SensorManager)getSystemService(SENSOR_SERVICE);
         locations=(LocationManager)getSystemService(LOCATION_SERVICE);
         restoreEvent();
         draw();
-        if(checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED ||
-            checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},71);
+        if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},71);
         }
         handler.postDelayed(new Runnable(){public void run(){status();handler.postDelayed(this,1000);}},1000);
     }
@@ -110,22 +107,28 @@ public class MainActivity extends Activity implements SensorEventListener, Surfa
         beginButton=button(active?"Finish survey":"Start survey");
         content.addView(beginButton,new LinearLayout.LayoutParams(-1,dp(47)));
         beginButton.setOnClickListener(v->toggleEvent());
-        content.addView(section("CAMERA COMPASS · MAGNETIC NORTH"));
-        cameraView=new SurfaceView(this);
-        LinearLayout.LayoutParams camParams=new LinearLayout.LayoutParams(-1,dp(171));
-        content.addView(cameraView,camParams);
-        headingView=label("Heading --°     Inclination --°",17,true);
-        headingView.setGravity(Gravity.CENTER);content.addView(headingView);
-        LinearLayout aimRow=horizontal();
-        markButton=button("Mark detection + bearing");
-        aimRow.addView(markButton,weighted(1));
-        Button clear=button("Clear");
-        clear.setBackgroundTintList(ColorStateList.valueOf(MUTED));
-        aimRow.addView(clear,new LinearLayout.LayoutParams(dp(80),dp(50)));
-        content.addView(aimRow);
-        markButton.setOnClickListener(v->markDetection());
-        clear.setOnClickListener(v->{markedAt=0;markedBearing=null;markedPitch=null;markButton.setText("Mark detection + bearing");});
-        gpsView=label("GPS: awaiting fix",11,false);gpsView.setTextColor(MUTED);content.addView(gpsView);
+        content.addView(section("DETECTION"));
+        LinearLayout detectRow=horizontal();
+        Button markTime=button("Mark now");
+        detectRow.addView(markTime,weighted(0.9f));
+        markButton=button("Open camera");
+        detectRow.addView(markButton,weighted(1.1f));
+        content.addView(detectRow);
+        markTime.setOnClickListener(v->markDetection());
+        markButton.setOnClickListener(v->openCamera());
+        LinearLayout markRow=horizontal();
+        bearingStatusView=label("Time and bearing not marked",12,false);
+        bearingStatusView.setTextColor(MUTED);
+        markRow.addView(bearingStatusView,weighted(1));
+        TextView clear=label("Clear mark",12,true);
+        clear.setTextColor(GREEN);
+        clear.setPadding(dp(10),dp(8),dp(6),dp(8));
+        clear.setOnClickListener(v->clearMark());
+        markRow.addView(clear);
+        content.addView(markRow);
+        gpsView=label("GPS: awaiting fix",11,false);
+        gpsView.setTextColor(MUTED);
+        content.addView(gpsView);
         content.addView(section("SPECIES / IDENTIFICATION"));
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(18);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
@@ -166,7 +169,7 @@ public class MainActivity extends Activity implements SensorEventListener, Surfa
         root.addView(saveButton,new LinearLayout.LayoutParams(-1,dp(55)));
         saveButton.setEnabled(active);
         saveButton.setOnClickListener(v->save());
-        setContentView(root);cameraView.getHolder().addCallback(this);
+        setContentView(root);
         updateMethods();refreshAutocomplete();status();
     }
     private void showGroups(){
@@ -247,17 +250,31 @@ public class MainActivity extends Activity implements SensorEventListener, Surfa
     private void finish(boolean complete,Double length){
         db.getWritableDatabase().execSQL("UPDATE surveys SET ended=?,effort_length_m=?,complete=? WHERE id=?",
           new Object[]{iso(System.currentTimeMillis()),length,complete?1:0,eventId});
-        active=false;eventId=null;markedAt=0;markedBearing=null;markedPitch=null;
-        beginButton.setText("Start survey");markButton.setText("Mark detection + bearing");
+        active=false;eventId=null;clearMark();
+        beginButton.setText("Start survey");
         saveButton.setEnabled(false);methodSpinner.setEnabled(true);lineEntry.setEnabled(true);showGroups();status();
         toast(complete?"Survey completed, including any nondetections":"Survey saved as incomplete");
     }
     private void markDetection(){
         if(!active){toast("Start a survey first");return;}
         markedAt=System.currentTimeMillis();
-        markedBearing=Float.isNaN(bearing)?null:(double)bearing;
-        markedPitch=Float.isNaN(pitch)?null:(double)pitch;
-        markButton.setText(markedBearing==null?"Time marked · no bearing":String.format(Locale.US,"Marked %.0f° · tap again",markedBearing));
+        showMarkStatus();
+    }
+    private void openCamera(){
+        if(!active){toast("Start survey first");return;}
+        Intent intent=new Intent(this,CameraActivity.class);
+        startActivityForResult(intent,CAMERA_REQ);
+    }
+    private void clearMark(){
+        markedAt=0;markedBearing=null;markedPitch=null;
+        if(bearingStatusView!=null)bearingStatusView.setText("Time and bearing not marked");
+    }
+    private void showMarkStatus(){
+        if(bearingStatusView==null)return;
+        if(markedBearing!=null)
+            bearingStatusView.setText(String.format(Locale.US,"Bearing %.0f° magnetic · pitch %+.0f°",markedBearing,markedPitch));
+        else if(markedAt>0) bearingStatusView.setText("Detection time marked · bearing optional");
+        else bearingStatusView.setText("Time and bearing not marked");
     }
     private static Double number(String v){try{return Double.parseDouble(v.trim());}catch(Exception e){return null;}}
     private void save(){
@@ -281,7 +298,7 @@ public class MainActivity extends Activity implements SensorEventListener, Surfa
                 notesEntry.getText().toString().trim(),sensorQuality,raw.contains(" · ")?"offline_starter_v0.4":"user_entered"});
         taxonEntry.setText("");count=1;countView.setText("1");distanceEntry.setText("");
         habitatEntry.setText("");behaviorEntry.setText("");notesEntry.setText("");
-        markedAt=0;markedBearing=null;markedPitch=null;markButton.setText("Mark detection + bearing");
+        clearMark();
         refreshAutocomplete();
         toast(distance==null?"Observation saved · distance not recorded":"Saved offline");
     }
@@ -303,6 +320,18 @@ public class MainActivity extends Activity implements SensorEventListener, Surfa
     }
     @Override protected void onActivityResult(int req,int result,Intent data){
         super.onActivityResult(req,result,data);
+        if(req==CAMERA_REQ){
+            if(result==RESULT_OK && data!=null){
+                float az=data.getFloatExtra("bearing_deg",Float.NaN);
+                float inclination=data.getFloatExtra("pitch_deg",Float.NaN);
+                if(markedAt==0)markedAt=data.getLongExtra("captured_at",System.currentTimeMillis());
+                markedBearing=Float.isNaN(az)?null:(double)az;
+                markedPitch=Float.isNaN(inclination)?null:(double)inclination;
+                sensorQuality=data.getIntExtra("sensor_quality",-1);
+                showMarkStatus();
+            }
+            return;
+        }
         if(req!=EXPORT_DOC||result!=RESULT_OK||data==null)return;
         try(OutputStream os=getContentResolver().openOutputStream(data.getData());ZipOutputStream z=new ZipOutputStream(os)){
             csv(z,"surveys.csv",
@@ -339,49 +368,19 @@ public class MainActivity extends Activity implements SensorEventListener, Surfa
     }
     @Override protected void onResume(){
         super.onResume();
-        Sensor s=sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        if(s!=null)sensors.registerListener(this,s,SensorManager.SENSOR_DELAY_UI);
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
             try{locations.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000,1f,this);}catch(Exception ignored){}
         }
-        startCamera();
     }
     @Override protected void onPause(){
-        super.onPause();sensors.unregisterListener(this);try{locations.removeUpdates(this);}catch(Exception ignored){}stopCamera();
+        super.onPause();
+        try{locations.removeUpdates(this);}catch(Exception ignored){}
     }
     @Override protected void onDestroy(){super.onDestroy();handler.removeCallbacksAndMessages(null);db.close();}
-    @Override public void onSensorChanged(SensorEvent ev){
-        if(ev.sensor.getType()!=Sensor.TYPE_ROTATION_VECTOR)return;
-        float[] r=new float[9];SensorManager.getRotationMatrixFromVector(r,ev.values);
-        float[] hp=Geometry.cameraAxisHeadingAndPitch(r);bearing=hp[0];pitch=hp[1];
-        if(headingView!=null)
-            headingView.setText(Float.isNaN(bearing)?"Aim camera closer to horizon":String.format(Locale.US,"Magnetic %.0f°   ·   Pitch %+.0f°",bearing,pitch));
-    }
-    @Override public void onAccuracyChanged(Sensor s,int quality){
-        if(s!=null && s.getType()==Sensor.TYPE_ROTATION_VECTOR){
-            sensorQuality=quality;
-            if(quality==SensorManager.SENSOR_STATUS_UNRELIABLE && hintView!=null)
-                hintView.setText("Compass accuracy low. Avoid nearby metal and electrical equipment.");
-        }
-    }
     @Override public void onLocationChanged(Location l){
         location=l;
         if(gpsView!=null)gpsView.setText(String.format(Locale.US,"Observer GPS: %.5f, %.5f · ±%.0f m",l.getLatitude(),l.getLongitude(),l.getAccuracy()));
     }
-    private void startCamera(){
-        if(camera!=null||cameraView==null||!cameraView.getHolder().getSurface().isValid())return;
-        if(checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED)return;
-        try{camera=Camera.open();camera.setDisplayOrientation(90);
-            camera.setPreviewDisplay(cameraView.getHolder());camera.startPreview();
-        }catch(Exception e){stopCamera();if(hintView!=null)hintView.setText("Camera unavailable · survey entry still works.");}
-    }
-    private void stopCamera(){
-        if(camera!=null){try{camera.stopPreview();}catch(Exception ignored){}camera.release();camera=null;}
-    }
-    @Override public void surfaceCreated(SurfaceHolder h){startCamera();}
-    @Override public void surfaceChanged(SurfaceHolder h,int a,int b,int c){startCamera();}
-    @Override public void surfaceDestroyed(SurfaceHolder h){stopCamera();}
-    @Override public void onRequestPermissionsResult(int code,String[] names,int[] results){super.onRequestPermissionsResult(code,names,results);startCamera();}
     private void toast(String s){Toast.makeText(this,s,Toast.LENGTH_SHORT).show();}
 
     final class SurveyDb extends SQLiteOpenHelper {

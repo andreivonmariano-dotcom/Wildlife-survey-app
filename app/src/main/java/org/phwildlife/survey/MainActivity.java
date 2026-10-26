@@ -43,15 +43,16 @@ public class MainActivity extends Activity implements LocationListener {
     private static final int EXPORT_DOC=22, CAMERA_REQ=23;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final int BACK=Color.rgb(247,249,246),INK=Color.rgb(22,51,38),GREEN=Color.rgb(37,104,74),MUTED=Color.rgb(95,116,101);
-    private SurveyDb db; private LocationManager locations;
+    private FieldDb db; private LocationManager locations;
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle;
-    private Spinner methodSpinner,detectionSpinner,substrateSpinner;
+    private Spinner methodSpinner,detectionSpinner,distanceSourceSpinner,firstPositionSpinner,movementSpinner;
     private AutoCompleteTextView taxonEntry;
     private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry;
     private Button beginButton,markButton,saveButton;
-    private LinearLayout groupBar,advancedPanel,lineRow;
+    private LinearLayout groupBar,advancedPanel,lineRow,birdMeasurements;
     private final String[] groups=Taxa.GROUPS;
-    private String group="Birds",eventId=null,method="point_count",profile="Birds",stationId="",observerName="";
+    private String group="Birds",eventId=null,method="point_count",profile="Birds",stationId="",observerName="",projectId="default",regionLabel="";
+    private Double stratumAreaKm2=null,lineBearing=null;
     private int pointTargetSeconds=600;
     private boolean basicLogOnly=false;
     private boolean active=false,detailShown=false;
@@ -65,7 +66,7 @@ public class MainActivity extends Activity implements LocationListener {
 
     @Override public void onCreate(Bundle b) {
         super.onCreate(b);
-        db=new SurveyDb();
+        db=new FieldDb(this);
         locations=(LocationManager)getSystemService(LOCATION_SERVICE);
         restoreEvent();
         Intent launch=getIntent();
@@ -83,6 +84,12 @@ public class MainActivity extends Activity implements LocationListener {
             if(observerName==null)observerName="";
             pointTargetSeconds=launch.getIntExtra("point_target_s",600);
             basicLogOnly=launch.getBooleanExtra("basic_log_only",false);
+            projectId=launch.getStringExtra("project_id");
+            if(projectId==null)projectId="default";
+            regionLabel=launch.getStringExtra("region_label");
+            if(regionLabel==null)regionLabel="";
+            double area=launch.getDoubleExtra("stratum_area_km2",Double.NaN);
+            stratumAreaKm2=Double.isNaN(area)?null:area;
         }
         if(!active&&!newEvent){finish();return;}
         draw();
@@ -90,7 +97,7 @@ public class MainActivity extends Activity implements LocationListener {
             String initialAz=launch.getStringExtra("transect_bearing");
             if(initialAz!=null&&!initialAz.isEmpty())lineEntry.setText(initialAz);
             toggleEvent();
-        }
+        }else if(lineBearing!=null)lineEntry.setText(String.valueOf(lineBearing));
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},71);
         }
@@ -174,6 +181,24 @@ public class MainActivity extends Activity implements LocationListener {
         detectionSpinner=new Spinner(this);
         detectionSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,new String[]{"Visual","Auditory","Both","Sign","Camera"}));
         row.addView(detectionSpinner,weighted(0.8f));content.addView(row);
+        birdMeasurements=vertical();
+        birdMeasurements.addView(section("BIRD DISTANCE QUALITY"));
+        distanceSourceSpinner=new Spinner(this);
+        distanceSourceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+            new String[]{"Unknown","Estimated","Measured"}));
+        birdMeasurements.addView(label("Distance method",12,false));
+        birdMeasurements.addView(distanceSourceSpinner);
+        firstPositionSpinner=new Spinner(this);
+        firstPositionSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+            new String[]{"Unknown","Yes","No"}));
+        birdMeasurements.addView(label("Distance to initial detection position?",12,false));
+        birdMeasurements.addView(firstPositionSpinner);
+        movementSpinner=new Spinner(this);
+        movementSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+            new String[]{"Unknown","Stationary","Moving","Flyover","Entering after start"}));
+        birdMeasurements.addView(label("Movement at first detection",12,false));
+        birdMeasurements.addView(movementSpinner);
+        content.addView(birdMeasurements);
         detailToggle=label("＋ Ecology, habitat and notes (optional)",14,true);
         detailToggle.setTextColor(GREEN);content.addView(detailToggle);
         advancedPanel=vertical();
@@ -232,14 +257,18 @@ public class MainActivity extends Activity implements LocationListener {
         taxonEntry.setHint(group.equals("Birds")?"Search bird (offline starter list)":"Search or enter "+group.toLowerCase(Locale.US)+" taxon");
         taxonEntry.setText("");
         distanceEntry.setHint(group.equals("Birds")?"Horizontal distance (m)":"Distance (m, optional)");
+        if(birdMeasurements!=null)birdMeasurements.setVisibility(group.equals("Birds")?View.VISIBLE:View.GONE);
     }
     private void restoreEvent(){
-        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id,method,started,COALESCE(taxon_group,'Birds'),COALESCE(survey_profile,'Birds'),COALESCE(station_id,''),COALESCE(observer_name,''),COALESCE(point_target_s,600),COALESCE(protocol_status,'legacy') FROM surveys WHERE ended IS NULL ORDER BY started DESC LIMIT 1",null)){
+        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id,method,started,COALESCE(taxon_group,'Birds'),COALESCE(survey_profile,'Birds'),COALESCE(station_id,''),COALESCE(observer_name,''),COALESCE(point_target_s,600),COALESCE(protocol_status,'legacy'),COALESCE(project_id,'default'),COALESCE(region_label,''),area_km2,transect_az FROM surveys WHERE ended IS NULL ORDER BY started DESC LIMIT 1",null)){
             if(c.moveToFirst()){
                 eventId=c.getString(0);method=c.getString(1);String time=c.getString(2);
                 group=c.getString(3);profile=c.getString(4);stationId=c.getString(5);
                 observerName=c.getString(6);pointTargetSeconds=c.getInt(7);
                 basicLogOnly="basic_log_only".equals(c.getString(8));
+                projectId=c.getString(9);regionLabel=c.getString(10);
+                stratumAreaKm2=c.isNull(11)?null:c.getDouble(11);
+                lineBearing=c.isNull(12)?null:c.getDouble(12);
                 startedAt=parseIso(time);active=true;
             }
         }catch(Exception ignored){}
@@ -253,8 +282,9 @@ public class MainActivity extends Activity implements LocationListener {
         }
         eventId="SV-"+System.currentTimeMillis();startedAt=System.currentTimeMillis();pointNotice=false;
         int target=method.equals("point_count")?pointTargetSeconds:0;
-        db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s,survey_profile,station_id,observer_name,protocol_status) VALUES(?,?,?,?,?,?,?,?,?,?)",
-          new Object[]{eventId,method,iso(startedAt),SurveyMethods.isBirdLine(profile,method)?line:null,group,target,profile,stationId,observerName,basicLogOnly?"basic_log_only":"beta_standardized"});
+        lineBearing=SurveyMethods.isBirdLine(profile,method)?line:null;
+        db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+          new Object[]{eventId,method,iso(startedAt),lineBearing,group,target,profile,stationId,observerName,basicLogOnly?"basic_log_only":"beta_standardized",projectId,regionLabel,stratumAreaKm2});
 
         active=true;beginButton.setText("Finish survey");saveButton.setEnabled(true);
         methodSpinner.setEnabled(false);lineEntry.setEnabled(false);showGroups();status();
@@ -310,21 +340,30 @@ public class MainActivity extends Activity implements LocationListener {
         String[] id=Taxa.identify(raw);
         Double distance=number(distanceEntry.getText().toString());
         if(distance!=null && (distance<0||distance>10000)){toast("Check distance value");return;}
-        Double perp=null,line=number(lineEntry.getText().toString());
+        Double perp=null,line=lineBearing;
         if(SurveyMethods.isBirdLine(profile,method)&&markedBearing!=null&&distance!=null&&line!=null)
             perp=Geometry.perpendicular(distance,markedBearing,line);
+        String distanceMethod=group.equals("Birds")?distanceSourceSpinner.getSelectedItem().toString():"Not applicable";
+        String firstPosition=group.equals("Birds")?firstPositionSpinner.getSelectedItem().toString():"Not applicable";
+        String movement=group.equals("Birds")?movementSpinner.getSelectedItem().toString():"Not applicable";
+        boolean candidate=group.equals("Birds")&&distance!=null&&!distanceMethod.equals("Unknown")
+          &&firstPosition.equals("Yes")&&(method.equals("point_count")||method.equals("line_transect"))
+          &&(!method.equals("line_transect")||perp!=null)
+          &&!movement.equals("Flyover")&&!movement.equals("Entering after start");
         Location loc=location;
         Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),acc=loc==null?null:loc.getAccuracy();
         long first=markedAt>0?markedAt:System.currentTimeMillis();
         db.getWritableDatabase().execSQL(
-            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{eventId,iso(first),group,id[0],id[1],raw,count,detectionSpinner.getSelectedItem().toString(),
                 distance,markedBearing,markedPitch,perp,lat,lon,acc,
                 habitatEntry.getText().toString().trim(),behaviorEntry.getText().toString().trim(),
-                notesEntry.getText().toString().trim(),sensorQuality,raw.contains(" · ")?"offline_starter_v0.4":"user_entered"});
+                notesEntry.getText().toString().trim(),sensorQuality,raw.contains(" · ")?"offline_starter_v0.4":"user_entered",
+                distanceMethod,firstPosition,movement,candidate?1:0,iso(System.currentTimeMillis())});
         taxonEntry.setText("");count=1;countView.setText("1");distanceEntry.setText("");
         habitatEntry.setText("");behaviorEntry.setText("");notesEntry.setText("");
         clearMark();
+        distanceSourceSpinner.setSelection(0);firstPositionSpinner.setSelection(0);movementSpinner.setSelection(0);
         refreshAutocomplete();
         toast(distance==null?"Observation saved · distance not recorded":"Saved offline");
     }
@@ -360,13 +399,24 @@ public class MainActivity extends Activity implements LocationListener {
         }
         if(req!=EXPORT_DOC||result!=RESULT_OK||data==null)return;
         try(OutputStream os=getContentResolver().openOutputStream(data.getData());ZipOutputStream z=new ZipOutputStream(os)){
+            csv(z,"projects.csv",
+              "SELECT id,name,description,created_at FROM projects",
+              "project_id,name,description,created_at");
+            csv(z,"sites.csv",
+              "SELECT id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at FROM sites",
+              "station_id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at");
             csv(z,"surveys.csv",
-              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status FROM surveys",
-              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status");
+              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather FROM surveys",
+              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather");
             csv(z,"observations.csv",
-              "SELECT event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source FROM field_records "+
-              "UNION ALL SELECT event_id,seen_at,'Birds',NULL,NULL,taxon,individual_count,detection,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,lat,lon,gps_accuracy_m,NULL,NULL,NULL,NULL,NULL FROM sightings",
-              "event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source");
+              "SELECT id,event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,deleted_at,legacy_source_id FROM field_records WHERE deleted_at IS NULL",
+              "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id");
+            csv(z,"distance_review.csv",
+              "SELECT r.id,r.event_id,r.taxon_group,r.raw_identification,r.horizontal_m,r.perpendicular_m,r.individual_count,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,s.method,s.station_id,s.effort_length_m,s.point_target_s,s.region_label,s.area_km2,s.complete FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' AND (s.method='point_count' OR s.method='line_transect')",
+              "record_id,event_id,taxon_group,taxon,horizontal_m,perpendicular_m,group_size,distance_method,initial_position,movement_status,candidate_flag,survey_method,station_id,effort_length_m,point_target_s,region_label,area_km2,completed");
+            csv(z,"edit_history.csv",
+              "SELECT id,record_id,action,edited_at,previous_json,current_json,reason FROM record_edits",
+              "audit_id,record_id,action,edited_at,previous_json,current_json,reason");
             toast("Exported survey events and observations");
         }catch(Exception e){toast("Export error: "+e.getMessage());}
     }
@@ -409,32 +459,4 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void toast(String s){Toast.makeText(this,s,Toast.LENGTH_SHORT).show();}
 
-    final class SurveyDb extends SQLiteOpenHelper {
-        SurveyDb(){super(MainActivity.this,"wildlife_field_v03.db",null,3);}
-        @Override public void onCreate(SQLiteDatabase d){
-            d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
-            d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
-            createRecords(d);
-        }
-        private void createRecords(SQLiteDatabase d){
-            d.execSQL("CREATE TABLE IF NOT EXISTS field_records(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,detected_at TEXT,taxon_group TEXT,common_name TEXT,scientific_name TEXT,raw_identification TEXT,individual_count INTEGER,detection_method TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,observer_lat REAL,observer_lon REAL,gps_accuracy_m REAL,habitat TEXT,behavior TEXT,notes TEXT,compass_quality INTEGER,name_source TEXT)");
-            d.execSQL("CREATE INDEX IF NOT EXISTS record_event_idx ON field_records(event_id)");
-        }
-        @Override public void onUpgrade(SQLiteDatabase d,int from,int to){
-            if(from<2){
-                d.execSQL("ALTER TABLE surveys ADD COLUMN taxon_group TEXT DEFAULT 'Birds'");
-                d.execSQL("ALTER TABLE surveys ADD COLUMN point_target_s INTEGER");
-                d.execSQL("ALTER TABLE surveys ADD COLUMN effort_length_m REAL");
-                d.execSQL("ALTER TABLE surveys ADD COLUMN complete INTEGER");
-                createRecords(d);
-            }
-            if(from<3){
-                d.execSQL("ALTER TABLE surveys ADD COLUMN survey_profile TEXT");
-                d.execSQL("ALTER TABLE surveys ADD COLUMN station_id TEXT");
-                d.execSQL("ALTER TABLE surveys ADD COLUMN observer_name TEXT");
-                d.execSQL("ALTER TABLE surveys ADD COLUMN protocol_status TEXT");
-                d.execSQL("UPDATE surveys SET survey_profile=COALESCE(taxon_group,'Birds'),protocol_status='legacy' WHERE survey_profile IS NULL");
-            }
-        }
-    }
 }

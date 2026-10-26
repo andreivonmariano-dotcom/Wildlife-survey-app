@@ -13,13 +13,16 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.*;
 import java.util.Locale;
+import java.util.ArrayList;
 
 /** Home and survey setup. Never starts the camera or a survey without a user choice. */
 public class WelcomeActivity extends Activity {
     private final int BG=Color.rgb(245,249,245),INK=Color.rgb(23,58,39),GREEN=Color.rgb(34,102,72),MUTED=Color.rgb(99,116,104);
     private LinearLayout main,root; private String profile="Birds";
     private boolean custom=false;
-    private EditText stationEntry,durationEntry,observerEntry,lineBearingEntry;
+    private EditText stationEntry,durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry;
+    private Spinner projectChoice;
+    private ArrayList<String> projectKeys=new ArrayList<>();
     private RadioGroup methodChoices;
     private SurveyMethods.Method[] choices;
     private int dp(float f){return (int)(f*getResources().getDisplayMetrics().density+0.5f);}
@@ -51,26 +54,47 @@ public class WelcomeActivity extends Activity {
     }
     private void home(){
         homeVisible=true;main.removeAllViews();
-        heading("Philippine Wildlife Survey","Offline field recording for Philippine birds, herpetofauna and mammals.");
-        String active=activeSurvey();
-        if(active!=null){
-            TextView label=text("A survey is still active. Resume it before starting another.",14,true);
-            main.addView(label);
+        heading("Philippine Wildlife Survey","Field surveys · Offline recording · Reviewable records");
+        if(activeSurvey()!=null){
+            main.addView(text("An unfinished survey is available. Resume it to continue recording.",14,true));
             Button resume=button("Resume active survey");
             resume.setOnClickListener(v->startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
             main.addView(resume);
-            Space pad=new Space(this);main.addView(pad,new LinearLayout.LayoutParams(1,dp(16)));
-            TextView tip=text("Finish the current survey to start a different survey.",12,false);
-            tip.setTextColor(MUTED);main.addView(tip);
-            return;
+            main.addView(text("Finish the active survey to start a different survey.",12,false));
+        } else {
+            main.addView(text("New survey",18,true));
+            card("Bird survey","Point counts, line transects and observations.",()->setup("Birds",false));
+            card("Herpetofauna survey","Reptiles and amphibians under a suitable shared method.",()->setup("Herpetofauna",false));
+            card("Mammal survey","Direct observations, tracks and signs, specialist logs.",()->setup("Mammals",false));
+            card("Custom survey","Choose category, method, station and duration.",()->customPicker());
         }
-        main.addView(text("Start a survey",18,true));
-        card("Bird survey","Point counts, line transects, area searches and opportunistic records.",()->setup("Birds",false));
-        card("Herpetofauna survey","Reptiles and amphibians together. Switch between them during the same survey.",()->setup("Herpetofauna",false));
-        card("Mammal survey","Direct observations, sign surveys, camera trap and bat records.",()->setup("Mammals",false));
-        card("Custom survey","Select one taxonomic category, protocol, station and timed survey duration.",()->customPicker());
-        TextView tip=text("The camera stays off until you open it from a survey.",12,false);
-        tip.setTextColor(MUTED);main.addView(tip);
+        main.addView(text("Field data & management",18,true));
+        card("Survey history","Review visits, edit records and inspect correction history.",
+            ()->startActivity(new Intent(this,HistoryActivity.class)));
+        card("Projects & stations","Manage projects, reusable stations and habitat details.",
+            ()->startActivity(new Intent(this,SitesActivity.class)));
+        main.addView(text("Recent surveys",18,true));
+        recentSurveys();
+        TextView note=text("The camera stays off until you open it during a survey.",12,false);
+        note.setTextColor(MUTED);main.addView(note);
+    }
+    private void recentSurveys(){
+        try{
+            String path=getDatabasePath(FieldDb.NAME).getAbsolutePath();
+            if(!new java.io.File(path).exists()){main.addView(text("No surveys yet.",13,false));return;}
+            try(SQLiteDatabase db=SQLiteDatabase.openDatabase(path,null,SQLiteDatabase.OPEN_READONLY);
+                Cursor c=db.rawQuery("SELECT id,COALESCE(survey_profile,taxon_group,'Birds'),COALESCE(station_id,''),started,ended FROM surveys ORDER BY started DESC LIMIT 5",null)){
+                if(c.getCount()==0)main.addView(text("No surveys yet.",13,false));
+                while(c.moveToNext()){
+                    final String id=c.getString(0);
+                    String profile=c.getString(1),station=c.getString(2),date=c.getString(3);
+                    String status=c.isNull(4)?"Active":"Saved";
+                    card(profile+" · "+(station.isEmpty()?"No station":station),
+                        (date==null?"":date.substring(0,Math.min(10,date.length())))+" · "+status,
+                        ()->startActivity(new Intent(this,HistoryActivity.class).putExtra("event_id",id)));
+                }
+            }
+        }catch(Exception e){main.addView(text("History is accessible from the management screen.",12,false));}
     }
     private void card(String name,String desc,Runnable action){
         LinearLayout wrapper=vertical();
@@ -113,10 +137,29 @@ public class WelcomeActivity extends Activity {
         methodChoices.check(1000);
         main.addView(text("Survey method",18,true));main.addView(methodChoices);
         main.addView(text("Survey details",18,true));
-        stationEntry=new EditText(this);
+        projectChoice=new Spinner(this);
+        projectKeys.clear();
+        ArrayList<String> names=new ArrayList<>();
+        try(FieldDb db=new FieldDb(this);
+            Cursor c=db.getReadableDatabase().rawQuery("SELECT id,name FROM projects ORDER BY name",null)){
+            while(c.moveToNext()){projectKeys.add(c.getString(0));names.add(c.getString(1));}
+        }
+        if(names.isEmpty()){projectKeys.add("default");names.add("General field project");}
+        projectChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));
+        main.addView(text("Project",13,false));main.addView(projectChoice);
+        stationEntry=new AutoCompleteTextView(this);stationEntry.setThreshold(1);
         stationEntry.setTextSize(16);stationEntry.setSingleLine(true);
-        stationEntry.setHint("Station / site ID (e.g. PC-01)");
+        stationEntry.setHint("Registered station ID");
         main.addView(stationEntry);
+        projectChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+            public void onNothingSelected(android.widget.AdapterView<?> p){}
+            public void onItemSelected(android.widget.AdapterView<?> p,View v,int i,long id){updateStations();}
+        });
+        Button manage=button("Manage stations");
+        manage.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
+        main.addView(manage);
+        TextView note=text("Registered stations are required for structured surveys.",12,false);
+        note.setTextColor(MUTED);main.addView(note);
         observerEntry=new EditText(this);
         observerEntry.setTextSize(16);observerEntry.setSingleLine(true);
         observerEntry.setHint("Observer (optional)");
@@ -141,6 +184,13 @@ public class WelcomeActivity extends Activity {
         });
         durationEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
         lineBearingEntry.setVisibility(View.GONE);
+        regionEntry=new EditText(this);regionEntry.setSingleLine(true);
+        regionEntry.setHint("Stratum / region label (optional)");
+        main.addView(regionEntry);
+        areaEntry=new EditText(this);areaEntry.setSingleLine(true);
+        areaEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        areaEntry.setHint("Stratum area (km², optional)");
+        main.addView(areaEntry);
         TextView help=text("Standardized methods retain survey effort separately. Basic-log methods need more equipment/effort fields before formal analysis.",12,false);
         help.setTextColor(MUTED);main.addView(help);
         Button start=button("Start survey");
@@ -148,14 +198,38 @@ public class WelcomeActivity extends Activity {
         startLp.topMargin=dp(16);main.addView(start,startLp);
         start.setOnClickListener(v->startSelected());
     }
+    private String projectId(){
+        int index=projectChoice==null?-1:projectChoice.getSelectedItemPosition();
+        return index<0||index>=projectKeys.size()?"default":projectKeys.get(index);
+    }
+    private void updateStations(){
+        if(stationEntry==null)return;
+        ArrayList<String> ids=new ArrayList<>();
+        try(FieldDb db=new FieldDb(this);
+            Cursor c=db.getReadableDatabase().rawQuery("SELECT id FROM sites WHERE project_id=? ORDER BY id",new String[]{projectId()})){
+            while(c.moveToNext())ids.add(c.getString(0));
+        }
+        stationEntry.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,ids));
+        stationEntry.setText("");
+    }
     private void startSelected(){
         int choice=methodChoices.getCheckedRadioButtonId()-1000;
         if(choice<0||choice>=choices.length){Toast.makeText(this,"Select survey method",Toast.LENGTH_SHORT).show();return;}
         SurveyMethods.Method m=choices[choice];
         String station=stationEntry.getText().toString().trim();
-        if(station.isEmpty()&&SurveyMethods.structured(m.code)){
-            stationEntry.setError("Station/site ID required for a structured survey");
-            stationEntry.requestFocus();return;
+        if(SurveyMethods.structured(m.code)){
+            if(station.isEmpty()){stationEntry.setError("Select a registered station ID");stationEntry.requestFocus();return;}
+            int found=0;
+            try(FieldDb db=new FieldDb(this);
+                Cursor c=db.getReadableDatabase().rawQuery("SELECT COUNT(*) FROM sites WHERE id=? AND project_id=?",new String[]{station,projectId()})){
+                if(c.moveToFirst())found=c.getInt(0);
+            }
+            if(found==0){stationEntry.setError("Register station in Projects & stations first");stationEntry.requestFocus();return;}
+        }
+        Double area=null;
+        try{if(!areaEntry.getText().toString().trim().isEmpty())area=Double.parseDouble(areaEntry.getText().toString().trim());}catch(Exception ignored){}
+        if(!areaEntry.getText().toString().trim().isEmpty()&&(area==null||area<=0)){
+            areaEntry.setError("Enter positive area in km²");return;
         }
         int duration=600;
         if("point_count".equals(m.code)){
@@ -178,6 +252,9 @@ public class WelcomeActivity extends Activity {
         i.putExtra("transect_bearing",lineBearingEntry.getText().toString().trim());
         i.putExtra("create_new",true);
         i.putExtra("survey_profile",profile);
+        i.putExtra("project_id",projectId());
+        i.putExtra("region_label",regionEntry.getText().toString().trim());
+        i.putExtra("stratum_area_km2",area==null?Double.NaN:area);
         i.putExtra("survey_method",m.code);
         i.putExtra("station_id",station);
         i.putExtra("observer_name",observerEntry.getText().toString().trim());

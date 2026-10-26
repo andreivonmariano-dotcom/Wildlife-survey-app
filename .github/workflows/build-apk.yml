@@ -36,10 +36,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="v0.6.0-beta"
+          TAG="v0.7.0-beta"
           FILE="app/build/outputs/apk/debug/app-debug.apk"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$FILE" --clobber
           else
-            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.6" --notes "Android beta with welcome screen and taxon-specific survey methods. Experimental field build, not publication-validated." --prerelease --target "$GITHUB_SHA"
+            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.7" --notes "Android beta with survey history, project/site register, bird distance quality, CSV and audit exports. Experimental field build, not yet field-validated." --prerelease --target "$GITHUB_SHA"
           fi

@@ -1,40 +1,36 @@
-# Wildlife Survey Beta v0.6: Welcome and protocol-specific survey setup
+# Philippine Wildlife Survey Beta v0.7
 
-Standalone offline Android prototype focused on Philippine vertebrate taxa. No SMART, KALUMBATA, or Bluetooth integration.
+Android offline wildlife survey platform, independent of SMART and KALUMBATA.
 
-## Welcome screen
-The launcher opens **WelcomeActivity** instead of the field entry form.
-- **Bird survey**: point count, line transect, area search, opportunistic.
-- **Herpetofauna survey**: visual encounter survey (VES), transect VES, amphibian call survey, cover-board inspection, pitfall/drift fence check, opportunistic. Reptiles and amphibians can both be recorded during VES surveys. Calling surveys are restricted to Amphibians.
-- **Mammal survey**: line transect, track/sign, spotlight, camera-trap checks, bat acoustic, live-trap checks, opportunistic.
-- **Custom survey**: select ONE of these three groups and then set the relevant method, station, observer and bird point-count duration. No All Taxa mode.
+## New in v0.7
+- Welcome home with **Recent Surveys**, Survey History, Projects & Stations.
+- Register projects and station IDs. Record optional station GPS coordinates and habitat, then reuse them across survey visits.
+- Require previously registered stations for structured survey methods.
+- Survey history lists completed and active visits. Tap a visit for its observations.
+- Edit taxon identification, count, distance, notes, first-position status, measurement source, and movement.
+- Observation edits write the previous and new values to an audit table.
+- Deletion **soft-deletes** the observation, retaining an audit trail.
+- Bird measurement quality controls classify estimated versus measured horizontal distance, initial position and flyovers.
+- Export linked `projects.csv`, `sites.csv`, `surveys.csv`, `observations.csv`, `distance_review.csv`, and `edit_history.csv`.
+- Dedicated on-demand camera from v0.5 and method-specific surveys from v0.6 remain.
 
-The method setup screen records site/station identifiers and makes method-specific controls visible. Bird line transects require a magnetic line bearing. A point count uses a configurable timer.
+## Install
+Use the GitHub Release `v0.7.0-beta`, open its Assets, and download `app-debug.apk`.
+Export old data from v0.6 before upgrading. Keep the existing Beta installed and install over it. App ID remains `org.phwildlife.survey.beta`. The GitHub build caches its debug signing key.
 
-## Survey screen
-Only relevant taxon-group controls appear. A herpetofauna VES survey lets observers switch between **Reptiles** and **Amphibians**, with both groups stored in one linked survey event. A completed event returns to the welcome screen. Active sessions can be resumed through the welcome screen. The camera remains hidden unless explicitly opened.
+## Scientific classification
+The `distance_eligible` field is **only a candidate flag**, not a guarantee that data are analysis-ready. Correct inference requires sampling design, sufficient detections, proper effort and stratum area, initial detection distances, and review of detection assumptions. See:
+- [Field Data Dictionary](docs/FIELD_DATA_DICTIONARY_v0_7.md)
+- [Bird Distance Sampling Protocol](docs/BIRD_DISTANCE_SAMPLING_PROTOCOL_v0_7.md)
+- [Field QA](docs/QA_TEST_PLAN_v0_7.md)
 
-## Research readiness
-Method choices are drawn from published bird monitoring, USGS amphibian inventories and published mammal monitoring literature, but **basic log** options are NOT complete scientific protocols in the current Beta. Acoustic/camera/trap deployments need protocol-specific sensor, number-of-traps, duration, uptime and effort records. The basic-log flag is present in the survey export. Point counts, line transects and VES also require appropriate sampling designs, calibration and effort to support inferential analyses.
+The app currently holds a **small, unreviewed** species-name starter list, not a complete Philippine taxa checklist. Sound detections and estimated distances require particular caution.
 
-## Storage and installation
-App ID `org.phwildlife.survey.beta` is unchanged. This build upgrades the offline database to schema version 3, adding profile, station ID, observer name and protocol status while retaining existing Beta records. Export from the old Beta before installing this update. GitHub's cached debug-signing key should permit updating without uninstalling the prior Beta.
+## Method scopes
+Birds: point counts, line transects, area search, opportunistic.
+Herpetofauna: VES, transect VES, amphibian call, cover boards, pitfall/drift checks, opportunistic.
+Mammals: direct transect, track/sign, spotlight, camera checks, bat acoustic, live-trap checks, opportunistic.
+Specialist capture/acoustic/camera methods remain **basic logging**, not full effort-complete survey systems.
 
-## GitHub APK
-See Actions → Build Android Debug APK → latest successful build → artifact `wildlife-survey-debug-apk`, extract `app-debug.apk`.
-
-## References for method choices
-- Cornell Lab of Ornithology Bird Monitoring Methods: https://www.birds.cornell.edu/landtrust/bird-monitoring-methods/
-- US Forest Service multiple species inventory guide: https://www.fs.usda.gov/psw/publications/wo/wo_gtr073.pdf
-- USGS amphibian calling monitoring: https://www.usgs.gov/centers/eesc/science/north-american-amphibian-monitoring-program
-- USGS pitfall/drift-fence surveys: https://www.usgs.gov/publications/straight-line-drift-fences-and-pitfall-traps
-- USGS NABat acoustic transect SOP: https://pubs.usgs.gov/publication/tm2C3/full
-
-## Test priorities
-- Launch → Welcome screen (not a survey).
-- Start a bird point count and verify timer is configurable.
-- Complete survey → returns to Welcome.
-- Start herpetofauna VES → switch reptiles / amphibians in same session.
-- Attempt amphibian calls → only amphibians appear.
-- Start custom mammal sign survey → survey event captures mammal profile and method.
-- Confirm existing Beta records persist, with correct data exports.
+## Status
+APK build compilation is automated. Field validation, true-north camera calibration, strict workflow design for every method, and dataset modelling checks remain open tasks.

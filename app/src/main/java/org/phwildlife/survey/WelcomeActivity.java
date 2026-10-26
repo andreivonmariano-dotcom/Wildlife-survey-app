@@ -26,6 +26,7 @@ public class WelcomeActivity extends Activity {
     private Spinner projectChoice, geographicChoice;
     private BoundaryLookup.Match suggested;
     private String geographicMethod=GeoRegions.BOUNDARY_METHOD;
+    private String suggestedStationId="";
     private TextView boundaryMessage;
     private ArrayList<String> projectKeys=new ArrayList<>();
     private RadioGroup methodChoices;
@@ -330,6 +331,7 @@ public class WelcomeActivity extends Activity {
             .setNegativeButton("Keep manual",null)
             .setPositiveButton("Use suggestion",(d,w)->{
                 suggested=match;
+                suggestedStationId=stationEntry==null?"":stationEntry.getText().toString().trim();
                 geographicChoice.setSelection(GeoRegions.index(match.checklistRegion));
                 geographicMethod="gps_station_polygon_suggested_confirmed";
             }).show();
@@ -339,6 +341,11 @@ public class WelcomeActivity extends Activity {
         if(choice<0||choice>=choices.length){Toast.makeText(this,"Select survey method",Toast.LENGTH_SHORT).show();return;}
         SurveyMethods.Method m=choices[choice];
         String station=stationEntry.getText().toString().trim();
+        if(suggested!=null&&!station.equals(suggestedStationId)){
+            suggested=null;
+            geographicMethod=GeoRegions.BOUNDARY_METHOD;
+            Toast.makeText(this,"Station changed: previous province suggestion cleared. Select a new suggestion or continue manually.",Toast.LENGTH_LONG).show();
+        }
         if(SurveyMethods.structured(m.code)){
             if(station.isEmpty()){stationEntry.setError("Select a registered station ID");stationEntry.requestFocus();return;}
             int found=0;

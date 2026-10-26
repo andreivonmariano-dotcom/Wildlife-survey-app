@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -32,3 +32,14 @@ jobs:
           name: wildlife-survey-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+      - name: Publish APK directly to GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v0.6.0-beta"
+          FILE="app/build/outputs/apk/debug/app-debug.apk"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$FILE" --clobber
+          else
+            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.6" --notes "Android beta with welcome screen and taxon-specific survey methods. Experimental field build, not publication-validated." --prerelease --target "$GITHUB_SHA"
+          fi

@@ -2,11 +2,10 @@ package org.phwildlife.survey;
 
 import android.Manifest;
 import android.app.Activity;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -21,6 +20,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -37,251 +40,369 @@ import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity implements SensorEventListener, SurfaceHolder.Callback, LocationListener {
-    private final Handler ui = new Handler(Looper.getMainLooper());
-    private SurveyDb db;
-    private SensorManager sensors;
-    private LocationManager locations;
-    private SurfaceView cameraSurface;
-    private Camera camera;
-    private TextView bearingView, gpsView, surveyView, hintView;
-    private EditText speciesInput, countInput, distanceInput, transectInput;
-    private Spinner modeInput, detectionInput;
-    private Button surveyButton, captureButton, saveButton;
-    private float heading = Float.NaN, pitch = Float.NaN;
-    private Double fixedBearing = null, fixedPitch = null;
-    private Location latestLocation;
-    private String surveyId = null;
-    private long startEpoch = 0;
-    private boolean active = false;
-    private int bg = Color.rgb(244,248,244), dark = Color.rgb(26,60,46), accent = Color.rgb(31,105,72);
-    private static final int EXPORT_DOC = 22;
+    private static final int EXPORT_DOC=22;
+    private final Handler handler=new Handler(Looper.getMainLooper());
+    private final int BACK=Color.rgb(247,249,246),INK=Color.rgb(22,51,38),GREEN=Color.rgb(37,104,74),MUTED=Color.rgb(95,116,101);
+    private SurveyDb db; private SensorManager sensors; private LocationManager locations;
+    private SurfaceView cameraView; private Camera camera;
+    private TextView headingView,gpsView,eventView,countView,hintView,detailToggle;
+    private Spinner methodSpinner,detectionSpinner,substrateSpinner;
+    private AutoCompleteTextView taxonEntry;
+    private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry;
+    private Button beginButton,markButton,saveButton;
+    private LinearLayout groupBar,advancedPanel,lineRow;
+    private final String[] groups=Taxa.GROUPS;
+    private String group="Birds",eventId=null,method="point";
+    private boolean active=false,detailShown=false;
+    private long startedAt=0,markedAt=0;
+    private int count=1,sensorQuality=-1;
+    private float bearing=Float.NaN,pitch=Float.NaN;
+    private Double markedBearing=null,markedPitch=null;
+    private Location location;
+    private boolean pointNotice=false;
+    private int dp(float n){return (int)(getResources().getDisplayMetrics().density*n+0.5f);}
 
     @Override public void onCreate(Bundle b) {
         super.onCreate(b);
-        db = new SurveyDb(this);
-        sensors = (SensorManager)getSystemService(SENSOR_SERVICE);
-        locations = (LocationManager)getSystemService(LOCATION_SERVICE);
-        buildUi();
-        cameraSurface.getHolder().addCallback(this);
-        if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-            checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},42);
+        db=new SurveyDb();
+        sensors=(SensorManager)getSystemService(SENSOR_SERVICE);
+        locations=(LocationManager)getSystemService(LOCATION_SERVICE);
+        restoreEvent();
+        draw();
+        if(checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED ||
+            checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},71);
         }
-        tick();
+        handler.postDelayed(new Runnable(){public void run(){status();handler.postDelayed(this,1000);}},1000);
     }
-    private TextView text(String value, int size) {
-        TextView t=new TextView(this);
-        t.setText(value);
-        t.setTextSize(size);
-        t.setTextColor(dark);
-        t.setPadding(2,5,2,5);
-        return t;
+    private TextView label(String text,int size,boolean bold) {
+        TextView t=new TextView(this);t.setText(text);t.setTextSize(size);t.setTextColor(INK);
+        if(bold)t.setTypeface(null,Typeface.BOLD);t.setPadding(dp(2),dp(3),dp(2),dp(3));return t;
     }
-    private EditText edit(String hint,String initial,int inputType) {
-        EditText e=new EditText(this);
-        e.setSingleLine(true); e.setHint(hint); e.setText(initial);
-        e.setTextColor(dark); e.setTextSize(16);
-        e.setInputType(inputType);
-        return e;
+    private Button button(String txt){
+        Button b=new Button(this);b.setText(txt);b.setAllCaps(false);b.setTextColor(Color.WHITE);
+        b.setBackgroundTintList(ColorStateList.valueOf(GREEN));b.setTextSize(14);b.setMinHeight(dp(44));return b;
     }
-    private Button btn(String label) {
-        Button b=new Button(this);b.setText(label);b.setAllCaps(false);
-        b.setTextColor(Color.WHITE);b.setBackgroundTintList(android.content.res.ColorStateList.valueOf(accent));
-        return b;
+    private EditText edit(String hint,int type){
+        EditText e=new EditText(this);e.setHint(hint);e.setTextColor(INK);
+        e.setTextSize(16);e.setInputType(type);e.setSingleLine(true);return e;
     }
-    private void buildUi() {
-        LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
-        root.setBackgroundColor(bg);root.setPadding(14,10,14,8);
-        TextView title=text("Philippine Wildlife Survey",20);title.setTypeface(null,Typeface.BOLD);
-        root.addView(title);
-        surveyView=text("No active survey",13);root.addView(surveyView);
-        cameraSurface=new SurfaceView(this);
-        root.addView(cameraSurface,new LinearLayout.LayoutParams(-1,0,3f));
-        bearingView=text("Camera bearing: --°  |  pitch: --°",19);
-        bearingView.setTypeface(null,Typeface.BOLD);bearingView.setGravity(Gravity.CENTER);
-        root.addView(bearingView);
-        gpsView=text("GPS: waiting for fix",12);root.addView(gpsView);
-        LinearLayout surveyRow=new LinearLayout(this);
-        modeInput=new Spinner(this);
-        modeInput.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,new String[]{"Point count","Line transect"}));
-        surveyRow.addView(modeInput,new LinearLayout.LayoutParams(0,-2,1));
-        transectInput=edit("Transect bearing °","",2);
-        surveyRow.addView(transectInput,new LinearLayout.LayoutParams(0,-2,1));
-        root.addView(surveyRow);
-        surveyButton=btn("Start survey");root.addView(surveyButton);
-        captureButton=btn("Capture bearing");
-        root.addView(captureButton);
-        LinearLayout entryRow=new LinearLayout(this);entryRow.setOrientation(LinearLayout.HORIZONTAL);
-        speciesInput=edit("Bird species / identification","",1);
-        entryRow.addView(speciesInput,new LinearLayout.LayoutParams(0,-2,2f));
-        countInput=edit("Count","1",2);
-        entryRow.addView(countInput,new LinearLayout.LayoutParams(0,-2,0.65f));
-        root.addView(entryRow);
-        LinearLayout details=new LinearLayout(this);
-        distanceInput=edit("Horizontal distance (m)","",8194);
-        details.addView(distanceInput,new LinearLayout.LayoutParams(0,-2,1f));
-        detectionInput=new Spinner(this);
-        detectionInput.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,new String[]{"Visual","Auditory","Both"}));
-        details.addView(detectionInput,new LinearLayout.LayoutParams(0,-2,1f));
-        root.addView(details);
-        saveButton=btn("Save bird");root.addView(saveButton);
-        Button export=btn("Export records");root.addView(export);
-        hintView=text("Estimate horizontal distance. Bearing is optional for sound-only records. Coordinates are GPS-based when a fix is available.",11);
-        root.addView(hintView);
-        setContentView(root);
-        saveButton.setEnabled(false);
-        surveyButton.setOnClickListener(v-> toggleSurvey());
-        captureButton.setOnClickListener(v-> {
-            if(!active){ toast("Start a survey first");return; }
-            if(Float.isNaN(heading)){toast("Camera orientation unavailable: bearing omitted");return;}
-            fixedBearing=(double)heading; fixedPitch=(double)pitch;
-            captureButton.setText(String.format(Locale.US,"Captured %.0f° · recapture",fixedBearing));
-        });
-        saveButton.setOnClickListener(v->saveBird());
-        export.setOnClickListener(v->exportRecords());
-        modeInput.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
-            public void onNothingSelected(android.widget.AdapterView<?> p){}
-            public void onItemSelected(android.widget.AdapterView<?> p,View v,int pos,long id){
-                transectInput.setVisibility(pos==1?View.VISIBLE:View.GONE);
+    private LinearLayout vertical(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;}
+    private LinearLayout horizontal(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.HORIZONTAL);c.setGravity(Gravity.CENTER_VERTICAL);return c;}
+    private LinearLayout.LayoutParams weighted(float wt){return new LinearLayout.LayoutParams(0,-2,wt);}
+    private TextView section(String title){TextView t=label(title,13,true);t.setTextColor(MUTED);return t;}
+    private void draw(){
+        LinearLayout root=vertical();root.setBackgroundColor(BACK);root.setPadding(dp(12),dp(5),dp(12),dp(7));
+        LinearLayout top=horizontal();
+        TextView title=label("Wildlife Survey",22,true);top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
+        Button export=button("Export");top.addView(export);export.setOnClickListener(v->exportZip());
+        root.addView(top);
+        eventView=label("Offline · ready",12,false);eventView.setTextColor(MUTED);root.addView(eventView);
+        ScrollView scroll=new ScrollView(this);scroll.setFillViewport(false);scroll.setVerticalScrollBarEnabled(false);
+        LinearLayout content=vertical();content.setPadding(dp(1),0,dp(1),dp(12));
+        groupBar=horizontal();content.addView(groupBar);showGroups();
+        LinearLayout methodRow=horizontal();
+        methodSpinner=new Spinner(this);methodRow.addView(methodSpinner,weighted(1f));
+        lineRow=horizontal();lineEntry=edit("Transect magnetic bearing °",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        lineRow.addView(lineEntry,new LinearLayout.LayoutParams(-1,-2));
+        methodRow.addView(lineRow,weighted(0.9f));
+        content.addView(methodRow);
+        beginButton=button(active?"Finish survey":"Start survey");
+        content.addView(beginButton,new LinearLayout.LayoutParams(-1,dp(47)));
+        beginButton.setOnClickListener(v->toggleEvent());
+        content.addView(section("CAMERA COMPASS · MAGNETIC NORTH"));
+        cameraView=new SurfaceView(this);
+        LinearLayout.LayoutParams camParams=new LinearLayout.LayoutParams(-1,dp(171));
+        content.addView(cameraView,camParams);
+        headingView=label("Heading --°     Inclination --°",17,true);
+        headingView.setGravity(Gravity.CENTER);content.addView(headingView);
+        LinearLayout aimRow=horizontal();
+        markButton=button("Mark detection + bearing");
+        aimRow.addView(markButton,weighted(1));
+        Button clear=button("Clear");
+        clear.setBackgroundTintList(ColorStateList.valueOf(MUTED));
+        aimRow.addView(clear,new LinearLayout.LayoutParams(dp(80),dp(50)));
+        content.addView(aimRow);
+        markButton.setOnClickListener(v->markDetection());
+        clear.setOnClickListener(v->{markedAt=0;markedBearing=null;markedPitch=null;markButton.setText("Mark detection + bearing");});
+        gpsView=label("GPS: awaiting fix",11,false);gpsView.setTextColor(MUTED);content.addView(gpsView);
+        content.addView(section("SPECIES / IDENTIFICATION"));
+        taxonEntry=new AutoCompleteTextView(this);
+        taxonEntry.setTextSize(18);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
+        taxonEntry.setThreshold(1);taxonEntry.setHint("Search common or scientific name");
+        taxonEntry.setSelectAllOnFocus(true);content.addView(taxonEntry);
+        taxonEntry.setOnClickListener(v->taxonEntry.showDropDown());
+        LinearLayout countLine=horizontal();
+        TextView countLabel=label("Individuals",14,true);countLine.addView(countLabel,weighted(1));
+        Button minus=button("−");countLine.addView(minus,new LinearLayout.LayoutParams(dp(55),dp(46)));
+        countView=label("1",19,true);countView.setGravity(Gravity.CENTER);
+        countLine.addView(countView,new LinearLayout.LayoutParams(dp(48),-2));
+        Button plus=button("+");countLine.addView(plus,new LinearLayout.LayoutParams(dp(55),dp(46)));
+        content.addView(countLine);
+        minus.setOnClickListener(v->{count=Math.max(1,count-1);countView.setText(""+count);});
+        plus.setOnClickListener(v->{count=Math.min(9999,count+1);countView.setText(""+count);});
+        LinearLayout row=horizontal();
+        distanceEntry=edit("Horizontal distance (m)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        row.addView(distanceEntry,weighted(1.2f));
+        detectionSpinner=new Spinner(this);
+        detectionSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,new String[]{"Visual","Auditory","Both","Sign","Camera"}));
+        row.addView(detectionSpinner,weighted(0.8f));content.addView(row);
+        detailToggle=label("＋ Ecology, habitat and notes (optional)",14,true);
+        detailToggle.setTextColor(GREEN);content.addView(detailToggle);
+        advancedPanel=vertical();
+        habitatEntry=edit("Habitat / microhabitat",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        behaviorEntry=edit("Behavior / reproductive evidence",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        notesEntry=edit("Observation notes",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        notesEntry.setSingleLine(false);notesEntry.setMinLines(2);
+        advancedPanel.addView(habitatEntry);advancedPanel.addView(behaviorEntry);advancedPanel.addView(notesEntry);
+        advancedPanel.setVisibility(View.GONE);content.addView(advancedPanel);
+        detailToggle.setOnClickListener(v->{detailShown=!detailShown;advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);
+            detailToggle.setText(detailShown?"− Hide ecology details":"＋ Ecology, habitat and notes (optional)");});
+        hintView=label("Tip: Mark detection records the time and optional direction. Distance is entered manually.",12,false);
+        hintView.setTextColor(MUTED);content.addView(hintView);
+        scroll.addView(content);
+        root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
+        saveButton=button("Save observation");
+        root.addView(saveButton,new LinearLayout.LayoutParams(-1,dp(55)));
+        saveButton.setEnabled(active);
+        saveButton.setOnClickListener(v->save());
+        setContentView(root);cameraView.getHolder().addCallback(this);
+        updateMethods();refreshAutocomplete();status();
+    }
+    private void showGroups(){
+        groupBar.removeAllViews();
+        for(String name:groups){
+            Button b=button(name);
+            b.setTextSize(11);b.setPadding(0,0,0,0);
+            b.setBackgroundTintList(ColorStateList.valueOf(name.equals(group)?GREEN:MUTED));
+            b.setEnabled(!active || name.equals(group));
+            groupBar.addView(b,new LinearLayout.LayoutParams(0,dp(45),1));
+            b.setOnClickListener(v->{if(active)return;group=name;showGroups();updateMethods();refreshAutocomplete();});
+        }
+    }
+    private void updateMethods(){
+        String[] methods=group.equals("Birds")?new String[]{"Point count","Line transect","Opportunistic"}:new String[]{"Visual encounter","Opportunistic"};
+        methodSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,methods));
+        int idx=0;
+        for(int i=0;i<methods.length;i++)if(methods[i].equalsIgnoreCase(method.replace('_',' ')))idx=i;
+        methodSpinner.setSelection(idx);
+        methodSpinner.setEnabled(!active);
+        methodSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            public void onNothingSelected(android.widget.AdapterView<?> a){}
+            public void onItemSelected(android.widget.AdapterView<?> a,View v,int pos,long id){
+                lineRow.setVisibility(group.equals("Birds") && pos==1?View.VISIBLE:View.GONE);
             }
         });
     }
-    private void toggleSurvey(){
-        if(!active) {
-            surveyId="SV-"+System.currentTimeMillis();
-            startEpoch=System.currentTimeMillis();
-            String mode=modeInput.getSelectedItemPosition()==0?"point":"line";
-            Double line=number(transectInput.getText().toString());
-            if(mode.equals("line") && (line==null || line<0 || line>=360)) {toast("Enter transect magnetic bearing (0 to 359.9°)");return;}
-            db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az) VALUES(?,?,?,?)",new Object[]{surveyId,mode,iso(startEpoch),line});
-            active=true;modeInput.setEnabled(false);transectInput.setEnabled(false);
-            surveyButton.setText("Finish survey");saveButton.setEnabled(true);
-        } else {
-            db.getWritableDatabase().execSQL("UPDATE surveys SET ended=? WHERE id=?",new Object[]{iso(System.currentTimeMillis()),surveyId});
-            active=false; surveyButton.setText("Start survey");
-            modeInput.setEnabled(true);transectInput.setEnabled(true);saveButton.setEnabled(false);
-            fixedBearing=null;fixedPitch=null;captureButton.setText("Capture bearing");
-            toast("Survey saved, including surveys with no bird detections");
+    private void refreshAutocomplete(){
+        java.util.LinkedHashSet<String> all=new java.util.LinkedHashSet<>();
+        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT common_name,scientific_name FROM field_records WHERE taxon_group=? ORDER BY id DESC LIMIT 12",new String[]{group})){
+            while(c.moveToNext()){
+                String a=c.isNull(0)?"":c.getString(0),b=c.isNull(1)?"":c.getString(1);
+                if(!a.isEmpty()&&!b.isEmpty())all.add(a+" · "+b);else if(!a.isEmpty())all.add(a);else if(!b.isEmpty())all.add(b);
+            }
         }
-        updateSurveyStatus();
+        for(String s:Taxa.sortedLabels(group))all.add(s);
+        taxonEntry.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_dropdown_item_1line,new java.util.ArrayList<>(all)));
+        taxonEntry.setHint(group.equals("Birds")?"Search bird (offline starter list)":"Search or enter "+group.toLowerCase(Locale.US)+" taxon");
+        taxonEntry.setText("");
+        distanceEntry.setHint(group.equals("Birds")?"Horizontal distance (m)":"Distance (m, optional)");
     }
-    private void updateSurveyStatus() {
-        if(active) surveyView.setText("Survey active · "+(modeInput.getSelectedItemPosition()==0?"Point":"Line")+" · "+((System.currentTimeMillis()-startEpoch)/60000)+" min");
-        else surveyView.setText("No active survey · records are stored offline");
+    private void restoreEvent(){
+        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id,method,started,COALESCE(taxon_group,'Birds') FROM surveys WHERE ended IS NULL ORDER BY started DESC LIMIT 1",null)){
+            if(c.moveToFirst()){
+                eventId=c.getString(0);method=c.getString(1);String time=c.getString(2);
+                group=c.getString(3);startedAt=parseIso(time);active=true;
+            }
+        }catch(Exception ignored){}
     }
-    private static Double number(String s) {
-        try { return Double.valueOf(s.trim()); } catch(Exception e){return null;}
-    }
-    private void saveBird() {
-        if(!active){toast("Start a survey");return;}
-        String taxon=speciesInput.getText().toString().trim();
-        if(taxon.isEmpty()){toast("Enter a bird identification");return;}
-        Double countD=number(countInput.getText().toString());
-        if(countD==null || countD<1 || countD != Math.floor(countD)){toast("Enter a positive whole-number count");return;}
-        Double distance=number(distanceInput.getText().toString());
-        if(distance!=null && (distance<0 || distance>10000)) {toast("Check the horizontal distance");return;}
-        Double az=fixedBearing, inc=fixedPitch;
-        Double perp=null;
-        if(modeInput.getSelectedItemPosition()==1 && distance!=null && az!=null) {
-            Double line=number(transectInput.getText().toString());
-            if(line!=null) perp=Geometry.perpendicular(distance,az,line);
+    private void toggleEvent(){
+        if(active){finishPrompt();return;}
+        String selected=methodSpinner.getSelectedItem().toString();
+        method=selected.toLowerCase(Locale.US).replace(' ','_');
+        Double line=number(lineEntry.getText().toString());
+        if(method.equals("line_transect") && (line==null||line<0||line>=360)){
+            toast("Enter transect MAGNETIC bearing from 0 to 359°");return;
         }
-        Location loc=latestLocation;
-        Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),accuracy=loc==null?null:loc.getAccuracy();
-        db.getWritableDatabase().execSQL("INSERT INTO sightings(event_id,seen_at,taxon,individual_count,detection,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,lat,lon,gps_accuracy_m) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
-             new Object[]{surveyId,iso(System.currentTimeMillis()),taxon,countD.intValue(),detectionInput.getSelectedItem().toString(),distance,az,inc,perp,lat,lon,accuracy});
-        speciesInput.setText("");countInput.setText("1");distanceInput.setText("");
-        fixedBearing=null;fixedPitch=null;captureButton.setText("Capture bearing");
-        toast(distance==null?"Saved as biodiversity observation (distance missing)":"Bird saved offline");
+        eventId="SV-"+System.currentTimeMillis();startedAt=System.currentTimeMillis();pointNotice=false;
+        int target=method.equals("point_count")?600:0;
+        db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s) VALUES(?,?,?,?,?,?)",
+          new Object[]{eventId,method,iso(startedAt),method.equals("line_transect")?line:null,group,target});
+        active=true;beginButton.setText("Finish survey");saveButton.setEnabled(true);
+        methodSpinner.setEnabled(false);lineEntry.setEnabled(false);showGroups();status();
+        toast("Survey started");
     }
-    private void exportRecords() {
-        Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("application/zip");
-        i.putExtra(Intent.EXTRA_TITLE,"philippine-wildlife-survey.zip");
+    private void finishPrompt(){
+        if(method.equals("line_transect")||method.equals("visual_encounter")){
+            EditText effort=edit("Actual surveyed length (meters)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            new AlertDialog.Builder(this).setTitle("Finish survey").setMessage("Enter actual surveyed route length if known. Leave blank if not measured.")
+            .setView(effort).setNegativeButton("Cancel",null)
+            .setNeutralButton("Incomplete",(d,w)->finish(false,number(effort.getText().toString())))
+            .setPositiveButton("Completed",(d,w)->finish(true,number(effort.getText().toString()))).show();
+        } else new AlertDialog.Builder(this).setTitle("Finish survey")
+            .setMessage("Completed surveys with zero detections will remain in your event dataset.")
+            .setNegativeButton("Cancel",null).setNeutralButton("Incomplete",(d,w)->finish(false,null))
+            .setPositiveButton("Completed",(d,w)->finish(true,null)).show();
+    }
+    private void finish(boolean complete,Double length){
+        db.getWritableDatabase().execSQL("UPDATE surveys SET ended=?,effort_length_m=?,complete=? WHERE id=?",
+          new Object[]{iso(System.currentTimeMillis()),length,complete?1:0,eventId});
+        active=false;eventId=null;markedAt=0;markedBearing=null;markedPitch=null;
+        beginButton.setText("Start survey");markButton.setText("Mark detection + bearing");
+        saveButton.setEnabled(false);methodSpinner.setEnabled(true);lineEntry.setEnabled(true);showGroups();status();
+        toast(complete?"Survey completed, including any nondetections":"Survey saved as incomplete");
+    }
+    private void markDetection(){
+        if(!active){toast("Start a survey first");return;}
+        markedAt=System.currentTimeMillis();
+        markedBearing=Float.isNaN(bearing)?null:(double)bearing;
+        markedPitch=Float.isNaN(pitch)?null:(double)pitch;
+        markButton.setText(markedBearing==null?"Time marked · no bearing":String.format(Locale.US,"Marked %.0f° · tap again",markedBearing));
+    }
+    private static Double number(String v){try{return Double.parseDouble(v.trim());}catch(Exception e){return null;}}
+    private void save(){
+        if(!active){toast("Start survey first");return;}
+        String raw=taxonEntry.getText().toString().trim();
+        if(raw.length()<2){toast("Enter a taxon or unidentified species");return;}
+        String[] id=Taxa.identify(raw);
+        Double distance=number(distanceEntry.getText().toString());
+        if(distance!=null && (distance<0||distance>10000)){toast("Check distance value");return;}
+        Double perp=null,line=number(lineEntry.getText().toString());
+        if(group.equals("Birds")&&method.equals("line_transect")&&markedBearing!=null&&distance!=null&&line!=null)
+            perp=Geometry.perpendicular(distance,markedBearing,line);
+        Location loc=location;
+        Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),acc=loc==null?null:loc.getAccuracy();
+        long first=markedAt>0?markedAt:System.currentTimeMillis();
+        db.getWritableDatabase().execSQL(
+            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            new Object[]{eventId,iso(first),group,id[0],id[1],raw,count,detectionSpinner.getSelectedItem().toString(),
+                distance,markedBearing,markedPitch,perp,lat,lon,acc,
+                habitatEntry.getText().toString().trim(),behaviorEntry.getText().toString().trim(),
+                notesEntry.getText().toString().trim(),sensorQuality,raw.contains(" · ")?"offline_starter_v0.4":"user_entered"});
+        taxonEntry.setText("");count=1;countView.setText("1");distanceEntry.setText("");
+        habitatEntry.setText("");behaviorEntry.setText("");notesEntry.setText("");
+        markedAt=0;markedBearing=null;markedPitch=null;markButton.setText("Mark detection + bearing");
+        refreshAutocomplete();
+        toast(distance==null?"Observation saved · distance not recorded":"Saved offline");
+    }
+    private void status(){
+        if(eventView==null)return;
+        if(active){
+            long elapsed=Math.max(0,(System.currentTimeMillis()-startedAt)/1000);
+            if(method.equals("point_count")){
+                long left=600-elapsed;eventView.setText(left>0?"● "+group+" · Point count · "+(left/60)+":"+String.format(Locale.US,"%02d",left%60)+" remaining":
+                     "● "+group+" · Point count target reached");
+                if(left<=0&&!pointNotice){pointNotice=true;toast("10-minute point-count target reached");}
+            }else eventView.setText("● "+group+" · "+method.replace('_',' ')+" · "+(elapsed/60)+" min");
+        }else eventView.setText("Offline · Select taxon group and start survey");
+    }
+    private void exportZip(){
+        Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("application/zip");i.putExtra(Intent.EXTRA_TITLE,"wildlife-survey-export.zip");
         startActivityForResult(i,EXPORT_DOC);
     }
-    @Override protected void onActivityResult(int req,int result,Intent data) {
+    @Override protected void onActivityResult(int req,int result,Intent data){
         super.onActivityResult(req,result,data);
-        if(req!=EXPORT_DOC || result!=RESULT_OK || data==null)return;
-        Uri uri=data.getData();if(uri==null)return;
-        try(OutputStream os=getContentResolver().openOutputStream(uri);ZipOutputStream zip=new ZipOutputStream(os)){
-            writeCsv(zip,"surveys.csv","SELECT id,method,started,ended,transect_az FROM surveys",
-                new String[]{"id","method","started_utc","ended_utc","transect_magnetic_azimuth_degrees"});
-            writeCsv(zip,"observations.csv","SELECT event_id,seen_at,taxon,individual_count,detection,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,lat,lon,gps_accuracy_m FROM sightings",
-                new String[]{"event_id","timestamp_utc","taxon","individual_count","detection_method","horizontal_distance_m","magnetic_bearing_degrees","pitch_degrees","perpendicular_distance_m","observer_lat","observer_lon","gps_accuracy_m"});
-            toast("Survey ZIP exported");
-        } catch(Exception e){toast("Export failed: "+e.getMessage());}
+        if(req!=EXPORT_DOC||result!=RESULT_OK||data==null)return;
+        try(OutputStream os=getContentResolver().openOutputStream(data.getData());ZipOutputStream z=new ZipOutputStream(os)){
+            csv(z,"surveys.csv",
+              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete FROM surveys",
+              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,taxon_group,point_target_seconds,actual_route_length_m,completed");
+            csv(z,"observations.csv",
+              "SELECT event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source FROM field_records "+
+              "UNION ALL SELECT event_id,seen_at,'Birds',NULL,NULL,taxon,individual_count,detection,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,lat,lon,gps_accuracy_m,NULL,NULL,NULL,NULL,NULL FROM sightings",
+              "event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source");
+            toast("Exported survey events and observations");
+        }catch(Exception e){toast("Export error: "+e.getMessage());}
     }
-    private void writeCsv(ZipOutputStream zip,String filename,String sql,String[] headers)throws Exception {
-        zip.putNextEntry(new ZipEntry(filename));
-        zip.write((String.join(",",headers)+"\n").getBytes(StandardCharsets.UTF_8));
+    private void csv(ZipOutputStream z,String name,String sql,String header)throws Exception{
+        z.putNextEntry(new ZipEntry(name));z.write((header+"\n").getBytes(StandardCharsets.UTF_8));
         try(Cursor c=db.getReadableDatabase().rawQuery(sql,null)){
             while(c.moveToNext()){
                 StringBuilder line=new StringBuilder();
-                for(int j=0;j<c.getColumnCount();j++) {
+                for(int j=0;j<c.getColumnCount();j++){
                     if(j>0)line.append(',');
-                    if(!c.isNull(j)){
-                        String v=c.getString(j);
-                        line.append('"').append(v.replace("\"","\"\"")).append('"');
-                    }
+                    if(!c.isNull(j))line.append('"').append(c.getString(j).replace("\"","\"\"")).append('"');
                 }
-                line.append('\n');zip.write(line.toString().getBytes(StandardCharsets.UTF_8));
+                z.write((line.toString()+"\n").getBytes(StandardCharsets.UTF_8));
             }
-        }
-        zip.closeEntry();
+        }z.closeEntry();
     }
-    private void tick(){updateSurveyStatus();ui.postDelayed(this::tick,1000);}
+    private static String iso(long ms) {
+        SimpleDateFormat f=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US);
+        f.setTimeZone(TimeZone.getTimeZone("UTC"));return f.format(new Date(ms));
+    }
+    private static long parseIso(String s) {
+        try{SimpleDateFormat f=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US);
+            f.setTimeZone(TimeZone.getTimeZone("UTC"));return f.parse(s).getTime();
+        }catch(Exception e){return System.currentTimeMillis();}
+    }
     @Override protected void onResume(){
         super.onResume();
         Sensor s=sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         if(s!=null)sensors.registerListener(this,s,SensorManager.SENSOR_DELAY_UI);
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-            try{ locations.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000,1f,this); }catch(Exception ignored){}
+            try{locations.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000,1f,this);}catch(Exception ignored){}
         }
         startCamera();
     }
-    @Override protected void onPause(){super.onPause();sensors.unregisterListener(this);locations.removeUpdates(this);stopCamera();}
-    @Override protected void onDestroy(){super.onDestroy();ui.removeCallbacksAndMessages(null);db.close();}
-    @Override public void onSensorChanged(SensorEvent event) {
-        if(event.sensor.getType()!=Sensor.TYPE_ROTATION_VECTOR)return;
-        float[] r=new float[9];SensorManager.getRotationMatrixFromVector(r,event.values);
-        float[] hp=Geometry.cameraAxisHeadingAndPitch(r);heading=hp[0];pitch=hp[1];
-        bearingView.setText(Float.isNaN(heading)?"Camera bearing unavailable (aim closer to horizon)":String.format(Locale.US,"Magnetic %.0f°   ·   Pitch %+.0f°",heading,pitch));
+    @Override protected void onPause(){
+        super.onPause();sensors.unregisterListener(this);try{locations.removeUpdates(this);}catch(Exception ignored){}stopCamera();
     }
-    @Override public void onAccuracyChanged(Sensor s,int accuracy) {
-        if(s!=null && s.getType()==Sensor.TYPE_ROTATION_VECTOR && accuracy==SensorManager.SENSOR_STATUS_UNRELIABLE)
-            hintView.setText("Compass unreliable. Move away from metal or electronics; record manually if necessary.");
+    @Override protected void onDestroy(){super.onDestroy();handler.removeCallbacksAndMessages(null);db.close();}
+    @Override public void onSensorChanged(SensorEvent ev){
+        if(ev.sensor.getType()!=Sensor.TYPE_ROTATION_VECTOR)return;
+        float[] r=new float[9];SensorManager.getRotationMatrixFromVector(r,ev.values);
+        float[] hp=Geometry.cameraAxisHeadingAndPitch(r);bearing=hp[0];pitch=hp[1];
+        if(headingView!=null)
+            headingView.setText(Float.isNaN(bearing)?"Aim camera closer to horizon":String.format(Locale.US,"Magnetic %.0f°   ·   Pitch %+.0f°",bearing,pitch));
     }
-    @Override public void onLocationChanged(Location l) {
-        latestLocation=l;
-        gpsView.setText(String.format(Locale.US,"GPS: %.5f, %.5f  ±%.0f m",l.getLatitude(),l.getLongitude(),l.getAccuracy()));
+    @Override public void onAccuracyChanged(Sensor s,int quality){
+        if(s!=null && s.getType()==Sensor.TYPE_ROTATION_VECTOR){
+            sensorQuality=quality;
+            if(quality==SensorManager.SENSOR_STATUS_UNRELIABLE && hintView!=null)
+                hintView.setText("Compass accuracy low. Avoid nearby metal and electrical equipment.");
+        }
+    }
+    @Override public void onLocationChanged(Location l){
+        location=l;
+        if(gpsView!=null)gpsView.setText(String.format(Locale.US,"Observer GPS: %.5f, %.5f · ±%.0f m",l.getLatitude(),l.getLongitude(),l.getAccuracy()));
     }
     private void startCamera(){
-        if(camera!=null || cameraSurface==null || !cameraSurface.getHolder().getSurface().isValid())return;
+        if(camera!=null||cameraView==null||!cameraView.getHolder().getSurface().isValid())return;
         if(checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED)return;
-        try{
-            camera=Camera.open();
-            camera.setDisplayOrientation(90);
-            camera.setPreviewDisplay(cameraSurface.getHolder());
-            camera.startPreview();
-        }catch(Exception e){stopCamera();gpsView.setText("Camera unavailable; survey recording still works");}
+        try{camera=Camera.open();camera.setDisplayOrientation(90);
+            camera.setPreviewDisplay(cameraView.getHolder());camera.startPreview();
+        }catch(Exception e){stopCamera();if(hintView!=null)hintView.setText("Camera unavailable · survey entry still works.");}
     }
-    private void stopCamera(){if(camera!=null){try{camera.stopPreview();}catch(Exception ignored){}camera.release();camera=null;}}
+    private void stopCamera(){
+        if(camera!=null){try{camera.stopPreview();}catch(Exception ignored){}camera.release();camera=null;}
+    }
     @Override public void surfaceCreated(SurfaceHolder h){startCamera();}
-    @Override public void surfaceChanged(SurfaceHolder h,int format,int width,int height){startCamera();}
+    @Override public void surfaceChanged(SurfaceHolder h,int a,int b,int c){startCamera();}
     @Override public void surfaceDestroyed(SurfaceHolder h){stopCamera();}
-    @Override public void onRequestPermissionsResult(int code,String[] perms,int[] results){super.onRequestPermissionsResult(code,perms,results);startCamera();}
-    private void toast(String msg){Toast.makeText(this,msg,Toast.LENGTH_LONG).show();}
-    private static String iso(long epoch){
-        SimpleDateFormat d=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US);
-        d.setTimeZone(TimeZone.getTimeZone("UTC"));return d.format(new Date(epoch));
-    }
-    static class SurveyDb extends SQLiteOpenHelper {
-        SurveyDb(Activity a){super(a,"wildlife_field_v03.db",null,1);}
-        @Override public void onCreate(SQLiteDatabase d) {
-            d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL)");
+    @Override public void onRequestPermissionsResult(int code,String[] names,int[] results){super.onRequestPermissionsResult(code,names,results);startCamera();}
+    private void toast(String s){Toast.makeText(this,s,Toast.LENGTH_SHORT).show();}
+
+    final class SurveyDb extends SQLiteOpenHelper {
+        SurveyDb(){super(MainActivity.this,"wildlife_field_v03.db",null,2);}
+        @Override public void onCreate(SQLiteDatabase d){
+            d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER)");
             d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
+            createRecords(d);
         }
-        @Override public void onUpgrade(SQLiteDatabase d,int a,int b){}
+        private void createRecords(SQLiteDatabase d){
+            d.execSQL("CREATE TABLE IF NOT EXISTS field_records(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,detected_at TEXT,taxon_group TEXT,common_name TEXT,scientific_name TEXT,raw_identification TEXT,individual_count INTEGER,detection_method TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,observer_lat REAL,observer_lon REAL,gps_accuracy_m REAL,habitat TEXT,behavior TEXT,notes TEXT,compass_quality INTEGER,name_source TEXT)");
+            d.execSQL("CREATE INDEX IF NOT EXISTS record_event_idx ON field_records(event_id)");
+        }
+        @Override public void onUpgrade(SQLiteDatabase d,int from,int to){
+            if(from<2){
+                d.execSQL("ALTER TABLE surveys ADD COLUMN taxon_group TEXT DEFAULT 'Birds'");
+                d.execSQL("ALTER TABLE surveys ADD COLUMN point_target_s INTEGER");
+                d.execSQL("ALTER TABLE surveys ADD COLUMN effort_length_m REAL");
+                d.execSQL("ALTER TABLE surveys ADD COLUMN complete INTEGER");
+                createRecords(d);
+            }
+        }
     }
 }

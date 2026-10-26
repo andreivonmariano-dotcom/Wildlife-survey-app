@@ -1,4 +1,40 @@
-# Philippine Wildlife Survey Beta v0.14.0
+# Philippine Wildlife Survey Beta v0.14.1
+
+## v0.14.1 station workflow cleanup and GPS checklist corrections
+
+This patch removes conflicting manual station setup from the primary interface. The Home page now labels the project manager **Projects**, and its **Add sampling station** control has been removed. Station rows remain available for reviewing and correcting names, habitats and locations. The survey setup screen never asks for a station before starting a project-based survey.
+
+- Bird point-count routes create their planned sampling stations automatically. The active survey's Start Point / Finish Point flow is the single route for beginning the next point count. An unsaved-observation warning returns to that same planned route, rather than opening the old legacy station picker.
+- Structured herpetofauna and mammal survey visits default to **Generate station at my current site**. Existing stations remain available as secondary choices for intentional repeat visits.
+- The bird line-transect, herpetofauna VES and point-count methods are selected in Setup only. The recording screen now shows a method label rather than a redundant disabled selector.
+- Recent survey cards identify the **project**, survey type and design rather than showing "No station" for project-based sessions.
+- Users can create/manage projects from within survey setup. Project names refresh after returning to the setup screen without discarding route and observer entries.
+- Old surveys and saved station IDs are preserved, including legacy workflows that originally used manually assigned station identifiers.
+
+### GPS-driven checklist suggestions
+
+**Suggest checklist using current GPS** requests a *new one-time fix* from the phone's GPS provider. No saved station coordinates and no cached last-known position are consulted.
+
+1. Ask for fine-location permission if it is not already granted.
+2. Obtain a new GPS fix, or stop after 25 seconds.
+3. Reject fixes older than 30 seconds, accuracy worse than 150 m, or simulated positions.
+4. Query bundled PSGC Q3 2026 polygon boundaries offline.
+5. Warn for boundary-edge, overlapping, unsupported or uncertain matches. Leave the checklist unchanged.
+6. When the match is appropriate, show the detected province and proposed checklist island group for explicit confirmation.
+
+A changed or failed lookup clears the old GPS-based suggestion so stale province labels do not carry into the next survey. The geographic choice remains manually editable. This categorizes an **administrative location**, not verified species occurrence or faunal range.
+
+### Data integrity correction
+
+Editing a generated station's **coordinates** in Projects clears its old `coordinate_uncertainty_m`, so a new manually entered position cannot silently inherit a prior GPS accuracy estimate. Previously recorded point-count coordinate snapshots remain unchanged. Coordinate corrections still need a documented source in field notes.
+
+The app remains fully offline. No location coordinate is sent to a server by the checklist suggestion. Use the v0.14.1 in-place APK update and **export a ZIP backup before installing**.
+
+See [v0.14.1 regression checklist](docs/QA_v0_14_1.md).
+
+---
+
+## v0.14 route planning baseline
 
 Offline field records for birds, amphibians, reptiles and mammals. Standalone from SMART and KALUMBATA.
 

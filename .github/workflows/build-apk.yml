@@ -42,10 +42,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="v0.14.0-beta"
+          TAG="v0.14.1-beta"
           FILE="app/build/outputs/apk/debug/app-debug.apk"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$FILE" --clobber
           else
-            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.14" --notes "Survey project-first setup, auto-generated point-count station plans, arrival-time GPS capture with accuracy flags, and configurable bird/herpetofauna route lengths." --prerelease --target "$GITHUB_SHA"
+            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.14.1" --notes "Remove duplicated station creation and selection, use fresh on-device GPS for checklist suggestions, retain project-first auto-generated sampling stations." --prerelease --target "$GITHUB_SHA"
           fi

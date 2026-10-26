@@ -29,8 +29,8 @@ public class SitesActivity extends Activity {
     private String selectedProject(){int pos=projectSpinner==null?-1:projectSpinner.getSelectedItemPosition();return pos<0||pos>=pids.size()?"default":pids.get(pos);}
     private void render(){
         LinearLayout root=column();root.setPadding(dp(16),dp(16),dp(16),dp(16));root.setBackgroundColor(Color.rgb(246,249,246));
-        root.addView(label("Projects & sampling stations",23));
-        root.addView(label("Projects and station IDs are generated automatically. Names remain editable. Saved IDs stay fixed for repeat visits and spatial analysis.",13));
+        root.addView(label("Projects",23));
+        root.addView(label("Create a project first. Survey routes generate their sampling stations automatically. Existing stations remain editable for location corrections and repeat visits.",13));
         Button back=btn("← Home");back.setOnClickListener(v->finish());root.addView(back);
         Spinner previous=projectSpinner;String selected=previous==null?"default":selectedProject();
         projectSpinner=new Spinner(this);pids.clear();ArrayList<String> projects=new ArrayList<>();
@@ -42,7 +42,6 @@ public class SitesActivity extends Activity {
         root.addView(label("Active project",15));
         root.addView(projectSpinner);
         Button project=UiKit.button(this,"＋ Add project","primary");project.setOnClickListener(v->newProject());root.addView(project);
-        Button site=UiKit.button(this,"＋ Add sampling station","primary");site.setOnClickListener(v->siteDialog(null));root.addView(site);
         ScrollView scroll=new ScrollView(this);content=column();scroll.addView(content);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         projectSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
@@ -54,9 +53,9 @@ public class SitesActivity extends Activity {
     private void renderSites(){
         if(content==null)return;content.removeAllViews();
         String projectId=selectedProject();
-        content.addView(label("Stations in "+projectId,17));
+        content.addView(label("Saved sampling stations in "+projectId,17));
         try(Cursor c=helper.getReadableDatabase().rawQuery("SELECT id,name,habitat,latitude,longitude FROM sites WHERE project_id=? ORDER BY id",new String[]{projectId})){
-            if(c.getCount()==0)content.addView(label("No stations. Add one above to start a structured survey.",13));
+            if(c.getCount()==0)content.addView(label("No stations yet. Start a survey to generate stations automatically.",13));
             while(c.moveToNext()){
                 String id=c.getString(0);
                 String coords=c.isNull(3)?"No coordinates":String.format(Locale.US,"%.5f, %.5f",c.getDouble(3),c.getDouble(4));
@@ -109,6 +108,7 @@ public class SitesActivity extends Activity {
     }
     private static Double num(String s){try{return s.trim().isEmpty()?null:Double.valueOf(s.trim());}catch(Exception e){return null;}}
     private void siteDialog(String siteId){
+        if(siteId==null)return; // New stations are generated from a survey, not here.
         String[] original={"","","","","",""};
         String pid=selectedProject();
         if(siteId!=null){
@@ -117,7 +117,6 @@ public class SitesActivity extends Activity {
             }
         }
         LinearLayout form=column();form.setPadding(dp(16),0,dp(16),0);
-        if(siteId==null)original[0]=newId("STN","sites");
         form.addView(label("Permanent sampling station ID · generated automatically",12));
         TextView generatedId=label(original[0],14);
         generatedId.setTextIsSelectable(true);
@@ -135,7 +134,8 @@ public class SitesActivity extends Activity {
         entries[0].setVisibility(View.GONE);
         for(EditText e:entries)form.addView(e);
         ScrollView scroll=new ScrollView(this);scroll.addView(form);
-        AlertDialog dialog=new AlertDialog.Builder(this).setTitle(siteId==null?"New sampling station":"Edit sampling station")
+        form.addView(label("Coordinate edits here do not change saved point-count GPS snapshots. Manually changed coordinates lose the original GPS accuracy value.",12));
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Edit saved sampling station")
             .setView(scroll).setNegativeButton("Cancel",null).setPositiveButton("Save",null).create();
         dialog.setOnShowListener(d->dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
             String id=entries[0].getText().toString().trim(),name=entries[1].getText().toString().trim();
@@ -149,12 +149,14 @@ public class SitesActivity extends Activity {
             values.put("habitat",entries[2].getText().toString().trim());
             if(lat!=null){values.put("latitude",lat);values.put("longitude",lon);}
             else{values.putNull("latitude");values.putNull("longitude");}
+            Double prevLat=num(original[3]),prevLon=num(original[4]);
+            boolean changedCoords=lat==null?prevLat!=null||prevLon!=null:
+                prevLat==null||prevLon==null||Double.compare(prevLat,lat)!=0||Double.compare(prevLon,lon)!=0;
+            if(changedCoords)values.putNull("coordinate_uncertainty_m");
             values.put("notes",entries[5].getText().toString().trim());
             values.put("updated_at",now());
-            int rows=0;
-            if(siteId==null){values.put("created_at",now());rows=helper.getWritableDatabase().insertWithOnConflict("sites",null,values,SQLiteDatabase.CONFLICT_IGNORE)<0?0:1;}
-            else rows=helper.getWritableDatabase().update("sites",values,"id=?",new String[]{siteId});
-            if(rows==0){Toast.makeText(this,"Station ID exists, choose a unique ID",Toast.LENGTH_SHORT).show();return;}
+            int rows=helper.getWritableDatabase().update("sites",values,"id=?",new String[]{siteId});
+            if(rows==0){Toast.makeText(this,"Station no longer exists",Toast.LENGTH_SHORT).show();return;}
             dialog.dismiss();renderSites();
         }));
         dialog.show();

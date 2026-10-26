@@ -196,7 +196,11 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout content=vertical();content.setPadding(dp(1),0,dp(1),dp(12));
         groupBar=horizontal();content.addView(groupBar);showGroups();
         LinearLayout methodRow=horizontal();
-        methodSpinner=new Spinner(this);methodRow.addView(methodSpinner,weighted(1f));
+        // The method was already chosen in survey setup. Do not offer a second, disabled selector.
+        methodSpinner=new Spinner(this);
+        TextView methodName=label("Method · "+method.replace('_',' '),14,true);
+        methodName.setTextColor(UiKit.FOREST);
+        methodRow.addView(methodName,weighted(1f));
         lineRow=horizontal();lineEntry=edit("Transect magnetic bearing °",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         lineRow.addView(lineEntry,new LinearLayout.LayoutParams(-1,-2));
         methodRow.addView(lineRow,weighted(0.9f));
@@ -645,7 +649,9 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void toggleEvent(){
         if(active){finishPrompt();return;}
-        method=SurveyMethods.codeForIndex(profile,methodSpinner.getSelectedItemPosition());
+        // The survey method comes from project setup; do not silently replace it
+        // with a default spinner selection during first launch.
+        if(method==null||method.isEmpty()){toast("Survey method missing. Return to setup.");return;}
         Double line=number(lineEntry.getText().toString());
         if(SurveyMethods.isBirdLine(profile,method) && (line==null||line<0||line>=360)){
             toast("Enter transect MAGNETIC bearing from 0 to 359°");return;
@@ -1046,10 +1052,11 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void genericUnitPicker(){
         String[] existing=stationSuggestions();
-        String[] list=java.util.Arrays.copyOf(existing,existing.length+1);
-        list[existing.length]="＋ Create new station here (automatic ID)";
+        String[] list=new String[existing.length+1];
+        list[0]="＋ Generate station at my current site";
+        System.arraycopy(existing,0,list,1,existing.length);
         LinearLayout panel=vertical();panel.setPadding(dp(16),0,dp(16),0);
-        TextView title=label("Next station, unvisited stations first",13,true);panel.addView(title);
+        TextView title=label("Generate a station for this visit, or select an existing station for repeat monitoring.",13,true);panel.addView(title);
         Spinner stations=new Spinner(this);
         stations.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,list));
         panel.addView(stations);
@@ -1122,7 +1129,7 @@ public class MainActivity extends Activity implements LocationListener {
                 }
                 if(w==dialog.getButton(AlertDialog.BUTTON_POSITIVE)){
                     int selected=stations.getSelectedItemPosition();
-                    String chosen=selected==existing.length?createFieldStation():list[selected];
+                    String chosen=selected==0?createFieldStation():existing[selected-1];
                     startUnit(chosen);
                     taxonEntry.setText("");distanceEntry.setText("");clearMark();
                     toast("Visit "+unitSequence+" · "+stationId);
@@ -1259,7 +1266,9 @@ public class MainActivity extends Activity implements LocationListener {
                 .setMessage("Save the current bird record before switching stations, or clear the draft.")
                 .setPositiveButton("Keep recording",null)
                 .setNegativeButton("Clear draft",(d,w)->{
-                    taxonEntry.setText("");distanceEntry.setText("");clearMark();pointPicker();
+                    taxonEntry.setText("");distanceEntry.setText("");clearMark();
+                    if(plannedStationCount>0)plannedPointAction();
+                    else pointPicker();
                 }).show();
             return;
         }

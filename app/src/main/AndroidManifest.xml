@@ -1,18 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
-    <application android:label="Wildlife Survey Beta 0.10" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
+    <application android:label="Wildlife Survey Beta 0.11" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
         <service android:name=".TrackService" android:exported="false" android:foregroundServiceType="location" />
         <activity android:name=".CameraActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".MainActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".SitesActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".ImportActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".DashboardActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".StationProgressActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".HistoryActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".WelcomeActivity" android:screenOrientation="portrait" android:exported="true">
             <intent-filter>

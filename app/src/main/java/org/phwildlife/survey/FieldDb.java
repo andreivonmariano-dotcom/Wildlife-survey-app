@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /** Shared offline schema, versioned migrations. Never drop a user observation table. */
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
-    public FieldDb(Context context){super(context,NAME,null,6);}
+    public FieldDb(Context context){super(context,NAME,null,7);}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -16,6 +16,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeFour(d);
         upgradeFive(d);
         upgradeSix(d);
+        upgradeSeven(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -36,6 +37,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<4)upgradeFour(d);
         if(oldVersion<5)upgradeFive(d);
         if(oldVersion<6)upgradeSix(d);
+        if(oldVersion<7)upgradeSeven(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -103,5 +105,33 @@ public final class FieldDb extends SQLiteOpenHelper {
         d.execSQL("ALTER TABLE field_records ADD COLUMN unit_time_status TEXT");
         d.execSQL("ALTER TABLE surveys ADD COLUMN session_notes TEXT");
         d.execSQL("UPDATE field_records SET unit_time_status=COALESCE(protocol_window_flag,'unknown') WHERE unit_time_status IS NULL");
+    }
+    /** Preserve excluded records. No physical record deletion in an outcome change. */
+    private void upgradeSeven(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE surveys ADD COLUMN outcome TEXT");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN exclusion_reason TEXT");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN outcome_changed_at TEXT");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN paused_at_utc TEXT");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN total_paused_ms INTEGER NOT NULL DEFAULT 0");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN effort_paused INTEGER NOT NULL DEFAULT 0");
+        d.execSQL("ALTER TABLE point_counts ADD COLUMN unit_paused_ms INTEGER NOT NULL DEFAULT 0");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN unit_paused_ms INTEGER NOT NULL DEFAULT 0");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN camera_days_verified REAL");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN trap_nights_verified REAL");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN recorder_hours_verified REAL");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN deployment_started_utc TEXT");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN deployment_ended_utc TEXT");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN downtime_hours REAL");
+        d.execSQL("ALTER TABLE sampling_units ADD COLUMN effort_remarks TEXT");
+        d.execSQL("CREATE TABLE IF NOT EXISTS survey_outcome_audit("+
+          "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,previous_outcome TEXT,"+
+          "new_outcome TEXT NOT NULL,changed_at_utc TEXT NOT NULL,reason TEXT,record_count INTEGER)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS survey_effort_pauses("+
+          "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,paused_at_utc TEXT NOT NULL,"+
+          "resumed_at_utc TEXT,duration_ms INTEGER,reason TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS survey_outcome_audit_event ON survey_outcome_audit(event_id)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS survey_pauses_event ON survey_effort_pauses(event_id)");
+        d.execSQL("UPDATE surveys SET outcome=CASE WHEN ended IS NULL THEN 'active' "+
+          "WHEN complete=1 THEN 'complete' ELSE 'incomplete' END WHERE outcome IS NULL");
     }
 }

@@ -1,5 +1,6 @@
 package org.phwildlife.survey;
 import android.app.Activity;
+import android.content.Intent;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -37,21 +38,25 @@ public class HistoryActivity extends Activity {
     }
     private void surveys(){
         try(Cursor c=db.getReadableDatabase().rawQuery(
-          "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id) FROM surveys s LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL GROUP BY s.id ORDER BY s.started DESC",null)){
+          "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),COALESCE(s.outcome,'active') FROM surveys s LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL GROUP BY s.id ORDER BY s.started DESC",null)){
             if(c.getCount()==0)rows.addView(text("No saved surveys yet.",15));
             while(c.moveToNext()){
                 String event=c.getString(0),profile=c.getString(1),method=c.getString(2),site=c.getString(3),date=c.getString(4);
-                String state=c.isNull(5)?"Active":c.getInt(6)==1?"Completed":"Incomplete";
-                Button item=btn(profile+" · "+method+"\n"+site+"  ·  "+date+"\n"+state+"  ·  "+c.getInt(7)+" records");
+                String state=c.getString(8).equals("not_counted")?"NOT COUNTED":c.isNull(5)?"Active":c.getInt(6)==1?"Completed":"Incomplete";
+                Button item=UiKit.button(this,profile+" · "+method+"\n"+site+" · "+date+"\n"+state+" · "+c.getInt(7)+" records",state.equals("NOT COUNTED")?"danger":"secondary");
                 item.setOnClickListener(v->{eventFilter=event;draw();});
                 rows.addView(item);
             }
         }
     }
     private void observations(String event){
-        try(Cursor meta=db.getReadableDatabase().rawQuery("SELECT COALESCE(station_id,''),method,started,ended FROM surveys WHERE id=?",new String[]{event})){
-            if(meta.moveToFirst())rows.addView(text("Station "+meta.getString(0)+" · "+meta.getString(1)+"\n"+meta.getString(2)+"\n"+(meta.isNull(3)?"Survey still active":"Survey finished"),14));
+        try(Cursor meta=db.getReadableDatabase().rawQuery("SELECT COALESCE(station_id,''),method,started,ended,COALESCE(outcome,'active'),COALESCE(exclusion_reason,'') FROM surveys WHERE id=?",new String[]{event})){
+            if(meta.moveToFirst())rows.addView(text("Station "+meta.getString(0)+" · "+meta.getString(1)+"\n"+meta.getString(2)+"\n"+meta.getString(4)+(meta.getString(4).equals("not_counted")?"\nNOT COUNTED REASON: "+meta.getString(5):""),14));
         }
+        Button progress=UiKit.button(this,"Station progress","secondary");
+        progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
+            .putExtra("event_id",event)));
+        rows.addView(progress);
         try(Cursor c=db.getReadableDatabase().rawQuery(
             "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,u.station_id,''),COALESCE(p.sequence_number,u.sequence_number,0),r.point_count_id,r.sampling_unit_id FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id LEFT JOIN sampling_units u ON u.id=r.sampling_unit_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,u.sequence_number,0),r.detected_at,r.id",new String[]{event})){
             if(c.getCount()==0)rows.addView(text("No detections recorded. The survey event remains saved.",14));

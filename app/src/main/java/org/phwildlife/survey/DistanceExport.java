@@ -36,7 +36,7 @@ public final class DistanceExport {
         try(Cursor c=database.rawQuery(
             "SELECT p.id,p.event_id,p.station_id,COALESCE(s.region_label,''),s.area_km2,COALESCE(p.notes,''),s.point_radius_m "+
             "FROM point_counts p JOIN surveys s ON s.id=p.event_id "+
-            "WHERE s.survey_profile='Birds' AND p.completed=1 AND s.complete=1 ORDER BY p.started",null)){
+            "WHERE s.survey_profile='Birds' AND p.completed=1 AND s.complete=1 AND COALESCE(s.outcome,'complete')='complete' ORDER BY p.started",null)){
             while(c.moveToNext()){
                 Sample v=new Sample();v.id=c.getString(0);v.eventId=c.getString(1);v.station=c.getString(2);
                 v.method="point_count";v.region=c.getString(3);v.area=c.isNull(4)?null:c.getDouble(4);v.effort=1.0;
@@ -47,7 +47,7 @@ public final class DistanceExport {
         }
         try(Cursor c=database.rawQuery(
             "SELECT id,COALESCE(station_id,''),COALESCE(region_label,''),area_km2,effort_length_m "+
-            "FROM surveys WHERE survey_profile='Birds' AND method='line_transect' AND complete=1 ORDER BY started",null)){
+            "FROM surveys WHERE survey_profile='Birds' AND method='line_transect' AND complete=1 AND COALESCE(outcome,'complete')='complete' ORDER BY started",null)){
             while(c.moveToNext()){
                 Sample v=new Sample();v.id=c.getString(0);v.eventId=v.id;v.method="line_transect";
                 v.station=c.getString(1);v.region=c.getString(2);v.area=c.isNull(3)?null:c.getDouble(3);
@@ -61,7 +61,7 @@ public final class DistanceExport {
         try(Cursor c=database.rawQuery(
             "SELECT DISTINCT r.raw_identification,s.method FROM field_records r "+
             "JOIN surveys s ON s.id=r.event_id WHERE r.taxon_group='Birds' AND r.deleted_at IS NULL "+
-            "AND r.distance_eligible=1 AND s.complete=1 AND s.survey_profile='Birds' "+
+            "AND r.distance_eligible=1 AND s.complete=1 AND COALESCE(s.outcome,'complete')='complete' AND s.survey_profile='Birds' "+
             "AND s.method IN ('point_count','line_transect') "+
             "AND trim(COALESCE(r.raw_identification,''))<>'' ORDER BY r.raw_identification",null)){
             while(c.moveToNext())observedPairs.add(c.getString(0)+"\u001f"+c.getString(1));

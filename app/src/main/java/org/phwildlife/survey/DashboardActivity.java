@@ -51,35 +51,45 @@ public class DashboardActivity extends Activity {
         LinearLayout.LayoutParams checkLp=new LinearLayout.LayoutParams(-1,dp(54));
         checkLp.bottomMargin=dp(14);page.addView(check,checkLp);
         int total=count("SELECT COUNT(*) FROM surveys",null);
-        int complete=count("SELECT COUNT(*) FROM surveys WHERE complete=1",null);
+        int complete=count("SELECT COUNT(*) FROM surveys WHERE outcome='complete'",null);
+        int incomplete=count("SELECT COUNT(*) FROM surveys WHERE outcome='incomplete'",null);
+        int excluded=count("SELECT COUNT(*) FROM surveys WHERE outcome='not_counted'",null);
         int active=count("SELECT COUNT(*) FROM surveys WHERE ended IS NULL",null);
-        int records=count("SELECT COUNT(*) FROM field_records WHERE deleted_at IS NULL",null);
-        int locations=count("SELECT COUNT(*) FROM sites",null);
-        int distinct=count("SELECT COUNT(DISTINCT lower(trim(raw_identification))) FROM field_records WHERE deleted_at IS NULL AND trim(COALESCE(raw_identification,''))<>''",null);
-        section("SURVEYS",String.valueOf(total),complete+" completed · "+active+" active");
-        int pointVisits=count("SELECT COUNT(*) FROM point_counts",null);
-        int completePoints=count("SELECT COUNT(*) FROM point_counts WHERE completed=1",null);
-        section("POINT COUNT VISITS",String.valueOf(pointVisits),completePoints+" completed · each station has its own count ID");
-        int otherVisits=count("SELECT COUNT(*) FROM sampling_units",null);
-        int otherFinished=count("SELECT COUNT(*) FROM sampling_units WHERE completed=1",null);
-        section("HERP / MAMMAL / OTHER VISITS",String.valueOf(otherVisits),
-            otherFinished+" completed · includes repeated sampling stations");
-        try(Cursor paths=helper.getReadableDatabase().rawQuery(
-          "SELECT COALESCE(SUM(gps_track_m),0),COUNT(*) FROM surveys WHERE method IN ('line_transect','ves_transect')",null)){
-          if(paths.moveToFirst())section("GPS WALKED PATH",String.format(Locale.US,"%.0f m",paths.getDouble(0)),
-            "Across "+paths.getInt(1)+" route surveys · GPS estimate, not certified transect effort");
-        }
-        section("DETECTIONS",String.valueOf(records),distinct+" distinct identification labels (not verified species)");
-        section("REGISTERED STATIONS",String.valueOf(locations),"Repeated visits remain separate events");
-        int candidate=count("SELECT COUNT(*) FROM field_records WHERE deleted_at IS NULL AND taxon_group='Birds' AND distance_eligible=1",null);
-        section("BIRD DISTANCE CANDIDATES",String.valueOf(candidate),"Screening flag only · not model-validated");
-        page.addView(label("OBSERVATIONS BY TAXON",17));
-        try(Cursor c=helper.getReadableDatabase().rawQuery("SELECT taxon_group,COUNT(*) FROM field_records WHERE deleted_at IS NULL GROUP BY taxon_group ORDER BY taxon_group",null)){
-            if(c.getCount()==0)page.addView(label("No recorded observations yet.",13));
+        section("SURVEYS IN ARCHIVE",String.valueOf(total),
+            complete+" completed · "+incomplete+" incomplete · "+active+" active");
+        section("NOT COUNTED",String.valueOf(excluded),
+            "Archived with reasons; excluded from research and monitoring summaries");
+        int visits=count("SELECT COUNT(*) FROM point_counts p JOIN surveys s ON s.id=p.event_id "+
+            "WHERE s.outcome='complete'",null);
+        int otherVisits=count("SELECT COUNT(*) FROM sampling_units u JOIN surveys s ON s.id=u.event_id "+
+            "WHERE s.outcome='complete'",null);
+        section("COUNTED SAMPLING UNITS",String.valueOf(visits+otherVisits),
+            visits+" bird point visits · "+otherVisits+" other protocol visits");
+        int records=count("SELECT COUNT(*) FROM field_records r JOIN surveys s ON s.id=r.event_id "+
+            "WHERE r.deleted_at IS NULL AND s.outcome='complete'",null);
+        int distinct=count("SELECT COUNT(DISTINCT lower(trim(r.raw_identification))) "+
+            "FROM field_records r JOIN surveys s ON s.id=r.event_id "+
+            "WHERE r.deleted_at IS NULL AND s.outcome='complete' AND trim(COALESCE(r.raw_identification,''))<>''",null);
+        section("COUNTED DETECTIONS",String.valueOf(records),
+            distinct+" distinct identification labels (not verified species)");
+        int excludedRecords=count("SELECT COUNT(*) FROM field_records r JOIN surveys s ON s.id=r.event_id "+
+            "WHERE r.deleted_at IS NULL AND s.outcome='not_counted'",null);
+        section("EXCLUDED DETECTION ARCHIVE",String.valueOf(excludedRecords),"Retained for audit only");
+        int stations=count("SELECT COUNT(*) FROM sites",null);
+        section("REGISTERED STATIONS",String.valueOf(stations),"Across all projects");
+        int candidate=count("SELECT COUNT(*) FROM field_records r JOIN surveys s ON s.id=r.event_id "+
+            "WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' "+
+            "AND r.distance_eligible=1 AND s.outcome='complete'",null);
+        section("BIRD DISTANCE CANDIDATES",String.valueOf(candidate),"Preliminary screening only");
+        page.addView(label("COUNTED DETECTIONS BY GROUP",17));
+        try(Cursor c=helper.getReadableDatabase().rawQuery(
+            "SELECT r.taxon_group,COUNT(*) FROM field_records r JOIN surveys s ON s.id=r.event_id "+
+            "WHERE r.deleted_at IS NULL AND s.outcome='complete' "+
+            "GROUP BY r.taxon_group ORDER BY r.taxon_group",null)){
             while(c.moveToNext())section(c.getString(0),String.valueOf(c.getInt(1)),null);
         }
         page.addView(label("RECENT FIELD ACTIVITY",17));
-        try(Cursor c=helper.getReadableDatabase().rawQuery("SELECT COALESCE(survey_profile,taxon_group,'Birds'),COALESCE(station_id,'Unassigned'),started,CASE WHEN ended IS NULL THEN 'Active' WHEN complete=1 THEN 'Completed' ELSE 'Incomplete' END FROM surveys ORDER BY started DESC LIMIT 8",null)){
+        try(Cursor c=helper.getReadableDatabase().rawQuery("SELECT COALESCE(survey_profile,taxon_group,'Birds'),COALESCE(station_id,'Unassigned'),started,CASE WHEN outcome='not_counted' THEN 'Not Counted' WHEN ended IS NULL THEN 'Active' WHEN complete=1 THEN 'Completed' ELSE 'Incomplete' END FROM surveys ORDER BY started DESC LIMIT 8",null)){
             while(c.moveToNext())page.addView(label(c.getString(0)+" · "+c.getString(1)+"\n"+c.getString(2)+" · "+c.getString(3),14));
         }
         page.addView(label("Scientific model eligibility must be checked using detection assumptions, valid effort, sampling frames and species-level datasets.",12));

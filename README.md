@@ -1,52 +1,53 @@
-# Philippine Wildlife Survey Beta v0.10
+# Philippine Wildlife Survey Beta v0.11
 
-Standalone offline Android application for bird, herpetofauna and mammal field surveys. The app is not connected to SMART or KALUMBATA.
+Standalone, offline Android field recording. Supports birds, herpetofauna and mammals. Independent of KALUMBATA and SMART.
 
-## v0.10 two-clock field interface
-- **TOTAL SURVEY TIME** counts upward from survey-session start. It does not reset on a new sampling station. It is reconstructed from saved UTC start time after app backgrounding or process restart.
-- **CURRENT UNIT** shows a station/visit countdown when the method has a target duration. At zero, it keeps running and displays **OVERTIME +HH:MM:SS** in solid red. For the final 30 seconds, the countdown pulses red. A one-time on-screen warning appears near the deadline and at overtime.
-- Untimed methods use an **ELAPSED** unit clock. Opportunistic observations use the survey clock.
-- Zero never automatically ends a survey, a point count, a unit visit, or a GPS track.
+## Protected survey outcomes
+Every finished survey gets one of three statuses:
 
-## Bird point counts
-- Each point count has an independent ID and station. Tap **Finish point · Next station** after counting at the current station.
-- Stations not visited during the active survey appear at the top of the next-station list.
-- A progress indicator shows the number of visits completed and distinct stations visited.
-- Ended stations keep their previously recorded bird observations linked to the original point-count ID.
-- Ending early marks the point incomplete. Birds detected in overtime remain biodiversity records but cannot pass the preliminary distance-sampling timing flag.
-- The whole survey clock keeps running across all points, including travel between stations. Travel is **not counted** as point-count effort.
+- **Complete**: fulfilled active sampling effort and sampling-unit rules. Retained for preliminary analysis screening.
+- **Incomplete**: interrupted, short or missing required effort. Retained for reinspection, not automatically accepted by models.
+- **Not Counted**: excluded, with a **required reason**. This option appears as a visually separate red **hold for two seconds** button on the Finish Survey screen. Pressing quickly does nothing. After holding, the user must enter a reason of at least five characters and explicitly confirm.
 
-## Herpetofauna and mammal station visits
-- For suitable standardized searches, inspections and recording protocols, each station visit now has a stable sampling-unit ID, recorded start and end, unit duration, completion status and station ID.
-- The **Finish visit · Next station** action prioritizes unvisited stations and lets the observer close a visit or move to the next.
-- Time-targeted methods include VES, amphibian calling, area searches, cover-board searches, track/sign surveys, spotlighting and bat acoustic logs. Equipment deployment checks still use elapsed visit times and equipment-specific effort fields rather than claiming their run time equals camera-nights or trap-nights.
-- At visit closure, relevant forms accept verified search area, searched length, equipment IDs, number of devices and device-hours.
-- Amphibian calling has an ordinal 0–3 index, background noise, air temperature, humidity, weather and life stage fields. A 0 call index does not fabricate a detected individual. Unit rows can exist with zero observations.
-- Herpetofauna visual encounter records include microhabitat, substrate, life stage and height above ground.
-- Mammal records include direct/indirect evidence type, equipment ID, observation height and **count_basis** such as individuals, sign events, acoustic events or image detections. This prevents arbitrary evidence counts being mislabeled as animal abundance.
-- Repeat visits with no detections remain saved as actual visits, not inferred confirmed absences for every species.
+A Not Counted survey remains in `surveys.csv`, its observations remain in `observations.csv` with `survey_outcome`, and the reason remains in `surveys.csv` and `survey_outcome_audit.csv`. This is a scientific exclusion flag, **not deletion**. Species, distance, occupancy, SDM and operational counted summaries exclude Not Counted surveys. The archived counts are shown separately on the dashboard.
 
-## Transect timing and GPS
-- Bird and mammal line transects and herpetofauna VES transects retain their GPS track and walked-distance estimate.
-- Configured timer continues in overtime until **Finish survey** is pressed.
-- The estimated GPS path length is not treated as certified straight-line line-transect effort.
-- Tracks remain subject to GPS filtering, battery management and Android foreground location permission.
+## Dual clocks and effort pauses
+- **TOTAL SESSION** shows actual elapsed wall-clock time, including breaks and travel.
+- **ACTIVE EFFORT** subtracts explicit pauses.
+- Point-count/station interval uses effective sampling time and restarts for each station.
+- During a pause, sampling entry is disabled and GPS tracking stops. Resume to record data and restart location tracking.
+- `effort_pauses.csv` and `sampling_units.csv` retain pause duration.
+- At 30 seconds before the interval, the clock flashes red. At zero, the clock becomes solid red and continues in **OVERTIME** until manually finished.
+- Optional vibration is **off by default** and can be enabled inside the survey. It triggers once near 30 seconds and again at overtime. Device vibration permission is declared.
+- The UI timer stops redrawing in the background; its values are recomputed from saved timestamps upon return. A survey paused through an Android app restart remains paused.
 
-## Database migration and data exports
-- Version 6 adds `sampling_units` and unit-specific fields without deleting old datasets. Earlier point count visits stay in `point_counts`.
-- Exports add `sampling_units.csv`, visit-specific metadata in `observations.csv`, unit-aware `occupancy_visits.csv`, mammal and herpetofauna observation tables, SDM records with unit IDs and existing distance/GIS files.
-- Zero-detection visit rows and observation records are separate. A missing distance does not become a nondetection.
-- Use this as **analysis preparation**, not a species occupancy or density estimate.
+## Station progress
+The in-survey **Station progress** button shows registered stations with zero visits, active visits and completed/incomplete visits. Survey History provides access to the same screen. Suggested next stations still put unvisited ones first.
 
-## Upgrade
-- v0.10 has the same application ID and dedicated debug signing key as v0.9 (`org.phwildlife.survey.beta08`). Install over v0.9. Keep an exported ZIP backup before updating.
-- Download the compiled `app-debug.apk` from the GitHub Release `v0.10.0-beta`.
+## Method-specific field effort
+At the end of individual visits, equipment-related methods may log:
+- verified number of devices and device-hours
+- **camera-days** for camera-trap checks, based on measured periods of camera operation
+- **trap-nights** for trapping or drift-fence checks, based on verified operational trapping effort
+- **recorder-hours** for acoustic methods
+- known downtime and verification notes
+- site-specific search area, length, environmental conditions and observer minutes where applicable
 
-## References and limitations
-- USGS amphibian calling monitoring describes fixed-time call-index visits, environmental conditions and audible disturbances: https://www.usgs.gov/centers/eesc/science/north-american-amphibian-monitoring-program
-- USGS visual encounter survey field effort can be measured by time or distance: https://www.usgs.gov/publications/optimizing-walking-pace-maximize-snake-detection-rate-a-visual-encounter-survey
-- Mammal camera-trap surveys must retain deployment and camera-night effort: https://nationalzoo.si.edu/conservation-ecology-center/snapshot-usa
-- Scientific instruments still require field calibration. The app does not measure animal distance with its camera, and phone GPS positions are observer locations.
-- The application has not been physically tested by an automated handset lab. Verify field forms, period boundaries, completion flags, exports and GPS behavior on a real phone.
+These are user-verified values. The app does **not** estimate functioning camera-days from visit duration or convert the time spent checking equipment into true trapping effort.
 
-See [v0.10 QA checklist](docs/QA_v0_10.md).
+`verified_deployment_effort.csv`, `amphibian_call_visits.csv`, `sampling_units.csv` and archive exports retain fields for quality review. `amphibian_call_visits.csv` contains each listening visit and its positive species-calling records, without fabricated absences.
+
+## Export policy
+- The scientific export files (`distance_flatfile_draft.csv`, `occupancy_visits.csv`, `sdm_occurrences.csv`, `herpetofauna_observations.csv`, `mammal_observations.csv`, `verified_deployment_effort.csv`, `amphibian_call_visits.csv`, `transect_tracks.geojson`) contain only surveys with outcome `complete`, pending further quality review.
+- The **raw archive** files (`surveys.csv`, `observations.csv`, `sampling_units.csv`, `point_counts.csv`, `survey_outcome_audit.csv`, `effort_pauses.csv`, `edit_history.csv`) retain excluded records with explicit status and explanations.
+- This separation prevents invalid survey attempts from inflating ecological effort denominators, but does not automatically validate complete surveys.
+
+## Installation
+v0.11 has the same Android application ID `org.phwildlife.survey.beta08` and cached signing key as v0.10. Export data from v0.10 before installing v0.11 over the existing Beta. Preserve the old ZIP backup.
+
+## Literature
+- USGS amphibian monitoring: https://www.usgs.gov/centers/eesc/science/north-american-amphibian-monitoring-program
+- HUTAN camera-trap handbook, operational camera days: https://www.hutan.org.my/wp-content/uploads/Reports/Other%20reports/Camera_trap_manual.pdf
+- Android VibrationEffect: https://developer.android.com/reference/android/os/VibrationEffect
+
+See [v0.11 device test plan](docs/QA_v0_11.md). Automated Android compilation does not substitute for phone or field testing.

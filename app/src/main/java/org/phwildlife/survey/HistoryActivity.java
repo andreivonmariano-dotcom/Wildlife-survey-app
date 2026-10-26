@@ -145,6 +145,15 @@ public class HistoryActivity extends Activity {
             try{
                 ContentValues values=new ContentValues();
                 values.put("raw_identification",name);values.put("common_name",split[0]);values.put("scientific_name",split[1]);
+                boolean unknown=Taxa.isUnknown(name);
+                boolean genusOnly=!unknown&&split[1]!=null&&(split[1].trim().endsWith(" sp.")||split[1].trim().endsWith(" spp."));
+                String rank=unknown?"unidentified":genusOnly?"genus":
+                    split[1]==null||split[1].trim().isEmpty()?"unverified_text":"species_name_unverified";
+                values.put("identification_level",rank);
+                String geo=before.optString("geo_region_at_detection","PH");
+                values.put("regional_evidence_status",
+                    GeoRegions.hasPositiveEvidence(before.optString("taxon_group","Birds"),geo,split[1])?
+                        "documented_regional_example":"distribution_not_assessed");
                 values.put("individual_count",count);
                 if(d==null)values.putNull("horizontal_m");else values.put("horizontal_m",d);
                 values.put("notes",notes.getText().toString());
@@ -160,7 +169,9 @@ public class HistoryActivity extends Activity {
                         survey[3]=c.isNull(3)?"":c.getString(3);
                     }
                 }
-                boolean candidate=d!=null&&first.getSelectedItem().toString().equals("Yes")
+                boolean candidate=before.optString("taxon_group","Birds").equals("Birds")&&
+                    !unknown&&!genusOnly&&split[1]!=null&&!split[1].isEmpty()&&d!=null&&
+                    first.getSelectedItem().toString().equals("Yes")
                     &&!type.getSelectedItem().toString().equals("Unknown")
                     &&(survey[0].equals("point_count")||survey[0].equals("line_transect"))
                     &&!movement.getSelectedItem().toString().equals("Flyover")

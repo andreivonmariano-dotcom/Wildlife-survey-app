@@ -23,7 +23,7 @@ public class WelcomeActivity extends Activity {
     private String currentScreen="home";
     private AutoCompleteTextView stationEntry;
     private EditText durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry,radiusEntry,transectDurationEntry;
-    private Spinner projectChoice;
+    private Spinner projectChoice, geographicChoice;
     private ArrayList<String> projectKeys=new ArrayList<>();
     private RadioGroup methodChoices;
     private SurveyMethods.Method[] choices;
@@ -176,6 +176,15 @@ public class WelcomeActivity extends Activity {
         if(names.isEmpty()){projectKeys.add("default");names.add("General field project");}
         projectChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));
         main.addView(text("Project",13,false));main.addView(projectChoice);
+        main.addView(text("Geographic checklist area",16,true));
+        geographicChoice=new Spinner(this);
+        geographicChoice.setAdapter(new ArrayAdapter<String>(
+            this,android.R.layout.simple_spinner_dropdown_item,GeoRegions.LABELS));
+        geographicChoice.setSelection(0);
+        main.addView(geographicChoice);
+        TextView geographyNote=text("Manual island-group selection for offline species suggestions. This is not GPS boundary verification or the study-area stratum. Regional evidence is incomplete, and unexpected species remain recordable.",12,false);
+        geographyNote.setTextColor(MUTED);
+        main.addView(geographyNote);
         stationEntry=new AutoCompleteTextView(this);stationEntry.setThreshold(1);
         stationEntry.setTextSize(16);stationEntry.setSingleLine(true);
         stationEntry.setHint("Registered station ID");
@@ -317,6 +326,8 @@ public class WelcomeActivity extends Activity {
         i.putExtra("create_new",true);
         i.putExtra("survey_profile",profile);
         i.putExtra("project_id",projectId());
+        i.putExtra("geographic_region_id",GeoRegions.idAt(geographicChoice.getSelectedItemPosition()));
+        i.putExtra("geographic_selection_method",GeoRegions.BOUNDARY_METHOD);
         i.putExtra("region_label",regionEntry.getText().toString().trim());
         i.putExtra("stratum_area_km2",area==null?Double.NaN:area);
         i.putExtra("survey_method",m.code);
@@ -344,7 +355,8 @@ public class WelcomeActivity extends Activity {
              .putString("radius",radiusEntry.getText().toString())
              .putString("transectDuration",transectDurationEntry.getText().toString())
              .putInt("methodChoice",methodChoices.getCheckedRadioButtonId()-1000)
-             .putInt("projectChoice",projectChoice.getSelectedItemPosition());
+             .putInt("projectChoice",projectChoice.getSelectedItemPosition())
+             .putInt("geographicChoice",geographicChoice.getSelectedItemPosition());
         }
         e.commit();
     }
@@ -363,6 +375,8 @@ public class WelcomeActivity extends Activity {
         transectDurationEntry.setText(p.getString("transectDuration","120"));
         int project=p.getInt("projectChoice",0);
         if(project>=0&&project<projectChoice.getCount())projectChoice.setSelection(project);
+        int geo=p.getInt("geographicChoice",0);
+        if(geo>=0&&geo<geographicChoice.getCount())geographicChoice.setSelection(geo);
     }
     private String activeSurvey(){
         try{

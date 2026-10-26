@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /** Shared offline schema, versioned migrations. Never drop a user observation table. */
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
-    public FieldDb(Context context){super(context,NAME,null,7);}
+    public FieldDb(Context context){super(context,NAME,null,8);}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -17,6 +17,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeFive(d);
         upgradeSix(d);
         upgradeSeven(d);
+        upgradeEight(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -38,6 +39,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<5)upgradeFive(d);
         if(oldVersion<6)upgradeSix(d);
         if(oldVersion<7)upgradeSeven(d);
+        if(oldVersion<8)upgradeEight(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -133,5 +135,19 @@ public final class FieldDb extends SQLiteOpenHelper {
         d.execSQL("CREATE INDEX IF NOT EXISTS survey_pauses_event ON survey_effort_pauses(event_id)");
         d.execSQL("UPDATE surveys SET outcome=CASE WHEN ended IS NULL THEN 'active' "+
           "WHEN complete=1 THEN 'complete' ELSE 'incomplete' END WHERE outcome IS NULL");
+    }
+    private void upgradeEight(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE surveys ADD COLUMN geographic_region_id TEXT NOT NULL DEFAULT 'PH'");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN geographic_selection_method TEXT NOT NULL DEFAULT 'legacy_unspecified'");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN regional_taxa_version TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN identification_level TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN regional_evidence_status TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN geo_region_at_detection TEXT");
+        d.execSQL("UPDATE surveys SET regional_taxa_version='legacy_no_region_filter' "+
+             "WHERE regional_taxa_version IS NULL");
+        d.execSQL("UPDATE field_records SET identification_level='legacy_not_assessed' "+
+             "WHERE identification_level IS NULL");
+        d.execSQL("CREATE INDEX IF NOT EXISTS idx_surveys_geo_region ON surveys(geographic_region_id)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS idx_field_records_identification ON field_records(identification_level)");
     }
 }

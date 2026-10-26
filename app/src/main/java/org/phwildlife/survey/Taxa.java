@@ -124,6 +124,39 @@ public final class Taxa {
         for(int i=0;i<a.length;i++){String[] p=a[i].split("\\|",2);b[i]=p[0]+" · "+p[1];}
         Arrays.sort(b,String.CASE_INSENSITIVE_ORDER);return b;
     }
+    /** Field-identification categories, never stored as invented binomial species. */
+    public static String[] unknownLabels(String group){
+        switch(group){
+          case "Birds":return new String[]{"Unidentified bird","Unidentified raptor","Unidentified owl",
+              "Unidentified passerine","Unidentified waterbird","Unidentified bird call"};
+          case "Reptiles":return new String[]{"Unidentified reptile","Unidentified snake",
+              "Unidentified lizard","Unidentified turtle"};
+          case "Amphibians":return new String[]{"Unidentified amphibian","Unidentified frog",
+              "Unidentified toad","Unidentified amphibian call","Unidentified tadpole"};
+          default:return new String[]{"Unidentified mammal","Unidentified bat",
+              "Unidentified rodent","Unidentified carnivore","Unidentified mammal sign"};
+        }
+    }
+    public static boolean isUnknown(String name){
+        return name!=null&&name.trim().toLowerCase(Locale.US).startsWith("unidentified ");
+    }
+    public static String[] sortedLabels(String group,String geoRegion,boolean regionalOnly){
+        LinkedHashSet<String> labels=new LinkedHashSet<>();
+        for(String unknown:unknownLabels(group))labels.add(unknown);
+        String[] species=forGroup(group);
+        java.util.ArrayList<String> matched=new java.util.ArrayList<>(),other=new java.util.ArrayList<>();
+        for(String v:species){
+            String[] p=v.split("\\|",2);
+            String item=p[0]+" · "+p[1];
+            if(GeoRegions.hasPositiveEvidence(group,geoRegion,p[1]))matched.add(item);
+            else other.add(item);
+        }
+        matched.sort(String.CASE_INSENSITIVE_ORDER);other.sort(String.CASE_INSENSITIVE_ORDER);
+        labels.addAll(matched);
+        // Avoid a blank taxon picker where no regional evidence is curated.
+        if(!regionalOnly||matched.isEmpty())labels.addAll(other);
+        return labels.toArray(new String[0]);
+    }
     public static String[] identify(String label) {
         int i=label.indexOf(" · ");
         if(i>0)return new String[]{label.substring(0,i),label.substring(i+3)};

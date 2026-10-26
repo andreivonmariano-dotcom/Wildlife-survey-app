@@ -62,7 +62,8 @@ public class MainActivity extends Activity implements LocationListener {
     private FieldDb db; private LocationManager locations;
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private Button pauseButton,progressButton;
-    private CheckBox vibrationChoice;
+    private CheckBox vibrationChoice,regionalOnlyChoice;
+    private TextView checklistNote;
     private boolean surveyPaused=false;
     private long pauseStartedAt=0,accumulatedPausedMs=0;
     private long unitPausedMs=0;
@@ -77,7 +78,7 @@ public class MainActivity extends Activity implements LocationListener {
     private String samplingUnitId=null;
     private long unitStartedAt=0;
     private int unitSequence=0;
-    private String group="Birds",eventId=null,pointCountId=null,method="point_count",profile="Birds",stationId="",observerName="",projectId="default",regionLabel="";
+    private String group="Birds",eventId=null,pointCountId=null,method="point_count",profile="Birds",stationId="",observerName="",projectId="default",regionLabel="",geographicRegion="PH";
     private long pointStartedAt=0;
     private int pointSequence=0,plannedDurationSeconds=0;
     private boolean nearEndNotified=false;
@@ -119,6 +120,8 @@ public class MainActivity extends Activity implements LocationListener {
             if(projectId==null)projectId="default";
             regionLabel=launch.getStringExtra("region_label");
             if(regionLabel==null)regionLabel="";
+            geographicRegion=launch.getStringExtra("geographic_region_id");
+            if(geographicRegion==null)geographicRegion="PH";
             double area=launch.getDoubleExtra("stratum_area_km2",Double.NaN);
             stratumAreaKm2=Double.isNaN(area)?null:area;
             double radius=launch.getDoubleExtra("point_radius_m",Double.NaN);
@@ -229,10 +232,33 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView.setTextColor(MUTED);
         content.addView(gpsView);
         content.addView(section("SPECIES / IDENTIFICATION"));
+        checklistNote=label("Geographic suggestions: "+GeoRegions.label(geographicRegion),13,true);
+        checklistNote.setTextColor(UiKit.FOREST);content.addView(checklistNote);
+        regionalOnlyChoice=new CheckBox(this);
+        regionalOnlyChoice.setText("Show regional suggestions only (partial curated list)");
+        regionalOnlyChoice.setTextSize(13);
+        regionalOnlyChoice.setChecked(!geographicRegion.equals("PH")&&!geographicRegion.equals("OTHER"));
+        content.addView(regionalOnlyChoice);
+        regionalOnlyChoice.setOnCheckedChangeListener((b,only)->updateTaxaSuggestions(false));
+        LinearLayout speciesRow=horizontal();
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(18);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
         taxonEntry.setThreshold(1);taxonEntry.setHint("Search common or scientific name");
-        taxonEntry.setSelectAllOnFocus(true);content.addView(taxonEntry);
+        taxonEntry.setSelectAllOnFocus(true);
+        speciesRow.addView(taxonEntry,new LinearLayout.LayoutParams(0,-2,1));
+        Button unknownBtn=UiKit.button(this,"Unidentified","secondary");
+        unknownBtn.setTextSize(12);
+        LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(dp(127),dp(52));
+        unknownLp.leftMargin=dp(6);speciesRow.addView(unknownBtn,unknownLp);
+        content.addView(speciesRow);
+        unknownBtn.setOnClickListener(v->{
+            String[] choices=Taxa.unknownLabels(group);
+            new AlertDialog.Builder(this).setTitle("Record unidentified "+group.toLowerCase(Locale.US))
+               .setItems(choices,(dialog,which)->{
+                   taxonEntry.setText(choices[which]);taxonEntry.setSelection(taxonEntry.length());
+                   queueDraft();
+               }).setNegativeButton("Cancel",null).show();
+        });
         taxonEntry.setOnClickListener(v->taxonEntry.showDropDown());
         LinearLayout countLine=horizontal();
         String countBasis=method.equals("track_sign")||method.equals("camera_trap_check")||
@@ -373,18 +399,35 @@ public class MainActivity extends Activity implements LocationListener {
         methodSpinner.setEnabled(false);
         lineRow.setVisibility(SurveyMethods.isBirdLine(profile,method)?View.VISIBLE:View.GONE);
     }
-    private void refreshAutocomplete(){
-        java.util.LinkedHashSet<String> all=new java.util.LinkedHashSet<>();
-        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT common_name,scientific_name FROM field_records WHERE taxon_group=? ORDER BY id DESC LIMIT 12",new String[]{group})){
-            while(c.moveToNext()){
-                String a=c.isNull(0)?"":c.getString(0),b=c.isNull(1)?"":c.getString(1);
-                if(!a.isEmpty()&&!b.isEmpty())all.add(a+" · "+b);else if(!a.isEmpty())all.add(a);else if(!b.isEmpty())all.add(b);
-            }
+    private void refreshAutocomplete(){updateTaxaSuggestions(true);}
+    private void updateTaxaSuggestions(boolean clear){
+        if(taxonEntry==null)return;
+        java.util.LinkedHashSet<String> items=new java.util.LinkedHashSet<>();
+        boolean regional=regionalOnlyChoice!=null&&regionalOnlyChoice.isChecked()&&
+            !geographicRegion.equals("PH")&&!geographicRegion.equals("OTHER");
+        for(String unknown:Taxa.unknownLabels(group))items.add(unknown);
+        String[] curated=Taxa.sortedLabels(group,geographicRegion,regional);
+        for(String v:curated)items.add(v);
+        if(!regional){
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT common_name,scientific_name FROM field_records WHERE taxon_group=? AND deleted_at IS NULL ORDER BY id DESC LIMIT 12",
+                new String[]{group})){
+                while(c.moveToNext()){
+                    String n=c.isNull(0)?"":c.getString(0),latin=c.isNull(1)?"":c.getString(1);
+                    if(!n.isEmpty()&&!latin.isEmpty())items.add(n+" · "+latin);
+                    else if(!n.isEmpty())items.add(n);
+                }
+            }catch(Exception ignored){}
         }
-        for(String s:Taxa.sortedLabels(group))all.add(s);
-        taxonEntry.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_dropdown_item_1line,new java.util.ArrayList<>(all)));
-        taxonEntry.setHint(group.equals("Birds")?"Search bird (offline starter list)":"Search or enter "+group.toLowerCase(Locale.US)+" taxon");
-        taxonEntry.setText("");
+        taxonEntry.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_dropdown_item_1line,
+            new java.util.ArrayList<>(items)));
+        if(checklistNote!=null)checklistNote.setText(
+            (geographicRegion.equals("PH")?"Philippines · all starter taxa":GeoRegions.label(geographicRegion))+
+            (regional?" · documented regional subset only":" · includes unassessed taxa")+
+            "\nRegional tags are incomplete; typing another species remains allowed.");
+        taxonEntry.setHint(group.equals("Birds")?"Bird name or unidentified bird":
+            "Name or unidentified "+group.toLowerCase(Locale.US).replace("s",""));
+        if(clear)taxonEntry.setText("");
         distanceEntry.setHint(group.equals("Birds")?"Horizontal distance (m)":"Distance (m, optional)");
         if(birdMeasurements!=null)birdMeasurements.setVisibility(group.equals("Birds")?View.VISIBLE:View.GONE);
         if(herpPanel!=null)herpPanel.setVisibility(profile.equals("Herpetofauna")?View.VISIBLE:View.GONE);
@@ -407,6 +450,10 @@ public class MainActivity extends Activity implements LocationListener {
             }
         }catch(Exception ignored){}
         if(active){
+            try(Cursor region=db.getReadableDatabase().rawQuery(
+                "SELECT COALESCE(geographic_region_id,'PH') FROM surveys WHERE id=?",new String[]{eventId})){
+                if(region.moveToFirst())geographicRegion=region.getString(0);
+            }catch(Exception ignored){}
             try(Cursor pc=db.getReadableDatabase().rawQuery(
                 "SELECT COALESCE(total_paused_ms,0),COALESCE(paused_at_utc,''),COALESCE(effort_paused,0) FROM surveys WHERE id=?",
                 new String[]{eventId})){
@@ -447,8 +494,8 @@ public class MainActivity extends Activity implements LocationListener {
         eventId="SV-"+System.currentTimeMillis();startedAt=System.currentTimeMillis();pointNotice=false;
         int target=method.equals("point_count")?pointTargetSeconds:0;
         lineBearing=SurveyMethods.isBirdLine(profile,method)?line:null;
-        db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,planned_duration_s) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-          new Object[]{eventId,method,iso(startedAt),lineBearing,group,target,profile,stationId,observerName,basicLogOnly?"basic_log_only":"beta_standardized",projectId,regionLabel,stratumAreaKm2,pointRadiusM,plannedDurationSeconds});
+        db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,planned_duration_s,geographic_region_id,geographic_selection_method,regional_taxa_version) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+          new Object[]{eventId,method,iso(startedAt),lineBearing,group,target,profile,stationId,observerName,basicLogOnly?"basic_log_only":"beta_standardized",projectId,regionLabel,stratumAreaKm2,pointRadiusM,plannedDurationSeconds,geographicRegion,GeoRegions.BOUNDARY_METHOD,GeoRegions.DATASET});
         if(method.equals("point_count"))startPoint(stationId);
         else if(requiresGenericUnit())startUnit(stationId);
 
@@ -1008,6 +1055,14 @@ public class MainActivity extends Activity implements LocationListener {
         }
         if(raw.length()<2){toast("Enter a taxon or unidentified species");return;}
         String[] id=Taxa.identify(raw);
+        boolean unidentified=Taxa.isUnknown(raw);
+        boolean genusOnly=!unidentified&&id[1]!=null&&
+            (id[1].trim().endsWith(" sp.")||id[1].trim().endsWith(" spp."));
+        String identificationLevel=unidentified?"unidentified":genusOnly?"genus":
+            id[1]==null||id[1].trim().isEmpty()?"unverified_text":"species_name_unverified";
+        String geoSupport=geographicRegion.equals("PH")||geographicRegion.equals("OTHER")?
+            "not_applicable":GeoRegions.hasPositiveEvidence(group,geographicRegion,id[1])?
+            "documented_regional_example":"distribution_not_assessed";
         Double distance=number(distanceEntry.getText().toString());
         if(distance!=null && (distance<0||distance>10000)){toast("Check distance value");return;}
         Double perp=null,line=lineBearing;
@@ -1030,7 +1085,8 @@ public class MainActivity extends Activity implements LocationListener {
         if(height!=null&&(height<0||height>150)){
             toast("Check height above ground");return;
         }
-        boolean candidate=group.equals("Birds")&&distance!=null&&!distanceMethod.equals("Unknown")
+        boolean candidate=group.equals("Birds")&&!unidentified&&!genusOnly&&
+            !id[1].isEmpty()&&distance!=null&&!distanceMethod.equals("Unknown")
           &&firstPosition.equals("Yes")&&inWindow&&(method.equals("point_count")||method.equals("line_transect"))
           &&(!method.equals("line_transect")||perp!=null)
           &&(!method.equals("point_count")||pointRadiusM==null||distance<=pointRadiusM)
@@ -1038,7 +1094,7 @@ public class MainActivity extends Activity implements LocationListener {
         Location loc=location;
         Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),acc=loc==null?null:loc.getAccuracy();
         db.getWritableDatabase().execSQL(
-            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,identification_level,regional_evidence_status,geo_region_at_detection) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{eventId,iso(first),group,id[0],id[1],raw,count,detectionSpinner.getSelectedItem().toString(),
                 distance,markedBearing,markedPitch,perp,lat,lon,acc,
                 habitatEntry.getText().toString().trim(),behaviorEntry.getText().toString().trim(),
@@ -1061,7 +1117,8 @@ public class MainActivity extends Activity implements LocationListener {
                     method.equals("bat_acoustic")?"acoustic_detection":
                     method.equals("live_trap_check")?"capture":
                     method.equals("coverboard_search")||method.equals("drift_fence_check")?"encounter":
-                    "individuals"});
+                    "individuals",
+                identificationLevel,geoSupport,geographicRegion});
         taxonEntry.setText("");count=1;countView.setText("1");distanceEntry.setText("");
         habitatEntry.setText("");behaviorEntry.setText("");notesEntry.setText("");
         // Retain environmental measurements through each visit. Reset identification-specific evidence.
@@ -1164,11 +1221,11 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at FROM sites",
               "station_id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at");
             csv(z,"surveys.csv",
-              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc FROM surveys",
-              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc");
+              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version FROM surveys",
+              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version");
             csv(z,"observations.csv",
-              "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,COALESCE(s.outcome,'active') FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
-              "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome");
+              "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,COALESCE(s.outcome,'active'),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
+              "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection");
             csv(z,"sampling_units.csv",
               "SELECT u.id,u.event_id,u.station_id,u.sequence_number,u.method,u.started,u.ended,u.target_seconds,u.completed,u.effort_minutes,u.effort_area_m2,u.effort_length_m,u.noise_score,u.wind_score,u.rain_condition,u.equipment_id,u.number_devices,u.trap_effort_hours,u.unit_paused_ms,u.camera_days_verified,u.trap_nights_verified,u.recorder_hours_verified,u.deployment_started_utc,u.deployment_ended_utc,u.downtime_hours,u.effort_remarks,COALESCE(s.outcome,'active') FROM sampling_units u JOIN surveys s ON s.id=u.event_id ORDER BY u.event_id,u.sequence_number",
               "sampling_unit_id,event_id,station_id,sequence,method,start_utc,end_utc,target_seconds,completed,active_effort_minutes,searched_area_m2,searched_length_m,noise_score,wind_score,rain_condition,equipment_id,number_devices,device_hours,unit_paused_ms,verified_camera_days,verified_trap_nights,verified_recorder_hours,deployment_start_utc,deployment_end_utc,downtime_hours,effort_notes,survey_outcome");

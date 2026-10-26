@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /** Shared offline schema, versioned migrations. Never drop a user observation table. */
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
-    public FieldDb(Context context){super(context,NAME,null,8);}
+    public FieldDb(Context context){super(context,NAME,null,9);}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -18,6 +18,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeSix(d);
         upgradeSeven(d);
         upgradeEight(d);
+        upgradeNine(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -40,6 +41,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<6)upgradeSix(d);
         if(oldVersion<7)upgradeSeven(d);
         if(oldVersion<8)upgradeEight(d);
+        if(oldVersion<9)upgradeNine(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -149,5 +151,37 @@ public final class FieldDb extends SQLiteOpenHelper {
              "WHERE identification_level IS NULL");
         d.execSQL("CREATE INDEX IF NOT EXISTS idx_surveys_geo_region ON surveys(geographic_region_id)");
         d.execSQL("CREATE INDEX IF NOT EXISTS idx_field_records_identification ON field_records(identification_level)");
+    }
+    private void upgradeNine(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS taxon_catalog("+
+          "taxon_key TEXT PRIMARY KEY,taxon_group TEXT NOT NULL,common_name TEXT,scientific_name TEXT NOT NULL,"+
+          "family TEXT,source TEXT NOT NULL,source_version TEXT NOT NULL,region_codes TEXT,"+
+          "review_status TEXT NOT NULL DEFAULT 'unreviewed',created_utc TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS catalog_group ON taxon_catalog(taxon_group,common_name)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS taxa_favorites("+
+          "taxon_group TEXT NOT NULL,raw_identification TEXT NOT NULL,PRIMARY KEY(taxon_group,raw_identification))");
+        d.execSQL("CREATE TABLE IF NOT EXISTS observation_media("+
+          "id INTEGER PRIMARY KEY AUTOINCREMENT,record_id INTEGER NOT NULL,file_name TEXT NOT NULL,"+
+          "mime_type TEXT NOT NULL,original_name TEXT,added_utc TEXT,source_note TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS media_record ON observation_media(record_id)");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN admin_province_name TEXT");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN admin_province_psgc TEXT");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN admin_boundary_version TEXT");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN admin_boundary_status TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN identification_confidence TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN identification_review_note TEXT");
+        d.execSQL("UPDATE field_records SET identification_confidence='not_assessed' "+
+          "WHERE identification_confidence IS NULL");
+        // Initial names are explicitly unreviewed, never represented as a complete checklist.
+        for(String group:Taxa.GROUPS){
+            for(String item:Taxa.forGroup(group)){
+                String[] parts=item.split("\\|",2);
+                if(parts.length!=2)continue;
+                String key="STARTER:"+group+":"+parts[1].toLowerCase(java.util.Locale.US);
+                d.execSQL("INSERT OR IGNORE INTO taxon_catalog(taxon_key,taxon_group,common_name,"+
+                   "scientific_name,source,source_version,region_codes,review_status) VALUES(?,?,?,?,?,?,?,?)",
+                   new Object[]{key,group,parts[0],parts[1],"v0.12 offline starter","legacy_v0.12","","unreviewed"});
+            }
+        }
     }
 }

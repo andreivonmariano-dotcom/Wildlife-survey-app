@@ -24,6 +24,9 @@ public class WelcomeActivity extends Activity {
     private AutoCompleteTextView stationEntry;
     private EditText durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry,radiusEntry,transectDurationEntry;
     private Spinner projectChoice, geographicChoice;
+    private BoundaryLookup.Match suggested;
+    private String geographicMethod=GeoRegions.BOUNDARY_METHOD;
+    private TextView boundaryMessage;
     private ArrayList<String> projectKeys=new ArrayList<>();
     private RadioGroup methodChoices;
     private SurveyMethods.Method[] choices;
@@ -100,6 +103,8 @@ public class WelcomeActivity extends Activity {
             ()->startActivity(new Intent(this,HistoryActivity.class)));
         card("Projects & stations","Manage projects, reusable stations and habitat details.",
             ()->startActivity(new Intent(this,SitesActivity.class)));
+        card("Offline species checklist","Review installed taxa and import an attributed, versioned taxonomic CSV.",
+            ()->startActivity(new Intent(this,CatalogActivity.class)));
         card("Import v0.7 backup","Restore the CSV ZIP from the previous Beta into this separate v0.8 installation.",
             ()->startActivity(new Intent(this,ImportActivity.class)));
         main.addView(text("Recent surveys",18,true));
@@ -182,6 +187,19 @@ public class WelcomeActivity extends Activity {
             this,android.R.layout.simple_spinner_dropdown_item,GeoRegions.LABELS));
         geographicChoice.setSelection(0);
         main.addView(geographicChoice);
+        geographicChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+            public void onNothingSelected(android.widget.AdapterView<?> parent){}
+            public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
+                if(suggested!=null&&!GeoRegions.idAt(position).equals(suggested.checklistRegion)){
+                    suggested=null;geographicMethod=GeoRegions.BOUNDARY_METHOD;
+                }
+            }
+        });
+        Button detect=UiKit.button(this,"Suggest province & checklist area from station/GPS","secondary");
+        main.addView(detect);
+        boundaryMessage=text("Offline provincial polygons: PSGC 3Q 2026. Tap to compare a station position or recent precise GPS fix. This never verifies a species distribution.",12,false);
+        boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
+        detect.setOnClickListener(v->suggestBoundary());
         TextView geographyNote=text("Manual island-group selection for offline species suggestions. This is not GPS boundary verification or the study-area stratum. Regional evidence is incomplete, and unexpected species remain recordable.",12,false);
         geographyNote.setTextColor(MUTED);
         main.addView(geographyNote);
@@ -269,6 +287,53 @@ public class WelcomeActivity extends Activity {
         stationEntry.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,ids));
         stationEntry.setText("");
     }
+    private void suggestBoundary(){
+        final double[] ll=new double[2];float accuracy=Float.NaN;
+        boolean got=false;String origin="station";
+        String id=stationEntry==null?"":stationEntry.getText().toString().trim();
+        if(!id.isEmpty())try(FieldDb db=new FieldDb(this);
+            Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT latitude,longitude,coordinate_uncertainty_m FROM sites WHERE id=? AND project_id=?",
+                new String[]{id,projectId()})){
+            if(c.moveToFirst()&&!c.isNull(0)&&!c.isNull(1)&&!c.isNull(2)){
+                ll[0]=c.getDouble(0);ll[1]=c.getDouble(1);accuracy=(float)c.getDouble(2);
+                got=true;
+            }
+        }catch(Exception ignored){}
+        if(!got)try{
+            android.location.LocationManager manager=(android.location.LocationManager)getSystemService(LOCATION_SERVICE);
+            if(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)==android.content.pm.PackageManager.PERMISSION_GRANTED){
+                android.location.Location gps=manager.getLastKnownLocation(android.location.LocationManager.GPS_PROVIDER);
+                if(gps!=null&&System.currentTimeMillis()-gps.getTime()<300000&&gps.hasAccuracy()){
+                    ll[0]=gps.getLatitude();ll[1]=gps.getLongitude();accuracy=gps.getAccuracy();
+                    got=true;origin="recent phone GPS";
+                }
+            }
+        }catch(Exception ignored){}
+        if(!got){
+            boundaryMessage.setText("No acceptable station coordinates or recent precise GPS fix. Save station latitude, longitude and uncertainty first, or select the area manually.");
+            return;
+        }
+        BoundaryLookup.Match match=BoundaryLookup.find(this,ll[0],ll[1],accuracy);
+        boundaryMessage.setText(origin+": "+match.province+" ("+match.psgc+") · "+match.status+
+            " · accuracy ~"+Math.round(accuracy)+" m · "+BoundaryLookup.VERSION);
+        if(!match.status.equals("suggestion_only")){
+            new android.app.AlertDialog.Builder(this).setTitle("Location needs review")
+                .setMessage("Boundary result: "+match.status+". Selected region remains unchanged. Confirm station GPS accuracy or choose the area manually.")
+                .setPositiveButton("Close",null).show();
+            return;
+        }
+        new android.app.AlertDialog.Builder(this).setTitle("Apply geographic suggestion?")
+            .setMessage("Province: "+match.province+"\nPSGC: "+match.psgc+
+                "\nSuggested checklist: "+GeoRegions.label(match.checklistRegion)+
+                "\nThis is a low-resolution administrative polygon estimate, not a biogeographic verification.")
+            .setNegativeButton("Keep manual",null)
+            .setPositiveButton("Use suggestion",(d,w)->{
+                suggested=match;
+                geographicChoice.setSelection(GeoRegions.index(match.checklistRegion));
+                geographicMethod="gps_station_polygon_suggested_confirmed";
+            }).show();
+    }
     private void startSelected(){
         int choice=methodChoices.getCheckedRadioButtonId()-1000;
         if(choice<0||choice>=choices.length){Toast.makeText(this,"Select survey method",Toast.LENGTH_SHORT).show();return;}
@@ -327,7 +392,13 @@ public class WelcomeActivity extends Activity {
         i.putExtra("survey_profile",profile);
         i.putExtra("project_id",projectId());
         i.putExtra("geographic_region_id",GeoRegions.idAt(geographicChoice.getSelectedItemPosition()));
-        i.putExtra("geographic_selection_method",GeoRegions.BOUNDARY_METHOD);
+        i.putExtra("geographic_selection_method",geographicMethod);
+        if(suggested!=null&&GeoRegions.idAt(geographicChoice.getSelectedItemPosition()).equals(suggested.checklistRegion)){
+            i.putExtra("admin_province",suggested.province);
+            i.putExtra("admin_province_psgc",suggested.psgc);
+            i.putExtra("admin_boundary_status",suggested.status);
+            i.putExtra("admin_boundary_version",BoundaryLookup.VERSION);
+        }
         i.putExtra("region_label",regionEntry.getText().toString().trim());
         i.putExtra("stratum_area_km2",area==null?Double.NaN:area);
         i.putExtra("survey_method",m.code);
@@ -356,7 +427,8 @@ public class WelcomeActivity extends Activity {
              .putString("transectDuration",transectDurationEntry.getText().toString())
              .putInt("methodChoice",methodChoices.getCheckedRadioButtonId()-1000)
              .putInt("projectChoice",projectChoice.getSelectedItemPosition())
-             .putInt("geographicChoice",geographicChoice.getSelectedItemPosition());
+             .putInt("geographicChoice",geographicChoice.getSelectedItemPosition())
+             .putString("geographicMethod",geographicMethod);
         }
         e.commit();
     }
@@ -377,6 +449,8 @@ public class WelcomeActivity extends Activity {
         if(project>=0&&project<projectChoice.getCount())projectChoice.setSelection(project);
         int geo=p.getInt("geographicChoice",0);
         if(geo>=0&&geo<geographicChoice.getCount())geographicChoice.setSelection(geo);
+        // Reconfirm polygon-based suggestions on a new session.
+        geographicMethod=GeoRegions.BOUNDARY_METHOD;
     }
     private String activeSurvey(){
         try{

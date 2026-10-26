@@ -92,12 +92,32 @@ public class HistoryActivity extends Activity {
               .setNegativeButton("Cancel",null)
               .setNeutralButton("Edit", (dlg,w)->edit(id,original))
               .setPositiveButton("More",(dlg,w)->new AlertDialog.Builder(this).setTitle("Record actions")
-                  .setItems(new String[]{"Edit observation","View edit history","Delete observation"},(d,index)->{
+                  .setItems(new String[]{"Edit observation","View photo evidence","View edit history","Delete observation"},(d,index)->{
                       if(index==0)edit(id,original);
-                      else if(index==1)audit(id);
+                      else if(index==1)viewPhotos(id);
+                      else if(index==2)audit(id);
                       else deletePrompt(id,original);
                   }).show()).show();
         }catch(Exception e){Toast.makeText(this,"Cannot open record: "+e.getMessage(),Toast.LENGTH_LONG).show();}
+    }
+    private void viewPhotos(long record){
+        java.util.ArrayList<String> names=new java.util.ArrayList<>();
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT file_name FROM observation_media WHERE record_id=? ORDER BY id",
+            new String[]{String.valueOf(record)})){
+            while(c.moveToNext())names.add(c.getString(0));
+        }
+        if(names.isEmpty()){Toast.makeText(this,"No photographs linked to this observation",Toast.LENGTH_SHORT).show();return;}
+        LinearLayout column=column();column.setPadding(dp(10),dp(10),dp(10),dp(10));
+        for(String name:names){
+            ImageView image=new ImageView(this);image.setAdjustViewBounds(true);
+            image.setMaxHeight(dp(400));PhotoEvidence.preview(this,name,image);
+            column.addView(image);
+            column.addView(text(name,11));
+        }
+        ScrollView scroll=new ScrollView(this);scroll.addView(column);
+        new AlertDialog.Builder(this).setTitle("Observation photographs").setView(scroll)
+          .setPositiveButton("Close",null).show();
     }
     private void edit(long id,JSONObject before) {
         LinearLayout form=column();form.setPadding(dp(14),0,dp(14),0);
@@ -108,6 +128,12 @@ public class HistoryActivity extends Activity {
         distance.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         EditText notes=field("Natural history / notes",before.optString("notes",""));
         EditText reason=field("Reason for correction (recommended)","");
+        EditText confidenceNote=field("Identification evidence / notes",before.optString("identification_review_note",""));
+        Spinner confidence=new Spinner(this);
+        String[] levels={"Field-identified (not expert verified)","Probable","Uncertain","Unidentified"};
+        confidence.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,levels));
+        String oldConfidence=before.optString("identification_confidence","Field-identified (not expert verified)");
+        for(int i=0;i<levels.length;i++)if(levels[i].equals(oldConfidence))confidence.setSelection(i);
         Spinner type=new Spinner(this);
         String[] sources={"Unknown","Estimated","Measured"};
         type.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,sources));
@@ -118,6 +144,7 @@ public class HistoryActivity extends Activity {
         first.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,position));
         for(int i=0;i<position.length;i++)if(position[i].equalsIgnoreCase(before.optString("initial_position","Unknown")))first.setSelection(i);
         form.addView(text("Identification",13));form.addView(taxon);
+        form.addView(text("Confidence",13));form.addView(confidence);form.addView(confidenceNote);
         form.addView(text("Count",13));form.addView(individuals);
         form.addView(text("Horizontal distance",13));form.addView(distance);
         form.addView(text("Distance source",13));form.addView(type);
@@ -150,6 +177,9 @@ public class HistoryActivity extends Activity {
                 String rank=unknown?"unidentified":genusOnly?"genus":
                     split[1]==null||split[1].trim().isEmpty()?"unverified_text":"species_name_unverified";
                 values.put("identification_level",rank);
+                String confidenceValue=unknown?"Unidentified":confidence.getSelectedItem().toString();
+                values.put("identification_confidence",confidenceValue);
+                values.put("identification_review_note",confidenceNote.getText().toString().trim());
                 String geo=before.optString("geo_region_at_detection","PH");
                 values.put("regional_evidence_status",
                     GeoRegions.hasPositiveEvidence(before.optString("taxon_group","Birds"),geo,split[1])?
@@ -170,7 +200,8 @@ public class HistoryActivity extends Activity {
                     }
                 }
                 boolean candidate=before.optString("taxon_group","Birds").equals("Birds")&&
-                    !unknown&&!genusOnly&&split[1]!=null&&!split[1].isEmpty()&&d!=null&&
+                    !unknown&&!genusOnly&&!confidenceValue.equals("Uncertain")&&!confidenceValue.equals("Unidentified")&&
+                    split[1]!=null&&!split[1].isEmpty()&&d!=null&&
                     first.getSelectedItem().toString().equals("Yes")
                     &&!type.getSelectedItem().toString().equals("Unknown")
                     &&(survey[0].equals("point_count")||survey[0].equals("line_transect"))

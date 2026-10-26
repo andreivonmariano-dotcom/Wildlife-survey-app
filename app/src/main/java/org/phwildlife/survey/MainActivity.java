@@ -49,7 +49,7 @@ import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity implements LocationListener {
-    private static final int EXPORT_DOC=22, CAMERA_REQ=23;
+    private static final int EXPORT_DOC=22, CAMERA_REQ=23, PHOTO_PICK=24;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final Runnable delayedDraftSave=()->persistDraft();
     private final Runnable visibleTimer=new Runnable(){
@@ -63,6 +63,12 @@ public class MainActivity extends Activity implements LocationListener {
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private Button pauseButton,progressButton;
     private CheckBox vibrationChoice,regionalOnlyChoice;
+    private Spinner confidenceSpinner;
+    private EditText identificationNote;
+    private TextView photoStatus;
+    private ImageView photoPreview;
+    private String pendingPhoto=null;
+    private Button favoriteButton;
     private TextView checklistNote;
     private boolean surveyPaused=false;
     private long pauseStartedAt=0,accumulatedPausedMs=0;
@@ -79,6 +85,7 @@ public class MainActivity extends Activity implements LocationListener {
     private long unitStartedAt=0;
     private int unitSequence=0;
     private String group="Birds",eventId=null,pointCountId=null,method="point_count",profile="Birds",stationId="",observerName="",projectId="default",regionLabel="",geographicRegion="PH";
+    private String adminProvince="",adminPsgc="",adminBoundaryStatus="",adminBoundaryVersion="",geographicSelectionMethod=GeoRegions.BOUNDARY_METHOD;
     private long pointStartedAt=0;
     private int pointSequence=0,plannedDurationSeconds=0;
     private boolean nearEndNotified=false;
@@ -122,6 +129,12 @@ public class MainActivity extends Activity implements LocationListener {
             if(regionLabel==null)regionLabel="";
             geographicRegion=launch.getStringExtra("geographic_region_id");
             if(geographicRegion==null)geographicRegion="PH";
+            adminProvince=launch.getStringExtra("admin_province");
+            adminPsgc=launch.getStringExtra("admin_province_psgc");
+            adminBoundaryStatus=launch.getStringExtra("admin_boundary_status");
+            adminBoundaryVersion=launch.getStringExtra("admin_boundary_version");
+            geographicSelectionMethod=launch.getStringExtra("geographic_selection_method");
+            if(geographicSelectionMethod==null)geographicSelectionMethod=GeoRegions.BOUNDARY_METHOD;
             double area=launch.getDoubleExtra("stratum_area_km2",Double.NaN);
             stratumAreaKm2=Double.isNaN(area)?null:area;
             double radius=launch.getDoubleExtra("point_radius_m",Double.NaN);
@@ -250,16 +263,28 @@ public class MainActivity extends Activity implements LocationListener {
         unknownBtn.setTextSize(12);
         LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(dp(127),dp(52));
         unknownLp.leftMargin=dp(6);speciesRow.addView(unknownBtn,unknownLp);
+        favoriteButton=UiKit.button(this,"☆","secondary");
+        favoriteButton.setTextSize(22);
+        LinearLayout.LayoutParams starP=new LinearLayout.LayoutParams(dp(48),dp(52));
+        starP.leftMargin=dp(4);speciesRow.addView(favoriteButton,starP);
+        favoriteButton.setContentDescription("Add or remove favorite species");
+        favoriteButton.setOnClickListener(v->toggleFavorite());
         content.addView(speciesRow);
         unknownBtn.setOnClickListener(v->{
             String[] choices=Taxa.unknownLabels(group);
             new AlertDialog.Builder(this).setTitle("Record unidentified "+group.toLowerCase(Locale.US))
                .setItems(choices,(dialog,which)->{
                    taxonEntry.setText(choices[which]);taxonEntry.setSelection(taxonEntry.length());
+                   confidenceSpinner.setSelection(3);
                    queueDraft();
                }).setNegativeButton("Cancel",null).show();
         });
         taxonEntry.setOnClickListener(v->taxonEntry.showDropDown());
+        taxonEntry.addTextChangedListener(new TextWatcher(){
+            public void beforeTextChanged(CharSequence a,int b,int c,int d){}
+            public void onTextChanged(CharSequence a,int b,int before,int count){refreshFavoriteIcon();}
+            public void afterTextChanged(Editable e){}
+        });
         LinearLayout countLine=horizontal();
         String countBasis=method.equals("track_sign")||method.equals("camera_trap_check")||
             method.equals("live_trap_check")||method.equals("bat_acoustic")||
@@ -270,6 +295,11 @@ public class MainActivity extends Activity implements LocationListener {
         countLine.addView(countView,new LinearLayout.LayoutParams(dp(48),-2));
         Button plus=button("+");countLine.addView(plus,new LinearLayout.LayoutParams(dp(55),dp(46)));
         content.addView(countLine);
+        content.addView(label("Identification confidence",12,true));
+        confidenceSpinner=new Spinner(this);
+        confidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+            new String[]{"Field-identified (not expert verified)","Probable","Uncertain","Unidentified"}));
+        content.addView(confidenceSpinner);
         minus.setOnClickListener(v->{count=Math.max(1,count-1);countView.setText(""+count);queueDraft();});
         plus.setOnClickListener(v->{count=Math.min(9999,count+1);countView.setText(""+count);queueDraft();});
         LinearLayout row=horizontal();
@@ -296,6 +326,18 @@ public class MainActivity extends Activity implements LocationListener {
         birdMeasurements.addView(label("Movement at first detection",12,false));
         birdMeasurements.addView(movementSpinner);
         content.addView(birdMeasurements);
+        TextView birdToggle=label("▾ Bird distance details",13,true);
+        birdToggle.setTextColor(GREEN);
+        if(profile.equals("Birds")){
+            // Keep the distance sampling quality items accessible in one tap.
+            content.addView(birdToggle);
+            birdMeasurements.setVisibility(View.GONE);
+            birdToggle.setOnClickListener(v->{
+                boolean show=birdMeasurements.getVisibility()!=View.VISIBLE;
+                birdMeasurements.setVisibility(show?View.VISIBLE:View.GONE);
+                birdToggle.setText(show?"▴ Hide bird distance details":"▾ Bird distance details");
+            });
+        }
         herpPanel=vertical();
         herpPanel.addView(section("HERPETOFAUNA / FIELD CONDITIONS (OPTIONAL)"));
         microhabitatEntry=edit("Microhabitat (stream edge, litter, canopy...)",
@@ -327,6 +369,16 @@ public class MainActivity extends Activity implements LocationListener {
         herpPanel.addView(label("Background noise during amphibian listening",12,false));
         herpPanel.addView(noiseSpinner);
         content.addView(herpPanel);
+        TextView herpToggle=label("▾ Amphibian / reptile environment",13,true);
+        herpToggle.setTextColor(GREEN);
+        if(profile.equals("Herpetofauna")){
+            content.addView(herpToggle);herpPanel.setVisibility(View.GONE);
+            herpToggle.setOnClickListener(v->{
+                boolean open=herpPanel.getVisibility()!=View.VISIBLE;
+                herpPanel.setVisibility(open?View.VISIBLE:View.GONE);
+                herpToggle.setText(open?"▴ Hide environment":"▾ Amphibian / reptile environment");
+            });
+        }
         mammalPanel=vertical();
         mammalPanel.addView(section("MAMMAL SURVEY EVIDENCE / EQUIPMENT"));
         evidenceSpinner=new Spinner(this);
@@ -338,6 +390,28 @@ public class MainActivity extends Activity implements LocationListener {
         perchEntry=edit("Height above ground (m, optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         mammalPanel.addView(perchEntry);
         content.addView(mammalPanel);
+        TextView mammalToggle=label("▾ Mammal evidence details",13,true);
+        mammalToggle.setTextColor(GREEN);
+        if(profile.equals("Mammals")){
+            content.addView(mammalToggle);mammalPanel.setVisibility(View.GONE);
+            mammalToggle.setOnClickListener(v->{
+                boolean open=mammalPanel.getVisibility()!=View.VISIBLE;
+                mammalPanel.setVisibility(open?View.VISIBLE:View.GONE);
+                mammalToggle.setText(open?"▴ Hide mammal evidence":"▾ Mammal evidence details");
+            });
+        }
+        content.addView(section("PHOTO EVIDENCE"));
+        LinearLayout photoRow=horizontal();
+        Button photoButton=UiKit.button(this,"Attach photo from phone","secondary");
+        photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(49),2));
+        photoStatus=label("No photo attached",12,false);
+        photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));
+        content.addView(photoRow);
+        photoButton.setOnClickListener(v->pickPhoto());
+        photoPreview=new ImageView(this);
+        photoPreview.setAdjustViewBounds(true);
+        photoPreview.setMaxHeight(dp(180));
+        photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
         detailToggle=label("＋ Ecology, habitat and notes (optional)",14,true);
         detailToggle.setTextColor(GREEN);content.addView(detailToggle);
         advancedPanel=vertical();
@@ -345,6 +419,9 @@ public class MainActivity extends Activity implements LocationListener {
         behaviorEntry=edit("Behavior / reproductive evidence",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         notesEntry=edit("Observation notes",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         notesEntry.setSingleLine(false);notesEntry.setMinLines(2);
+        identificationNote=edit("Identification evidence / uncertainty (optional)",
+            InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        advancedPanel.addView(identificationNote);
         advancedPanel.addView(habitatEntry);advancedPanel.addView(behaviorEntry);advancedPanel.addView(notesEntry);
         advancedPanel.setVisibility(View.GONE);content.addView(advancedPanel);
         detailToggle.setOnClickListener(v->{detailShown=!detailShown;advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);queueDraft();
@@ -399,6 +476,48 @@ public class MainActivity extends Activity implements LocationListener {
         methodSpinner.setEnabled(false);
         lineRow.setVisibility(SurveyMethods.isBirdLine(profile,method)?View.VISIBLE:View.GONE);
     }
+    private void toggleFavorite(){
+        if(taxonEntry==null)return;
+        String term=taxonEntry.getText().toString().trim();
+        if(term.length()<2){toast("Select or type a taxon before marking favorite");return;}
+        SQLiteDatabase d=db.getWritableDatabase();
+        int exists=0;
+        try(Cursor c=d.rawQuery("SELECT COUNT(*) FROM taxa_favorites WHERE taxon_group=? AND raw_identification=?",
+            new String[]{group,term})){
+            if(c.moveToFirst())exists=c.getInt(0);
+        }
+        if(exists>0)d.execSQL("DELETE FROM taxa_favorites WHERE taxon_group=? AND raw_identification=?",
+            new Object[]{group,term});
+        else d.execSQL("INSERT OR IGNORE INTO taxa_favorites(taxon_group,raw_identification) VALUES(?,?)",
+            new Object[]{group,term});
+        refreshFavoriteIcon();updateTaxaSuggestions(false);
+        toast(exists>0?"Removed favorite":"Favorite saved");
+    }
+    private void refreshFavoriteIcon(){
+        if(favoriteButton==null||taxonEntry==null||db==null)return;
+        String name=taxonEntry.getText().toString().trim();
+        boolean starred=false;
+        if(!name.isEmpty())try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT 1 FROM taxa_favorites WHERE taxon_group=? AND raw_identification=?",
+            new String[]{group,name})){
+            starred=c.moveToFirst();
+        }catch(Exception ignored){}
+        favoriteButton.setText(starred?"★":"☆");
+    }
+    private void pickPhoto(){
+        Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        startActivityForResult(intent,PHOTO_PICK);
+    }
+    private void showPendingPhoto(){
+        if(photoStatus!=null)photoStatus.setText(pendingPhoto==null?"No photo selected":"Photo ready · copied offline");
+        if(photoPreview!=null){
+            photoPreview.setVisibility(pendingPhoto==null?View.GONE:View.VISIBLE);
+            if(pendingPhoto!=null)PhotoEvidence.preview(this,pendingPhoto,photoPreview);
+            else photoPreview.setImageDrawable(null);
+        }
+    }
     private void refreshAutocomplete(){updateTaxaSuggestions(true);}
     private void updateTaxaSuggestions(boolean clear){
         if(taxonEntry==null)return;
@@ -406,6 +525,26 @@ public class MainActivity extends Activity implements LocationListener {
         boolean regional=regionalOnlyChoice!=null&&regionalOnlyChoice.isChecked()&&
             !geographicRegion.equals("PH")&&!geographicRegion.equals("OTHER");
         for(String unknown:Taxa.unknownLabels(group))items.add(unknown);
+        try(Cursor fav=db.getReadableDatabase().rawQuery(
+            "SELECT raw_identification FROM taxa_favorites WHERE taxon_group=? ORDER BY raw_identification",
+            new String[]{group})){
+            while(fav.moveToNext())items.add(fav.getString(0));
+        }catch(Exception ignored){}
+        try(Cursor cat=db.getReadableDatabase().rawQuery(
+            "SELECT common_name,scientific_name,region_codes,review_status FROM taxon_catalog "+
+            "WHERE taxon_group=? ORDER BY common_name,scientific_name",
+            new String[]{group})){
+            while(cat.moveToNext()){
+                String common=cat.isNull(0)?"":cat.getString(0);
+                String scientific=cat.getString(1);
+                String codes=cat.isNull(2)?"":cat.getString(2);
+                boolean matched=!geographicRegion.equals("PH")&&
+                    (("|"+codes+"|").contains("|"+geographicRegion+"|")||
+                     (!adminPsgc.isEmpty()&&("|"+codes+"|").contains("|P:"+adminPsgc+"|")))&&
+                    cat.getString(3).equals("reviewed");
+                if(!regional||matched)items.add(common.isEmpty()?scientific:common+" · "+scientific);
+            }
+        }catch(Exception ignored){}
         String[] curated=Taxa.sortedLabels(group,geographicRegion,regional);
         for(String v:curated)items.add(v);
         if(!regional){
@@ -422,6 +561,7 @@ public class MainActivity extends Activity implements LocationListener {
         taxonEntry.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_dropdown_item_1line,
             new java.util.ArrayList<>(items)));
         if(checklistNote!=null)checklistNote.setText(
+            (adminProvince.isEmpty()?"":adminProvince+" · ")+
             (geographicRegion.equals("PH")?"Philippines · all starter taxa":GeoRegions.label(geographicRegion))+
             (regional?" · documented regional subset only":" · includes unassessed taxa")+
             "\nRegional tags are incomplete; typing another species remains allowed.");
@@ -429,9 +569,9 @@ public class MainActivity extends Activity implements LocationListener {
             "Name or unidentified "+group.toLowerCase(Locale.US).replace("s",""));
         if(clear)taxonEntry.setText("");
         distanceEntry.setHint(group.equals("Birds")?"Horizontal distance (m)":"Distance (m, optional)");
-        if(birdMeasurements!=null)birdMeasurements.setVisibility(group.equals("Birds")?View.VISIBLE:View.GONE);
-        if(herpPanel!=null)herpPanel.setVisibility(profile.equals("Herpetofauna")?View.VISIBLE:View.GONE);
-        if(mammalPanel!=null)mammalPanel.setVisibility(profile.equals("Mammals")?View.VISIBLE:View.GONE);
+        if(birdMeasurements!=null&&!group.equals("Birds"))birdMeasurements.setVisibility(View.GONE);
+        if(herpPanel!=null&&!profile.equals("Herpetofauna"))herpPanel.setVisibility(View.GONE);
+        if(mammalPanel!=null&&!profile.equals("Mammals"))mammalPanel.setVisibility(View.GONE);
         if(noiseSpinner!=null)noiseSpinner.setVisibility(method.equals("amphibian_calls")?View.VISIBLE:View.GONE);
         if(callScoreSpinner!=null&&profile.equals("Herpetofauna"))callScoreSpinner.setVisibility(group.equals("Amphibians")?View.VISIBLE:View.GONE);
     }
@@ -453,6 +593,11 @@ public class MainActivity extends Activity implements LocationListener {
             try(Cursor region=db.getReadableDatabase().rawQuery(
                 "SELECT COALESCE(geographic_region_id,'PH') FROM surveys WHERE id=?",new String[]{eventId})){
                 if(region.moveToFirst())geographicRegion=region.getString(0);
+                try(Cursor admin=db.getReadableDatabase().rawQuery(
+                    "SELECT COALESCE(admin_province_name,''),COALESCE(admin_province_psgc,'') FROM surveys WHERE id=?",
+                    new String[]{eventId})){
+                    if(admin.moveToFirst()){adminProvince=admin.getString(0);adminPsgc=admin.getString(1);}
+                }
             }catch(Exception ignored){}
             try(Cursor pc=db.getReadableDatabase().rawQuery(
                 "SELECT COALESCE(total_paused_ms,0),COALESCE(paused_at_utc,''),COALESCE(effort_paused,0) FROM surveys WHERE id=?",
@@ -494,8 +639,8 @@ public class MainActivity extends Activity implements LocationListener {
         eventId="SV-"+System.currentTimeMillis();startedAt=System.currentTimeMillis();pointNotice=false;
         int target=method.equals("point_count")?pointTargetSeconds:0;
         lineBearing=SurveyMethods.isBirdLine(profile,method)?line:null;
-        db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,planned_duration_s,geographic_region_id,geographic_selection_method,regional_taxa_version) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-          new Object[]{eventId,method,iso(startedAt),lineBearing,group,target,profile,stationId,observerName,basicLogOnly?"basic_log_only":"beta_standardized",projectId,regionLabel,stratumAreaKm2,pointRadiusM,plannedDurationSeconds,geographicRegion,GeoRegions.BOUNDARY_METHOD,GeoRegions.DATASET});
+        db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,planned_duration_s,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+          new Object[]{eventId,method,iso(startedAt),lineBearing,group,target,profile,stationId,observerName,basicLogOnly?"basic_log_only":"beta_standardized",projectId,regionLabel,stratumAreaKm2,pointRadiusM,plannedDurationSeconds,geographicRegion,geographicSelectionMethod,GeoRegions.DATASET,adminProvince,adminPsgc,adminBoundaryVersion,adminBoundaryStatus});
         if(method.equals("point_count"))startPoint(stationId);
         else if(requiresGenericUnit())startUnit(stationId);
 
@@ -1085,7 +1230,9 @@ public class MainActivity extends Activity implements LocationListener {
         if(height!=null&&(height<0||height>150)){
             toast("Check height above ground");return;
         }
-        boolean candidate=group.equals("Birds")&&!unidentified&&!genusOnly&&
+        String confidence=confidenceSpinner.getSelectedItem().toString();
+        if(unidentified)confidence="Unidentified";
+        boolean candidate=group.equals("Birds")&&!confidence.equals("Uncertain")&&!confidence.equals("Unidentified")&&!unidentified&&!genusOnly&&
             !id[1].isEmpty()&&distance!=null&&!distanceMethod.equals("Unknown")
           &&firstPosition.equals("Yes")&&inWindow&&(method.equals("point_count")||method.equals("line_transect"))
           &&(!method.equals("line_transect")||perp!=null)
@@ -1094,7 +1241,7 @@ public class MainActivity extends Activity implements LocationListener {
         Location loc=location;
         Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),acc=loc==null?null:loc.getAccuracy();
         db.getWritableDatabase().execSQL(
-            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,identification_level,regional_evidence_status,geo_region_at_detection) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,identification_level,regional_evidence_status,geo_region_at_detection,identification_confidence,identification_review_note) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{eventId,iso(first),group,id[0],id[1],raw,count,detectionSpinner.getSelectedItem().toString(),
                 distance,markedBearing,markedPitch,perp,lat,lon,acc,
                 habitatEntry.getText().toString().trim(),behaviorEntry.getText().toString().trim(),
@@ -1118,8 +1265,21 @@ public class MainActivity extends Activity implements LocationListener {
                     method.equals("live_trap_check")?"capture":
                     method.equals("coverboard_search")||method.equals("drift_fence_check")?"encounter":
                     "individuals",
-                identificationLevel,geoSupport,geographicRegion});
+                identificationLevel,geoSupport,geographicRegion,
+                confidence,identificationNote.getText().toString().trim()});
+        if(pendingPhoto!=null){
+            try(Cursor c=db.getReadableDatabase().rawQuery("SELECT last_insert_rowid()",null)){
+                if(c.moveToFirst()){
+                    long recordId=c.getLong(0);
+                    PhotoEvidence.attach(this,db.getWritableDatabase(),recordId,pendingPhoto);
+                    pendingPhoto=null;showPendingPhoto();
+                }
+            }catch(Exception photoError){
+                toast("Observation saved, but photo link needs review: "+photoError.getMessage());
+            }
+        }
         taxonEntry.setText("");count=1;countView.setText("1");distanceEntry.setText("");
+        confidenceSpinner.setSelection(0);identificationNote.setText("");
         habitatEntry.setText("");behaviorEntry.setText("");notesEntry.setText("");
         // Retain environmental measurements through each visit. Reset identification-specific evidence.
         if(evidenceSpinner!=null)evidenceSpinner.setSelection(0);
@@ -1200,6 +1360,15 @@ public class MainActivity extends Activity implements LocationListener {
     }
     @Override protected void onActivityResult(int req,int result,Intent data){
         super.onActivityResult(req,result,data);
+        if(req==PHOTO_PICK){
+            if(result==RESULT_OK&&data!=null&&data.getData()!=null){
+                try{
+                    pendingPhoto=PhotoEvidence.addPending(this,data.getData());
+                    showPendingPhoto();persistDraft();
+                }catch(Exception ex){toast("Photo selection failed: "+ex.getMessage());}
+            }
+            return;
+        }
         if(req==CAMERA_REQ){
             if(result==RESULT_OK && data!=null){
                 float az=data.getFloatExtra("bearing_deg",Float.NaN);
@@ -1221,11 +1390,11 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at FROM sites",
               "station_id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at");
             csv(z,"surveys.csv",
-              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version FROM surveys",
-              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version");
+              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status FROM surveys",
+              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status");
             csv(z,"observations.csv",
-              "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,COALESCE(s.outcome,'active'),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
-              "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection");
+              "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,COALESCE(s.outcome,'active'),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection,r.identification_confidence,r.identification_review_note FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
+              "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection,identification_confidence,identification_review_note");
             csv(z,"sampling_units.csv",
               "SELECT u.id,u.event_id,u.station_id,u.sequence_number,u.method,u.started,u.ended,u.target_seconds,u.completed,u.effort_minutes,u.effort_area_m2,u.effort_length_m,u.noise_score,u.wind_score,u.rain_condition,u.equipment_id,u.number_devices,u.trap_effort_hours,u.unit_paused_ms,u.camera_days_verified,u.trap_nights_verified,u.recorder_hours_verified,u.deployment_started_utc,u.deployment_ended_utc,u.downtime_hours,u.effort_remarks,COALESCE(s.outcome,'active') FROM sampling_units u JOIN surveys s ON s.id=u.event_id ORDER BY u.event_id,u.sequence_number",
               "sampling_unit_id,event_id,station_id,sequence,method,start_utc,end_utc,target_seconds,completed,active_effort_minutes,searched_area_m2,searched_length_m,noise_score,wind_score,rain_condition,equipment_id,number_devices,device_hours,unit_paused_ms,verified_camera_days,verified_trap_nights,verified_recorder_hours,deployment_start_utc,deployment_end_utc,downtime_hours,effort_notes,survey_outcome");
@@ -1246,6 +1415,7 @@ public class MainActivity extends Activity implements LocationListener {
               "Sample.Label,station_id,method,Region.Label,Area_km2,Effort_line_km_or_point_visits,line_length_m,planned_duration_seconds,point_radius_m,completed");
             DistanceExport.write(z,db.getReadableDatabase());
             ResearchExports.write(z,db.getReadableDatabase());
+            PhotoEvidence.writeZip(this,z,db.getReadableDatabase());
             csv(z,"distance_review.csv",
               "SELECT r.id,r.event_id,r.taxon_group,r.raw_identification,r.horizontal_m,r.perpendicular_m,r.individual_count,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,s.method,COALESCE(p.station_id,s.station_id),s.effort_length_m,s.point_target_s,s.region_label,s.area_km2,s.complete,r.point_count_id,r.protocol_window_flag FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' AND COALESCE(s.outcome,'active')='complete' AND (s.method='point_count' OR s.method='line_transect')",
               "record_id,event_id,taxon_group,taxon,horizontal_m,perpendicular_m,group_size,distance_method,initial_position,movement_status,candidate_flag,survey_method,station_id,effort_length_m,point_target_s,region_label,area_km2,completed,point_count_id,window_flag");
@@ -1284,7 +1454,7 @@ public class MainActivity extends Activity implements LocationListener {
         handler.postDelayed(delayedDraftSave,800);
     }
     private void watchDraftFields(){
-        for(EditText e:new EditText[]{taxonEntry,distanceEntry,lineEntry,habitatEntry,behaviorEntry,notesEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry}){
+        for(EditText e:new EditText[]{taxonEntry,distanceEntry,lineEntry,identificationNote,habitatEntry,behaviorEntry,notesEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry}){
             e.addTextChangedListener(new TextWatcher(){
                 public void beforeTextChanged(CharSequence s,int start,int count,int after){}
                 public void onTextChanged(CharSequence s,int start,int before,int count){queueDraft();}
@@ -1304,6 +1474,7 @@ public class MainActivity extends Activity implements LocationListener {
         evidenceSpinner.setOnItemSelectedListener(onSelection);
         lifeStageSpinner.setOnItemSelectedListener(onSelection);
         noiseSpinner.setOnItemSelectedListener(onSelection);
+        confidenceSpinner.setOnItemSelectedListener(onSelection);
     }
     /** Foreground survey draft is persisted independent of Android Activity lifetime. */
     private void persistDraft(){
@@ -1311,6 +1482,9 @@ public class MainActivity extends Activity implements LocationListener {
         try{
             JSONObject d=new JSONObject();
             d.put("group",group);d.put("taxon",taxonEntry.getText().toString());
+            d.put("confidence",confidenceSpinner.getSelectedItemPosition());
+            d.put("identificationNote",identificationNote.getText().toString());
+            d.put("pendingPhoto",pendingPhoto==null?"":pendingPhoto);
             d.put("count",count);d.put("distance",distanceEntry.getText().toString());
             d.put("line",lineEntry.getText().toString());
             d.put("detection",detectionSpinner.getSelectedItemPosition());
@@ -1353,6 +1527,10 @@ public class MainActivity extends Activity implements LocationListener {
                 group=g;showGroups();refreshAutocomplete();
             }
             taxonEntry.setText(d.optString("taxon",""));
+            confidenceSpinner.setSelection(d.optInt("confidence",0));
+            identificationNote.setText(d.optString("identificationNote",""));
+            pendingPhoto=d.optString("pendingPhoto","").isEmpty()?null:d.optString("pendingPhoto");
+            showPendingPhoto();
             distanceEntry.setText(d.optString("distance",""));
             if(!d.optString("line","").isEmpty())lineEntry.setText(d.optString("line",""));
             count=d.optInt("count",1);countView.setText(""+count);

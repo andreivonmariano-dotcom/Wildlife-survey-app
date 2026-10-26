@@ -59,7 +59,8 @@ public final class ResearchExports {
             "FROM field_records r JOIN surveys s ON s.id=r.event_id LEFT JOIN point_counts p ON p.id=r.point_count_id "+
             "LEFT JOIN sampling_units u ON u.id=r.sampling_unit_id "+
             "WHERE r.deleted_at IS NULL AND COALESCE(s.outcome,'active')='complete' "+
-            "AND r.identification_level='species_name_unverified' ORDER BY r.id",null)){
+            "AND r.identification_level='species_name_unverified' "+
+            "AND COALESCE(r.identification_confidence,'not_assessed') NOT IN ('Uncertain','Unidentified') ORDER BY r.id",null)){
             while(c.moveToNext()){
                 row(z,num(c,0),num(c,1),num(c,2),num(c,3),num(c,4),num(c,5),num(c,6),num(c,7),num(c,8),
                     "observer_GPS_not_exact_animal_location",num(c,9),num(c,10),num(c,11),num(c,12),

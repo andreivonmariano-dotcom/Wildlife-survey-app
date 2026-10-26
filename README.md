@@ -1,47 +1,32 @@
-# Philippine Wildlife Survey Beta v0.8
+# Philippine Wildlife Survey Beta v0.9
 
-Independent offline field collection for Philippine Birds, Herpetofauna and Mammals. No SMART, KALUMBATA or external rangefinder integration.
+Offline Android app for Birds, Herpetofauna, and Mammals. No SMART or KALUMBATA integration.
 
-## What changed
-- Welcome page has a clear dark forest header, survey choices and access to Dashboard, Survey History, Stations and Import.
-- Main recording form gains **Home**, **Review** and an anchored **Save Observation** button. Actions have distinct primary, navigation, caution and camera colors.
-- Camera stays off until explicitly opened. Camera closes after bearing capture.
-- Active survey context lives in the local database. Incomplete observation forms are saved as a device-local draft. Fields autosave after typing pauses (~0.8 seconds), and save again when backgrounded or switching to camera.
-- Restart can reopen the active survey rather than resetting the user to Home, unless **Home** was deliberately selected.
-- Setup page retains a partially completed survey setup when switching away from the app.
-- Fieldwork Dashboard displays survey counts, completion statuses, observation totals and counts grouped by taxon. **No density estimation is attempted.** The dashboard runs SQLite \`PRAGMA quick_check\` upon user request.
-- Bird survey setup supports a point count radius, duration, station, observer, strata label and study area. Line transects require a matching **magnetic** line bearing.
-- Bird observations capture estimated/measured distance, distance to initial detected position, and movement. Point count radius and line-direction availability affect the candidate analysis flag.
-- Export includes linked CSV data, distance sample effort, a **species-specific draft flatfile** with zero-detection sample rows only where that taxon was not recorded at all. Events with sightings lacking valid distance are not mislabelled as zero detections, and the audit trail. The flatfile must be filtered by one species and one protocol before R Distance analysis. Missing stratum area or length are left empty, never fabricated.
-- A dedicated **Import v0.7 backup** screen imports the previous Beta's exported CSV ZIP into a fresh, empty v0.8 database transactionally. Read the migration warning below.
+## v0.9 field updates
+- Each bird **point count** is its own sampling unit, with `point_count_id`, station ID, start/end timestamp, target duration and completion status. One survey session can contain several station counts.
+- **Finish point · Next station**: choose from registered stations, close the current point and start the next timer. Bird observations remain linked to the original station. The separate **Finish survey** action closes the whole field session.
+- A bird recorded outside the point-count timer remains in the biodiversity observations but is excluded from the preliminary distance-sampling candidate flag. Short point counts are flagged incomplete.
+- Bird line-transect duration is set during survey setup (for example, 120 minutes). VES and amphibian listening surveys also accept planned duration.
+- The remaining time appears on the survey screen. During the final 30 seconds the text pulses red. An alert is displayed near the end, without making sound.
+- A **location foreground service** records GPS track positions for line transects and VES transects, including screen-off / app-in-background operation where permitted by Android. It shows a persistent notification. Recording ends when the field session is closed.
+- Survey screen shows **GPS walked path ~meters**, computed from accepted GPS fixes with filters for poor accuracy, unrealistically rapid jumps, short jitter and long gaps. This is NOT a verified straight-line transect length. The official effort-length field remains a separate observer-entered value.
+- Herpetofauna form adds air temperature, relative humidity, substrate, microhabitat, weather and optional amphibian calling index. VES duration and searched area are separate survey-level data.
+- Survey history groups observations by point-count station and visit number. The dashboard reports point visits and GPS path totals.
 
-## Installation and preservation of earlier data
-**IMPORTANT:** v0.8 installs alongside v0.7. It uses Android ID \`org.phwildlife.survey.beta08\`, not the original Beta ID. This decision is deliberate: previous GitHub runs did not retain their signing keys and Android could reject an in-place update. Do not uninstall v0.7 until data has been exported, imported, and verified.
+## Data exports
+ZIP includes `point_counts.csv`, `track_points.csv`, `transect_tracks.geojson`, `distance_samples.csv`, `distance_flatfile_draft.csv`, `distance_review.csv`, `occupancy_visits.csv`, `sdm_occurrences.csv`, `herpetofauna_observations.csv`, and previous datasets.
+- R Distance draft: each point count is a separate sample; distance, effort and study area use consistent **km / km²** units. Line samples use the measured route length in km. True zero-detection rows are not created for observations missing a distance.
+- Occupancy file contains actual sampling units and positive detections, **not artificial absences**. Occupancy models need defined target species, repeated visits and detection covariates.
+- SDM file flags GPS coordinates as **observer positions**, not exact wildlife locations. No background or pseudoabsence points are invented.
+- GIS track file is the filtered observer walking path in WGS84 longitude/latitude, not a verified transect survey design.
 
-1. In v0.7, open an active survey if needed and use **Export** to save your ZIP backup. Export first, then keep the old app installed.
-2. Install v0.8 from the v0.8 GitHub Release APK.
-3. On v0.8 Home choose **Import v0.7 backup**, select that ZIP and confirm.
-4. Check project/station register, survey history, record counts and sample CSV. Keep an external copy of the ZIP.
-5. Start new v0.8 surveys only after import if past records are needed: import refuses to run into a database containing survey data to avoid ID conflicts.
+## Installation and data integrity
+v0.9 has the same app ID (`org.phwildlife.survey.beta08`) and signing key as v0.8. Export existing data first, then install v0.9 over v0.8. Earlier v0.7 remains separately installed. Schema is updated non-destructively to version 5.
 
-The new signing key is generated in a fixed path and cached by GitHub Actions for follow-up v0.8 builds. For longer-term releases, a durable protected signing key must be set up. Cache expiry still threatens continuity, so backup data routinely.
+## Android permissions
+Foreground GPS recording starts only from an active transect in the app and uses a visible ongoing notification. Android may interrupt tracking when location permission is revoked, battery-saving policies interfere, or GPS quality deteriorates. A missing GPS track is not imputed.
 
-## Scientific data limitations
-Distance-sampling \`distance_eligible\` is **only a screening candidate flag**. It is not an authoritative scientific validity decision. Field-calibrate compass and distance estimates. Record initial detection position and method-specific effort. R \`Distance\` needs per-species and per-method input, stratum areas, valid effort and sample-level nondetection rows. Detections missing distance remain biodiversity observations. Methods that require camera deployment, live trap nights or acoustic recorder effort still provide preliminary logging only.
+## Scientific status
+**Beta field prototype.** Camera cannot measure target distance. GPS walked distance is not validated route effort. The bird species starter names are unreviewed. Distance, occupancy and SDM export tables remain candidates, not finalized analytical datasets. Survey protocol adherence, taxonomic verification, effort calibration and model assumptions require researcher review.
 
-## Known limits
-- No complete reviewed Philippine taxonomic checklist yet.
-- No field-tested GPS accuracy thresholds, geomagnetic declination correction or transect segment geometry.
-- No audio/photo evidence capture or automatic GIS maps yet.
-- Database quick_check verifies internal storage consistency, not ecology or species accuracy.
-- The v0.7 import recognizes exports from v0.7 with \`projects.csv\`, \`sites.csv\`, \`surveys.csv\`, \`observations.csv\` and \`edit_history.csv\`. It is not a universal import format. Deleted observations excluded from the v0.7 observation CSV are not reconstructed.
-- The application should be tested on a real device for configuration changes, process death, data migration and CSV values.
-
-## Docs
-- [v0.8 release and QA plan](docs/RELIABILITY_AND_QA_v0_8.md)
-- [Distance-sampling workflow](docs/BIRD_DISTANCE_SAMPLING_PROTOCOL_v0_7.md)
-- [Field schema](docs/FIELD_DATA_DICTIONARY_v0_7.md)
-
-## Reference sources
-- Android save UI state: https://developer.android.com/topic/libraries/architecture/views/saving-states-views
-- R Distance flatfile: https://distancesampling.org/Distance/reference/flatfile.html
+See [v0.9 field QA](docs/QA_v0_9.md).

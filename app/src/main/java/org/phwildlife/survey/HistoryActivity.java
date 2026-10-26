@@ -53,12 +53,13 @@ public class HistoryActivity extends Activity {
             if(meta.moveToFirst())rows.addView(text("Station "+meta.getString(0)+" · "+meta.getString(1)+"\n"+meta.getString(2)+"\n"+(meta.isNull(3)?"Survey still active":"Survey finished"),14));
         }
         try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT id,COALESCE(raw_identification,''),COALESCE(taxon_group,''),individual_count,horizontal_m,COALESCE(detection_method,''),detected_at FROM field_records WHERE event_id=? AND deleted_at IS NULL ORDER BY detected_at,id",new String[]{event})){
+            "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,''),COALESCE(p.sequence_number,0) FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,0),r.detected_at,r.id",new String[]{event})){
             if(c.getCount()==0)rows.addView(text("No detections recorded. The survey event remains saved.",14));
             while(c.moveToNext()){
                 long record=c.getLong(0);
                 String dist=c.isNull(4)?"distance unknown":String.format(Locale.US,"%.1f m",c.getDouble(4));
-                Button item=btn(c.getString(1)+" · "+c.getInt(3)+"\n"+c.getString(2)+" · "+c.getString(5)+" · "+dist+"\n"+c.getString(6));
+                String point=c.getInt(8)>0?"Station "+c.getString(7)+" · Point "+c.getInt(8)+"\n":"";
+                Button item=btn(point+c.getString(1)+" · "+c.getInt(3)+"\n"+c.getString(2)+" · "+c.getString(5)+" · "+dist+"\n"+c.getString(6));
                 item.setOnClickListener(v->recordDetail(record));
                 rows.addView(item);
             }
@@ -146,11 +147,12 @@ public class HistoryActivity extends Activity {
                 values.put("initial_position",first.getSelectedItem().toString());
                 values.put("movement_status",movement.getSelectedItem().toString());
                 String event=before.optString("event_id");
-                String[] survey=new String[]{"","",""};
-                try(Cursor c=writable.rawQuery("SELECT method,transect_az,point_radius_m FROM surveys WHERE id=?",new String[]{event})){
+                String[] survey=new String[]{"","","",""};
+                try(Cursor c=writable.rawQuery("SELECT method,transect_az,point_radius_m,planned_duration_s FROM surveys WHERE id=?",new String[]{event})){
                     if(c.moveToFirst()){
                         survey[0]=c.getString(0);survey[1]=c.isNull(1)?"":c.getString(1);
                         survey[2]=c.isNull(2)?"":c.getString(2);
+                        survey[3]=c.isNull(3)?"":c.getString(3);
                     }
                 }
                 boolean candidate=d!=null&&first.getSelectedItem().toString().equals("Yes")
@@ -159,7 +161,8 @@ public class HistoryActivity extends Activity {
                     &&!movement.getSelectedItem().toString().equals("Flyover")
                     &&!movement.getSelectedItem().toString().equals("Entering after start")
                     &&(!survey[0].equals("line_transect")||(!survey[1].isEmpty()&&!before.isNull("bearing_magnetic")))
-                    &&(!survey[0].equals("point_count")||survey[2].isEmpty()||d<=Double.parseDouble(survey[2]));
+                    &&(!survey[0].equals("point_count")||survey[2].isEmpty()||d<=Double.parseDouble(survey[2]))
+                    &&!before.optString("protocol_window_flag","within").equals("outside");
                 values.put("distance_eligible",candidate?1:0);
                 if(d!=null&&survey[0].equals("line_transect")&&!survey[1].isEmpty()&&!before.isNull("bearing_magnetic"))
                     values.put("perpendicular_m",Geometry.perpendicular(d,before.getDouble("bearing_magnetic"),Double.parseDouble(survey[1])));

@@ -22,7 +22,7 @@ public class WelcomeActivity extends Activity {
     private boolean custom=false;
     private String currentScreen="home";
     private AutoCompleteTextView stationEntry;
-    private EditText durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry,radiusEntry;
+    private EditText durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry,radiusEntry,transectDurationEntry;
     private Spinner projectChoice;
     private ArrayList<String> projectKeys=new ArrayList<>();
     private RadioGroup methodChoices;
@@ -198,6 +198,12 @@ public class WelcomeActivity extends Activity {
         durationEntry.setHint("Point count duration (minutes)");
         durationEntry.setText("10");
         main.addView(durationEntry);
+        transectDurationEntry=new EditText(this);
+        transectDurationEntry.setTextSize(16);transectDurationEntry.setSingleLine(true);
+        transectDurationEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
+        transectDurationEntry.setHint("Survey duration (minutes)");
+        transectDurationEntry.setText("120");
+        main.addView(transectDurationEntry);
         radiusEntry=new EditText(this);radiusEntry.setTextSize(16);radiusEntry.setSingleLine(true);
         radiusEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         radiusEntry.setHint("Fixed point-count radius (m, optional)");
@@ -213,11 +219,13 @@ public class WelcomeActivity extends Activity {
             if(choice>=0&&choice<choices.length){
                 durationEntry.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);
                 radiusEntry.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);
+                transectDurationEntry.setVisibility(choices[choice].code.equals("line_transect")||choices[choice].code.equals("ves_transect")||choices[choice].code.equals("visual_encounter")||choices[choice].code.equals("amphibian_calls")?View.VISIBLE:View.GONE);
                 lineBearingEntry.setVisibility(profile.equals("Birds")&&choices[choice].code.equals("line_transect")?View.VISIBLE:View.GONE);
             }
         });
         durationEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
         radiusEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
+        transectDurationEntry.setVisibility(choices[0].code.equals("line_transect")||choices[0].code.equals("ves_transect")||choices[0].code.equals("visual_encounter")||choices[0].code.equals("amphibian_calls")?View.VISIBLE:View.GONE);
         lineBearingEntry.setVisibility(View.GONE);
         regionEntry=new EditText(this);regionEntry.setSingleLine(true);
         regionEntry.setHint("Stratum / region label (optional)");
@@ -274,6 +282,15 @@ public class WelcomeActivity extends Activity {
                 durationEntry.setError("Enter 1 to 120 minutes");durationEntry.requestFocus();return;
             }
         }
+        int plannedDuration=0;
+        if(m.code.equals("line_transect")||m.code.equals("ves_transect")||m.code.equals("visual_encounter")||m.code.equals("amphibian_calls")){
+            try{plannedDuration=Integer.parseInt(transectDurationEntry.getText().toString().trim())*60;}
+            catch(Exception ignored){plannedDuration=-1;}
+            if(plannedDuration<60||plannedDuration>43200){
+                transectDurationEntry.setError("Enter 1 to 720 minutes");
+                transectDurationEntry.requestFocus();return;
+            }
+        }
         Double radius=null;
         if(m.code.equals("point_count")&&!radiusEntry.getText().toString().trim().isEmpty()){
             try{radius=Double.valueOf(radiusEntry.getText().toString().trim());}catch(Exception ignored){}
@@ -302,6 +319,7 @@ public class WelcomeActivity extends Activity {
         i.putExtra("observer_name",observerEntry.getText().toString().trim());
         i.putExtra("point_target_s",duration);
         i.putExtra("point_radius_m",radius==null?Double.NaN:radius);
+        i.putExtra("planned_duration_s",plannedDuration);
         i.putExtra("custom_survey",custom);
         i.putExtra("basic_log_only",m.basicLog);
         currentScreen="home";homeVisible=true;
@@ -319,6 +337,7 @@ public class WelcomeActivity extends Activity {
              .putString("area",areaEntry.getText().toString())
              .putString("region",regionEntry.getText().toString())
              .putString("radius",radiusEntry.getText().toString())
+             .putString("transectDuration",transectDurationEntry.getText().toString())
              .putInt("methodChoice",methodChoices.getCheckedRadioButtonId()-1000)
              .putInt("projectChoice",projectChoice.getSelectedItemPosition());
         }
@@ -336,6 +355,7 @@ public class WelcomeActivity extends Activity {
         areaEntry.setText(p.getString("area",""));
         regionEntry.setText(p.getString("region",""));
         radiusEntry.setText(p.getString("radius",""));
+        transectDurationEntry.setText(p.getString("transectDuration","120"));
         int project=p.getInt("projectChoice",0);
         if(project>=0&&project<projectChoice.getCount())projectChoice.setSelection(project);
     }

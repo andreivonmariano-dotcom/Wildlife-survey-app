@@ -57,6 +57,14 @@ public class DashboardActivity extends Activity {
         int locations=count("SELECT COUNT(*) FROM sites",null);
         int distinct=count("SELECT COUNT(DISTINCT lower(trim(raw_identification))) FROM field_records WHERE deleted_at IS NULL AND trim(COALESCE(raw_identification,''))<>''",null);
         section("SURVEYS",String.valueOf(total),complete+" completed · "+active+" active");
+        int pointVisits=count("SELECT COUNT(*) FROM point_counts",null);
+        int completePoints=count("SELECT COUNT(*) FROM point_counts WHERE completed=1",null);
+        section("POINT COUNT VISITS",String.valueOf(pointVisits),completePoints+" completed · each station has its own count ID");
+        try(Cursor paths=helper.getReadableDatabase().rawQuery(
+          "SELECT COALESCE(SUM(gps_track_m),0),COUNT(*) FROM surveys WHERE method IN ('line_transect','ves_transect')",null)){
+          if(paths.moveToFirst())section("GPS WALKED PATH",String.format(Locale.US,"%.0f m",paths.getDouble(0)),
+            "Across "+paths.getInt(1)+" route surveys · GPS estimate, not certified transect effort");
+        }
         section("DETECTIONS",String.valueOf(records),distinct+" distinct identification labels (not verified species)");
         section("REGISTERED STATIONS",String.valueOf(locations),"Repeated visits remain separate events");
         int candidate=count("SELECT COUNT(*) FROM field_records WHERE deleted_at IS NULL AND taxon_group='Birds' AND distance_eligible=1",null);

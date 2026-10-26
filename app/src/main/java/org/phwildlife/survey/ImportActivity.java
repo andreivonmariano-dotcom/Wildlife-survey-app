@@ -193,6 +193,12 @@ public class ImportActivity extends Activity {
                 str(v,"current_json",r,"current_json");str(v,"reason",r,"reason");
                 insert(d,"record_edits",v);
             }
+            // Imported v0.7 point count events predate station-level point-count IDs.
+            d.execSQL("INSERT OR IGNORE INTO point_counts(id,event_id,station_id,sequence_number,started,ended,target_seconds,completed,notes) "+
+                "SELECT 'LEGACY-'+id,id,COALESCE(station_id,'UNSPECIFIED'),1,started,ended,COALESCE(point_target_s,600),complete,'Imported legacy point count; verify effort' "+
+                "FROM surveys WHERE method='point_count'");
+            d.execSQL("UPDATE field_records SET point_count_id='LEGACY-'||event_id "+
+                "WHERE point_count_id IS NULL AND event_id IN (SELECT id FROM surveys WHERE method='point_count')");
             d.setTransactionSuccessful();
             status.setText("Import successful: "+files.get("surveys.csv").size()+" survey events and "+
                 files.get("observations.csv").size()+" observations restored. Check Survey History and export again for verification.");

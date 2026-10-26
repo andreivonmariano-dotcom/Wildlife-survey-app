@@ -7,13 +7,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 /** Shared offline schema, versioned migrations. Never drop a user observation table. */
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
-    public FieldDb(Context context){super(context,NAME,null,4);}
+    public FieldDb(Context context){super(context,NAME,null,5);}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
         d.execSQL("CREATE TABLE field_records(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,detected_at TEXT,taxon_group TEXT,common_name TEXT,scientific_name TEXT,raw_identification TEXT,individual_count INTEGER,detection_method TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,observer_lat REAL,observer_lon REAL,gps_accuracy_m REAL,habitat TEXT,behavior TEXT,notes TEXT,compass_quality INTEGER,name_source TEXT)");
         d.execSQL("CREATE INDEX record_event_idx ON field_records(event_id)");
         upgradeFour(d);
+        upgradeFive(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -32,6 +33,7 @@ public final class FieldDb extends SQLiteOpenHelper {
             d.execSQL("UPDATE surveys SET survey_profile=COALESCE(taxon_group,'Birds'),protocol_status='legacy' WHERE survey_profile IS NULL");
         }
         if(oldVersion<4)upgradeFour(d);
+        if(oldVersion<5)upgradeFive(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -55,5 +57,29 @@ public final class FieldDb extends SQLiteOpenHelper {
         d.execSQL("INSERT OR IGNORE INTO sites(id,project_id,name,created_at,updated_at) SELECT DISTINCT station_id,'default',station_id,datetime('now'),datetime('now') FROM surveys WHERE station_id IS NOT NULL AND trim(station_id)<>''");
         d.execSQL("INSERT INTO field_records(event_id,detected_at,taxon_group,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,name_source,legacy_source_id,updated_at) SELECT event_id,seen_at,'Birds',taxon,individual_count,detection,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,lat,lon,gps_accuracy_m,'legacy_v0.3',id,datetime('now') FROM sightings");
         d.execSQL("UPDATE field_records SET distance_eligible=0 WHERE distance_eligible IS NULL");
+    }
+    private void upgradeFive(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS point_counts(id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT NOT NULL,sequence_number INTEGER NOT NULL,started TEXT NOT NULL,ended TEXT,target_seconds INTEGER NOT NULL,completed INTEGER,notes TEXT,UNIQUE(event_id,sequence_number))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS point_event_idx ON point_counts(event_id,sequence_number)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS track_points(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,recorded_at TEXT NOT NULL,latitude REAL NOT NULL,longitude REAL NOT NULL,accuracy_m REAL,segment_m REAL DEFAULT 0,accepted INTEGER NOT NULL,reason TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS track_by_event ON track_points(event_id,id)");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN point_count_id TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN protocol_window_flag TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN air_temp_c REAL");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN humidity_pct REAL");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN substrate TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN weather_notes TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN amphibian_call_score INTEGER");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN microhabitat TEXT");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN planned_duration_s INTEGER");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN gps_track_m REAL DEFAULT 0");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN gps_track_status TEXT");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN searched_area_m2 REAL");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN observer_effort_minutes REAL");
+        // Represent pre-v0.9 bird point visits as legacy samples, without invented completion times.
+        d.execSQL("INSERT OR IGNORE INTO point_counts(id,event_id,station_id,sequence_number,started,ended,target_seconds,completed,notes) "+
+            "SELECT 'LEGACY-'+id,id,COALESCE(station_id,'UNSPECIFIED'),1,started,ended,COALESCE(point_target_s,600),complete,'Legacy record grouping only; station effort requires review' "+
+            "FROM surveys WHERE method='point_count'");
+        d.execSQL("UPDATE field_records SET point_count_id='LEGACY-'||event_id WHERE event_id IN (SELECT id FROM surveys WHERE method='point_count') AND point_count_id IS NULL");
     }
 }

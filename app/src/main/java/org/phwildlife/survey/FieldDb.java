@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /** Shared offline schema, versioned migrations. Never drop a user observation table. */
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
-    public FieldDb(Context context){super(context,NAME,null,5);}
+    public FieldDb(Context context){super(context,NAME,null,6);}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -15,6 +15,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         d.execSQL("CREATE INDEX record_event_idx ON field_records(event_id)");
         upgradeFour(d);
         upgradeFive(d);
+        upgradeSix(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -34,6 +35,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         }
         if(oldVersion<4)upgradeFour(d);
         if(oldVersion<5)upgradeFive(d);
+        if(oldVersion<6)upgradeSix(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -81,5 +83,25 @@ public final class FieldDb extends SQLiteOpenHelper {
             "SELECT 'LEGACY-'+id,id,COALESCE(station_id,'UNSPECIFIED'),1,started,ended,COALESCE(point_target_s,600),complete,'Legacy record grouping only; station effort requires review' "+
             "FROM surveys WHERE method='point_count'");
         d.execSQL("UPDATE field_records SET point_count_id='LEGACY-'||event_id WHERE event_id IN (SELECT id FROM surveys WHERE method='point_count') AND point_count_id IS NULL");
+    }
+    private void upgradeSix(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS sampling_units("+
+            "id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT NOT NULL,"+
+            "sequence_number INTEGER NOT NULL,method TEXT NOT NULL,started TEXT NOT NULL,ended TEXT,"+
+            "target_seconds INTEGER,completed INTEGER,effort_minutes REAL,effort_area_m2 REAL,"+
+            "effort_length_m REAL,noise_score INTEGER,wind_score INTEGER,rain_condition TEXT,"+
+            "equipment_id TEXT,number_devices INTEGER,trap_effort_hours REAL,notes TEXT,"+
+            "UNIQUE(event_id,sequence_number))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS units_by_survey ON sampling_units(event_id,sequence_number)");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN sampling_unit_id TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN equipment_id TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN count_basis TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN life_stage TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN evidence_type TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN perch_height_m REAL");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN call_noise_score INTEGER");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN unit_time_status TEXT");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN session_notes TEXT");
+        d.execSQL("UPDATE field_records SET unit_time_status=COALESCE(protocol_window_flag,'unknown') WHERE unit_time_status IS NULL");
     }
 }

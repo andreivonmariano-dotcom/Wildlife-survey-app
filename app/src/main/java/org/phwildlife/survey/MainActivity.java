@@ -48,15 +48,18 @@ public class MainActivity extends Activity implements LocationListener {
     private final Runnable delayedDraftSave=()->persistDraft();
     private final int BACK=Color.rgb(247,249,246),INK=Color.rgb(22,51,38),GREEN=Color.rgb(37,104,74),MUTED=Color.rgb(95,116,101);
     private FieldDb db; private LocationManager locations;
-    private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle;
-    private Spinner methodSpinner,detectionSpinner,distanceSourceSpinner,firstPositionSpinner,movementSpinner,substrateSpinner,callScoreSpinner;
+    private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView;
+    private Spinner methodSpinner,detectionSpinner,distanceSourceSpinner,firstPositionSpinner,movementSpinner,substrateSpinner,callScoreSpinner,lifeStageSpinner,evidenceSpinner,noiseSpinner;
     private AutoCompleteTextView taxonEntry;
-    private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry;
+    private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry;
     private Button beginButton,markButton,saveButton,reviewButton,pointNextButton;
-    private LinearLayout groupBar,advancedPanel,lineRow,birdMeasurements,herpPanel;
+    private LinearLayout groupBar,advancedPanel,lineRow,birdMeasurements,herpPanel,mammalPanel;
     private ScrollView fieldScroll;
     private boolean returnToHome=false;
     private final String[] groups=Taxa.GROUPS;
+    private String samplingUnitId=null;
+    private long unitStartedAt=0;
+    private int unitSequence=0;
     private String group="Birds",eventId=null,pointCountId=null,method="point_count",profile="Birds",stationId="",observerName="",projectId="default",regionLabel="";
     private long pointStartedAt=0;
     private int pointSequence=0,plannedDurationSeconds=0;
@@ -145,7 +148,10 @@ public class MainActivity extends Activity implements LocationListener {
         Button export=UiKit.button(this,"Export","secondary");export.setTextSize(13);
         top.addView(export,new LinearLayout.LayoutParams(dp(84),dp(49)));export.setOnClickListener(v->exportZip());
         root.addView(top);
-        eventView=label("Offline · ready",12,false);eventView.setTextColor(MUTED);root.addView(eventView);
+        sessionClockView=label("Total survey · 00:00:00",16,true);
+        sessionClockView.setTextColor(UiKit.FOREST);root.addView(sessionClockView);
+        eventView=label("Sampling unit timer",15,true);eventView.setTextColor(MUTED);root.addView(eventView);
+        progressView=label("",12,false);progressView.setTextColor(MUTED);root.addView(progressView);
         fieldScroll=new ScrollView(this);fieldScroll.setFillViewport(false);fieldScroll.setVerticalScrollBarEnabled(false);
         LinearLayout content=vertical();content.setPadding(dp(1),0,dp(1),dp(12));
         groupBar=horizontal();content.addView(groupBar);showGroups();
@@ -160,8 +166,8 @@ public class MainActivity extends Activity implements LocationListener {
         beginButton.setOnClickListener(v->toggleEvent());
         pointNextButton=UiKit.button(this,"Finish point · Next station","camera");
         content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,dp(53)));
-        pointNextButton.setVisibility(method.equals("point_count")?View.VISIBLE:View.GONE);
-        pointNextButton.setOnClickListener(v->nextPoint());
+        pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
+        pointNextButton.setOnClickListener(v->{if(method.equals("point_count"))nextPoint();else nextSamplingUnit();});
         trackingView=label("GPS track: awaiting location",14,true);
         trackingView.setTextColor(UiKit.BLUE);
         content.addView(trackingView);
@@ -195,7 +201,10 @@ public class MainActivity extends Activity implements LocationListener {
         taxonEntry.setSelectAllOnFocus(true);content.addView(taxonEntry);
         taxonEntry.setOnClickListener(v->taxonEntry.showDropDown());
         LinearLayout countLine=horizontal();
-        TextView countLabel=label("Individuals",14,true);countLine.addView(countLabel,weighted(1));
+        String countBasis=method.equals("track_sign")||method.equals("camera_trap_check")||
+            method.equals("live_trap_check")||method.equals("bat_acoustic")||
+            method.equals("drift_fence_check")?"Individuals / evidence count":"Individuals";
+        TextView countLabel=label(countBasis,14,true);countLine.addView(countLabel,weighted(1));
         Button minus=button("−");countLine.addView(minus,new LinearLayout.LayoutParams(dp(55),dp(46)));
         countView=label("1",19,true);countView.setGravity(Gravity.CENTER);
         countLine.addView(countView,new LinearLayout.LayoutParams(dp(48),-2));
@@ -232,6 +241,8 @@ public class MainActivity extends Activity implements LocationListener {
         microhabitatEntry=edit("Microhabitat (stream edge, litter, canopy...)",
             InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         herpPanel.addView(microhabitatEntry);
+        herpHeightEntry=edit("Height above ground (m, optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        herpPanel.addView(herpHeightEntry);
         tempEntry=edit("Air temperature °C",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED);
         herpPanel.addView(tempEntry);
         humidityEntry=edit("Relative humidity %",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -246,7 +257,27 @@ public class MainActivity extends Activity implements LocationListener {
         callScoreSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Not scored","0 — no calls","1 — individuals distinguishable","2 — overlapping calls","3 — full chorus"}));
         herpPanel.addView(label("Amphibian call index (ordinal, method-dependent)",12,false));herpPanel.addView(callScoreSpinner);
+        lifeStageSpinner=new Spinner(this);
+        lifeStageSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+            new String[]{"Life stage not recorded","Egg","Larva / tadpole","Juvenile","Subadult","Adult","Unknown"}));
+        herpPanel.addView(label("Life stage",12,false));herpPanel.addView(lifeStageSpinner);
+        noiseSpinner=new Spinner(this);
+        noiseSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+            new String[]{"Noise not assessed","0 — none","1 — slight","2 — moderate","3 — serious","4 — severe"}));
+        herpPanel.addView(label("Background noise during amphibian listening",12,false));
+        herpPanel.addView(noiseSpinner);
         content.addView(herpPanel);
+        mammalPanel=vertical();
+        mammalPanel.addView(section("MAMMAL SURVEY EVIDENCE / EQUIPMENT"));
+        evidenceSpinner=new Spinner(this);
+        evidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+            new String[]{"Evidence not recorded","Direct sighting","Track","Scat","Burrow / den","Camera image","Acoustic detection","Live capture","Other sign"}));
+        mammalPanel.addView(label("Type of evidence",12,false));mammalPanel.addView(evidenceSpinner);
+        deviceEntry=edit("Equipment or trap ID (optional)",InputType.TYPE_CLASS_TEXT);
+        mammalPanel.addView(deviceEntry);
+        perchEntry=edit("Height above ground (m, optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        mammalPanel.addView(perchEntry);
+        content.addView(mammalPanel);
         detailToggle=label("＋ Ecology, habitat and notes (optional)",14,true);
         detailToggle.setTextColor(GREEN);content.addView(detailToggle);
         advancedPanel=vertical();
@@ -272,6 +303,9 @@ public class MainActivity extends Activity implements LocationListener {
         saveButton.setEnabled(active&&(!method.equals("point_count")||pointCountId!=null));
         if(pointNextButton!=null&&pointCountId==null&&method.equals("point_count"))
             pointNextButton.setText("Start next point count");
+        if(pointNextButton!=null&&requiresGenericUnit()&&samplingUnitId==null)
+            pointNextButton.setText("Start next station");
+        if(requiresGenericUnit()&&samplingUnitId==null)saveButton.setEnabled(false);
         saveButton.setOnClickListener(v->save());
         reviewButton.setOnClickListener(v->{
             persistDraft();
@@ -320,6 +354,8 @@ public class MainActivity extends Activity implements LocationListener {
         distanceEntry.setHint(group.equals("Birds")?"Horizontal distance (m)":"Distance (m, optional)");
         if(birdMeasurements!=null)birdMeasurements.setVisibility(group.equals("Birds")?View.VISIBLE:View.GONE);
         if(herpPanel!=null)herpPanel.setVisibility(profile.equals("Herpetofauna")?View.VISIBLE:View.GONE);
+        if(mammalPanel!=null)mammalPanel.setVisibility(profile.equals("Mammals")?View.VISIBLE:View.GONE);
+        if(noiseSpinner!=null)noiseSpinner.setVisibility(method.equals("amphibian_calls")?View.VISIBLE:View.GONE);
         if(callScoreSpinner!=null&&profile.equals("Herpetofauna"))callScoreSpinner.setVisibility(group.equals("Amphibians")?View.VISIBLE:View.GONE);
     }
     private void restoreEvent(){
@@ -345,6 +381,14 @@ public class MainActivity extends Activity implements LocationListener {
                     pointStartedAt=parseIso(c.getString(3));
                 }
             }catch(Exception ignored){}
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT id,station_id,sequence_number,started FROM sampling_units WHERE event_id=? AND ended IS NULL ORDER BY sequence_number DESC LIMIT 1",
+                new String[]{eventId})){
+                if(c.moveToFirst()){
+                    samplingUnitId=c.getString(0);stationId=c.getString(1);unitSequence=c.getInt(2);
+                    unitStartedAt=parseIso(c.getString(3));
+                }
+            }catch(Exception ignored){}
             try(Cursor c=db.getReadableDatabase().rawQuery("SELECT COALESCE(planned_duration_s,0) FROM surveys WHERE id=?",new String[]{eventId})){
                 if(c.moveToFirst())plannedDurationSeconds=c.getInt(0);
             }catch(Exception ignored){}
@@ -363,6 +407,7 @@ public class MainActivity extends Activity implements LocationListener {
         db.getWritableDatabase().execSQL("INSERT INTO surveys(id,method,started,transect_az,taxon_group,point_target_s,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,planned_duration_s) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
           new Object[]{eventId,method,iso(startedAt),lineBearing,group,target,profile,stationId,observerName,basicLogOnly?"basic_log_only":"beta_standardized",projectId,regionLabel,stratumAreaKm2,pointRadiusM,plannedDurationSeconds});
         if(method.equals("point_count"))startPoint(stationId);
+        else if(requiresGenericUnit())startUnit(stationId);
 
         active=true;beginButton.setText("Finish survey");saveButton.setEnabled(true);
         if(method.equals("line_transect")||method.equals("ves_transect"))startTracking();
@@ -370,6 +415,15 @@ public class MainActivity extends Activity implements LocationListener {
         toast("Survey started");
     }
     private void finishPrompt(){
+        if(taxonEntry!=null&&!taxonEntry.getText().toString().trim().isEmpty()){
+            new AlertDialog.Builder(this).setTitle("Unfinished observation")
+                .setMessage("Save the entered observation, or clear it before ending the survey.")
+                .setNegativeButton("Keep recording",null)
+                .setPositiveButton("Clear unfinished entry",(d,w)->{
+                    taxonEntry.setText("");distanceEntry.setText("");clearMark();finishPrompt();
+                }).show();
+            return;
+        }
         if(SurveyMethods.needsRouteLength(method)){
             LinearLayout panel=vertical();panel.setPadding(dp(20),0,dp(20),0);
             EditText effort=edit("Verified surveyed route length (meters)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -406,6 +460,13 @@ public class MainActivity extends Activity implements LocationListener {
         if(complete&&plannedDurationSeconds>0&&System.currentTimeMillis()-startedAt<plannedDurationSeconds*1000L){
             complete=false;toast("Survey ended before the planned duration; marked incomplete");
         }
+        if(requiresGenericUnit()&&samplingUnitId!=null)closeUnit(null,null,null,null,null);
+        if(requiresGenericUnit()){
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT COUNT(*) FROM sampling_units WHERE event_id=? AND COALESCE(completed,0)=0",new String[]{eventId})){
+                if(c.moveToFirst()&&c.getInt(0)>0)complete=false;
+            }
+        }
         if(method.equals("point_count")){
             if(pointCountId!=null)closePoint();
             // The session may contain multiple finished points, each with its own status.
@@ -426,6 +487,159 @@ public class MainActivity extends Activity implements LocationListener {
         saveButton.setEnabled(false);methodSpinner.setEnabled(false);lineEntry.setEnabled(false);showGroups();status();
         toast(complete?"Survey completed":"Survey saved as incomplete");
         navigateHome();
+    }
+
+    private boolean requiresGenericUnit(){
+        return SurveyMethods.structured(method) &&
+            !method.equals("point_count")&&!method.equals("line_transect")&&!method.equals("ves_transect");
+    }
+    private boolean hasStationUnits(){
+        return method.equals("point_count")||requiresGenericUnit();
+    }
+    private int[] visitProgress(){
+        if(eventId==null)return new int[]{0,0,0};
+        String table=method.equals("point_count")?"point_counts":"sampling_units";
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT COUNT(*),SUM(CASE WHEN completed=1 THEN 1 ELSE 0 END),"+
+            "COUNT(DISTINCT station_id) FROM "+table+" WHERE event_id=?",new String[]{eventId})){
+            if(c.moveToFirst())return new int[]{c.getInt(0),c.getInt(1),c.getInt(2)};
+        }catch(Exception ignored){}
+        return new int[]{0,0,0};
+    }
+    private void startUnit(String station){
+        int seq=1;
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT COALESCE(MAX(sequence_number),0)+1 FROM sampling_units WHERE event_id=?",new String[]{eventId})){
+            if(c.moveToFirst())seq=c.getInt(0);
+        }
+        unitSequence=seq;
+        samplingUnitId="UNIT-"+eventId+"-"+unitSequence;
+        unitStartedAt=System.currentTimeMillis();
+        stationId=station;nearEndNotified=false;pointNotice=false;
+        db.getWritableDatabase().execSQL(
+            "INSERT INTO sampling_units(id,event_id,station_id,sequence_number,method,started,target_seconds) VALUES(?,?,?,?,?,?,?)",
+            new Object[]{samplingUnitId,eventId,station,unitSequence,method,iso(unitStartedAt),
+                plannedDurationSeconds>0?plannedDurationSeconds:null});
+        if(pointNextButton!=null)pointNextButton.setText("Finish visit · Next station");
+        if(saveButton!=null)saveButton.setEnabled(active);
+    }
+    private void closeUnit(Double area,Double length,String equipment,Integer devices,Double hours){
+        if(samplingUnitId==null)return;
+        long time=System.currentTimeMillis();
+        double minutes=Math.max(0,(time-unitStartedAt)/60000.0);
+        int completed=plannedDurationSeconds<=0||time-unitStartedAt>=plannedDurationSeconds*1000L?1:0;
+        db.getWritableDatabase().execSQL(
+            "UPDATE sampling_units SET ended=?,completed=?,effort_minutes=?,effort_area_m2=?,"+
+            "effort_length_m=?,equipment_id=?,number_devices=?,trap_effort_hours=? WHERE id=?",
+            new Object[]{iso(time),completed,minutes,area,length,equipment,devices,hours,samplingUnitId});
+        samplingUnitId=null;
+        if(pointNextButton!=null)pointNextButton.setText("Start next station visit");
+        if(saveButton!=null)saveButton.setEnabled(false);
+    }
+    private void nextSamplingUnit(){
+        if(!active||!requiresGenericUnit())return;
+        if(!taxonEntry.getText().toString().trim().isEmpty()){
+            new AlertDialog.Builder(this).setTitle("Unsaved observation")
+                .setMessage("Save the current detection before ending this visit.")
+                .setNegativeButton("Keep recording",null)
+                .setPositiveButton("Clear entry",(d,w)->{
+                    taxonEntry.setText("");distanceEntry.setText("");clearMark();genericUnitPicker();
+                }).show();
+            return;
+        }
+        genericUnitPicker();
+    }
+    private void genericUnitPicker(){
+        String[] list=stationSuggestions();
+        if(list.length==0){toast("Register a station from Home → Projects & stations");return;}
+        LinearLayout panel=vertical();panel.setPadding(dp(16),0,dp(16),0);
+        TextView title=label("Next station, unvisited stations first",13,true);panel.addView(title);
+        Spinner stations=new Spinner(this);
+        stations.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,list));
+        panel.addView(stations);
+        EditText area=edit("Verified area searched m² (optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText length=edit("Verified route/search length m (optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText equipment=edit("Trap/camera/recorder ID (optional)",InputType.TYPE_CLASS_TEXT);
+        EditText devices=edit("Number of devices (optional)",InputType.TYPE_CLASS_NUMBER);
+        EditText hours=edit("Verified device-hours (optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText noise=edit("Noise code 0–4 (optional)",InputType.TYPE_CLASS_NUMBER);
+        EditText wind=edit("Wind code 0–6 (optional)",InputType.TYPE_CLASS_NUMBER);
+        EditText rain=edit("Rain / sky conditions (optional)",InputType.TYPE_CLASS_TEXT);
+        if(samplingUnitId!=null){
+            if(method.equals("visual_encounter")||method.equals("area_search")||method.equals("track_sign"))
+                panel.addView(area);
+            if(method.equals("spotlight")||method.equals("track_sign")||method.equals("area_search"))
+                panel.addView(length);
+            if(method.equals("coverboard_search")||method.equals("drift_fence_check")||
+               method.equals("camera_trap_check")||method.equals("live_trap_check")||method.equals("bat_acoustic")){
+                panel.addView(equipment);panel.addView(devices);panel.addView(hours);
+            }
+            if(profile.equals("Herpetofauna")){
+                panel.addView(label("Conditions at this visit",13,true));
+                panel.addView(noise);panel.addView(wind);panel.addView(rain);
+            }
+        }
+        ScrollView sc=new ScrollView(this);sc.addView(panel);
+        AlertDialog dialog=new AlertDialog.Builder(this)
+            .setTitle(samplingUnitId==null?"Start sampling visit":"Finish visit · next station")
+            .setView(sc).setNegativeButton("Cancel",null)
+            .setNeutralButton("Close visit only",null)
+            .setPositiveButton("Start next station",null).create();
+        dialog.setOnShowListener(v->{
+            android.view.View.OnClickListener close=w->{
+                if(!validateUnitEffort(area,length,devices,hours))return;
+                Integer nv=integerOrNull(noise.getText().toString());
+                Integer windVal=integerOrNull(wind.getText().toString());
+                if(nv!=null&&(nv<0||nv>4)||windVal!=null&&(windVal<0||windVal>6)){
+                    toast("Noise code 0–4; wind code 0–6");return;
+                }
+                if(samplingUnitId!=null){
+                    String finished=samplingUnitId;
+                    closeUnit(number(area.getText().toString()),number(length.getText().toString()),
+                        equipment.getText().toString(),integerOrNull(devices.getText().toString()),number(hours.getText().toString()));
+                    db.getWritableDatabase().execSQL(
+                        "UPDATE sampling_units SET noise_score=?,wind_score=?,rain_condition=? WHERE id=?",
+                        new Object[]{nv,windVal,rain.getText().toString().trim(),finished});
+                }
+                if(w==dialog.getButton(AlertDialog.BUTTON_POSITIVE)){
+                    startUnit(list[stations.getSelectedItemPosition()]);
+                    taxonEntry.setText("");distanceEntry.setText("");clearMark();
+                    toast("Visit "+unitSequence+" · "+stationId);
+                }
+                persistDraft();status();dialog.dismiss();
+            };
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(close);
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(close);
+        });
+        dialog.show();
+    }
+    private static Integer integerOrNull(String text){
+        try{return text.trim().isEmpty()?null:Integer.parseInt(text.trim());}catch(Exception e){return null;}
+    }
+    private boolean validateUnitEffort(EditText area,EditText length,EditText devices,EditText hours){
+        Double a=number(area.getText().toString()),l=number(length.getText().toString()),
+            h=number(hours.getText().toString());
+        Integer n=integerOrNull(devices.getText().toString());
+        if(a!=null&&a<=0||l!=null&&l<=0||h!=null&&h<0||n!=null&&n<=0){
+            toast("Effort and device counts must be positive");return false;
+        }
+        if(!area.getText().toString().trim().isEmpty()&&a==null||
+           !length.getText().toString().trim().isEmpty()&&l==null||
+           !hours.getText().toString().trim().isEmpty()&&h==null||
+           !devices.getText().toString().trim().isEmpty()&&n==null){
+            toast("Check the numeric survey effort entries");return false;
+        }
+        return true;
+    }
+    private String[] stationSuggestions(){
+        java.util.ArrayList<String> stations=new java.util.ArrayList<>();
+        String table=method.equals("point_count")?"point_counts":"sampling_units";
+        String sql="SELECT s.id,COUNT(u.id) AS seen FROM sites s LEFT JOIN "+table+
+            " u ON u.station_id=s.id AND u.event_id=? WHERE s.project_id=? GROUP BY s.id ORDER BY seen ASC,s.id";
+        try(Cursor c=db.getReadableDatabase().rawQuery(sql,new String[]{eventId,projectId})){
+            while(c.moveToNext())stations.add(c.getString(0));
+        }catch(Exception ignored){}
+        return stations.toArray(new String[0]);
     }
     private void startPoint(String station){
         SQLiteDatabase d=db.getWritableDatabase();
@@ -465,12 +679,9 @@ public class MainActivity extends Activity implements LocationListener {
         pointPicker();
     }
     private void pointPicker(){
-        java.util.ArrayList<String> stations=new java.util.ArrayList<>();
-        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id FROM sites WHERE project_id=? ORDER BY id",new String[]{projectId})){
-            while(c.moveToNext())stations.add(c.getString(0));
-        }
-        if(stations.isEmpty()){toast("Register sampling stations from Home first");return;}
-        String[] names=stations.toArray(new String[0]);final int[] selected={0};
+        String[] names=stationSuggestions();
+        if(names.length==0){toast("Register sampling stations from Home first");return;}
+        final int[] selected={0};
         new AlertDialog.Builder(this).setTitle(pointCountId==null?"Start next point count":"Finish current point, then start next")
             .setMessage("Choose the next station. Previous observations remain linked to their station.")
             .setSingleChoiceItems(names,0,(d,which)->selected[0]=which)
@@ -536,7 +747,13 @@ public class MainActivity extends Activity implements LocationListener {
     private void save(){
         if(!active){toast("Start survey first");return;}
         if(method.equals("point_count")&&pointCountId==null){
-            toast("Start a new station point count before recording");return;
+            toast("Start a new point count station before recording");return;
+        }
+        if(requiresGenericUnit()&&samplingUnitId==null){
+            toast("Start a sampling station before recording");return;
+        }
+        if(method.equals("amphibian_calls")&&callScoreSpinner.getSelectedItemPosition()==1){
+            toast("No calls heard: close the sampling visit without a detection record");return;
         }
         String raw=taxonEntry.getText().toString().trim();
         Double temp=number(tempEntry.getText().toString());
@@ -556,9 +773,17 @@ public class MainActivity extends Activity implements LocationListener {
         String firstPosition=group.equals("Birds")?firstPositionSpinner.getSelectedItem().toString():"Not applicable";
         String movement=group.equals("Birds")?movementSpinner.getSelectedItem().toString():"Not applicable";
         long first=markedAt>0?markedAt:System.currentTimeMillis();
-        boolean inWindow=method.equals("point_count")?pointCountId!=null&&
-            first>=pointStartedAt&&first<=pointStartedAt+pointTargetSeconds*1000L:
-            plannedDurationSeconds<=0||first<=startedAt+plannedDurationSeconds*1000L;
+        boolean inWindow;
+        if(method.equals("point_count"))
+            inWindow=pointCountId!=null&&first>=pointStartedAt&&first<=pointStartedAt+pointTargetSeconds*1000L;
+        else if(requiresGenericUnit())
+            inWindow=samplingUnitId!=null&&(plannedDurationSeconds<=0||
+                first<=unitStartedAt+plannedDurationSeconds*1000L)&&first>=unitStartedAt;
+        else inWindow=plannedDurationSeconds<=0||first<=startedAt+plannedDurationSeconds*1000L;
+        Double height=profile.equals("Herpetofauna")?number(herpHeightEntry.getText().toString()):number(perchEntry.getText().toString());
+        if(height!=null&&(height<0||height>150)){
+            toast("Check height above ground");return;
+        }
         boolean candidate=group.equals("Birds")&&distance!=null&&!distanceMethod.equals("Unknown")
           &&firstPosition.equals("Yes")&&inWindow&&(method.equals("point_count")||method.equals("line_transect"))
           &&(!method.equals("line_transect")||perp!=null)
@@ -567,7 +792,7 @@ public class MainActivity extends Activity implements LocationListener {
         Location loc=location;
         Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),acc=loc==null?null:loc.getAccuracy();
         db.getWritableDatabase().execSQL(
-            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{eventId,iso(first),group,id[0],id[1],raw,count,detectionSpinner.getSelectedItem().toString(),
                 distance,markedBearing,markedPitch,perp,lat,lon,acc,
                 habitatEntry.getText().toString().trim(),behaviorEntry.getText().toString().trim(),
@@ -578,47 +803,82 @@ public class MainActivity extends Activity implements LocationListener {
                 profile.equals("Herpetofauna")?substrateSpinner.getSelectedItem().toString():null,
                 weatherEntry.getText().toString().trim(),
                 profile.equals("Herpetofauna")&&group.equals("Amphibians")&&callScoreSpinner.getSelectedItemPosition()>0?callScoreSpinner.getSelectedItemPosition()-1:null,
-                microhabitatEntry.getText().toString().trim()});
+                microhabitatEntry.getText().toString().trim(),samplingUnitId,
+                profile.equals("Herpetofauna")?lifeStageSpinner.getSelectedItem().toString():null,
+                profile.equals("Mammals")?evidenceSpinner.getSelectedItem().toString():null,
+                height,
+                method.equals("amphibian_calls")&&noiseSpinner.getSelectedItemPosition()>0?noiseSpinner.getSelectedItemPosition()-1:null,
+                inWindow?"within":"overtime",
+                profile.equals("Mammals")?deviceEntry.getText().toString().trim():null,
+                method.equals("track_sign")?"sign_event":
+                    method.equals("camera_trap_check")?"image_detection":
+                    method.equals("bat_acoustic")?"acoustic_detection":
+                    method.equals("live_trap_check")?"capture":
+                    method.equals("coverboard_search")||method.equals("drift_fence_check")?"encounter":
+                    "individuals"});
         taxonEntry.setText("");count=1;countView.setText("1");distanceEntry.setText("");
         habitatEntry.setText("");behaviorEntry.setText("");notesEntry.setText("");
-        // Retain environmental measurements through the survey until the observer edits them.
+        // Retain environmental measurements through each visit. Reset identification-specific evidence.
+        if(evidenceSpinner!=null)evidenceSpinner.setSelection(0);
+        if(lifeStageSpinner!=null)lifeStageSpinner.setSelection(0);
         clearMark();
         distanceSourceSpinner.setSelection(0);firstPositionSpinner.setSelection(0);movementSpinner.setSelection(0);
         refreshAutocomplete();
         persistDraft();
         toast(distance==null?"Observation saved · distance not recorded":"Saved offline");
     }
+    private static String timeFmt(long sec){
+        long seconds=Math.max(0,sec);
+        return String.format(Locale.US,"%02d:%02d:%02d",seconds/3600,seconds/60%60,seconds%60);
+    }
     private void status(){
-        if(eventView==null)return;
-        if(active){
-            long now=System.currentTimeMillis(),elapsed=Math.max(0,(now-startedAt)/1000);
-            String message;
-            long left=-1;
-            if(method.equals("point_count")){
-                if(pointCountId==null)message="Point finished · choose next station";
-                else {
-                    left=pointTargetSeconds-Math.max(0,(now-pointStartedAt)/1000);
-                    String timer=String.format(Locale.US,"%02d:%02d",Math.max(0,left)/60,Math.max(0,left)%60);
-                    message="Point "+pointSequence+" · "+stationId+" · "+(left>0?timer+" remaining":"Timer complete · Finish point");
-                }
-            }else if(plannedDurationSeconds>0){
-                left=plannedDurationSeconds-elapsed;
-                String timer=String.format(Locale.US,"%02d:%02d",Math.max(0,left)/60,Math.max(0,left)%60);
-                message=profile+" · "+method.replace('_',' ')+" · "+(left>0?timer+" remaining":"Timer complete");
-            }else message=profile+" · "+method.replace('_',' ')+" · "+(elapsed/60)+" minutes";
-            eventView.setText(message);
-            boolean near=left>=0&&left<=30;
-            eventView.setTextColor(near?Color.rgb(190,37,35):MUTED);
-            eventView.setAlpha(near&&left>0?(now/650%2==0?1f:0.48f):1f);
-            if(near&&!nearEndNotified&&left>0){nearEndNotified=true;toast("30 seconds remaining");}
-            if(left!=-1&&left<=0&&!pointNotice&&(method.equals("point_count")||plannedDurationSeconds>0)){
-                pointNotice=true;toast("Time target reached. Finish the current sampling unit.");
-            }
-            if(method.equals("line_transect")||method.equals("ves_transect"))refreshTrack();
-        }else{
-            eventView.setAlpha(1f);eventView.setTextColor(MUTED);
-            eventView.setText("Offline · Choose a survey method");
+        if(eventView==null||sessionClockView==null)return;
+        if(!active){
+            sessionClockView.setText("Survey not started");
+            eventView.setText("No active sampling unit");
+            progressView.setText("");
+            return;
         }
+        long now=System.currentTimeMillis();
+        long sessionElapsed=Math.max(0,(now-startedAt)/1000);
+        sessionClockView.setText("TOTAL SURVEY TIME  "+timeFmt(sessionElapsed));
+        long unitElapsed=-1,target=0;
+        String label="Survey";
+        if(method.equals("point_count")){
+            if(pointCountId!=null){
+                unitElapsed=Math.max(0,(now-pointStartedAt)/1000);
+                target=pointTargetSeconds;label="POINT "+pointSequence+" · "+stationId;
+            }else label="Point finished · start the next station";
+        }else if(requiresGenericUnit()){
+            if(samplingUnitId!=null){
+                unitElapsed=Math.max(0,(now-unitStartedAt)/1000);
+                target=plannedDurationSeconds;
+                label="VISIT "+unitSequence+" · "+stationId;
+            }else label="Visit closed · start the next station";
+        }else{
+            unitElapsed=sessionElapsed;
+            target=plannedDurationSeconds;
+            label=method.replace('_',' ').toUpperCase(Locale.US);
+        }
+        long remaining=unitElapsed<0||target<=0?Long.MAX_VALUE:target-unitElapsed;
+        if(unitElapsed<0)eventView.setText(label);
+        else if(target<=0)eventView.setText(label+" · ELAPSED "+timeFmt(unitElapsed));
+        else if(remaining>0)eventView.setText(label+" · "+timeFmt(remaining)+" left");
+        else eventView.setText(label+" · OVERTIME +"+timeFmt(-remaining));
+        boolean countdown=remaining!=Long.MAX_VALUE;
+        boolean near=countdown&&remaining>0&&remaining<=30;
+        boolean overtime=countdown&&remaining<=0;
+        eventView.setTextColor(near||overtime?Color.rgb(189,38,38):MUTED);
+        // Pulse only in the final 30 seconds; overtime stays solid red.
+        eventView.setAlpha(near?((now/600)%2==0?1f:0.36f):1f);
+        if(near&&!nearEndNotified){nearEndNotified=true;toast("30 seconds left in this sampling interval");}
+        if(overtime&&!pointNotice){pointNotice=true;toast("Interval target reached. Recording continues in overtime.");}
+        if(hasStationUnits()){
+            int[] visits=visitProgress();
+            progressView.setText(visits[1]+" completed of "+visits[0]+" visits · "+visits[2]+" distinct stations");
+        }else if(target>0)progressView.setText("Scheduled interval "+timeFmt(target)+" · session continues in overtime");
+        else progressView.setText("Session clock continues until Finish survey");
+        if(method.equals("line_transect")||method.equals("ves_transect"))refreshTrack();
     }
     private void exportZip(){
         Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);
@@ -699,7 +959,7 @@ public class MainActivity extends Activity implements LocationListener {
         handler.postDelayed(delayedDraftSave,800);
     }
     private void watchDraftFields(){
-        for(EditText e:new EditText[]{taxonEntry,distanceEntry,lineEntry,habitatEntry,behaviorEntry,notesEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry}){
+        for(EditText e:new EditText[]{taxonEntry,distanceEntry,lineEntry,habitatEntry,behaviorEntry,notesEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry}){
             e.addTextChangedListener(new TextWatcher(){
                 public void beforeTextChanged(CharSequence s,int start,int count,int after){}
                 public void onTextChanged(CharSequence s,int start,int before,int count){queueDraft();}
@@ -716,6 +976,9 @@ public class MainActivity extends Activity implements LocationListener {
         movementSpinner.setOnItemSelectedListener(onSelection);
         substrateSpinner.setOnItemSelectedListener(onSelection);
         callScoreSpinner.setOnItemSelectedListener(onSelection);
+        evidenceSpinner.setOnItemSelectedListener(onSelection);
+        lifeStageSpinner.setOnItemSelectedListener(onSelection);
+        noiseSpinner.setOnItemSelectedListener(onSelection);
     }
     /** Foreground survey draft is persisted independent of Android Activity lifetime. */
     private void persistDraft(){
@@ -734,6 +997,12 @@ public class MainActivity extends Activity implements LocationListener {
             d.put("microhabitat",microhabitatEntry.getText().toString());
             d.put("substrate",substrateSpinner.getSelectedItemPosition());
             d.put("callIndex",callScoreSpinner.getSelectedItemPosition());
+            d.put("noise",noiseSpinner.getSelectedItemPosition());
+            d.put("lifeStage",lifeStageSpinner.getSelectedItemPosition());
+            d.put("evidence",evidenceSpinner.getSelectedItemPosition());
+            d.put("device",deviceEntry.getText().toString());
+            d.put("height",perchEntry.getText().toString());
+            d.put("herpHeight",herpHeightEntry.getText().toString());
             d.put("behavior",behaviorEntry.getText().toString());
             d.put("notes",notesEntry.getText().toString());
             d.put("details",detailShown);
@@ -770,6 +1039,12 @@ public class MainActivity extends Activity implements LocationListener {
             microhabitatEntry.setText(d.optString("microhabitat",""));
             substrateSpinner.setSelection(d.optInt("substrate",0));
             callScoreSpinner.setSelection(d.optInt("callIndex",0));
+            noiseSpinner.setSelection(d.optInt("noise",0));
+            lifeStageSpinner.setSelection(d.optInt("lifeStage",0));
+            evidenceSpinner.setSelection(d.optInt("evidence",0));
+            deviceEntry.setText(d.optString("device",""));
+            perchEntry.setText(d.optString("height",""));
+            herpHeightEntry.setText(d.optString("herpHeight",""));
             behaviorEntry.setText(d.optString("behavior",""));
             notesEntry.setText(d.optString("notes",""));
             distanceSourceSpinner.setSelection(d.optInt("distanceSource",0));

@@ -53,12 +53,12 @@ public class HistoryActivity extends Activity {
             if(meta.moveToFirst())rows.addView(text("Station "+meta.getString(0)+" · "+meta.getString(1)+"\n"+meta.getString(2)+"\n"+(meta.isNull(3)?"Survey still active":"Survey finished"),14));
         }
         try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,''),COALESCE(p.sequence_number,0) FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,0),r.detected_at,r.id",new String[]{event})){
+            "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,u.station_id,''),COALESCE(p.sequence_number,u.sequence_number,0),r.point_count_id,r.sampling_unit_id FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id LEFT JOIN sampling_units u ON u.id=r.sampling_unit_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,u.sequence_number,0),r.detected_at,r.id",new String[]{event})){
             if(c.getCount()==0)rows.addView(text("No detections recorded. The survey event remains saved.",14));
             while(c.moveToNext()){
                 long record=c.getLong(0);
                 String dist=c.isNull(4)?"distance unknown":String.format(Locale.US,"%.1f m",c.getDouble(4));
-                String point=c.getInt(8)>0?"Station "+c.getString(7)+" · Point "+c.getInt(8)+"\n":"";
+                String point=c.getInt(8)>0?"Station "+c.getString(7)+" · "+(!c.isNull(9)?"Point ":"Visit ")+c.getInt(8)+"\n":"";
                 Button item=btn(point+c.getString(1)+" · "+c.getInt(3)+"\n"+c.getString(2)+" · "+c.getString(5)+" · "+dist+"\n"+c.getString(6));
                 item.setOnClickListener(v->recordDetail(record));
                 rows.addView(item);

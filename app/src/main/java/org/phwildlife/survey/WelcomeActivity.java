@@ -201,7 +201,7 @@ public class WelcomeActivity extends Activity {
         transectDurationEntry=new EditText(this);
         transectDurationEntry.setTextSize(16);transectDurationEntry.setSingleLine(true);
         transectDurationEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
-        transectDurationEntry.setHint("Survey duration (minutes)");
+        transectDurationEntry.setHint("Timed interval (minutes)");
         transectDurationEntry.setText("120");
         main.addView(transectDurationEntry);
         radiusEntry=new EditText(this);radiusEntry.setTextSize(16);radiusEntry.setSingleLine(true);
@@ -219,13 +219,18 @@ public class WelcomeActivity extends Activity {
             if(choice>=0&&choice<choices.length){
                 durationEntry.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);
                 radiusEntry.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);
-                transectDurationEntry.setVisibility(choices[choice].code.equals("line_transect")||choices[choice].code.equals("ves_transect")||choices[choice].code.equals("visual_encounter")||choices[choice].code.equals("amphibian_calls")?View.VISIBLE:View.GONE);
+                transectDurationEntry.setVisibility(!choices[choice].code.equals("point_count")&&SurveyMethods.timedInterval(choices[choice].code)?View.VISIBLE:View.GONE);
+                if(choices[choice].code.equals("amphibian_calls"))transectDurationEntry.setText("5");
+                else if(choices[choice].code.equals("visual_encounter")||choices[choice].code.equals("area_search")||
+                    choices[choice].code.equals("track_sign")||choices[choice].code.equals("coverboard_search"))transectDurationEntry.setText("30");
+                else if(choices[choice].code.equals("spotlight")||choices[choice].code.equals("bat_acoustic"))transectDurationEntry.setText("60");
+                else transectDurationEntry.setText("120");
                 lineBearingEntry.setVisibility(profile.equals("Birds")&&choices[choice].code.equals("line_transect")?View.VISIBLE:View.GONE);
             }
         });
         durationEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
         radiusEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
-        transectDurationEntry.setVisibility(choices[0].code.equals("line_transect")||choices[0].code.equals("ves_transect")||choices[0].code.equals("visual_encounter")||choices[0].code.equals("amphibian_calls")?View.VISIBLE:View.GONE);
+        transectDurationEntry.setVisibility(!choices[0].code.equals("point_count")&&SurveyMethods.timedInterval(choices[0].code)?View.VISIBLE:View.GONE);
         lineBearingEntry.setVisibility(View.GONE);
         regionEntry=new EditText(this);regionEntry.setSingleLine(true);
         regionEntry.setHint("Stratum / region label (optional)");
@@ -234,7 +239,7 @@ public class WelcomeActivity extends Activity {
         areaEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         areaEntry.setHint("Stratum area (km², optional)");
         main.addView(areaEntry);
-        TextView help=text("Standardized methods retain survey effort separately. Basic-log methods need more equipment/effort fields before formal analysis.",12,false);
+        TextView help=text("The whole-survey clock always runs. Timed methods get a separate station/interval clock; it continues into overtime after its target. Specialist equipment checks use elapsed time and device-effort logs.",12,false);
         help.setTextColor(MUTED);main.addView(help);
         Button start=UiKit.button(this,"Start "+profile+" survey","primary");
         LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(58));
@@ -283,7 +288,7 @@ public class WelcomeActivity extends Activity {
             }
         }
         int plannedDuration=0;
-        if(m.code.equals("line_transect")||m.code.equals("ves_transect")||m.code.equals("visual_encounter")||m.code.equals("amphibian_calls")){
+        if(!m.code.equals("point_count")&&SurveyMethods.timedInterval(m.code)){
             try{plannedDuration=Integer.parseInt(transectDurationEntry.getText().toString().trim())*60;}
             catch(Exception ignored){plannedDuration=-1;}
             if(plannedDuration<60||plannedDuration>43200){

@@ -55,6 +55,14 @@ public final class SurveyMethods {
             ||method.equals("visual_encounter")||method.equals("area_search")
             ||method.equals("track_sign")||method.equals("spotlight");
     }
+    /** Only protocols where an observation/search/listening interval is meaningful. */
+    public static boolean timedInterval(String method){
+        return method.equals("point_count")||method.equals("line_transect")
+          ||method.equals("ves_transect")||method.equals("visual_encounter")
+          ||method.equals("amphibian_calls")||method.equals("area_search")
+          ||method.equals("track_sign")||method.equals("spotlight")
+          ||method.equals("bat_acoustic")||method.equals("coverboard_search");
+    }
     public static boolean structured(String method) {
         return !method.equals("opportunistic");
     }

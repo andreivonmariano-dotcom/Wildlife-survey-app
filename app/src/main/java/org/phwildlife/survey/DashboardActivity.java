@@ -60,6 +60,10 @@ public class DashboardActivity extends Activity {
         int pointVisits=count("SELECT COUNT(*) FROM point_counts",null);
         int completePoints=count("SELECT COUNT(*) FROM point_counts WHERE completed=1",null);
         section("POINT COUNT VISITS",String.valueOf(pointVisits),completePoints+" completed · each station has its own count ID");
+        int otherVisits=count("SELECT COUNT(*) FROM sampling_units",null);
+        int otherFinished=count("SELECT COUNT(*) FROM sampling_units WHERE completed=1",null);
+        section("HERP / MAMMAL / OTHER VISITS",String.valueOf(otherVisits),
+            otherFinished+" completed · includes repeated sampling stations");
         try(Cursor paths=helper.getReadableDatabase().rawQuery(
           "SELECT COALESCE(SUM(gps_track_m),0),COUNT(*) FROM surveys WHERE method IN ('line_transect','ves_transect')",null)){
           if(paths.moveToFirst())section("GPS WALKED PATH",String.format(Locale.US,"%.0f m",paths.getDouble(0)),

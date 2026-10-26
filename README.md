@@ -1,32 +1,52 @@
-# Philippine Wildlife Survey Beta v0.9
+# Philippine Wildlife Survey Beta v0.10
 
-Offline Android app for Birds, Herpetofauna, and Mammals. No SMART or KALUMBATA integration.
+Standalone offline Android application for bird, herpetofauna and mammal field surveys. The app is not connected to SMART or KALUMBATA.
 
-## v0.9 field updates
-- Each bird **point count** is its own sampling unit, with `point_count_id`, station ID, start/end timestamp, target duration and completion status. One survey session can contain several station counts.
-- **Finish point · Next station**: choose from registered stations, close the current point and start the next timer. Bird observations remain linked to the original station. The separate **Finish survey** action closes the whole field session.
-- A bird recorded outside the point-count timer remains in the biodiversity observations but is excluded from the preliminary distance-sampling candidate flag. Short point counts are flagged incomplete.
-- Bird line-transect duration is set during survey setup (for example, 120 minutes). VES and amphibian listening surveys also accept planned duration.
-- The remaining time appears on the survey screen. During the final 30 seconds the text pulses red. An alert is displayed near the end, without making sound.
-- A **location foreground service** records GPS track positions for line transects and VES transects, including screen-off / app-in-background operation where permitted by Android. It shows a persistent notification. Recording ends when the field session is closed.
-- Survey screen shows **GPS walked path ~meters**, computed from accepted GPS fixes with filters for poor accuracy, unrealistically rapid jumps, short jitter and long gaps. This is NOT a verified straight-line transect length. The official effort-length field remains a separate observer-entered value.
-- Herpetofauna form adds air temperature, relative humidity, substrate, microhabitat, weather and optional amphibian calling index. VES duration and searched area are separate survey-level data.
-- Survey history groups observations by point-count station and visit number. The dashboard reports point visits and GPS path totals.
+## v0.10 two-clock field interface
+- **TOTAL SURVEY TIME** counts upward from survey-session start. It does not reset on a new sampling station. It is reconstructed from saved UTC start time after app backgrounding or process restart.
+- **CURRENT UNIT** shows a station/visit countdown when the method has a target duration. At zero, it keeps running and displays **OVERTIME +HH:MM:SS** in solid red. For the final 30 seconds, the countdown pulses red. A one-time on-screen warning appears near the deadline and at overtime.
+- Untimed methods use an **ELAPSED** unit clock. Opportunistic observations use the survey clock.
+- Zero never automatically ends a survey, a point count, a unit visit, or a GPS track.
 
-## Data exports
-ZIP includes `point_counts.csv`, `track_points.csv`, `transect_tracks.geojson`, `distance_samples.csv`, `distance_flatfile_draft.csv`, `distance_review.csv`, `occupancy_visits.csv`, `sdm_occurrences.csv`, `herpetofauna_observations.csv`, and previous datasets.
-- R Distance draft: each point count is a separate sample; distance, effort and study area use consistent **km / km²** units. Line samples use the measured route length in km. True zero-detection rows are not created for observations missing a distance.
-- Occupancy file contains actual sampling units and positive detections, **not artificial absences**. Occupancy models need defined target species, repeated visits and detection covariates.
-- SDM file flags GPS coordinates as **observer positions**, not exact wildlife locations. No background or pseudoabsence points are invented.
-- GIS track file is the filtered observer walking path in WGS84 longitude/latitude, not a verified transect survey design.
+## Bird point counts
+- Each point count has an independent ID and station. Tap **Finish point · Next station** after counting at the current station.
+- Stations not visited during the active survey appear at the top of the next-station list.
+- A progress indicator shows the number of visits completed and distinct stations visited.
+- Ended stations keep their previously recorded bird observations linked to the original point-count ID.
+- Ending early marks the point incomplete. Birds detected in overtime remain biodiversity records but cannot pass the preliminary distance-sampling timing flag.
+- The whole survey clock keeps running across all points, including travel between stations. Travel is **not counted** as point-count effort.
 
-## Installation and data integrity
-v0.9 has the same app ID (`org.phwildlife.survey.beta08`) and signing key as v0.8. Export existing data first, then install v0.9 over v0.8. Earlier v0.7 remains separately installed. Schema is updated non-destructively to version 5.
+## Herpetofauna and mammal station visits
+- For suitable standardized searches, inspections and recording protocols, each station visit now has a stable sampling-unit ID, recorded start and end, unit duration, completion status and station ID.
+- The **Finish visit · Next station** action prioritizes unvisited stations and lets the observer close a visit or move to the next.
+- Time-targeted methods include VES, amphibian calling, area searches, cover-board searches, track/sign surveys, spotlighting and bat acoustic logs. Equipment deployment checks still use elapsed visit times and equipment-specific effort fields rather than claiming their run time equals camera-nights or trap-nights.
+- At visit closure, relevant forms accept verified search area, searched length, equipment IDs, number of devices and device-hours.
+- Amphibian calling has an ordinal 0–3 index, background noise, air temperature, humidity, weather and life stage fields. A 0 call index does not fabricate a detected individual. Unit rows can exist with zero observations.
+- Herpetofauna visual encounter records include microhabitat, substrate, life stage and height above ground.
+- Mammal records include direct/indirect evidence type, equipment ID, observation height and **count_basis** such as individuals, sign events, acoustic events or image detections. This prevents arbitrary evidence counts being mislabeled as animal abundance.
+- Repeat visits with no detections remain saved as actual visits, not inferred confirmed absences for every species.
 
-## Android permissions
-Foreground GPS recording starts only from an active transect in the app and uses a visible ongoing notification. Android may interrupt tracking when location permission is revoked, battery-saving policies interfere, or GPS quality deteriorates. A missing GPS track is not imputed.
+## Transect timing and GPS
+- Bird and mammal line transects and herpetofauna VES transects retain their GPS track and walked-distance estimate.
+- Configured timer continues in overtime until **Finish survey** is pressed.
+- The estimated GPS path length is not treated as certified straight-line line-transect effort.
+- Tracks remain subject to GPS filtering, battery management and Android foreground location permission.
 
-## Scientific status
-**Beta field prototype.** Camera cannot measure target distance. GPS walked distance is not validated route effort. The bird species starter names are unreviewed. Distance, occupancy and SDM export tables remain candidates, not finalized analytical datasets. Survey protocol adherence, taxonomic verification, effort calibration and model assumptions require researcher review.
+## Database migration and data exports
+- Version 6 adds `sampling_units` and unit-specific fields without deleting old datasets. Earlier point count visits stay in `point_counts`.
+- Exports add `sampling_units.csv`, visit-specific metadata in `observations.csv`, unit-aware `occupancy_visits.csv`, mammal and herpetofauna observation tables, SDM records with unit IDs and existing distance/GIS files.
+- Zero-detection visit rows and observation records are separate. A missing distance does not become a nondetection.
+- Use this as **analysis preparation**, not a species occupancy or density estimate.
 
-See [v0.9 field QA](docs/QA_v0_9.md).
+## Upgrade
+- v0.10 has the same application ID and dedicated debug signing key as v0.9 (`org.phwildlife.survey.beta08`). Install over v0.9. Keep an exported ZIP backup before updating.
+- Download the compiled `app-debug.apk` from the GitHub Release `v0.10.0-beta`.
+
+## References and limitations
+- USGS amphibian calling monitoring describes fixed-time call-index visits, environmental conditions and audible disturbances: https://www.usgs.gov/centers/eesc/science/north-american-amphibian-monitoring-program
+- USGS visual encounter survey field effort can be measured by time or distance: https://www.usgs.gov/publications/optimizing-walking-pace-maximize-snake-detection-rate-a-visual-encounter-survey
+- Mammal camera-trap surveys must retain deployment and camera-night effort: https://nationalzoo.si.edu/conservation-ecology-center/snapshot-usa
+- Scientific instruments still require field calibration. The app does not measure animal distance with its camera, and phone GPS positions are observer locations.
+- The application has not been physically tested by an automated handset lab. Verify field forms, period boundaries, completion flags, exports and GPS behavior on a real phone.
+
+See [v0.10 QA checklist](docs/QA_v0_10.md).

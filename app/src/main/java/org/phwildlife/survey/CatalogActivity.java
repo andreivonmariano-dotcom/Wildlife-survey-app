@@ -30,12 +30,17 @@ public final class CatalogActivity extends Activity {
     }
     @Override protected void onDestroy(){super.onDestroy();db.close();}
     private void refresh(){
-        int total=0,added=0;
+        int total=0,added=0,mdd=0;
         try(Cursor c=db.getReadableDatabase().rawQuery(
            "SELECT COUNT(*),SUM(CASE WHEN source<>'v0.12 offline starter' THEN 1 ELSE 0 END) FROM taxon_catalog",null)){
            if(c.moveToFirst()){total=c.getInt(0);added=c.isNull(1)?0:c.getInt(1);}
         }
-        info.setText("Catalog: "+total+" names ("+added+" imported). The built-in starter is incomplete and unreviewed.\n\n"+
+        try(Cursor mammal=db.getReadableDatabase().rawQuery(
+            "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_group='Mammals' AND taxon_key LIKE 'MDD:%'",null)){
+            if(mammal.moveToFirst())mdd=mammal.getInt(0);
+        }
+        info.setText("Catalog: "+total+" names ("+added+" from non-starter sources), including "+
+          mdd+" Philippine mammal candidates from MDD v2.5. The other groups still have incomplete starter lists.\\n\\n"+
           "For a versioned checklist, prepare UTF-8 CSV with headers:\n"+
           "taxon_key,taxon_group,common_name,scientific_name,family,source,source_version,region_codes,review_status\n\n"+
           "Taxon group: Birds, Reptiles, Amphibians or Mammals. Separate regional codes with |, for example MINDANAO|P:1102400000. A P: code is a PSGC province code. Leave region_codes blank when distribution is not documented. review_status: reviewed or unreviewed.\n\n"+

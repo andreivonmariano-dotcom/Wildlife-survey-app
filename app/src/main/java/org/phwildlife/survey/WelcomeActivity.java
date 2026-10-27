@@ -31,6 +31,8 @@ public class WelcomeActivity extends Activity {
     private static final int GPS_PERMISSION_REQUEST=71;
     private final Handler gpsHandler=new Handler(Looper.getMainLooper());
     private LocationListener pendingGpsListener;
+    private int gpsLookupGeneration=0;
+    private boolean gpsPolygonResolving=false;
     private Runnable gpsTimeout;
     private Button gpsLookupButton;
     private EditText durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry,radiusEntry,transectDurationEntry,routeLengthEntry,customSpacingEntry;
@@ -261,14 +263,18 @@ public class WelcomeActivity extends Activity {
         geographicChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
             public void onNothingSelected(android.widget.AdapterView<?> parent){}
             public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
+                if(gpsPolygonResolving){
+                    gpsLookupGeneration++;
+                    gpsPolygonResolving=false;
+                }
                 if(suggested!=null&&!GeoRegions.idAt(position).equals(suggested.checklistRegion)){
                     suggested=null;geographicMethod=GeoRegions.BOUNDARY_METHOD;
                 }
             }
         });
-        gpsLookupButton=UiKit.button(this,"Suggest checklist using current GPS","secondary");
+        gpsLookupButton=UiKit.button(this,"Choose checklist area by GPS","secondary");
         main.addView(gpsLookupButton);
-        boundaryMessage=text("Optional GPS area suggestion",12,false);
+        boundaryMessage=text("Auto-selects a mapped island group from a verified GPS fix.",12,false);
         boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
         gpsLookupButton.setOnClickListener(v->suggestBoundary());
         TextView geographyNote=text("Area suggestions do not confirm species occurrence.",12,false);
@@ -411,72 +417,84 @@ public class WelcomeActivity extends Activity {
         int index=projectChoice==null?-1:projectChoice.getSelectedItemPosition();
         return index<0||index>=projectKeys.size()?"default":projectKeys.get(index);
     }
-    /** Live GPS fix, not a cached site coordinate or getLastKnownLocation. */
+    /** The GPS selector uses the containing official polygon, never a nearest guess. */
+    private boolean usableChecklistGps(Location gps){
+        if(gps==null||!LocationManager.GPS_PROVIDER.equals(gps.getProvider())||
+            !gps.hasAccuracy())return false;
+        long age=(android.os.SystemClock.elapsedRealtimeNanos()-
+            gps.getElapsedRealtimeNanos())/1000000L;
+        return GeoChecklistPolicy.acceptableLocation(gps.getLatitude(),gps.getLongitude(),
+            gps.getAccuracy(),age,gps.isFromMockProvider());
+    }
+    private void applyGpsChecklistScope(Location gps){
+        if(gpsPolygonResolving)return;
+        cancelGpsLookup();
+        final int token=gpsLookupGeneration;
+        gpsPolygonResolving=true;
+        if(boundaryMessage!=null)boundaryMessage.setText("Matching GPS to checklist area…");
+        final Location accepted=new Location(gps);
+        new Thread(()->{
+            final BoundaryLookup.Match match=BoundaryLookup.find(
+                getApplicationContext(),accepted.getLatitude(),accepted.getLongitude(),
+                accepted.getAccuracy());
+            runOnUiThread(()->{
+                if(gpsLookupGeneration!=token||isFinishing()||
+                    !"setup".equals(currentScreen)||geographicChoice==null)return;
+                gpsPolygonResolving=false;
+                if(!GeoChecklistPolicy.canAutoSelect(match.status,match.checklistRegion)){
+                    suggested=null;
+                    geographicMethod=GeoRegions.BOUNDARY_METHOD;
+                    boundaryMessage.setText("Area uncertain ("+match.status+"). "+
+                        "Select the checklist area manually.");
+                    return;
+                }
+                // The observer has already requested GPS area selection. No extra dialog.
+                geographicChoice.setSelection(GeoRegions.index(match.checklistRegion));
+                suggested=match;
+                geographicMethod="fresh_phone_gps_polygon_auto";
+                boundaryMessage.setText("Selected "+GeoRegions.label(match.checklistRegion)+
+                    " · "+match.province+" · GPS ±"+
+                    Math.round(accepted.getAccuracy())+" m"+
+                    "\\nArea selection does not confirm species presence.");
+                persistSetup();
+            });
+        },"LIKAS-Checklist-GPS-Area").start();
+    }
     private void suggestBoundary(){
-        if(boundaryMessage==null)return;
-        // A new lookup must never reuse a previously confirmed administrative label.
+        if(boundaryMessage==null||!"setup".equals(currentScreen))return;
+        cancelGpsLookup();
         suggested=null;geographicMethod=GeoRegions.BOUNDARY_METHOD;
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
-            boundaryMessage.setText("Precise location permission is needed for a GPS-based checklist suggestion. You can still choose a region manually.");
+            boundaryMessage.setText("Precise location required. You can select an area manually.");
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION},GPS_PERMISSION_REQUEST);
             return;
         }
         LocationManager manager=(LocationManager)getSystemService(LOCATION_SERVICE);
         if(manager==null||!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            boundaryMessage.setText("Phone GPS is off. Turn on location services or select the checklist region manually.");
+            boundaryMessage.setText("Turn on phone GPS or choose an area manually.");
             return;
         }
-        cancelGpsLookup();
-        if(gpsLookupButton!=null){gpsLookupButton.setEnabled(false);gpsLookupButton.setText("Locating…");}
-        boundaryMessage.setText("Acquiring a new GPS position from this phone. No saved sampling station is used.");
+        if(gpsLookupButton!=null){
+            gpsLookupButton.setEnabled(false);gpsLookupButton.setText("Locating…");
+        }
+        boundaryMessage.setText("Waiting for a fresh GPS fix below 10 m…");
+        Location live=TrackService.currentFix();
+        if(usableChecklistGps(live)){applyGpsChecklistScope(live);return;}
         pendingGpsListener=new LocationListener(){
             @Override public void onLocationChanged(Location gps){
-                if(boundaryMessage==null||!currentScreen.equals("setup")){cancelGpsLookup();return;}
-                if(!gps.hasAccuracy()||gps.getAccuracy()>150f||
-                    Math.abs(System.currentTimeMillis()-gps.getTime())>30000||
-                    gps.isFromMockProvider()){
-                    boundaryMessage.setText("Waiting for a better live GPS reading ("+
-                        (gps.hasAccuracy()?"±"+Math.round(gps.getAccuracy())+" m":"unknown accuracy")+
-                        "). Will keep trying for up to 25 seconds.");
+                if(pendingGpsListener!=this||!"setup".equals(currentScreen))return;
+                if(!usableChecklistGps(gps)){
+                    boundaryMessage.setText("Waiting for GPS below 10 m"+
+                        (gps.hasAccuracy()?" · currently ±"+Math.round(gps.getAccuracy())+" m":"")+"…");
                     return;
                 }
-                cancelGpsLookup();
-                BoundaryLookup.Match match=BoundaryLookup.find(WelcomeActivity.this,
-                    gps.getLatitude(),gps.getLongitude(),gps.getAccuracy());
-                boundaryMessage.setText(String.format(Locale.US,
-                    "Phone GPS %.5f, %.5f · ±%.0f m\nProvince: %s · %s\n%s",
-                    gps.getLatitude(),gps.getLongitude(),gps.getAccuracy(),
-                    match.province,match.psgc,match.status));
-                if(!match.status.equals("suggestion_only")){
-                    new android.app.AlertDialog.Builder(WelcomeActivity.this)
-                        .setTitle("Geographic uncertainty")
-                        .setMessage("The GPS-based administrative match is "+match.status+
-                            ". No checklist area was changed. Use a new GPS fix or select manually.")
-                        .setPositiveButton("Close",null).show();
-                    return;
-                }
-                new android.app.AlertDialog.Builder(WelcomeActivity.this)
-                    .setTitle("Use GPS-based checklist suggestion?")
-                    .setMessage("Current phone position: "+
-                        String.format(Locale.US,"%.5f, %.5f · ±%.0f m",gps.getLatitude(),
-                            gps.getLongitude(),gps.getAccuracy())+
-                        "\nProvince: "+match.province+
-                        "\nSuggested island-group list: "+GeoRegions.label(match.checklistRegion)+
-                        "\nThis is an administrative boundary suggestion, not species-range evidence.")
-                    .setNegativeButton("Keep manual selection",null)
-                    .setPositiveButton("Apply suggestion",(dialog,which)->{
-                        geographicChoice.setSelection(GeoRegions.index(match.checklistRegion));
-                        suggested=match;
-                        geographicMethod="fresh_phone_gps_polygon_confirmed";
-                        boundaryMessage.setText("Current GPS confirmed · "+match.province+
-                            " · "+GeoRegions.label(match.checklistRegion)+
-                            " · "+BoundaryLookup.VERSION);
-                    }).show();
+                applyGpsChecklistScope(gps);
             }
             @Override public void onProviderDisabled(String provider){
                 cancelGpsLookup();
-                if(boundaryMessage!=null)boundaryMessage.setText("GPS was disabled. Select a region manually.");
+                if(boundaryMessage!=null)
+                    boundaryMessage.setText("GPS disabled. Select the checklist area manually.");
             }
         };
         final LocationListener listener=pendingGpsListener;
@@ -484,18 +502,20 @@ public class WelcomeActivity extends Activity {
             if(pendingGpsListener!=listener)return;
             cancelGpsLookup();
             if(boundaryMessage!=null)boundaryMessage.setText(
-                "No new GPS fix within 25 seconds. Move to open sky and retry, or select manually.");
+                "GPS unavailable after 30 seconds. Select an area manually or retry.");
         };
         try{
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000L,0f,listener,Looper.getMainLooper());
-            gpsHandler.postDelayed(gpsTimeout,25000);
-        }catch(Exception ex){
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000L,0f,
+                listener,Looper.getMainLooper());
+            gpsHandler.postDelayed(gpsTimeout,30000L);
+        }catch(Exception e){
             cancelGpsLookup();
-            boundaryMessage.setText("Could not obtain GPS: "+ex.getClass().getSimpleName()+
-                ". You can select the area manually.");
+            boundaryMessage.setText("GPS unavailable. Select the checklist area manually.");
         }
     }
     private void cancelGpsLookup(){
+        gpsLookupGeneration++;
+        gpsPolygonResolving=false;
         if(gpsTimeout!=null){gpsHandler.removeCallbacks(gpsTimeout);gpsTimeout=null;}
         if(pendingGpsListener!=null){
             try{
@@ -504,8 +524,10 @@ public class WelcomeActivity extends Activity {
             }catch(Exception ignored){}
             pendingGpsListener=null;
         }
-        if(gpsLookupButton!=null){gpsLookupButton.setEnabled(true);
-            gpsLookupButton.setText("Suggest checklist using current GPS");}
+        if(gpsLookupButton!=null){
+            gpsLookupButton.setEnabled(true);
+            gpsLookupButton.setText("Choose checklist area by GPS");
+        }
     }
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){
         super.onRequestPermissionsResult(request,permissions,results);

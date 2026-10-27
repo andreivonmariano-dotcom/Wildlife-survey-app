@@ -38,6 +38,9 @@ public final class CallLibraryActivity extends Activity {
     private LinearLayout body;
     private String eventId,group="Birds",surveyProfile="Birds",method="",station="",selectedClip=null;
     private long selectedMs=0,clipDuration=0;
+    private int spectrogramZoom=1,analysisGeneration=0;
+    private float spectrogramContrast=1f;
+    private TextView frequencyInfo;
     private CallAudioRecorder recorder;
     private CallSpectrogramView spectrum;
     private MediaPlayer player;
@@ -268,8 +271,59 @@ public final class CallLibraryActivity extends Activity {
         final File file=new File(AcousticEvidence.directory(this),filename);
         body.addView(label(profile+" · "+date+"\nSurvey: "+outcome,14,true));
         spectrum=new CallSpectrogramView(this);
+        spectrum.setContrast(spectrogramContrast);
         body.addView(spectrum,new LinearLayout.LayoutParams(-1,dp(260)));
-        body.addView(label("Tap the spectrogram to seek and mark a call.",12,false));
+        frequencyInfo=label("Tap the spectrogram: time and frequency appear here",12,true);
+        frequencyInfo.setTextColor(UiKit.POND);
+        body.addView(frequencyInfo);
+        spectrum.setFrequencyListener((hz,ms)->frequencyInfo.setText(String.format(
+            Locale.US,"Cursor %s · %.0f Hz (approximate)",format(ms),hz)));
+        LinearLayout tools=new LinearLayout(this);
+        Button less=UiKit.button(this,"− Zoom","secondary");
+        Button more=UiKit.button(this,"+ Zoom","secondary");
+        tools.addView(less,new LinearLayout.LayoutParams(0,dp(48),1));
+        LinearLayout.LayoutParams zoomLp=new LinearLayout.LayoutParams(0,dp(48),1);
+        zoomLp.leftMargin=dp(8);tools.addView(more,zoomLp);
+        body.addView(tools);
+        Button backward=UiKit.button(this,"‹ Earlier","secondary");
+        Button forward=UiKit.button(this,"Later ›","secondary");
+        LinearLayout pages=new LinearLayout(this);
+        pages.addView(backward,new LinearLayout.LayoutParams(0,dp(48),1));
+        LinearLayout.LayoutParams nextLp=new LinearLayout.LayoutParams(0,dp(48),1);
+        nextLp.leftMargin=dp(8);pages.addView(forward,nextLp);body.addView(pages);
+        TextView contrastTitle=label("Spectrogram contrast",12,true);
+        body.addView(contrastTitle);
+        SeekBar contrastBar=new SeekBar(this);
+        contrastBar.setMax(350);contrastBar.setProgress(Math.round((spectrogramContrast-.5f)*100));
+        body.addView(contrastBar);
+        less.setOnClickListener(v->{
+            spectrogramZoom=Math.max(1,spectrogramZoom/2);
+            loadSpectrum(file,clip);
+        });
+        more.setOnClickListener(v->{
+            spectrogramZoom=Math.min(16,spectrogramZoom*2);
+            loadSpectrum(file,clip);
+        });
+        backward.setOnClickListener(v->{
+            long[] w=AcousticViewport.window(clipDuration,selectedMs,spectrogramZoom);
+            selectedMs=Math.max(0,w[0]-(w[1]-w[0])/2);
+            loadSpectrum(file,clip);
+        });
+        forward.setOnClickListener(v->{
+            long[] w=AcousticViewport.window(clipDuration,selectedMs,spectrogramZoom);
+            selectedMs=Math.min(clipDuration,w[1]+(w[1]-w[0])/2);
+            loadSpectrum(file,clip);
+        });
+        contrastBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+            public void onStartTrackingTouch(SeekBar bar){}
+            public void onStopTrackingTouch(SeekBar bar){}
+            public void onProgressChanged(SeekBar bar,int progress,boolean fromUser){
+                if(fromUser){
+                    spectrogramContrast=.5f+progress/100f;
+                    spectrum.setContrast(spectrogramContrast);
+                }
+            }
+        });
         playbackTime=label("00:00 / "+format(clipDuration),14,true);
         body.addView(playbackTime);
         seek=new SeekBar(this);seek.setMax((int)Math.min(Integer.MAX_VALUE,clipDuration));
@@ -341,13 +395,29 @@ public final class CallLibraryActivity extends Activity {
             }
         }
         // Analysis runs away from UI; archived clips remain playable without an active survey.
+        loadSpectrum(file,clip);
+    }
+    /** Analyze the currently visible time window, preserving the WAV unchanged. */
+    private void loadSpectrum(File file,String clip){
+        final long[] bounds=AcousticViewport.window(clipDuration,selectedMs,spectrogramZoom);
+        final int generation=++analysisGeneration;
+        final CallSpectrogramView destination=spectrum;
         new Thread(()->{
             try{
-                float[][] bands=CallSpectrogramView.readWav(file);
-                ui.post(()->{if(clip.equals(selectedClip)&&!isDestroyed())
-                    spectrum.setSaved(bands,clipDuration);});
-            }catch(Exception e){ui.post(()->notice("Spectrogram unavailable: "+e.getMessage()));}
-        },"LIKAS-Spectrogram-Review").start();
+                float[][] bands=CallSpectrogramView.readWav(file,bounds[0],bounds[1]);
+                ui.post(()->{
+                    if(generation!=analysisGeneration||!clip.equals(selectedClip)||
+                        isDestroyed()||spectrum!=destination)return;
+                    destination.setSaved(bands,clipDuration,bounds[0],bounds[1]);
+                    destination.setCursor(selectedMs/(float)Math.max(1,clipDuration));
+                    if(frequencyInfo!=null)
+                        frequencyInfo.setText("Window "+format(bounds[0])+" to "+
+                            format(bounds[1])+" · "+spectrogramZoom+"× zoom");
+                });
+            }catch(Exception e){ui.post(()->{
+                if(generation==analysisGeneration)notice("Spectrogram: "+e.getMessage());
+            });}
+        },"LIKAS-Spectrogram-Window").start();
     }
     private void newLabel(String clip){
         LinearLayout form=column();form.setPadding(dp(16),dp(5),dp(16),dp(5));

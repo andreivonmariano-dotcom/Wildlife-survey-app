@@ -114,6 +114,8 @@ public class MainActivity extends Activity implements LocationListener {
         super.onCreate(b);
         db=new FieldDb(this);
         locations=(LocationManager)getSystemService(LOCATION_SERVICE);
+        if(b!=null&&b.containsKey("manual_elevation_m"))
+            manualElevationMeters=b.getDouble("manual_elevation_m");
         restoreEvent();
         Intent launch=getIntent();
         boolean newEvent=!active&&launch.getBooleanExtra("create_new",false);
@@ -1817,6 +1819,7 @@ public class MainActivity extends Activity implements LocationListener {
     @Override protected void onSaveInstanceState(Bundle out){
         persistDraft();
         out.putString("saved_event_id",eventId);
+        if(manualElevationMeters!=null)out.putDouble("manual_elevation_m",manualElevationMeters);
         super.onSaveInstanceState(out);
     }
     @Override protected void onResume(){

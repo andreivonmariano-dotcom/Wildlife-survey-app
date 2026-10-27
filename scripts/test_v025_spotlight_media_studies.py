@@ -8,7 +8,7 @@ def src(name):
 class V025Protocols(unittest.TestCase):
     def test_additive_schema(self):
         db=src("FieldDb.java")
-        self.assertIn("super(context,NAME,null,26)",db)
+        self.assertIn("super(context,NAME,null,27)",db)
         self.assertIn("if(oldVersion<26)upgradeTwentySix(d)",db)
         for term in ("CREATE TABLE IF NOT EXISTS spotlight_passes(",
                      "CREATE TABLE IF NOT EXISTS protocol_media(",

@@ -42,6 +42,8 @@ public final class TaxonDetailActivity extends Activity {
         content.addView(title);
         TextView body=text(value,15,false);
         body.setTextIsSelectable(true);
+        body.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
+        body.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
         content.addView(body);
     }
     @Override public void onCreate(Bundle state){

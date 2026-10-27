@@ -92,6 +92,18 @@ public final class TaxonDetailActivity extends Activity {
             content.addView(text("Search the installed bird, mammal, amphibian and reptile catalogs.",14,false));
         }
     }
+    private static String originalReference(String source){
+        String label=source==null?"":source.toLowerCase(Locale.ROOT);
+        if(label.contains("checklist of amphibians of the philippines"))
+            return "https://www.researchgate.net/publication/360034142_Checklist_of_amphibians_of_the_Philippines_version_2025-1";
+        if(label.contains("checklist of reptiles of the philippines"))
+            return "https://www.researchgate.net/publication/362324825_Checklist_of_reptiles_of_the_Philippines_version_2026-1";
+        if(label.contains("mammal diversity database"))
+            return "https://doi.org/10.5281/zenodo.21654811";
+        if(label.contains("avilist"))
+            return "https://doi.org/10.2173/avilist.v2026";
+        return "";
+    }
     private static String col(Cursor c,String field){
         int i=c.getColumnIndex(field);
         return i<0||c.isNull(i)?"":c.getString(i).trim();
@@ -157,6 +169,7 @@ public final class TaxonDetailActivity extends Activity {
             paragraph("CITES (source snapshot)",col(c,"cites"));
             paragraph("Taxonomic note",col(c,"taxonomic_note"));
             paragraph("Original source",col(c,"source")+" · "+col(c,"source_version"));
+            paragraph("Source publication",originalReference(col(c,"source")));
             paragraph("Source record ID",col(c,"taxon_key"));
             if(col(c,"review_status").equals("unreviewed"))
                 paragraph("Review status","Not independently reviewed for regional occurrence");

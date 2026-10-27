@@ -179,6 +179,11 @@ public class HistoryActivity extends Activity {
         lp.topMargin=dp(7);rows.addView(sounds,lp);
         sounds.setOnClickListener(v->startActivity(new Intent(this,CallLibraryActivity.class)
             .putExtra("event_id",event)));
+        Button devices=UiKit.button(this,"Camera / trap deployment history","secondary");
+        LinearLayout.LayoutParams deviceLp=new LinearLayout.LayoutParams(-1,dp(52));
+        deviceLp.topMargin=dp(7);rows.addView(devices,deviceLp);
+        devices.setOnClickListener(v->startActivity(new Intent(this,TrapProtocolActivity.class)
+            .putExtra("event_id",event)));
         appendObservations(event);
     }
     private void appendObservations(String event){

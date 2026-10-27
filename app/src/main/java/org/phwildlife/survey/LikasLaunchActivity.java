@@ -56,8 +56,8 @@ public final class LikasLaunchActivity extends Activity {
         root.setBackgroundColor(Color.rgb(12,40,32));
         root.addView(new LikasForestView(this),new FrameLayout.LayoutParams(-1,-1));
         View scrim=new View(this);
-        int hour=java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY);
-        scrim.setBackgroundColor(Color.argb(LikasUiRules.isNight(hour)?46:25,0,23,15));
+        // Keep text contrast stable; the forest animates its own gradual daylight palette.
+        scrim.setBackgroundColor(Color.argb(34,0,23,15));
         root.addView(scrim,new FrameLayout.LayoutParams(-1,-1));
 
         LinearLayout content=new LinearLayout(this);

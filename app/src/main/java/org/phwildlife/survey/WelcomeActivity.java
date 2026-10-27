@@ -455,7 +455,7 @@ public class WelcomeActivity extends Activity {
                 boundaryMessage.setText("Selected "+GeoRegions.label(match.checklistRegion)+
                     " · "+match.province+" · GPS ±"+
                     Math.round(accepted.getAccuracy())+" m"+
-                    "\\nArea selection does not confirm species presence.");
+                    "\nArea selection does not confirm species presence.");
                 persistSetup();
             });
         },"LIKAS-Checklist-GPS-Area").start();

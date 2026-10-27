@@ -19,7 +19,7 @@ public final class SurveyClosePolicy {
     public static String resolve(boolean requestedComplete,boolean cancelled,
             boolean stationBased,int visits,int unfinishedVisits,int missedPlannedStations,
             int targetSeconds,long measuredActiveEffortMs,
-            boolean routeLengthRequired,Double measuredRouteM,
+            boolean routeLengthRequired,boolean plannedRouteFinished,Double measuredRouteM,
             boolean searchedAreaRequired,Double measuredAreaM2){
         if(cancelled)return NOT_COUNTED;
         if(!requestedComplete)return INCOMPLETE;
@@ -28,7 +28,7 @@ public final class SurveyClosePolicy {
         if(!stationBased&&targetSeconds>0&&
             measuredActiveEffortMs<(long)targetSeconds*1000L)
             return INCOMPLETE;
-        if(routeLengthRequired&&(measuredRouteM==null||
+        if(routeLengthRequired&&(!plannedRouteFinished||measuredRouteM==null||
             !Double.isFinite(measuredRouteM)||measuredRouteM<=0d))
             return INCOMPLETE;
         if(searchedAreaRequired&&(measuredAreaM2==null||

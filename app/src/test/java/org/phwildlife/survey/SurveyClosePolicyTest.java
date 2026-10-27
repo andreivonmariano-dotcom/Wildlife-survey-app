@@ -7,7 +7,7 @@ public final class SurveyClosePolicyTest {
             int unfinished,int missed,int target,long effort,boolean route,Double distance,
             boolean area,Double areaM2){
         return SurveyClosePolicy.resolve(request,cancel,stations,visits,unfinished,missed,
-            target,effort,route,distance,area,areaM2);
+            target,effort,route,true,distance,area,areaM2);
     }
     @Test public void canceledAlwaysNotCounted(){
         assertEquals("not_counted",outcome(true,true,true,0,4,8,600,0,true,null,false,null));
@@ -25,6 +25,10 @@ public final class SurveyClosePolicyTest {
         assertEquals("incomplete",outcome(true,false,false,0,0,0,600,599999,true,2000d,false,null));
         assertEquals("incomplete",outcome(true,false,false,0,0,0,600,600000,true,null,false,null));
         assertEquals("complete",outcome(true,false,false,0,0,0,600,600000,true,1900d,false,null));
+    }
+    @Test public void unfinishedPlannedTransectIsIncompleteDespiteLength(){
+        assertEquals("incomplete",SurveyClosePolicy.resolve(true,false,false,0,0,0,
+            600,600000,true,false,2000d,false,null));
     }
     @Test public void areaSearchRequiresRecordedArea(){
         assertEquals("incomplete",outcome(true,false,false,0,0,0,0,10000,false,null,true,null));

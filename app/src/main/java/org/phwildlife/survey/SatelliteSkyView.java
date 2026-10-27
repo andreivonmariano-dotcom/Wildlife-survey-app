@@ -29,7 +29,7 @@ public final class SatelliteSkyView extends View {
     }
     public SatelliteSkyView(Context context){
         super(context);
-        setMinimumHeight(dp(290));
+        setMinimumHeight(Math.round(dp(290)));
         setContentDescription("Waiting for live GNSS satellite positions");
     }
     private float dp(float units){return units*getResources().getDisplayMetrics().density;}

@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.net.Uri;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -142,6 +143,25 @@ public final class TaxonDetailActivity extends Activity {
             .setItems(names.toArray(new String[0]),(d,which)->loadKey(ids[which]))
             .setNegativeButton("Cancel",null).show();
     }
+    /**
+     * Official reference links lead to the publisher's site. No remote
+     * photographs, audio or third-party copyrighted media are stored locally.
+     */
+    private void sourceLink(String title,String candidate,String prefix){
+        if(candidate==null||!candidate.startsWith(prefix))return;
+        Button button=UiKit.button(this,title,"secondary");
+        content.addView(button);
+        button.setOnClickListener(v->{
+            try{
+                Intent open=new Intent(Intent.ACTION_VIEW,Uri.parse(candidate));
+                startActivity(open);
+            }catch(Exception ex){
+                new AlertDialog.Builder(this)
+                    .setMessage("No app is available to open this reference link.")
+                    .setPositiveButton("Close",null).show();
+            }
+        });
+    }
     private void showMessage(String message){
         content.removeAllViews();
         content.addView(text(message,15,false));
@@ -170,6 +190,12 @@ public final class TaxonDetailActivity extends Activity {
             paragraph("Taxonomic note",col(c,"taxonomic_note"));
             paragraph("Original source",col(c,"source")+" · "+col(c,"source_version"));
             paragraph("Source publication",originalReference(col(c,"source")));
+            sourceLink("WBCP checklist source",col(c,"source_url"),
+                "https://birdwatch.ph/");
+            sourceLink("Bird photographs and identification on eBird",
+                col(c,"ebird_url"),"https://ebird.org/species/");
+            sourceLink("Bird vocalizations on xeno-canto",
+                col(c,"sound_url"),"https://www.xeno-canto.org/species/");
             paragraph("Source record ID",col(c,"taxon_key"));
             if(col(c,"review_status").equals("unreviewed"))
                 paragraph("Review status","Not independently reviewed for regional occurrence");
@@ -208,8 +234,10 @@ public final class TaxonDetailActivity extends Activity {
             if(regional.length()>0)
                 paragraph("Regional occurrence evidence",regional.toString());
             else paragraph("Regional occurrence evidence","Not assessed in the installed evidence catalog");
-            TextView foot=text("A source-listed location is not a verified observation "+
-                "at this station. Status categories reflect the source's publication date.",12,false);
+            TextView foot=text("WBCP birds follow IOC v15.1 (2025). The source links "+
+                "require internet. External photos and recordings remain on their "+
+                "publishers' sites. No reference confirms presence at this station. "+
+                "Conservation categories reflect the source date.",12,false);
             foot.setTextColor(UiKit.MUTED);
             foot.setPadding(0,dp(15),0,0);
             content.addView(foot);

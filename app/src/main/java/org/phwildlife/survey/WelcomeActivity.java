@@ -44,6 +44,8 @@ public class WelcomeActivity extends Activity {
     private boolean updatingRouteChoices=false;
     private TextView stationCountPreview,routeHeader,spacingHeader,repeatHeader;
     private Spinner projectChoice, geographicChoice,studyChoice;
+    private TextView studyToggle;
+    private LinearLayout studyOptions;
     private final ArrayList<String> studyTemplateIds=new ArrayList<>();
     private BoundaryLookup.Match suggested;
     private String geographicMethod=GeoRegions.BOUNDARY_METHOD;
@@ -482,7 +484,7 @@ public class WelcomeActivity extends Activity {
         });
 
         main.addView(step("04","Begin survey"));
-        LinearLayout studyOptions=vertical();
+        studyOptions=vertical();
         studyOptions.setVisibility(View.GONE);
         studyChoice=new Spinner(this);
         studyOptions.addView(studyChoice,new LinearLayout.LayoutParams(-1,dp(52)));
@@ -490,20 +492,40 @@ public class WelcomeActivity extends Activity {
         studyOptions.addView(manageStudies,new LinearLayout.LayoutParams(-1,dp(46)));
         manageStudies.setOnClickListener(v->
             startActivity(new Intent(this,StudyProtocolsActivity.class)));
-        TextView studyToggle=text("＋ Study-specific rules (optional)",14,true);
+        studyToggle=text("＋ Study rules (optional)",14,true);
         studyToggle.setTextColor(GREEN);studyToggle.setMinHeight(dp(48));
         studyToggle.setGravity(Gravity.CENTER_VERTICAL);studyToggle.setFocusable(true);
         studyToggle.setOnClickListener(v->{
             boolean open=studyOptions.getVisibility()!=View.VISIBLE;
             studyOptions.setVisibility(open?View.VISIBLE:View.GONE);
-            studyToggle.setText(open?"− Hide study rules":"＋ Study-specific rules (optional)");
+            refreshStudyTitle();
         });
         main.addView(studyToggle);main.addView(studyOptions);
+        studyChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+            public void onNothingSelected(android.widget.AdapterView<?> parent){}
+            public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
+                refreshStudyTitle();
+            }
+        });
         refreshStudyChoices();
         Button start=UiKit.button(this,"Continue to GPS · "+profile,"primary");
         LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(58));
         startLp.topMargin=dp(16);main.addView(start,startLp);
         start.setOnClickListener(v->startSelected());
+    }
+    private void refreshStudyTitle(){
+        if(studyToggle==null||studyChoice==null||studyOptions==null)return;
+        if(studyOptions.getVisibility()==View.VISIBLE){
+            studyToggle.setText("− Hide study rules");return;
+        }
+        String id=selectedStudyId();
+        if(id.isEmpty())studyToggle.setText("＋ Study rules (optional)");
+        else{
+            String title=studyChoice.getSelectedItem()==null?"Custom":
+                studyChoice.getSelectedItem().toString();
+            int cutoff=title.indexOf(" · ");
+            studyToggle.setText("＋ Study: "+(cutoff>0?title.substring(0,cutoff):title));
+        }
     }
     private String selectedStudyId(){
         int index=studyChoice==null?-1:studyChoice.getSelectedItemPosition();
@@ -532,6 +554,7 @@ public class WelcomeActivity extends Activity {
             android.R.layout.simple_spinner_dropdown_item,labels));
         int selected=studyTemplateIds.indexOf(earlier);
         studyChoice.setSelection(Math.max(0,selected));
+        refreshStudyTitle();
     }
     /** Project edits refresh without clearing method, route length or checklist controls. */
     private void refreshProjectOptions(){

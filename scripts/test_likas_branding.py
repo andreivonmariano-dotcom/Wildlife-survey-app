@@ -78,7 +78,9 @@ class LikasBrandingSmokeTest(unittest.TestCase):
     def test_survey_end_remains_available_to_observer(self):
         recording = (JAVA / "MainActivity.java").read_text(encoding="utf-8")
         self.assertIn('endSurveyButton=UiKit.button(this,"End Survey"', recording)
-        self.assertIn('root.addView(endSurveyButton,endParams)', recording)
+        self.assertIn('footerOptions.addView(endSurveyButton,endParams)', recording)
+        self.assertIn('root.addView(footer)', recording)
+        self.assertIn('footer.addView(saveButton,new LinearLayout.LayoutParams(-1,dp(56)))', recording)
         for item in ("Finish Complete", "End Incomplete", "Cancel Survey"):
             self.assertIn(item, recording)
         self.assertIn("exportZip()", recording)

@@ -26,6 +26,10 @@ public final class CatalogActivity extends Activity {
         layout.addView(species);
         species.setOnClickListener(v->startActivity(
             new Intent(this,TaxonDetailActivity.class)));
+        Button regions=UiKit.button(this,"Mindanao & Davao species references","secondary");
+        layout.addView(regions);
+        regions.setOnClickListener(v->startActivity(
+            new Intent(this,RegionalChecklistActivity.class)));
         Button choose=UiKit.button(this,"Import species checklist CSV","secondary");
         layout.addView(choose);choose.setOnClickListener(v->pick());
         Button evidence=UiKit.button(this,"Import regional evidence CSV","secondary");

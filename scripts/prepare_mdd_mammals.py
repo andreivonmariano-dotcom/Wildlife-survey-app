@@ -20,11 +20,14 @@ DEST = Path("app/src/main/assets/ph_mammals_mdd_v2_5.json")
 def truthy(value):
     return str(value).strip().lower() in {"1", "true", "yes"}
 
-def selected_philippines(value):
-    # Country membership is a national candidate record, not a confirmed
-    # province or island occurrence.
-    return any(part.strip().lower() == "philippines"
-               for part in re.split(r"[|;,]", value or ""))
+def philippines_membership(value):
+    # Retain MDD's uncertain Philippine membership (e.g. Philippines?)
+    # as an explicitly unreviewed national candidate, rather than discarding it.
+    for part in re.split(r"[|;,]", value or ""):
+        item = part.strip()
+        if item.strip("?").strip().lower() == "philippines":
+            return True, "?" in item
+    return False, False
 
 def extract(data):
     reader = csv.DictReader(io.StringIO(data.decode("utf-8-sig"), newline=""))
@@ -34,7 +37,8 @@ def extract(data):
         raise ValueError(f"Missing source fields: {required-set(reader.fieldnames or [])}")
     taxa = {}
     for row in reader:
-        if not selected_philippines(row["countryDistribution"]):
+        in_philippines, uncertain_range = philippines_membership(row["countryDistribution"])
+        if not in_philippines:
             continue
         if truthy(row["extinct"]) or truthy(row["domestic"]):
             continue
@@ -49,7 +53,7 @@ def extract(data):
             "common_name": (row["mainCommonName"] or "").strip(),
             "scientific_name": scientific,
             "family": (row["family"] or "").strip(),
-            "review_status": "unreviewed" if truthy(row["flagged"]) else "reviewed"
+            "review_status": "unreviewed" if truthy(row["flagged"]) or uncertain_range else "reviewed"
         }
     if len(taxa) < 20 or len(taxa) > 1200:
         raise ValueError(f"Suspicious Philippine candidate count: {len(taxa)}")

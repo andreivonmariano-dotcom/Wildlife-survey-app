@@ -1396,7 +1396,7 @@ public class MainActivity extends Activity implements LocationListener {
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
             toast("Location permission is needed to record GPS track");return;
         }
-        if(eventId==null)return;
+        if(eventId==null||TrackService.wasStopped(this))return;
         Intent i=new Intent(this,TrackService.class);
         i.setAction(TrackService.ACTION_START);i.putExtra("event_id",eventId);
         try{startForegroundService(i);}catch(Exception ex){toast("GPS tracking unavailable: "+ex.getMessage());}
@@ -1997,10 +1997,11 @@ public class MainActivity extends Activity implements LocationListener {
         handler.removeCallbacks(visibleTimer);
         status();refreshPauseControls();
         handler.postDelayed(visibleTimer,1000);
-        if(active&&!surveyPaused&&(method.equals("line_transect")||method.equals("ves_transect")))startTracking();
+        if(active&&!surveyPaused&&!TrackService.wasStopped(this)&&
+            (method.equals("line_transect")||method.equals("ves_transect")))startTracking();
         if(active)getSharedPreferences("field_resume",MODE_PRIVATE).edit().putString("screen","survey").commit();
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-            if(active&&!TrackService.isRunning()){
+            if(active&&!TrackService.isRunning()&&!TrackService.wasStopped(this)){
                 try{TrackService.startGnss(this);}catch(Exception e){
                     toast("Continuous GPS unavailable: "+e.getClass().getSimpleName());
                 }

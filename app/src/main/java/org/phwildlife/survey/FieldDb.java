@@ -104,7 +104,7 @@ public final class FieldDb extends SQLiteOpenHelper {
             "ON trap_checks(deployment_id,checked_at_utc)");
         d.execSQL("CREATE TABLE IF NOT EXISTS trap_captures("+
             "id INTEGER PRIMARY KEY AUTOINCREMENT,check_id INTEGER NOT NULL,"+
-            "taxon_label TEXT NOT NULL,individual_mark TEXT,captured_at_utc TEXT NOT NULL,"+
+            "taxon_label TEXT NOT NULL,individual_mark TEXT,logged_at_utc TEXT NOT NULL,"+
             "released_at_utc TEXT,disposition TEXT NOT NULL,notes TEXT,"+
             "FOREIGN KEY(check_id) REFERENCES trap_checks(id))");
         d.execSQL("CREATE INDEX IF NOT EXISTS trap_captures_check ON trap_captures(check_id)");

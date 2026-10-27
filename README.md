@@ -1,3 +1,41 @@
+# LIKAS | Philippine Wildlife Survey v0.18.3 Source Evidence Beta
+
+## Species detail and regional evidence
+- The Offline taxonomy screen opens read-only species reference pages.
+  Search scientific or common names. The screen shows classification,
+  source-dated IUCN and Philippine status, taxonomic authority, explicit
+  island/province distribution text, aliases and original source links.
+- In a survey recording screen, hold the current species field to inspect
+  that species without changing the field's raw identification.
+- SQLite schema 16 adds a separate `taxon_occurrence_evidence` table,
+  preserving source/version, original distribution quote, province/island
+  label and review state. Survey records and historical names are not migrated.
+- Researchers can import attributed island/province occurrence CSVs only
+  after installing the matching source taxon catalog. Unknown taxon keys
+  cause the entire evidence import to roll back.
+- The Offline taxonomy screen can browse Mindanao source-listed taxa and
+  four Davao provinces independently, with a derived Davao Region union.
+  **These are source listings, not sightings or asserted presence at a GPS
+  station.** Missing location mentions are not absence records.
+- The private user-supplied Emerson Sy 2025-1/2026-1 source-derived import
+  bundle is delivered separately. No full original checklist has been
+  committed to GitHub or packaged within the APK pending redistribution rights.
+
+## Philippine birds: national occurrence crosswalk
+- AviList v2026 is the global taxonomic authority, licensed CC BY 4.0.
+- The WBCP Records Committee 2026 status report lists 765 Philippine bird
+  species, but its complete 2026 checklist had not been published as of
+  October 1, 2026. The public 2025 checklist is restricted to personal or
+  scientific reference without broader publication rights.
+- `scripts/reconcile_ph_birds_avilist.py` matches an authorized Philippine
+  occurrence CSV to AviList accepted species names. It requires pinned file
+  hashes and explicit source column names. Taxonomic split/conflict cases
+  go to a review CSV and are never automatically guessed.
+- **No comprehensive AviList-aligned Philippine bird list is yet bundled.**
+  The script is a transparent preparation step, not a manufactured checklist.
+
+See `docs/QA_v0_18_3_SPECIES_EVIDENCE.md` for scientific and device tests.
+
 # LIKAS | Philippine Wildlife Survey v0.18.1 Auto GPS Beta
 
 ## Automatic field acquisition

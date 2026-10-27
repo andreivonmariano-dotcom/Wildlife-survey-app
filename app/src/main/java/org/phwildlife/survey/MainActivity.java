@@ -54,6 +54,13 @@ public class MainActivity extends Activity implements LocationListener {
     private final Runnable delayedDraftSave=()->persistDraft();
     private final Runnable visibleTimer=new Runnable(){
         @Override public void run(){
+            Location live=TrackService.currentFix();
+            if(live!=null){
+                location=live;
+                if(gpsView!=null)gpsView.setText(String.format(Locale.US,
+                    "Continuous GPS: %.5f, %.5f · ±%.1f m",live.getLatitude(),
+                    live.getLongitude(),live.hasAccuracy()?live.getAccuracy():Float.NaN));
+            }
             status();
             handler.postDelayed(this,1000);
         }
@@ -667,8 +674,10 @@ public class MainActivity extends Activity implements LocationListener {
         double startLongitude=launchGps.getDoubleExtra("start_gps_longitude",Double.NaN);
         float startAccuracy=launchGps.getFloatExtra("start_gps_accuracy_m",Float.NaN);
         long startGpsTime=launchGps.getLongExtra("start_gps_recorded_at_ms",0L);
-        if(!GpsFixPolicy.acceptable(startLatitude,startLongitude,startAccuracy,
-            startGpsTime,System.currentTimeMillis(),false)){
+        long startElapsedNanos=launchGps.getLongExtra("start_gps_elapsed_nanos",0L);
+        long monotonicAgeMs=(SystemClock.elapsedRealtimeNanos()-startElapsedNanos)/1000000L;
+        if(startElapsedNanos<=0||!GpsFixPolicy.acceptableElapsed(
+            startLatitude,startLongitude,startAccuracy,monotonicAgeMs,false)){
             toast("Survey-start GPS missing, too old, or not better than 10 m. Retry setup.");
             finish();return;
         }
@@ -965,6 +974,7 @@ public class MainActivity extends Activity implements LocationListener {
             }
         }
         if(method.equals("line_transect")||method.equals("ves_transect"))stopTracking();
+        TrackService.stopGnss(this);
         // Stationary and station-based search effort excludes travel between visits.
         // Preserve session clock separately. Never substitute the full survey duration
         // for sampling effort in an analytical effort denominator.
@@ -1574,6 +1584,20 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void launchStationGps(String kind,String id,boolean generate,String label){
         if(!active||surveyPaused){toast("Resume the survey before starting the station");return;}
+        // Reuse the continuous foreground receiver. A qualifying fix starts this
+        // station immediately without a second acquisition page or cold start.
+        Location current=TrackService.currentFix();
+        if(verifiedStationFix(current)){
+            Intent accepted=new Intent();
+            accepted.putExtra("station_kind",kind);
+            accepted.putExtra("station_id",id);
+            accepted.putExtra("station_generate",generate);
+            accepted.putExtra("station_event_id",eventId);
+            accepted.putExtra("station_gps_missing",false);
+            accepted.putExtra("station_gps_location",current);
+            stationGpsResult(accepted);
+            return;
+        }
         Intent intent=new Intent(this,SurveyGpsActivity.class);
         intent.putExtra("station_gps_mode",true);
         intent.putExtra("station_kind",kind);
@@ -1586,9 +1610,8 @@ public class MainActivity extends Activity implements LocationListener {
     private boolean verifiedStationFix(Location fix){
         if(fix==null||!LocationManager.GPS_PROVIDER.equals(fix.getProvider())||!fix.hasAccuracy())return false;
         long ageMs=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
-        return ageMs>=0&&ageMs<=GpsFixPolicy.MAX_FIX_AGE_MS&&
-            GpsFixPolicy.acceptable(fix.getLatitude(),fix.getLongitude(),fix.getAccuracy(),
-                fix.getTime(),System.currentTimeMillis(),fix.isFromMockProvider());
+        return GpsFixPolicy.acceptableElapsed(fix.getLatitude(),fix.getLongitude(),
+            fix.getAccuracy(),ageMs,fix.isFromMockProvider());
     }
     private void stationGpsResult(Intent data){
         if(!active||surveyPaused||eventId==null)return;
@@ -1869,7 +1892,11 @@ public class MainActivity extends Activity implements LocationListener {
         if(active&&!surveyPaused&&(method.equals("line_transect")||method.equals("ves_transect")))startTracking();
         if(active)getSharedPreferences("field_resume",MODE_PRIVATE).edit().putString("screen","survey").commit();
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-            try{locations.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000,1f,this);}catch(Exception ignored){}
+            if(active&&!TrackService.isRunning()){
+                try{TrackService.startGnss(this);}catch(Exception e){
+                    toast("Continuous GPS unavailable: "+e.getClass().getSimpleName());
+                }
+            }
         }
     }
     @Override protected void onPause(){

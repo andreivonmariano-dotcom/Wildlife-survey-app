@@ -17,11 +17,26 @@ the survey event in SQLite schema 12, and exported in `surveys.csv`. The
 migration adds columns without deleting historical records. Older events
 keep these fields null.
 
-**Important distinction:** Existing planned point-count station acceptance
-is still up to 75 m and 30 seconds, with missing-GPS warning override.
-Survey-start precision does not certify each later station/observation fix.
-Research protocols should decide whether to adopt a comparable station-level
-threshold after handset testing.
+## GNSS sky map and station-level acquisition (v0.16)
+The GPS preflight includes a north-up satellite sky plot with cardinal directions,
+30° and 60° elevation rings, color-coded satellite constellations, readable
+satellite identifiers and distinct rings around satellites contributing to the
+fix. Marker size indicates GNSS signal C/N0. Satellite metrics are diagnostic
+and do not independently prove horizontal position accuracy.
+
+Before each planned point-count visit, manually selected bird station visit,
+or structured herpetofauna/mammal station, the same preflight screen acquires
+a fresh GPS_PROVIDER fix. The station clock starts after the observer accepts
+a valid fix with reported horizontal accuracy **strictly below 10 m** and
+age no greater than 10 seconds, or explicitly selects a missing-GPS override.
+The latter leaves station coordinates NULL and records a GPS-quality warning.
+Survey-start GPS is never reused as the next station's location. Existing
+route station IDs and historic coordinates remain intact on repeat visits.
+Prior v0.15 visits can retain older, less precise historical measurements.
+
+Physical-handset testing under canopy and in open sky remains required,
+including checking permission prompts, GNSS diagnostics and explicit
+missing-GPS override. A phone receiver cannot guarantee actual 10 m error.
 
 ## Taxonomy status and data sourcing
 The original starter taxa are incomplete for birds and herpetofauna.

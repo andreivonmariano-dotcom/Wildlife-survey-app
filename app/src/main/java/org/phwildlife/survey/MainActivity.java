@@ -80,6 +80,7 @@ public class MainActivity extends Activity implements LocationListener {
     private long pauseStartedAt=0,accumulatedPausedMs=0;
     private long unitPausedMs=0;
     private Spinner methodSpinner,detectionSpinner,distanceSourceSpinner,firstPositionSpinner,movementSpinner,substrateSpinner,callScoreSpinner,lifeStageSpinner,evidenceSpinner,noiseSpinner;
+    private TaxonSuggestionAdapter taxonSuggestionAdapter;
     private AutoCompleteTextView taxonEntry;
     private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry;
     private Button beginButton,markButton,saveButton,reviewButton,pointNextButton;
@@ -579,59 +580,31 @@ public class MainActivity extends Activity implements LocationListener {
     private static String nonNull(String value){return value==null?"":value;}
     private void updateTaxaSuggestions(boolean clear){
         if(taxonEntry==null)return;
-        java.util.LinkedHashSet<String> items=new java.util.LinkedHashSet<>();
         boolean regional=regionalOnlyChoice!=null&&regionalOnlyChoice.isChecked()&&
-            !geographicRegion.equals("PH")&&!geographicRegion.equals("OTHER");
-        for(String unknown:Taxa.unknownLabels(group))items.add(unknown);
-        try(Cursor fav=db.getReadableDatabase().rawQuery(
-            "SELECT raw_identification FROM taxa_favorites WHERE taxon_group=? ORDER BY raw_identification",
-            new String[]{group})){
-            while(fav.moveToNext())items.add(fav.getString(0));
-        }catch(Exception ignored){}
-        try(Cursor cat=db.getReadableDatabase().rawQuery(
-            "SELECT common_name,scientific_name,region_codes,review_status FROM taxon_catalog "+
-            "WHERE taxon_group=? ORDER BY common_name,scientific_name",
-            new String[]{group})){
-            while(cat.moveToNext()){
-                String common=cat.isNull(0)?"":cat.getString(0);
-                String scientific=cat.getString(1);
-                String codes=cat.isNull(2)?"":cat.getString(2);
-                boolean matched=!"PH".equals(geographicRegion)&&
-                    (("|"+codes+"|").contains("|"+geographicRegion+"|")||
-                     (!nonNull(adminPsgc).isEmpty()&&("|"+codes+"|").contains("|P:"+adminPsgc+"|")))&&
-                    cat.getString(3).equals("reviewed");
-                if(!regional||matched)items.add(common.isEmpty()?scientific:common+" · "+scientific);
-            }
-        }catch(Exception ignored){}
-        String[] curated=Taxa.sortedLabels(group,geographicRegion,regional);
-        for(String v:curated)items.add(v);
-        if(!regional){
-            try(Cursor c=db.getReadableDatabase().rawQuery(
-                "SELECT common_name,scientific_name FROM field_records WHERE taxon_group=? AND deleted_at IS NULL ORDER BY id DESC LIMIT 12",
-                new String[]{group})){
-                while(c.moveToNext()){
-                    String n=c.isNull(0)?"":c.getString(0),latin=c.isNull(1)?"":c.getString(1);
-                    if(!n.isEmpty()&&!latin.isEmpty())items.add(n+" · "+latin);
-                    else if(!n.isEmpty())items.add(n);
-                }
-            }catch(Exception ignored){}
-        }
-        taxonEntry.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_dropdown_item_1line,
-            new java.util.ArrayList<>(items)));
-        if(checklistNote!=null)checklistNote.setText(
-            (nonNull(adminProvince).isEmpty()?"":adminProvince+" · ")+
-            (geographicRegion.equals("PH")?"Philippines · all starter taxa":GeoRegions.label(geographicRegion))+
-            (regional?" · documented regional subset only":" · includes unassessed taxa")+
-            " · unrestricted search");
+            TaxonSearchPolicy.hasDocumentedRegion(true,geographicRegion);
+        if(taxonSuggestionAdapter==null){
+            taxonSuggestionAdapter=new TaxonSuggestionAdapter(this,db,group,
+                geographicRegion,adminPsgc,regional);
+            taxonEntry.setAdapter(taxonSuggestionAdapter);
+        }else taxonSuggestionAdapter.setScope(group,geographicRegion,adminPsgc,regional);
+        if(checklistNote!=null)checklistNote.setText(regional?
+            "Only documented area records":"National candidates · local presence unverified");
         taxonEntry.setHint(group.equals("Birds")?"Bird name or unidentified bird":
-            "Name or unidentified "+group.toLowerCase(Locale.US).replace("s",""));
+            "Species or unidentified "+group.toLowerCase(Locale.US));
         if(clear)taxonEntry.setText("");
-        if(distanceEntry!=null)distanceEntry.setHint(group.equals("Birds")?"Horizontal distance (m)":"Distance (m, optional)");
-        if(birdMeasurements!=null&&!group.equals("Birds"))birdMeasurements.setVisibility(View.GONE);
-        if(herpPanel!=null&&!profile.equals("Herpetofauna"))herpPanel.setVisibility(View.GONE);
-        if(mammalPanel!=null&&!profile.equals("Mammals"))mammalPanel.setVisibility(View.GONE);
-        if(noiseSpinner!=null)noiseSpinner.setVisibility(method.equals("amphibian_calls")?View.VISIBLE:View.GONE);
-        if(callScoreSpinner!=null&&profile.equals("Herpetofauna"))callScoreSpinner.setVisibility(group.equals("Amphibians")?View.VISIBLE:View.GONE);
+        else taxonSuggestionAdapter.getFilter().filter(taxonEntry.getText());
+        if(distanceEntry!=null)distanceEntry.setHint(group.equals("Birds")?
+            "Horizontal distance (m)":"Distance (m, optional)");
+        if(birdMeasurements!=null&&!group.equals("Birds"))
+            birdMeasurements.setVisibility(View.GONE);
+        if(herpPanel!=null&&!profile.equals("Herpetofauna"))
+            herpPanel.setVisibility(View.GONE);
+        if(mammalPanel!=null&&!profile.equals("Mammals"))
+            mammalPanel.setVisibility(View.GONE);
+        if(noiseSpinner!=null)
+            noiseSpinner.setVisibility(method.equals("amphibian_calls")?View.VISIBLE:View.GONE);
+        if(callScoreSpinner!=null&&profile.equals("Herpetofauna"))
+            callScoreSpinner.setVisibility(group.equals("Amphibians")?View.VISIBLE:View.GONE);
     }
     private void restoreEvent(){
         try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id,method,started,COALESCE(taxon_group,'Birds'),COALESCE(survey_profile,'Birds'),COALESCE(station_id,''),COALESCE(observer_name,''),COALESCE(point_target_s,600),COALESCE(protocol_status,'legacy'),COALESCE(project_id,'default'),COALESCE(region_label,''),area_km2,transect_az,point_radius_m FROM surveys WHERE ended IS NULL ORDER BY started DESC LIMIT 1",null)){
@@ -1456,7 +1429,10 @@ public class MainActivity extends Activity implements LocationListener {
         if(scientific!=null&&!scientific.isEmpty()){
             try(Cursor source=db.getReadableDatabase().rawQuery(
                 "SELECT source,source_version FROM taxon_catalog "+
-                "WHERE taxon_group=? AND scientific_name=? LIMIT 1",
+                "WHERE taxon_group=? AND scientific_name=? "+
+                "ORDER BY CASE WHEN taxon_key LIKE 'STARTER:%' THEN 1 ELSE 0 END,"+
+                "CASE WHEN review_status='reviewed' THEN 0 ELSE 1 END "+
+                "LIMIT 1",
                 new String[]{taxonGroup,scientific})){
                 if(source.moveToFirst())return "catalog:"+source.getString(0)+"|"+source.getString(1);
             }catch(Exception ignored){}

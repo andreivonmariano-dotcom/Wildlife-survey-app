@@ -95,9 +95,9 @@ public class WelcomeActivity extends Activity {
                 LinearLayout banner=vertical();banner.setPadding(dp(16),dp(15),dp(16),dp(15));
         android.graphics.drawable.GradientDrawable hero=new android.graphics.drawable.GradientDrawable();
         hero.setColor(UiKit.INK);hero.setCornerRadius(dp(17));banner.setBackground(hero);
-        TextView tag=text("PHILIPPINE WILDLIFE SURVEY",12,true);tag.setTextColor(Color.rgb(183,220,195));
-        TextView welcome=text("Welcome back",25,true);welcome.setTextColor(Color.WHITE);
-        TextView desc=text("Field surveys, saved offline and ready to review.",13,false);desc.setTextColor(Color.rgb(217,234,222));
+        TextView tag=text("LIKAS",32,true);tag.setTextColor(Color.rgb(255,240,193));
+        TextView welcome=text("WILDLIFE SURVEY",14,true);welcome.setTextColor(Color.rgb(194,225,183));
+        TextView desc=text("Philippine biodiversity field records",13,false);desc.setTextColor(Color.rgb(217,234,222));
         banner.addView(tag);banner.addView(welcome);banner.addView(desc);
         LinearLayout.LayoutParams heroLp=new LinearLayout.LayoutParams(-1,-2);heroLp.bottomMargin=dp(15);main.addView(banner,heroLp);
         if(activeSurvey()!=null){

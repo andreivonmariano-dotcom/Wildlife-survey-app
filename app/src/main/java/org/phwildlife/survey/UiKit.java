@@ -12,8 +12,8 @@ import android.widget.TextView;
 public final class UiKit {
   private UiKit(){}
   public static final int BG=Color.rgb(246,249,246);
-  public static final int INK=Color.rgb(24,53,40);
-  public static final int FOREST=Color.rgb(30,99,68);
+  public static final int INK=Color.rgb(13,49,39);
+  public static final int FOREST=Color.rgb(28,91,62);
   public static final int MUTED=Color.rgb(97,116,104);
   public static final int BLUE=Color.rgb(40,88,137);
   public static final int AMBER=Color.rgb(153,92,28);

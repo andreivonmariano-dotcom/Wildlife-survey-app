@@ -166,8 +166,6 @@ public class WelcomeActivity extends Activity {
             resume.setOnClickListener(v->startActivity(
                 new Intent(this,MainActivity.class).putExtra("resume",true)));
             activeCard.addView(resume,new LinearLayout.LayoutParams(-1,dp(56)));
-            TextView note=text("Finish or end this survey before starting another.",12,false);
-            note.setTextColor(MUTED);activeCard.addView(note);
             main.addView(activeCard);
         }else{
             main.addView(step("NEW","Choose wildlife group"));
@@ -183,7 +181,18 @@ public class WelcomeActivity extends Activity {
             LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(-1,-2);
             secondLp.topMargin=dp(9);main.addView(second,secondLp);
         }
-        Button toolsToggle=UiKit.button(this,"History & tools  ▾","secondary");
+        LinearLayout shortcutRow=new LinearLayout(this);
+        shortcutRow.setOrientation(LinearLayout.HORIZONTAL);
+        Button history=UiKit.button(this,"Survey history","secondary");
+        shortcutRow.addView(history,new LinearLayout.LayoutParams(0,dp(52),1));
+        history.setOnClickListener(v->startActivity(new Intent(this,HistoryActivity.class)));
+        Button catalog=UiKit.button(this,"Species checklist","secondary");
+        LinearLayout.LayoutParams catalogLp=new LinearLayout.LayoutParams(0,dp(52),1);
+        catalogLp.leftMargin=dp(8);shortcutRow.addView(catalog,catalogLp);
+        catalog.setOnClickListener(v->startActivity(new Intent(this,CatalogActivity.class)));
+        LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
+        shortcutsLp.topMargin=dp(14);main.addView(shortcutRow,shortcutsLp);
+        Button toolsToggle=UiKit.button(this,"More tools  ▾","quiet");
         LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(54));
         toolMargin.topMargin=dp(10);main.addView(toolsToggle,toolMargin);
         LinearLayout tools=vertical();
@@ -191,22 +200,22 @@ public class WelcomeActivity extends Activity {
         toolsToggle.setOnClickListener(v->{
             boolean expanded=tools.getVisibility()!=View.VISIBLE;
             tools.setVisibility(expanded?View.VISIBLE:View.GONE);
-            toolsToggle.setText(expanded?"History & tools  ▴":"History & tools  ▾");
+            toolsToggle.setText(expanded?"Less tools  ▴":"More tools  ▾");
         });
-        toolRow(tools,"Survey history",()->startActivity(new Intent(this,HistoryActivity.class)));
-        toolRow(tools,"Call recordings & spectrograms",()->
+        tools.addView(text("Field evidence",13,true));
+        toolRow(tools,"Sound recordings",()->
             startActivity(new Intent(this,CallLibraryActivity.class)));
         toolRow(tools,"Camera and trap records",()->
             startActivity(new Intent(this,TrapProtocolActivity.class)));
-        toolRow(tools,"Coverboards, area search & signs",()->
+        toolRow(tools,"Other method evidence",()->
             startActivity(new Intent(this,FieldProtocolsActivity.class)));
-        toolRow(tools,"Study protocol templates",()->
-            startActivity(new Intent(this,StudyProtocolsActivity.class)));
+        tools.addView(text("Projects and reporting",13,true));
         toolRow(tools,"Projects & stations",()->startActivity(new Intent(this,SitesActivity.class)));
-        toolRow(tools,"Offline checklist",()->startActivity(new Intent(this,CatalogActivity.class)));
+        toolRow(tools,"Study protocols",()->
+            startActivity(new Intent(this,StudyProtocolsActivity.class)));
         toolRow(tools,"Fieldwork dashboard",()->startActivity(new Intent(this,DashboardActivity.class)));
         toolRow(tools,"Scientific data review",()->startActivity(new Intent(this,AuditActivity.class)));
-        toolRow(tools,"Legacy backup import",()->startActivity(new Intent(this,ImportActivity.class)));
+        toolRow(tools,"Import previous backup",()->startActivity(new Intent(this,ImportActivity.class)));
         main.addView(tools);
     }
     private void toolRow(LinearLayout parent,String name,Runnable action){
@@ -473,25 +482,37 @@ public class WelcomeActivity extends Activity {
         });
 
         main.addView(step("04","Begin survey"));
-        main.addView(text("Study completion requirements",14,true));
+        LinearLayout studyOptions=vertical();
+        studyOptions.setVisibility(View.GONE);
         studyChoice=new Spinner(this);
-        main.addView(studyChoice,new LinearLayout.LayoutParams(-1,dp(54)));
-        Button manageStudies=UiKit.button(this,"Manage study protocols","secondary");
-        main.addView(manageStudies,new LinearLayout.LayoutParams(-1,dp(48)));
+        studyOptions.addView(studyChoice,new LinearLayout.LayoutParams(-1,dp(52)));
+        Button manageStudies=UiKit.button(this,"Manage study templates","quiet");
+        studyOptions.addView(manageStudies,new LinearLayout.LayoutParams(-1,dp(46)));
         manageStudies.setOnClickListener(v->
             startActivity(new Intent(this,StudyProtocolsActivity.class)));
+        TextView studyToggle=text("＋ Study-specific rules (optional)",14,true);
+        studyToggle.setTextColor(GREEN);studyToggle.setMinHeight(dp(48));
+        studyToggle.setGravity(Gravity.CENTER_VERTICAL);studyToggle.setFocusable(true);
+        studyToggle.setOnClickListener(v->{
+            boolean open=studyOptions.getVisibility()!=View.VISIBLE;
+            studyOptions.setVisibility(open?View.VISIBLE:View.GONE);
+            studyToggle.setText(open?"− Hide study rules":"＋ Study-specific rules (optional)");
+        });
+        main.addView(studyToggle);main.addView(studyOptions);
         refreshStudyChoices();
         Button start=UiKit.button(this,"Continue to GPS · "+profile,"primary");
         LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(58));
         startLp.topMargin=dp(16);main.addView(start,startLp);
         start.setOnClickListener(v->startSelected());
     }
+    private String selectedStudyId(){
+        int index=studyChoice==null?-1:studyChoice.getSelectedItemPosition();
+        return index>=0&&index<studyTemplateIds.size()?studyTemplateIds.get(index):"";
+    }
     private void refreshStudyChoices(){
         if(studyChoice==null||projectChoice==null||methodChoices==null||
             methodChoices.getCheckedRadioButtonId()<1000||projectKeys.isEmpty())return;
-        String earlier=studyTemplateIds.isEmpty()?"":studyTemplateIds.get(
-            Math.min(studyChoice.getSelectedItemPosition()<0?0:
-                studyChoice.getSelectedItemPosition(),studyTemplateIds.size()-1));
+        String earlier=selectedStudyId();
         ArrayList<String> labels=new ArrayList<>();labels.add("Standard LIKAS requirements");
         studyTemplateIds.clear();studyTemplateIds.add("");
         int methodIndex=methodChoices.getCheckedRadioButtonId()-1000;
@@ -887,7 +908,8 @@ public class WelcomeActivity extends Activity {
              .putInt("methodChoice",methodChoices.getCheckedRadioButtonId()-1000)
              .putInt("projectChoice",projectChoice.getSelectedItemPosition())
              .putInt("geographicChoice",geographicChoice.getSelectedItemPosition())
-             .putString("geographicMethod",geographicMethod);
+             .putString("geographicMethod",geographicMethod)
+             .putString("studyTemplateId",selectedStudyId());
         }
         e.commit();
     }
@@ -913,6 +935,10 @@ public class WelcomeActivity extends Activity {
         if(geo>=0&&geo<geographicChoice.getCount())geographicChoice.setSelection(geo);
         // Reconfirm polygon-based suggestions on a new session.
         geographicMethod=GeoRegions.BOUNDARY_METHOD;
+        refreshStudyChoices();
+        String savedStudy=p.getString("studyTemplateId","");
+        int studyIndex=studyTemplateIds.indexOf(savedStudy);
+        if(studyIndex>=0)studyChoice.setSelection(studyIndex);
     }
     private String activeSurvey(){
         try{

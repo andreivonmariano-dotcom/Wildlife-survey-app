@@ -3,222 +3,216 @@ package org.phwildlife.survey;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.SystemClock;
+import android.util.AttributeSet;
 import android.view.View;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 
 /**
- * Offline, deliberately low-resolution pixel-art Philippine rainforest.
- * Fixed 216x384 scene, nearest-neighbor upscale, 10 fps maximum.
- * No network, decoded animation frames, GPS, storage, or animation workers.
+ * Lightweight, offline, clock-aware ambient background for the LIKAS welcome screen.
+ * The view is decorative only. Place interactive controls in a sibling view above it.
  */
 public final class LikasForestView extends View {
-    static final int PIXELS_W=216, PIXELS_H=384, FRAME_DELAY_MS=100;
-    private final Paint ink=new Paint();
-    private final Bitmap scene=Bitmap.createBitmap(PIXELS_W,PIXELS_H,Bitmap.Config.ARGB_8888);
-    private final Canvas pixels=new Canvas(scene);
-    private final Rect destination=new Rect();
-    private long animationStartedMs=0;
-    private boolean playing=false,started=false;
-    private float light=1f;
-    private long lastClockCheck=0;
+    private static final long FRAME_INTERVAL_MS = 100L;
+    private static final float TAU = (float) (Math.PI * 2.0);
+    private static final String DAY_PATH = "likas_forest/forest_day.webp";
+    private static final String NIGHT_PATH = "likas_forest/forest_night.webp";
 
-    public LikasForestView(Context context){
-        super(context);
-        ink.setAntiAlias(false);
-        ink.setFilterBitmap(false);
-        setContentDescription("Animated pixel-art Philippine tropical forest; forest changes between day and night.");
+    private final Paint bitmapPaint = new Paint();
+    private final Paint effectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Rect source = new Rect();
+    private final Rect destination = new Rect();
+    private final RectF pixel = new RectF();
+    private final Bitmap day;
+    private final Bitmap night;
+    private final long startedAt = SystemClock.uptimeMillis();
+
+    private boolean motionEnabled = true;
+    private float nightMix = 0f;
+    private float targetNightMix = 0f;
+    private long lastClockSample = 0L;
+    private long lastFrame = 0L;
+    private float sourceLeft = 0f;
+    private float sourceSpan = 1f;
+
+    public LikasForestView(Context context) {
+        this(context, null);
+    }
+
+    public LikasForestView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        bitmapPaint.setAntiAlias(false);
+        bitmapPaint.setFilterBitmap(false);
+        day = load(context, DAY_PATH);
+        night = load(context, NIGHT_PATH);
+        nightMix = targetNightMix = clockNightFraction();
+        setClickable(false);
+        setFocusable(false);
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
 
-    static int mix(int a,int b,float t){
-        t=Math.max(0f,Math.min(1f,t));
-        return Color.rgb(
-            Math.round(Color.red(a)+(Color.red(b)-Color.red(a))*t),
-            Math.round(Color.green(a)+(Color.green(b)-Color.green(a))*t),
-            Math.round(Color.blue(a)+(Color.blue(b)-Color.blue(a))*t));
+    private static Bitmap load(Context context, String path) {
+        try (InputStream stream = context.getAssets().open(path)) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = false;
+            return BitmapFactory.decodeStream(stream, null, options);
+        } catch (IOException exception) {
+            return null;
+        }
     }
-    private static final java.util.Map<String,Integer> COLORS=new java.util.HashMap<>();
-    private static int color(String value){
-        Integer cached=COLORS.get(value);
-        if(cached!=null)return cached;
-        int parsed=Color.parseColor(value);
-        COLORS.put(value,parsed);
-        return parsed;
+
+    public void setMotionEnabled(boolean enabled) {
+        motionEnabled = enabled;
+        invalidate();
     }
-    private void rect(int x,int y,int w,int h,int shade){
-        if(w<=0||h<=0)return;
-        ink.setColor(shade);
-        pixels.drawRect(x,y,x+w,y+h,ink);
+
+    private static float ease(float value) {
+        float t = Math.max(0f, Math.min(1f, value));
+        return t * t * (3f - 2f * t);
     }
-    private int between(String night,String day){
-        return mix(color(night),color(day),light);
+
+    private static float clockNightFraction() {
+        Calendar clock = Calendar.getInstance();
+        float hour = clock.get(Calendar.HOUR_OF_DAY)
+                + clock.get(Calendar.MINUTE) / 60f;
+        if (hour < 5.25f || hour >= 19.25f) return 1f;
+        if (hour < 6.50f) return 1f - ease((hour - 5.25f) / 1.25f);
+        if (hour < 17.75f) return 0f;
+        return ease((hour - 17.75f) / 1.50f);
     }
-    private void sky(float second){
-        int upper=between("#101C34","#78B5AC");
-        int lower=between("#435A70","#D4DBAD");
-        for(int y=0;y<PIXELS_H;y+=8)
-            rect(0,y,PIXELS_W,8,mix(upper,lower,y/(float)PIXELS_H));
-        int orbX=162,orbY=62;
-        rect(orbX-10,orbY-10,20,20,between("#9EB9D2","#FBE8A4"));
-        rect(orbX-7,orbY-7,14,14,between("#DCE8D4","#FFF4C7"));
-        if(light<.45f){
-            for(int i=0;i<19;i++){
-                int x=(i*61+13)%PIXELS_W,y=10+(i*37)%125;
-                int star=Color.argb(Math.round((.45f-light)*260f),230,244,213);
-                rect(x,y,i%4==0?2:1,1,star);
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        final int width = getWidth();
+        final int height = getHeight();
+        if (width <= 0 || height <= 0) return;
+
+        final long now = SystemClock.uptimeMillis();
+        if (now - lastClockSample > 30000L || lastClockSample == 0L) {
+            targetNightMix = clockNightFraction();
+            lastClockSample = now;
+        }
+        float elapsed = lastFrame == 0L ? 0f : Math.min(500f, now - lastFrame);
+        lastFrame = now;
+        nightMix += (targetNightMix - nightMix) * Math.min(1f, elapsed / 1800f);
+
+        float seconds = motionEnabled ? (now - startedAt) / 1000f : 0f;
+        canvas.drawColor(Color.rgb(8, 28, 31));
+        Bitmap primary = day != null ? day : night;
+        if (primary != null) {
+            drawPlate(canvas, primary, 255, seconds);
+            if (night != null && day != null) {
+                drawPlate(canvas, night, Math.round(255f * nightMix), seconds);
+            }
+            if (motionEnabled) drawAmbientEffects(canvas, seconds, width, height);
+        }
+
+        if (motionEnabled && isShown() && ValueAnimator.areAnimatorsEnabled())
+            postInvalidateDelayed(FRAME_INTERVAL_MS);
+    }
+
+    private void drawPlate(Canvas canvas, Bitmap plate, int alpha, float seconds) {
+        float viewRatio = getWidth() / (float) getHeight();
+        float span = Math.max(1f, Math.min(plate.getWidth(),
+                plate.getHeight() * viewRatio));
+        float maxLeft = Math.max(0f, plate.getWidth() - span);
+        float range = Math.min(17f, maxLeft * 0.43f);
+        float center = plate.getWidth() * 0.55f
+                + (float) Math.sin(seconds * TAU / 34f) * range;
+        float left = Math.max(0f, Math.min(maxLeft, center - span / 2f));
+        sourceLeft = left;
+        sourceSpan = span;
+
+        source.set(Math.round(left), 0, Math.round(left + span), plate.getHeight());
+        destination.set(0, 0, getWidth(), getHeight());
+        bitmapPaint.setAlpha(alpha);
+        canvas.drawBitmap(plate, source, destination, bitmapPaint);
+    }
+
+    private float screenX(float worldX) {
+        return (worldX - sourceLeft) * getWidth() / sourceSpan;
+    }
+
+    private void drawAmbientEffects(Canvas canvas, float t, int w, int h) {
+        // Gentle leaf movement at the edges without shifting the entire scene.
+        for (int i = 0; i < 4; i++) {
+            float x = i % 2 == 0 ? w * 0.025f : w * 0.975f;
+            float y = h * (0.14f + 0.17f * (i / 2));
+            float angle = (float) Math.sin(t * 0.65f + i) * 5f;
+            canvas.save();
+            canvas.rotate(angle, x, y);
+            effectPaint.setColor(Color.argb(120, 24, 85, 47));
+            pixel.set(x - w * 0.012f, y - h * 0.018f,
+                    x + w * 0.012f, y + h * 0.018f);
+            canvas.drawOval(pixel, effectPaint);
+            canvas.restore();
+        }
+
+        // Clouds move over the exact supplied day/night forest artwork.
+        for (int i = 0; i < 3; i++) {
+            float wrap = w + w * 0.3f;
+            float x = ((w * (0.16f + i * 0.39f) + t * (2.2f + i)) % wrap);
+            float y = h * (0.12f + i * 0.065f);
+            effectPaint.setColor(Color.argb(Math.round(17f * (1f - nightMix)),
+                    239, 251, 249));
+            pixel.set(x, y, x + w * 0.075f, y + Math.max(2f, h * 0.003f));
+            canvas.drawRect(pixel, effectPaint);
+        }
+
+        // Short repeating fall highlights and moving surface ripples.
+        effectPaint.setStrokeWidth(Math.max(2f, w * 0.005f));
+        for (int i = 0; i < 2; i++) {
+            float x = screenX(i == 0 ? 129f : 151f);
+            if (x > 0 && x < w) {
+                float offset = (t * 18f + i * 23f) % (h * 0.12f);
+                effectPaint.setColor(Color.argb(95, 214, 249, 255));
+                canvas.drawLine(x, h * 0.49f + offset,
+                        x, h * 0.505f + offset, effectPaint);
             }
         }
-        int cloud=between("#6E8593","#E7E8D0");
-        for(int n=0;n<3;n++){
-            int x=((n*99+55+(int)(second*(n%2==0?1.6f:-1.1f)))%310+310)%310-48;
-            int y=31+n*21;
-            for(int shift=-310;shift<=310;shift+=310){
-                rect(x+shift,y+7,54,6,cloud);
-                rect(x+shift+7,y+3,31,12,cloud);
-                rect(x+shift+17,y,18,10,cloud);
+        for (int i = 0; i < 7; i++) {
+            float x = screenX(109f + i * 8f
+                    + (float) Math.sin(t * 0.7f + i) * 0.8f);
+            if (x > 0 && x < w) {
+                float y = h * (0.67f + i % 3 * 0.018f);
+                effectPaint.setColor(Color.argb(50 + (i % 3) * 18,
+                        195, 244, 248));
+                canvas.drawLine(x, y, x + w * 0.025f, y, effectPaint);
             }
         }
-    }
-    private void mountains(float seconds){
-        int distant=between("#253B53","#88A99B");
-        int ridge=between("#193648","#648E78");
-        int dx=(int)(seconds*.55f)%PIXELS_W;
-        for(int x=-PIXELS_W;x<PIXELS_W*2;x+=4){
-            int cx=x+dx;
-            int peak=142+Math.abs(((cx/4)*13)%51-26)/2;
-            rect(x,peak,4,130,distant);
-        }
-        for(int x=0;x<PIXELS_W;x+=5){
-            int peak=173+Math.abs((x*7+30)%79-40)/3;
-            rect(x,peak,5,112,ridge);
-        }
-    }
-    private void tree(int x,int crownTop,int size,int bark,int foliage,int highlight,float sway){
-        // Rectangular, uneven crowns and buttressed trunks in coarse pixel clusters.
-        int shift=Math.round(sway);
-        int trunkW=Math.max(4,size/9);
-        rect(x-trunkW/2,crownTop+size/4,trunkW,PIXELS_H-crownTop,bark);
-        rect(x-trunkW-4,290,5,35,bark);
-        rect(x+trunkW-1,303,6,28,bark);
-        int leafW=size;
-        rect(x-leafW/2+shift,crownTop+11,leafW,28,foliage);
-        rect(x-leafW/2+7+shift,crownTop+3,leafW-16,35,foliage);
-        rect(x-leafW/2+16+shift,crownTop-4,leafW-30,18,foliage);
-        rect(x-leafW/2-10+shift,crownTop+23,24,23,foliage);
-        rect(x+leafW/2-10+shift,crownTop+15,19,25,foliage);
-        rect(x-leafW/2+12+shift,crownTop+7,18,8,highlight);
-        rect(x+leafW/5+shift,crownTop+16,12,6,highlight);
-    }
-    private void layer(float sec,boolean rear){
-        int foliage=rear?between("#254951","#5D9474"):between("#16453F","#2B6C4B");
-        int leaves=rear?between("#3B6661","#87AD7D"):between("#255B43","#488B5B");
-        int wood=rear?between("#1A313B","#416750"):between("#102E2D","#315B43");
-        float speed=rear?1.1f:2.4f;
-        int travel=((int)(sec*speed))%270;
-        for(int k=-1;k<3;k++){
-            int base=k*270-travel;
-            if(rear){
-                tree(base+47,130,69,wood,foliage,leaves,(float)Math.sin(sec*.63f+k)*2);
-                tree(base+189,116,83,wood,foliage,leaves,(float)Math.sin(sec*.48f+k+1)*3);
-            }else{
-                tree(base+19,192,74,wood,foliage,leaves,(float)Math.sin(sec*.68f+k)*3);
-                tree(base+177,205,88,wood,foliage,leaves,(float)Math.sin(sec*.53f+k+2)*3);
-            }
+
+        // Night fireflies complement the original waterfall and foliage.
+        for (int i = 0; i < 10; i++) {
+            float baseX = (i % 2 == 0 ? 0.08f : 0.90f)
+                    + (i / 2) * (i % 2 == 0 ? 0.025f : -0.02f);
+            float x = w * baseX + (float) Math.sin(t * 0.3f + i * 2f) * w * 0.018f;
+            float y = h * (0.19f + (i % 5) * 0.135f)
+                    + (float) Math.cos(t * 0.48f + i) * h * 0.009f;
+            float pulse = 0.5f + 0.5f * (float) Math.sin(t * 1.25f + i * 1.7f);
+            int alpha = Math.round((30f + 115f * nightMix) * pulse);
+            effectPaint.setColor(Color.argb(alpha, 235, 254, 145));
+            float diameter = Math.max(2f, w * 0.006f);
+            pixel.set(x, y, x + diameter, y + diameter);
+            canvas.drawRect(pixel, effectPaint);
         }
     }
-    private void waterfall(float sec){
-        int stone=between("#234044","#5A7C65");
-        int foam=between("#8AAEB1","#E0F6DC");
-        int water=between("#376E7D","#70C8BA");
-        rect(121,206,60,126,stone);
-        rect(128,206,45,118,between("#2B4B55","#54826B"));
-        rect(143,208,22,117,water);
-        for(int j=0;j<15;j++){
-            int y=209+((j*11+(int)(sec*20))%112);
-            rect(145+j%3*5,y,3,9,foam);
-        }
-        rect(136,316,38,6,foam);
-        rect(122,323,60,4,water);
-        for(int i=0;i<13;i++){
-            int x=99+i*8,y=328+(i%3)*3;
-            rect(x,y,6,2,foam);
-        }
-    }
-    private void foreground(float sec){
-        int ground=between("#0D282D","#244B38");
-        int green=between("#1B4438","#397748");
-        int greenLit=between("#34654A","#5F9655");
-        rect(0,339,PIXELS_W,45,ground);
-        for(int k=0;k<30;k++){
-            int x=(k*37+17)%PIXELS_W;
-            int y=327+(k*11)%32;
-            int bend=(int)Math.sin(sec*.8f+k)*2;
-            rect(x+bend,y,4,22,green);
-            rect(x-5+bend,y+4,10,5,greenLit);
-            rect(x+3+bend,y-4,7,7,green);
-        }
-        // Bottom shade supports readable launch buttons without a raster overlay.
-        rect(0,364,PIXELS_W,20,between("#0B222B","#1C3F31"));
-    }
-    private void fireflies(float sec){
-        if(light>.72f)return;
-        int alpha=Math.round((.72f-light)/.72f*235f);
-        for(int n=0;n<17;n++){
-            float pulse=(float)Math.sin(sec*1.7f+n*2.1f);
-            int x=(n*41+29+(int)(sec*(n%2==0?1f:-1f)))%PIXELS_W;
-            if(x<0)x+=PIXELS_W;
-            int y=170+(n*43)%167+(int)Math.sin(sec*.7f+n)*3;
-            rect(x,y,n%3==0?3:2,2,Color.argb(Math.max(0,(int)(alpha*(.58f+.42f*pulse))),227,247,154));
-        }
-    }
-    private void render(float sec){
-        sky(sec);
-        mountains(sec);
-        layer(sec,true);
-        waterfall(sec);
-        layer(sec,false);
-        foreground(sec);
-        fireflies(sec);
-    }
-    @Override protected void onDraw(Canvas target){
-        super.onDraw(target);
-        if(getWidth()<=0||getHeight()<=0)return;
-        long now=SystemClock.uptimeMillis();
-        if(!started){animationStartedMs=now;started=true;updateDaylight(true);}
-        else if(now-lastClockCheck>=5000L)updateDaylight(false);
-        render(playing?(now-animationStartedMs)*.001f:0f);
-        destination.set(0,0,getWidth(),getHeight());
-        ink.setFilterBitmap(false);
-        ink.setAlpha(255);
-        target.drawBitmap(scene,null,destination,ink);
-        if(playing&&ValueAnimator.areAnimatorsEnabled())
-            postInvalidateDelayed(FRAME_DELAY_MS);
-    }
-    private void updateDaylight(boolean initial){
-        Calendar clock=Calendar.getInstance();
-        int minute=clock.get(Calendar.HOUR_OF_DAY)*60+clock.get(Calendar.MINUTE);
-        float desired=LikasUiRules.daylightFactor(minute);
-        if(initial)light=desired;
-        else light+=Math.max(-.025f,Math.min(.025f,desired-light));
-        lastClockCheck=SystemClock.uptimeMillis();
-    }
-    @Override protected void onAttachedToWindow(){
-        super.onAttachedToWindow();
-        playing=getVisibility()==VISIBLE&&getWindowVisibility()==VISIBLE;
-        animationStartedMs=SystemClock.uptimeMillis();
-        started=false;invalidate();
-    }
-    @Override protected void onWindowVisibilityChanged(int visibility){
+
+    @Override
+    protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
-        playing=visibility==VISIBLE&&getVisibility()==VISIBLE;
-        if(playing){animationStartedMs=SystemClock.uptimeMillis();invalidate();}
-    }
-    @Override protected void onDetachedFromWindow(){
-        playing=false;super.onDetachedFromWindow();
+        if (visibility == VISIBLE && motionEnabled && ValueAnimator.areAnimatorsEnabled()) {
+            lastFrame = 0L;
+            postInvalidateDelayed(FRAME_INTERVAL_MS);
+        }
     }
 }

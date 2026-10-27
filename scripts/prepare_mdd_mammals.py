@@ -16,6 +16,7 @@ from urllib.request import Request, urlopen
 SOURCE = "https://zenodo.org/records/21654811/files/MDD_v2.5_6904species.csv?download=1"
 OFFICIAL_MD5 = "533e662fd5b8f66a5f56c191e7efac44"
 DEST = Path("app/src/main/assets/ph_mammals_mdd_v2_5.json")
+CACHE = Path(".taxonomy-cache/mdd-v2.5.csv")
 
 def truthy(value):
     return str(value).strip().lower() in {"1", "true", "yes"}
@@ -60,11 +61,16 @@ def extract(data):
     return sorted(taxa.values(), key=lambda x: x["scientific_name"])
 
 def main():
-    request = Request(SOURCE, headers={"User-Agent": "Philippine-Wildlife-Survey/0.16"})
-    with urlopen(request, timeout=90) as response:
-        source = response.read(26_000_000)
+    source = CACHE.read_bytes() if CACHE.is_file() else b""
     if hashlib.md5(source).hexdigest() != OFFICIAL_MD5:
-        raise ValueError("Official MDD v2.5 checksum mismatch: do not build altered taxonomy")
+        request = Request(SOURCE, headers={"User-Agent": "Philippine-Wildlife-Survey/0.27"})
+        with urlopen(request, timeout=90) as response:
+            source = response.read(26_000_000)
+        if hashlib.md5(source).hexdigest() != OFFICIAL_MD5:
+            raise ValueError("Official MDD v2.5 checksum mismatch: do not build altered taxonomy")
+        CACHE.parent.mkdir(parents=True, exist_ok=True)
+        CACHE.write_bytes(source)
+    # Even cached data must match the pinned official checksum on every build.
     candidates = extract(source)
     DEST.parent.mkdir(parents=True, exist_ok=True)
     DEST.write_text(json.dumps(candidates, ensure_ascii=False, separators=(",", ":")),

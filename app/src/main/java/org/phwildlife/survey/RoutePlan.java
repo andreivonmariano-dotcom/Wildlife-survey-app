@@ -126,9 +126,11 @@ public final class RoutePlan {
             l.getLongitude()>=-180&&l.getLongitude()<=180;
     }
     public static void start(SQLiteDatabase db,String event,Next n,String pointId,int targetSeconds,long startedAt,Location gps){
-        boolean hasFix=acceptable(gps,startedAt);
+        boolean hasFix=acceptable(gps,startedAt)&&
+            GpsFixPolicy.acceptable(gps.getLatitude(),gps.getLongitude(),gps.getAccuracy(),
+                gps.getTime(),startedAt,gps.isFromMockProvider());
         String time=utc(startedAt);
-        String quality=hasFix?"gps_fix_at_station_start":"missing_or_weak_gps_at_start";
+        String quality=hasFix?"verified_station_fix_under_10m":"missing_or_weak_gps_at_start";
         Object lat=hasFix?gps.getLatitude():null,lon=hasFix?gps.getLongitude():null,
             acc=hasFix?gps.getAccuracy():null;
         db.beginTransaction();

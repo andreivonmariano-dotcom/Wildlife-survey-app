@@ -224,6 +224,10 @@ public class WelcomeActivity extends Activity {
         TextView item=text(name+"   ›",16,true);
         item.setPadding(dp(16),dp(14),dp(12),dp(14));
         item.setBackground(UiKit.surface(this));
+        item.setFocusable(true);
+        item.setMinHeight(dp(48));
+        item.setGravity(Gravity.CENTER_VERTICAL);
+        item.setContentDescription("Open "+name);
         LinearLayout.LayoutParams margins=new LinearLayout.LayoutParams(-1,-2);
         margins.bottomMargin=dp(8);parent.addView(item,margins);
         item.setOnClickListener(v->action.run());

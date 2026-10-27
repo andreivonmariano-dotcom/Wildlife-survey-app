@@ -23,9 +23,11 @@ import java.util.Locale;
 public final class RegionalChecklistActivity extends Activity {
     private static final String[] AREAS={"Mindanao","Davao Region","Davao del Sur",
         "Davao del Norte","Davao Oriental","Davao de Oro"};
+    private static final String[] GROUPS={"All wildlife","Birds","Amphibians",
+        "Reptiles","Mammals"};
     private FieldDb db;
     private EditText search;
-    private Spinner scope;
+    private Spinner scope,groupFilter;
     private TextView status;
     private ListView list;
     private final ArrayList<String> ids=new ArrayList<>();
@@ -49,6 +51,10 @@ public final class RegionalChecklistActivity extends Activity {
         scope.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,AREAS));
         root.addView(scope);
+        groupFilter=new Spinner(this);
+        groupFilter.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,GROUPS));
+        root.addView(groupFilter);
         search=new EditText(this);
         search.setSingleLine(true);
         search.setHint("Filter scientific or common name");
@@ -77,6 +83,11 @@ public final class RegionalChecklistActivity extends Activity {
                     int position,long id){refresh();}
             @Override public void onNothingSelected(AdapterView<?> p){}
         });
+        groupFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override public void onItemSelected(AdapterView<?> parent,View view,
+                    int position,long id){refresh();}
+            @Override public void onNothingSelected(AdapterView<?> parent){}
+        });
         search.addTextChangedListener(new TextWatcher(){
             @Override public void beforeTextChanged(CharSequence s,int a,int c,int f){}
             @Override public void onTextChanged(CharSequence s,int start,int before,int count){
@@ -100,6 +111,11 @@ public final class RegionalChecklistActivity extends Activity {
             where="e.area_type='province' AND e.area_label=?";
             args.add(selected);
         }
+        int selectedGroup=groupFilter==null?-1:groupFilter.getSelectedItemPosition();
+        if(selectedGroup>0){
+            where+=" AND c.taxon_group=?";
+            args.add(GROUPS[selectedGroup]);
+        }
         String term=TaxonSearchPolicy.trim(search.getText().toString());
         if(!term.isEmpty()){
             where+=" AND (LOWER(c.common_name) LIKE ? ESCAPE '!' OR "+
@@ -112,7 +128,7 @@ public final class RegionalChecklistActivity extends Activity {
             "SELECT DISTINCT e.taxon_key,c.common_name,c.scientific_name "+
                 "FROM taxon_occurrence_evidence e JOIN taxon_catalog c "+
                 "ON e.taxon_key=c.taxon_key WHERE "+where+
-                " ORDER BY c.scientific_name COLLATE NOCASE LIMIT 220",
+                " ORDER BY c.taxon_group,c.scientific_name COLLATE NOCASE LIMIT 1000",
             args.toArray(new String[0]))){
             while(c.moveToNext()){
                 ids.add(c.getString(0));

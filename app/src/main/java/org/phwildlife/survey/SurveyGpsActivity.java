@@ -32,6 +32,7 @@ public final class SurveyGpsActivity extends Activity {
     private boolean receiverStartedInThisScreen=false;
     private boolean acquisitionVisible=false;
     private boolean launchCommitted=false;
+    private boolean skipConfirmationOpen=false;
     private boolean skyRegistered=false;
     private Location qualifiedFix;
     private TextView status,satelliteStatus,signalStatus;
@@ -117,6 +118,27 @@ public final class SurveyGpsActivity extends Activity {
         // Survey and station setup are already explicit actions. No second Start tap.
         startButton.setVisibility(View.GONE);
         content.addView(startButton);
+        if(!stationMode){
+            Button skip=UiKit.button(this,"Start without GPS · mark start missing","secondary");
+            skip.setOnClickListener(v->{
+                if(launchCommitted||skipConfirmationOpen||!acquisitionVisible||isFinishing())return;
+                skipConfirmationOpen=true;
+                new AlertDialog.Builder(this)
+                    .setTitle("Start this survey without GPS?")
+                    .setMessage("Survey time and observations will be recorded now. "+
+                        "The starting coordinates stay blank and are flagged in the export. "+
+                        "A later GPS fix cannot replace the missing starting position. "+
+                        "GPS tracking and station readings can begin when available.")
+                    .setNegativeButton("Keep checking GPS",(dialog,which)->{
+                        skipConfirmationOpen=false;updateLocation();
+                    })
+                    .setOnCancelListener(dialog->{skipConfirmationOpen=false;updateLocation();})
+                    .setPositiveButton("Start with missing GPS",(dialog,which)->{
+                        skipConfirmationOpen=false;launchWithoutFix();
+                    }).show();
+            });
+            content.addView(skip);
+        }
         if(stationMode){
             Button missing=UiKit.button(this,"Start without GPS · flag missing","warning");
             missing.setOnClickListener(v->new AlertDialog.Builder(this)
@@ -204,7 +226,7 @@ public final class SurveyGpsActivity extends Activity {
         boolean good=validFix(current);
         qualifiedFix=good?new Location(current):null;
         startButton.setEnabled(good);
-        if(good&&acquisitionVisible&&!launchCommitted&&!isFinishing()){
+        if(good&&acquisitionVisible&&!launchCommitted&&!skipConfirmationOpen&&!isFinishing()){
             status.setText("GPS verified · starting "+(stationMode?"station":"survey")+"…");
             launchWithFix();
             return;
@@ -250,6 +272,26 @@ public final class SurveyGpsActivity extends Activity {
         }catch(RuntimeException e){
             launchCommitted=false;
             status.setText("Could not open survey: "+e.getClass().getSimpleName());
+        }
+    }
+    /** Explicit observer override. No GPS values or position estimates are invented. */
+    private void launchWithoutFix(){
+        if(stationMode||launchCommitted||!acquisitionVisible||isFinishing())return;
+        launchCommitted=true;
+        Intent launch=new Intent(this,MainActivity.class);
+        if(getIntent().getExtras()!=null)launch.putExtras(getIntent().getExtras());
+        launch.removeExtra("start_gps_latitude");
+        launch.removeExtra("start_gps_longitude");
+        launch.removeExtra("start_gps_accuracy_m");
+        launch.removeExtra("start_gps_recorded_at_ms");
+        launch.removeExtra("start_gps_elapsed_nanos");
+        launch.putExtra("start_without_gps",true);
+        try{
+            startActivity(launch);
+            finish();
+        }catch(RuntimeException error){
+            launchCommitted=false;
+            status.setText("Could not open survey: "+error.getClass().getSimpleName());
         }
     }
     private void finishStation(Location fix){

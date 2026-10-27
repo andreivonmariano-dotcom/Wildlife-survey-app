@@ -487,7 +487,8 @@ public final class CatalogActivity extends Activity {
                     "family","source","source_version","region_codes","review_status",
                     "order_name","subfamily","subgenus","authority","authority_year",
                     "distribution_text","distribution_status","ph_red_list","iucn_red_list",
-                    "cites","synonym_text","taxonomic_note"};
+                    "cites","synonym_text","taxonomic_note",
+                    "source_url","ebird_url","sound_url"};
                 StringBuilder columns=new StringBuilder(),placeholders=new StringBuilder();
                 for(String key:keys){
                     if(columns.length()>0){columns.append(",");placeholders.append(",");}

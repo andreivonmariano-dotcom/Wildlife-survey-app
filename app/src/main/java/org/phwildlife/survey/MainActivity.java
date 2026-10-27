@@ -55,12 +55,13 @@ public class MainActivity extends Activity implements LocationListener {
     private final Runnable visibleTimer=new Runnable(){
         @Override public void run(){
             status();
+            updateGpsReadout();
             handler.postDelayed(this,1000);
         }
     };
     private final int BACK=Color.rgb(247,249,246),INK=Color.rgb(22,51,38),GREEN=Color.rgb(37,104,74),MUTED=Color.rgb(95,116,101);
     private FieldDb db; private LocationManager locations;
-    private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
+    private TextView bearingStatusView,gpsView,elevationView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private Button pauseButton,progressButton;
     private CheckBox vibrationChoice,regionalOnlyChoice;
     private Spinner confidenceSpinner;
@@ -104,6 +105,8 @@ public class MainActivity extends Activity implements LocationListener {
     private float bearing=Float.NaN,pitch=Float.NaN;
     private Double markedBearing=null,markedPitch=null;
     private Location location;
+    // A manual elevation applies only to the next saved detection, not future visits.
+    private Double manualElevationMeters=null;
     private boolean pointNotice=false;
     private int dp(float n){return (int)(getResources().getDisplayMetrics().density*n+0.5f);}
 
@@ -111,6 +114,8 @@ public class MainActivity extends Activity implements LocationListener {
         super.onCreate(b);
         db=new FieldDb(this);
         locations=(LocationManager)getSystemService(LOCATION_SERVICE);
+        if(b!=null&&b.containsKey("manual_elevation_m"))
+            manualElevationMeters=b.getDouble("manual_elevation_m");
         restoreEvent();
         Intent launch=getIntent();
         boolean newEvent=!active&&launch.getBooleanExtra("create_new",false);
@@ -259,6 +264,10 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView=label("GPS: awaiting fix",11,false);
         gpsView.setTextColor(MUTED);
         content.addView(gpsView);
+        elevationView=label("Elevation: awaiting fresh GPS · tap to edit",12,false);
+        elevationView.setTextColor(UiKit.BLUE);
+        elevationView.setOnClickListener(v->editElevation());
+        content.addView(elevationView);
         content.addView(section("SPECIES / IDENTIFICATION"));
         checklistNote=label("Geographic suggestions: "+GeoRegions.label(geographicRegion),13,true);
         checklistNote.setTextColor(UiKit.FOREST);content.addView(checklistNote);
@@ -465,7 +474,7 @@ public class MainActivity extends Activity implements LocationListener {
             startActivity(new Intent(this,HistoryActivity.class).putExtra("event_id",eventId));
         });
         setContentView(root);
-        updateMethods();refreshAutocomplete();status();
+        updateMethods();refreshAutocomplete();status();updateGpsReadout();
         watchDraftFields();
 
     }
@@ -1021,19 +1030,25 @@ public class MainActivity extends Activity implements LocationListener {
         unitStartedAt=System.currentTimeMillis();
         stationId=station;nearEndNotified=false;pointNotice=false;
         boolean gpsValid=RoutePlan.acceptable(location,unitStartedAt);
+        ElevationFix.Reading elev=ElevationFix.fromGps(gpsValid?location:null,unitStartedAt);
         Object lat=gpsValid?location.getLatitude():null,lon=gpsValid?location.getLongitude():null,
             accuracy=gpsValid?location.getAccuracy():null;
         db.getWritableDatabase().execSQL(
             "INSERT INTO sampling_units(id,event_id,station_id,sequence_number,method,started,target_seconds,"+
-            "gps_latitude,gps_longitude,gps_accuracy_m,gps_recorded_at,gps_status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+            "gps_latitude,gps_longitude,gps_accuracy_m,gps_recorded_at,gps_status,"+
+            "elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source,elevation_status) "+
+            "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{samplingUnitId,eventId,station,unitSequence,method,iso(unitStartedAt),
                 plannedDurationSeconds>0?plannedDurationSeconds:null,lat,lon,accuracy,
                 gpsValid?iso(location.getTime()):null,
-                gpsValid?"gps_fix_at_visit_start":"missing_or_weak_gps_at_start"});
+                gpsValid?"gps_fix_at_visit_start":"missing_or_weak_gps_at_start",
+                elev.meters,elev.verticalAccuracyM,elev.datum,elev.source,elev.status});
         if(gpsValid)db.getWritableDatabase().execSQL(
-            "UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=? "+
+            "UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=?,"+
+            "elevation_m=?,elevation_vertical_accuracy_m=?,elevation_datum=?,elevation_source=? "+
             "WHERE id=? AND latitude IS NULL AND longitude IS NULL",
-            new Object[]{lat,lon,accuracy,iso(unitStartedAt),station});
+            new Object[]{lat,lon,accuracy,iso(unitStartedAt),elev.meters,elev.verticalAccuracyM,
+                elev.datum,elev.source,station});
         else toast("Sampling unit started without reliable GPS · flagged");
         if(pointNextButton!=null)pointNextButton.setText("Finish visit · Next station");
         if(saveButton!=null)saveButton.setEnabled(active);
@@ -1071,15 +1086,17 @@ public class MainActivity extends Activity implements LocationListener {
         String id=RoutePlan.newSiteId();
         long now=System.currentTimeMillis();
         boolean ok=RoutePlan.acceptable(location,now);
+        ElevationFix.Reading elev=ElevationFix.fromGps(ok?location:null,now);
         db.getWritableDatabase().execSQL(
-            "INSERT INTO sites(id,project_id,name,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at) "+
-            "VALUES(?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO sites(id,project_id,name,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at,"+
+            "elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source) "+
+            "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{id,projectId,"Field station "+(unitSequence+1),
                 ok?location.getLatitude():null,ok?location.getLongitude():null,
                 ok?location.getAccuracy():null,
                 "Auto-created during "+profile+" survey "+eventId+
                 (ok?" · GPS captured":" · GPS missing at creation"),
-                iso(now),iso(now)});
+                iso(now),iso(now),elev.meters,elev.verticalAccuracyM,elev.datum,elev.source});
         return id;
     }
     private void genericUnitPicker(){
@@ -1433,10 +1450,13 @@ public class MainActivity extends Activity implements LocationListener {
           &&(!method.equals("line_transect")||perp!=null)
           &&(!method.equals("point_count")||pointRadiusM==null||distance<=pointRadiusM)
           &&!movement.equals("Flyover")&&!movement.equals("Entering after start");
-        Location loc=location;
+        long gpsSnapshotAt=System.currentTimeMillis();
+        Location loc=RoutePlan.acceptable(location,gpsSnapshotAt)?location:null;
+        ElevationFix.Reading elev=manualElevationMeters==null?
+            ElevationFix.fromGps(loc,gpsSnapshotAt):ElevationFix.manual(manualElevationMeters);
         Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),acc=loc==null?null:loc.getAccuracy();
         db.getWritableDatabase().execSQL(
-            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,identification_level,regional_evidence_status,geo_region_at_detection,identification_confidence,identification_review_note) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,identification_level,regional_evidence_status,geo_region_at_detection,identification_confidence,identification_review_note,elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source,elevation_status,elevation_gps_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{eventId,iso(first),group,id[0],id[1],raw,count,detectionSpinner.getSelectedItem().toString(),
                 distance,markedBearing,markedPitch,perp,lat,lon,acc,
                 habitatEntry.getText().toString().trim(),behaviorEntry.getText().toString().trim(),
@@ -1461,7 +1481,9 @@ public class MainActivity extends Activity implements LocationListener {
                     method.equals("coverboard_search")||method.equals("drift_fence_check")?"encounter":
                     "individuals",
                 identificationLevel,geoSupport,geographicRegion,
-                confidence,identificationNote.getText().toString().trim()});
+                confidence,identificationNote.getText().toString().trim(),
+                elev.meters,elev.verticalAccuracyM,elev.datum,elev.source,elev.status,
+                elev.fixTimeMs==null?null:iso(elev.fixTimeMs)});
         if(pendingPhoto!=null){
             try(Cursor c=db.getReadableDatabase().rawQuery("SELECT last_insert_rowid()",null)){
                 if(c.moveToFirst()){
@@ -1473,6 +1495,8 @@ public class MainActivity extends Activity implements LocationListener {
                 toast("Observation saved, but photo link needs review: "+photoError.getMessage());
             }
         }
+        manualElevationMeters=null;
+        updateGpsReadout();
         taxonEntry.setText("");count=1;countView.setText("1");distanceEntry.setText("");
         confidenceSpinner.setSelection(0);identificationNote.setText("");
         habitatEntry.setText("");behaviorEntry.setText("");notesEntry.setText("");
@@ -1587,20 +1611,20 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT id,name,description,created_at FROM projects",
               "project_id,name,description,created_at");
             csv(z,"sites.csv",
-              "SELECT id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at FROM sites",
-              "station_id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at");
+              "SELECT id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at,elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source FROM sites",
+              "station_id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at,elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source");
             csv(z,"surveys.csv",
               "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id FROM surveys",
               "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id");
             csv(z,"observations.csv",
-              "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,COALESCE(s.outcome,'active'),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection,r.identification_confidence,r.identification_review_note FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
-              "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection,identification_confidence,identification_review_note");
+              "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,COALESCE(s.outcome,'active'),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection,r.identification_confidence,r.identification_review_note,r.elevation_m,r.elevation_vertical_accuracy_m,r.elevation_datum,r.elevation_source,r.elevation_status,r.elevation_gps_at FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
+              "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection,identification_confidence,identification_review_note,elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source,elevation_status,elevation_gps_fix_at_utc");
             csv(z,"sampling_units.csv",
-              "SELECT u.id,u.event_id,u.station_id,u.sequence_number,u.method,u.started,u.ended,u.target_seconds,u.completed,u.effort_minutes,u.effort_area_m2,u.effort_length_m,u.noise_score,u.wind_score,u.rain_condition,u.equipment_id,u.number_devices,u.trap_effort_hours,u.unit_paused_ms,u.camera_days_verified,u.trap_nights_verified,u.recorder_hours_verified,u.deployment_started_utc,u.deployment_ended_utc,u.downtime_hours,u.effort_remarks,COALESCE(s.outcome,'active'),u.gps_latitude,u.gps_longitude,u.gps_accuracy_m,u.gps_recorded_at,u.gps_status FROM sampling_units u JOIN surveys s ON s.id=u.event_id ORDER BY u.event_id,u.sequence_number",
-              "sampling_unit_id,event_id,station_id,sequence,method,start_utc,end_utc,target_seconds,completed,active_effort_minutes,searched_area_m2,searched_length_m,noise_score,wind_score,rain_condition,equipment_id,number_devices,device_hours,unit_paused_ms,verified_camera_days,verified_trap_nights,verified_recorder_hours,deployment_start_utc,deployment_end_utc,downtime_hours,effort_notes,survey_outcome,station_gps_lat,station_gps_lon,station_accuracy_m,gps_fix_at_utc,gps_status");
+              "SELECT u.id,u.event_id,u.station_id,u.sequence_number,u.method,u.started,u.ended,u.target_seconds,u.completed,u.effort_minutes,u.effort_area_m2,u.effort_length_m,u.noise_score,u.wind_score,u.rain_condition,u.equipment_id,u.number_devices,u.trap_effort_hours,u.unit_paused_ms,u.camera_days_verified,u.trap_nights_verified,u.recorder_hours_verified,u.deployment_started_utc,u.deployment_ended_utc,u.downtime_hours,u.effort_remarks,COALESCE(s.outcome,'active'),u.gps_latitude,u.gps_longitude,u.gps_accuracy_m,u.gps_recorded_at,u.gps_status,u.elevation_m,u.elevation_vertical_accuracy_m,u.elevation_datum,u.elevation_source,u.elevation_status FROM sampling_units u JOIN surveys s ON s.id=u.event_id ORDER BY u.event_id,u.sequence_number",
+              "sampling_unit_id,event_id,station_id,sequence,method,start_utc,end_utc,target_seconds,completed,active_effort_minutes,searched_area_m2,searched_length_m,noise_score,wind_score,rain_condition,equipment_id,number_devices,device_hours,unit_paused_ms,verified_camera_days,verified_trap_nights,verified_recorder_hours,deployment_start_utc,deployment_end_utc,downtime_hours,effort_notes,survey_outcome,station_gps_lat,station_gps_lon,station_accuracy_m,gps_fix_at_utc,gps_status,elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source,elevation_status");
             csv(z,"point_counts.csv",
-              "SELECT p.id,p.event_id,p.station_id,p.sequence_number,p.started,p.ended,p.target_seconds,p.completed,p.notes,p.unit_paused_ms,COALESCE(s.outcome,'active'),p.planned_chainage_m,p.gps_latitude,p.gps_longitude,p.gps_accuracy_m,p.gps_recorded_at,p.gps_status FROM point_counts p JOIN surveys s ON s.id=p.event_id ORDER BY p.event_id,p.sequence_number",
-              "point_count_id,event_id,station_id,sequence,start_utc,end_utc,target_seconds,completed,notes,unit_paused_ms,survey_outcome,planned_chainage_m,station_gps_lat,station_gps_lon,station_gps_accuracy_m,gps_fix_at_utc,gps_status");
+              "SELECT p.id,p.event_id,p.station_id,p.sequence_number,p.started,p.ended,p.target_seconds,p.completed,p.notes,p.unit_paused_ms,COALESCE(s.outcome,'active'),p.planned_chainage_m,p.gps_latitude,p.gps_longitude,p.gps_accuracy_m,p.gps_recorded_at,p.gps_status,p.elevation_m,p.elevation_vertical_accuracy_m,p.elevation_datum,p.elevation_source,p.elevation_status FROM point_counts p JOIN surveys s ON s.id=p.event_id ORDER BY p.event_id,p.sequence_number",
+              "point_count_id,event_id,station_id,sequence,start_utc,end_utc,target_seconds,completed,notes,unit_paused_ms,survey_outcome,planned_chainage_m,station_gps_lat,station_gps_lon,station_gps_accuracy_m,gps_fix_at_utc,gps_status,elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source,elevation_status");
             csv(z,"route_templates.csv",
               "SELECT id,project_id,name,method,planned_length_m,station_spacing_m,station_count,created_at_utc,notes FROM route_templates",
               "route_template_id,project_id,route_name,method,planned_length_m,station_spacing_m,station_count,created_at_utc,notes");
@@ -1608,8 +1632,8 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT template_id,station_id,sequence_number,chainage_m FROM route_template_stations ORDER BY template_id,sequence_number",
               "route_template_id,station_id,sequence_number,planned_chainage_m");
             csv(z,"survey_stations.csv",
-              "SELECT r.event_id,r.station_id,r.sequence_number,r.planned_chainage_m,r.visit_state,r.captured_at,r.gps_latitude,r.gps_longitude,r.gps_accuracy_m,r.gps_status,COALESCE(s.outcome,'active') FROM survey_stations r JOIN surveys s ON s.id=r.event_id ORDER BY r.event_id,r.sequence_number",
-              "event_id,station_id,sequence_number,planned_chainage_m,visit_state,count_started_at_utc,station_lat,station_lon,station_gps_accuracy_m,gps_status,survey_outcome");
+              "SELECT r.event_id,r.station_id,r.sequence_number,r.planned_chainage_m,r.visit_state,r.captured_at,r.gps_latitude,r.gps_longitude,r.gps_accuracy_m,r.gps_status,r.elevation_m,r.elevation_vertical_accuracy_m,r.elevation_datum,r.elevation_source,r.elevation_status,COALESCE(s.outcome,'active') FROM survey_stations r JOIN surveys s ON s.id=r.event_id ORDER BY r.event_id,r.sequence_number",
+              "event_id,station_id,sequence_number,planned_chainage_m,visit_state,count_started_at_utc,station_lat,station_lon,station_gps_accuracy_m,gps_status,elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source,elevation_status,survey_outcome");
             csv(z,"survey_outcome_audit.csv",
               "SELECT id,event_id,previous_outcome,new_outcome,changed_at_utc,reason,record_count FROM survey_outcome_audit",
               "audit_id,event_id,previous_outcome,new_outcome,changed_utc,reason,record_count");
@@ -1795,6 +1819,7 @@ public class MainActivity extends Activity implements LocationListener {
     @Override protected void onSaveInstanceState(Bundle out){
         persistDraft();
         out.putString("saved_event_id",eventId);
+        if(manualElevationMeters!=null)out.putDouble("manual_elevation_m",manualElevationMeters);
         super.onSaveInstanceState(out);
     }
     @Override protected void onResume(){
@@ -1822,8 +1847,55 @@ public class MainActivity extends Activity implements LocationListener {
             &&active&&(method.equals("line_transect")||method.equals("ves_transect")))startTracking();
     }
     @Override public void onLocationChanged(Location l){
-        location=l;
-        if(gpsView!=null)gpsView.setText(String.format(Locale.US,"Observer GPS: %.5f, %.5f · ±%.0f m",l.getLatitude(),l.getLongitude(),l.getAccuracy()));
+        if(location==null||l.getElapsedRealtimeNanos()>=location.getElapsedRealtimeNanos())
+            location=new Location(l);
+        updateGpsReadout();
+    }
+    private void editElevation(){
+        EditText entry=edit("Elevation in meters",InputType.TYPE_CLASS_NUMBER|
+            InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED);
+        if(manualElevationMeters!=null)
+            entry.setText(String.format(Locale.US,"%.1f",manualElevationMeters));
+        new AlertDialog.Builder(this).setTitle("Elevation for next observation")
+            .setMessage("GPS elevation is automatic. A manual correction affects the next saved observation only. Its height reference is recorded as unspecified.")
+            .setView(entry).setNegativeButton("Cancel",null)
+            .setNeutralButton("Use GPS",(d,w)->{
+                manualElevationMeters=null;updateGpsReadout();
+            })
+            .setPositiveButton("Apply manual",(d,w)->{
+                Double n=number(entry.getText().toString());
+                if(n==null||n< -500||n>9000||!Double.isFinite(n)){
+                    toast("Enter a valid elevation from -500 to 9000 meters");return;
+                }
+                manualElevationMeters=n;updateGpsReadout();
+            }).show();
+    }
+    private void updateGpsReadout(){
+        long now=System.currentTimeMillis();
+        Location fresh=RoutePlan.acceptable(location,now)?location:null;
+        if(gpsView!=null){
+            if(fresh==null)gpsView.setText("Observer GPS: waiting for a fresh fix (30 s, <=75 m)");
+            else gpsView.setText(String.format(Locale.US,
+                "Observer GPS: %.5f, %.5f · horizontal ±%.0f m",
+                fresh.getLatitude(),fresh.getLongitude(),fresh.getAccuracy()));
+        }
+        if(elevationView==null)return;
+        ElevationFix.Reading value=manualElevationMeters!=null?
+            ElevationFix.manual(manualElevationMeters):ElevationFix.fromGps(fresh,now);
+        if(value.meters!=null){
+            String reference="mean_sea_level".equals(value.datum)?"MSL":
+                "wgs84_ellipsoid".equals(value.datum)?"WGS84 ellipsoid":"datum unspecified";
+            String uncertainty=value.verticalAccuracyM==null?" · vertical accuracy unknown":
+                String.format(Locale.US," · vertical ±%.0f m",value.verticalAccuracyM);
+            elevationView.setText(String.format(Locale.US,
+                "Elevation: %.1f m %s%s · tap to edit",value.meters,reference,
+                manualElevationMeters!=null?" · manual":uncertainty));
+        }else if("poor_vertical_accuracy".equals(value.status))
+            elevationView.setText(String.format(Locale.US,
+                "Elevation: uncertain (vertical ±%.0f m) · tap to edit",value.verticalAccuracyM));
+        else if("altitude_unavailable".equals(value.status))
+            elevationView.setText("Elevation: unavailable in GPS fix · tap to edit");
+        else elevationView.setText("Elevation: awaiting fresh GPS fix · tap to edit");
     }
     private void toast(String s){Toast.makeText(this,s,Toast.LENGTH_SHORT).show();}
 

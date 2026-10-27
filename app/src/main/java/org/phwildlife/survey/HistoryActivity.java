@@ -58,13 +58,15 @@ public class HistoryActivity extends Activity {
             .putExtra("event_id",event)));
         rows.addView(progress);
         try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,u.station_id,''),COALESCE(p.sequence_number,u.sequence_number,0),r.point_count_id,r.sampling_unit_id FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id LEFT JOIN sampling_units u ON u.id=r.sampling_unit_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,u.sequence_number,0),r.detected_at,r.id",new String[]{event})){
+            "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,u.station_id,''),COALESCE(p.sequence_number,u.sequence_number,0),r.point_count_id,r.sampling_unit_id,r.elevation_m,r.elevation_datum FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id LEFT JOIN sampling_units u ON u.id=r.sampling_unit_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,u.sequence_number,0),r.detected_at,r.id",new String[]{event})){
             if(c.getCount()==0)rows.addView(text("No detections recorded. The survey event remains saved.",14));
             while(c.moveToNext()){
                 long record=c.getLong(0);
                 String dist=c.isNull(4)?"distance unknown":String.format(Locale.US,"%.1f m",c.getDouble(4));
                 String point=c.getInt(8)>0?"Station "+c.getString(7)+" · "+(!c.isNull(9)?"Point ":"Visit ")+c.getInt(8)+"\n":"";
-                Button item=btn(point+c.getString(1)+" · "+c.getInt(3)+"\n"+c.getString(2)+" · "+c.getString(5)+" · "+dist+"\n"+c.getString(6));
+                String elevation=c.isNull(11)?"Elevation unavailable":String.format(Locale.US,
+                    "Elevation %.1f m (%s)",c.getDouble(11),c.isNull(12)?"datum unknown":c.getString(12));
+                Button item=btn(point+c.getString(1)+" · "+c.getInt(3)+"\n"+c.getString(2)+" · "+c.getString(5)+" · "+dist+"\n"+elevation+"\n"+c.getString(6));
                 item.setOnClickListener(v->recordDetail(record));
                 rows.addView(item);
             }
@@ -87,8 +89,11 @@ public class HistoryActivity extends Activity {
             if(!c.moveToFirst()){draw();return;}
             JSONObject original=snapshot(c);
             String title=original.optString("raw_identification","Observation "+id);
+            String elevation=original.isNull("elevation_m")?"Elevation unavailable":
+                String.format(Locale.US,"Elevation %.1f m (%s), source %s",original.optDouble("elevation_m"),
+                    original.optString("elevation_datum","unknown"),original.optString("elevation_source","unknown"));
             new AlertDialog.Builder(this).setTitle(title)
-              .setMessage("Review or correct this record. Original values remain in the audit history.")
+              .setMessage(elevation+"\nReview or correct this record. Original values remain in the audit history.")
               .setNegativeButton("Cancel",null)
               .setNeutralButton("Edit", (dlg,w)->edit(id,original))
               .setPositiveButton("More",(dlg,w)->new AlertDialog.Builder(this).setTitle("Record actions")
@@ -126,6 +131,8 @@ public class HistoryActivity extends Activity {
         individuals.setInputType(InputType.TYPE_CLASS_NUMBER);
         EditText distance=field("Horizontal distance (m)",before.isNull("horizontal_m")?"":before.optString("horizontal_m"));
         distance.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText elevation=field("Elevation (m)",before.isNull("elevation_m")?"":before.optString("elevation_m"));
+        elevation.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED);
         EditText notes=field("Natural history / notes",before.optString("notes",""));
         EditText reason=field("Reason for correction (recommended)","");
         EditText confidenceNote=field("Identification evidence / notes",before.optString("identification_review_note",""));
@@ -147,6 +154,8 @@ public class HistoryActivity extends Activity {
         form.addView(text("Confidence",13));form.addView(confidence);form.addView(confidenceNote);
         form.addView(text("Count",13));form.addView(individuals);
         form.addView(text("Horizontal distance",13));form.addView(distance);
+        form.addView(text("Elevation · GPS datum: "+before.optString("elevation_datum","unknown")+" (editing sets datum to unspecified)",13));
+        form.addView(elevation);
         form.addView(text("Distance source",13));form.addView(type);
         form.addView(text("First detection position?",13));form.addView(first);
         Spinner movement=new Spinner(this);
@@ -163,6 +172,11 @@ public class HistoryActivity extends Activity {
             String name=taxon.getText().toString().trim();
             int count=0;try{count=Integer.parseInt(individuals.getText().toString().trim());}catch(Exception ignored){}
             Double d=num(distance.getText().toString());
+            String elevationText=elevation.getText().toString().trim();
+            Double elevationValue=num(elevationText);
+            if(!elevationText.isEmpty()&&(elevationValue==null||!Double.isFinite(elevationValue)||elevationValue< -500||elevationValue>9000)){
+                Toast.makeText(this,"Check elevation in meters (-500 to 9000)",Toast.LENGTH_LONG).show();return;
+            }
             if(name.length()<2||count<1||d!=null&&(d<0||d>10000)){
                 Toast.makeText(this,"Check identification, count and distance",Toast.LENGTH_LONG).show();return;
             }
@@ -186,6 +200,18 @@ public class HistoryActivity extends Activity {
                         "documented_regional_example":"distribution_not_assessed");
                 values.put("individual_count",count);
                 if(d==null)values.putNull("horizontal_m");else values.put("horizontal_m",d);
+                Double oldElevation=before.isNull("elevation_m")?null:before.optDouble("elevation_m");
+                boolean elevationChanged=(oldElevation==null)!=(elevationValue==null)||
+                    oldElevation!=null&&elevationValue!=null&&Math.abs(oldElevation-elevationValue)>0.0001;
+                if(elevationChanged){
+                    if(elevationValue==null)values.putNull("elevation_m");
+                    else values.put("elevation_m",elevationValue);
+                    values.putNull("elevation_vertical_accuracy_m");
+                    values.put("elevation_datum","unspecified");
+                    values.put("elevation_source","manual_correction");
+                    values.put("elevation_status",elevationValue==null?"manually_cleared":"manual_correction");
+                    values.putNull("elevation_gps_at");
+                }
                 values.put("notes",notes.getText().toString());
                 values.put("distance_method",type.getSelectedItem().toString());
                 values.put("initial_position",first.getSelectedItem().toString());

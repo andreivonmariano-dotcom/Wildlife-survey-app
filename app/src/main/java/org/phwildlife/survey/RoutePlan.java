@@ -127,6 +127,7 @@ public final class RoutePlan {
     }
     public static void start(SQLiteDatabase db,String event,Next n,String pointId,int targetSeconds,long startedAt,Location gps){
         boolean hasFix=acceptable(gps,startedAt);
+        ElevationFix.Reading elevation=ElevationFix.fromGps(hasFix?gps:null,startedAt);
         String time=utc(startedAt);
         String quality=hasFix?"gps_fix_at_station_start":"missing_or_weak_gps_at_start";
         Object lat=hasFix?gps.getLatitude():null,lon=hasFix?gps.getLongitude():null,
@@ -134,17 +135,24 @@ public final class RoutePlan {
         db.beginTransaction();
         try{
             db.execSQL("INSERT INTO point_counts(id,event_id,station_id,sequence_number,started,target_seconds,"+
-                "planned_chainage_m,gps_latitude,gps_longitude,gps_accuracy_m,gps_recorded_at,gps_status) "+
-                "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                "planned_chainage_m,gps_latitude,gps_longitude,gps_accuracy_m,gps_recorded_at,gps_status,"+
+                "elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source,elevation_status) "+
+                "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 new Object[]{pointId,event,n.stationId,n.sequence,time,targetSeconds,n.chainage,
-                    lat,lon,acc,hasFix?utc(gps.getTime()):null,quality});
+                    lat,lon,acc,hasFix?utc(gps.getTime()):null,quality,
+                    elevation.meters,elevation.verticalAccuracyM,elevation.datum,elevation.source,elevation.status});
             db.execSQL("UPDATE survey_stations SET visit_state='started',captured_at=?,gps_latitude=?,"+
-                "gps_longitude=?,gps_accuracy_m=?,gps_status=? WHERE event_id=? AND sequence_number=?",
-                new Object[]{time,lat,lon,acc,quality,event,n.sequence});
+                "gps_longitude=?,gps_accuracy_m=?,gps_status=?,elevation_m=?,"+
+                "elevation_vertical_accuracy_m=?,elevation_datum=?,elevation_source=?,elevation_status=? "+
+                "WHERE event_id=? AND sequence_number=?",
+                new Object[]{time,lat,lon,acc,quality,elevation.meters,elevation.verticalAccuracyM,
+                    elevation.datum,elevation.source,elevation.status,event,n.sequence});
             if(hasFix){
-                db.execSQL("UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=? "+
+                db.execSQL("UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=?,"+
+                    "elevation_m=?,elevation_vertical_accuracy_m=?,elevation_datum=?,elevation_source=? "+
                     "WHERE id=? AND latitude IS NULL AND longitude IS NULL",
-                    new Object[]{lat,lon,acc,time,n.stationId});
+                    new Object[]{lat,lon,acc,time,elevation.meters,elevation.verticalAccuracyM,
+                        elevation.datum,elevation.source,n.stationId});
             }
             db.setTransactionSuccessful();
         }finally{db.endTransaction();}

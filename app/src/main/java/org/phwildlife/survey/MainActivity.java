@@ -294,6 +294,13 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(detectRow);
         markTime.setOnClickListener(v->markDetection());
         markButton.setOnClickListener(v->openCamera());
+        if(FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile)){
+            Button sound=UiKit.button(this,"♪ Record / Review Calls","secondary");
+            sound.setContentDescription("Record, view spectrogram and label bird or amphibian calls");
+            LinearLayout.LayoutParams soundLp=new LinearLayout.LayoutParams(-1,dp(52));
+            soundLp.topMargin=dp(7);content.addView(sound,soundLp);
+            sound.setOnClickListener(v->openCallLibrary());
+        }
         LinearLayout markRow=horizontal();
         markRowView=markRow;
         markRow.setVisibility(View.GONE);
@@ -1533,6 +1540,16 @@ public class MainActivity extends Activity implements LocationListener {
         markedObserverFix=freshObserverFix();
         showMarkStatus();persistDraft();
     }
+    private void openCallLibrary(){
+        if(!active||eventId==null){toast("Start a survey before recording sound");return;}
+        persistDraft();
+        Intent audio=new Intent(this,CallLibraryActivity.class);
+        audio.putExtra("event_id",eventId);
+        audio.putExtra("taxon_group",group);
+        audio.putExtra("method",method);
+        audio.putExtra("station_id",stationId);
+        startActivity(audio);
+    }
     private void openCamera(){
         if(!active){toast("Start survey first");return;}
         Intent intent=new Intent(this,CameraActivity.class);
@@ -1925,6 +1942,7 @@ public class MainActivity extends Activity implements LocationListener {
             DistanceExport.write(z,exportDb.getReadableDatabase());
             ResearchExports.write(z,exportDb.getReadableDatabase());
             PhotoEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
+            AcousticEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             DataAudit.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             csv(exportDb,z,"distance_review.csv",
               "SELECT r.id,r.event_id,r.taxon_group,r.raw_identification,r.horizontal_m,r.perpendicular_m,r.individual_count,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,s.method,COALESCE(p.station_id,s.station_id),s.effort_length_m,s.point_target_s,s.region_label,s.area_km2,s.complete,r.point_count_id,r.protocol_window_flag FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' AND COALESCE(s.outcome,'active')='complete' AND (s.method='point_count' OR s.method='line_transect')",

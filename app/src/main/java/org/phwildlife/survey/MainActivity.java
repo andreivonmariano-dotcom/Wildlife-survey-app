@@ -1028,19 +1028,25 @@ public class MainActivity extends Activity implements LocationListener {
         unitStartedAt=System.currentTimeMillis();
         stationId=station;nearEndNotified=false;pointNotice=false;
         boolean gpsValid=RoutePlan.acceptable(location,unitStartedAt);
+        ElevationFix.Reading elev=ElevationFix.fromGps(gpsValid?location:null,unitStartedAt);
         Object lat=gpsValid?location.getLatitude():null,lon=gpsValid?location.getLongitude():null,
             accuracy=gpsValid?location.getAccuracy():null;
         db.getWritableDatabase().execSQL(
             "INSERT INTO sampling_units(id,event_id,station_id,sequence_number,method,started,target_seconds,"+
-            "gps_latitude,gps_longitude,gps_accuracy_m,gps_recorded_at,gps_status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+            "gps_latitude,gps_longitude,gps_accuracy_m,gps_recorded_at,gps_status,"+
+            "elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source,elevation_status) "+
+            "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{samplingUnitId,eventId,station,unitSequence,method,iso(unitStartedAt),
                 plannedDurationSeconds>0?plannedDurationSeconds:null,lat,lon,accuracy,
                 gpsValid?iso(location.getTime()):null,
-                gpsValid?"gps_fix_at_visit_start":"missing_or_weak_gps_at_start"});
+                gpsValid?"gps_fix_at_visit_start":"missing_or_weak_gps_at_start",
+                elev.meters,elev.verticalAccuracyM,elev.datum,elev.source,elev.status});
         if(gpsValid)db.getWritableDatabase().execSQL(
-            "UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=? "+
+            "UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=?,"+
+            "elevation_m=?,elevation_vertical_accuracy_m=?,elevation_datum=?,elevation_source=? "+
             "WHERE id=? AND latitude IS NULL AND longitude IS NULL",
-            new Object[]{lat,lon,accuracy,iso(unitStartedAt),station});
+            new Object[]{lat,lon,accuracy,iso(unitStartedAt),elev.meters,elev.verticalAccuracyM,
+                elev.datum,elev.source,station});
         else toast("Sampling unit started without reliable GPS · flagged");
         if(pointNextButton!=null)pointNextButton.setText("Finish visit · Next station");
         if(saveButton!=null)saveButton.setEnabled(active);
@@ -1078,15 +1084,17 @@ public class MainActivity extends Activity implements LocationListener {
         String id=RoutePlan.newSiteId();
         long now=System.currentTimeMillis();
         boolean ok=RoutePlan.acceptable(location,now);
+        ElevationFix.Reading elev=ElevationFix.fromGps(ok?location:null,now);
         db.getWritableDatabase().execSQL(
-            "INSERT INTO sites(id,project_id,name,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at) "+
-            "VALUES(?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO sites(id,project_id,name,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at,"+
+            "elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source) "+
+            "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{id,projectId,"Field station "+(unitSequence+1),
                 ok?location.getLatitude():null,ok?location.getLongitude():null,
                 ok?location.getAccuracy():null,
                 "Auto-created during "+profile+" survey "+eventId+
                 (ok?" · GPS captured":" · GPS missing at creation"),
-                iso(now),iso(now)});
+                iso(now),iso(now),elev.meters,elev.verticalAccuracyM,elev.datum,elev.source});
         return id;
     }
     private void genericUnitPicker(){
@@ -1440,10 +1448,13 @@ public class MainActivity extends Activity implements LocationListener {
           &&(!method.equals("line_transect")||perp!=null)
           &&(!method.equals("point_count")||pointRadiusM==null||distance<=pointRadiusM)
           &&!movement.equals("Flyover")&&!movement.equals("Entering after start");
-        Location loc=location;
+        long gpsSnapshotAt=System.currentTimeMillis();
+        Location loc=RoutePlan.acceptable(location,gpsSnapshotAt)?location:null;
+        ElevationFix.Reading elev=manualElevationMeters==null?
+            ElevationFix.fromGps(loc,gpsSnapshotAt):ElevationFix.manual(manualElevationMeters);
         Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),acc=loc==null?null:loc.getAccuracy();
         db.getWritableDatabase().execSQL(
-            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,identification_level,regional_evidence_status,geo_region_at_detection,identification_confidence,identification_review_note) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,identification_level,regional_evidence_status,geo_region_at_detection,identification_confidence,identification_review_note,elevation_m,elevation_vertical_accuracy_m,elevation_datum,elevation_source,elevation_status,elevation_gps_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{eventId,iso(first),group,id[0],id[1],raw,count,detectionSpinner.getSelectedItem().toString(),
                 distance,markedBearing,markedPitch,perp,lat,lon,acc,
                 habitatEntry.getText().toString().trim(),behaviorEntry.getText().toString().trim(),
@@ -1468,7 +1479,9 @@ public class MainActivity extends Activity implements LocationListener {
                     method.equals("coverboard_search")||method.equals("drift_fence_check")?"encounter":
                     "individuals",
                 identificationLevel,geoSupport,geographicRegion,
-                confidence,identificationNote.getText().toString().trim()});
+                confidence,identificationNote.getText().toString().trim(),
+                elev.meters,elev.verticalAccuracyM,elev.datum,elev.source,elev.status,
+                elev.fixTimeMs==null?null:iso(elev.fixTimeMs)});
         if(pendingPhoto!=null){
             try(Cursor c=db.getReadableDatabase().rawQuery("SELECT last_insert_rowid()",null)){
                 if(c.moveToFirst()){
@@ -1480,6 +1493,8 @@ public class MainActivity extends Activity implements LocationListener {
                 toast("Observation saved, but photo link needs review: "+photoError.getMessage());
             }
         }
+        manualElevationMeters=null;
+        updateGpsReadout();
         taxonEntry.setText("");count=1;countView.setText("1");distanceEntry.setText("");
         confidenceSpinner.setSelection(0);identificationNote.setText("");
         habitatEntry.setText("");behaviorEntry.setText("");notesEntry.setText("");

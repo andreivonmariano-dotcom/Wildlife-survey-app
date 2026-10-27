@@ -103,13 +103,13 @@ public final class LikasLaunchActivity extends Activity {
 
         content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,.75f));
 
-        ImageView frog=new ImageView(this);
-        frog.setImageResource(R.drawable.likas_frog_icon);
-        frog.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        ImageView icon=new ImageView(this);
+        icon.setImageResource(R.drawable.likas_frog_icon);
+        icon.setScaleType(ImageView.ScaleType.FIT_CENTER);
         // The adjacent LIKAS wordmark supplies the spoken identity.
-        frog.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         int logoSize=getResources().getConfiguration().fontScale>=1.5f?dp(94):dp(116);
-        content.addView(frog,new LinearLayout.LayoutParams(logoSize,logoSize));
+        content.addView(icon,new LinearLayout.LayoutParams(logoSize,logoSize));
 
         TextView brand=label("LIKAS",40,CREAM,true);
         brand.setLetterSpacing(.11f);

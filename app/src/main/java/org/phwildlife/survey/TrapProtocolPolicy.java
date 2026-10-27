@@ -12,7 +12,8 @@ public final class TrapProtocolPolicy {
     }
     public static boolean canComplete(int deployments,int uncheckedDevices,int openDevices,
             int missingCaptureDetails){
-        return deployments>0&&uncheckedDevices==0&&openDevices==0&&
-            missingCaptureDetails==0;
+        // A scheduled check can be complete without retrieving installed traps.
+        // Open devices remain visible in the deployment inventory.
+        return deployments>0&&uncheckedDevices==0&&missingCaptureDetails==0;
     }
 }

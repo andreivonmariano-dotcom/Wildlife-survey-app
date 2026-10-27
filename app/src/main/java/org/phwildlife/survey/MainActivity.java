@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements LocationListener {
             handler.postDelayed(this,1000);
         }
     };
-    private final int BACK=Color.rgb(247,249,246),INK=Color.rgb(22,51,38),GREEN=Color.rgb(37,104,74),MUTED=Color.rgb(95,116,101);
+    private final int BACK=UiKit.BG,INK=UiKit.INK,GREEN=UiKit.FOREST,MUTED=UiKit.MUTED;
     private FieldDb db; private LocationManager locations;
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private LinearLayout markRowView;
@@ -212,11 +212,30 @@ public class MainActivity extends Activity implements LocationListener {
         Button export=UiKit.button(this,"Export","secondary");export.setTextSize(13);
         top.addView(export,new LinearLayout.LayoutParams(dp(84),dp(49)));export.setOnClickListener(v->exportZip());
         root.addView(top);
-        sessionClockView=label("Total survey · 00:00:00",16,true);
-        sessionClockView.setTextColor(UiKit.FOREST);root.addView(sessionClockView);
-        pauseStatusView=label("",12,true);pauseStatusView.setTextColor(UiKit.AMBER);root.addView(pauseStatusView);
-        eventView=label("Sampling unit timer",15,true);eventView.setTextColor(MUTED);root.addView(eventView);
-        progressView=label("",12,false);progressView.setTextColor(MUTED);root.addView(progressView);
+        // Fixed status HUD: short, high-contrast survey state, always visible.
+        LinearLayout hud=vertical();
+        hud.setBackground(UiKit.surface(this));
+        hud.setPadding(dp(12),dp(8),dp(12),dp(8));
+        LinearLayout.LayoutParams hudLp=new LinearLayout.LayoutParams(-1,-2);
+        hudLp.topMargin=dp(5);hudLp.bottomMargin=dp(8);
+        sessionClockView=label("Session 00:00:00 · Active 00:00:00",16,true);
+        sessionClockView.setTextColor(UiKit.FOREST);hud.addView(sessionClockView);
+        eventView=label("Sampling unit timer",14,true);
+        eventView.setTextColor(MUTED);hud.addView(eventView);
+        progressView=label("",12,false);progressView.setTextColor(MUTED);hud.addView(progressView);
+        pauseStatusView=label("",12,true);
+        pauseStatusView.setTextColor(UiKit.AMBER);hud.addView(pauseStatusView);
+        gpsView=label("GPS searching · details",12,true);
+        gpsView.setTextColor(UiKit.AMBER);
+        gpsView.setOnClickListener(v->showGpsDetail());
+        gpsView.setMinHeight(dp(44));
+        gpsView.setGravity(Gravity.CENTER_VERTICAL);
+        hud.addView(gpsView);
+        startGpsBanner=label("Initial GPS missing · location unverified",12,true);
+        startGpsBanner.setTextColor(UiKit.AMBER);
+        hud.addView(startGpsBanner);
+        refreshStartGpsBanner();
+        root.addView(hud,hudLp);
         fieldScroll=new ScrollView(this);fieldScroll.setFillViewport(false);fieldScroll.setVerticalScrollBarEnabled(false);
         LinearLayout content=vertical();content.setPadding(dp(1),0,dp(1),dp(12));
         groupBar=horizontal();content.addView(groupBar);showGroups();
@@ -286,14 +305,6 @@ public class MainActivity extends Activity implements LocationListener {
         clear.setOnClickListener(v->clearMark());
         markRow.addView(clear);
         content.addView(markRow);
-        gpsView=label("GPS: searching · tap for details",12,false);
-        gpsView.setTextColor(MUTED);
-        gpsView.setOnClickListener(v->showGpsDetail());
-        content.addView(gpsView);
-        startGpsBanner=label("Start location missing · GPS readings will be captured later",12,true);
-        startGpsBanner.setTextColor(UiKit.AMBER);
-        content.addView(startGpsBanner);
-        refreshStartGpsBanner();
         content.addView(section("Species"));
         Button identifySpecies=UiKit.button(this,"Find species","primary");
         identifySpecies.setContentDescription("Open full offline species list and identification reference");
@@ -486,18 +497,24 @@ public class MainActivity extends Activity implements LocationListener {
         // The field form stays focused on observations. Method tips live in Help.
         fieldScroll.addView(content);
         root.addView(fieldScroll,new LinearLayout.LayoutParams(-1,0,1));
-        LinearLayout footer=horizontal();
-        saveButton=UiKit.button(this,"Save observation","primary");
-        footer.addView(saveButton,new LinearLayout.LayoutParams(0,dp(56),2f));
-        reviewButton=UiKit.button(this,"Review","secondary");
-        LinearLayout.LayoutParams reviewParams=new LinearLayout.LayoutParams(0,dp(56),1f);
-        reviewParams.leftMargin=dp(8);footer.addView(reviewButton,reviewParams);
+        // Two-tier fixed action dock. Save is the only filled primary action.
+        LinearLayout footer=vertical();
+        footer.setPadding(0,dp(5),0,0);
+        saveButton=UiKit.button(this,"Save Observation","primary");
+        footer.addView(saveButton,new LinearLayout.LayoutParams(-1,dp(56)));
+        LinearLayout footerOptions=horizontal();
+        reviewButton=UiKit.button(this,"Review Records","secondary");
+        LinearLayout.LayoutParams reviewParams=new LinearLayout.LayoutParams(0,dp(49),1);
+        footerOptions.addView(reviewButton,reviewParams);
+        // Ending a survey remains accessible even with the keyboard open.
+        endSurveyButton=UiKit.button(this,"End Survey","outline-danger");
+        LinearLayout.LayoutParams endParams=new LinearLayout.LayoutParams(0,dp(49),1);
+        endParams.leftMargin=dp(8);
+        footerOptions.addView(endSurveyButton,endParams);
+        LinearLayout.LayoutParams optionsParams=new LinearLayout.LayoutParams(-1,-2);
+        optionsParams.topMargin=dp(6);
+        footer.addView(footerOptions,optionsParams);
         root.addView(footer);
-        // Survey disposition is a permanent footer action, not a hidden setting.
-        endSurveyButton=UiKit.button(this,"End Survey","warning");
-        LinearLayout.LayoutParams endParams=new LinearLayout.LayoutParams(-1,dp(52));
-        endParams.topMargin=dp(6);
-        root.addView(endSurveyButton,endParams);
         endSurveyButton.setEnabled(active);
         endSurveyButton.setOnClickListener(v->finishPrompt());
         saveButton.setEnabled(active&&(!method.equals("point_count")||pointCountId!=null));
@@ -2116,8 +2133,8 @@ public class MainActivity extends Activity implements LocationListener {
     private void updateGpsLabel(Location fix){
         if(gpsView==null)return;
         if(fix==null||!fix.hasAccuracy()){
-            gpsView.setText(TrackService.wasStopped(this)?"GPS stopped · tap to restart":
-                "GPS: searching · tap for details");
+            gpsView.setText(TrackService.wasStopped(this)?"GPS stopped · restart":
+                "GPS searching · details");
             gpsView.setTextColor(UiKit.AMBER);
             return;
         }

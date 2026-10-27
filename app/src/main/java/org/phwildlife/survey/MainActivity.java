@@ -66,18 +66,18 @@ public class MainActivity extends Activity implements LocationListener {
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private LinearLayout markRowView;
     private Button pauseButton,progressButton;
-    private CheckBox vibrationChoice,regionalOnlyChoice;
+    private CheckBox vibrationChoice;
     private Spinner confidenceSpinner;
     private EditText identificationNote;
     private TextView photoStatus;
     private ImageView photoPreview;
     private String pendingPhoto=null;
     private Button favoriteButton;
-    private TextView checklistNote;
+    private TextView callScoreLabel,noiseLabel;
     private boolean surveyPaused=false;
     private long pauseStartedAt=0,accumulatedPausedMs=0;
     private long unitPausedMs=0;
-    private Spinner methodSpinner,detectionSpinner,distanceSourceSpinner,firstPositionSpinner,movementSpinner,substrateSpinner,callScoreSpinner,lifeStageSpinner,evidenceSpinner,noiseSpinner;
+    private Spinner detectionSpinner,distanceSourceSpinner,firstPositionSpinner,movementSpinner,substrateSpinner,callScoreSpinner,lifeStageSpinner,evidenceSpinner,noiseSpinner;
     private TaxonSuggestionAdapter taxonSuggestionAdapter;
     private AutoCompleteTextView taxonEntry;
     private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry;
@@ -215,7 +215,6 @@ public class MainActivity extends Activity implements LocationListener {
         groupBar=horizontal();content.addView(groupBar);showGroups();
         LinearLayout methodRow=horizontal();
         // The method was already chosen in survey setup. Do not offer a second, disabled selector.
-        methodSpinner=new Spinner(this);
         TextView methodName=label(SurveyMethods.lookup(profile,method).label,14,true);
         methodName.setTextColor(UiKit.FOREST);
         methodRow.addView(methodName,weighted(1f));
@@ -290,24 +289,6 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout.LayoutParams pickerSpace=new LinearLayout.LayoutParams(-1,dp(58));
         pickerSpace.bottomMargin=dp(6);content.addView(identifySpecies,pickerSpace);
         identifySpecies.setOnClickListener(v->openSpeciesPicker());
-        LinearLayout catalogOptions=vertical();
-        checklistNote=label("Area: "+GeoRegions.label(geographicRegion),12,false);
-        checklistNote.setTextColor(MUTED);catalogOptions.addView(checklistNote);
-        regionalOnlyChoice=new CheckBox(this);
-        regionalOnlyChoice.setText("Show verified regional suggestions only (partial list)");
-        regionalOnlyChoice.setTextSize(13);
-        regionalOnlyChoice.setChecked(false); // National candidate names remain searchable by default.
-        catalogOptions.addView(regionalOnlyChoice);
-        catalogOptions.setVisibility(View.GONE);
-        TextView filters=label("Species search options  ▾",12,true);
-        filters.setPadding(dp(6),dp(5),dp(6),dp(7));
-        filters.setTextColor(GREEN);
-        filters.setOnClickListener(v->{
-            boolean expanded=catalogOptions.getVisibility()!=View.VISIBLE;
-            catalogOptions.setVisibility(expanded?View.VISIBLE:View.GONE);
-            filters.setText(expanded?"Species search options  ▴":"Species search options  ▾");
-        });
-        regionalOnlyChoice.setOnCheckedChangeListener((b,only)->updateTaxaSuggestions(false));
         // Complete species selection now lives on its own page.
         // Retain direct text entry for novel/unidentified field observations.
         LinearLayout speciesRow=horizontal();
@@ -421,7 +402,8 @@ public class MainActivity extends Activity implements LocationListener {
         callScoreSpinner=new Spinner(this);
         callScoreSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Not scored","0 — no calls","1 — individuals distinguishable","2 — overlapping calls","3 — full chorus"}));
-        herpPanel.addView(label("Amphibian call index (0–3)",12,false));herpPanel.addView(callScoreSpinner);
+        callScoreLabel=label("Amphibian call index (0–3)",12,false);
+        herpPanel.addView(callScoreLabel);herpPanel.addView(callScoreSpinner);
         lifeStageSpinner=new Spinner(this);
         lifeStageSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Life stage not recorded","Egg","Larva / tadpole","Juvenile","Subadult","Adult","Unknown"}));
@@ -429,8 +411,8 @@ public class MainActivity extends Activity implements LocationListener {
         noiseSpinner=new Spinner(this);
         noiseSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Noise not assessed","0 — none","1 — slight","2 — moderate","3 — serious","4 — severe"}));
-        herpPanel.addView(label("Background noise during amphibian listening",12,false));
-        herpPanel.addView(noiseSpinner);
+        noiseLabel=label("Background noise during amphibian listening",12,false);
+        herpPanel.addView(noiseLabel);herpPanel.addView(noiseSpinner);
         if(profile.equals("Herpetofauna"))content.addView(herpPanel);
         TextView herpToggle=label("▾ Amphibian / reptile environment",13,true);
         herpToggle.setTextColor(GREEN);
@@ -538,13 +520,6 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
     private void updateMethods(){
-        String[] names=SurveyMethods.displayNames(profile);
-        methodSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,names));
-        int idx=0;
-        SurveyMethods.Method[] all=SurveyMethods.forProfile(profile);
-        for(int i=0;i<all.length;i++)if(all[i].code.equals(method))idx=i;
-        methodSpinner.setSelection(idx);
-        methodSpinner.setEnabled(false);
         lineRow.setVisibility(SurveyMethods.isBirdLine(profile,method)?View.VISIBLE:View.GONE);
     }
     private void toggleFavorite(){
@@ -610,15 +585,13 @@ public class MainActivity extends Activity implements LocationListener {
     private static String nonNull(String value){return value==null?"":value;}
     private void updateTaxaSuggestions(boolean clear){
         if(taxonEntry==null)return;
-        boolean regional=regionalOnlyChoice!=null&&regionalOnlyChoice.isChecked()&&
-            TaxonSearchPolicy.hasDocumentedRegion(true,geographicRegion);
+        // Full and local catalogs are selected in Identify species. The inline field accepts any name.
+        boolean regional=false;
         if(taxonSuggestionAdapter==null){
             taxonSuggestionAdapter=new TaxonSuggestionAdapter(this,db,group,
                 geographicRegion,adminPsgc,regional);
             taxonEntry.setAdapter(taxonSuggestionAdapter);
         }else taxonSuggestionAdapter.setScope(group,geographicRegion,adminPsgc,regional);
-        if(checklistNote!=null)checklistNote.setText(regional?
-            "Only documented area records":"National candidates · local presence unverified");
         taxonEntry.setHint(group.equals("Birds")?"Bird name or unidentified bird":
             "Species or unidentified "+group.toLowerCase(Locale.US));
         if(clear)taxonEntry.setText("");
@@ -631,10 +604,12 @@ public class MainActivity extends Activity implements LocationListener {
             herpPanel.setVisibility(View.GONE);
         if(mammalPanel!=null&&!profile.equals("Mammals"))
             mammalPanel.setVisibility(View.GONE);
-        if(noiseSpinner!=null)
-            noiseSpinner.setVisibility(method.equals("amphibian_calls")?View.VISIBLE:View.GONE);
-        if(callScoreSpinner!=null&&profile.equals("Herpetofauna"))
-            callScoreSpinner.setVisibility(group.equals("Amphibians")?View.VISIBLE:View.GONE);
+        boolean calls=group.equals("Amphibians")&&profile.equals("Herpetofauna");
+        if(callScoreSpinner!=null)callScoreSpinner.setVisibility(calls?View.VISIBLE:View.GONE);
+        if(callScoreLabel!=null)callScoreLabel.setVisibility(calls?View.VISIBLE:View.GONE);
+        boolean listening=calls&&method.equals("amphibian_calls");
+        if(noiseSpinner!=null)noiseSpinner.setVisibility(listening?View.VISIBLE:View.GONE);
+        if(noiseLabel!=null)noiseLabel.setVisibility(listening?View.VISIBLE:View.GONE);
     }
     private void restoreEvent(){
         try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id,method,started,COALESCE(taxon_group,'Birds'),COALESCE(survey_profile,'Birds'),COALESCE(station_id,''),COALESCE(observer_name,''),COALESCE(point_target_s,600),COALESCE(protocol_status,'legacy'),COALESCE(project_id,'default'),COALESCE(region_label,''),area_km2,transect_az,point_radius_m FROM surveys WHERE ended IS NULL ORDER BY started DESC LIMIT 1",null)){
@@ -778,7 +753,7 @@ public class MainActivity extends Activity implements LocationListener {
         }
         surveyPaused=false;pauseStartedAt=0;accumulatedPausedMs=0;unitPausedMs=0;
         if(method.equals("line_transect")||method.equals("ves_transect"))startTracking();
-        methodSpinner.setEnabled(false);lineEntry.setEnabled(false);showGroups();status();
+        lineEntry.setEnabled(false);showGroups();status();
         toast(method.equals("point_count")&&plannedStationCount>0?
             plannedStationCount+" stations planned. Start the first count on arrival.":"Survey started");
     }

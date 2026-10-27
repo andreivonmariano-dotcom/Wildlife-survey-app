@@ -64,7 +64,7 @@ class ReleaseScreenAndPerfQA(unittest.TestCase):
     def test_offline_and_end_survey_guards_are_preserved(self):
         main=read("MainActivity.java")
         for key in ('start_without_gps','SurveyClosePolicy.resolve(',
-                    'survey_study_protocols','StudyProtocols.passes',
+                    'StudyProtocols.snapshot','StudyProtocols.passes',
                     'TrapProtocolPolicy.canComplete','FieldProtocolPolicy.canComplete',
                     'PhotoEvidence.writeZip','AcousticEvidence.writeZip'):
             self.assertIn(key,main)

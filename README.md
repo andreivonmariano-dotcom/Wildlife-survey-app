@@ -1,6 +1,21 @@
-# Philippine Wildlife Survey Beta v0.16.0 (development branch)
+# Philippine Wildlife Survey Beta v0.16.1 (development branch)
 
 Offline Android wildlife field application for Birds, Herpetofauna and Mammals. Independent of SMART and KALUMBATA. No map UI in this release.
+
+## v0.16.1 GNSS field corrections
+
+Live GPS acceptance now checks Android elapsed realtime. The phone's wall
+clock no longer rejects an otherwise valid fix whose satellite timestamp
+appears slightly ahead. The continuous location service stays active after
+pressing Home or locking the screen. Android shows a foreground GPS
+notification, subject to notification permissions. The service may stop after
+force-stop, reboot, permission changes or device power restrictions.
+
+Sampling stations use the current live receiver fix. Valid readings under
+10 m start a station immediately. A compact GPS screen appears only when
+the current fix is insufficient. The full satellite sky map remains on the
+initial survey GPS screen. An explicit missing-GPS station start records a
+quality flag and no fabricated coordinates.
 
 ## v0.16 survey-start GNSS accuracy gate (in development)
 All newly configured surveys pass through `SurveyGpsActivity` before `MainActivity`

@@ -147,6 +147,34 @@ public final class FieldDb extends SQLiteOpenHelper {
             "fix_time_utc TEXT,updated_utc TEXT)");
         d.execSQL("CREATE INDEX IF NOT EXISTS station_env_event "+
             "ON station_environment(event_id,station_id)");
+        // Narrow, traceable starting set for Mindanao ecology. These
+        // observations are never interpreted as strict habitat exclusions.
+        String[][] mindanao={
+            {"SYREP2026:001","wetland|riparian|mangrove",
+                "", "850", "Animal Diversity Web: Crocodylus mindorensis",
+                "accessed-2026-10-27",
+                "https://animaldiversity.org/accounts/Crocodylus_mindorensis/",
+                "Natural ponds, marshes, freshwater creeks and rivers; observed "+
+                "up to 850 m. The recorded upper occurrence does not certify "+
+                "absence above 850 m."},
+            {"WBCP2025:Dicaeum_nigrilore","montane|mossy",
+                "900", "", "EcoRegistros: Dicaeum nigrilore",
+                "accessed-2026-10-27",
+                "https://www.ecoregistros.org/sheet/Dicaeum-nigrilore-nigrilore",
+                "Mindanao montane and submontane moist forest, reported above "+
+                "900 m. One published habitat description is not a strict range."}
+        };
+        for(String[] row:mindanao){
+            d.execSQL("INSERT OR IGNORE INTO taxon_habitat_profiles("+
+                "taxon_key,habitat_codes,strict_habitat,elevation_min_m,"+
+                "elevation_max_m,source,source_version,review_status,"+
+                "updated_utc,source_url,evidence_note) "+
+                "VALUES(?,?,0,?,?,?,?,'reviewed',datetime('now'),?,?)",
+                new Object[]{row[0],row[1],
+                    row[2].isEmpty()?null:Double.valueOf(row[2]),
+                    row[3].isEmpty()?null:Double.valueOf(row[3]),
+                    row[4],row[5],row[6],row[7]});
+        }
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");

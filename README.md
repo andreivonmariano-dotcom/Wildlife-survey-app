@@ -1,7 +1,23 @@
-# LIKAS | Philippine Wildlife Survey v0.17.0 Beta (development)
+# LIKAS | Philippine Wildlife Survey v0.17.1 Beta (UI review branch)
 
 LIKAS is the working app identity. This development branch is a UI and stability
 pass, not a change to the Android package or installed SQLite records.
+
+## v0.17.1 visual and stability refinements
+- Original Philippine forest scene with irregular tree crowns and tapered palms.
+- Less dim daytime colors and a clearer disabled Continue Survey action.
+- Home header alignment, lighter status bar, tighter survey-group cards.
+- Recorder has fewer persistent instructions. Species filters, identification confidence
+  and session/vibration controls are folded into short expandable sections.
+  The Save Observation action remains pinned on screen.
+- History and observations load 40 entries per batch. Generic checklist CSV
+  parsing and insertion run on background threads, preserving transaction rollback.
+- Notification Stop GPS choice survives Activity recreation and avoids unintended
+  receiver restarts. Explicit GPS retry is available.
+- Day/night rendering and Continue Survey display rules have new JUnit tests.
+
+The current source is still a **development field-test candidate**, not a
+scientifically validated release. See docs/QA_v0_17_1_LIKAS.md.
 
 ## v0.17 LIKAS launch and field usability
 - Original leaf-and-compass vector mark and adaptive Android launcher icon.

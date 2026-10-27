@@ -696,19 +696,7 @@ public final class SpeciesPickerActivity extends Activity {
         TextView range=text(OccurrenceEvidencePolicy.title(item.evidence),13,true);
         range.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
         range.setPadding(0,dp(7),0,dp(3));card.addView(range);
-        if(!item.reviewedHabitats.isEmpty()||!item.reviewedElevation.isEmpty()){
-            String ecology="Reviewed habitat: "+(item.reviewedHabitats.isEmpty()?
-                "unassessed":item.reviewedHabitats);
-            if(!item.reviewedElevation.isEmpty())
-                ecology+=" · reported elevation "+item.reviewedElevation;
-            TextView ecological=text(ecology,12,false);
-            ecological.setTextColor(UiKit.FOREST);
-            ecological.setMaxLines(2);
-            card.addView(ecological);
-        }
-        TextView citation=text(item.source+" · "+item.version,11,false);
-        citation.setTextColor(UiKit.MUTED);citation.setMaxLines(2);
-        card.addView(citation);
+        // Source, ecological references and profile detail are available under Details.
         LinearLayout buttons=new LinearLayout(this);
         Button details=UiKit.button(this,"Details","secondary");
         buttons.addView(details,new LinearLayout.LayoutParams(0,dp(48),1f));

@@ -23,7 +23,6 @@ import java.util.Calendar;
  */
 public final class LikasForestView extends View {
     private static final long FRAME_INTERVAL_MS = 33L;
-    private static final float TAU = (float)(Math.PI*2.0);
     private static final String DAY_HD = "likas_forest/forest_day_hd.webp";
     private static final String NIGHT_HD = "likas_forest/forest_night_hd.webp";
     private static final String DAY_FALLBACK = "likas_forest/forest_day.webp";
@@ -73,10 +72,6 @@ public final class LikasForestView extends View {
         x=Math.max(0f,Math.min(1f,x));
         return x*x*(3f-2f*x);
     }
-    static float panFraction(float seconds){
-        // Cosine is continuous at the seam and has zero speed at both edges.
-        return .5f+.37f*(float)Math.sin(seconds*TAU/96f);
-    }
     private static float clockNightFraction(){
         Calendar clock=Calendar.getInstance();
         float hour=clock.get(Calendar.HOUR_OF_DAY)+clock.get(Calendar.MINUTE)/60f;
@@ -102,7 +97,7 @@ public final class LikasForestView extends View {
         canvas.drawColor(Color.rgb(8,39,30));
         Bitmap first=day!=null?day:night;
         if(first!=null){
-            float progress=panFraction(seconds);
+            float progress=ForestMotionPolicy.pan(seconds);
             drawPlate(canvas,first,255,progress);
             if(day!=null&&night!=null)
                 drawPlate(canvas,night,Math.round(255f*nightMix),progress);

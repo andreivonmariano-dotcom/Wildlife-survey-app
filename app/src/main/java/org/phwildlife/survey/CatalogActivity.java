@@ -25,6 +25,18 @@ public final class CatalogActivity extends Activity {
         layout.addView(choose);choose.setOnClickListener(v->pick());
         Button mammals=UiKit.button(this,"Import Philippine mammals from MDD v2.5 CSV","secondary");
         layout.addView(mammals);mammals.setOnClickListener(v->pickMdd());
+        Button help=UiKit.button(this,"Checklist import guide  ⓘ","quiet");
+        layout.addView(help);
+        help.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Checklist CSV format")
+            .setMessage("UTF-8 CSV columns:\n"+
+                "taxon_key, taxon_group, common_name, scientific_name, family, source, "+
+                "source_version, region_codes, review_status\n\n"+
+                "Taxon group: Birds, Reptiles, Amphibians or Mammals. "+
+                "Use reviewed or unreviewed. Regional occurrence needs separate evidence. "+
+                "National taxonomy does not verify presence at a survey station. "+
+                "For mammals use the official MDD v2.5 source file.")
+            .setPositiveButton("Close",null).show());
         Button back=UiKit.button(this,"‹ Home","secondary");layout.addView(back);back.setOnClickListener(v->finish());
         setContentView(layout);refresh();
     }
@@ -39,17 +51,9 @@ public final class CatalogActivity extends Activity {
             "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_group='Mammals' AND taxon_key LIKE 'MDD:%'",null)){
             if(mammal.moveToFirst())mdd=mammal.getInt(0);
         }
-        info.setText("Catalog: "+total+" names ("+added+" from non-starter sources), including "+
-          mdd+" Philippine mammal candidates from MDD v2.5. The other groups still have incomplete starter lists.\n\n"+
-          "For a versioned checklist, prepare UTF-8 CSV with headers:\n"+
-          "taxon_key,taxon_group,common_name,scientific_name,family,source,source_version,region_codes,review_status\n\n"+
-          "Taxon group: Birds, Reptiles, Amphibians or Mammals. Separate regional codes with |, for example MINDANAO|P:1102400000. A P: code is a PSGC province code. Leave region_codes blank when distribution is not documented. review_status: reviewed or unreviewed.\n\n"+
-          "Importer never treats an unlisted region as a confirmed absence. Source/version are required. Verified distribution evidence must be curated separately from accepted taxonomy.\n\n"+
-          "Recommended avian taxonomy: AviList v2026 (CC BY 4.0).\n\n"+
-          "Mammals: select the official MDD_v2.5_6904species.csv file. The app selects species whose countryDistribution includes Philippines, excluding domestic and recently extinct taxa. "+
-          "This is a national candidate species list, not proof of occurrence on any island or province. Philippine Mammal Project locality review is still required.\n"+
-          "Amphibians: Emerson Y. Sy 2025-1. Reptiles: Emerson Y. Sy 2026-1. "+
-          "Use the attributed checklist CSV importer for researcher-reviewed entries from those sources.\n");
+        info.setText("Installed names: "+total+
+            "\nPhilippine mammal candidates: "+mdd+
+            "\nBird and herpetofauna checklists: partial");
     }
     private void pickMdd(){
         Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);

@@ -60,16 +60,21 @@ public class WelcomeActivity extends Activity {
         String screen=getPreferences(MODE_PRIVATE).getString("screen","home");
         String rememberedProfile=getPreferences(MODE_PRIVATE).getString("profile","Birds");
         boolean rememberedCustom=getPreferences(MODE_PRIVATE).getBoolean("custom",false);
-        if(screen.equals("setup")&&!isSurveyActive()){setup(rememberedProfile,rememberedCustom);restoreSetup();}
+        boolean showMenu=getIntent().getBooleanExtra("show_menu",false);
+        if(showMenu)home();
+        else if(screen.equals("setup")&&!isSurveyActive()){setup(rememberedProfile,rememberedCustom);restoreSetup();}
         else if(screen.equals("custom")&&!isSurveyActive())customPicker();
         else home();
-        if(isSurveyActive()&&getSharedPreferences("field_resume",MODE_PRIVATE).getString("screen","home").equals("survey"))
+        if(!showMenu&&isSurveyActive()&&
+            getSharedPreferences("field_resume",MODE_PRIVATE).getString("screen","home").equals("survey"))
             startActivity(new Intent(this,MainActivity.class).putExtra("resume",true));
     }
     @Override protected void onResume(){
         super.onResume();
-        if(root!=null&&homeVisible)home();
-        else if(root!=null&&"setup".equals(currentScreen)&&projectChoice!=null)
+        if(root!=null&&homeVisible){
+            String current=activeSurvey();
+            if(!java.util.Objects.equals(current,lastHomeActiveSurvey))home();
+        }else if(root!=null&&"setup".equals(currentScreen)&&projectChoice!=null)
             refreshProjectOptions();
     }
     @Override protected void onPause(){
@@ -78,6 +83,7 @@ public class WelcomeActivity extends Activity {
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);home();}
     private boolean isSurveyActive(){return activeSurvey()!=null;}
     private boolean homeVisible=true;
+    private String lastHomeActiveSurvey=null;
     private void buildShell(){
         root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(18),dp(18),dp(18),dp(18));
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
@@ -92,44 +98,65 @@ public class WelcomeActivity extends Activity {
     }
     private void home(){
         homeVisible=true;currentScreen="home";main.removeAllViews();
-                LinearLayout banner=vertical();banner.setPadding(dp(16),dp(15),dp(16),dp(15));
-        android.graphics.drawable.GradientDrawable hero=new android.graphics.drawable.GradientDrawable();
-        hero.setColor(UiKit.INK);hero.setCornerRadius(dp(17));banner.setBackground(hero);
-        TextView tag=text("PHILIPPINE WILDLIFE SURVEY",12,true);tag.setTextColor(Color.rgb(183,220,195));
-        TextView welcome=text("Welcome back",25,true);welcome.setTextColor(Color.WHITE);
-        TextView desc=text("Field surveys, saved offline and ready to review.",13,false);desc.setTextColor(Color.rgb(217,234,222));
-        banner.addView(tag);banner.addView(welcome);banner.addView(desc);
-        LinearLayout.LayoutParams heroLp=new LinearLayout.LayoutParams(-1,-2);heroLp.bottomMargin=dp(15);main.addView(banner,heroLp);
-        if(activeSurvey()!=null){
-            main.addView(text("An unfinished survey is available. Resume it to continue recording.",14,true));
-            Button resume=UiKit.button(this,"Resume active survey","primary");
-            resume.setOnClickListener(v->startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
+        LinearLayout header=new LinearLayout(this);
+        header.setGravity(Gravity.CENTER_VERTICAL);
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        ImageView logo=new ImageView(this);logo.setImageResource(R.drawable.likas_mark);
+        logo.setContentDescription("LIKAS mark");
+        header.addView(logo,new LinearLayout.LayoutParams(dp(52),dp(52)));
+        LinearLayout brand=vertical();brand.setPadding(dp(12),0,0,0);
+        brand.addView(text("LIKAS",26,true));
+        TextView sub=text("Philippine Wildlife Survey",12,false);
+        sub.setTextColor(MUTED);brand.addView(sub);
+        header.addView(brand,new LinearLayout.LayoutParams(0,-2,1));
+        Button back=UiKit.button(this,"‹ Start","quiet");
+        back.setTextSize(13);back.setOnClickListener(v->finish());
+        header.addView(back,new LinearLayout.LayoutParams(dp(88),dp(46)));
+        LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
+        headerLp.bottomMargin=dp(18);main.addView(header,headerLp);
+        String unfinished=activeSurvey();
+        lastHomeActiveSurvey=unfinished;
+        if(unfinished!=null){
+            TextView banner=text("Unfinished survey",16,true);
+            banner.setTextColor(GREEN);main.addView(banner);
+            Button resume=UiKit.button(this,"Continue Survey","primary");
+            resume.setOnClickListener(v->startActivity(
+                new Intent(this,MainActivity.class).putExtra("resume",true)));
             main.addView(resume);
-            main.addView(text("Finish the active survey to start a different survey.",12,false));
-        } else {
-            main.addView(text("New survey",18,true));
-            card("Bird survey","Point counts, line transects and observations.",()->setup("Birds",false));
-            card("Herpetofauna survey","Reptiles and amphibians under a suitable shared method.",()->setup("Herpetofauna",false));
-            card("Mammal survey","Direct observations, tracks and signs, specialist logs.",()->setup("Mammals",false));
-            card("Custom survey","Choose category, method and duration.",()->customPicker());
+            TextView notice=text("Finish the active survey before creating another.",12,false);
+            notice.setTextColor(MUTED);main.addView(notice);
+        }else{
+            main.addView(text("New survey",17,true));
+            card("Birds","",()->setup("Birds",false));
+            card("Herpetofauna","",()->setup("Herpetofauna",false));
+            card("Mammals","",()->setup("Mammals",false));
+            card("Custom survey","",()->customPicker());
         }
-        main.addView(text("Field data & management",18,true));
-        card("Fieldwork dashboard","Survey counts, monitoring activity and detected-taxa summaries.",
-            ()->startActivity(new Intent(this,DashboardActivity.class)));
-        card("Scientific data review","Check route links, station GPS, sampling effort, observation data and photo archive.",
-            ()->startActivity(new Intent(this,AuditActivity.class)));
-        card("Survey history","Review visits, edit records and inspect correction history.",
-            ()->startActivity(new Intent(this,HistoryActivity.class)));
-        card("Projects","Create projects and review survey-generated stations.",
-            ()->startActivity(new Intent(this,SitesActivity.class)));
-        card("Offline species checklist","Review installed taxa and import an attributed, versioned taxonomic CSV.",
-            ()->startActivity(new Intent(this,CatalogActivity.class)));
-        card("Legacy backup importer","Import an older ZIP only when migrating legacy records.",
-            ()->startActivity(new Intent(this,ImportActivity.class)));
-        main.addView(text("Recent surveys",18,true));
-        recentSurveys();
-        TextView note=text("The camera stays off until you open it during a survey.",12,false);
-        note.setTextColor(MUTED);main.addView(note);
+        Button toolsToggle=UiKit.button(this,"Data & Tools  ▾","secondary");
+        LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(54));
+        toolMargin.topMargin=dp(15);main.addView(toolsToggle,toolMargin);
+        LinearLayout tools=vertical();
+        tools.setVisibility(View.GONE);
+        toolsToggle.setOnClickListener(v->{
+            boolean expanded=tools.getVisibility()!=View.VISIBLE;
+            tools.setVisibility(expanded?View.VISIBLE:View.GONE);
+            toolsToggle.setText(expanded?"Data & Tools  ▴":"Data & Tools  ▾");
+        });
+        toolRow(tools,"Survey history",()->startActivity(new Intent(this,HistoryActivity.class)));
+        toolRow(tools,"Projects & stations",()->startActivity(new Intent(this,SitesActivity.class)));
+        toolRow(tools,"Offline checklist",()->startActivity(new Intent(this,CatalogActivity.class)));
+        toolRow(tools,"Fieldwork dashboard",()->startActivity(new Intent(this,DashboardActivity.class)));
+        toolRow(tools,"Scientific data review",()->startActivity(new Intent(this,AuditActivity.class)));
+        toolRow(tools,"Legacy backup import",()->startActivity(new Intent(this,ImportActivity.class)));
+        main.addView(tools);
+    }
+    private void toolRow(LinearLayout parent,String name,Runnable action){
+        TextView item=text(name+"   ›",16,true);
+        item.setPadding(dp(16),dp(14),dp(12),dp(14));
+        item.setBackground(UiKit.surface(this));
+        LinearLayout.LayoutParams margins=new LinearLayout.LayoutParams(-1,-2);
+        margins.bottomMargin=dp(8);parent.addView(item,margins);
+        item.setOnClickListener(v->action.run());
     }
     private void recentSurveys(){
         try{
@@ -160,18 +187,18 @@ public class WelcomeActivity extends Activity {
     private void card(String name,String desc,Runnable action){
         LinearLayout wrapper=vertical();
         wrapper.setPadding(dp(12),dp(11),dp(12),dp(13));
-        android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
-        bg.setColor(Color.WHITE);bg.setCornerRadius(dp(14));bg.setStroke(dp(1),Color.rgb(218,232,219));
         wrapper.setBackground(UiKit.surface(this));
         TextView h=text(name+"  ›",19,true);wrapper.addView(h);
-        TextView sub=text(desc,13,false);sub.setTextColor(MUTED);wrapper.addView(sub);
+        if(desc!=null&&!desc.isEmpty()){
+            TextView sub=text(desc,13,false);sub.setTextColor(MUTED);wrapper.addView(sub);
+        }
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(11);
         main.addView(wrapper,lp);wrapper.setOnClickListener(v->action.run());
     }
     private void customPicker(){
         homeVisible=false;currentScreen="custom";main.removeAllViews();
         Button back=UiKit.button(this,"← Back","secondary");main.addView(back);back.setOnClickListener(v->home());
-        heading("Custom survey","Choose one category. The survey will use only methods suited to that category.");
+        heading("Custom survey","Select a wildlife group.");
         card("Birds","Custom bird survey",()->setup("Birds",true));
         card("Herpetofauna","Custom reptile and amphibian survey",()->setup("Herpetofauna",true));
         card("Mammals","Custom mammal survey",()->setup("Mammals",true));
@@ -182,7 +209,7 @@ public class WelcomeActivity extends Activity {
         Button back=button("← Back");main.addView(back);
         back.setOnClickListener(v->{if(custom)customPicker();else home();});
         heading((custom?"Custom · ":"")+profile+" survey",
-            "Choose a project and survey design. Stations are created during the survey.");
+            "Select method and project.");
         choices=SurveyMethods.forProfile(profile);
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){
@@ -192,9 +219,7 @@ public class WelcomeActivity extends Activity {
             rb.setId(1000+i);rb.setText(label);rb.setTextSize(16);rb.setTextColor(INK);
             rb.setPadding(dp(4),dp(10),dp(4),dp(10));
             methodChoices.addView(rb);
-            TextView desc=text(m.description,12,false);
-            desc.setTextColor(MUTED);desc.setPadding(dp(36),0,dp(4),dp(7));
-            methodChoices.addView(desc);
+
         }
         methodChoices.check(1000);
         main.addView(text("Survey method",18,true));main.addView(methodChoices);
@@ -215,7 +240,7 @@ public class WelcomeActivity extends Activity {
                 refreshRouteTemplates();
             }
         });
-        Button projectManage=UiKit.button(this,"Create or manage projects","secondary");
+        Button projectManage=UiKit.button(this,"Projects","secondary");
         projectManage.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
         main.addView(projectManage);
         main.addView(text("Geographic checklist area",16,true));
@@ -234,10 +259,10 @@ public class WelcomeActivity extends Activity {
         });
         gpsLookupButton=UiKit.button(this,"Suggest checklist using current GPS","secondary");
         main.addView(gpsLookupButton);
-        boundaryMessage=text("Uses a fresh GPS reading from this phone and offline province polygons. No station is needed. GPS suggestions are optional and do not confirm species presence.",12,false);
+        boundaryMessage=text("Optional GPS area suggestion",12,false);
         boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
         gpsLookupButton.setOnClickListener(v->suggestBoundary());
-        TextView geographyNote=text("Manual island-group selection for offline species suggestions. This is not GPS boundary verification or the study-area stratum. Regional evidence is incomplete, and unexpected species remain recordable.",12,false);
+        TextView geographyNote=text("Area suggestions do not confirm species occurrence.",12,false);
         geographyNote.setTextColor(MUTED);
         main.addView(geographyNote);
         // Sampling stations are assigned within field visits, never in survey setup.
@@ -351,8 +376,7 @@ public class WelcomeActivity extends Activity {
         areaEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         areaEntry.setHint("Stratum area (km², optional)");
         main.addView(areaEntry);
-        TextView help=text("The whole-survey clock always runs. Timed methods get a separate station/interval clock; it continues into overtime after its target. Specialist equipment checks use elapsed time and device-effort logs.",12,false);
-        help.setTextColor(MUTED);main.addView(help);
+
         Button start=UiKit.button(this,"Start "+profile+" survey","primary");
         LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(58));
         startLp.topMargin=dp(16);main.addView(start,startLp);
@@ -689,8 +713,9 @@ public class WelcomeActivity extends Activity {
         i.putExtra("route_template_name",routeName);
         i.putExtra("custom_survey",custom);
         i.putExtra("basic_log_only",m.basicLog);
-        currentScreen="home";homeVisible=true;
-        getPreferences(MODE_PRIVATE).edit().putString("screen","home").commit();
+        // Preserve the setup selections until the survey has actually started.
+        // Canceling GPS acquisition must return to this same configured screen.
+        persistSetup();
         startActivity(i);
     }
     private void persistSetup(){

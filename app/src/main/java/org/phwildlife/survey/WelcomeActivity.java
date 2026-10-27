@@ -117,9 +117,6 @@ public class WelcomeActivity extends Activity {
         sub.setPadding(0,dp(2),0,0);
         sub.setTextColor(MUTED);brand.addView(sub);
         header.addView(brand,new LinearLayout.LayoutParams(0,dp(56),1));
-        Button back=UiKit.button(this,"‹ Back","quiet");
-        back.setTextSize(13);back.setOnClickListener(v->finish());
-        header.addView(back,new LinearLayout.LayoutParams(dp(88),dp(46)));
         LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
         headerLp.bottomMargin=dp(18);main.addView(header,headerLp);
         String unfinished=activeSurvey();
@@ -131,7 +128,7 @@ public class WelcomeActivity extends Activity {
             resume.setOnClickListener(v->startActivity(
                 new Intent(this,MainActivity.class).putExtra("resume",true)));
             main.addView(resume);
-            TextView notice=text("Finish the active survey before creating another.",12,false);
+            TextView notice=text("End this survey to start another.",12,false);
             notice.setTextColor(MUTED);main.addView(notice);
         }else{
             TextView prompt=text("Select a survey group",16,true);
@@ -142,7 +139,7 @@ public class WelcomeActivity extends Activity {
             card("Mammals","",()->setup("Mammals",false));
             card("Custom survey","",()->customPicker());
         }
-        Button toolsToggle=UiKit.button(this,"Data & Tools  ▾","secondary");
+        Button toolsToggle=UiKit.button(this,"History & tools  ▾","secondary");
         LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(54));
         toolMargin.topMargin=dp(10);main.addView(toolsToggle,toolMargin);
         LinearLayout tools=vertical();
@@ -150,7 +147,7 @@ public class WelcomeActivity extends Activity {
         toolsToggle.setOnClickListener(v->{
             boolean expanded=tools.getVisibility()!=View.VISIBLE;
             tools.setVisibility(expanded?View.VISIBLE:View.GONE);
-            toolsToggle.setText(expanded?"Data & Tools  ▴":"Data & Tools  ▾");
+            toolsToggle.setText(expanded?"History & tools  ▴":"History & tools  ▾");
         });
         toolRow(tools,"Survey history",()->startActivity(new Intent(this,HistoryActivity.class)));
         toolRow(tools,"Projects & stations",()->startActivity(new Intent(this,SitesActivity.class)));

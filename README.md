@@ -1,3 +1,13 @@
+# LIKAS v0.27.1 RC2 | Field screen polish and truthful GPS accuracy
+
+**Development candidate**: `0.27.1-rc2` (versionCode 47). Retains app ID `org.phwildlife.survey.beta08` and SQLite schema 27.
+
+This candidate refines Projects, Station Progress, Dashboard, Scientific Data Review and live recording headings. It keeps existing approved frog artwork and full-resolution day/night forest images. A missing station GPS accuracy now displays **accuracy unavailable**, never `±0 m`. The project-wide station register is distinguished from planned survey station visits.
+
+Survey methods, observations, signed sound/photo evidence, Complete/Incomplete/Not Counted outcomes and archives are unchanged. See [RC2 field QA](docs/QA_v0_27_1_FIELD_POLISH_RC2.md). Android/JVM and Python automated checks run in CI. **Handset, signing continuity and backed-up upgrade testing remain open release gates.**
+
+---
+
 # LIKAS v0.27.0 RC1 | Philippine wildlife surveys
 
 LIKAS is an offline-first Android field-research app for Philippine birds, reptiles, amphibians and mammals. It stores individual observations, sampling effort, GNSS quality, acoustic evidence, device histories and archived survey outcomes without requiring internet during fieldwork.

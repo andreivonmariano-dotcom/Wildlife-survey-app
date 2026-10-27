@@ -42,14 +42,14 @@ public final class CatalogActivity extends Activity {
         guide=new TextView(this);
         guide.setTextSize(13);guide.setTextColor(UiKit.MUTED);
         guide.setPadding(dp(7),dp(14),dp(7),dp(20));
-        guide.setText("Required CSV columns:\\n"+
-          "taxon_key,taxon_group,common_name,scientific_name,family,source,source_version,region_codes,review_status\\n\\n"+
+        guide.setText("Required CSV columns:\n"+
+          "taxon_key,taxon_group,common_name,scientific_name,family,source,source_version,region_codes,review_status\n\n"+
           "Groups: Birds, Reptiles, Amphibians or Mammals. Separate regional codes with |, for example MINDANAO|P:1102400000. "+
-          "Leave region_codes empty if distribution evidence is unavailable. review_status is reviewed or unreviewed.\\n\\n"+
+          "Leave region_codes empty if distribution evidence is unavailable. review_status is reviewed or unreviewed.\n\n"+
           "Regional recommendations represent supporting evidence, not confirmed absence elsewhere. "+
-          "Source and version are required for every imported checklist.\\n\\n"+
-          "Birds: AviList v2026 provides a taxonomy reference, not Philippine island occurrences.\\n"+
-          "Mammals: use MDD_v2.5_6904species.csv. Country-level Philippines membership does not confirm occurrence in a province.\\n"+
+          "Source and version are required for every imported checklist.\n\n"+
+          "Birds: AviList v2026 provides a taxonomy reference, not Philippine island occurrences.\n"+
+          "Mammals: use MDD_v2.5_6904species.csv. Country-level Philippines membership does not confirm occurrence in a province.\n"+
           "Amphibians: Emerson Y. Sy checklist 2025-1. Reptiles: Emerson Y. Sy checklist 2026-1. "+
           "Curate and attribute each checklist before CSV import.");
         guide.setVisibility(android.view.View.GONE);
@@ -68,7 +68,7 @@ public final class CatalogActivity extends Activity {
            "SELECT COUNT(*),SUM(CASE WHEN source<>'v0.12 offline starter' THEN 1 ELSE 0 END) FROM taxon_catalog",null)){
            if(c.moveToFirst()){total=c.getInt(0);added=c.isNull(1)?0:c.getInt(1);}
         }
-        info.setText(total+" species names available offline · "+added+" imported.\\n"+
+        info.setText(total+" species names available offline · "+added+" imported.\n"+
           "The built-in starter is incomplete and unreviewed. Choose an attributed source to add taxa.");
     }
     private void pickMdd(){

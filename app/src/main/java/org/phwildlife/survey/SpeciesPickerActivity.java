@@ -461,6 +461,7 @@ public final class SpeciesPickerActivity extends Activity {
     }
     private static final class Species {
         String key,group,common,scientific,family,origin,iucn,ph,source,version;
+        String reviewedHabitats="",reviewedElevation="";
         int evidence;
         HabitatLikelihood.Result screening;
     }
@@ -524,6 +525,12 @@ public final class SpeciesPickerActivity extends Activity {
                     Double min=c.isNull(13)?null:c.getDouble(13);
                     Double max=c.isNull(14)?null:c.getDouble(14);
                     boolean reviewed="reviewed".equals(string(c,15));
+                    if(reviewed){
+                        item.reviewedHabitats=profileHabitats.replace("|",", ");
+                        if(min!=null||max!=null)item.reviewedElevation=
+                            (min==null?"?":Math.round(min)+"")+
+                            "–"+(max==null?"?":Math.round(max)+"")+" m";
+                    }
                     item.screening=HabitatLikelihood.assess(item.evidence,
                         siteCode,altitude,uncertainty,
                         profileHabitats,strict,min,max,reviewed);
@@ -666,6 +673,16 @@ public final class SpeciesPickerActivity extends Activity {
         TextView range=text(OccurrenceEvidencePolicy.title(item.evidence),13,true);
         range.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
         range.setPadding(0,dp(7),0,dp(3));card.addView(range);
+        if(!item.reviewedHabitats.isEmpty()||!item.reviewedElevation.isEmpty()){
+            String ecology="Reviewed habitat: "+(item.reviewedHabitats.isEmpty()?
+                "unassessed":item.reviewedHabitats);
+            if(!item.reviewedElevation.isEmpty())
+                ecology+=" · reported elevation "+item.reviewedElevation;
+            TextView ecological=text(ecology,12,false);
+            ecological.setTextColor(UiKit.FOREST);
+            ecological.setMaxLines(2);
+            card.addView(ecological);
+        }
         TextView citation=text(item.source+" · "+item.version,11,false);
         citation.setTextColor(UiKit.MUTED);citation.setMaxLines(2);
         card.addView(citation);

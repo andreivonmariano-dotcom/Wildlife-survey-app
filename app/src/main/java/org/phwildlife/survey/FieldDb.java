@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,17);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,18);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -34,6 +34,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeFifteen(d);
         upgradeSixteen(d);
         upgradeSeventeen(d);
+        upgradeEighteen(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -65,6 +66,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<15)upgradeFifteen(d);
         if(oldVersion<16)upgradeSixteen(d);
         if(oldVersion<17)upgradeSeventeen(d);
+        if(oldVersion<18)upgradeEighteen(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -234,6 +236,15 @@ public final class FieldDb extends SQLiteOpenHelper {
             "gps_status TEXT NOT NULL DEFAULT 'pending',"+
             "PRIMARY KEY(event_id,sequence_number),UNIQUE(event_id,station_id))");
         d.execSQL("CREATE INDEX IF NOT EXISTS survey_station_event ON survey_stations(event_id,visit_state)");
+    }
+
+    /**
+     * First install and upgrades both install national wildlife catalogs locally.
+     * The database upgrade is transactional. A corrupted embedded asset aborts
+     * the upgrade rather than saving a partial species list or field record.
+     */
+    private void upgradeEighteen(SQLiteDatabase db){
+        BundledCatalog.seed(appContext,db);
     }
 
     /** Taxonomic sources may link to external references; no images are bundled. */

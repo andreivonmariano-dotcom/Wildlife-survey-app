@@ -10,14 +10,19 @@ ANDROID = "{http://schemas.android.com/apk/res/android}"
 
 
 class LikasBrandingSmokeTest(unittest.TestCase):
-    def test_adaptive_icon_uses_approved_artwork_and_palette(self):
+    def test_adaptive_icon_uses_minimalist_frog_artwork(self):
         icon = ET.parse(RES / "mipmap-anydpi-v26/ic_launcher.xml").getroot()
         self.assertEqual(icon.tag, "adaptive-icon")
         self.assertEqual(
             icon.find("foreground").attrib[ANDROID + "drawable"],
-            "@drawable/likas_launcher_art",
+            "@drawable/likas_frog_icon",
         )
-        self.assertTrue((RES / "drawable-nodpi/likas_launcher_art.webp").is_file())
+        self.assertTrue((RES / "drawable-nodpi/likas_frog_icon.webp").is_file())
+        round_icon = ET.parse(RES / "mipmap-anydpi-v26/ic_launcher_round.xml").getroot()
+        self.assertEqual(
+            round_icon.find("foreground").attrib[ANDROID + "drawable"],
+            "@drawable/likas_frog_icon",
+        )
         palette = ET.parse(RES / "values/likas_colors.xml").getroot()
         entries = {item.attrib["name"]: item.text for item in palette.findall("color")}
         self.assertEqual(entries["likas_icon_background"], "#08271E")
@@ -28,6 +33,8 @@ class LikasBrandingSmokeTest(unittest.TestCase):
         assets = {
             "drawable-nodpi/likas_launcher_art.webp":
                 "ad9079af4b9dcac0a024410a1989e28012d2c98052d88e295c9dd693df2d33d5",
+            "drawable-nodpi/likas_frog_icon.webp":
+                "aba89d67d5b2b815d24fb9e8c9edc3767bcc41e58d9d430f218b5ab05b0bc5e3",
         }
         for name, expected in assets.items():
             self.assertEqual(hashlib.sha256((RES / name).read_bytes()).hexdigest(), expected)
@@ -44,7 +51,8 @@ class LikasBrandingSmokeTest(unittest.TestCase):
         self.assertEqual(application.attrib[ANDROID + "icon"], "@mipmap/ic_launcher")
         launch = (JAVA / "LikasLaunchActivity.java").read_text(encoding="utf-8")
         self.assertIn('new LikasForestView(this)', launch)
-        self.assertIn('icon.setImageResource(R.drawable.likas_launcher_art)', launch)
+        self.assertIn('icon.setImageResource(R.drawable.likas_frog_icon)', launch)
+        self.assertIn('name=label("LIKAS",44,Color.WHITE,true)', launch)
         self.assertIn('action("Resume Survey",true)', launch)
         self.assertIn('available?"Home & Tools":"New Survey"', launch)
         self.assertIn("available?View.VISIBLE:View.GONE", launch)

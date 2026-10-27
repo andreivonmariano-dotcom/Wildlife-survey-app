@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ScrollView;
 import java.util.Locale;
 
 /**
@@ -35,6 +36,7 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
     private TextView satelliteStatus;
     private TextView signalStatus;
     private SatelliteSkyView skyView;
+    private boolean stationMode;
     private final Handler ui = new Handler(Looper.getMainLooper());
     private final GnssStatus.Callback satelliteCallback = new GnssStatus.Callback() {
         @Override public void onStarted() {
@@ -66,19 +68,21 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        stationMode=getIntent().getBooleanExtra("station_gps_mode",false);
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         int gap = Math.round(18f * getResources().getDisplayMetrics().density);
         root.setPadding(gap, gap, gap, gap);
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.title(this, "Acquire survey-start GPS"));
+        root.addView(UiKit.title(this,stationMode?"Acquire station GPS":"Acquire survey-start GPS"));
 
         TextView details = new TextView(this);
-        details.setText("Wait for a fresh, precise GPS fix before the survey clock starts. "
-            + "Target: reported horizontal accuracy better than 10 m; fix age at most 10 seconds. "
-            + "In forest canopy, this standard may not be reachable. "
-            + "Move to clearer sky or retry. The phone's accuracy estimate is not a guarantee of true error.");
+        details.setText((stationMode?"Station "+getIntent().getStringExtra("station_label")+
+            ". The station visit timer starts only after GPS confirmation. ":
+            "The survey clock starts only after a fresh GNSS position. ")+
+            "Target: device-reported horizontal accuracy below 10 m, fix age at most 10 seconds. "+
+            "Forest canopy can prevent this. Satellite information is diagnostic, not proof of field accuracy.");
         details.setTextSize(15);
         details.setTextColor(UiKit.INK);
         details.setPadding(0, gap, 0, gap);
@@ -104,15 +108,28 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
         skyView=new SatelliteSkyView(this);
         root.addView(skyView,new LinearLayout.LayoutParams(-1,Math.round(290f*getResources().getDisplayMetrics().density)));
         TextView legend=new TextView(this);
-        legend.setText("Sky plot: north up · edge = horizon · center = overhead · green = used in fix · gray = tracked only. Satellite labels: G GPS, E Galileo, R GLONASS, C BeiDou, J QZSS, S SBAS, I NavIC.");
+        legend.setText("North at top · Center: overhead (90°) · Outer ring: horizon (0°)\n"+
+            "Colors: GPS green, Galileo blue, GLONASS purple, BeiDou amber, others gray. "+
+            "Green outer ring = used in fix. Marker size reflects signal C/N0 (dB-Hz).");
         legend.setTextSize(12);
         legend.setTextColor(UiKit.INK);
         root.addView(legend);
 
-        startButton = UiKit.button(this, "Start survey with verified GPS", "primary");
+        startButton = UiKit.button(this,stationMode?"Start station with GPS":"Start survey with verified GPS", "primary");
         startButton.setEnabled(false);
         startButton.setOnClickListener(v -> launchSurvey());
         root.addView(startButton, new LinearLayout.LayoutParams(-1, -2));
+
+        if(stationMode){
+            Button missing=UiKit.button(this,"Start station without GPS · flag missing","warning");
+            missing.setOnClickListener(v->new android.app.AlertDialog.Builder(this)
+                .setTitle("Start without reliable GPS?")
+                .setMessage("This station will have no verified coordinates. The survey export will flag missing GPS. "+
+                    "Use this only if satellite reception is inadequate.")
+                .setNegativeButton("Keep acquiring",null)
+                .setPositiveButton("Start flagged station",(dialog,which)->finishStation(null)).show());
+            root.addView(missing);
+        }
 
         Button retry = UiKit.button(this, "Retry GPS acquisition", "secondary");
         retry.setOnClickListener(v -> beginAcquisition());
@@ -127,7 +144,10 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
         cancel.setOnClickListener(v -> finish());
         root.addView(cancel);
 
-        setContentView(root);
+        ScrollView page=new ScrollView(this);
+        page.setFillViewport(true);
+        page.addView(root);
+        setContentView(page);
     }
 
     @Override protected void onResume() {
@@ -191,6 +211,18 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
         }
     }
 
+    private void finishStation(Location fix){
+        Intent result=new Intent();
+        result.putExtra("station_kind",getIntent().getStringExtra("station_kind"));
+        result.putExtra("station_id",getIntent().getStringExtra("station_id"));
+        result.putExtra("station_generate",getIntent().getBooleanExtra("station_generate",false));
+        result.putExtra("station_event_id",getIntent().getStringExtra("station_event_id"));
+        result.putExtra("station_gps_missing",fix==null);
+        if(fix!=null)result.putExtra("station_gps_location",fix);
+        setResult(RESULT_OK,result);
+        finish();
+    }
+
     private void launchSurvey() {
         Location fix = qualifiedFix;
         long now = System.currentTimeMillis();
@@ -203,6 +235,7 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
             status.setText("GPS fix expired or lost accuracy. Waiting for another live fix.");
             return;
         }
+        if(stationMode){finishStation(new Location(fix));return;}
         Intent launch = new Intent(this, MainActivity.class);
         if (getIntent().getExtras() != null) launch.putExtras(getIntent().getExtras());
         launch.putExtra("start_gps_latitude", fix.getLatitude());

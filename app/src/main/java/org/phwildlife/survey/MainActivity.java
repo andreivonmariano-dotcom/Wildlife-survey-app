@@ -585,6 +585,10 @@ public class MainActivity extends Activity implements LocationListener {
         screen.putExtra("group",group);
         screen.putExtra("profile",profile);
         screen.putExtra("survey_id",eventId);
+        String currentVisit=pointCountId!=null?pointCountId:
+            samplingUnitId!=null?samplingUnitId:"SURVEY-"+eventId;
+        screen.putExtra("visit_id",currentVisit);
+        screen.putExtra("station_id",stationId);
         screen.putExtra("geo_region",geographicRegion);
         screen.putExtra("province",adminProvince);
         if(habitatEntry!=null)screen.putExtra("habitat",habitatEntry.getText().toString());
@@ -1158,6 +1162,8 @@ public class MainActivity extends Activity implements LocationListener {
                 plannedDurationSeconds>0?plannedDurationSeconds:null,lat,lon,accuracy,
                 gpsValid?iso(stationFix.getTime()):null,
                 gpsValid?"verified_station_fix_under_10m":"missing_or_weak_gps_at_start"});
+        StationEnvironmentStore.recordStationFix(db.getWritableDatabase(),
+            eventId,samplingUnitId,station,stationFix);
         if(gpsValid)db.getWritableDatabase().execSQL(
             "UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=? "+
             "WHERE id=? AND latitude IS NULL AND longitude IS NULL",
@@ -1362,6 +1368,8 @@ public class MainActivity extends Activity implements LocationListener {
         int newSequence=next.sequence;
         String id="PC-"+eventId+"-"+newSequence;
         RoutePlan.start(db.getWritableDatabase(),eventId,next,id,pointTargetSeconds,now,fresh);
+        StationEnvironmentStore.recordStationFix(db.getWritableDatabase(),
+            eventId,id,next.stationId,fresh);
         stationId=next.stationId;pointSequence=newSequence;pointCountId=id;pointStartedAt=now;
         pointNotice=false;nearEndNotified=false;clearMark();
         if(saveButton!=null)saveButton.setEnabled(true);
@@ -1401,6 +1409,7 @@ public class MainActivity extends Activity implements LocationListener {
             new Object[]{pointCountId,eventId,stationId,pointSequence,iso(pointStartedAt),pointTargetSeconds,
                 lat,lon,accuracy,good?iso(fresh.getTime()):null,
                 good?"verified_station_fix_under_10m":"missing_or_weak_gps_at_start"});
+        StationEnvironmentStore.recordStationFix(d,eventId,pointCountId,station,fresh);
         if(good)d.execSQL("UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=? "+
             "WHERE id=? AND latitude IS NULL AND longitude IS NULL",
             new Object[]{lat,lon,accuracy,iso(pointStartedAt),station});

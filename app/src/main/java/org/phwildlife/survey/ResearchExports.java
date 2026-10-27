@@ -18,7 +18,33 @@ public final class ResearchExports {
         z.write((s+"\n").getBytes(StandardCharsets.UTF_8));
     }
     public static void write(ZipOutputStream z,SQLiteDatabase d)throws Exception{
-        surveyVisits(z,d);sdm(z,d);herps(z,d);mammals(z,d);deploymentEffort(z,d);callingHistory(z,d);geojson(z,d);
+        stationEnvironment(z,d);surveyVisits(z,d);sdm(z,d);herps(z,d);mammals(z,d);deploymentEffort(z,d);callingHistory(z,d);geojson(z,d);
+    }
+    /** Source-labeled site metadata, including incomplete/cancelled visits. */
+    private static void stationEnvironment(ZipOutputStream z,SQLiteDatabase d)throws Exception{
+        z.putNextEntry(new ZipEntry("station_environment.csv"));
+        row(z,"visit_id","event_id","station_id","survey_outcome",
+            "habitat_code","habitat_source","gps_elevation_msl_m",
+            "gps_height_wgs84_ellipsoid_m","gps_vertical_uncertainty_m",
+            "gps_elevation_datum","gps_elevation_status",
+            "manual_elevation_msl_m","manual_vertical_uncertainty_m",
+            "fix_time_utc","updated_utc");
+        try(Cursor c=d.rawQuery(
+            "SELECT e.visit_id,e.event_id,e.station_id,"+
+            "COALESCE(s.outcome,'active'),e.habitat_code,e.habitat_source,"+
+            "e.elevation_msl_m,e.elevation_hae_m,e.vertical_uncertainty_m,"+
+            "e.elevation_datum,e.elevation_source,"+
+            "e.manual_elevation_msl_m,e.manual_vertical_uncertainty_m,"+
+            "e.fix_time_utc,e.updated_utc FROM station_environment e "+
+            "LEFT JOIN surveys s ON s.id=e.event_id "+
+            "ORDER BY e.event_id,e.visit_id",null)){
+            while(c.moveToNext()){
+                String[] values=new String[15];
+                for(int i=0;i<values.length;i++)values[i]=num(c,i);
+                row(z,values);
+            }
+        }
+        z.closeEntry();
     }
     private static void pointUnits(ZipOutputStream z,SQLiteDatabase d)throws Exception{
         z.putNextEntry(new ZipEntry("point_counts.csv"));

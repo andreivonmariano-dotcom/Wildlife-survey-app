@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,20);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,21);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -37,6 +37,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeEighteen(d);
         upgradeNineteen(d);
         upgradeTwenty(d);
+        upgradeTwentyOne(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -71,6 +72,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<18)upgradeEighteen(d);
         if(oldVersion<19)upgradeNineteen(d);
         if(oldVersion<20)upgradeTwenty(d);
+        if(oldVersion<21)upgradeTwentyOne(d);
     }
     /**
      * User-reviewed habitat references are stored apart from publisher taxon
@@ -131,6 +133,47 @@ public final class FieldDb extends SQLiteOpenHelper {
                     p[2].isEmpty()?null:Double.valueOf(p[2]),
                     p[3].isEmpty()?null:Double.valueOf(p[3]),
                     p[4],p[5],p[6],p[7]});
+        }
+    }
+    /** Captures per-visit environmental measurements, not site-wide estimates. */
+    private void upgradeTwentyOne(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS station_environment("+
+            "visit_id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT NOT NULL,"+
+            "habitat_code TEXT,habitat_source TEXT,"+
+            "manual_elevation_msl_m REAL,manual_vertical_uncertainty_m REAL,"+
+            "elevation_msl_m REAL,elevation_hae_m REAL,"+
+            "vertical_uncertainty_m REAL,elevation_datum TEXT,"+
+            "elevation_source TEXT NOT NULL DEFAULT 'not_available',"+
+            "fix_time_utc TEXT,updated_utc TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS station_env_event "+
+            "ON station_environment(event_id,station_id)");
+        // Narrow, traceable starting set for Mindanao ecology. These
+        // observations are never interpreted as strict habitat exclusions.
+        String[][] mindanao={
+            {"SYREP2026:001","wetland|riparian|mangrove",
+                "", "850", "Animal Diversity Web: Crocodylus mindorensis",
+                "accessed-2026-10-27",
+                "https://animaldiversity.org/accounts/Crocodylus_mindorensis/",
+                "Natural ponds, marshes, freshwater creeks and rivers; observed "+
+                "up to 850 m. The recorded upper occurrence does not certify "+
+                "absence above 850 m."},
+            {"WBCP2025:Dicaeum_nigrilore","montane|mossy",
+                "900", "", "EcoRegistros: Dicaeum nigrilore",
+                "accessed-2026-10-27",
+                "https://www.ecoregistros.org/sheet/Dicaeum-nigrilore-nigrilore",
+                "Mindanao montane and submontane moist forest, reported above "+
+                "900 m. One published habitat description is not a strict range."}
+        };
+        for(String[] row:mindanao){
+            d.execSQL("INSERT OR IGNORE INTO taxon_habitat_profiles("+
+                "taxon_key,habitat_codes,strict_habitat,elevation_min_m,"+
+                "elevation_max_m,source,source_version,review_status,"+
+                "updated_utc,source_url,evidence_note) "+
+                "VALUES(?,?,0,?,?,?,?,'reviewed',datetime('now'),?,?)",
+                new Object[]{row[0],row[1],
+                    row[2].isEmpty()?null:Double.valueOf(row[2]),
+                    row[3].isEmpty()?null:Double.valueOf(row[3]),
+                    row[4],row[5],row[6],row[7]});
         }
     }
     private void upgradeFour(SQLiteDatabase d){

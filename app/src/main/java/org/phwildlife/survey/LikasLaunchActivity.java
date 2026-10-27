@@ -23,7 +23,7 @@ import java.io.File;
  * are started here. Existing surveys are resumed explicitly by the observer.
  */
 public final class LikasLaunchActivity extends Activity {
-    private Button continueButton;
+    private Button continueButton,newSurveyButton;
     private int dp(float n){return Math.round(getResources().getDisplayMetrics().density*n);}
     private TextView label(String text,float size,int color,boolean bold){
         TextView t=new TextView(this);t.setText(text);t.setTextColor(color);t.setTextSize(size);
@@ -46,7 +46,7 @@ public final class LikasLaunchActivity extends Activity {
     }
     private String currentVersion(){
         try{return getPackageManager().getPackageInfo(getPackageName(),0).versionName;}
-        catch(Exception e){return "0.17.1-beta";}
+        catch(Exception e){return "development";}
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
@@ -56,8 +56,8 @@ public final class LikasLaunchActivity extends Activity {
         root.setBackgroundColor(Color.rgb(12,40,32));
         root.addView(new LikasForestView(this),new FrameLayout.LayoutParams(-1,-1));
         View scrim=new View(this);
-        int hour=java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY);
-        scrim.setBackgroundColor(Color.argb(LikasUiRules.isNight(hour)?46:25,0,23,15));
+        // Keep text contrast stable; the forest animates its own gradual daylight palette.
+        scrim.setBackgroundColor(Color.argb(34,0,23,15));
         root.addView(scrim,new FrameLayout.LayoutParams(-1,-1));
 
         LinearLayout content=new LinearLayout(this);
@@ -67,13 +67,13 @@ public final class LikasLaunchActivity extends Activity {
         FrameLayout.LayoutParams cover=new FrameLayout.LayoutParams(-1,-1);
         root.addView(content,cover);
 
-        content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2f));
+        content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2.3f));
         ImageView icon=new ImageView(this);
         icon.setImageResource(R.drawable.likas_mark);
         icon.setContentDescription("LIKAS field survey mark, a leaf with a compass needle");
         content.addView(icon,new LinearLayout.LayoutParams(dp(89),dp(89)));
 
-        TextView name=label("LIKAS",52,Color.WHITE,true);
+        TextView name=label("LIKAS",48,Color.WHITE,true);
         name.setLetterSpacing(.14f);
         LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(-1,-2);
         nameLp.topMargin=dp(13);content.addView(name,nameLp);
@@ -82,24 +82,20 @@ public final class LikasLaunchActivity extends Activity {
             Color.rgb(230,245,225),true);
         subtitle.setLetterSpacing(.11f);
         content.addView(subtitle);
-        TextView sub=label("Offline field research",14,Color.rgb(225,238,225),false);
-        LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
-        subLp.topMargin=dp(8);content.addView(sub,subLp);
         content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2.4f));
 
-        Button start=action("Start New Survey",true);
-        content.addView(start,new LinearLayout.LayoutParams(-1,dp(62)));
-        start.setOnClickListener(v->{
+        continueButton=action("Resume Survey",true);
+        content.addView(continueButton,new LinearLayout.LayoutParams(-1,dp(62)));
+        newSurveyButton=action("New Survey",false);
+        LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(60));
+        startLp.topMargin=dp(12);
+        content.addView(newSurveyButton,startLp);
+        newSurveyButton.setOnClickListener(v->{
             Intent home=new Intent(this,WelcomeActivity.class);
             home.putExtra("show_menu",true);
             startActivity(home);
             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
         });
-
-        continueButton=action("Continue Survey",false);
-        LinearLayout.LayoutParams cont=new LinearLayout.LayoutParams(-1,dp(62));
-        cont.topMargin=dp(12);
-        content.addView(continueButton,cont);
         continueButton.setOnClickListener(v->{
             if(!hasActiveSurvey())return;
             Intent resume=new Intent(this,MainActivity.class).putExtra("resume",true);
@@ -126,9 +122,17 @@ public final class LikasLaunchActivity extends Activity {
     @Override protected void onResume(){
         super.onResume();
         boolean available=hasActiveSurvey();
+        continueButton.setVisibility(available?View.VISIBLE:View.GONE);
+        // Without an unfinished survey, New Survey becomes the primary action.
+        GradientDrawable newBg=new GradientDrawable();
+        newBg.setColor(available?Color.argb(70,16,45,35):Color.rgb(237,245,234));
+        newBg.setCornerRadius(dp(16));
+        newBg.setStroke(dp(1),Color.rgb(222,238,224));
+        newSurveyButton.setBackground(newBg);
+        newSurveyButton.setBackgroundTintList(null);
+        newSurveyButton.setTextColor(available?Color.WHITE:Color.rgb(21,64,45));
+        newSurveyButton.setText(available?"Home & Tools":"New Survey");
         continueButton.setEnabled(LikasUiRules.canContinue(available));
-        // Disabled action remains legible instead of nearly disappearing.
-        continueButton.setAlpha(available?1f:.82f);
         continueButton.setContentDescription(available?
             "Continue the unfinished survey":"Continue survey unavailable. No active survey.");
     }

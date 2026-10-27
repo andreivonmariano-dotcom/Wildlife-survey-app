@@ -2,143 +2,221 @@ package org.phwildlife.survey;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Shader;
+import android.graphics.Rect;
 import android.os.SystemClock;
 import android.view.View;
 import java.util.Calendar;
 
 /**
- * Small, entirely offline forest scene. Inspired by Philippine lowland
- * dipterocarp forests: layered emergent crowns, buttressed trunks and palms.
- * No video, network, bitmap decode or animation worker threads.
+ * Offline, deliberately low-resolution pixel-art Philippine rainforest.
+ * Fixed 216x384 scene, nearest-neighbor upscale, 10 fps maximum.
+ * No network, decoded animation frames, GPS, storage, or animation workers.
  */
 public final class LikasForestView extends View {
-    private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Path shape=new Path();
-    private LinearGradient sky;
-    private long firstFrame;
-    private boolean playing=false,night=false;
-    private int width,height;
+    static final int PIXELS_W=216, PIXELS_H=384, FRAME_DELAY_MS=100;
+    private final Paint ink=new Paint();
+    private final Bitmap scene=Bitmap.createBitmap(PIXELS_W,PIXELS_H,Bitmap.Config.ARGB_8888);
+    private final Canvas pixels=new Canvas(scene);
+    private final Rect destination=new Rect();
+    private long animationStartedMs=0;
+    private boolean playing=false,started=false;
+    private float light=1f;
+    private long lastClockCheck=0;
 
-    public LikasForestView(Context context){super(context);
-        setContentDescription("Illustrated Philippine lowland rainforest background");}
-    private int rgb(String hex){return Color.parseColor(hex);}
-    private void palette(){
-        int hour=Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        night=LikasUiRules.isNight(hour);
-        if(width>0&&height>0){
-            sky=new LinearGradient(0,0,0,height,
-                night?rgb("#102B34"):rgb("#416F61"),
-                night?rgb("#466759"):rgb("#A5B993"),Shader.TileMode.CLAMP);
+    public LikasForestView(Context context){
+        super(context);
+        ink.setAntiAlias(false);
+        ink.setFilterBitmap(false);
+        setContentDescription("Animated pixel-art Philippine tropical forest; forest changes between day and night.");
+        setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+    }
+
+    static int mix(int a,int b,float t){
+        t=Math.max(0f,Math.min(1f,t));
+        return Color.rgb(
+            Math.round(Color.red(a)+(Color.red(b)-Color.red(a))*t),
+            Math.round(Color.green(a)+(Color.green(b)-Color.green(a))*t),
+            Math.round(Color.blue(a)+(Color.blue(b)-Color.blue(a))*t));
+    }
+    private static final java.util.Map<String,Integer> COLORS=new java.util.HashMap<>();
+    private static int color(String value){
+        Integer cached=COLORS.get(value);
+        if(cached!=null)return cached;
+        int parsed=Color.parseColor(value);
+        COLORS.put(value,parsed);
+        return parsed;
+    }
+    private void rect(int x,int y,int w,int h,int shade){
+        if(w<=0||h<=0)return;
+        ink.setColor(shade);
+        pixels.drawRect(x,y,x+w,y+h,ink);
+    }
+    private int between(String night,String day){
+        return mix(color(night),color(day),light);
+    }
+    private void sky(float second){
+        int upper=between("#101C34","#78B5AC");
+        int lower=between("#435A70","#D4DBAD");
+        for(int y=0;y<PIXELS_H;y+=8)
+            rect(0,y,PIXELS_W,8,mix(upper,lower,y/(float)PIXELS_H));
+        int orbX=162,orbY=62;
+        rect(orbX-10,orbY-10,20,20,between("#9EB9D2","#FBE8A4"));
+        rect(orbX-7,orbY-7,14,14,between("#DCE8D4","#FFF4C7"));
+        if(light<.45f){
+            for(int i=0;i<19;i++){
+                int x=(i*61+13)%PIXELS_W,y=10+(i*37)%125;
+                int star=Color.argb(Math.round((.45f-light)*260f),230,244,213);
+                rect(x,y,i%4==0?2:1,1,star);
+            }
+        }
+        int cloud=between("#6E8593","#E7E8D0");
+        for(int n=0;n<3;n++){
+            int x=((n*99+55+(int)(second*(n%2==0?1.6f:-1.1f)))%310+310)%310-48;
+            int y=31+n*21;
+            for(int shift=-310;shift<=310;shift+=310){
+                rect(x+shift,y+7,54,6,cloud);
+                rect(x+shift+7,y+3,31,12,cloud);
+                rect(x+shift+17,y,18,10,cloud);
+            }
         }
     }
-    @Override protected void onSizeChanged(int w,int h,int oldW,int oldH){
-        super.onSizeChanged(w,h,oldW,oldH);width=w;height=h;palette();
-    }
-    private void fill(int color){paint.setColor(color);paint.setStyle(Paint.Style.FILL);paint.setShader(null);}
-    private void polygon(Canvas c,int color,float... coords){
-        shape.reset();shape.moveTo(coords[0]*width,coords[1]*height);
-        for(int i=2;i<coords.length;i+=2)shape.lineTo(coords[i]*width,coords[i+1]*height);
-        shape.close();fill(color);c.drawPath(shape,paint);
-    }
-    /**
-     * Uneven, overlapping native tree-crown lobes. Avoid the identical oval
-     * silhouettes that made the previous tree layers appear artificial.
-     */
-    private void crown(Canvas c,float x,float y,float rw,float rh,int color){
-        fill(color);shape.reset();
-        final float left=(x-rw)*width,top=(y-rh)*height;
-        final float right=(x+rw)*width,bottom=(y+rh)*height;
-        final float w=right-left,h=bottom-top,mid=(right+left)*.5f;
-        shape.moveTo(left+w*.06f,bottom-h*.17f);
-        shape.cubicTo(left-w*.10f,top+h*.69f,left+w*.10f,top+h*.44f,left+w*.19f,top+h*.48f);
-        shape.cubicTo(left+w*.10f,top+h*.20f,left+w*.31f,top+h*.10f,left+w*.39f,top+h*.22f);
-        shape.cubicTo(left+w*.42f,top-h*.08f,left+w*.63f,top-h*.04f,left+w*.70f,top+h*.20f);
-        shape.cubicTo(left+w*.86f,top+h*.05f,right+w*.05f,top+h*.27f,right-w*.06f,top+h*.48f);
-        shape.cubicTo(right+w*.14f,top+h*.66f,right-w*.02f,bottom+h*.04f,mid+w*.12f,bottom-h*.03f);
-        shape.cubicTo(mid,bottom+h*.02f,left+w*.30f,bottom-h*.02f,left+w*.06f,bottom-h*.17f);
-        shape.close();c.drawPath(shape,paint);
-    }
-    private void emergent(Canvas c,float x,float top,float heightFrac,float canopy,int trunk,int leaf){
-        float foot=.98f,half=.010f;
-        polygon(c,trunk,x-half,top+.08f,x+half,top+.08f,
-            x+half*.9f,foot-.12f,x+.055f,foot,
-            x+.015f,foot,x,foot-.075f,x-.016f,foot,
-            x-.06f,foot,x-half*.9f,foot-.12f);
-        crown(c,x,top,canopy,heightFrac,leaf);
-        crown(c,x-canopy*.47f,top+.028f,canopy*.66f,heightFrac*.85f,leaf);
-        crown(c,x+canopy*.50f,top+.016f,canopy*.65f,heightFrac*.83f,leaf);
-    }
-    private void palm(Canvas c,float x,float y,int trunk,int leaf,float bend){
-        // Slightly bent understory palm with tapered and asymmetric fronds.
-        polygon(c,trunk,x-.006f,1f,x+.005f,1f,x+bend+.008f,y,x+bend-.006f,y);
-        float head=x+bend;
-        for(int i=0;i<8;i++){
-            float direction=i<4?-1f:1f;
-            float n=i%4;
-            float length=.085f-n*.011f;
-            float dx=direction*length;
-            float rise=.022f+n*.018f;
-            shape.reset();shape.moveTo(head*width,y*height);
-            shape.cubicTo((head+dx*.32f)*width,(y-rise*.6f)*height,
-                (head+dx*.80f)*width,(y-rise*.95f)*height,
-                (head+dx)*width,(y-rise*.3f+n*.008f)*height);
-            shape.cubicTo((head+dx*.66f)*width,(y-rise*.45f+.021f)*height,
-                (head+dx*.24f)*width,(y+.015f)*height,head*width,y*height);
-            shape.close();fill(leaf);c.drawPath(shape,paint);
+    private void mountains(float seconds){
+        int distant=between("#253B53","#88A99B");
+        int ridge=between("#193648","#648E78");
+        int dx=(int)(seconds*.55f)%PIXELS_W;
+        for(int x=-PIXELS_W;x<PIXELS_W*2;x+=4){
+            int cx=x+dx;
+            int peak=142+Math.abs(((cx/4)*13)%51-26)/2;
+            rect(x,peak,4,130,distant);
+        }
+        for(int x=0;x<PIXELS_W;x+=5){
+            int peak=173+Math.abs((x*7+30)%79-40)/3;
+            rect(x,peak,5,112,ridge);
         }
     }
-    @Override protected void onDraw(Canvas canvas){
-        super.onDraw(canvas);
-        if(width<=0||height<=0)return;
-        float seconds=playing?(SystemClock.uptimeMillis()-firstFrame)/1000f:0f;
-        paint.setShader(sky);canvas.drawRect(0,0,width,height,paint);paint.setShader(null);
-        // Soft sunrise/dusk glow. No bitmap, particle allocation or video.
-        fill(night?Color.argb(29,194,219,199):Color.argb(68,245,226,178));
-        canvas.drawCircle(width*.76f,height*.14f,width*.14f,paint);
-        int far=night?rgb("#27483F"):rgb("#678778");
-        int near=night?rgb("#163B34"):rgb("#2F6754");
-        int deep=night?rgb("#0C2A28"):rgb("#184536");
-        int bark=night?rgb("#15362E"):rgb("#315844");
-        float sway=playing?(float)Math.sin(seconds*.34f)*width*.004f:0f;
-        canvas.save();
-        canvas.translate(sway,0);
-        emergent(canvas,.04f,.31f,.061f,.10f,bark,far);
-        emergent(canvas,.34f,.29f,.082f,.112f,bark,far);
-        emergent(canvas,.69f,.33f,.073f,.11f,bark,far);
-        emergent(canvas,.96f,.28f,.091f,.14f,bark,far);
-        canvas.restore();
-        // Thin drifting forest mist, painted behind the foreground understory.
-        float drift=playing?(float)Math.sin(seconds*.17f)*width*.045f:0f;
-        fill(Color.argb(night?12:22,219,237,218));
-        canvas.drawOval(-width*.18f+drift,height*.63f,width*.72f+drift,height*.78f,paint);
-        canvas.drawOval(width*.4f-drift,height*.57f,width*1.18f-drift,height*.72f,paint);
-        emergent(canvas,-.06f,.54f,.063f,.18f,bark,near);
-        emergent(canvas,.81f,.51f,.076f,.17f,bark,near);
-        emergent(canvas,1.10f,.55f,.067f,.15f,bark,near);
-        fill(deep);canvas.drawOval(-width*.3f,height*.83f,width*1.3f,height*1.22f,paint);
-        palm(canvas,.12f,.70f,bark,deep,.06f);
-        palm(canvas,.91f,.73f,bark,deep,-.045f);
-        // Broad, dark foreground creates a natural readable button area.
-        fill(Color.argb(night?85:60,8,27,22));
-        canvas.drawRect(0,height*.76f,width,height,paint);
-        if(playing&&ValueAnimator.areAnimatorsEnabled())postInvalidateDelayed(85L);
+    private void tree(int x,int crownTop,int size,int bark,int foliage,int highlight,float sway){
+        // Rectangular, uneven crowns and buttressed trunks in coarse pixel clusters.
+        int shift=Math.round(sway);
+        int trunkW=Math.max(4,size/9);
+        rect(x-trunkW/2,crownTop+size/4,trunkW,PIXELS_H-crownTop,bark);
+        rect(x-trunkW-4,290,5,35,bark);
+        rect(x+trunkW-1,303,6,28,bark);
+        int leafW=size;
+        rect(x-leafW/2+shift,crownTop+11,leafW,28,foliage);
+        rect(x-leafW/2+7+shift,crownTop+3,leafW-16,35,foliage);
+        rect(x-leafW/2+16+shift,crownTop-4,leafW-30,18,foliage);
+        rect(x-leafW/2-10+shift,crownTop+23,24,23,foliage);
+        rect(x+leafW/2-10+shift,crownTop+15,19,25,foliage);
+        rect(x-leafW/2+12+shift,crownTop+7,18,8,highlight);
+        rect(x+leafW/5+shift,crownTop+16,12,6,highlight);
+    }
+    private void layer(float sec,boolean rear){
+        int foliage=rear?between("#254951","#5D9474"):between("#16453F","#2B6C4B");
+        int leaves=rear?between("#3B6661","#87AD7D"):between("#255B43","#488B5B");
+        int wood=rear?between("#1A313B","#416750"):between("#102E2D","#315B43");
+        float speed=rear?1.1f:2.4f;
+        int travel=((int)(sec*speed))%270;
+        for(int k=-1;k<3;k++){
+            int base=k*270-travel;
+            if(rear){
+                tree(base+47,130,69,wood,foliage,leaves,(float)Math.sin(sec*.63f+k)*2);
+                tree(base+189,116,83,wood,foliage,leaves,(float)Math.sin(sec*.48f+k+1)*3);
+            }else{
+                tree(base+19,192,74,wood,foliage,leaves,(float)Math.sin(sec*.68f+k)*3);
+                tree(base+177,205,88,wood,foliage,leaves,(float)Math.sin(sec*.53f+k+2)*3);
+            }
+        }
+    }
+    private void waterfall(float sec){
+        int stone=between("#234044","#5A7C65");
+        int foam=between("#8AAEB1","#E0F6DC");
+        int water=between("#376E7D","#70C8BA");
+        rect(121,206,60,126,stone);
+        rect(128,206,45,118,between("#2B4B55","#54826B"));
+        rect(143,208,22,117,water);
+        for(int j=0;j<15;j++){
+            int y=209+((j*11+(int)(sec*20))%112);
+            rect(145+j%3*5,y,3,9,foam);
+        }
+        rect(136,316,38,6,foam);
+        rect(122,323,60,4,water);
+        for(int i=0;i<13;i++){
+            int x=99+i*8,y=328+(i%3)*3;
+            rect(x,y,6,2,foam);
+        }
+    }
+    private void foreground(float sec){
+        int ground=between("#0D282D","#244B38");
+        int green=between("#1B4438","#397748");
+        int greenLit=between("#34654A","#5F9655");
+        rect(0,339,PIXELS_W,45,ground);
+        for(int k=0;k<30;k++){
+            int x=(k*37+17)%PIXELS_W;
+            int y=327+(k*11)%32;
+            int bend=(int)Math.sin(sec*.8f+k)*2;
+            rect(x+bend,y,4,22,green);
+            rect(x-5+bend,y+4,10,5,greenLit);
+            rect(x+3+bend,y-4,7,7,green);
+        }
+        // Bottom shade supports readable launch buttons without a raster overlay.
+        rect(0,364,PIXELS_W,20,between("#0B222B","#1C3F31"));
+    }
+    private void fireflies(float sec){
+        if(light>.72f)return;
+        int alpha=Math.round((.72f-light)/.72f*235f);
+        for(int n=0;n<17;n++){
+            float pulse=(float)Math.sin(sec*1.7f+n*2.1f);
+            int x=(n*41+29+(int)(sec*(n%2==0?1f:-1f)))%PIXELS_W;
+            if(x<0)x+=PIXELS_W;
+            int y=170+(n*43)%167+(int)Math.sin(sec*.7f+n)*3;
+            rect(x,y,n%3==0?3:2,2,Color.argb(Math.max(0,(int)(alpha*(.58f+.42f*pulse))),227,247,154));
+        }
+    }
+    private void render(float sec){
+        sky(sec);
+        mountains(sec);
+        layer(sec,true);
+        waterfall(sec);
+        layer(sec,false);
+        foreground(sec);
+        fireflies(sec);
+    }
+    @Override protected void onDraw(Canvas target){
+        super.onDraw(target);
+        if(getWidth()<=0||getHeight()<=0)return;
+        long now=SystemClock.uptimeMillis();
+        if(!started){animationStartedMs=now;started=true;updateDaylight(true);}
+        else if(now-lastClockCheck>=5000L)updateDaylight(false);
+        render(playing?(now-animationStartedMs)*.001f:0f);
+        destination.set(0,0,getWidth(),getHeight());
+        ink.setFilterBitmap(false);
+        ink.setAlpha(255);
+        target.drawBitmap(scene,null,destination,ink);
+        if(playing&&ValueAnimator.areAnimatorsEnabled())
+            postInvalidateDelayed(FRAME_DELAY_MS);
+    }
+    private void updateDaylight(boolean initial){
+        Calendar clock=Calendar.getInstance();
+        int minute=clock.get(Calendar.HOUR_OF_DAY)*60+clock.get(Calendar.MINUTE);
+        float desired=LikasUiRules.daylightFactor(minute);
+        if(initial)light=desired;
+        else light+=Math.max(-.025f,Math.min(.025f,desired-light));
+        lastClockCheck=SystemClock.uptimeMillis();
     }
     @Override protected void onAttachedToWindow(){
         super.onAttachedToWindow();
-        firstFrame=SystemClock.uptimeMillis();
-        playing=getWindowVisibility()==VISIBLE&&getVisibility()==VISIBLE;
-        palette();invalidate();
+        playing=getVisibility()==VISIBLE&&getWindowVisibility()==VISIBLE;
+        animationStartedMs=SystemClock.uptimeMillis();
+        started=false;invalidate();
     }
     @Override protected void onWindowVisibilityChanged(int visibility){
         super.onWindowVisibilityChanged(visibility);
-        playing=visibility==VISIBLE;
-        if(playing){firstFrame=SystemClock.uptimeMillis();palette();invalidate();}
+        playing=visibility==VISIBLE&&getVisibility()==VISIBLE;
+        if(playing){animationStartedMs=SystemClock.uptimeMillis();invalidate();}
     }
     @Override protected void onDetachedFromWindow(){
         playing=false;super.onDetachedFromWindow();

@@ -50,7 +50,7 @@ public final class SpeciesPickerActivity extends Activity {
     private Spinner groups,views;
     private Button sortButton;
     private LinearLayout cards;
-    private TextView status;
+    private TextView status,siteSummary;
     private int generation=0,offset=0,sortMode=0,statusFilter=0;
     private String habitatCode="";
     private Double siteElevation=null,elevationUncertainty=null;
@@ -194,7 +194,12 @@ public final class SpeciesPickerActivity extends Activity {
         TextView model=text("Percentage = screening index, not occurrence probability. "+
             "Unassessed species stay selectable.",12,false);
         model.setTextColor(UiKit.MUTED);
-        model.setPadding(0,dp(6),0,dp(8));root.addView(model);
+        model.setPadding(0,dp(6),0,dp(4));root.addView(model);
+        siteSummary=text("",12,false);
+        siteSummary.setTextColor(UiKit.FOREST);
+        siteSummary.setPadding(0,0,0,dp(8));
+        root.addView(siteSummary);
+        updateSiteSummary();
         Button unknown=UiKit.button(this,"Use unidentified identification","secondary");
         root.addView(unknown);
         unknown.setOnClickListener(v->{
@@ -296,6 +301,16 @@ public final class SpeciesPickerActivity extends Activity {
             return Double.isFinite(numeric)?numeric:null;
         }catch(NumberFormatException ignored){return null;}
     }
+    private void updateSiteSummary(){
+        if(siteSummary==null)return;
+        String habitatName=HabitatLikelihood.HABITATS[
+            HabitatLikelihood.habitatIndex(habitatCode)];
+        siteSummary.setText("Survey site: "+habitatName+
+            (siteElevation==null?" · elevation unassessed":
+                " · "+siteElevation+" m"+
+                (elevationUncertainty==null?"":" ±"+elevationUncertainty+" m"))+
+            " · settings saved for this survey");
+    }
     private void openSiteConditions(){
         LinearLayout panel=new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
@@ -345,6 +360,7 @@ public final class SpeciesPickerActivity extends Activity {
                 habitatCode=HabitatLikelihood.codeAt(site.getSelectedItemPosition());
                 siteElevation=meters;elevationUncertainty=uncertainty;
                 savePickerSettings();
+                updateSiteSummary();
                 dialog.dismiss();
                 refresh();
             }));

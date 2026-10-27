@@ -56,7 +56,11 @@ public class WelcomeActivity extends Activity {
     }
     private Button button(String label){return UiKit.button(this,label,"secondary");}
     private LinearLayout vertical(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
-    @Override public void onCreate(Bundle state){super.onCreate(state);buildShell();
+    @Override public void onCreate(Bundle state){super.onCreate(state);
+        getWindow().setStatusBarColor(BG);
+        getWindow().setNavigationBarColor(BG);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        buildShell();
         String screen=getPreferences(MODE_PRIVATE).getString("screen","home");
         String rememberedProfile=getPreferences(MODE_PRIVATE).getString("profile","Birds");
         boolean rememberedCustom=getPreferences(MODE_PRIVATE).getBoolean("custom",false);

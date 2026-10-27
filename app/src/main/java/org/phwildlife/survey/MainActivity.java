@@ -114,6 +114,9 @@ public class MainActivity extends Activity implements LocationListener {
     // Observer position belongs to the detection time, not the later Save tap.
     private Location markedObserverFix;
     private boolean pointNotice=false;
+    private String cachedPausedUnit="";
+    private long pausedUnitCacheMs=-1,pausedUnitFetchedMs=0;
+    private long lastProgressFetchMs=0,lastTrackFetchMs=0;
     private int dp(float n){return (int)(getResources().getDisplayMetrics().density*n+0.5f);}
 
     @Override public void onCreate(Bundle b) {
@@ -450,8 +453,7 @@ public class MainActivity extends Activity implements LocationListener {
         advancedPanel.setVisibility(View.GONE);content.addView(advancedPanel);
         detailToggle.setOnClickListener(v->{detailShown=!detailShown;advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);queueDraft();
             detailToggle.setText(detailShown?"− Hide ecology details":"＋ Ecology, habitat and notes (optional)");});
-        hintView=label("Tip: Mark detection records the time and optional direction. Distance is entered manually.",12,false);
-        hintView.setTextColor(MUTED);content.addView(hintView);
+        // The field form stays focused on observations. Method tips live in Help.
         fieldScroll.addView(content);
         root.addView(fieldScroll,new LinearLayout.LayoutParams(-1,0,1));
         LinearLayout footer=horizontal();
@@ -590,7 +592,7 @@ public class MainActivity extends Activity implements LocationListener {
             (nonNull(adminProvince).isEmpty()?"":adminProvince+" · ")+
             (geographicRegion.equals("PH")?"Philippines · all starter taxa":GeoRegions.label(geographicRegion))+
             (regional?" · documented regional subset only":" · includes unassessed taxa")+
-            "\nRegional tags are incomplete; typing another species remains allowed.");
+            " · unrestricted search");
         taxonEntry.setHint(group.equals("Birds")?"Bird name or unidentified bird":
             "Name or unidentified "+group.toLowerCase(Locale.US).replace("s",""));
         if(clear)taxonEntry.setText("");
@@ -804,6 +806,7 @@ public class MainActivity extends Activity implements LocationListener {
             writable.setTransactionSuccessful();
         }finally{writable.endTransaction();}
         surveyPaused=false;pauseStartedAt=0;
+        cachedPausedUnit="";lastProgressFetchMs=0;
         if(method.equals("line_transect")||method.equals("ves_transect"))startTracking();
         refreshPauseControls();status();persistDraft();
     }
@@ -811,10 +814,16 @@ public class MainActivity extends Activity implements LocationListener {
         if(started<=0)return 0;
         long paused=0;
         if(id!=null){
-            try(Cursor c=db.getReadableDatabase().rawQuery(
-                "SELECT COALESCE(unit_paused_ms,0) FROM "+unitTable+" WHERE id=?",new String[]{id})){
-                if(c.moveToFirst())paused=c.getLong(0);
-            }catch(Exception ignored){}
+            String key=unitTable+"|"+id;
+            if(!key.equals(cachedPausedUnit)||now-pausedUnitFetchedMs>=5000L){
+                cachedPausedUnit=key;pausedUnitFetchedMs=now;pausedUnitCacheMs=0;
+                try(Cursor c=db.getReadableDatabase().rawQuery(
+                    "SELECT COALESCE(unit_paused_ms,0) FROM "+unitTable+" WHERE id=?",
+                    new String[]{id})){
+                    if(c.moveToFirst())pausedUnitCacheMs=c.getLong(0);
+                }catch(Exception ignored){}
+            }
+            paused=pausedUnitCacheMs;
         }
         if(surveyPaused&&pauseStartedAt>0)paused+=Math.max(0,now-pauseStartedAt);
         return Math.max(0,now-started-paused);
@@ -1554,8 +1563,8 @@ public class MainActivity extends Activity implements LocationListener {
         long now=System.currentTimeMillis();
         long wallElapsed=Math.max(0,now-startedAt);
         long activeElapsed=Math.max(0,wallElapsed-currentPausedMs(now));
-        sessionClockView.setText("TOTAL SESSION "+timeFmt(wallElapsed/1000)+
-            "  ·  SESSION EXCL. PAUSES "+timeFmt(activeElapsed/1000));
+        sessionClockView.setText("Session "+timeFmt(wallElapsed/1000)+
+            "   ·   Active "+timeFmt(activeElapsed/1000));
         long unitElapsed=-1,target=0;
         String label="SURVEY";
         if(method.equals("point_count")){
@@ -1592,19 +1601,26 @@ public class MainActivity extends Activity implements LocationListener {
             pointNotice=true;toast("Sampling interval ended · recording continues in overtime");
             vibrateIfEnabled(300);
         }
-        if(method.equals("point_count")&&plannedStationCount>0){
-            int counted=RoutePlan.recordedCount(db.getReadableDatabase(),eventId);
-            int[] visits=visitProgress();
-            progressView.setText("Planned "+plannedStationCount+" stations · "+counted+
-                " visited · "+visits[1]+" complete. Travel and point effort are separate.");
-        }else if(hasStationUnits()){
-            int[] counts=visitProgress();
-            progressView.setText(counts[1]+" completed / "+counts[0]+" started visits · "+
-                counts[2]+" distinct stations. Open Station progress for details.");
-        }else if(target>0)progressView.setText("Target "+timeFmt(target)+
-            " · overtime continues until Finish survey");
-        else progressView.setText("The session clock continues until Finish survey");
-        if(method.equals("line_transect")||method.equals("ves_transect"))refreshTrack();
+        // Sampling counts and path summaries do not change every second.
+        if(lastProgressFetchMs==0||now-lastProgressFetchMs>=4000L){
+            lastProgressFetchMs=now;
+            if(method.equals("point_count")&&plannedStationCount>0){
+                int counted=RoutePlan.recordedCount(db.getReadableDatabase(),eventId);
+                int[] visits=visitProgress();
+                progressView.setText(counted+"/"+plannedStationCount+
+                    " stations visited · "+visits[1]+" complete");
+            }else if(hasStationUnits()){
+                int[] counts=visitProgress();
+                progressView.setText(counts[1]+"/"+counts[0]+" visits complete");
+            }else if(target>0){
+                progressView.setText("Target "+timeFmt(target));
+            }else progressView.setText("");
+        }
+        if((method.equals("line_transect")||method.equals("ves_transect"))&&
+            (lastTrackFetchMs==0||now-lastTrackFetchMs>=4000L)){
+            lastTrackFetchMs=now;
+            refreshTrack();
+        }
     }
     private void exportZip(){
         Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);
@@ -1849,7 +1865,7 @@ public class MainActivity extends Activity implements LocationListener {
             d.put("pitch",markedPitch==null?JSONObject.NULL:markedPitch);
             d.put("sensorQuality",sensorQuality);
             d.put("scrollY",fieldScroll==null?0:fieldScroll.getScrollY());
-            getSharedPreferences("field_drafts",MODE_PRIVATE).edit().putString("draft_"+eventId,d.toString()).commit();
+            getSharedPreferences("field_drafts",MODE_PRIVATE).edit().putString("draft_"+eventId,d.toString()).apply();
         }catch(Exception ignored){}
     }
     private void restoreDraft(){

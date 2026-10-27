@@ -28,7 +28,7 @@ class V025Protocols(unittest.TestCase):
         line=next(x for x in src("SurveyMethods.java").splitlines()
                   if 'new Method("spotlight"' in x)
         self.assertIn("false)",line)
-        self.assertIn('"spotlight".equals(method)',src("MainActivity.java"))
+        self.assertIn('method.equals("spotlight")',src("MainActivity.java"))
         self.assertIn("spotlight_passes.csv",src("FieldProtocolEvidence.java"))
     def test_protocol_photo_and_verified_gps(self):
         ui=src("FieldProtocolsActivity.java")

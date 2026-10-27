@@ -80,7 +80,8 @@ public final class SurveyGpsActivity extends Activity {
         content.setBackgroundColor(UiKit.BG);
         content.addView(UiKit.title(this,stationMode?"Station GPS":"Survey GPS"));
         TextView explanation=new TextView(this);
-        explanation.setText("Starts automatically after a fresh GPS fix with reported accuracy under 10 m.");
+        explanation.setText(stationMode?"Wait for a verified station position, or flag the missing GPS.":
+            "The survey starts automatically below 10 m GPS accuracy. You can start without GPS.");
         explanation.setTextSize(15);
         explanation.setTextColor(UiKit.INK);
         explanation.setPadding(0,gap,0,gap);
@@ -91,6 +92,27 @@ public final class SurveyGpsActivity extends Activity {
         status.setText("Waiting for GPS updates from the receiver...");
         status.setPadding(0,gap,0,gap);
         content.addView(status);
+        if(!stationMode){
+            Button skip=UiKit.button(this,"Start without GPS · mark start missing","secondary");
+            skip.setOnClickListener(v->{
+                if(launchCommitted||skipConfirmationOpen||!acquisitionVisible||isFinishing())return;
+                skipConfirmationOpen=true;
+                new AlertDialog.Builder(this)
+                    .setTitle("Start this survey without GPS?")
+                    .setMessage("Survey time and observations will be recorded now. "+
+                        "The starting coordinates stay blank and are flagged in the export. "+
+                        "A later GPS fix cannot replace the missing starting position. "+
+                        "GPS tracking and station readings can begin when available.")
+                    .setNegativeButton("Keep checking GPS",(dialog,which)->{
+                        skipConfirmationOpen=false;updateLocation();
+                    })
+                    .setOnCancelListener(dialog->{skipConfirmationOpen=false;updateLocation();})
+                    .setPositiveButton("Start with missing GPS",(dialog,which)->{
+                        skipConfirmationOpen=false;launchWithoutFix();
+                    }).show();
+            });
+            content.addView(skip);
+        }
         if(!stationMode){
             satelliteStatus=new TextView(this);
             satelliteStatus.setText("Satellites: waiting for receiver");
@@ -118,27 +140,6 @@ public final class SurveyGpsActivity extends Activity {
         // Survey and station setup are already explicit actions. No second Start tap.
         startButton.setVisibility(View.GONE);
         content.addView(startButton);
-        if(!stationMode){
-            Button skip=UiKit.button(this,"Start without GPS · mark start missing","secondary");
-            skip.setOnClickListener(v->{
-                if(launchCommitted||skipConfirmationOpen||!acquisitionVisible||isFinishing())return;
-                skipConfirmationOpen=true;
-                new AlertDialog.Builder(this)
-                    .setTitle("Start this survey without GPS?")
-                    .setMessage("Survey time and observations will be recorded now. "+
-                        "The starting coordinates stay blank and are flagged in the export. "+
-                        "A later GPS fix cannot replace the missing starting position. "+
-                        "GPS tracking and station readings can begin when available.")
-                    .setNegativeButton("Keep checking GPS",(dialog,which)->{
-                        skipConfirmationOpen=false;updateLocation();
-                    })
-                    .setOnCancelListener(dialog->{skipConfirmationOpen=false;updateLocation();})
-                    .setPositiveButton("Start with missing GPS",(dialog,which)->{
-                        skipConfirmationOpen=false;launchWithoutFix();
-                    }).show();
-            });
-            content.addView(skip);
-        }
         if(stationMode){
             Button missing=UiKit.button(this,"Start without GPS · flag missing","warning");
             missing.setOnClickListener(v->new AlertDialog.Builder(this)

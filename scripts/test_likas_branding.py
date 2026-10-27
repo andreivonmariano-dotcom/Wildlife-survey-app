@@ -54,7 +54,7 @@ class LikasBrandingSmokeTest(unittest.TestCase):
         launch = (JAVA / "LikasLaunchActivity.java").read_text(encoding="utf-8")
         self.assertIn('new LikasForestView(this)', launch)
         self.assertIn('icon.setImageResource(R.drawable.likas_frog_icon)', launch)
-        self.assertIn('name=label("LIKAS",44,Color.WHITE,true)', launch)
+        self.assertIn('name=label("LIKAS",44,Color.rgb(239,243,223),true)', launch)
         self.assertIn('action("Resume Survey",true)', launch)
         self.assertIn('available?"Home & Tools":"New Survey"', launch)
         self.assertIn("available?View.VISIBLE:View.GONE", launch)

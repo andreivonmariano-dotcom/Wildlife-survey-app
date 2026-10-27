@@ -500,10 +500,10 @@ public final class FieldProtocolsActivity extends Activity {
                 LinearLayout card=panel(c.getString(0)+
                     (c.getInt(9)==1?" · repeat pass":" · first pass"));
                 card.addView(text(c.getString(2)+" to "+c.getString(3)+
-                    "\\nObserver "+c.getString(1)+" · route "+c.getDouble(6)+" m"+
-                    "\\nBeam "+c.getDouble(4)+" m · visibility "+c.getDouble(5)+" m"+
-                    "\\nLight: "+c.getString(7)+" · weather: "+c.getString(8)+
-                    "\\nDuplicate control: "+c.getString(10),12));
+                    "\nObserver "+c.getString(1)+" · route "+c.getDouble(6)+" m"+
+                    "\nBeam "+c.getDouble(4)+" m · visibility "+c.getDouble(5)+" m"+
+                    "\nLight: "+c.getString(7)+" · weather: "+c.getString(8)+
+                    "\nDuplicate control: "+c.getString(10),12));
             }
         }
     }

@@ -8,7 +8,7 @@ def read(name):
 class V024FieldProtocolTest(unittest.TestCase):
     def test_non_destructive_schema_v25(self):
         schema=read("FieldDb.java")
-        self.assertIn("super(context,NAME,null,26)",schema)
+        self.assertIn("super(context,NAME,null,27)",schema)
         self.assertIn("if(oldVersion<25)upgradeTwentyFive(d)",schema)
         self.assertIn("upgradeTwentyFive(d);",schema)
         for table in ("coverboard_units","coverboard_checks","area_search_passes",

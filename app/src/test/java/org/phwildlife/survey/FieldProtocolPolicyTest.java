@@ -14,7 +14,8 @@ public final class FieldProtocolPolicyTest {
         assertFalse(FieldProtocolPolicy.canComplete("coverboard_search",0,0,0));
         assertFalse(FieldProtocolPolicy.canComplete("area_search",0,0,0));
         assertFalse(FieldProtocolPolicy.canComplete("track_sign",1,0,1));
-        assertTrue(FieldProtocolPolicy.canComplete("spotlight",0,0,0));
+        assertFalse(FieldProtocolPolicy.canComplete("spotlight",0,0,0));
+        assertTrue(FieldProtocolPolicy.canComplete("spotlight",2,0,0));
     }
     @Test public void timeAndMeasuredEffortArePositive(){
         assertTrue(FieldProtocolPolicy.validInterval(1000,2000));

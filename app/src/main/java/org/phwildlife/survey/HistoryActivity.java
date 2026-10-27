@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.Editable;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.graphics.Typeface;
 import android.view.View;
@@ -23,6 +25,8 @@ public class HistoryActivity extends Activity {
     private String eventFilter;
     private String outcomeFilter="all";
     private String surveySearch="";
+    private final Handler searchHandler=new Handler(Looper.getMainLooper());
+    private Runnable pendingSearch;
     private static final String[] OUTCOME_LABELS={
         "All outcomes","Complete","Incomplete","Canceled / Not counted","Active"};
     private static final String[] OUTCOME_VALUES={
@@ -76,8 +80,13 @@ public class HistoryActivity extends Activity {
             search.addTextChangedListener(new TextWatcher(){
                 public void beforeTextChanged(CharSequence s,int st,int n,int after){}
                 public void onTextChanged(CharSequence s,int st,int before,int count){
-                    surveySearch=s.toString().trim();surveyOffset=0;
-                    if(rows!=null){rows.removeAllViews();surveys();}
+                    surveySearch=s.toString().trim();
+                    if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
+                    pendingSearch=()->{
+                        surveyOffset=0;
+                        if(rows!=null){rows.removeAllViews();surveys();}
+                    };
+                    searchHandler.postDelayed(pendingSearch,220L);
                 }
                 public void afterTextChanged(Editable value){}
             });
@@ -103,7 +112,7 @@ public class HistoryActivity extends Activity {
               String.valueOf(PAGE_SIZE),String.valueOf(surveyOffset)})){
             int rowsThisPage=c.getCount();
             if(rowsThisPage==0&&surveyOffset==0)
-                rows.addView(text("No surveys match this outcome.",15));
+                rows.addView(text("No matching surveys",15));
             while(c.moveToNext()){
                 String event=c.getString(0),profile=c.getString(1),method=c.getString(2),site=c.getString(3),date=c.getString(4);
                 String outcome=c.getString(8);
@@ -138,12 +147,17 @@ public class HistoryActivity extends Activity {
     }
     private void observations(String event){
         String outcome="active";
+        String surveyMethod="";
+        String surveyProfile="Birds";
         try(Cursor meta=db.getReadableDatabase().rawQuery(
             "SELECT COALESCE(station_id,''),method,started,ended,"+
-                "COALESCE(outcome,'active'),COALESCE(exclusion_reason,'') "+
+                "COALESCE(outcome,'active'),COALESCE(exclusion_reason,''),"+
+                "COALESCE(survey_profile,taxon_group,'Birds') "+
                 "FROM surveys WHERE id=?",new String[]{event})){
             if(meta.moveToFirst()){
                 outcome=meta.getString(4);
+                surveyMethod=meta.getString(1);
+                surveyProfile=meta.getString(6);
                 String state=outcome.equals("not_counted")?"Canceled · Not counted":
                     outcome.equals("incomplete")?"Incomplete":
                     outcome.equals("complete")?"Complete":"Active";
@@ -170,25 +184,32 @@ public class HistoryActivity extends Activity {
                 }
             }
         }
-        Button progress=UiKit.button(this,"Station progress","secondary");
-        progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
-            .putExtra("event_id",event)));
-        rows.addView(progress);
-        Button sounds=UiKit.button(this,"♪ Call recordings and spectrograms","secondary");
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
-        lp.topMargin=dp(7);rows.addView(sounds,lp);
-        sounds.setOnClickListener(v->startActivity(new Intent(this,CallLibraryActivity.class)
-            .putExtra("event_id",event)));
-        Button devices=UiKit.button(this,"Camera / trap deployment history","secondary");
-        LinearLayout.LayoutParams deviceLp=new LinearLayout.LayoutParams(-1,dp(52));
-        deviceLp.topMargin=dp(7);rows.addView(devices,deviceLp);
-        devices.setOnClickListener(v->startActivity(new Intent(this,TrapProtocolActivity.class)
-            .putExtra("event_id",event)));
-        Button evidence=UiKit.button(this,"Coverboard / area / sign evidence","secondary");
-        LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,dp(52));
-        evidenceLp.topMargin=dp(6);rows.addView(evidence,evidenceLp);
-        evidence.setOnClickListener(v->startActivity(new Intent(this,FieldProtocolsActivity.class)
-            .putExtra("event_id",event)));
+        boolean birdOrHerp="Birds".equals(surveyProfile)||
+            "Herpetofauna".equals(surveyProfile);
+        boolean trap=TrapProtocolPolicy.supported(surveyMethod);
+        boolean field=FieldProtocolPolicy.supported(surveyMethod);
+        if(birdOrHerp){
+            Button sounds=UiKit.button(this,"Sound recordings","secondary");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(48));
+            lp.topMargin=dp(5);rows.addView(sounds,lp);
+            sounds.setOnClickListener(v->startActivity(new Intent(this,CallLibraryActivity.class)
+                .putExtra("event_id",event)));
+        }
+        if(trap||field){
+            Button evidence=UiKit.button(this,trap?"Device checks & captures":"Method effort & evidence","secondary");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(48));
+            lp.topMargin=dp(5);rows.addView(evidence,lp);
+            final Class<?> destination=trap?TrapProtocolActivity.class:FieldProtocolsActivity.class;
+            evidence.setOnClickListener(v->startActivity(new Intent(this,destination)
+                .putExtra("event_id",event)));
+        }
+        if("point_count".equals(surveyMethod)||SurveyMethods.timedInterval(surveyMethod)){
+            Button progress=UiKit.button(this,"Station & effort progress","quiet");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(48));
+            lp.topMargin=dp(5);rows.addView(progress,lp);
+            progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
+                .putExtra("event_id",event)));
+        }
         appendObservations(event);
     }
     private void appendObservations(String event){

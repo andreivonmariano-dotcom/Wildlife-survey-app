@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,26);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,27);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -43,6 +43,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeTwentyFour(d);
         upgradeTwentyFive(d);
         upgradeTwentySix(d);
+        upgradeTwentySeven(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -83,6 +84,16 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<24)upgradeTwentyFour(d);
         if(oldVersion<25)upgradeTwentyFive(d);
         if(oldVersion<26)upgradeTwentySix(d);
+        if(oldVersion<27)upgradeTwentySeven(d);
+    }
+    /**
+     * Pre-v27 templates had no wildlife profile. Preserve those template IDs and
+     * frozen survey snapshots; NULL means explicitly shared legacy scope.
+     */
+    private void upgradeTwentySeven(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE study_protocol_templates ADD COLUMN survey_profile TEXT");
+        d.execSQL("CREATE INDEX IF NOT EXISTS study_template_taxon_scope "+
+            "ON study_protocol_templates(project_id,method,survey_profile)");
     }
     /** Configurable study effort and direct, original-photo survey evidence. */
     private void upgradeTwentySix(SQLiteDatabase d){

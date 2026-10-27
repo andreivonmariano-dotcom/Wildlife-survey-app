@@ -17,7 +17,7 @@ class AcousticFieldTest(unittest.TestCase):
 
     def test_private_wav_and_persistent_labels_schema(self):
         db=source("FieldDb.java")
-        self.assertIn("super(context,NAME,null,26)",db)
+        self.assertIn("super(context,NAME,null,27)",db)
         self.assertIn("if(oldVersion<23)upgradeTwentyThree(d)",db)
         self.assertIn("CREATE TABLE IF NOT EXISTS acoustic_clips(",db)
         self.assertIn("CREATE TABLE IF NOT EXISTS acoustic_labels(",db)

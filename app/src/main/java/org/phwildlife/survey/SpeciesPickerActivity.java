@@ -2,6 +2,7 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -52,6 +53,9 @@ public final class SpeciesPickerActivity extends Activity {
     private Double siteElevation=null,elevationUncertainty=null;
     private List<Species> loaded=new ArrayList<>();
     private boolean truncated=false;
+    private SharedPreferences surveyOptions;
+    private String preferencePrefix="";
+    private int savedGroupIndex=0,savedViewIndex=0;
     private String[] availableGroups;
     private String geographicRegion="PH",province="",habitat="";
     private static final int MAX_QUERY_ROWS=5000;
@@ -76,6 +80,34 @@ public final class SpeciesPickerActivity extends Activity {
             default:return "";
         }
     }
+    private int checked(int value,int upper){
+        return Math.max(0,Math.min(value,upper-1));
+    }
+    private String pref(String suffix){return preferencePrefix+suffix;}
+    private void restorePickerSettings(){
+        sortMode=checked(surveyOptions.getInt(pref("sort"),0),
+            SpeciesSortPolicy.SORT_LABELS.length);
+        statusFilter=checked(surveyOptions.getInt(pref("filter"),0),
+            SpeciesSortPolicy.FILTER_LABELS.length);
+        savedGroupIndex=checked(surveyOptions.getInt(pref("group"),0),availableGroups.length);
+        savedViewIndex=checked(surveyOptions.getInt(pref("view"),0),VIEWS.length);
+        habitatCode=surveyOptions.getString(pref("habitat"),habitatCode);
+        if(HabitatLikelihood.habitatIndex(habitatCode)==0)habitatCode="";
+        siteElevation=parseNumber(surveyOptions.getString(pref("elevation"),""));
+        elevationUncertainty=parseNumber(surveyOptions.getString(pref("uncertainty"),""));
+    }
+    private void savePickerSettings(){
+        if(surveyOptions==null)return;
+        surveyOptions.edit().putInt(pref("sort"),sortMode)
+            .putInt(pref("filter"),statusFilter)
+            .putInt(pref("group"),groups==null?0:groups.getSelectedItemPosition())
+            .putInt(pref("view"),views==null?0:views.getSelectedItemPosition())
+            .putString(pref("habitat"),habitatCode)
+            .putString(pref("elevation"),siteElevation==null?"":siteElevation.toString())
+            .putString(pref("uncertainty"),
+                elevationUncertainty==null?"":elevationUncertainty.toString())
+            .apply();
+    }
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);
         Intent request=getIntent();
@@ -91,6 +123,10 @@ public final class SpeciesPickerActivity extends Activity {
         habitat=request.getStringExtra("habitat");
         if(habitat==null)habitat="";
         habitatCode=guessHabitat(habitat);
+        String surveyId=request.getStringExtra("survey_id");
+        preferencePrefix="survey_"+(surveyId==null||surveyId.isEmpty()?"unknown":surveyId)+"_";
+        surveyOptions=getSharedPreferences("likas_species_picker",MODE_PRIVATE);
+        restorePickerSettings();
         getWindow().setStatusBarColor(UiKit.BG);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         LinearLayout root=new LinearLayout(this);
@@ -116,7 +152,8 @@ public final class SpeciesPickerActivity extends Activity {
 
         LinearLayout quick=new LinearLayout(this);
         quick.setGravity(Gravity.CENTER_VERTICAL);
-        sortButton=UiKit.button(this,"Sort & Filter · A–Z","secondary");
+        sortButton=UiKit.button(this,
+            "Sort & Filter · "+SpeciesSortPolicy.SORT_LABELS[sortMode],"secondary");
         sortButton.setOnClickListener(v->openSortFilter());
         quick.addView(sortButton,new LinearLayout.LayoutParams(0,dp(52),1.25f));
         Button conditions=UiKit.button(this,"Site conditions","quiet");
@@ -137,9 +174,8 @@ public final class SpeciesPickerActivity extends Activity {
             android.R.layout.simple_spinner_dropdown_item,VIEWS));
         controls.addView(views,new LinearLayout.LayoutParams(0,dp(48),1f));
         root.addView(controls);
-        for(int i=0;i<availableGroups.length;i++){
-            if(availableGroups[i].equals(group)){groups.setSelection(i);break;}
-        }
+        groups.setSelection(savedGroupIndex);
+        views.setSelection(savedViewIndex);
 
         Location fix=TrackService.currentFix();
         String gps="GPS position unavailable";
@@ -239,11 +275,13 @@ public final class SpeciesPickerActivity extends Activity {
                 sortMode=order.getSelectedItemPosition();
                 statusFilter=byStatus.getSelectedItemPosition();
                 sortButton.setText("Sort & Filter · "+SpeciesSortPolicy.SORT_LABELS[sortMode]);
+                savePickerSettings();
                 refresh();
             })
             .setNeutralButton("Reset",(dialog,which)->{
                 sortMode=0;statusFilter=0;
                 sortButton.setText("Sort & Filter · A–Z");
+                savePickerSettings();
                 refresh();
             })
             .setNegativeButton("Cancel",null).show();
@@ -303,6 +341,7 @@ public final class SpeciesPickerActivity extends Activity {
                 }
                 habitatCode=HabitatLikelihood.codeAt(site.getSelectedItemPosition());
                 siteElevation=meters;elevationUncertainty=uncertainty;
+                savePickerSettings();
                 dialog.dismiss();
                 refresh();
             }));
@@ -384,6 +423,7 @@ public final class SpeciesPickerActivity extends Activity {
     }
     private void refresh(){
         if(search==null||cards==null)return;
+        savePickerSettings();
         final int ticket=++generation;
         final String term=search.getText().toString().trim();
         final String group=currentGroup();
@@ -516,6 +556,10 @@ public final class SpeciesPickerActivity extends Activity {
         result.putExtra("species_group",group);
         setResult(RESULT_OK,result);
         finish();
+    }
+    @Override protected void onPause(){
+        savePickerSettings();
+        super.onPause();
     }
     @Override protected void onDestroy(){
         generation++;

@@ -216,7 +216,7 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout methodRow=horizontal();
         // The method was already chosen in survey setup. Do not offer a second, disabled selector.
         methodSpinner=new Spinner(this);
-        TextView methodName=label("Method · "+method.replace('_',' '),14,true);
+        TextView methodName=label(SurveyMethods.lookup(profile,method).label,14,true);
         methodName.setTextColor(UiKit.FOREST);
         methodRow.addView(methodName,weighted(1f));
         lineRow=horizontal();lineEntry=edit("Transect magnetic bearing °",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -250,8 +250,7 @@ public class MainActivity extends Activity implements LocationListener {
             sessionSettings.setVisibility(expanded?View.VISIBLE:View.GONE);
             sessionToggle.setText(expanded?"Vibration settings  ▴":"Vibration settings  ▾");
         });
-        content.addView(sessionToggle);
-        content.addView(sessionSettings);
+        // Optional settings are placed below the observation form.
         pointNextButton=UiKit.button(this,"Finish point · Next station","camera");
         content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,dp(53)));
         pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
@@ -286,7 +285,7 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView.setOnClickListener(v->showGpsDetail());
         content.addView(gpsView);
         content.addView(section("Species"));
-        Button identifySpecies=UiKit.button(this,"Identify Species","primary");
+        Button identifySpecies=UiKit.button(this,"Find species","primary");
         identifySpecies.setContentDescription("Open full offline species list and identification reference");
         LinearLayout.LayoutParams pickerSpace=new LinearLayout.LayoutParams(-1,dp(58));
         pickerSpace.bottomMargin=dp(6);content.addView(identifySpecies,pickerSpace);
@@ -314,7 +313,7 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout speciesRow=horizontal();
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(18);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
-        taxonEntry.setThreshold(100);taxonEntry.setHint("Selected species / enter verbatim name");
+        taxonEntry.setThreshold(100);taxonEntry.setHint("Species name or field ID");
         taxonEntry.setSelectAllOnFocus(true);
         speciesRow.addView(taxonEntry,new LinearLayout.LayoutParams(0,-2,1));
         Button unknownBtn=UiKit.button(this,"Unidentified","secondary");
@@ -375,7 +374,6 @@ public class MainActivity extends Activity implements LocationListener {
         detectionSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,new String[]{"Visual","Auditory","Both","Sign","Camera"}));
         row.addView(detectionSpinner,weighted(0.8f));content.addView(row);
         birdMeasurements=vertical();
-        birdMeasurements.addView(section("BIRD DISTANCE QUALITY"));
         distanceSourceSpinner=new Spinner(this);
         distanceSourceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Unknown","Estimated","Measured"}));
@@ -384,14 +382,14 @@ public class MainActivity extends Activity implements LocationListener {
         firstPositionSpinner=new Spinner(this);
         firstPositionSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Unknown","Yes","No"}));
-        birdMeasurements.addView(label("Distance to initial detection position?",12,false));
+        birdMeasurements.addView(label("Distance refers to first detection?",12,false));
         birdMeasurements.addView(firstPositionSpinner);
         movementSpinner=new Spinner(this);
         movementSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Unknown","Stationary","Moving","Flyover","Entering after start"}));
         birdMeasurements.addView(label("Movement at first detection",12,false));
         birdMeasurements.addView(movementSpinner);
-        content.addView(birdMeasurements);
+        if(profile.equals("Birds"))content.addView(birdMeasurements);
         TextView birdToggle=label("▾ Bird distance details",13,true);
         birdToggle.setTextColor(GREEN);
         if(profile.equals("Birds")){
@@ -405,7 +403,6 @@ public class MainActivity extends Activity implements LocationListener {
             });
         }
         herpPanel=vertical();
-        herpPanel.addView(section("HERPETOFAUNA / FIELD CONDITIONS (OPTIONAL)"));
         microhabitatEntry=edit("Microhabitat (stream edge, litter, canopy...)",
             InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         herpPanel.addView(microhabitatEntry);
@@ -424,7 +421,7 @@ public class MainActivity extends Activity implements LocationListener {
         callScoreSpinner=new Spinner(this);
         callScoreSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Not scored","0 — no calls","1 — individuals distinguishable","2 — overlapping calls","3 — full chorus"}));
-        herpPanel.addView(label("Amphibian call index (ordinal, method-dependent)",12,false));herpPanel.addView(callScoreSpinner);
+        herpPanel.addView(label("Amphibian call index (0–3)",12,false));herpPanel.addView(callScoreSpinner);
         lifeStageSpinner=new Spinner(this);
         lifeStageSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Life stage not recorded","Egg","Larva / tadpole","Juvenile","Subadult","Adult","Unknown"}));
@@ -434,7 +431,7 @@ public class MainActivity extends Activity implements LocationListener {
             new String[]{"Noise not assessed","0 — none","1 — slight","2 — moderate","3 — serious","4 — severe"}));
         herpPanel.addView(label("Background noise during amphibian listening",12,false));
         herpPanel.addView(noiseSpinner);
-        content.addView(herpPanel);
+        if(profile.equals("Herpetofauna"))content.addView(herpPanel);
         TextView herpToggle=label("▾ Amphibian / reptile environment",13,true);
         herpToggle.setTextColor(GREEN);
         if(profile.equals("Herpetofauna")){
@@ -446,7 +443,6 @@ public class MainActivity extends Activity implements LocationListener {
             });
         }
         mammalPanel=vertical();
-        mammalPanel.addView(section("MAMMAL SURVEY EVIDENCE / EQUIPMENT"));
         evidenceSpinner=new Spinner(this);
         evidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Evidence not recorded","Direct sighting","Track","Scat","Burrow / den","Camera image","Acoustic detection","Live capture","Other sign"}));
@@ -455,7 +451,7 @@ public class MainActivity extends Activity implements LocationListener {
         mammalPanel.addView(deviceEntry);
         perchEntry=edit("Height above ground (m, optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         mammalPanel.addView(perchEntry);
-        content.addView(mammalPanel);
+        if(profile.equals("Mammals"))content.addView(mammalPanel);
         TextView mammalToggle=label("▾ Mammal evidence details",13,true);
         mammalToggle.setTextColor(GREEN);
         if(profile.equals("Mammals")){
@@ -466,9 +462,8 @@ public class MainActivity extends Activity implements LocationListener {
                 mammalToggle.setText(open?"▴ Hide mammal evidence":"▾ Mammal evidence details");
             });
         }
-        content.addView(section("PHOTO EVIDENCE"));
         LinearLayout photoRow=horizontal();
-        Button photoButton=UiKit.button(this,"Attach photo from phone","secondary");
+        Button photoButton=UiKit.button(this,"Add photo","secondary");
         photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(49),2));
         photoStatus=label("No photo attached",12,false);
         photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));
@@ -478,7 +473,7 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setAdjustViewBounds(true);
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
-        detailToggle=label("＋ Ecology, habitat and notes (optional)",14,true);
+        detailToggle=label("＋ More observation details",14,true);
         detailToggle.setTextColor(GREEN);content.addView(detailToggle);
         advancedPanel=vertical();
         habitatEntry=edit("Habitat / microhabitat",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -492,7 +487,9 @@ public class MainActivity extends Activity implements LocationListener {
         advancedPanel.addView(habitatEntry);advancedPanel.addView(behaviorEntry);advancedPanel.addView(notesEntry);
         advancedPanel.setVisibility(View.GONE);content.addView(advancedPanel);
         detailToggle.setOnClickListener(v->{detailShown=!detailShown;advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);queueDraft();
-            detailToggle.setText(detailShown?"− Hide ecology details":"＋ Ecology, habitat and notes (optional)");});
+            detailToggle.setText(detailShown?"− Hide observation details":"＋ More observation details");});
+        content.addView(sessionToggle);
+        content.addView(sessionSettings);
         // The field form stays focused on observations. Method tips live in Help.
         fieldScroll.addView(content);
         root.addView(fieldScroll,new LinearLayout.LayoutParams(-1,0,1));
@@ -927,8 +924,8 @@ public class MainActivity extends Activity implements LocationListener {
             lp.bottomMargin=dp(10);
             actions.addView(button,lp);
         }
-        TextView details=label("Complete only after the required effort and stations. "+
-            "Incomplete preserves partial work. Cancel keeps an excluded audit record.",12,false);
+        TextView details=label("Complete: requirements met. Incomplete: save partial work. "+
+            "Not Counted: exclude from analysis.",12,false);
         details.setTextColor(MUTED);actions.addView(details);
         AlertDialog dialog=new AlertDialog.Builder(this)
             .setTitle("End Survey")
@@ -1008,8 +1005,7 @@ public class MainActivity extends Activity implements LocationListener {
             InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         if(!requestedComplete)panel.addView(incompleteReason);
         TextView note=label(requestedComplete?
-            "LIKas will verify effort and station progress. Missing requirements "+
-            "are saved as Incomplete, not falsely marked Complete.":
+            "Effort and stations are checked. Unfinished surveys are saved as Incomplete.":
             "Partial effort and observations remain archived as Incomplete.",13,false);
         note.setTextColor(MUTED);panel.addView(note);
         ScrollView reviewScroll=new ScrollView(this);
@@ -2044,7 +2040,7 @@ public class MainActivity extends Activity implements LocationListener {
             movementSpinner.setSelection(d.optInt("movement",0));
             detailShown=d.optBoolean("details",false);
             advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);
-            detailToggle.setText(detailShown?"− Hide ecology details":"＋ Ecology, habitat and notes (optional)");
+            detailToggle.setText(detailShown?"− Hide observation details":"＋ More observation details");
             markedAt=d.optLong("markedTime",0);
             markedObserverFix=null;
             if(markedAt>0&&d.has("markedGpsLat")&&d.has("markedGpsLon")&&

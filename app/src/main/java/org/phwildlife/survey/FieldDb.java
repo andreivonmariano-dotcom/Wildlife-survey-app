@@ -140,6 +140,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         d.execSQL("CREATE TABLE IF NOT EXISTS station_environment("+
             "visit_id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT NOT NULL,"+
             "habitat_code TEXT,habitat_source TEXT,"+
+            "manual_elevation_msl_m REAL,manual_vertical_uncertainty_m REAL,"+
             "elevation_msl_m REAL,elevation_hae_m REAL,"+
             "vertical_uncertainty_m REAL,elevation_datum TEXT,"+
             "elevation_source TEXT NOT NULL DEFAULT 'not_available',"+

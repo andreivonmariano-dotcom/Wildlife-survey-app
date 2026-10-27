@@ -397,6 +397,9 @@ public class WelcomeActivity extends Activity {
         extraDetails.setVisibility(View.GONE);
         TextView advancedToggle=text("＋ Additional survey details",14,true);
         advancedToggle.setTextColor(GREEN);
+        advancedToggle.setMinHeight(dp(48));
+        advancedToggle.setGravity(Gravity.CENTER_VERTICAL);
+        advancedToggle.setFocusable(true);
         main.addView(advancedToggle);
         main.addView(extraDetails);
         advancedToggle.setOnClickListener(v->{

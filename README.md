@@ -30,7 +30,7 @@ its published MD5 checksum, then filters extant non-domestic species with
 Philippine country membership. The CI build bundles this subset into the APK.
 On a fresh install or upgrade to schema 12, the app seeds the attributed
 offline mammal catalog automatically without replacing user-imported names.
-The first successful build produced **244 Philippine mammal candidates**.
+The current checksum-pinned build produced **246 Philippine mammal candidates**, including two entries with uncertain country membership flagged for review.
 The existing manual MDD CSV importer remains available. Local source builds
 that skip the build-time preparation script do not bundle this asset.
 

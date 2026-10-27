@@ -19,6 +19,7 @@
         <activity android:name=".DashboardActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".StationProgressActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".CatalogActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".TaxonDetailActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".HistoryActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".WelcomeActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".LikasLaunchActivity" android:screenOrientation="portrait" android:exported="true">

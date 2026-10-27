@@ -11,7 +11,7 @@ public final class TrapProtocolPolicyTest {
     @Test public void completeNeedsInspectionsAndRetrieval(){
         assertFalse(TrapProtocolPolicy.canComplete(0,0,0,0));
         assertFalse(TrapProtocolPolicy.canComplete(3,1,0,0));
-        assertFalse(TrapProtocolPolicy.canComplete(3,0,1,0));
+        assertTrue(TrapProtocolPolicy.canComplete(3,0,1,0)); // cameras can stay deployed
         assertFalse(TrapProtocolPolicy.canComplete(3,0,0,1));
         assertTrue(TrapProtocolPolicy.canComplete(3,0,0,0));
     }

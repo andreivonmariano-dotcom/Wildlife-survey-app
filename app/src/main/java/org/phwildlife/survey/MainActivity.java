@@ -2148,7 +2148,7 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void csv(FieldDb exportDb,ZipOutputStream z,String name,String sql,String header)throws Exception{
         z.putNextEntry(new ZipEntry(name));z.write((header+"\n").getBytes(StandardCharsets.UTF_8));
-        try(Cursor c=db.getReadableDatabase().rawQuery(sql,null)){
+        try(Cursor c=exportDb.getReadableDatabase().rawQuery(sql,null)){
             while(c.moveToNext()){
                 StringBuilder line=new StringBuilder();
                 for(int j=0;j<c.getColumnCount();j++){

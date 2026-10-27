@@ -38,3 +38,12 @@ Governing requirements: G-05/G-07/G-10/G-11, U-01 through U-06, E-04/E-05, CC-01
 6. Observe day, dusk, and nighttime backgrounds and reduced-motion setting for readability, animation stability and battery use.
 
 This is an incremental UI release candidate, not a real-device certified field release.
+
+## RC3 CI and APK verification (2026-10-27)
+- GitHub run `40533599624` passed at app-code commit `718cb671a94410cf98f0f539ec2adb517f25a37d`. Python source contracts, JVM unit tests and Android APK compilation passed.
+- The earlier CI failures exposed an old branding test tied to fixed splash text and wordmark size. It now asserts the approved imagery and actual navigation semantics, with separate startup tests added.
+- Artifact ZIP was inspected and contained exactly one debug APK. Extracted file: `LIKAS-v0.27.2-RC3-startup-review.apk`.
+- APK SHA-256: `5a38eb14aef0ac5c281248f63c41cc34ae202484ba0fbeb0c8921db95c3e3abf`, size 1,389,359 bytes.
+- APK signing v2 certificate SHA-256 matches the previous RC2 debug build: `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`.
+- The binary manifest includes `org.phwildlife.survey.beta08` and `0.27.2-rc3`; versionCode 48 is set in `app/build.gradle`. Approved HD backgrounds and frog are bundled.
+- Direct in-chat download was presented with current-session file verification. This does not replace physical handset testing, a full signed-upgrade/migration check or on-device screenshots.

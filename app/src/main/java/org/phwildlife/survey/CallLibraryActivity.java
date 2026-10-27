@@ -36,7 +36,7 @@ public final class CallLibraryActivity extends Activity {
     private FieldDb database;
     private final Handler ui=new Handler(Looper.getMainLooper());
     private LinearLayout body;
-    private String eventId,group="Birds",method="",station="",selectedClip=null;
+    private String eventId,group="Birds",surveyProfile="Birds",method="",station="",selectedClip=null;
     private long selectedMs=0,clipDuration=0;
     private CallAudioRecorder recorder;
     private CallSpectrogramView spectrum;
@@ -81,8 +81,8 @@ public final class CallLibraryActivity extends Activity {
         super.onCreate(state);
         database=new FieldDb(this);
         eventId=getIntent().getStringExtra("event_id");
-        group=getIntent().getStringExtra("taxon_group");
-        if(group==null)group="Birds";
+        String selectedGroup=getIntent().getStringExtra("taxon_group");
+        if(selectedGroup!=null)group=selectedGroup;
         method=getIntent().getStringExtra("method");
         if(method==null)method="";
         station=getIntent().getStringExtra("station_id");
@@ -91,7 +91,12 @@ public final class CallLibraryActivity extends Activity {
             try(Cursor c=database.getReadableDatabase().rawQuery(
                 "SELECT COALESCE(survey_profile,taxon_group,'Birds'),method "+
                 "FROM surveys WHERE id=?",new String[]{eventId})){
-                if(c.moveToFirst()){group=c.getString(0);method=c.getString(1);}
+                if(c.moveToFirst()){
+                    surveyProfile=c.getString(0);
+                    if(selectedGroup==null)group=surveyProfile.equals("Herpetofauna")?
+                        "Amphibians":surveyProfile;
+                    method=c.getString(1);
+                }
             }
         }
         draw();
@@ -131,7 +136,7 @@ public final class CallLibraryActivity extends Activity {
         releasePlayer();layout("Sound recordings");
         TextView desc=label(eventId==null?
             "Saved bird songs and amphibian calls · all surveys":
-            group+" · "+SurveyMethods.lookup(group,method).label,13,false);
+            group+" · "+SurveyMethods.lookup(surveyProfile,method).label,13,false);
         desc.setTextColor(UiKit.MUTED);body.addView(desc);
         if(canRecord()){
             recordButton=UiKit.button(this,"● Record sound","primary");
@@ -210,7 +215,7 @@ public final class CallLibraryActivity extends Activity {
                             ContentValues values=new ContentValues();
                             values.put("id",pendingId);values.put("event_id",eventId);
                             values.put("station_id",station);
-                            values.put("taxon_group",group.equals("Herpetofauna")?"Amphibians":group);
+                            values.put("taxon_group",group);
                             values.put("method",method);values.put("filename",wav.getName());
                             values.put("recorded_at_utc",recordedAt);
                             values.put("duration_ms",duration);

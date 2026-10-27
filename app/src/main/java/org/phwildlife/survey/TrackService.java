@@ -14,6 +14,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.altitude.AltitudeConverter;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -67,6 +70,9 @@ public final class TrackService extends Service implements LocationListener {
     private long lastNotificationElapsed=0;
     private boolean foreground=false;
     private boolean subscribed=false;
+    private final ExecutorService altitudeWorker=Executors.newSingleThreadExecutor();
+    private AltitudeConverter altitudeConverter;
+    private long lastConversionRequest=0;
     private static String iso(long t){SimpleDateFormat s=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US);s.setTimeZone(TimeZone.getTimeZone("UTC"));return s.format(new Date(t));}
     @Override public void onCreate(){super.onCreate();manager=(LocationManager)getSystemService(LOCATION_SERVICE);db=new FieldDb(this);}
     @Override public int onStartCommand(Intent intent,int flags,int startId){
@@ -166,6 +172,30 @@ public final class TrackService extends Service implements LocationListener {
     }
     @Override public void onLocationChanged(Location l){
         latestFix=new Location(l);
+        // Android 14+ can convert native GPS WGS84 height to mean-sea-level
+        // height. The conversion may load local geoid assets and must run
+        // off the UI thread. Older phones retain the WGS84 height only.
+        if(Build.VERSION.SDK_INT>=34&&l.hasAltitude()&&!l.hasMslAltitude()&&
+                l.hasVerticalAccuracy()&&
+                SystemClock.elapsedRealtime()-lastConversionRequest>=5000L){
+            lastConversionRequest=SystemClock.elapsedRealtime();
+            Location candidate=new Location(l);
+            altitudeWorker.execute(()->{
+                try{
+                    if(altitudeConverter==null)altitudeConverter=new AltitudeConverter();
+                    altitudeConverter.addMslAltitudeToLocation(
+                        getApplicationContext(),candidate);
+                    Location current=latestFix;
+                    if(current!=null&&current.getElapsedRealtimeNanos()==
+                            candidate.getElapsedRealtimeNanos()&&
+                            candidate.hasMslAltitude()){
+                        latestFix=new Location(candidate);
+                    }
+                }catch(Exception ignored){
+                    // A geoid conversion failure never fabricates MSL height.
+                }
+            });
+        }
         long uptime=SystemClock.elapsedRealtime();
         if(uptime-lastNotificationElapsed>=5000L){
             lastNotificationElapsed=uptime;
@@ -220,6 +250,7 @@ public final class TrackService extends Service implements LocationListener {
         if(manager!=null)try{manager.removeUpdates(this);}catch(Exception ignored){}
         receiverRunning=false;latestFix=null;subscribed=false;
         if(db!=null)db.close();
+        altitudeWorker.shutdownNow();
         super.onDestroy();
     }
     @Override public IBinder onBind(Intent i){return null;}

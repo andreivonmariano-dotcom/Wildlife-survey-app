@@ -58,7 +58,7 @@ public class MainActivity extends Activity implements LocationListener {
             if(live!=null){
                 location=live;
                 updateGpsLabel(live);
-            }
+            }else updateGpsLabel(null);
             status();
             handler.postDelayed(this,1000);
         }
@@ -2024,7 +2024,8 @@ public class MainActivity extends Activity implements LocationListener {
     private void updateGpsLabel(Location fix){
         if(gpsView==null)return;
         if(fix==null||!fix.hasAccuracy()){
-            gpsView.setText("GPS: searching · tap for details");
+            gpsView.setText(TrackService.wasStopped(this)?"GPS stopped · tap to restart":
+                "GPS: searching · tap for details");
             gpsView.setTextColor(UiKit.AMBER);
             return;
         }
@@ -2042,8 +2043,19 @@ public class MainActivity extends Activity implements LocationListener {
             String.format(Locale.US,"%.6f, %.6f\nReported accuracy: ±%.1f m\nProvider: %s",
                 fix.getLatitude(),fix.getLongitude(),
                 fix.hasAccuracy()?fix.getAccuracy():Float.NaN,fix.getProvider());
-        new AlertDialog.Builder(this).setTitle("Observer GPS").setMessage(message)
-            .setPositiveButton("Close",null).show();
+        AlertDialog.Builder details=new AlertDialog.Builder(this)
+            .setTitle("Observer GPS").setMessage(message)
+            .setPositiveButton("Close",null);
+        if(TrackService.wasStopped(this)){
+            details.setNeutralButton("Restart GPS",(dialog,which)->{
+                try{
+                    TrackService.startGnss(this);
+                    if(!surveyPaused&&(method.equals("line_transect")||
+                        method.equals("ves_transect")))startTracking();
+                }catch(Exception error){toast("GPS restart failed: "+error.getMessage());}
+            });
+        }
+        details.show();
     }
     @Override public void onLocationChanged(Location l){
         location=l;

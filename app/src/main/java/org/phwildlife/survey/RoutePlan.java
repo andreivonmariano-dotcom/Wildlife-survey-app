@@ -2,6 +2,7 @@ package org.phwildlife.survey;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.location.LocationManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -120,15 +121,13 @@ public final class RoutePlan {
             new String[]{event})){return c.moveToFirst()?c.getInt(0):0;}
     }
     public static boolean acceptable(Location l,long now){
-        return l!=null&&l.hasAccuracy()&&l.getAccuracy()>0&&l.getAccuracy()<=75f&&
-            now-l.getTime()>=0&&now-l.getTime()<=30000&&
-            !l.isFromMockProvider()&&l.getLatitude()>=-90&&l.getLatitude()<=90&&
-            l.getLongitude()>=-180&&l.getLongitude()<=180;
+        if(l==null||!LocationManager.GPS_PROVIDER.equals(l.getProvider())||!l.hasAccuracy())return false;
+        long age=(android.os.SystemClock.elapsedRealtimeNanos()-l.getElapsedRealtimeNanos())/1000000L;
+        return GpsFixPolicy.acceptableElapsed(l.getLatitude(),l.getLongitude(),
+            l.getAccuracy(),age,l.isFromMockProvider());
     }
     public static void start(SQLiteDatabase db,String event,Next n,String pointId,int targetSeconds,long startedAt,Location gps){
-        boolean hasFix=acceptable(gps,startedAt)&&
-            GpsFixPolicy.acceptable(gps.getLatitude(),gps.getLongitude(),gps.getAccuracy(),
-                gps.getTime(),startedAt,gps.isFromMockProvider());
+        boolean hasFix=acceptable(gps,startedAt);
         String time=utc(startedAt);
         String quality=hasFix?"verified_station_fix_under_10m":"missing_or_weak_gps_at_start";
         Object lat=hasFix?gps.getLatitude():null,lon=hasFix?gps.getLongitude():null,

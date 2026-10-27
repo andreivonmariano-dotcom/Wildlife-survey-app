@@ -1,3 +1,41 @@
+# LIKAS | Philippine Wildlife Survey v0.18.0 Taxonomy Beta (development)
+
+## Taxonomy coverage status
+- **Mammals:** same version-pinned Philippine country-filtered ASM MDD v2.5
+  candidates that were bundled in v0.16/v0.17 build workflow.
+- **Birds:** AviList v2026 is the intended taxonomy under CC BY 4.0.
+  A vetted Philippines occurrence list is not yet bundled.
+- **Amphibians:** Emerson Y. Sy 2025-1 source located. Complete verified
+  author file and redistribution permission pending.
+- **Reptiles:** Emerson Y. Sy 2026-1 source located. Complete verified
+  author file and redistribution permission pending.
+
+National membership is not evidence of local presence. Verbatim
+identifications, unfamiliar species and unverified regional taxa remain
+recordable.
+
+### Catalog performance changes
+- SQLite schema 13 adds scientific-name, common-name and source/version
+  indexes. No observation table is dropped.
+- Offline taxon autocomplete runs a bounded background query rather than
+  materializing the entire candidate catalog as Android views.
+- Search supports common and scientific names, literal punctuation,
+  favorites and recent verbatim identifications.
+- Offline checklist page shows installed counts by bird/amphibian/reptile/
+  mammal and the actual installed source/version distribution.
+- `scripts/validate_ph_taxa.py` validates a permissioned and reviewed
+  source CSV with pinned SHA-256, prevents duplicate identifiers/names,
+  and rejects regional evidence not separately vetted.
+
+See `docs/PHILIPPINE_TAXONOMY_SOURCES.md` for source citations and
+`docs/QA_v0_18_TAXONOMY.md` for acceptance checks.
+No complete Sy checklist or global AviList taxonomy has been incorrectly
+packaged as a verified Philippine or provincial occurrence list.
+
+**Warning:** This remains a development beta. Export survey data before
+upgrade, preserve the original signing certificate and validate performance
+and taxonomy imports on a real Android phone.
+
 # LIKAS | Philippine Wildlife Survey v0.17.1 Beta (UI review branch)
 
 LIKAS is the working app identity. This development branch is a UI and stability

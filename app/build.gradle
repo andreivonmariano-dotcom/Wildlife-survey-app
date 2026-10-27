@@ -6,8 +6,8 @@ android {
         applicationId 'org.phwildlife.survey.beta08'
         minSdk 26
         targetSdk 34
-        versionCode 21
-        versionName '0.17.1-beta'
+        versionCode 22
+        versionName '0.18.0-beta'
     }
     signingConfigs {
         debug {

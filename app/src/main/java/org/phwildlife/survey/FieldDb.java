@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,12);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,13);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -29,6 +29,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeTen(d);
         upgradeEleven(d);
         upgradeTwelve(d);
+        upgradeThirteen(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -55,6 +56,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<10)upgradeTen(d);
         if(oldVersion<11)upgradeEleven(d);
         if(oldVersion<12)upgradeTwelve(d);
+        if(oldVersion<13)upgradeThirteen(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -227,6 +229,16 @@ public final class FieldDb extends SQLiteOpenHelper {
     }
 
     /** Version 12: GNSS provenance, plus a version-pinned offline mammal candidate catalog. */
+    /** Version 13 improves large versioned checklist lookup without changing observations. */
+    private void upgradeThirteen(SQLiteDatabase d){
+        d.execSQL("CREATE INDEX IF NOT EXISTS catalog_group_scientific_nocase "+
+            "ON taxon_catalog(taxon_group,scientific_name COLLATE NOCASE)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS catalog_group_common_nocase "+
+            "ON taxon_catalog(taxon_group,common_name COLLATE NOCASE)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS catalog_source_version "+
+            "ON taxon_catalog(source,source_version)");
+    }
+
     private void upgradeTwelve(SQLiteDatabase d){
         d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_latitude REAL");
         d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_longitude REAL");

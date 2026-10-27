@@ -129,7 +129,9 @@ public final class FieldProtocolsActivity extends Activity {
             records.addView(text("This method has no coverboard, area-search, or track-and-sign module.",14));
             return;
         }
-        String description="coverboard_search".equals(method)?
+        String description="spotlight".equals(method)?
+            "Spotlight passes · beam, visibility, distance and repeat visits":
+            "coverboard_search".equals(method)?
             "Coverboards · individual board checks":
             "area_search".equals(method)?
             "Area search · timed search passes and repeated coverage":
@@ -138,6 +140,7 @@ public final class FieldProtocolsActivity extends Activity {
         if(!active())records.addView(text("Read only · start an active sampling visit to add effort",13));
         if("coverboard_search".equals(method))showBoards();
         else if("area_search".equals(method))showAreas();
+        else if("spotlight".equals(method))showSpotlight();
         else showSignEffort();
     }
     private void showSurveys(){
@@ -380,6 +383,105 @@ public final class FieldProtocolsActivity extends Activity {
                 row.put("duplicate_control_notes",duplicatePlan);
                 row.put("notes",notes.getText().toString().trim());
                 db.getWritableDatabase().insertOrThrow("area_search_passes",null,row);
+                dialog.dismiss();draw();
+            }));
+        dialog.show();
+    }
+    private void showSpotlight(){
+        if(active())action("＋ Record spotlight survey pass",records,true)
+            .setOnClickListener(v->newSpotlightPass());
+        records.addView(text("Record beam coverage and visibility for each pass. "+
+            "A repeated pass must remain separate from new unique route effort.",12));
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT route_id,observer,started_at_utc,ended_at_utc,beam_width_m,"+
+            "visibility_m,distance_m,beam_type,COALESCE(weather,''),repeat_pass,"+
+            "duplicate_control_notes FROM spotlight_passes "+
+            "WHERE event_id=? ORDER BY started_at_utc,id",new String[]{eventId})){
+            if(c.getCount()==0)records.addView(text("No spotlight passes yet.",14));
+            while(c.moveToNext()){
+                LinearLayout card=panel(c.getString(0)+
+                    (c.getInt(9)==1?" · repeat pass":" · first pass"));
+                card.addView(text(c.getString(2)+" to "+c.getString(3)+
+                    "\\nObserver "+c.getString(1)+" · route "+c.getDouble(6)+" m"+
+                    "\\nBeam "+c.getDouble(4)+" m · visibility "+c.getDouble(5)+" m"+
+                    "\\nLight: "+c.getString(7)+" · weather: "+c.getString(8)+
+                    "\\nDuplicate control: "+c.getString(10),12));
+            }
+        }
+    }
+    private void newSpotlightPass(){
+        LinearLayout form=col();form.setPadding(dp(12),0,dp(12),0);
+        EditText route=field("Route / area ID (stable across passes)",false);
+        EditText observer=field("Observer name or ID",false);
+        EditText start=field("Start UTC yyyy-MM-ddTHH:mm:ssZ",false);
+        EditText end=field("End UTC yyyy-MM-ddTHH:mm:ssZ",false);
+        end.setText(utc(System.currentTimeMillis()));
+        EditText width=field("Measured or specified beam search width (m)",true);
+        EditText visibility=field("Effective visual detection distance (m)",true);
+        EditText distance=field("Measured length walked or searched (m)",true);
+        EditText beam=field("Lamp model / beam intensity / observers / technique",false);
+        EditText weather=field("Cloud, moon, rain and obstruction",false);
+        CheckBox repeat=new CheckBox(this);
+        repeat.setText("Repeated pass over an earlier route");
+        EditText duplicate=field("How were individuals and repeat sightings tracked?",false);
+        EditText notes=field("Speed, transect width method and search limitations",false);
+        for(EditText item:new EditText[]{route,observer,start,end,width,visibility,distance,
+            beam,weather})form.addView(item);
+        form.addView(repeat);form.addView(duplicate);form.addView(notes);
+        ScrollView scroll=new ScrollView(this);scroll.addView(form);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Spotlight effort")
+            .setView(scroll).setNegativeButton("Back",null)
+            .setPositiveButton("Save pass",null).create();
+        dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            .setOnClickListener(w->{
+                if(!active()){toast("Survey closed");return;}
+                if(route.getText().toString().trim().isEmpty()){
+                    route.setError("Route ID required");return;
+                }
+                if(observer.getText().toString().trim().isEmpty()){
+                    observer.setError("Observer required");return;
+                }
+                if(!validInterval(start,end))return;
+                Double beamWidth=quantity(width),view=quantity(visibility),length=quantity(distance);
+                if(beamWidth==null||beamWidth<=0||beamWidth>10000){
+                    width.setError("Enter positive beam width (m)");return;
+                }
+                if(view==null||view<=0||view>10000){
+                    visibility.setError("Enter positive visibility (m)");return;
+                }
+                if(length==null||!FieldProtocolPolicy.validDistance(length)){
+                    distance.setError("Measured route length required");return;
+                }
+                if(beam.getText().toString().trim().isEmpty()){
+                    beam.setError("Document lamp and technique");return;
+                }
+                String control=duplicate.getText().toString().trim();
+                if(control.isEmpty()){
+                    duplicate.setError("Record repeat count controls, even with zero sightings");return;
+                }
+                boolean earlier=false;
+                try(Cursor previous=db.getReadableDatabase().rawQuery(
+                    "SELECT COUNT(*) FROM spotlight_passes WHERE event_id=? AND route_id=?",
+                    new String[]{eventId,route.getText().toString().trim()})){
+                    if(previous.moveToFirst())earlier=previous.getInt(0)>0;
+                }
+                if(earlier&&!repeat.isChecked()){
+                    toast("Mark the previously searched route as a repeated pass");return;
+                }
+                ContentValues row=new ContentValues();
+                row.put("event_id",eventId);row.put("station_id",stationId);
+                row.put("route_id",route.getText().toString().trim());
+                row.put("observer",observer.getText().toString().trim());
+                row.put("started_at_utc",start.getText().toString().trim());
+                row.put("ended_at_utc",end.getText().toString().trim());
+                row.put("beam_width_m",beamWidth);row.put("visibility_m",view);
+                row.put("distance_m",length);
+                row.put("beam_type",beam.getText().toString().trim());
+                row.put("weather",weather.getText().toString().trim());
+                row.put("repeat_pass",earlier||repeat.isChecked()?1:0);
+                row.put("duplicate_control_notes",control);
+                row.put("notes",notes.getText().toString().trim());
+                db.getWritableDatabase().insertOrThrow("spotlight_passes",null,row);
                 dialog.dismiss();draw();
             }));
         dialog.show();

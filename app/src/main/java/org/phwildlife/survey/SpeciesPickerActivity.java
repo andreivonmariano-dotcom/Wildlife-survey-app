@@ -180,7 +180,7 @@ public final class SpeciesPickerActivity extends Activity {
 
         search=new EditText(this);
         search.setSingleLine(true);search.setTextSize(16);
-        search.setHint("Search common, scientific or older name");
+        search.setHint("Common or scientific name");
         LinearLayout searchRow=new LinearLayout(this);
         searchRow.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams searchParams=new LinearLayout.LayoutParams(0,dp(54),1f);
@@ -205,7 +205,7 @@ public final class SpeciesPickerActivity extends Activity {
             "Sort · "+SpeciesSortPolicy.SORT_LABELS[sortMode],"secondary");
         sortButton.setOnClickListener(v->openSortFilter());
         quick.addView(sortButton,new LinearLayout.LayoutParams(0,dp(52),1.25f));
-        Button conditions=UiKit.button(this,"Site conditions","quiet");
+        Button conditions=UiKit.button(this,"Site conditions","secondary");
         LinearLayout.LayoutParams conditionSpace=new LinearLayout.LayoutParams(0,dp(52),1f);
         conditionSpace.leftMargin=dp(6);
         quick.addView(conditions,conditionSpace);
@@ -224,6 +224,7 @@ public final class SpeciesPickerActivity extends Activity {
         controls.addView(views,new LinearLayout.LayoutParams(0,dp(48),1f));
         root.addView(controls);
         groups.setSelection(savedGroupIndex);
+        groups.setVisibility(availableGroups.length>1?View.VISIBLE:View.GONE);
         views.setSelection(savedViewIndex);
 
         Location fix=TrackService.currentFix();
@@ -234,25 +235,23 @@ public final class SpeciesPickerActivity extends Activity {
                 gps=String.format(Locale.US,"GPS ±%.1f m",fix.getAccuracy());
         }
         String scope=island(geographicRegion);
-        TextView context=text((scope.isEmpty()?"National checklist":scope+" checklist area")+
+        TextView context=text("ⓘ  "+(scope.isEmpty()?"Philippine checklist":scope+" checklist")+
             (province.isEmpty()?"":" · "+province)+" · "+gps,12,false);
-        context.setTextColor(UiKit.FOREST);root.addView(context);
-        TextView model=text("ⓘ About species scores",12,false);
-        model.setTextColor(UiKit.FOREST);
-        model.setMinHeight(dp(44));
-        model.setGravity(Gravity.CENTER_VERTICAL);
-        model.setFocusable(true);
-        model.setPadding(0,dp(3),0,dp(3));
-        model.setOnClickListener(v->new AlertDialog.Builder(this)
-            .setTitle("Species screening score")
-            .setMessage("Scores summarize reviewed habitat and elevation evidence. "+
-                "They are not probabilities of occurrence or proof of absence. "+
-                "Unassessed species remain selectable.")
+        context.setTextColor(UiKit.FOREST);
+        context.setMinHeight(dp(42));
+        context.setGravity(Gravity.CENTER_VERTICAL);
+        context.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Checklist and species screening")
+            .setMessage("Regional and habitat evidence help organize the offline list. "+
+                "Scores summarize reviewed habitat and elevation data. "+
+                "They are screening indexes, not probabilities of occurrence or "+
+                "proof of absence. Unassessed species remain selectable.\n\n"+
+                (siteSummary==null?"":siteSummary.getText().toString()))
             .setPositiveButton("Close",null).show());
-        root.addView(model);
+        root.addView(context);
         siteSummary=text("",12,false);
         siteSummary.setTextColor(UiKit.FOREST);
-        siteSummary.setPadding(0,0,0,dp(8));
+        siteSummary.setPadding(0,0,0,dp(4));
         root.addView(siteSummary);
         updateSiteSummary();
         status=text("Loading offline species…",12,false);
@@ -644,20 +643,18 @@ public final class SpeciesPickerActivity extends Activity {
     private void addSpecies(Species item){
         LinearLayout card=new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(dp(13),dp(11),dp(13),dp(10));
+        card.setPadding(dp(14),dp(10),dp(14),dp(10));
         card.setBackground(UiKit.surface(this));
         LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
         cardLp.bottomMargin=dp(8);cards.addView(card,cardLp);
         String name=item.common.isEmpty()?item.scientific:item.common;
-        TextView heading=text(name,17,true);card.addView(heading);
+        TextView heading=text(name,16,true);card.addView(heading);
         if(!name.equals(item.scientific)){
             TextView scientific=text(item.scientific,14,false);
             scientific.setTypeface(null,Typeface.ITALIC);card.addView(scientific);
         }
+        // Source and conservation detail remain available on the Details page.
         StringBuilder identifiers=new StringBuilder(item.family);
-        if(!item.origin.isEmpty())identifiers.append(" · ").append(item.origin);
-        if(!item.iucn.isEmpty())identifiers.append(" · IUCN ").append(item.iucn);
-        if(!item.ph.isEmpty())identifiers.append(" · PH ").append(item.ph);
         if(identifiers.length()>0){
             TextView meta=text(identifiers.toString(),12,false);
             meta.setTextColor(UiKit.MUTED);card.addView(meta);
@@ -671,23 +668,9 @@ public final class SpeciesPickerActivity extends Activity {
         if(item.screening.scorePercent==null)indicator=UiKit.MUTED;
         TextView likelihood=text(label,14,true);
         likelihood.setTextColor(indicator);
-        likelihood.setPadding(0,dp(7),0,dp(3));
+        likelihood.setPadding(0,dp(5),0,dp(2));
         card.addView(likelihood);
-        // Colored indicator is paired with text; never rely on color alone.
-        if(item.screening.scorePercent!=null){
-            ProgressBar bar=new ProgressBar(this,null,
-                android.R.attr.progressBarStyleHorizontal);
-            bar.setMax(100);
-            bar.setProgress(item.screening.scorePercent);
-            bar.setProgressTintList(ColorStateList.valueOf(indicator));
-            bar.setProgressBackgroundTintList(
-                ColorStateList.valueOf(Color.rgb(226,231,226)));
-            LinearLayout.LayoutParams track=new LinearLayout.LayoutParams(-1,dp(7));
-            track.bottomMargin=dp(3);
-            card.addView(bar,track);
-            bar.setContentDescription(label+
-                ". Screening index, not a measured probability of occurrence.");
-        }
+        // Text preserves the score without suggesting a measured probability.
         likelihood.setContentDescription(label+
             ". Tap for the documented basis of this screening assessment.");
         likelihood.setOnClickListener(v->new AlertDialog.Builder(this)
@@ -698,12 +681,12 @@ public final class SpeciesPickerActivity extends Activity {
             .setPositiveButton("Close",null).show());
         TextView range=text(OccurrenceEvidencePolicy.title(item.evidence),13,true);
         range.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
-        range.setPadding(0,dp(7),0,dp(3));card.addView(range);
+        range.setPadding(0,dp(2),0,dp(3));card.addView(range);
         // Source, ecological references and profile detail are available under Details.
         LinearLayout buttons=new LinearLayout(this);
         Button details=UiKit.button(this,"Details","secondary");
         buttons.addView(details,new LinearLayout.LayoutParams(0,dp(48),1f));
-        Button select=UiKit.button(this,"Select species","primary");
+        Button select=UiKit.button(this,"Use species","primary");
         LinearLayout.LayoutParams selectLp=new LinearLayout.LayoutParams(0,dp(48),1.5f);
         selectLp.leftMargin=dp(9);
         buttons.addView(select,selectLp);

@@ -54,6 +54,26 @@ public final class SpeciesPickerActivity extends Activity {
     private int generation=0,offset=0,sortMode=0,statusFilter=0;
     private String habitatCode="";
     private Double siteElevation=null,elevationUncertainty=null;
+    private int elevationMode=0; // 0 GPS MSL, 1 manual MSL, 2 unassessed
+    private String visitId="",stationId="",surveyId="";
+    private boolean gpsAutoTracking=false;
+    private String lastGpsElevationKey="";
+    private final Runnable gpsMonitor=new Runnable(){
+        @Override public void run(){
+            if(!gpsAutoTracking||isFinishing()||isDestroyed())return;
+            if(elevationMode==0){
+                GpsElevation.Sample fix=GpsElevation.read(TrackService.currentFix());
+                String state=fix.usableForHabitat?
+                    String.valueOf(Math.round(fix.mslMeters)):"unavailable";
+                if(!state.equals(lastGpsElevationKey)){
+                    lastGpsElevationKey=state;
+                    updateSiteSummary();
+                    refresh();
+                }
+            }
+            ui.postDelayed(this,5000L);
+        }
+    };
     private List<Species> loaded=new ArrayList<>();
     private boolean truncated=false;
     private SharedPreferences surveyOptions;
@@ -87,6 +107,7 @@ public final class SpeciesPickerActivity extends Activity {
         return Math.max(0,Math.min(value,upper-1));
     }
     private String pref(String suffix){return preferencePrefix+suffix;}
+    private String visitPref(String suffix){return preferencePrefix+"visit_"+visitId+"_"+suffix;}
     private void restorePickerSettings(){
         sortMode=checked(surveyOptions.getInt(pref("sort"),0),
             SpeciesSortPolicy.SORT_LABELS.length);
@@ -96,8 +117,9 @@ public final class SpeciesPickerActivity extends Activity {
         savedViewIndex=checked(surveyOptions.getInt(pref("view"),0),VIEWS.length);
         habitatCode=surveyOptions.getString(pref("habitat"),habitatCode);
         if(HabitatLikelihood.habitatIndex(habitatCode)==0)habitatCode="";
-        siteElevation=parseNumber(surveyOptions.getString(pref("elevation"),""));
-        elevationUncertainty=parseNumber(surveyOptions.getString(pref("uncertainty"),""));
+        elevationMode=checked(surveyOptions.getInt(visitPref("mode"),0),3);
+        siteElevation=parseNumber(surveyOptions.getString(visitPref("elevation"),""));
+        elevationUncertainty=parseNumber(surveyOptions.getString(visitPref("uncertainty"),""));
     }
     private void savePickerSettings(){
         if(surveyOptions==null)return;
@@ -106,8 +128,9 @@ public final class SpeciesPickerActivity extends Activity {
             .putInt(pref("group"),groups==null?0:groups.getSelectedItemPosition())
             .putInt(pref("view"),views==null?0:views.getSelectedItemPosition())
             .putString(pref("habitat"),habitatCode)
-            .putString(pref("elevation"),siteElevation==null?"":siteElevation.toString())
-            .putString(pref("uncertainty"),
+            .putInt(visitPref("mode"),elevationMode)
+            .putString(visitPref("elevation"),siteElevation==null?"":siteElevation.toString())
+            .putString(visitPref("uncertainty"),
                 elevationUncertainty==null?"":elevationUncertainty.toString())
             .apply();
     }
@@ -127,6 +150,11 @@ public final class SpeciesPickerActivity extends Activity {
         if(habitat==null)habitat="";
         habitatCode=guessHabitat(habitat);
         String surveyId=request.getStringExtra("survey_id");
+        this.surveyId=surveyId==null?"":surveyId;
+        visitId=request.getStringExtra("visit_id");
+        if(visitId==null||visitId.isEmpty())visitId="SURVEY-"+this.surveyId;
+        stationId=request.getStringExtra("station_id");
+        if(stationId==null)stationId="";
         preferencePrefix="survey_"+(surveyId==null||surveyId.isEmpty()?"unknown":surveyId)+"_";
         surveyOptions=getSharedPreferences("likas_species_picker",MODE_PRIVATE);
         restorePickerSettings();
@@ -301,15 +329,38 @@ public final class SpeciesPickerActivity extends Activity {
             return Double.isFinite(numeric)?numeric:null;
         }catch(NumberFormatException ignored){return null;}
     }
+    private GpsElevation.Sample liveElevation(){
+        return GpsElevation.read(TrackService.currentFix());
+    }
+    private Double effectiveElevation(){
+        if(elevationMode==1)return siteElevation;
+        if(elevationMode==0){
+            GpsElevation.Sample fix=liveElevation();
+            return fix.usableForHabitat?fix.mslMeters:null;
+        }
+        return null;
+    }
+    private Double effectiveUncertainty(){
+        if(elevationMode==1)return elevationUncertainty;
+        if(elevationMode==0){
+            GpsElevation.Sample fix=liveElevation();
+            return fix.usableForHabitat?fix.verticalUncertaintyMeters:null;
+        }
+        return null;
+    }
     private void updateSiteSummary(){
         if(siteSummary==null)return;
         String habitatName=HabitatLikelihood.HABITATS[
             HabitatLikelihood.habitatIndex(habitatCode)];
-        siteSummary.setText("Survey site: "+habitatName+
-            (siteElevation==null?" · elevation unassessed":
-                " · "+siteElevation+" m"+
-                (elevationUncertainty==null?"":" ±"+elevationUncertainty+" m"))+
-            " · settings saved for this survey");
+        String reading;
+        if(elevationMode==2)reading="elevation unassessed";
+        else if(elevationMode==1)
+            reading=siteElevation==null?"manual elevation missing":
+                "Manual MSL "+siteElevation+" m"+
+                (elevationUncertainty==null?"":" ±"+elevationUncertainty+" m");
+        else reading=liveElevation().label();
+        siteSummary.setText("Habitat: "+habitatName+" · "+reading+
+            "\nSaved for this survey and sampling visit");
     }
     private void openSiteConditions(){
         LinearLayout panel=new LinearLayout(this);
@@ -321,7 +372,20 @@ public final class SpeciesPickerActivity extends Activity {
             android.R.layout.simple_spinner_dropdown_item,HabitatLikelihood.HABITATS));
         site.setSelection(HabitatLikelihood.habitatIndex(habitatCode));
         panel.addView(site);
-        TextView elevationLabel=text("Site elevation (meters, optional)",14,true);
+        TextView gpsStatus=text(liveElevation().label(),12,false);
+        gpsStatus.setTextColor(UiKit.FOREST);
+        gpsStatus.setPadding(0,dp(10),0,dp(7));
+        panel.addView(gpsStatus);
+        panel.addView(text("Elevation source",14,true));
+        Spinner source=new Spinner(this);
+        source.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,new String[]{
+                "Automatic · fresh GPS mean sea level",
+                "Manual · measured elevation above sea level",
+                "Unassessed · do not score elevation"}));
+        source.setSelection(elevationMode);
+        panel.addView(source);
+        TextView elevationLabel=text("Manual MSL elevation (m)",14,true);
         elevationLabel.setPadding(0,dp(12),0,0);
         panel.addView(elevationLabel);
         EditText elevation=new EditText(this);
@@ -338,8 +402,20 @@ public final class SpeciesPickerActivity extends Activity {
         if(elevationUncertainty!=null)
             accuracy.setText(String.valueOf(elevationUncertainty));
         panel.addView(accuracy);
-        TextView note=text("Landcover and terrain maps are not yet installed. "+
-            "Only reviewed species habitat profiles affect the score.",12,false);
+        source.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override public void onItemSelected(AdapterView<?> parent,View view,
+                    int position,long id){
+                boolean manual=position==1;
+                elevationLabel.setVisibility(manual?View.VISIBLE:View.GONE);
+                elevation.setVisibility(manual?View.VISIBLE:View.GONE);
+                accuracy.setVisibility(manual?View.VISIBLE:View.GONE);
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent){}
+        });
+        TextView note=text("GPS horizontal accuracy does not indicate altitude accuracy. "+
+            "WGS84 ellipsoid height is shown for reference but not used as MSL. "+
+            "Automatic scores require a fresh GPS MSL value with reported "+
+            "vertical uncertainty at most 50 m.",12,false);
         note.setTextColor(UiKit.MUTED);note.setPadding(0,dp(9),0,0);
         panel.addView(note);
         AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Site conditions")
@@ -351,15 +427,32 @@ public final class SpeciesPickerActivity extends Activity {
                 String rawAccuracy=accuracy.getText().toString().trim();
                 Double meters=parseNumber(rawElevation);
                 Double uncertainty=parseNumber(rawAccuracy);
-                if(!rawElevation.isEmpty()&&meters==null){
-                    elevation.setError("Enter a valid number");return;
+                int selectedMode=source.getSelectedItemPosition();
+                if(selectedMode==1&&(meters==null||!Double.isFinite(meters))){
+                    elevation.setError("Enter measured MSL elevation");return;
                 }
-                if(!rawAccuracy.isEmpty()&&(uncertainty==null||uncertainty<0)){
+                if(selectedMode==1&&!rawAccuracy.isEmpty()&&
+                    (uncertainty==null||uncertainty<0)){
                     accuracy.setError("Enter nonnegative meters");return;
                 }
+                elevationMode=selectedMode;
                 habitatCode=HabitatLikelihood.codeAt(site.getSelectedItemPosition());
                 siteElevation=meters;elevationUncertainty=uncertainty;
                 savePickerSettings();
+                if(!surveyId.isEmpty()){
+                    try(FieldDb helper=new FieldDb(getApplicationContext())){
+                        StationEnvironmentStore.recordHabitat(helper.getWritableDatabase(),
+                            surveyId,visitId,stationId,habitatCode);
+                        StationEnvironmentStore.recordManualElevation(
+                            helper.getWritableDatabase(),surveyId,visitId,stationId,
+                            elevationMode==1?siteElevation:null,
+                            elevationMode==1?elevationUncertainty:null);
+                        if(elevationMode==0)
+                            StationEnvironmentStore.recordStationFix(
+                                helper.getWritableDatabase(),surveyId,visitId,stationId,
+                                TrackService.currentFix());
+                    }catch(Exception ignored){}
+                }
                 updateSiteSummary();
                 dialog.dismiss();
                 refresh();
@@ -449,7 +542,7 @@ public final class SpeciesPickerActivity extends Activity {
         final boolean onlyLocal=views.getSelectedItemPosition()==1;
         final int sorting=sortMode,filter=statusFilter;
         final String siteCode=habitatCode;
-        final Double altitude=siteElevation,uncertainty=elevationUncertainty;
+        final Double altitude=effectiveElevation(),uncertainty=effectiveUncertainty();
         offset=0;loaded=new ArrayList<>();truncated=false;
         cards.removeAllViews();
         status.setText("Finding "+group+"…");
@@ -597,7 +690,14 @@ public final class SpeciesPickerActivity extends Activity {
         setResult(RESULT_OK,result);
         finish();
     }
+    @Override protected void onResume(){
+        super.onResume();
+        gpsAutoTracking=true;
+        ui.post(gpsMonitor);
+    }
     @Override protected void onPause(){
+        gpsAutoTracking=false;
+        ui.removeCallbacks(gpsMonitor);
         savePickerSettings();
         super.onPause();
     }

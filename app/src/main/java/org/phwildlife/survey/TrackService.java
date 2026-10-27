@@ -176,7 +176,6 @@ public final class TrackService extends Service implements LocationListener {
         // height. The conversion may load local geoid assets and must run
         // off the UI thread. Older phones retain the WGS84 height only.
         if(Build.VERSION.SDK_INT>=34&&l.hasAltitude()&&!l.hasMslAltitude()&&
-                l.hasVerticalAccuracy()&&
                 SystemClock.elapsedRealtime()-lastConversionRequest>=5000L){
             lastConversionRequest=SystemClock.elapsedRealtime();
             Location candidate=new Location(l);
@@ -186,10 +185,23 @@ public final class TrackService extends Service implements LocationListener {
                     altitudeConverter.addMslAltitudeToLocation(
                         getApplicationContext(),candidate);
                     Location current=latestFix;
-                    if(current!=null&&current.getElapsedRealtimeNanos()==
-                            candidate.getElapsedRealtimeNanos()&&
-                            candidate.hasMslAltitude()){
-                        latestFix=new Location(candidate);
+                    if(current!=null&&candidate.hasMslAltitude()){
+                        if(current.getElapsedRealtimeNanos()==
+                                candidate.getElapsedRealtimeNanos()){
+                            latestFix=new Location(candidate);
+                        }else if(current.hasAltitude()&&!current.hasMslAltitude()){
+                            // Cache is warm: convert the newest reading instead
+                            // of applying a stale height to a newer GPS fix.
+                            Location newest=new Location(current);
+                            altitudeConverter.addMslAltitudeToLocation(
+                                getApplicationContext(),newest);
+                            Location stillCurrent=latestFix;
+                            if(stillCurrent!=null&&newest.hasMslAltitude()&&
+                                    stillCurrent.getElapsedRealtimeNanos()==
+                                    newest.getElapsedRealtimeNanos()){
+                                latestFix=newest;
+                            }
+                        }
                     }
                 }catch(Exception ignored){
                     // A geoid conversion failure never fabricates MSL height.

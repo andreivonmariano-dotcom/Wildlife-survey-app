@@ -129,7 +129,7 @@ public class HistoryActivity extends Activity {
                     c.isNull(5)?"Active":c.getInt(6)==1?"Complete":"Incomplete";
                 LinearLayout card=column();card.setPadding(dp(12),dp(9),dp(12),dp(9));
                 card.setBackground(UiKit.surface(this));
-                TextView name=text(profile+" · "+SurveyMethods.lookup(profile,method).label,16);
+                TextView name=text(profile+" · "+SurveyMethods.displayLabel(profile,method),16);
                 name.setTypeface(null,Typeface.BOLD);card.addView(name);
                 TextView meta=text((site.isEmpty()?"No station":site)+" · "+date+
                     "\n"+c.getInt(7)+" observations",12);
@@ -170,7 +170,7 @@ public class HistoryActivity extends Activity {
                 String state=outcome.equals("not_counted")?"Canceled · Not counted":
                     outcome.equals("incomplete")?"Incomplete":
                     outcome.equals("complete")?"Complete":"Active";
-                rows.addView(text(state+" · "+meta.getString(1)+
+                rows.addView(text(state+" · "+SurveyMethods.displayLabel(surveyProfile,meta.getString(1))+
                     "\nStation "+meta.getString(0)+
                     "\nStarted "+meta.getString(2)+
                     (meta.isNull(3)?"":"\nEnded "+meta.getString(3)),15));

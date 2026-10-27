@@ -68,7 +68,8 @@ public final class CallSpectrogramView extends View {
             long totalMs=samples*1000L/CallAudioRecorder.SAMPLE_RATE;
             long from=Math.max(0,Math.min(totalMs,startMs));
             long to=endMs<0?totalMs:Math.max(from+1,Math.min(totalMs,endMs));
-            long firstSample=from*CallAudioRecorder.SAMPLE_RATE/1000;
+            long firstSample=Math.min(samples-SpectrogramMath.WINDOW,
+                from*CallAudioRecorder.SAMPLE_RATE/1000);
             long lastSample=Math.min(samples-SpectrogramMath.WINDOW,
                 to*CallAudioRecorder.SAMPLE_RATE/1000-SpectrogramMath.WINDOW);
             if(lastSample<firstSample)lastSample=firstSample;

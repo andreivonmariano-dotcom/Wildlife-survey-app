@@ -16,15 +16,15 @@ public final class AuditActivity extends Activity{
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16),dp(14),dp(16),dp(12));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.title(this,"Scientific data review"));
-        TextView explanation=new TextView(this);
-        explanation.setText("This read-only review checks database links, route templates, station effort, GPS, photographs and observation metadata. A warning is not automatic evidence of invalid data.");
-        explanation.setTextSize(14);explanation.setTextColor(UiKit.INK);
-        root.addView(explanation);
-        Button refresh=UiKit.button(this,"Run quality checks","primary");root.addView(refresh);
-        refresh.setOnClickListener(v->scan());
         Button back=UiKit.button(this,"‹ Back","secondary");root.addView(back);
         back.setOnClickListener(v->finish());
+        root.addView(UiKit.title(this,"Scientific data review"));
+        TextView explanation=new TextView(this);
+        explanation.setText("Read-only checks for records, GPS, survey effort and evidence files.");
+        explanation.setTextSize(14);explanation.setTextColor(UiKit.MUTED);
+        explanation.setPadding(0,dp(4),0,dp(12));root.addView(explanation);
+        Button refresh=UiKit.button(this,"Run quality checks","primary");root.addView(refresh);
+        refresh.setOnClickListener(v->scan());
         ScrollView scroll=new ScrollView(this);
         items=new LinearLayout(this);items.setOrientation(LinearLayout.VERTICAL);
         scroll.addView(items);
@@ -37,12 +37,12 @@ public final class AuditActivity extends Activity{
         TextView summary=new TextView(this);
         summary.setText(issues.isEmpty()?"No issues detected by the current checks":
             issues.size()+" issue categories need review");
-        summary.setTextSize(19);summary.setTextColor(UiKit.INK);
+        summary.setTextSize(19);summary.setTextColor(UiKit.FOREST);
         summary.setPadding(0,dp(12),0,dp(12));items.addView(summary);
         if(issues.isEmpty()){
             TextView note=new TextView(this);
             note.setText("Passing automated checks does not verify species identification, GPS field accuracy, equipment calibration, sampling design or adequate survey effort.");
-            note.setTextSize(13);items.addView(note);
+            note.setTextSize(13);note.setTextColor(UiKit.MUTED);items.addView(note);
         }
         for(DataAudit.Issue issue:issues){
             LinearLayout card=new LinearLayout(this);card.setOrientation(LinearLayout.VERTICAL);
@@ -61,8 +61,8 @@ public final class AuditActivity extends Activity{
             margin.topMargin=dp(9);items.addView(card,margin);
         }
         TextView explanation=new TextView(this);
-        explanation.setText("Full inspection results are included in ZIP export as data_quality_flags.csv. "+
-            "This screen never repairs or deletes source records automatically.");
+        explanation.setText("Full inspection results are included in the research ZIP as data_quality_flags.csv. "+
+            "Warnings require review. This screen never changes source records.");
         explanation.setTextColor(UiKit.INK);explanation.setTextSize(12);
         explanation.setPadding(0,dp(15),0,0);items.addView(explanation);
     }

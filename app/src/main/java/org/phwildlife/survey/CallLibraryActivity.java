@@ -139,7 +139,7 @@ public final class CallLibraryActivity extends Activity {
         releasePlayer();layout("Sound recordings");
         TextView desc=label(eventId==null?
             "Saved bird songs and amphibian calls · all surveys":
-            group+" · "+SurveyMethods.lookup(surveyProfile,method).label,13,false);
+            group+" · "+SurveyMethods.displayLabel(surveyProfile,method),13,false);
         desc.setTextColor(UiKit.MUTED);body.addView(desc);
         if(canRecord()){
             recordButton=UiKit.button(this,"● Record sound","primary");

@@ -1026,7 +1026,7 @@ public class MainActivity extends Activity implements LocationListener {
             boolean ready=TrapProtocolPolicy.canComplete(d[0],d[1],d[2],d[3]);
             result.append(ready?"✓":"○").append(" Device deployment, check, retrieval and capture history: ")
                 .append(d[0]).append(" devices, ").append(d[1]).append(" unchecked, ")
-                .append(d[2]).append(" open, ").append(d[3])
+                .append(d[2]).append(" still deployed (allowed), ").append(d[3])
                 .append(" undocumented captures\n");
         }
         result.append("✓ Saved detections remain in the field archive");

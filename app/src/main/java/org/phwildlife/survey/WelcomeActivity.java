@@ -192,6 +192,8 @@ public class WelcomeActivity extends Activity {
             toolsToggle.setText(expanded?"History & tools  ▴":"History & tools  ▾");
         });
         toolRow(tools,"Survey history",()->startActivity(new Intent(this,HistoryActivity.class)));
+        toolRow(tools,"Call recordings & spectrograms",()->
+            startActivity(new Intent(this,CallLibraryActivity.class)));
         toolRow(tools,"Projects & stations",()->startActivity(new Intent(this,SitesActivity.class)));
         toolRow(tools,"Offline checklist",()->startActivity(new Intent(this,CatalogActivity.class)));
         toolRow(tools,"Fieldwork dashboard",()->startActivity(new Intent(this,DashboardActivity.class)));

@@ -8,7 +8,7 @@ def read(name):
 class V024FieldProtocolTest(unittest.TestCase):
     def test_non_destructive_schema_v25(self):
         schema=read("FieldDb.java")
-        self.assertIn("super(context,NAME,null,25)",schema)
+        self.assertIn("super(context,NAME,null,26)",schema)
         self.assertIn("if(oldVersion<25)upgradeTwentyFive(d)",schema)
         self.assertIn("upgradeTwentyFive(d);",schema)
         for table in ("coverboard_units","coverboard_checks","area_search_passes",
@@ -20,7 +20,7 @@ class V024FieldProtocolTest(unittest.TestCase):
         for method in ("coverboard_search","area_search","track_sign"):
             line=next(v for v in catalog.splitlines() if 'new Method("'+method+'"' in v)
             self.assertTrue(line.rstrip().endswith("false),"),line)
-        for method in ("spotlight","bat_acoustic"):
+        for method in ("bat_acoustic",):
             line=next(v for v in catalog.splitlines() if 'new Method("'+method+'"' in v)
             self.assertTrue(line.rstrip().endswith("true),"),line)
     def test_board_inventory_and_inspection(self):

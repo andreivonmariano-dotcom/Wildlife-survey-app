@@ -805,6 +805,8 @@ public class MainActivity extends Activity implements LocationListener {
                         routeTemplateName,plannedRouteMeters,plannedSpacingMeters,startedAt);
                 }
             }
+            StudyProtocols.apply(database,eventId,projectId,method,
+                getIntent().getStringExtra("study_protocol_id"),iso(startedAt));
             database.setTransactionSuccessful();
         }catch(Exception ex){
             toast("Could not start survey: "+ex.getMessage());
@@ -1035,6 +1037,33 @@ public class MainActivity extends Activity implements LocationListener {
                 .append(f[1]).append(" uninspected boards, ")
                 .append(f[2]).append(" invalid effort entries\n");
         }
+        StudyProtocols.Rule study=StudyProtocols.snapshot(db.getReadableDatabase(),eventId);
+        if(study!=null){
+            int totalUnits=studyEvidenceUnits();
+            long elapsed=Math.max(0,System.currentTimeMillis()-startedAt-
+                currentPausedMs(System.currentTimeMillis()));
+            if(hasStationUnits()){
+                elapsed=0;
+                String table=method.equals("point_count")?"point_counts":"sampling_units";
+                try(Cursor checks=db.getReadableDatabase().rawQuery(
+                    "SELECT started,ended,COALESCE(unit_paused_ms,0) FROM "+table+
+                    " WHERE event_id=? AND ended IS NOT NULL",new String[]{eventId})){
+                    while(checks.moveToNext())elapsed+=Math.max(0,
+                        parseIso(checks.getString(1))-parseIso(checks.getString(0))-
+                        checks.getLong(2));
+                }
+            }
+            int visits=hasStationUnits()?visitProgress()[1]:0;
+            boolean eligible=StudyProtocols.passes(study,visits,elapsed,totalUnits,
+                "verified_start_fix_under_10m".equals(startGpsStatus),
+                StudyProtocols.photoCount(db.getReadableDatabase(),eventId));
+            result.append(eligible?"✓":"○").append(" Study template: ")
+                .append(study.name).append(" · visits ").append(visits)
+                .append("/").append(study.visits).append(" · minutes ")
+                .append(elapsed/60000).append("/").append(study.minutes)
+                .append(" · units ").append(totalUnits).append("/")
+                .append(study.units).append("\n");
+        }
         if(TrapProtocolPolicy.supported(method)){
             int[] d=deviceCompleteness();
             boolean ready=TrapProtocolPolicy.canComplete(d[0],d[1],d[2],d[3]);
@@ -1156,6 +1185,13 @@ public class MainActivity extends Activity implements LocationListener {
             plannedDurationSeconds,effortTime,
             SurveyClosePolicy.routeLengthRequired(method),plannedRouteCompleted,
             length,SurveyClosePolicy.searchedAreaRequired(method),pendingSearchedArea);
+        if(complete&&!excluded){
+            StudyProtocols.Rule study=StudyProtocols.snapshot(db.getReadableDatabase(),eventId);
+            if(study!=null&&!StudyProtocols.passes(study,visitCount,effortTime,
+                studyEvidenceUnits(),"verified_start_fix_under_10m".equals(startGpsStatus),
+                StudyProtocols.photoCount(db.getReadableDatabase(),eventId)))
+                outcome=SurveyClosePolicy.INCOMPLETE;
+        }
         if(complete&&!excluded&&FieldProtocolPolicy.supported(method)){
             int[] data=methodCompleteness();
             if(!FieldProtocolPolicy.canComplete(method,data[0],data[1],data[2]))
@@ -1602,6 +1638,14 @@ public class MainActivity extends Activity implements LocationListener {
                 new String[]{eventId})){
                 if(c.moveToFirst()){units=c.getInt(0);unchecked=c.getInt(1);}
             }
+        }else if(method.equals("spotlight")){
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT COUNT(*),COALESCE(SUM(CASE WHEN beam_width_m<=0 OR "+
+                "visibility_m<=0 OR distance_m<=0 OR ended_at_utc<=started_at_utc OR "+
+                "TRIM(duplicate_control_notes)='' THEN 1 ELSE 0 END),0) "+
+                "FROM spotlight_passes WHERE event_id=?",new String[]{eventId})){
+                if(c.moveToFirst()){units=c.getInt(0);invalid=c.getInt(1);}
+            }
         }else if(method.equals("area_search")){
             try(Cursor c=db.getReadableDatabase().rawQuery(
                 "SELECT COUNT(*),COALESCE(SUM(CASE WHEN measured_area_m2<=0 "+
@@ -1620,6 +1664,12 @@ public class MainActivity extends Activity implements LocationListener {
             }
         }
         return new int[]{units,unchecked,invalid};
+    }
+    private int studyEvidenceUnits(){
+        if(FieldProtocolPolicy.supported(method))return methodCompleteness()[0];
+        if(TrapProtocolPolicy.supported(method))return deviceCompleteness()[0];
+        if(hasStationUnits())return visitProgress()[1];
+        return 0;
     }
     private void openTrapProtocol(){
         if(!active||eventId==null){toast("Start survey before device checks");return;}
@@ -2057,6 +2107,9 @@ public class MainActivity extends Activity implements LocationListener {
             AcousticEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             TrapEvidence.writeZip(z,exportDb.getReadableDatabase());
             FieldProtocolEvidence.writeZip(z,exportDb.getReadableDatabase());
+            ProtocolEvidencePhotos.writeZip(getApplicationContext(),z,
+                exportDb.getReadableDatabase());
+            StudyProtocolExports.writeZip(z,exportDb.getReadableDatabase());
             DataAudit.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             csv(exportDb,z,"distance_review.csv",
               "SELECT r.id,r.event_id,r.taxon_group,r.raw_identification,r.horizontal_m,r.perpendicular_m,r.individual_count,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,s.method,COALESCE(p.station_id,s.station_id),s.effort_length_m,s.point_target_s,s.region_label,s.area_km2,s.complete,r.point_count_id,r.protocol_window_flag FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' AND COALESCE(s.outcome,'active')='complete' AND (s.method='point_count' OR s.method='line_transect')",

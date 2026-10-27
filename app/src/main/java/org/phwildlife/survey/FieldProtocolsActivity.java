@@ -2,6 +2,10 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.location.Location;
+import android.os.SystemClock;
+import android.net.Uri;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -15,6 +19,7 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.ImageView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -30,6 +35,9 @@ public final class FieldProtocolsActivity extends Activity {
     private LinearLayout records;
     private String eventId,stationId="",method="";
     private long surveyStartMs=0;
+    private static final int PICK_EVIDENCE=7191;
+    private String pendingTargetType;
+    private long pendingTargetId=0;
 
     private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
     private LinearLayout col(){LinearLayout l=new LinearLayout(this);
@@ -81,6 +89,79 @@ public final class FieldProtocolsActivity extends Activity {
             return c.moveToFirst()&&c.isNull(0);
         }
     }
+    /** Only a fresh under-10 m GNSS location is recorded as verified. */
+    private void stampGps(ContentValues values){
+        Location fix=TrackService.currentFix();
+        if(fix!=null){
+            long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1_000_000L;
+            if(GpsFixPolicy.acceptableElapsed(fix.getLatitude(),fix.getLongitude(),
+                    fix.getAccuracy(),age,fix.isFromMockProvider())){
+                values.put("latitude",fix.getLatitude());
+                values.put("longitude",fix.getLongitude());
+                values.put("gps_accuracy_m",fix.getAccuracy());
+                values.put("gps_timestamp_utc",utc(fix.getTime()));
+                values.put("gps_status","verified_under_10m");
+                return;
+            }
+        }
+        values.put("gps_status","missing_or_unverified");
+    }
+    private String gpsSummary(Cursor c,int start){
+        return "verified_under_10m".equals(c.getString(start))?
+            String.format(Locale.US,"GPS %.6f, %.6f ±%.1f m",
+                c.getDouble(start+1),c.getDouble(start+2),c.getDouble(start+3)):
+            "GPS missing / unverified";
+    }
+    private int photoCount(String type,long target){
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT COUNT(*) FROM protocol_media WHERE target_type=? AND target_id=?",
+            new String[]{type,String.valueOf(target)})){
+            return c.moveToFirst()?c.getInt(0):0;
+        }
+    }
+    private void showPhotos(String type,long target){
+        ScrollView scroll=new ScrollView(this);
+        LinearLayout content=col();
+        content.setPadding(dp(12),dp(10),dp(12),dp(12));
+        scroll.addView(content);
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT file_name,added_utc FROM protocol_media "+
+            "WHERE target_type=? AND target_id=? ORDER BY id",
+            new String[]{type,String.valueOf(target)})){
+            while(c.moveToNext()){
+                content.addView(text("Captured in evidence archive · "+c.getString(1),12));
+                ImageView photo=new ImageView(this);
+                photo.setAdjustViewBounds(true);
+                photo.setContentDescription("Original photo linked to this field record");
+                PhotoEvidence.preview(this,c.getString(0),photo);
+                content.addView(photo,new LinearLayout.LayoutParams(-1,dp(240)));
+            }
+        }
+        new AlertDialog.Builder(this).setTitle("Linked evidence photographs")
+            .setView(scroll).setPositiveButton("Close",null).show();
+    }
+    private void choosePhoto(String type,long target){
+        if(!active()){toast("Photo capture requires the active station");return;}
+        pendingTargetType=type;pendingTargetId=target;
+        Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("image/*");intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivityForResult(intent,PICK_EVIDENCE);
+    }
+    @Override protected void onActivityResult(int request,int result,Intent data){
+        super.onActivityResult(request,result,data);
+        if(request!=PICK_EVIDENCE)return;
+        if(result==RESULT_OK&&data!=null&&data.getData()!=null&&
+            pendingTargetType!=null&&active()){
+            try{
+                ProtocolEvidencePhotos.attach(this,db.getWritableDatabase(),eventId,
+                    pendingTargetType,pendingTargetId,data.getData());
+                toast("Photo linked to original field evidence");
+                draw();
+            }catch(Exception err){toast("Photo not saved: "+err.getMessage());}
+        }
+        pendingTargetType=null;pendingTargetId=0;
+    }
     private boolean validInterval(EditText start,EditText end){
         Long from=millis(start.getText().toString());
         Long to=millis(end.getText().toString());
@@ -129,7 +210,9 @@ public final class FieldProtocolsActivity extends Activity {
             records.addView(text("This method has no coverboard, area-search, or track-and-sign module.",14));
             return;
         }
-        String description="coverboard_search".equals(method)?
+        String description="spotlight".equals(method)?
+            "Spotlight passes · beam, visibility, distance and repeat visits":
+            "coverboard_search".equals(method)?
             "Coverboards · individual board checks":
             "area_search".equals(method)?
             "Area search · timed search passes and repeated coverage":
@@ -138,13 +221,14 @@ public final class FieldProtocolsActivity extends Activity {
         if(!active())records.addView(text("Read only · start an active sampling visit to add effort",13));
         if("coverboard_search".equals(method))showBoards();
         else if("area_search".equals(method))showAreas();
+        else if("spotlight".equals(method))showSpotlight();
         else showSignEffort();
     }
     private void showSurveys(){
         records.addView(text("Open a completed or active survey's field protocol.",14));
         try(Cursor c=db.getReadableDatabase().rawQuery(
             "SELECT id,method,started,COALESCE(outcome,'active') FROM surveys "+
-            "WHERE method IN ('coverboard_search','area_search','track_sign') "+
+            "WHERE method IN ('coverboard_search','area_search','track_sign','spotlight') "+
             "ORDER BY started DESC LIMIT 200",null)){
             if(c.getCount()==0)records.addView(text("No matching surveys yet.",14));
             while(c.moveToNext()){
@@ -184,14 +268,23 @@ public final class FieldProtocolsActivity extends Activity {
                     .setOnClickListener(v->inspectBoard(pk,board));
                 try(Cursor checks=db.getReadableDatabase().rawQuery(
                     "SELECT checked_at_utc,observer,board_condition,individuals_seen,"+
-                    "COALESCE(taxon_label,''),COALESCE(notes,'') FROM coverboard_checks "+
+                    "COALESCE(taxon_label,''),COALESCE(notes,''),id,"+
+                    "gps_status,latitude,longitude,gps_accuracy_m FROM coverboard_checks "+
                     "WHERE board_pk=? ORDER BY checked_at_utc DESC LIMIT 30",
                     new String[]{pk})){
                     while(checks.moveToNext()){
+                        long checkId=checks.getLong(6);
                         card.addView(text(checks.getString(0)+" · "+checks.getString(1)+
                             " · "+checks.getString(2)+"\n"+
                             checks.getInt(3)+" individuals · "+checks.getString(4)+
-                            " · "+checks.getString(5),12));
+                            " · "+checks.getString(5)+"\n"+
+                            gpsSummary(checks,7)+" · "+photoCount("coverboard_check",checkId)+
+                            " photos",12));
+                        if(photoCount("coverboard_check",checkId)>0)
+                            action("View inspection photos",card,false)
+                                .setOnClickListener(v->showPhotos("coverboard_check",checkId));
+                        if(active())action("Attach photo to this inspection",card,false)
+                            .setOnClickListener(v->choosePhoto("coverboard_check",checkId));
                     }
                 }
             }
@@ -285,8 +378,16 @@ public final class FieldProtocolsActivity extends Activity {
                 values.put("individuals_seen",count);
                 values.put("taxon_label",taxon.getText().toString().trim());
                 values.put("notes",notes.getText().toString().trim());
-                db.getWritableDatabase().insertOrThrow("coverboard_checks",null,values);
+                stampGps(values);
+                long checkId=db.getWritableDatabase().insertOrThrow(
+                    "coverboard_checks",null,values);
                 dialog.dismiss();draw();
+                new AlertDialog.Builder(this).setTitle("Inspection saved")
+                    .setMessage("GNSS quality and time were recorded with this inspection. "+
+                        "Attach a source photograph to this exact board check?")
+                    .setNegativeButton("Later",null)
+                    .setPositiveButton("Attach photo",(d,i)->
+                        choosePhoto("coverboard_check",checkId)).show();
             }));
         dialog.show();
     }
@@ -384,6 +485,105 @@ public final class FieldProtocolsActivity extends Activity {
             }));
         dialog.show();
     }
+    private void showSpotlight(){
+        if(active())action("＋ Record spotlight survey pass",records,true)
+            .setOnClickListener(v->newSpotlightPass());
+        records.addView(text("Record beam coverage and visibility for each pass. "+
+            "A repeated pass must remain separate from new unique route effort.",12));
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT route_id,observer,started_at_utc,ended_at_utc,beam_width_m,"+
+            "visibility_m,distance_m,beam_type,COALESCE(weather,''),repeat_pass,"+
+            "duplicate_control_notes FROM spotlight_passes "+
+            "WHERE event_id=? ORDER BY started_at_utc,id",new String[]{eventId})){
+            if(c.getCount()==0)records.addView(text("No spotlight passes yet.",14));
+            while(c.moveToNext()){
+                LinearLayout card=panel(c.getString(0)+
+                    (c.getInt(9)==1?" · repeat pass":" · first pass"));
+                card.addView(text(c.getString(2)+" to "+c.getString(3)+
+                    "\nObserver "+c.getString(1)+" · route "+c.getDouble(6)+" m"+
+                    "\nBeam "+c.getDouble(4)+" m · visibility "+c.getDouble(5)+" m"+
+                    "\nLight: "+c.getString(7)+" · weather: "+c.getString(8)+
+                    "\nDuplicate control: "+c.getString(10),12));
+            }
+        }
+    }
+    private void newSpotlightPass(){
+        LinearLayout form=col();form.setPadding(dp(12),0,dp(12),0);
+        EditText route=field("Route / area ID (stable across passes)",false);
+        EditText observer=field("Observer name or ID",false);
+        EditText start=field("Start UTC yyyy-MM-ddTHH:mm:ssZ",false);
+        EditText end=field("End UTC yyyy-MM-ddTHH:mm:ssZ",false);
+        end.setText(utc(System.currentTimeMillis()));
+        EditText width=field("Measured or specified beam search width (m)",true);
+        EditText visibility=field("Effective visual detection distance (m)",true);
+        EditText distance=field("Measured length walked or searched (m)",true);
+        EditText beam=field("Lamp model / beam intensity / observers / technique",false);
+        EditText weather=field("Cloud, moon, rain and obstruction",false);
+        CheckBox repeat=new CheckBox(this);
+        repeat.setText("Repeated pass over an earlier route");
+        EditText duplicate=field("How were individuals and repeat sightings tracked?",false);
+        EditText notes=field("Speed, transect width method and search limitations",false);
+        for(EditText item:new EditText[]{route,observer,start,end,width,visibility,distance,
+            beam,weather})form.addView(item);
+        form.addView(repeat);form.addView(duplicate);form.addView(notes);
+        ScrollView scroll=new ScrollView(this);scroll.addView(form);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Spotlight effort")
+            .setView(scroll).setNegativeButton("Back",null)
+            .setPositiveButton("Save pass",null).create();
+        dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            .setOnClickListener(w->{
+                if(!active()){toast("Survey closed");return;}
+                if(route.getText().toString().trim().isEmpty()){
+                    route.setError("Route ID required");return;
+                }
+                if(observer.getText().toString().trim().isEmpty()){
+                    observer.setError("Observer required");return;
+                }
+                if(!validInterval(start,end))return;
+                Double beamWidth=quantity(width),view=quantity(visibility),length=quantity(distance);
+                if(beamWidth==null||beamWidth<=0||beamWidth>10000){
+                    width.setError("Enter positive beam width (m)");return;
+                }
+                if(view==null||view<=0||view>10000){
+                    visibility.setError("Enter positive visibility (m)");return;
+                }
+                if(length==null||!FieldProtocolPolicy.validDistance(length)){
+                    distance.setError("Measured route length required");return;
+                }
+                if(beam.getText().toString().trim().isEmpty()){
+                    beam.setError("Document lamp and technique");return;
+                }
+                String control=duplicate.getText().toString().trim();
+                if(control.isEmpty()){
+                    duplicate.setError("Record repeat count controls, even with zero sightings");return;
+                }
+                boolean earlier=false;
+                try(Cursor previous=db.getReadableDatabase().rawQuery(
+                    "SELECT COUNT(*) FROM spotlight_passes WHERE event_id=? AND route_id=?",
+                    new String[]{eventId,route.getText().toString().trim()})){
+                    if(previous.moveToFirst())earlier=previous.getInt(0)>0;
+                }
+                if(earlier&&!repeat.isChecked()){
+                    toast("Mark the previously searched route as a repeated pass");return;
+                }
+                ContentValues row=new ContentValues();
+                row.put("event_id",eventId);row.put("station_id",stationId);
+                row.put("route_id",route.getText().toString().trim());
+                row.put("observer",observer.getText().toString().trim());
+                row.put("started_at_utc",start.getText().toString().trim());
+                row.put("ended_at_utc",end.getText().toString().trim());
+                row.put("beam_width_m",beamWidth);row.put("visibility_m",view);
+                row.put("distance_m",length);
+                row.put("beam_type",beam.getText().toString().trim());
+                row.put("weather",weather.getText().toString().trim());
+                row.put("repeat_pass",earlier||repeat.isChecked()?1:0);
+                row.put("duplicate_control_notes",control);
+                row.put("notes",notes.getText().toString().trim());
+                db.getWritableDatabase().insertOrThrow("spotlight_passes",null,row);
+                dialog.dismiss();draw();
+            }));
+        dialog.show();
+    }
     private void showSignEffort(){
         if(active())action("＋ Record measured track/sign search",records,true)
             .setOnClickListener(v->newSignEffort());
@@ -405,15 +605,24 @@ public final class FieldProtocolsActivity extends Activity {
                     .setOnClickListener(v->newSign(id));
                 try(Cursor signs=db.getReadableDatabase().rawQuery(
                     "SELECT sign_type,taxon_label,age_class,identification_confidence,"+
-                    "COALESCE(independent_event_key,''),COALESCE(notes,'') "+
+                    "COALESCE(independent_event_key,''),COALESCE(notes,''),id,"+
+                    "gps_status,latitude,longitude,gps_accuracy_m "+
                     "FROM track_sign_encounters WHERE effort_id=? ORDER BY id",
                     new String[]{String.valueOf(id)})){
                     if(signs.getCount()==0)card.addView(text("No signs detected · valid zero result",12));
                     while(signs.moveToNext()){
+                        long signId=signs.getLong(6);
                         card.addView(text(signs.getString(0)+" · "+signs.getString(1)+
                             " · "+signs.getString(2)+" · "+signs.getString(3)+
                             "\nEncounter key "+signs.getString(4)+
-                            " · "+signs.getString(5),12));
+                            " · "+signs.getString(5)+"\n"+
+                            gpsSummary(signs,7)+" · "+photoCount("track_sign",signId)+
+                            " photos",12));
+                        if(photoCount("track_sign",signId)>0)
+                            action("View sign photographs",card,false)
+                                .setOnClickListener(v->showPhotos("track_sign",signId));
+                        if(active())action("Attach photo to this sign",card,false)
+                            .setOnClickListener(v->choosePhoto("track_sign",signId));
                     }
                 }
             }
@@ -514,9 +723,17 @@ public final class FieldProtocolsActivity extends Activity {
                 if(!eventKey.isEmpty())row.put("independent_event_key",eventKey);
                 row.put("substrate",substrate.getText().toString().trim());
                 row.put("notes",notes.getText().toString().trim());
+                stampGps(row);
                 try{
-                    db.getWritableDatabase().insertOrThrow("track_sign_encounters",null,row);
+                    long signId=db.getWritableDatabase().insertOrThrow(
+                        "track_sign_encounters",null,row);
                     dialog.dismiss();draw();
+                    new AlertDialog.Builder(this).setTitle("Sign saved")
+                        .setMessage("GNSS quality was saved. Attach a photograph "+
+                            "to this individual sign encounter?")
+                        .setNegativeButton("Later",null)
+                        .setPositiveButton("Attach photo",(d,i)->
+                            choosePhoto("track_sign",signId)).show();
                 }catch(Exception ex){key.setError("Encounter key already used in this survey");}
             }));
         dialog.show();

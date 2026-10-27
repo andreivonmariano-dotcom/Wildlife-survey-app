@@ -41,7 +41,8 @@ public final class FieldProtocolEvidence {
         csv(archive,db,"coverboard_checks.csv",
             "SELECT x.id,x.board_pk,b.event_id,b.station_id,b.board_id,"+
             "x.checked_at_utc,x.observer,x.board_condition,x.substrate,"+
-            "x.temperature_c,x.humidity_pct,x.individuals_seen,x.taxon_label,x.notes "+
+            "x.temperature_c,x.humidity_pct,x.individuals_seen,x.taxon_label,x.notes,"+
+            "x.latitude,x.longitude,x.gps_accuracy_m,x.gps_timestamp_utc,x.gps_status "+
             "FROM coverboard_checks x JOIN coverboard_units b ON b.id=x.board_pk "+
             "ORDER BY b.event_id,x.checked_at_utc");
         csv(archive,db,"area_search_passes.csv",
@@ -55,7 +56,13 @@ public final class FieldProtocolEvidence {
             "FROM track_sign_efforts ORDER BY event_id,started_at_utc");
         csv(archive,db,"track_sign_encounters.csv",
             "SELECT id,event_id,effort_id,recorded_at_utc,sign_type,taxon_label,"+
-            "age_class,identification_confidence,independent_event_key,substrate,notes "+
+            "age_class,identification_confidence,independent_event_key,substrate,notes,"+
+            "latitude,longitude,gps_accuracy_m,gps_timestamp_utc,gps_status "+
             "FROM track_sign_encounters ORDER BY event_id,effort_id,id");
+        csv(archive,db,"spotlight_passes.csv",
+            "SELECT id,event_id,station_id,route_id,observer,started_at_utc,"+
+            "ended_at_utc,beam_width_m,visibility_m,distance_m,beam_type,weather,"+
+            "repeat_pass,duplicate_control_notes,notes "+
+            "FROM spotlight_passes ORDER BY event_id,started_at_utc");
     }
 }

@@ -5,7 +5,7 @@ public final class FieldProtocolPolicy {
     private FieldProtocolPolicy(){}
     public static boolean supported(String method){
         return "coverboard_search".equals(method)||"area_search".equals(method)||
-            "track_sign".equals(method);
+            "track_sign".equals(method)||"spotlight".equals(method);
     }
     public static boolean canComplete(String method,int units,int missingChecks,int invalidEfforts){
         if(!supported(method))return true;

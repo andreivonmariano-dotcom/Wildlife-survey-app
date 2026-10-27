@@ -62,7 +62,8 @@ public class MainActivity extends Activity implements LocationListener {
         }
     };
     private final int BACK=UiKit.BG,INK=UiKit.INK,GREEN=UiKit.FOREST,MUTED=UiKit.MUTED;
-    private FieldDb db; private LocationManager locations;
+    private FieldDb db; private SurveyHudReader hudReader;
+    private LocationManager locations;
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private LinearLayout markRowView;
     private Button pauseButton,progressButton;
@@ -125,6 +126,7 @@ public class MainActivity extends Activity implements LocationListener {
     @Override public void onCreate(Bundle b) {
         super.onCreate(b);
         db=new FieldDb(this);
+        hudReader=new SurveyHudReader(this);
         locations=(LocationManager)getSystemService(LOCATION_SERVICE);
         restoreEvent();
         Intent launch=getIntent();
@@ -331,16 +333,28 @@ public class MainActivity extends Activity implements LocationListener {
         // One row combines direct entry and the complete offline checklist.
         // Complete species selection now lives on its own page.
         // Retain direct text entry for novel/unidentified field observations.
+        boolean stackSpecies=FieldLayoutPolicy.stackSpeciesEntry(
+            getResources().getConfiguration().screenWidthDp,
+            getResources().getConfiguration().fontScale);
+        int fieldControlHeight=FieldLayoutPolicy.actionHeightDp(
+            getResources().getConfiguration().fontScale);
         LinearLayout speciesRow=horizontal();
+        if(stackSpecies)speciesRow.setOrientation(LinearLayout.VERTICAL);
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
         taxonEntry.setThreshold(100);taxonEntry.setHint("Species or field ID");
         taxonEntry.setSelectAllOnFocus(true);
-        speciesRow.addView(taxonEntry,new LinearLayout.LayoutParams(0,dp(52),1));
+        speciesRow.addView(taxonEntry,stackSpecies?
+            new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
+            new LinearLayout.LayoutParams(0,dp(fieldControlHeight),1));
         Button identifySpecies=UiKit.button(this,"Browse","secondary");
         identifySpecies.setContentDescription("Search offline species checklist");
-        LinearLayout.LayoutParams browseLp=new LinearLayout.LayoutParams(dp(94),dp(52));
-        browseLp.leftMargin=dp(8);speciesRow.addView(identifySpecies,browseLp);
+        LinearLayout.LayoutParams browseLp=stackSpecies?
+            new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
+            new LinearLayout.LayoutParams(dp(94),dp(fieldControlHeight));
+        if(stackSpecies)browseLp.topMargin=dp(5);
+        else browseLp.leftMargin=dp(8);
+        speciesRow.addView(identifySpecies,browseLp);
         identifySpecies.setOnClickListener(v->openSpeciesPicker());
         content.addView(speciesRow);
         LinearLayout speciesActions=horizontal();
@@ -542,14 +556,17 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout footer=vertical();
         footer.setPadding(0,dp(5),0,0);
         saveButton=UiKit.button(this,"Save Observation","primary");
-        footer.addView(saveButton,new LinearLayout.LayoutParams(-1,dp(56)));
+        footer.addView(saveButton,new LinearLayout.LayoutParams(-1,dp(
+            FieldLayoutPolicy.saveHeightDp(getResources().getConfiguration().fontScale))));
         LinearLayout footerOptions=horizontal();
         reviewButton=UiKit.button(this,"Review Records","secondary");
-        LinearLayout.LayoutParams reviewParams=new LinearLayout.LayoutParams(0,dp(49),1);
+        LinearLayout.LayoutParams reviewParams=new LinearLayout.LayoutParams(0,dp(
+            FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale)),1);
         footerOptions.addView(reviewButton,reviewParams);
         // Ending a survey remains accessible even with the keyboard open.
         endSurveyButton=UiKit.button(this,"End Survey","outline-danger");
-        LinearLayout.LayoutParams endParams=new LinearLayout.LayoutParams(0,dp(49),1);
+        LinearLayout.LayoutParams endParams=new LinearLayout.LayoutParams(0,dp(
+            FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale)),1);
         endParams.leftMargin=dp(8);
         footerOptions.addView(endSurveyButton,endParams);
         LinearLayout.LayoutParams optionsParams=new LinearLayout.LayoutParams(-1,-2);
@@ -1928,25 +1945,20 @@ public class MainActivity extends Activity implements LocationListener {
             pointNotice=true;toast("Sampling interval ended · recording continues in overtime");
             vibrateIfEnabled(300);
         }
-        // Sampling counts and path summaries do not change every second.
-        if(lastProgressFetchMs==0||now-lastProgressFetchMs>=4000L){
+        // Timer rendering stays on UI. SQLite progress and GNSS path refresh
+        // are serialized in the background; the one-second HUD never reads them.
+        if(lastProgressFetchMs==0||now-lastProgressFetchMs>=6000L){
             lastProgressFetchMs=now;
-            if(method.equals("point_count")&&plannedStationCount>0){
-                int counted=RoutePlan.recordedCount(db.getReadableDatabase(),eventId);
-                int[] visits=visitProgress();
-                progressView.setText(counted+"/"+plannedStationCount+
-                    " stations visited · "+visits[1]+" complete");
-            }else if(hasStationUnits()){
-                int[] counts=visitProgress();
-                progressView.setText(counts[1]+"/"+counts[0]+" visits complete");
-            }else progressView.setText("");
-            progressView.setVisibility(progressView.getText().length()>0?
-                View.VISIBLE:View.GONE);
-        }
-        if((method.equals("line_transect")||method.equals("ves_transect"))&&
-            (lastTrackFetchMs==0||now-lastTrackFetchMs>=4000L)){
-            lastTrackFetchMs=now;
-            refreshTrack();
+            hudReader.request(eventId,method,plannedStationCount,plannedRouteMeters,
+                hasStationUnits(),result->{
+                    if(!active||!result.eventId.equals(eventId))return;
+                    if(progressView!=null){
+                        progressView.setText(result.progress);
+                        progressView.setVisibility(result.progress.isEmpty()?View.GONE:View.VISIBLE);
+                    }
+                    if(trackingView!=null&&!result.track.isEmpty())
+                        trackingView.setText(result.track);
+                });
         }
     }
     private void exportZip(){
@@ -2336,7 +2348,12 @@ public class MainActivity extends Activity implements LocationListener {
         super.onPause();
         try{locations.removeUpdates(this);}catch(Exception ignored){}
     }
-    @Override protected void onDestroy(){super.onDestroy();handler.removeCallbacksAndMessages(null);db.close();}
+    @Override protected void onDestroy(){
+        handler.removeCallbacksAndMessages(null);
+        if(hudReader!=null)hudReader.close();
+        db.close();
+        super.onDestroy();
+    }
     @Override public void onRequestPermissionsResult(int code,String[] perms,int[] results){
         super.onRequestPermissionsResult(code,perms,results);
         if(code==71&&results.length>0&&results[0]==PackageManager.PERMISSION_GRANTED

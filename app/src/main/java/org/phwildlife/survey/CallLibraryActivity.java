@@ -38,6 +38,10 @@ public final class CallLibraryActivity extends Activity {
     private LinearLayout body;
     private String eventId,group="Birds",surveyProfile="Birds",method="",station="",selectedClip=null;
     private long selectedMs=0,clipDuration=0;
+    private int spectrogramZoom=1,analysisGeneration=0;
+    private float spectrogramContrast=1f;
+    private double lastTappedHz=Double.NaN;
+    private TextView frequencyInfo;
     private CallAudioRecorder recorder;
     private CallSpectrogramView spectrum;
     private MediaPlayer player;
@@ -268,8 +272,62 @@ public final class CallLibraryActivity extends Activity {
         final File file=new File(AcousticEvidence.directory(this),filename);
         body.addView(label(profile+" · "+date+"\nSurvey: "+outcome,14,true));
         spectrum=new CallSpectrogramView(this);
+        spectrum.setContrast(spectrogramContrast);
         body.addView(spectrum,new LinearLayout.LayoutParams(-1,dp(260)));
-        body.addView(label("Tap the spectrogram to seek and mark a call.",12,false));
+        frequencyInfo=label("Tap the spectrogram: time and frequency appear here",12,true);
+        frequencyInfo.setTextColor(UiKit.POND);
+        body.addView(frequencyInfo);
+        spectrum.setFrequencyListener((hz,ms)->{
+            lastTappedHz=hz;
+            frequencyInfo.setText(String.format(
+                Locale.US,"Cursor %s · %.0f Hz (approximate)",format(ms),hz));
+        });
+        LinearLayout tools=new LinearLayout(this);
+        Button less=UiKit.button(this,"− Zoom","secondary");
+        Button more=UiKit.button(this,"+ Zoom","secondary");
+        tools.addView(less,new LinearLayout.LayoutParams(0,dp(48),1));
+        LinearLayout.LayoutParams zoomLp=new LinearLayout.LayoutParams(0,dp(48),1);
+        zoomLp.leftMargin=dp(8);tools.addView(more,zoomLp);
+        body.addView(tools);
+        Button backward=UiKit.button(this,"‹ Earlier","secondary");
+        Button forward=UiKit.button(this,"Later ›","secondary");
+        LinearLayout pages=new LinearLayout(this);
+        pages.addView(backward,new LinearLayout.LayoutParams(0,dp(48),1));
+        LinearLayout.LayoutParams nextLp=new LinearLayout.LayoutParams(0,dp(48),1);
+        nextLp.leftMargin=dp(8);pages.addView(forward,nextLp);body.addView(pages);
+        TextView contrastTitle=label("Spectrogram contrast",12,true);
+        body.addView(contrastTitle);
+        SeekBar contrastBar=new SeekBar(this);
+        contrastBar.setMax(350);contrastBar.setProgress(Math.round((spectrogramContrast-.5f)*100));
+        body.addView(contrastBar);
+        less.setOnClickListener(v->{
+            spectrogramZoom=Math.max(1,spectrogramZoom/2);
+            loadSpectrum(file,clip);
+        });
+        more.setOnClickListener(v->{
+            spectrogramZoom=Math.min(16,spectrogramZoom*2);
+            loadSpectrum(file,clip);
+        });
+        backward.setOnClickListener(v->{
+            long[] w=AcousticViewport.window(clipDuration,selectedMs,spectrogramZoom);
+            selectedMs=Math.max(0,w[0]-(w[1]-w[0])/2);
+            loadSpectrum(file,clip);
+        });
+        forward.setOnClickListener(v->{
+            long[] w=AcousticViewport.window(clipDuration,selectedMs,spectrogramZoom);
+            selectedMs=Math.min(clipDuration,w[1]+(w[1]-w[0])/2);
+            loadSpectrum(file,clip);
+        });
+        contrastBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+            public void onStartTrackingTouch(SeekBar bar){}
+            public void onStopTrackingTouch(SeekBar bar){}
+            public void onProgressChanged(SeekBar bar,int progress,boolean fromUser){
+                if(fromUser){
+                    spectrogramContrast=.5f+progress/100f;
+                    spectrum.setContrast(spectrogramContrast);
+                }
+            }
+        });
         playbackTime=label("00:00 / "+format(clipDuration),14,true);
         body.addView(playbackTime);
         seek=new SeekBar(this);seek.setMax((int)Math.min(Integer.MAX_VALUE,clipDuration));
@@ -323,14 +381,22 @@ public final class CallLibraryActivity extends Activity {
         TextView labelHeader=label("Call annotations",17,true);
         body.addView(labelHeader);
         try(Cursor rows=database.getReadableDatabase().rawQuery(
-            "SELECT start_ms,end_ms,call_label,COALESCE(notes,'') "+
+            "SELECT start_ms,end_ms,call_label,COALESCE(notes,''),id,"+
+            "COALESCE(taxon_key,''),observation_id,selected_frequency_hz "+
             "FROM acoustic_labels WHERE clip_id=? ORDER BY start_ms,id",new String[]{clip})){
             if(rows.getCount()==0)body.addView(label("No call labels yet.",13,false));
             while(rows.moveToNext()){
                 long time=rows.getLong(0),until=rows.getLong(1);
                 String species=rows.getString(2),notes=rows.getString(3);
+                long annotationId=rows.getLong(4);
+                String linkedTaxon=rows.getString(5);
+                String linkedRecord=rows.isNull(6)?"":String.valueOf(rows.getLong(6));
+                String frequency=rows.isNull(7)?"":String.format(Locale.US,
+                    " · ~%.0f Hz",rows.getDouble(7));
                 Button annotation=UiKit.button(this,format(time)+"–"+format(until)+
-                    "  "+species+(notes.isEmpty()?"":"\n"+notes),"secondary");
+                    "  "+species+frequency+(linkedTaxon.isEmpty()?"":" · checklist linked")+
+                    (linkedRecord.isEmpty()?"":" · observation #"+linkedRecord)+
+                    "\nTap to play · hold to link evidence","secondary");
                 LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(69));
                 lp.bottomMargin=dp(7);body.addView(annotation,lp);
                 annotation.setOnClickListener(v->{
@@ -338,16 +404,35 @@ public final class CallLibraryActivity extends Activity {
                     spectrum.setCursor(time/(float)Math.max(1,clipDuration));
                     if(player!=null)player.seekTo((int)time);
                 });
+                annotation.setOnLongClickListener(v->{
+                    openLabelLinks(annotationId);return true;
+                });
             }
         }
         // Analysis runs away from UI; archived clips remain playable without an active survey.
+        loadSpectrum(file,clip);
+    }
+    /** Analyze the currently visible time window, preserving the WAV unchanged. */
+    private void loadSpectrum(File file,String clip){
+        final long[] bounds=AcousticViewport.window(clipDuration,selectedMs,spectrogramZoom);
+        final int generation=++analysisGeneration;
+        final CallSpectrogramView destination=spectrum;
         new Thread(()->{
             try{
-                float[][] bands=CallSpectrogramView.readWav(file);
-                ui.post(()->{if(clip.equals(selectedClip)&&!isDestroyed())
-                    spectrum.setSaved(bands,clipDuration);});
-            }catch(Exception e){ui.post(()->notice("Spectrogram unavailable: "+e.getMessage()));}
-        },"LIKAS-Spectrogram-Review").start();
+                float[][] bands=CallSpectrogramView.readWav(file,bounds[0],bounds[1]);
+                ui.post(()->{
+                    if(generation!=analysisGeneration||!clip.equals(selectedClip)||
+                        isDestroyed()||spectrum!=destination)return;
+                    destination.setSaved(bands,clipDuration,bounds[0],bounds[1]);
+                    destination.setCursor(selectedMs/(float)Math.max(1,clipDuration));
+                    if(frequencyInfo!=null)
+                        frequencyInfo.setText("Window "+format(bounds[0])+" to "+
+                            format(bounds[1])+" · "+spectrogramZoom+"× zoom");
+                });
+            }catch(Exception e){ui.post(()->{
+                if(generation==analysisGeneration)notice("Spectrogram: "+e.getMessage());
+            });}
+        },"LIKAS-Spectrogram-Window").start();
     }
     private void newLabel(String clip){
         LinearLayout form=column();form.setPadding(dp(16),dp(5),dp(16),dp(5));
@@ -362,6 +447,12 @@ public final class CallLibraryActivity extends Activity {
         end.setHint("End in seconds");
         end.setText(String.format(Locale.US,"%.2f",
             Math.min(clipDuration,selectedMs+1000)/1000d));form.addView(end);
+        EditText frequency=new EditText(this);
+        frequency.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        frequency.setHint("Frequency Hz · estimate from tapped spectrogram");
+        if(Double.isFinite(lastTappedHz))
+            frequency.setText(String.format(Locale.US,"%.0f",lastTappedHz));
+        form.addView(frequency);
         EditText notes=new EditText(this);notes.setHint("Call pattern or ID evidence (optional)");
         form.addView(notes);
         new AlertDialog.Builder(this).setTitle("Label recorded call")
@@ -372,17 +463,118 @@ public final class CallLibraryActivity extends Activity {
                     if(species.isEmpty())throw new IllegalArgumentException("Call ID required");
                     long from=Math.round(Double.parseDouble(start.getText().toString())*1000),
                         to=Math.round(Double.parseDouble(end.getText().toString())*1000);
-                    if(from<0||to<=from||to>clipDuration)
+                    if(!CallLinkPolicy.usableLabelRange(from,to,clipDuration))
                         throw new IllegalArgumentException("Select a valid time interval");
                     ContentValues v=new ContentValues();
                     v.put("clip_id",clip);v.put("start_ms",from);v.put("end_ms",to);
                     v.put("call_label",species);
+                    String hzText=frequency.getText().toString().trim();
+                    if(!hzText.isEmpty()){
+                        double hz=Double.parseDouble(hzText);
+                        if(!Double.isFinite(hz)||hz<AcousticViewport.MIN_HZ||
+                            hz>AcousticViewport.MAX_HZ)
+                            throw new IllegalArgumentException("Select 85–17,000 Hz");
+                        v.put("selected_frequency_hz",hz);
+                    }
                     v.put("notes",notes.getText().toString().trim());
                     v.put("reviewed_at_utc",utc(System.currentTimeMillis()));
                     database.getWritableDatabase().insertOrThrow("acoustic_labels",null,v);
                     selectedMs=from;showClip();
                 }catch(Exception e){notice("Label not saved: "+e.getMessage());}
             }).show();
+    }
+    /** Link a reviewed time range to the checklist and/or saved survey detection. */
+    private void openLabelLinks(long id){
+        new AlertDialog.Builder(this).setTitle("Call evidence links")
+            .setItems(new String[]{"Choose checklist taxon","Link saved observation",
+                "Clear checklist link","Clear observation link"},(dialog,which)->{
+                if(which==0)lookupChecklist(id);
+                else if(which==1)chooseObservation(id);
+                else{
+                    ContentValues v=new ContentValues();
+                    v.putNull(which==2?"taxon_key":"observation_id");
+                    v.put("review_status","unverified");
+                    database.getWritableDatabase().update("acoustic_labels",v,
+                        "id=?",new String[]{String.valueOf(id)});
+                    showClip();
+                }
+            }).setNegativeButton("Close",null).show();
+    }
+    private String[] annotationContext(long labelId){
+        try(Cursor c=database.getReadableDatabase().rawQuery(
+            "SELECT c.event_id,c.taxon_group FROM acoustic_labels a "+
+            "JOIN acoustic_clips c ON c.id=a.clip_id WHERE a.id=?",
+            new String[]{String.valueOf(labelId)})){
+            if(c.moveToFirst())return new String[]{c.getString(0),c.getString(1)};
+        }
+        throw new IllegalStateException("Saved call label not found");
+    }
+    private void lookupChecklist(long id){
+        EditText query=new EditText(this);query.setSingleLine(true);
+        query.setHint("Search scientific or common name");
+        new AlertDialog.Builder(this).setTitle("Find checklist species").setView(query)
+            .setNegativeButton("Cancel",null)
+            .setPositiveButton("Find",(d,w)->{
+                String value=query.getText().toString().trim();
+                if(value.length()<2){notice("Enter at least two characters");return;}
+                String[] context=annotationContext(id);
+                java.util.ArrayList<String> keys=new java.util.ArrayList<>();
+                java.util.ArrayList<String> names=new java.util.ArrayList<>();
+                try(Cursor c=database.getReadableDatabase().rawQuery(
+                    "SELECT taxon_key,scientific_name,COALESCE(common_name,'') "+
+                    "FROM taxon_catalog WHERE taxon_group=? AND "+
+                    "(scientific_name LIKE ? OR common_name LIKE ?) "+
+                    "ORDER BY scientific_name LIMIT 50",
+                    new String[]{context[1],"%"+value+"%","%"+value+"%"})){
+                    while(c.moveToNext()){
+                        keys.add(c.getString(0));
+                        names.add(c.getString(1)+(c.getString(2).isEmpty()?"":" · "+c.getString(2)));
+                    }
+                }
+                if(names.isEmpty()){notice("No matching checklist taxon. Keep a manual label.");return;}
+                new AlertDialog.Builder(this).setTitle("Assign checklist identity")
+                    .setItems(names.toArray(new String[0]),(dlg,index)->{
+                        ContentValues v=new ContentValues();
+                        v.put("taxon_key",keys.get(index));
+                        v.put("review_status","linked_unverified");
+                        database.getWritableDatabase().update("acoustic_labels",v,
+                            "id=?",new String[]{String.valueOf(id)});
+                        showClip();
+                    }).setNegativeButton("Cancel",null).show();
+            }).show();
+    }
+    private void chooseObservation(long labelId){
+        String[] context=annotationContext(labelId);
+        java.util.ArrayList<Long> recordIds=new java.util.ArrayList<>();
+        java.util.ArrayList<String> names=new java.util.ArrayList<>();
+        try(Cursor c=database.getReadableDatabase().rawQuery(
+            "SELECT id,COALESCE(raw_identification,''),detected_at "+
+            "FROM field_records WHERE event_id=? AND taxon_group=? AND deleted_at IS NULL "+
+            "ORDER BY detected_at DESC LIMIT 100",context)){
+            while(c.moveToNext()){
+                recordIds.add(c.getLong(0));
+                names.add("#"+c.getLong(0)+" · "+c.getString(1)+" · "+c.getString(2));
+            }
+        }
+        if(names.isEmpty()){notice("No saved "+context[1]+" observations in this survey");return;}
+        new AlertDialog.Builder(this).setTitle("Link saved survey observation")
+            .setItems(names.toArray(new String[0]),(d,index)->{
+                long record=recordIds.get(index);
+                try(Cursor check=database.getReadableDatabase().rawQuery(
+                    "SELECT event_id,taxon_group FROM field_records WHERE id=? "+
+                    "AND deleted_at IS NULL",new String[]{String.valueOf(record)})){
+                    if(!check.moveToFirst()||!CallLinkPolicy.sameSurveyAndGroup(
+                        context[0],check.getString(0),context[1],check.getString(1))){
+                        notice("Observation does not match this survey and taxon group");return;
+                    }
+                }
+                ContentValues v=new ContentValues();
+                v.put("observation_id",record);
+                v.put("review_status","linked_unverified");
+                database.getWritableDatabase().update("acoustic_labels",v,
+                    "id=?",new String[]{String.valueOf(labelId)});
+                showClip();
+            }).setNegativeButton("Cancel",null).show();
     }
     private void releasePlayer(){
         if(player!=null){

@@ -22,16 +22,16 @@ public final class SurveyMethods {
             new Method("ves_transect","Transect VES","Systematic searches along a defined terrestrial or riparian route.",false),
             new Method("amphibian_calls","Amphibian calling","Timed station listening with call index, saved WAV, spectrogram and time-coded labels.",false),
             new Method("coverboard_search","Cover-board search","Inspect predefined cover objects and record inspection effort.",true),
-            new Method("drift_fence_check","Pitfall / drift fence check","Record detections during trap inspections. Trap-deployment data are not yet captured.",true),
+            new Method("drift_fence_check","Pitfall / drift fence check","Per-trap deployments, inspected effort, capture records and release audit.",false),
             new Method("opportunistic","Opportunistic","Record incidental reptiles and amphibians.",false)
         };
         return new Method[]{
             new Method("line_transect","Line transect","Record visual encounters along a measured route.",false),
             new Method("track_sign","Track and sign survey","Record identifiable tracks, scat and other field signs.",true),
             new Method("spotlight","Spotlight survey","Nocturnal searches along a defined route or area.",true),
-            new Method("camera_trap_check","Camera-trap check","Log identified detections. Deployment and camera-days tracking is planned.",true),
+            new Method("camera_trap_check","Camera-trap check","Per-camera deployment, operation checks and retrieval audit.",false),
             new Method("bat_acoustic","Bat acoustic survey","Log acoustic detections. Recorder effort and call metadata are planned.",true),
-            new Method("live_trap_check","Live-trap check","Log sightings or captures. Trap-night and capture fields are planned.",true),
+            new Method("live_trap_check","Live-trap check","Per-trap deployment, checks and individual capture/release audit.",false),
             new Method("opportunistic","Opportunistic","Record incidental mammal observations.",false)
         };
     }

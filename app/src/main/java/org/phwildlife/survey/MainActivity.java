@@ -301,6 +301,12 @@ public class MainActivity extends Activity implements LocationListener {
             soundLp.topMargin=dp(7);content.addView(sound,soundLp);
             sound.setOnClickListener(v->openCallLibrary());
         }
+        if(TrapProtocolPolicy.supported(method)){
+            Button devices=UiKit.button(this,"▣ Devices, Checks & Captures","secondary");
+            LinearLayout.LayoutParams deviceLp=new LinearLayout.LayoutParams(-1,dp(52));
+            deviceLp.topMargin=dp(7);content.addView(devices,deviceLp);
+            devices.setOnClickListener(v->openTrapProtocol());
+        }
         LinearLayout markRow=horizontal();
         markRowView=markRow;
         markRow.setVisibility(View.GONE);
@@ -1015,6 +1021,14 @@ public class MainActivity extends Activity implements LocationListener {
             result.append("○ Measured transect length and route confirmation required\n");
         if(SurveyClosePolicy.searchedAreaRequired(method))
             result.append("○ Measured search area required\n");
+        if(TrapProtocolPolicy.supported(method)){
+            int[] d=deviceCompleteness();
+            boolean ready=TrapProtocolPolicy.canComplete(d[0],d[1],d[2],d[3]);
+            result.append(ready?"✓":"○").append(" Device deployment, check, retrieval and capture history: ")
+                .append(d[0]).append(" devices, ").append(d[1]).append(" unchecked, ")
+                .append(d[2]).append(" still deployed (allowed), ").append(d[3])
+                .append(" undocumented captures\n");
+        }
         result.append("✓ Saved detections remain in the field archive");
         return result.toString();
     }
@@ -1128,8 +1142,13 @@ public class MainActivity extends Activity implements LocationListener {
             plannedDurationSeconds,effortTime,
             SurveyClosePolicy.routeLengthRequired(method),plannedRouteCompleted,
             length,SurveyClosePolicy.searchedAreaRequired(method),pendingSearchedArea);
+        if(complete&&!excluded&&TrapProtocolPolicy.supported(method)){
+            int[] device=deviceCompleteness();
+            if(!TrapProtocolPolicy.canComplete(device[0],device[1],device[2],device[3]))
+                outcome=SurveyClosePolicy.INCOMPLETE;
+        }
         if(complete&&SurveyClosePolicy.INCOMPLETE.equals(outcome))
-            toast("Required effort or stations unfinished: saved as Incomplete");
+            toast("Required effort, stations or device checks unfinished: saved Incomplete");
         String finalReason=reason;
         if(SurveyClosePolicy.INCOMPLETE.equals(outcome)){
             String statusReason="Survey effort, route, or sampling requirements not completed";
@@ -1540,6 +1559,37 @@ public class MainActivity extends Activity implements LocationListener {
         markedObserverFix=freshObserverFix();
         showMarkStatus();persistDraft();
     }
+    private void openTrapProtocol(){
+        if(!active||eventId==null){toast("Start survey before device checks");return;}
+        persistDraft();
+        Intent i=new Intent(this,TrapProtocolActivity.class);
+        i.putExtra("event_id",eventId);
+        i.putExtra("station_id",stationId);
+        startActivity(i);
+    }
+    private int[] deviceCompleteness(){
+        int deployments=0,unchecked=0,open=0,missingCaptures=0;
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT COUNT(*),COALESCE(SUM(CASE WHEN d.retrieved_at_utc IS NULL THEN 1 ELSE 0 END),0),"+
+            "COALESCE(SUM(CASE WHEN NOT EXISTS (SELECT 1 FROM trap_checks x WHERE x.deployment_id=d.id) "+
+            "THEN 1 ELSE 0 END),0) FROM trap_deployments d WHERE d.event_id=? AND d.method=?",
+            new String[]{eventId,method})){
+            if(c.moveToFirst()){
+                deployments=c.getInt(0);open=c.getInt(1);unchecked=c.getInt(2);
+            }
+        }
+        if(TrapProtocolPolicy.needsCaptureDetails(method)){
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT COALESCE(SUM(MAX(0,x.observations-(SELECT COUNT(*) "+
+                "FROM trap_captures z WHERE z.check_id=x.id))),0) "+
+                "FROM trap_checks x JOIN trap_deployments d ON d.id=x.deployment_id "+
+                "WHERE d.event_id=? AND d.method=?",
+                new String[]{eventId,method})){
+                if(c.moveToFirst())missingCaptures=c.getInt(0);
+            }
+        }
+        return new int[]{deployments,unchecked,open,missingCaptures};
+    }
     private void openCallLibrary(){
         if(!active||eventId==null){toast("Start a survey before recording sound");return;}
         persistDraft();
@@ -1943,6 +1993,7 @@ public class MainActivity extends Activity implements LocationListener {
             ResearchExports.write(z,exportDb.getReadableDatabase());
             PhotoEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             AcousticEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
+            TrapEvidence.writeZip(z,exportDb.getReadableDatabase());
             DataAudit.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             csv(exportDb,z,"distance_review.csv",
               "SELECT r.id,r.event_id,r.taxon_group,r.raw_identification,r.horizontal_m,r.perpendicular_m,r.individual_count,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,s.method,COALESCE(p.station_id,s.station_id),s.effort_length_m,s.point_target_s,s.region_label,s.area_km2,s.complete,r.point_count_id,r.protocol_window_flag FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' AND COALESCE(s.outcome,'active')='complete' AND (s.method='point_count' OR s.method='line_transect')",

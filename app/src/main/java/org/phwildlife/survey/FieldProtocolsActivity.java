@@ -74,7 +74,7 @@ public final class FieldProtocolsActivity extends Activity {
         catch(Exception err){return null;}
     }
     private boolean active(){
-        if(eventId==null)return false;
+        if(eventId==null||stationId.isEmpty())return false;
         try(Cursor c=db.getReadableDatabase().rawQuery(
             "SELECT ended FROM surveys WHERE id=? AND method=?",
             new String[]{eventId,method})){
@@ -135,7 +135,7 @@ public final class FieldProtocolsActivity extends Activity {
             "Area search · timed search passes and repeated coverage":
             "Mammal track and sign · measured routes and sign encounters";
         records.addView(text(description,16));
-        if(!active())records.addView(text("Archived survey · read-only protocol records",13));
+        if(!active())records.addView(text("Read only · start an active sampling visit to add effort",13));
         if("coverboard_search".equals(method))showBoards();
         else if("area_search".equals(method))showAreas();
         else showSignEffort();

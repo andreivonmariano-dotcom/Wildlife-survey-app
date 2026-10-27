@@ -42,7 +42,7 @@ public class WelcomeActivity extends Activity {
     private CheckBox saveTemplateChoice;
     private TextView templateHint;
     private boolean updatingRouteChoices=false;
-    private TextView stationCountPreview;
+    private TextView stationCountPreview,routeHeader,spacingHeader,repeatHeader;
     private Spinner projectChoice, geographicChoice;
     private BoundaryLookup.Match suggested;
     private String geographicMethod=GeoRegions.BOUNDARY_METHOD;
@@ -117,9 +117,6 @@ public class WelcomeActivity extends Activity {
         sub.setPadding(0,dp(2),0,0);
         sub.setTextColor(MUTED);brand.addView(sub);
         header.addView(brand,new LinearLayout.LayoutParams(0,dp(56),1));
-        Button back=UiKit.button(this,"‹ Back","quiet");
-        back.setTextSize(13);back.setOnClickListener(v->finish());
-        header.addView(back,new LinearLayout.LayoutParams(dp(88),dp(46)));
         LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
         headerLp.bottomMargin=dp(18);main.addView(header,headerLp);
         String unfinished=activeSurvey();
@@ -131,7 +128,7 @@ public class WelcomeActivity extends Activity {
             resume.setOnClickListener(v->startActivity(
                 new Intent(this,MainActivity.class).putExtra("resume",true)));
             main.addView(resume);
-            TextView notice=text("Finish the active survey before creating another.",12,false);
+            TextView notice=text("End this survey to start another.",12,false);
             notice.setTextColor(MUTED);main.addView(notice);
         }else{
             TextView prompt=text("Select a survey group",16,true);
@@ -142,7 +139,7 @@ public class WelcomeActivity extends Activity {
             card("Mammals","",()->setup("Mammals",false));
             card("Custom survey","",()->customPicker());
         }
-        Button toolsToggle=UiKit.button(this,"Data & Tools  ▾","secondary");
+        Button toolsToggle=UiKit.button(this,"History & tools  ▾","secondary");
         LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(54));
         toolMargin.topMargin=dp(10);main.addView(toolsToggle,toolMargin);
         LinearLayout tools=vertical();
@@ -150,7 +147,7 @@ public class WelcomeActivity extends Activity {
         toolsToggle.setOnClickListener(v->{
             boolean expanded=tools.getVisibility()!=View.VISIBLE;
             tools.setVisibility(expanded?View.VISIBLE:View.GONE);
-            toolsToggle.setText(expanded?"Data & Tools  ▴":"Data & Tools  ▾");
+            toolsToggle.setText(expanded?"History & tools  ▴":"History & tools  ▾");
         });
         toolRow(tools,"Survey history",()->startActivity(new Intent(this,HistoryActivity.class)));
         toolRow(tools,"Projects & stations",()->startActivity(new Intent(this,SitesActivity.class)));
@@ -244,17 +241,25 @@ public class WelcomeActivity extends Activity {
         }
         if(names.isEmpty()){projectKeys.add("default");names.add("General field project");}
         projectChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));
-        main.addView(text("Project",13,false));main.addView(projectChoice);
+        main.addView(text("Project",13,false));
         projectChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
             public void onNothingSelected(android.widget.AdapterView<?> parent){}
             public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
                 refreshRouteTemplates();
             }
         });
-        Button projectManage=UiKit.button(this,"Projects","secondary");
+        LinearLayout projectRow=new LinearLayout(this);
+        projectRow.setOrientation(LinearLayout.HORIZONTAL);
+        projectRow.setGravity(Gravity.CENTER_VERTICAL);
+        projectRow.addView(projectChoice,new LinearLayout.LayoutParams(0,dp(52),1f));
+        Button projectManage=UiKit.button(this,"Manage","secondary");
+        LinearLayout.LayoutParams manageWidth=new LinearLayout.LayoutParams(dp(110),dp(52));
+        manageWidth.leftMargin=dp(8);
+        projectRow.addView(projectManage,manageWidth);
+        main.addView(projectRow);
+        projectManage.setContentDescription("Manage projects and sampling stations");
         projectManage.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
-        main.addView(projectManage);
-        main.addView(text("Geographic checklist area",16,true));
+        main.addView(text("Checklist region",16,true));
         geographicChoice=new Spinner(this);
         geographicChoice.setAdapter(new ArrayAdapter<String>(
             this,android.R.layout.simple_spinner_dropdown_item,GeoRegions.LABELS));
@@ -274,12 +279,9 @@ public class WelcomeActivity extends Activity {
         });
         gpsLookupButton=UiKit.button(this,"Choose checklist area by GPS","secondary");
         main.addView(gpsLookupButton);
-        boundaryMessage=text("Auto-selects a mapped island group from a verified GPS fix.",12,false);
+        boundaryMessage=text("Select a region or use GPS to suggest one.",12,false);
         boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
         gpsLookupButton.setOnClickListener(v->suggestBoundary());
-        TextView geographyNote=text("Area suggestions do not confirm species occurrence.",12,false);
-        geographyNote.setTextColor(MUTED);
-        main.addView(geographyNote);
         // Sampling stations are assigned within field visits, never in survey setup.
         observerEntry=new EditText(this);
         observerEntry.setTextSize(16);observerEntry.setSingleLine(true);
@@ -300,7 +302,7 @@ public class WelcomeActivity extends Activity {
         radiusEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         radiusEntry.setHint("Fixed point-count radius (m, optional)");
         main.addView(radiusEntry);
-        main.addView(text("Planned survey route",17,true));
+        routeHeader=text("Planned route",17,true);main.addView(routeHeader);
         routeLengthEntry=new EditText(this);
         routeLengthEntry.setSingleLine(true);routeLengthEntry.setTextSize(17);
         routeLengthEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -309,7 +311,7 @@ public class WelcomeActivity extends Activity {
         spacingChoice=new Spinner(this);
         spacingChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"100 m","250 m","500 m","Custom spacing"}));
-        main.addView(text("Distance between point-count stations",13,false));
+        spacingHeader=text("Distance between stations",13,false);main.addView(spacingHeader);
         main.addView(spacingChoice);
         spacingChoice.setSelection(1);
         customSpacingEntry=new EditText(this);
@@ -318,10 +320,10 @@ public class WelcomeActivity extends Activity {
         customSpacingEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         customSpacingEntry.setVisibility(View.GONE);main.addView(customSpacingEntry);
         stationCountPreview=text("",13,true);stationCountPreview.setTextColor(GREEN);main.addView(stationCountPreview);
-        main.addView(text("Repeat monitoring route (bird point count)",14,true));
+        repeatHeader=text("Repeat monitoring route",14,true);main.addView(repeatHeader);
         templateChoice=new Spinner(this);
         main.addView(templateChoice);
-        templateHint=text("Use a saved route to revisit the same permanent station IDs, or create a new route.",12,false);
+        templateHint=text("Saved routes reuse permanent stations.",12,false);
         templateHint.setTextColor(MUTED);main.addView(templateHint);
         saveTemplateChoice=new CheckBox(this);
         saveTemplateChoice.setText("Save this route for future monitoring");
@@ -386,11 +388,25 @@ public class WelcomeActivity extends Activity {
         updateRoutePreview();
         regionEntry=new EditText(this);regionEntry.setSingleLine(true);
         regionEntry.setHint("Stratum / region label (optional)");
-        main.addView(regionEntry);
+        LinearLayout extraDetails=vertical();
+        extraDetails.addView(regionEntry);
         areaEntry=new EditText(this);areaEntry.setSingleLine(true);
         areaEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         areaEntry.setHint("Stratum area (km², optional)");
-        main.addView(areaEntry);
+        extraDetails.addView(areaEntry);
+        extraDetails.setVisibility(View.GONE);
+        TextView advancedToggle=text("＋ Additional survey details",14,true);
+        advancedToggle.setTextColor(GREEN);
+        advancedToggle.setMinHeight(dp(48));
+        advancedToggle.setGravity(Gravity.CENTER_VERTICAL);
+        advancedToggle.setFocusable(true);
+        main.addView(advancedToggle);
+        main.addView(extraDetails);
+        advancedToggle.setOnClickListener(v->{
+            boolean open=extraDetails.getVisibility()!=View.VISIBLE;
+            extraDetails.setVisibility(open?View.VISIBLE:View.GONE);
+            advancedToggle.setText(open?"− Hide additional details":"＋ Additional survey details");
+        });
 
         Button start=UiKit.button(this,"Start "+profile+" survey","primary");
         LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(58));
@@ -537,9 +553,7 @@ public class WelcomeActivity extends Activity {
         else if(boundaryMessage!=null)
             boundaryMessage.setText("Precise GPS access was not granted. Use the manual geographic checklist choice.");
     }
-    private boolean supportsRoute(String code){
-        return code.equals("point_count")||code.equals("line_transect")||code.equals("ves_transect");
-    }
+    private boolean supportsRoute(String code){return FieldUiPolicy.routeSetup(code);}
     private double spacingMeters(){
         int pos=spacingChoice==null?1:spacingChoice.getSelectedItemPosition();
         if(pos==0)return 100;
@@ -554,6 +568,10 @@ public class WelcomeActivity extends Activity {
         if(choice<0||choice>=choices.length)return;
         String method=choices[choice].code;
         boolean route=supportsRoute(method);
+        routeHeader.setVisibility(route?View.VISIBLE:View.GONE);
+        boolean points=FieldUiPolicy.pointStationSetup(method);
+        repeatHeader.setVisibility(points?View.VISIBLE:View.GONE);
+        spacingHeader.setVisibility(points?View.VISIBLE:View.GONE);
         routeLengthEntry.setVisibility(route?View.VISIBLE:View.GONE);
         if(spacingChoice!=null)spacingChoice.setVisibility(method.equals("point_count")?View.VISIBLE:View.GONE);
         if(customSpacingEntry!=null)customSpacingEntry.setVisibility(
@@ -568,11 +586,10 @@ public class WelcomeActivity extends Activity {
             if(spacing<=0){stationCountPreview.setText("Select a positive station spacing.");return;}
             int stations=SurveyMath.stations(length,spacing);
             double last=(stations-1)*spacing;
-            stationCountPreview.setText(stations+" planned points at 0, "+(int)spacing+
-                " ... "+(int)last+" m. Remaining route beyond final point: "+
-                Math.max(0,(int)Math.round(length-last))+" m.");
+            stationCountPreview.setText(stations+" points · "+(int)spacing+
+                " m spacing · last station at "+(int)last+" m");
         }else stationCountPreview.setText(String.format(Locale.US,
-            "Continuous %.2f km transect. No point-count stations will be generated.",length/1000.0));
+            "Planned transect · %.2f km",length/1000.0));
     }
     private String selectedTemplateId(){
         if(templateChoice==null)return "";
@@ -623,13 +640,13 @@ public class WelcomeActivity extends Activity {
                         Math.abs(spacing-500)<0.001?2:3;
                     spacingChoice.setSelection(idx);
                     if(idx==3)customSpacingEntry.setText(String.format(Locale.US,"%.1f",spacing));
-                    templateHint.setText("Using saved route: "+c.getString(3)+
-                        ". Reuses station IDs and existing baseline positions. Each new visit saves fresh GPS.");
+                    templateHint.setText("Saved route: "+c.getString(3)+
+                        " · same stations, fresh GPS at each visit");
                 }else{
                     templateHint.setText("Saved route is unavailable. Select New route.");
                 }
             }catch(Exception e){templateHint.setText("Route could not be read. Select New route.");}
-        }else templateHint.setText("New route creates station IDs once; save the route to revisit them on later survey dates.");
+        }else templateHint.setText("New route · permanent station IDs assigned at start");
         routeLengthEntry.setEnabled(!saved);
         spacingChoice.setEnabled(!saved);
         customSpacingEntry.setEnabled(!saved);

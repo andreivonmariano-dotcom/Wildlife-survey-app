@@ -77,12 +77,9 @@ public final class SurveyGpsActivity extends Activity {
         content.setOrientation(LinearLayout.VERTICAL);
         content.setPadding(gap,gap,gap,gap);
         content.setBackgroundColor(UiKit.BG);
-        content.addView(UiKit.title(this,stationMode?"Station GPS check":"Acquire survey-start GPS"));
+        content.addView(UiKit.title(this,stationMode?"Station GPS":"Survey GPS"));
         TextView explanation=new TextView(this);
-        explanation.setText(stationMode?
-            "Checking live GPS. This station starts automatically below 10 m.":
-            "Survey starts automatically after a fresh, non-mock GNSS fix below 10 m. "+
-            "Acquisition remains active in the background.");
+        explanation.setText("Starts automatically after a fresh GPS fix with reported accuracy under 10 m.");
         explanation.setTextSize(15);
         explanation.setTextColor(UiKit.INK);
         explanation.setPadding(0,gap,0,gap);
@@ -108,8 +105,7 @@ public final class SurveyGpsActivity extends Activity {
             content.addView(skyView,new LinearLayout.LayoutParams(
                 -1,Math.round(290f*getResources().getDisplayMetrics().density)));
             TextView legend=new TextView(this);
-            legend.setText("N at top · center overhead · edge horizon. Colors identify constellations. "+
-                "Green outline: used in fix. Marker size: signal strength.");
+            legend.setText("Green outline = satellite used for position fix");
             legend.setTextColor(UiKit.INK);
             legend.setTextSize(12);
             content.addView(legend);

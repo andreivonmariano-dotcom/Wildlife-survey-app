@@ -20,10 +20,10 @@ def migration_sql(version):
     end = DB_SOURCE.index("\n    }", start)
     body = DB_SOURCE[start:end]
     statements = []
-    for statement in re.findall(r"d\\.execSQL\\((.*?)\\);", body, flags=re.S):
+    for statement in re.findall(r"d\.execSQL\((.*?)\);", body, flags=re.S):
         # No SQL variables are allowed in this pinned run of additive migrations.
-        fragments = re.findall(r'"(?:\\\\.|[^"\\\\])*"', statement)
-        remainder = re.sub(r'"(?:\\\\.|[^"\\\\])*"|[+\\s]', "", statement)
+        fragments = re.findall(r'"(?:\\.|[^"\\])*"', statement)
+        remainder = re.sub(r'"(?:\\.|[^"\\])*"|[+\s]', "", statement)
         if remainder or not fragments:
             raise AssertionError("Migration SQL contains unrecognized expressions: " + remainder)
         sql = "".join(json.loads(piece) for piece in fragments)

@@ -49,7 +49,7 @@ import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity implements LocationListener {
-    private static final int EXPORT_DOC=22, CAMERA_REQ=23, PHOTO_PICK=24;
+    private static final int EXPORT_DOC=22, CAMERA_REQ=23, PHOTO_PICK=24, STATION_GPS_REQ=25;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final Runnable delayedDraftSave=()->persistDraft();
     private final Runnable visibleTimer=new Runnable(){
@@ -1025,7 +1025,7 @@ public class MainActivity extends Activity implements LocationListener {
         }catch(Exception ignored){}
         return new int[]{0,0,0};
     }
-    private void startUnit(String station){
+    private void startUnit(String station,Location stationFix){
         int seq=1;
         try(Cursor c=db.getReadableDatabase().rawQuery(
             "SELECT COALESCE(MAX(sequence_number),0)+1 FROM sampling_units WHERE event_id=?",new String[]{eventId})){
@@ -1035,16 +1035,16 @@ public class MainActivity extends Activity implements LocationListener {
         samplingUnitId="UNIT-"+eventId+"-"+unitSequence;
         unitStartedAt=System.currentTimeMillis();
         stationId=station;nearEndNotified=false;pointNotice=false;
-        boolean gpsValid=RoutePlan.acceptable(location,unitStartedAt);
-        Object lat=gpsValid?location.getLatitude():null,lon=gpsValid?location.getLongitude():null,
-            accuracy=gpsValid?location.getAccuracy():null;
+        boolean gpsValid=verifiedStationFix(stationFix);
+        Object lat=gpsValid?stationFix.getLatitude():null,lon=gpsValid?stationFix.getLongitude():null,
+            accuracy=gpsValid?stationFix.getAccuracy():null;
         db.getWritableDatabase().execSQL(
             "INSERT INTO sampling_units(id,event_id,station_id,sequence_number,method,started,target_seconds,"+
             "gps_latitude,gps_longitude,gps_accuracy_m,gps_recorded_at,gps_status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{samplingUnitId,eventId,station,unitSequence,method,iso(unitStartedAt),
                 plannedDurationSeconds>0?plannedDurationSeconds:null,lat,lon,accuracy,
-                gpsValid?iso(location.getTime()):null,
-                gpsValid?"gps_fix_at_visit_start":"missing_or_weak_gps_at_start"});
+                gpsValid?iso(stationFix.getTime()):null,
+                gpsValid?"verified_station_fix_under_10m":"missing_or_weak_gps_at_start"});
         if(gpsValid)db.getWritableDatabase().execSQL(
             "UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=? "+
             "WHERE id=? AND latitude IS NULL AND longitude IS NULL",
@@ -1082,16 +1082,16 @@ public class MainActivity extends Activity implements LocationListener {
         genericUnitPicker();
     }
     /** One-off station generated on site for non-point standardized methods. */
-    private String createFieldStation(){
+    private String createFieldStation(Location stationFix){
         String id=RoutePlan.newSiteId();
         long now=System.currentTimeMillis();
-        boolean ok=RoutePlan.acceptable(location,now);
+        boolean ok=verifiedStationFix(stationFix);
         db.getWritableDatabase().execSQL(
             "INSERT INTO sites(id,project_id,name,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at) "+
             "VALUES(?,?,?,?,?,?,?,?,?)",
             new Object[]{id,projectId,"Field station "+(unitSequence+1),
-                ok?location.getLatitude():null,ok?location.getLongitude():null,
-                ok?location.getAccuracy():null,
+                ok?stationFix.getLatitude():null,ok?stationFix.getLongitude():null,
+                ok?stationFix.getAccuracy():null,
                 "Auto-created during "+profile+" survey "+eventId+
                 (ok?" · GPS captured":" · GPS missing at creation"),
                 iso(now),iso(now)});
@@ -1176,10 +1176,9 @@ public class MainActivity extends Activity implements LocationListener {
                 }
                 if(w==dialog.getButton(AlertDialog.BUTTON_POSITIVE)){
                     int selected=stations.getSelectedItemPosition();
-                    String chosen=selected==0?createFieldStation():existing[selected-1];
-                    startUnit(chosen);
-                    taxonEntry.setText("");distanceEntry.setText("");clearMark();
-                    toast("Visit "+unitSequence+" · "+stationId);
+                    boolean generate=selected==0;
+                    String chosen=generate?"":existing[selected-1];
+                    launchStationGps("generic",chosen,generate,generate?"New field station":chosen);
                 }
                 persistDraft();status();dialog.dismiss();
             };
@@ -1235,19 +1234,12 @@ public class MainActivity extends Activity implements LocationListener {
         RoutePlan.Next next=RoutePlan.next(db.getReadableDatabase(),eventId);
         if(next==null){toast("All planned points have been visited");refreshPlannedPointButton();return;}
         if(surveyPaused){toast("Resume effort before starting the point count");return;}
-        long now=System.currentTimeMillis();
-        if(RoutePlan.acceptable(location,now)){
-            beginPlannedPoint(next,location);return;
-        }
-        new AlertDialog.Builder(this).setTitle("Station GPS not ready")
-            .setMessage("Point "+next.sequence+" at planned chainage "+Math.round(next.chainage)+" m.\n"+
-                "The app needs a GPS fix from the last 30 seconds, accuracy 75 m or better. "+
-                "You can start without coordinates, but that station will be flagged in exports.")
-            .setNegativeButton("Wait for fresh GPS",null)
-            .setPositiveButton("Start, flag GPS missing",(d,w)->beginPlannedPoint(next,null)).show();
+        launchStationGps("planned",next.stationId,false,
+            "Point "+next.sequence+" · "+Math.round(next.chainage)+" m");
     }
     private void beginPlannedPoint(RoutePlan.Next next,Location fresh){
         if(!active||pointCountId!=null||!method.equals("point_count"))return;
+        if(fresh!=null&&!verifiedStationFix(fresh)){toast("GPS expired. Reacquire at the station.");return;}
         if(surveyPaused){toast("Resume effort first");return;}
         RoutePlan.Next expected=RoutePlan.next(db.getReadableDatabase(),eventId);
         if(expected==null||!expected.stationId.equals(next.stationId)){
@@ -1278,7 +1270,7 @@ public class MainActivity extends Activity implements LocationListener {
             }
         }
     }
-    private void startPoint(String station){
+    private void startPoint(String station,Location fresh){
         SQLiteDatabase d=db.getWritableDatabase();
         int sequence=1;
         try(Cursor c=d.rawQuery("SELECT COALESCE(MAX(sequence_number),0)+1 FROM point_counts WHERE event_id=?",new String[]{eventId})){
@@ -1288,8 +1280,17 @@ public class MainActivity extends Activity implements LocationListener {
         pointCountId="PC-"+eventId+"-"+pointSequence;
         stationId=station;pointStartedAt=System.currentTimeMillis();
         pointNotice=false;nearEndNotified=false;
-        d.execSQL("INSERT INTO point_counts(id,event_id,station_id,sequence_number,started,target_seconds) VALUES(?,?,?,?,?,?)",
-            new Object[]{pointCountId,eventId,stationId,pointSequence,iso(pointStartedAt),pointTargetSeconds});
+        boolean good=verifiedStationFix(fresh);
+        Object lat=good?fresh.getLatitude():null,lon=good?fresh.getLongitude():null,
+            accuracy=good?fresh.getAccuracy():null;
+        d.execSQL("INSERT INTO point_counts(id,event_id,station_id,sequence_number,started,target_seconds,"+
+            "gps_latitude,gps_longitude,gps_accuracy_m,gps_recorded_at,gps_status) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+            new Object[]{pointCountId,eventId,stationId,pointSequence,iso(pointStartedAt),pointTargetSeconds,
+                lat,lon,accuracy,good?iso(fresh.getTime()):null,
+                good?"verified_station_fix_under_10m":"missing_or_weak_gps_at_start"});
+        if(good)d.execSQL("UPDATE sites SET latitude=?,longitude=?,coordinate_uncertainty_m=?,updated_at=? "+
+            "WHERE id=? AND latitude IS NULL AND longitude IS NULL",
+            new Object[]{lat,lon,accuracy,iso(pointStartedAt),station});
         if(pointNextButton!=null)pointNextButton.setText("Finish point · Next station");
         if(saveButton!=null)saveButton.setEnabled(true);
     }
@@ -1336,10 +1337,8 @@ public class MainActivity extends Activity implements LocationListener {
             .setPositiveButton("Start next station",(d,w)->{
                 String next=names[selected[0]];
                 if(pointCountId!=null)closePoint();
-                startPoint(next);
-                taxonEntry.setText("");distanceEntry.setText("");clearMark();
+                launchStationGps("custom",next,false,next);
                 persistDraft();status();
-                toast("Station "+next+" · new timer started");
             }).show();
     }
     private void startTracking(){
@@ -1573,8 +1572,58 @@ public class MainActivity extends Activity implements LocationListener {
         i.setType("application/zip");i.putExtra(Intent.EXTRA_TITLE,"wildlife-survey-export.zip");
         startActivityForResult(i,EXPORT_DOC);
     }
+    private void launchStationGps(String kind,String id,boolean generate,String label){
+        if(!active||surveyPaused){toast("Resume the survey before starting the station");return;}
+        Intent intent=new Intent(this,SurveyGpsActivity.class);
+        intent.putExtra("station_gps_mode",true);
+        intent.putExtra("station_kind",kind);
+        intent.putExtra("station_id",id);
+        intent.putExtra("station_generate",generate);
+        intent.putExtra("station_label",label);
+        intent.putExtra("station_event_id",eventId);
+        startActivityForResult(intent,STATION_GPS_REQ);
+    }
+    private boolean verifiedStationFix(Location fix){
+        if(fix==null||!LocationManager.GPS_PROVIDER.equals(fix.getProvider())||!fix.hasAccuracy())return false;
+        long ageMs=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
+        return ageMs>=0&&ageMs<=GpsFixPolicy.MAX_FIX_AGE_MS&&
+            GpsFixPolicy.acceptable(fix.getLatitude(),fix.getLongitude(),fix.getAccuracy(),
+                fix.getTime(),System.currentTimeMillis(),fix.isFromMockProvider());
+    }
+    private void stationGpsResult(Intent data){
+        if(!active||surveyPaused||eventId==null)return;
+        if(!eventId.equals(data.getStringExtra("station_event_id"))){toast("Station belongs to a different survey");return;}
+        String kind=data.getStringExtra("station_kind"),id=data.getStringExtra("station_id");
+        boolean generate=data.getBooleanExtra("station_generate",false);
+        boolean missing=data.getBooleanExtra("station_gps_missing",false);
+        Location fix=data.getParcelableExtra("station_gps_location");
+        if(missing)fix=null;
+        else if(!verifiedStationFix(fix)){toast("GPS fix expired. Reacquire station position.");return;}
+        if("planned".equals(kind)){
+            if(!method.equals("point_count")||pointCountId!=null)return;
+            RoutePlan.Next next=RoutePlan.next(db.getReadableDatabase(),eventId);
+            if(next==null||!next.stationId.equals(id)){toast("Station order changed");return;}
+            beginPlannedPoint(next,fix);
+        }else if("custom".equals(kind)){
+            if(!method.equals("point_count")||plannedStationCount>0||id==null)return;
+            startPoint(id,fix);
+            taxonEntry.setText("");distanceEntry.setText("");clearMark();
+            persistDraft();status();
+        }else if("generic".equals(kind)){
+            if(!requiresGenericUnit()||samplingUnitId!=null)return;
+            String station=generate?createFieldStation(fix):id;
+            if(station==null||station.isEmpty()){toast("Station ID missing");return;}
+            startUnit(station,fix);
+            taxonEntry.setText("");distanceEntry.setText("");clearMark();
+            persistDraft();status();
+        }
+    }
     @Override protected void onActivityResult(int req,int result,Intent data){
         super.onActivityResult(req,result,data);
+        if(req==STATION_GPS_REQ){
+            if(result==RESULT_OK&&data!=null)stationGpsResult(data);
+            return;
+        }
         if(req==PHOTO_PICK){
             if(result==RESULT_OK&&data!=null&&data.getData()!=null){
                 try{

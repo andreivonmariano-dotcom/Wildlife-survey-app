@@ -28,7 +28,7 @@ public final class SurveyMethods {
         return new Method[]{
             new Method("line_transect","Line transect","Record visual encounters along a measured route.",false),
             new Method("track_sign","Track and sign survey","Measured search routes, substrate, sign age, confidence and independent encounters.",false),
-            new Method("spotlight","Spotlight survey","Nocturnal searches along a defined route or area.",true),
+            new Method("spotlight","Spotlight survey","Timed passes with lamp, beam width, visual range, distance and repeat-event controls.",false),
             new Method("camera_trap_check","Camera-trap check","Per-camera deployment, operation checks and retrieval audit.",false),
             new Method("bat_acoustic","Bat acoustic survey","Log acoustic detections. Recorder effort and call metadata are planned.",true),
             new Method("live_trap_check","Live-trap check","Per-trap deployment, checks and individual capture/release audit.",false),

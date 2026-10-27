@@ -19,6 +19,7 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.ImageView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -118,6 +119,27 @@ public final class FieldProtocolsActivity extends Activity {
             return c.moveToFirst()?c.getInt(0):0;
         }
     }
+    private void showPhotos(String type,long target){
+        ScrollView scroll=new ScrollView(this);
+        LinearLayout content=col();
+        content.setPadding(dp(12),dp(10),dp(12),dp(12));
+        scroll.addView(content);
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT file_name,added_utc FROM protocol_media "+
+            "WHERE target_type=? AND target_id=? ORDER BY id",
+            new String[]{type,String.valueOf(target)})){
+            while(c.moveToNext()){
+                content.addView(text("Captured in evidence archive · "+c.getString(1),12));
+                ImageView photo=new ImageView(this);
+                photo.setAdjustViewBounds(true);
+                photo.setContentDescription("Original photo linked to this field record");
+                PhotoEvidence.preview(this,c.getString(0),photo);
+                content.addView(photo,new LinearLayout.LayoutParams(-1,dp(240)));
+            }
+        }
+        new AlertDialog.Builder(this).setTitle("Linked evidence photographs")
+            .setView(scroll).setPositiveButton("Close",null).show();
+    }
     private void choosePhoto(String type,long target){
         if(!active()){toast("Photo capture requires the active station");return;}
         pendingTargetType=type;pendingTargetId=target;
@@ -206,7 +228,7 @@ public final class FieldProtocolsActivity extends Activity {
         records.addView(text("Open a completed or active survey's field protocol.",14));
         try(Cursor c=db.getReadableDatabase().rawQuery(
             "SELECT id,method,started,COALESCE(outcome,'active') FROM surveys "+
-            "WHERE method IN ('coverboard_search','area_search','track_sign') "+
+            "WHERE method IN ('coverboard_search','area_search','track_sign','spotlight') "+
             "ORDER BY started DESC LIMIT 200",null)){
             if(c.getCount()==0)records.addView(text("No matching surveys yet.",14));
             while(c.moveToNext()){
@@ -258,6 +280,9 @@ public final class FieldProtocolsActivity extends Activity {
                             " · "+checks.getString(5)+"\n"+
                             gpsSummary(checks,7)+" · "+photoCount("coverboard_check",checkId)+
                             " photos",12));
+                        if(photoCount("coverboard_check",checkId)>0)
+                            action("View inspection photos",card,false)
+                                .setOnClickListener(v->showPhotos("coverboard_check",checkId));
                         if(active())action("Attach photo to this inspection",card,false)
                             .setOnClickListener(v->choosePhoto("coverboard_check",checkId));
                     }
@@ -593,6 +618,9 @@ public final class FieldProtocolsActivity extends Activity {
                             " · "+signs.getString(5)+"\n"+
                             gpsSummary(signs,7)+" · "+photoCount("track_sign",signId)+
                             " photos",12));
+                        if(photoCount("track_sign",signId)>0)
+                            action("View sign photographs",card,false)
+                                .setOnClickListener(v->showPhotos("track_sign",signId));
                         if(active())action("Attach photo to this sign",card,false)
                             .setOnClickListener(v->choosePhoto("track_sign",signId));
                     }

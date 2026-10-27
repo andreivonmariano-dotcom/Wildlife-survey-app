@@ -60,7 +60,7 @@ public class MainActivity extends Activity implements LocationListener {
     };
     private final int BACK=Color.rgb(247,249,246),INK=Color.rgb(22,51,38),GREEN=Color.rgb(37,104,74),MUTED=Color.rgb(95,116,101);
     private FieldDb db; private LocationManager locations;
-    private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
+    private TextView bearingStatusView,gpsView,eventView,countView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private Button pauseButton,progressButton;
     private CheckBox vibrationChoice,regionalOnlyChoice;
     private Spinner confidenceSpinner;
@@ -73,7 +73,7 @@ public class MainActivity extends Activity implements LocationListener {
     private boolean surveyPaused=false;
     private long pauseStartedAt=0,accumulatedPausedMs=0;
     private long unitPausedMs=0;
-    private Spinner methodSpinner,detectionSpinner,distanceSourceSpinner,firstPositionSpinner,movementSpinner,substrateSpinner,callScoreSpinner,lifeStageSpinner,evidenceSpinner,noiseSpinner;
+    private Spinner detectionSpinner,distanceSourceSpinner,firstPositionSpinner,movementSpinner,substrateSpinner,callScoreSpinner,lifeStageSpinner,evidenceSpinner,noiseSpinner;
     private AutoCompleteTextView taxonEntry;
     private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry;
     private Button beginButton,markButton,saveButton,reviewButton,pointNextButton;
@@ -180,7 +180,13 @@ public class MainActivity extends Activity implements LocationListener {
     private LinearLayout vertical(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;}
     private LinearLayout horizontal(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.HORIZONTAL);c.setGravity(Gravity.CENTER_VERTICAL);return c;}
     private LinearLayout.LayoutParams weighted(float wt){return new LinearLayout.LayoutParams(0,-2,wt);}
-    private TextView section(String title){TextView t=label(title,13,true);t.setTextColor(MUTED);return t;}
+    private TextView section(String title){
+        TextView t=label(title,12,true);
+        t.setTextColor(UiKit.FOREST);
+        t.setLetterSpacing(0.065f);
+        t.setPadding(dp(2),dp(15),dp(2),dp(7));
+        return t;
+    }
     private void draw(){
         LinearLayout root=vertical();root.setBackgroundColor(BACK);root.setPadding(dp(12),dp(5),dp(12),dp(7));
         LinearLayout top=horizontal();
@@ -202,7 +208,6 @@ public class MainActivity extends Activity implements LocationListener {
         groupBar=horizontal();content.addView(groupBar);showGroups();
         LinearLayout methodRow=horizontal();
         // The method was already chosen in survey setup. Do not offer a second, disabled selector.
-        methodSpinner=new Spinner(this);
         TextView methodName=label("Method · "+method.replace('_',' '),14,true);
         methodName.setTextColor(UiKit.FOREST);
         methodRow.addView(methodName,weighted(1f));
@@ -210,8 +215,11 @@ public class MainActivity extends Activity implements LocationListener {
         lineRow.addView(lineEntry,new LinearLayout.LayoutParams(-1,-2));
         methodRow.addView(lineRow,weighted(0.9f));
         content.addView(methodRow);
-        beginButton=UiKit.button(this,active?"Finish survey":"Start survey","warning");
-        content.addView(beginButton,new LinearLayout.LayoutParams(-1,dp(47)));
+        beginButton=UiKit.button(this,active?"End survey":"Start survey","warning");
+        // Keep survey ending accessible even at the bottom of a long observation form.
+        LinearLayout.LayoutParams endLp=new LinearLayout.LayoutParams(-1,dp(51));
+        endLp.topMargin=dp(7);endLp.bottomMargin=dp(9);
+        root.addView(beginButton,endLp);
         beginButton.setOnClickListener(v->toggleEvent());
         LinearLayout utilityRow=horizontal();
         pauseButton=UiKit.button(this,"Pause effort","secondary");
@@ -237,7 +245,7 @@ public class MainActivity extends Activity implements LocationListener {
         trackingView.setTextColor(UiKit.BLUE);
         content.addView(trackingView);
         trackingView.setVisibility(method.equals("line_transect")||method.equals("ves_transect")?View.VISIBLE:View.GONE);
-        content.addView(section("DETECTION"));
+        content.addView(section("Detection"));
         LinearLayout detectRow=horizontal();
         Button markTime=UiKit.button(this,"Mark now","secondary");
         detectRow.addView(markTime,weighted(0.9f));
@@ -259,7 +267,7 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView=label("GPS: awaiting fix",11,false);
         gpsView.setTextColor(MUTED);
         content.addView(gpsView);
-        content.addView(section("SPECIES / IDENTIFICATION"));
+        content.addView(section("Species identification"));
         checklistNote=label("Geographic suggestions: "+GeoRegions.label(geographicRegion),13,true);
         checklistNote.setTextColor(UiKit.FOREST);content.addView(checklistNote);
         regionalOnlyChoice=new CheckBox(this);
@@ -324,7 +332,7 @@ public class MainActivity extends Activity implements LocationListener {
         detectionSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,new String[]{"Visual","Auditory","Both","Sign","Camera"}));
         row.addView(detectionSpinner,weighted(0.8f));content.addView(row);
         birdMeasurements=vertical();
-        birdMeasurements.addView(section("BIRD DISTANCE QUALITY"));
+        birdMeasurements.addView(section("Bird distance quality"));
         distanceSourceSpinner=new Spinner(this);
         distanceSourceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Unknown","Estimated","Measured"}));
@@ -354,7 +362,7 @@ public class MainActivity extends Activity implements LocationListener {
             });
         }
         herpPanel=vertical();
-        herpPanel.addView(section("HERPETOFAUNA / FIELD CONDITIONS (OPTIONAL)"));
+        herpPanel.addView(section("Herpetofauna field conditions"));
         microhabitatEntry=edit("Microhabitat (stream edge, litter, canopy...)",
             InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         herpPanel.addView(microhabitatEntry);
@@ -395,7 +403,7 @@ public class MainActivity extends Activity implements LocationListener {
             });
         }
         mammalPanel=vertical();
-        mammalPanel.addView(section("MAMMAL SURVEY EVIDENCE / EQUIPMENT"));
+        mammalPanel.addView(section("Mammal evidence and equipment"));
         evidenceSpinner=new Spinner(this);
         evidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Evidence not recorded","Direct sighting","Track","Scat","Burrow / den","Camera image","Acoustic detection","Live capture","Other sign"}));
@@ -415,7 +423,7 @@ public class MainActivity extends Activity implements LocationListener {
                 mammalToggle.setText(open?"▴ Hide mammal evidence":"▾ Mammal evidence details");
             });
         }
-        content.addView(section("PHOTO EVIDENCE"));
+        content.addView(section("Photo evidence"));
         LinearLayout photoRow=horizontal();
         Button photoButton=UiKit.button(this,"Attach photo from phone","secondary");
         photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(49),2));
@@ -441,8 +449,6 @@ public class MainActivity extends Activity implements LocationListener {
         advancedPanel.setVisibility(View.GONE);content.addView(advancedPanel);
         detailToggle.setOnClickListener(v->{detailShown=!detailShown;advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);queueDraft();
             detailToggle.setText(detailShown?"− Hide ecology details":"＋ Ecology, habitat and notes (optional)");});
-        hintView=label("Tip: Mark detection records the time and optional direction. Distance is entered manually.",12,false);
-        hintView.setTextColor(MUTED);content.addView(hintView);
         fieldScroll.addView(content);
         root.addView(fieldScroll,new LinearLayout.LayoutParams(-1,0,1));
         LinearLayout footer=horizontal();
@@ -483,13 +489,6 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
     private void updateMethods(){
-        String[] names=SurveyMethods.displayNames(profile);
-        methodSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,names));
-        int idx=0;
-        SurveyMethods.Method[] all=SurveyMethods.forProfile(profile);
-        for(int i=0;i<all.length;i++)if(all[i].code.equals(method))idx=i;
-        methodSpinner.setSelection(idx);
-        methodSpinner.setEnabled(false);
         lineRow.setVisibility(SurveyMethods.isBirdLine(profile,method)?View.VISIBLE:View.GONE);
     }
     private void toggleFavorite(){
@@ -706,7 +705,7 @@ public class MainActivity extends Activity implements LocationListener {
             stationId="";
         else if(requiresGenericUnit())
             stationId="";
-        active=true;beginButton.setText("Finish survey");
+        active=true;beginButton.setText("End survey");
         saveButton.setEnabled(!hasStationUnits());
         if(hasStationUnits()&&pointNextButton!=null){
             if(method.equals("point_count")&&plannedStationCount>0)
@@ -716,7 +715,7 @@ public class MainActivity extends Activity implements LocationListener {
         }
         surveyPaused=false;pauseStartedAt=0;accumulatedPausedMs=0;unitPausedMs=0;
         if(method.equals("line_transect")||method.equals("ves_transect"))startTracking();
-        methodSpinner.setEnabled(false);lineEntry.setEnabled(false);showGroups();status();
+        lineEntry.setEnabled(false);showGroups();status();
         toast(method.equals("point_count")&&plannedStationCount>0?
             plannedStationCount+" stations planned. Start the first count on arrival.":"Survey started");
     }

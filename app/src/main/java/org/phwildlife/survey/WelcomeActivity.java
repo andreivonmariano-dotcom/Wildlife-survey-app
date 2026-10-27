@@ -78,6 +78,7 @@ public class WelcomeActivity extends Activity {
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);home();}
     private boolean isSurveyActive(){return activeSurvey()!=null;}
     private boolean homeVisible=true;
+    private boolean moreToolsVisible=false;
     private void buildShell(){
         root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(18),dp(18),dp(18),dp(18));
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
@@ -90,46 +91,106 @@ public class WelcomeActivity extends Activity {
         TextView s=text(subtitle,14,false);s.setTextColor(MUTED);main.addView(s);
         Space space=new Space(this);main.addView(space,new LinearLayout.LayoutParams(1,dp(20)));
     }
+    /** Calm offline-first home screen. Keep recording and research tools one tap away. */
     private void home(){
         homeVisible=true;currentScreen="home";main.removeAllViews();
-                LinearLayout banner=vertical();banner.setPadding(dp(16),dp(15),dp(16),dp(15));
-        android.graphics.drawable.GradientDrawable hero=new android.graphics.drawable.GradientDrawable();
-        hero.setColor(UiKit.INK);hero.setCornerRadius(dp(17));banner.setBackground(hero);
-        TextView tag=text("LIKAS",32,true);tag.setTextColor(Color.rgb(255,240,193));
-        TextView welcome=text("WILDLIFE SURVEY",14,true);welcome.setTextColor(Color.rgb(194,225,183));
-        TextView desc=text("Philippine biodiversity field records",13,false);desc.setTextColor(Color.rgb(217,234,222));
-        banner.addView(tag);banner.addView(welcome);banner.addView(desc);
-        LinearLayout.LayoutParams heroLp=new LinearLayout.LayoutParams(-1,-2);heroLp.bottomMargin=dp(15);main.addView(banner,heroLp);
+
+        LinearLayout banner=vertical();
+        banner.setPadding(dp(21),dp(19),dp(21),dp(20));
+        android.graphics.drawable.GradientDrawable hero=new android.graphics.drawable.GradientDrawable(
+            android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+            new int[]{Color.rgb(8,39,30),Color.rgb(30,92,64)});
+        hero.setCornerRadius(dp(22));
+        banner.setBackground(hero);
+        TextView eyebrow=text("PHILIPPINE BIODIVERSITY",11,true);
+        eyebrow.setLetterSpacing(0.11f);eyebrow.setTextColor(Color.rgb(185,218,187));
+        TextView brand=text("LIKAS",36,true);
+        brand.setLetterSpacing(0.045f);brand.setTextColor(Color.rgb(255,240,193));
+        brand.setPadding(dp(3),0,dp(3),dp(2));
+        TextView tagline=text("Wildlife survey & field records",15,false);
+        tagline.setTextColor(Color.rgb(231,241,227));
+        View rule=new View(this);rule.setBackgroundColor(Color.rgb(151,187,135));
+        LinearLayout.LayoutParams ruleLp=new LinearLayout.LayoutParams(dp(44),dp(3));
+        ruleLp.topMargin=dp(10);
+        banner.addView(eyebrow);banner.addView(brand);banner.addView(tagline);banner.addView(rule,ruleLp);
+        LinearLayout.LayoutParams heroLp=new LinearLayout.LayoutParams(-1,-2);
+        heroLp.bottomMargin=dp(18);main.addView(banner,heroLp);
+
         if(activeSurvey()!=null){
-            main.addView(text("An unfinished survey is available. Resume it to continue recording.",14,true));
-            Button resume=UiKit.button(this,"Resume active survey","primary");
+            sectionHeading("Survey in progress","Your field records remain available offline");
+            Button resume=UiKit.button(this,"Continue active survey","primary");
             resume.setOnClickListener(v->startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
             main.addView(resume);
-            main.addView(text("Finish the active survey to start a different survey.",12,false));
         } else {
-            main.addView(text("New survey",18,true));
-            card("Bird survey","Point counts, line transects and observations.",()->setup("Birds",false));
-            card("Herpetofauna survey","Reptiles and amphibians under a suitable shared method.",()->setup("Herpetofauna",false));
-            card("Mammal survey","Direct observations, tracks and signs, specialist logs.",()->setup("Mammals",false));
-            card("Custom survey","Choose category, method and duration.",()->customPicker());
+            sectionHeading("Start a survey","Select the wildlife group");
+            quickRow("Birds","Point counts & transects",()->setup("Birds",false),
+                     "Herpetofauna","Amphibians & reptiles",()->setup("Herpetofauna",false));
+            quickRow("Mammals","Sightings, tracks & signs",()->setup("Mammals",false),
+                     "Custom","Choose your own method",()->customPicker());
         }
-        main.addView(text("Field data & management",18,true));
-        card("Fieldwork dashboard","Survey counts, monitoring activity and detected-taxa summaries.",
-            ()->startActivity(new Intent(this,DashboardActivity.class)));
-        card("Scientific data review","Check route links, station GPS, sampling effort, observation data and photo archive.",
-            ()->startActivity(new Intent(this,AuditActivity.class)));
-        card("Survey history","Review visits, edit records and inspect correction history.",
-            ()->startActivity(new Intent(this,HistoryActivity.class)));
-        card("Projects","Create projects and review survey-generated stations.",
-            ()->startActivity(new Intent(this,SitesActivity.class)));
-        card("Offline species checklist","Review installed taxa and import an attributed, versioned taxonomic CSV.",
-            ()->startActivity(new Intent(this,CatalogActivity.class)));
-        card("Legacy backup importer","Import an older ZIP only when migrating legacy records.",
-            ()->startActivity(new Intent(this,ImportActivity.class)));
-        main.addView(text("Recent surveys",18,true));
+
+        sectionHeading("Your workspace","Review surveys, projects and species");
+        quickRow("Dashboard","Fieldwork overview",()->startActivity(new Intent(this,DashboardActivity.class)),
+                 "History","Surveys & observations",()->startActivity(new Intent(this,HistoryActivity.class)));
+        quickRow("Projects","Sites & repeat visits",()->startActivity(new Intent(this,SitesActivity.class)),
+                 "Species checklist","Offline taxonomy",()->startActivity(new Intent(this,CatalogActivity.class)));
+
+        TextView tools=text(moreToolsVisible?"− Hide additional tools":"+ Data quality & import tools",14,true);
+        tools.setTextColor(UiKit.FOREST);
+        tools.setPadding(dp(9),dp(12),dp(9),dp(12));
+        tools.setMinHeight(dp(48));tools.setGravity(Gravity.CENTER_VERTICAL);
+        tools.setContentDescription(moreToolsVisible?"Hide additional tools":"Show additional tools");
+        tools.setOnClickListener(v->{moreToolsVisible=!moreToolsVisible;home();});
+        main.addView(tools);
+        if(moreToolsVisible){
+            card("Scientific data review","Check records, station links, effort and location quality.",
+                 ()->startActivity(new Intent(this,AuditActivity.class)));
+            card("Import legacy backup","Restore a compatible archive from an older app version.",
+                 ()->startActivity(new Intent(this,ImportActivity.class)));
+        }
+
+        sectionHeading("Recent surveys","The three latest field events");
         recentSurveys();
-        TextView note=text("The camera stays off until you open it during a survey.",12,false);
-        note.setTextColor(MUTED);main.addView(note);
+        TextView historyLink=text("View all survey history  ›",14,true);
+        historyLink.setTextColor(UiKit.FOREST);historyLink.setMinHeight(dp(48));
+        historyLink.setGravity(Gravity.CENTER_VERTICAL);
+        historyLink.setOnClickListener(v->startActivity(new Intent(this,HistoryActivity.class)));
+        main.addView(historyLink);
+    }
+    private void sectionHeading(String title,String subtitle){
+        TextView head=text(title,19,true);
+        head.setPadding(dp(3),dp(11),dp(3),0);
+        main.addView(head);
+        TextView caption=text(subtitle,12,false);
+        caption.setTextColor(MUTED);caption.setPadding(dp(3),0,dp(3),dp(9));
+        main.addView(caption);
+    }
+    private void quickRow(String first,String firstDetail,Runnable firstAction,
+                          String second,String secondDetail,Runnable secondAction){
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams left=new LinearLayout.LayoutParams(0,-2,1f);
+        LinearLayout.LayoutParams right=new LinearLayout.LayoutParams(0,-2,1f);
+        right.leftMargin=dp(10);
+        row.addView(quickCard(first,firstDetail,firstAction),left);
+        row.addView(quickCard(second,secondDetail,secondAction),right);
+        LinearLayout.LayoutParams rowLp=new LinearLayout.LayoutParams(-1,-2);
+        rowLp.bottomMargin=dp(10);main.addView(row,rowLp);
+    }
+    private LinearLayout quickCard(String title,String subtitle,Runnable action){
+        LinearLayout tile=vertical();
+        tile.setBackground(UiKit.surface(this));
+        tile.setPadding(dp(13),dp(14),dp(11),dp(12));
+        tile.setMinimumHeight(dp(101));
+        TextView name=text(title,16,true);
+        name.setPadding(0,0,0,dp(4));tile.addView(name);
+        TextView detail=text(subtitle,12,false);
+        detail.setTextColor(MUTED);detail.setPadding(0,0,0,0);
+        tile.addView(detail);
+        tile.setContentDescription(title+". "+subtitle);
+        tile.setFocusable(true);
+        tile.setOnClickListener(v->action.run());
+        return tile;
     }
     private void recentSurveys(){
         try{
@@ -141,7 +202,7 @@ public class WelcomeActivity extends Activity {
                     "COALESCE(p.name,s.project_id,'General field project'),s.started,s.ended,"+
                     "COALESCE(s.outcome,'active'),COALESCE(s.planned_station_count,0),"+
                     "COALESCE(s.planned_route_m,0) FROM surveys s "+
-                    "LEFT JOIN projects p ON p.id=s.project_id ORDER BY s.started DESC LIMIT 5",null)){
+                    "LEFT JOIN projects p ON p.id=s.project_id ORDER BY s.started DESC LIMIT 3",null)){
                 if(c.getCount()==0)main.addView(text("No surveys yet.",13,false));
                 while(c.moveToNext()){
                     String id=c.getString(0),taxon=c.getString(1),project=c.getString(2);
@@ -159,14 +220,21 @@ public class WelcomeActivity extends Activity {
     }
     private void card(String name,String desc,Runnable action){
         LinearLayout wrapper=vertical();
-        wrapper.setPadding(dp(12),dp(11),dp(12),dp(13));
-        android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
-        bg.setColor(Color.WHITE);bg.setCornerRadius(dp(14));bg.setStroke(dp(1),Color.rgb(218,232,219));
+        wrapper.setPadding(dp(14),dp(11),dp(12),dp(11));
+        wrapper.setMinimumHeight(dp(68));
         wrapper.setBackground(UiKit.surface(this));
-        TextView h=text(name+"  ›",19,true);wrapper.addView(h);
-        TextView sub=text(desc,13,false);sub.setTextColor(MUTED);wrapper.addView(sub);
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(11);
-        main.addView(wrapper,lp);wrapper.setOnClickListener(v->action.run());
+        TextView heading=text(name+"  ›",16,true);
+        heading.setPadding(dp(1),dp(2),dp(1),dp(2));
+        wrapper.addView(heading);
+        TextView sub=text(desc,12,false);
+        sub.setTextColor(MUTED);sub.setPadding(dp(1),0,dp(1),dp(2));
+        wrapper.addView(sub);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.bottomMargin=dp(9);
+        main.addView(wrapper,lp);
+        wrapper.setContentDescription(name+". "+desc);
+        wrapper.setFocusable(true);
+        wrapper.setOnClickListener(v->action.run());
     }
     private void customPicker(){
         homeVisible=false;currentScreen="custom";main.removeAllViews();

@@ -14,19 +14,52 @@ import java.util.*;
 /** Import a versioned, explicitly attributed checklist supplied by the researcher. */
 public final class CatalogActivity extends Activity {
     private static final int PICK=891,PICK_MDD=892,MAX=25*1024*1024;
-    private FieldDb db;private TextView info;
+    private FieldDb db;private TextView info,guide;
+    private int dp(int n){return (int)(n*getResources().getDisplayMetrics().density+0.5f);}
     @Override public void onCreate(Bundle b){
         super.onCreate(b);db=new FieldDb(this);
         LinearLayout layout=new LinearLayout(this);layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(22,22,22,22);layout.setBackgroundColor(UiKit.BG);
-        layout.addView(UiKit.title(this,"Offline taxonomy"));
-        info=new TextView(this);info.setTextSize(15);info.setTextColor(UiKit.INK);layout.addView(info);
-        Button choose=UiKit.button(this,"Import attributed species CSV","primary");
+        layout.setPadding(dp(18),dp(12),dp(18),dp(28));layout.setBackgroundColor(UiKit.BG);
+        ScrollView scroll=new ScrollView(this);
+        scroll.setFillViewport(true);scroll.addView(layout);
+        Button back=UiKit.button(this,"‹ Home","secondary");
+        layout.addView(back);back.setOnClickListener(v->finish());
+        layout.addView(UiKit.title(this,"Offline species checklist"));
+
+        info=new TextView(this);info.setTextSize(14);info.setTextColor(UiKit.INK);
+        info.setPadding(dp(4),dp(7),dp(4),dp(16));layout.addView(info);
+
+        Button choose=UiKit.button(this,"Import species checklist CSV","primary");
         layout.addView(choose);choose.setOnClickListener(v->pick());
-        Button mammals=UiKit.button(this,"Import Philippine mammals from MDD v2.5 CSV","secondary");
-        layout.addView(mammals);mammals.setOnClickListener(v->pickMdd());
-        Button back=UiKit.button(this,"‹ Home","secondary");layout.addView(back);back.setOnClickListener(v->finish());
-        setContentView(layout);refresh();
+        Button mammals=UiKit.button(this,"Import Philippine mammals (MDD v2.5)","secondary");
+        LinearLayout.LayoutParams mammalLp=new LinearLayout.LayoutParams(-1,-2);
+        mammalLp.topMargin=dp(10);layout.addView(mammals,mammalLp);
+        mammals.setOnClickListener(v->pickMdd());
+
+        Button help=UiKit.button(this,"Checklist sources & CSV format  ▾","quiet");
+        LinearLayout.LayoutParams helpLp=new LinearLayout.LayoutParams(-1,-2);
+        helpLp.topMargin=dp(16);layout.addView(help,helpLp);
+        guide=new TextView(this);
+        guide.setTextSize(13);guide.setTextColor(UiKit.MUTED);
+        guide.setPadding(dp(7),dp(14),dp(7),dp(20));
+        guide.setText("Required CSV columns:\n"+
+          "taxon_key,taxon_group,common_name,scientific_name,family,source,source_version,region_codes,review_status\n\n"+
+          "Groups: Birds, Reptiles, Amphibians or Mammals. Separate regional codes with |, for example MINDANAO|P:1102400000. "+
+          "Leave region_codes empty if distribution evidence is unavailable. review_status is reviewed or unreviewed.\n\n"+
+          "Regional recommendations represent supporting evidence, not confirmed absence elsewhere. "+
+          "Source and version are required for every imported checklist.\n\n"+
+          "Birds: AviList v2026 provides a taxonomy reference, not Philippine island occurrences.\n"+
+          "Mammals: use MDD_v2.5_6904species.csv. Country-level Philippines membership does not confirm occurrence in a province.\n"+
+          "Amphibians: Emerson Y. Sy checklist 2025-1. Reptiles: Emerson Y. Sy checklist 2026-1. "+
+          "Curate and attribute each checklist before CSV import.");
+        guide.setVisibility(android.view.View.GONE);
+        layout.addView(guide);
+        help.setOnClickListener(v->{
+            boolean opening=guide.getVisibility()!=android.view.View.VISIBLE;
+            guide.setVisibility(opening?android.view.View.VISIBLE:android.view.View.GONE);
+            help.setText(opening?"Hide checklist guidance  ▴":"Checklist sources & CSV format  ▾");
+        });
+        setContentView(scroll);refresh();
     }
     @Override protected void onDestroy(){super.onDestroy();db.close();}
     private void refresh(){
@@ -35,16 +68,8 @@ public final class CatalogActivity extends Activity {
            "SELECT COUNT(*),SUM(CASE WHEN source<>'v0.12 offline starter' THEN 1 ELSE 0 END) FROM taxon_catalog",null)){
            if(c.moveToFirst()){total=c.getInt(0);added=c.isNull(1)?0:c.getInt(1);}
         }
-        info.setText("Catalog: "+total+" names ("+added+" imported). The built-in starter is incomplete and unreviewed.\n\n"+
-          "For a versioned checklist, prepare UTF-8 CSV with headers:\n"+
-          "taxon_key,taxon_group,common_name,scientific_name,family,source,source_version,region_codes,review_status\n\n"+
-          "Taxon group: Birds, Reptiles, Amphibians or Mammals. Separate regional codes with |, for example MINDANAO|P:1102400000. A P: code is a PSGC province code. Leave region_codes blank when distribution is not documented. review_status: reviewed or unreviewed.\n\n"+
-          "Importer never treats an unlisted region as a confirmed absence. Source/version are required. Verified distribution evidence must be curated separately from accepted taxonomy.\n\n"+
-          "Recommended avian taxonomy: AviList v2026 (CC BY 4.0).\n\n"+
-          "Mammals: select the official MDD_v2.5_6904species.csv file. The app selects species whose countryDistribution includes Philippines, excluding domestic and recently extinct taxa. "+
-          "This is a national candidate species list, not proof of occurrence on any island or province. Philippine Mammal Project locality review is still required.\n"+
-          "Amphibians: Emerson Y. Sy 2025-1. Reptiles: Emerson Y. Sy 2026-1. "+
-          "Use the attributed checklist CSV importer for researcher-reviewed entries from those sources.\n");
+        info.setText(total+" species names available offline · "+added+" imported.\n"+
+          "The built-in starter is incomplete and unreviewed. Choose an attributed source to add taxa.");
     }
     private void pickMdd(){
         Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);

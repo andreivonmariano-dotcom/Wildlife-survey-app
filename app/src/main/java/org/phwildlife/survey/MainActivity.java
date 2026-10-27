@@ -508,6 +508,7 @@ public class MainActivity extends Activity implements LocationListener {
         Button photoButton=UiKit.button(this,"Add photo","secondary");
         photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(49),2));
         photoStatus=label("",12,false);
+        photoStatus.setVisibility(View.GONE);
         photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));
         content.addView(photoRow);
         photoButton.setOnClickListener(v->pickPhoto());
@@ -640,7 +641,10 @@ public class MainActivity extends Activity implements LocationListener {
         startActivityForResult(intent,PHOTO_PICK);
     }
     private void showPendingPhoto(){
-        if(photoStatus!=null)photoStatus.setText(pendingPhoto==null?"":"Photo saved locally");
+        if(photoStatus!=null){
+            photoStatus.setText(pendingPhoto==null?"":"Photo saved locally");
+            photoStatus.setVisibility(pendingPhoto==null?View.GONE:View.VISIBLE);
+        }
         if(photoPreview!=null){
             photoPreview.setVisibility(pendingPhoto==null?View.GONE:View.VISIBLE);
             if(pendingPhoto!=null)PhotoEvidence.preview(this,pendingPhoto,photoPreview);

@@ -252,7 +252,7 @@ public final class SpeciesPickerActivity extends Activity {
         siteSummary=text("",12,false);
         siteSummary.setTextColor(UiKit.FOREST);
         siteSummary.setPadding(0,0,0,dp(4));
-        root.addView(siteSummary);
+        // Site evidence remains available in the checklist context information.
         updateSiteSummary();
         status=text("Loading offline species…",12,false);
         status.setTextColor(UiKit.MUTED);status.setPadding(0,dp(9),0,dp(7));
@@ -625,9 +625,8 @@ public final class SpeciesPickerActivity extends Activity {
             addSpecies(item);
         }
         offset=stop;
-        status.setText(offset+" / "+loaded.size()+" species · "+
-            SpeciesSortPolicy.SORT_LABELS[sortMode]+
-            (truncated?" · narrow your search to see all matches":""));
+        status.setText(offset+" of "+loaded.size()+" species"+
+            (truncated?" · refine search for more":""));
         if(offset<loaded.size()){
             Button next=UiKit.button(this,"Load more species","secondary");
             cards.addView(next);

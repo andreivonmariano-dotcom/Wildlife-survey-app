@@ -105,7 +105,8 @@ public final class CatalogActivity extends Activity {
                                             "MDD:"+entry.get("id"),"Mammals",entry.get("mainCommonName"),
                                             entry.get("sciName").replace('_',' '),entry.get("family"),
                                             "ASM Mammal Diversity Database, DOI 10.5281/zenodo.21654811",
-                                            "v2.5_2026-07-28","",isTrue(entry.get("flagged"))?"unreviewed":"reviewed"
+                                            "v2.5_2026-07-28","",(isTrue(entry.get("flagged"))||
+                                             countryUncertainPhilippines(entry.get("countryDistribution")))?"unreviewed":"reviewed"
                                         };
                                         for(int j=0;j<values.length;j++)statement.bindString(j+1,
                                             values[j]==null?"":values[j]);
@@ -130,7 +131,14 @@ public final class CatalogActivity extends Activity {
     private static boolean countryHasPhilippines(String names){
         if(names==null)return false;
         for(String item:names.split("[|;,]"))
-            if(item.trim().equalsIgnoreCase("Philippines"))return true;
+            if(item.trim().replace("?","").trim().equalsIgnoreCase("Philippines"))return true;
+        return false;
+    }
+    private static boolean countryUncertainPhilippines(String names){
+        if(names==null)return false;
+        for(String item:names.split("[|;,]"))
+            if(item.contains("?")&&item.trim().replace("?","").trim().equalsIgnoreCase("Philippines"))
+                return true;
         return false;
     }
     private static boolean isTrue(String value){

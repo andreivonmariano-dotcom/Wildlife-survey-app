@@ -22,7 +22,7 @@ public final class CatalogActivity extends Activity {
         layout.setPadding(22,22,22,22);layout.setBackgroundColor(UiKit.BG);
         layout.addView(UiKit.title(this,"Offline taxonomy"));
         info=new TextView(this);info.setTextSize(15);info.setTextColor(UiKit.INK);layout.addView(info);
-        Button choose=UiKit.button(this,"Import attributed species CSV","primary");
+        Button choose=UiKit.button(this,"Import species checklist CSV","primary");
         layout.addView(choose);choose.setOnClickListener(v->pick());
         Button synonyms=UiKit.button(this,"Import name synonyms CSV","secondary");
         layout.addView(synonyms);synonyms.setOnClickListener(v->pickSynonyms());
@@ -358,17 +358,43 @@ public final class CatalogActivity extends Activity {
             try(FieldDb helper=new FieldDb(getApplicationContext())){
                 SQLiteDatabase writable=helper.getWritableDatabase();
                 writable.beginTransaction();
+                String[] keys={"taxon_key","taxon_group","common_name","scientific_name",
+                    "family","source","source_version","region_codes","review_status",
+                    "order_name","subfamily","subgenus","authority","authority_year",
+                    "distribution_text","distribution_status","ph_red_list","iucn_red_list",
+                    "cites","synonym_text","taxonomic_note"};
+                StringBuilder columns=new StringBuilder(),placeholders=new StringBuilder();
+                for(String key:keys){
+                    if(columns.length()>0){columns.append(",");placeholders.append(",");}
+                    columns.append(key);placeholders.append("?");
+                }
                 try(android.database.sqlite.SQLiteStatement statement=writable.compileStatement(
-                    "INSERT OR REPLACE INTO taxon_catalog(taxon_key,taxon_group,common_name,"+
-                    "scientific_name,family,source,source_version,region_codes,review_status,created_utc) "+
-                    "VALUES(?,?,?,?,?,?,?,?,?,datetime('now'))")){
-                    String[] keys={"taxon_key","taxon_group","common_name","scientific_name",
-                        "family","source","source_version","region_codes","review_status"};
+                    "INSERT OR REPLACE INTO taxon_catalog("+columns+",created_utc) VALUES("+
+                        placeholders+",datetime('now'))");
+                    android.database.sqlite.SQLiteStatement alias=writable.compileStatement(
+                        "INSERT OR REPLACE INTO taxon_synonyms("+
+                        "taxon_key,alias_name,source,source_version) VALUES(?,?,?,?)")){
                     for(Map<String,String> row:rows){
                         statement.clearBindings();
                         for(int i=0;i<keys.length;i++)
-                            statement.bindString(i+1,row.get(keys[i]));
+                            statement.bindString(i+1,row.getOrDefault(keys[i],""));
                         statement.executeInsert();
+                        // Sy's original amphibian spreadsheet includes multiple
+                        // prior scientific names in some synonym cells.
+                        String synonyms=row.getOrDefault("synonym_text","");
+                        if(!synonyms.isEmpty()){
+                            for(String item:synonyms.split(";")){
+                                String older=item.trim();
+                                if(older.isEmpty()||
+                                    older.equalsIgnoreCase(row.get("scientific_name")))continue;
+                                alias.clearBindings();
+                                alias.bindString(1,row.get("taxon_key"));
+                                alias.bindString(2,older);
+                                alias.bindString(3,row.get("source"));
+                                alias.bindString(4,row.get("source_version"));
+                                alias.executeInsert();
+                            }
+                        }
                         changed++;
                     }
                     writable.setTransactionSuccessful();

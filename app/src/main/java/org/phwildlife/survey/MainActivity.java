@@ -370,7 +370,7 @@ public class MainActivity extends Activity implements LocationListener {
             new String[]{"Unknown","Stationary","Moving","Flyover","Entering after start"}));
         birdMeasurements.addView(label("Movement at first detection",12,false));
         birdMeasurements.addView(movementSpinner);
-        if(profile.equals("Birds"))content.addView(birdMeasurements);
+        if(FieldUiPolicy.birdDetails(profile))content.addView(birdMeasurements);
         TextView birdToggle=label("▾ Bird distance details",13,true);
         birdToggle.setTextColor(GREEN);
         if(profile.equals("Birds")){
@@ -413,7 +413,7 @@ public class MainActivity extends Activity implements LocationListener {
             new String[]{"Noise not assessed","0 — none","1 — slight","2 — moderate","3 — serious","4 — severe"}));
         noiseLabel=label("Background noise during amphibian listening",12,false);
         herpPanel.addView(noiseLabel);herpPanel.addView(noiseSpinner);
-        if(profile.equals("Herpetofauna"))content.addView(herpPanel);
+        if(FieldUiPolicy.herpetofaunaDetails(profile))content.addView(herpPanel);
         TextView herpToggle=label("▾ Amphibian / reptile environment",13,true);
         herpToggle.setTextColor(GREEN);
         if(profile.equals("Herpetofauna")){
@@ -433,7 +433,7 @@ public class MainActivity extends Activity implements LocationListener {
         mammalPanel.addView(deviceEntry);
         perchEntry=edit("Height above ground (m, optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         mammalPanel.addView(perchEntry);
-        if(profile.equals("Mammals"))content.addView(mammalPanel);
+        if(FieldUiPolicy.mammalDetails(profile))content.addView(mammalPanel);
         TextView mammalToggle=label("▾ Mammal evidence details",13,true);
         mammalToggle.setTextColor(GREEN);
         if(profile.equals("Mammals")){
@@ -604,10 +604,10 @@ public class MainActivity extends Activity implements LocationListener {
             herpPanel.setVisibility(View.GONE);
         if(mammalPanel!=null&&!profile.equals("Mammals"))
             mammalPanel.setVisibility(View.GONE);
-        boolean calls=group.equals("Amphibians")&&profile.equals("Herpetofauna");
+        boolean calls=FieldUiPolicy.callIndex(profile,group);
         if(callScoreSpinner!=null)callScoreSpinner.setVisibility(calls?View.VISIBLE:View.GONE);
         if(callScoreLabel!=null)callScoreLabel.setVisibility(calls?View.VISIBLE:View.GONE);
-        boolean listening=calls&&method.equals("amphibian_calls");
+        boolean listening=FieldUiPolicy.listeningNoise(profile,group,method);
         if(noiseSpinner!=null)noiseSpinner.setVisibility(listening?View.VISIBLE:View.GONE);
         if(noiseLabel!=null)noiseLabel.setVisibility(listening?View.VISIBLE:View.GONE);
     }

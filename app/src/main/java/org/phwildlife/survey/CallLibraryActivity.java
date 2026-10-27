@@ -40,6 +40,7 @@ public final class CallLibraryActivity extends Activity {
     private long selectedMs=0,clipDuration=0;
     private int spectrogramZoom=1,analysisGeneration=0;
     private float spectrogramContrast=1f;
+    private double lastTappedHz=Double.NaN;
     private TextView frequencyInfo;
     private CallAudioRecorder recorder;
     private CallSpectrogramView spectrum;
@@ -276,8 +277,11 @@ public final class CallLibraryActivity extends Activity {
         frequencyInfo=label("Tap the spectrogram: time and frequency appear here",12,true);
         frequencyInfo.setTextColor(UiKit.POND);
         body.addView(frequencyInfo);
-        spectrum.setFrequencyListener((hz,ms)->frequencyInfo.setText(String.format(
-            Locale.US,"Cursor %s · %.0f Hz (approximate)",format(ms),hz)));
+        spectrum.setFrequencyListener((hz,ms)->{
+            lastTappedHz=hz;
+            frequencyInfo.setText(String.format(
+                Locale.US,"Cursor %s · %.0f Hz (approximate)",format(ms),hz));
+        });
         LinearLayout tools=new LinearLayout(this);
         Button less=UiKit.button(this,"− Zoom","secondary");
         Button more=UiKit.button(this,"+ Zoom","secondary");
@@ -378,7 +382,7 @@ public final class CallLibraryActivity extends Activity {
         body.addView(labelHeader);
         try(Cursor rows=database.getReadableDatabase().rawQuery(
             "SELECT start_ms,end_ms,call_label,COALESCE(notes,''),id,"+
-            "COALESCE(taxon_key,''),observation_id "+
+            "COALESCE(taxon_key,''),observation_id,selected_frequency_hz "+
             "FROM acoustic_labels WHERE clip_id=? ORDER BY start_ms,id",new String[]{clip})){
             if(rows.getCount()==0)body.addView(label("No call labels yet.",13,false));
             while(rows.moveToNext()){
@@ -387,8 +391,10 @@ public final class CallLibraryActivity extends Activity {
                 long annotationId=rows.getLong(4);
                 String linkedTaxon=rows.getString(5);
                 String linkedRecord=rows.isNull(6)?"":String.valueOf(rows.getLong(6));
+                String frequency=rows.isNull(7)?"":String.format(Locale.US,
+                    " · ~%.0f Hz",rows.getDouble(7));
                 Button annotation=UiKit.button(this,format(time)+"–"+format(until)+
-                    "  "+species+(linkedTaxon.isEmpty()?"":" · checklist linked")+
+                    "  "+species+frequency+(linkedTaxon.isEmpty()?"":" · checklist linked")+
                     (linkedRecord.isEmpty()?"":" · observation #"+linkedRecord)+
                     "\nTap to play · hold to link evidence","secondary");
                 LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(69));
@@ -441,6 +447,12 @@ public final class CallLibraryActivity extends Activity {
         end.setHint("End in seconds");
         end.setText(String.format(Locale.US,"%.2f",
             Math.min(clipDuration,selectedMs+1000)/1000d));form.addView(end);
+        EditText frequency=new EditText(this);
+        frequency.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        frequency.setHint("Frequency Hz · estimate from tapped spectrogram");
+        if(Double.isFinite(lastTappedHz))
+            frequency.setText(String.format(Locale.US,"%.0f",lastTappedHz));
+        form.addView(frequency);
         EditText notes=new EditText(this);notes.setHint("Call pattern or ID evidence (optional)");
         form.addView(notes);
         new AlertDialog.Builder(this).setTitle("Label recorded call")
@@ -456,6 +468,14 @@ public final class CallLibraryActivity extends Activity {
                     ContentValues v=new ContentValues();
                     v.put("clip_id",clip);v.put("start_ms",from);v.put("end_ms",to);
                     v.put("call_label",species);
+                    String hzText=frequency.getText().toString().trim();
+                    if(!hzText.isEmpty()){
+                        double hz=Double.parseDouble(hzText);
+                        if(!Double.isFinite(hz)||hz<AcousticViewport.MIN_HZ||
+                            hz>AcousticViewport.MAX_HZ)
+                            throw new IllegalArgumentException("Select 85–17,000 Hz");
+                        v.put("selected_frequency_hz",hz);
+                    }
                     v.put("notes",notes.getText().toString().trim());
                     v.put("reviewed_at_utc",utc(System.currentTimeMillis()));
                     database.getWritableDatabase().insertOrThrow("acoustic_labels",null,v);

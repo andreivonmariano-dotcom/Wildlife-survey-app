@@ -14,8 +14,8 @@ public class DashboardActivity extends Activity {
     private int dp(int n){return (int)(getResources().getDisplayMetrics().density*n+0.5);}
     private LinearLayout vertical(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
     private TextView label(String s,int font){TextView t=new TextView(this);t.setText(s);t.setTextColor(UiKit.INK);t.setTextSize(font);t.setPadding(dp(8),dp(8),dp(8),dp(8));return t;}
-    @Override public void onCreate(Bundle state){super.onCreate(state);helper=new FieldDb(this);render();}
-    @Override protected void onResume(){super.onResume();if(page!=null)render();}
+    @Override public void onCreate(Bundle state){super.onCreate(state);helper=new FieldDb(this);}
+    @Override protected void onResume(){super.onResume();render();}
     @Override protected void onDestroy(){super.onDestroy();helper.close();}
     private int count(String sql,String[] args) {
         try(Cursor c=helper.getReadableDatabase().rawQuery(sql,args)){return c.moveToFirst()?c.getInt(0):0;}

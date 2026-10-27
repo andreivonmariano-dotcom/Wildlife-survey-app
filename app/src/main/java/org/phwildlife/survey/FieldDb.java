@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,21);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,22);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -38,6 +38,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeNineteen(d);
         upgradeTwenty(d);
         upgradeTwentyOne(d);
+        upgradeTwentyTwo(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -73,6 +74,15 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<19)upgradeNineteen(d);
         if(oldVersion<20)upgradeTwenty(d);
         if(oldVersion<21)upgradeTwentyOne(d);
+        if(oldVersion<22)upgradeTwentyTwo(d);
+    }
+    /** Provenance for missing GPS at survey start. Do not backfill coordinates. */
+    private void upgradeTwentyTwo(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_status TEXT");
+        d.execSQL("UPDATE surveys SET start_gps_status=CASE "+
+            "WHEN start_gps_latitude IS NOT NULL AND start_gps_longitude IS NOT NULL "+
+            "THEN 'legacy_start_fix_present' ELSE 'legacy_start_location_unrecorded' END "+
+            "WHERE start_gps_status IS NULL");
     }
     /**
      * User-reviewed habitat references are stored apart from publisher taxon

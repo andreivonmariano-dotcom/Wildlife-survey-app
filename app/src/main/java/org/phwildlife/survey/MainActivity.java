@@ -706,12 +706,13 @@ public class MainActivity extends Activity implements LocationListener {
         long startGpsTime=launchGps.getLongExtra("start_gps_recorded_at_ms",0L);
         long startElapsedNanos=launchGps.getLongExtra("start_gps_elapsed_nanos",0L);
         long monotonicAgeMs=(SystemClock.elapsedRealtimeNanos()-startElapsedNanos)/1000000L;
-        if(!withoutGps&&(startElapsedNanos<=0||!GpsFixPolicy.acceptableElapsed(
-            startLatitude,startLongitude,startAccuracy,monotonicAgeMs,false))){
+        String startQuality=SurveyStartGpsPolicy.classify(withoutGps,
+            startLatitude,startLongitude,startAccuracy,monotonicAgeMs,false);
+        if(startElapsedNanos<=0&&!withoutGps||startQuality==null){
             toast("Survey-start GPS missing, too old, or not better than 10 m. Retry setup.");
             finish();return;
         }
-        startGpsStatus=withoutGps?"missing_at_survey_start":"verified_start_fix_under_10m";
+        startGpsStatus=startQuality;
         eventId="SV-"+System.currentTimeMillis();startedAt=System.currentTimeMillis();pointNotice=false;
         int target=method.equals("point_count")?pointTargetSeconds:0;
         lineBearing=SurveyMethods.isBirdLine(profile,method)?line:null;

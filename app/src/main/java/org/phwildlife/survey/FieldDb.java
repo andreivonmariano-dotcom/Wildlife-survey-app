@@ -84,6 +84,7 @@ public final class FieldDb extends SQLiteOpenHelper {
     private void upgradeTwentyFour(SQLiteDatabase d){
         d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN taxon_key TEXT");
         d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN observation_id INTEGER");
+        d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN selected_frequency_hz REAL");
         d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN review_status TEXT DEFAULT 'unverified'");
         d.execSQL("CREATE INDEX IF NOT EXISTS call_taxon ON acoustic_labels(taxon_key)");
         d.execSQL("CREATE TABLE IF NOT EXISTS trap_deployments("+

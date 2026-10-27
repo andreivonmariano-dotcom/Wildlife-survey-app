@@ -24,8 +24,6 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.os.VibrationEffect;
 import android.os.SystemClock;
-import android.view.MotionEvent;
-import android.view.HapticFeedbackConstants;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -83,7 +81,7 @@ public class MainActivity extends Activity implements LocationListener {
     private TaxonSuggestionAdapter taxonSuggestionAdapter;
     private AutoCompleteTextView taxonEntry;
     private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry;
-    private Button beginButton,markButton,saveButton,reviewButton,pointNextButton;
+    private Button endSurveyButton,markButton,saveButton,reviewButton,pointNextButton;
     private LinearLayout groupBar,advancedPanel,lineRow,birdMeasurements,herpPanel,mammalPanel;
     private ScrollView fieldScroll;
     private boolean returnToHome=false;
@@ -223,8 +221,6 @@ public class MainActivity extends Activity implements LocationListener {
         lineRow.addView(lineEntry,new LinearLayout.LayoutParams(-1,-2));
         methodRow.addView(lineRow,weighted(0.9f));
         content.addView(methodRow);
-        beginButton=UiKit.button(this,active?"Finish survey":"Start survey","warning");
-        beginButton.setOnClickListener(v->toggleEvent());
         LinearLayout utilityRow=horizontal();
         pauseButton=UiKit.button(this,"Pause effort","secondary");
         utilityRow.addView(pauseButton,new LinearLayout.LayoutParams(0,dp(47),1));
@@ -244,14 +240,13 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout sessionSettings=vertical();
         sessionSettings.setVisibility(View.GONE);
         sessionSettings.addView(vibrationChoice);
-        sessionSettings.addView(beginButton,new LinearLayout.LayoutParams(-1,dp(48)));
-        TextView sessionToggle=label("Session options  ▾",13,true);
+        TextView sessionToggle=label("Vibration settings  ▾",13,true);
         sessionToggle.setTextColor(GREEN);
         sessionToggle.setPadding(dp(6),dp(7),dp(6),dp(8));
         sessionToggle.setOnClickListener(v->{
             boolean expanded=sessionSettings.getVisibility()!=View.VISIBLE;
             sessionSettings.setVisibility(expanded?View.VISIBLE:View.GONE);
-            sessionToggle.setText(expanded?"Session options  ▴":"Session options  ▾");
+            sessionToggle.setText(expanded?"Vibration settings  ▴":"Vibration settings  ▾");
         });
         content.addView(sessionToggle);
         content.addView(sessionSettings);
@@ -501,6 +496,13 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout.LayoutParams reviewParams=new LinearLayout.LayoutParams(0,dp(56),1f);
         reviewParams.leftMargin=dp(8);footer.addView(reviewButton,reviewParams);
         root.addView(footer);
+        // Survey disposition is a permanent footer action, not a hidden setting.
+        endSurveyButton=UiKit.button(this,"End Survey","warning");
+        LinearLayout.LayoutParams endParams=new LinearLayout.LayoutParams(-1,dp(52));
+        endParams.topMargin=dp(6);
+        root.addView(endSurveyButton,endParams);
+        endSurveyButton.setEnabled(active);
+        endSurveyButton.setOnClickListener(v->finishPrompt());
         saveButton.setEnabled(active&&(!method.equals("point_count")||pointCountId!=null));
         if(pointNextButton!=null&&pointCountId==null&&method.equals("point_count"))
             pointNextButton.setText("Start next point count");
@@ -742,7 +744,8 @@ public class MainActivity extends Activity implements LocationListener {
             stationId="";
         else if(requiresGenericUnit())
             stationId="";
-        active=true;beginButton.setText("Finish survey");
+        active=true;
+        if(endSurveyButton!=null)endSurveyButton.setEnabled(true);
         if(gpsView!=null)gpsView.setText(String.format(Locale.US,
             "Survey-start GPS: %.6f, %.6f · ±%.1f m",startLatitude,startLongitude,startAccuracy));
         saveButton.setEnabled(!hasStationUnits());
@@ -873,87 +876,82 @@ public class MainActivity extends Activity implements LocationListener {
         });
         dialog.show();
     }
-    /** Deliberately different from Android's default 500 ms long click. */
-    private void armNotCountedHold(Button redButton){
-        final long[] down={0};
-        final boolean[] fired={false};
-        final Runnable action=()->{
-            if(down[0]==0||SystemClock.uptimeMillis()-down[0]<1800)return;
-            fired[0]=true;down[0]=0;
-            redButton.setText("Not counted · hold 2 seconds");
-            redButton.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            showNotCountedReason();
-        };
-        redButton.setOnClickListener(v->toast("Press and hold for 2 seconds to use Not Counted"));
-        redButton.setOnTouchListener((v,e)->{
-            int a=e.getActionMasked();
-            if(a==MotionEvent.ACTION_DOWN){
-                down[0]=SystemClock.uptimeMillis();fired[0]=false;
-                redButton.setText("Keep holding · Not Counted");
-                handler.postDelayed(action,1800);
-                return true;
-            }
-            if(a==MotionEvent.ACTION_MOVE){
-                if(e.getX()<0||e.getY()<0||e.getX()>v.getWidth()||e.getY()>v.getHeight()){
-                    down[0]=0;handler.removeCallbacks(action);
-                    redButton.setText("Not counted · hold 2 seconds");
-                }
-                return true;
-            }
-            if(a==MotionEvent.ACTION_UP||a==MotionEvent.ACTION_CANCEL){
-                down[0]=0;handler.removeCallbacks(action);
-                redButton.setText("Not counted · hold 2 seconds");
-                if(a==MotionEvent.ACTION_UP&&!fired[0])toast("Hold the red button for 2 seconds");
-                return true;
-            }
-            return true;
-        });
-    }
+    /**
+     * Survey disposition is available at all times through the pinned footer.
+     * Each outcome is deliberate and distinguishable, including cancellation.
+     */
     private void finishPrompt(){
+        if(!active)return;
         if(taxonEntry!=null&&!taxonEntry.getText().toString().trim().isEmpty()){
             new AlertDialog.Builder(this).setTitle("Unsaved observation")
-                .setMessage("Save this entry before finishing, or clear the unfinished draft.")
+                .setMessage("Save this observation before ending the survey, "+
+                    "or discard only the unfinished entry.")
                 .setNegativeButton("Keep recording",null)
-                .setPositiveButton("Clear draft",(d,w)->{
-                    taxonEntry.setText("");distanceEntry.setText("");clearMark();finishPrompt();
+                .setPositiveButton("Discard entry",(d,w)->{
+                    taxonEntry.setText("");distanceEntry.setText("");clearMark();
+                    finishPrompt();
                 }).show();
             return;
         }
-        LinearLayout panel=vertical();panel.setPadding(dp(16),dp(6),dp(16),dp(8));
-        TextView explanation=label("Choose how this survey should appear in field records and analyses.",13,false);
-        panel.addView(explanation);
-        boolean effortRequired=SurveyMethods.needsRouteLength(method);
-        EditText length=edit("Verified route length (meters)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        EditText area=edit("Area searched (m², optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        if(effortRequired)panel.addView(length);
-        if(method.equals("visual_encounter")||method.equals("ves_transect"))panel.addView(area);
-        TextView note=label("Complete: retain for eligible analyses after data review.\nIncomplete: retain and flag insufficient effort.\nNot counted: archive records but exclude the whole survey from scientific summaries.",12,false);
-        panel.addView(note);
-        Button reject=UiKit.button(this,"Not counted · hold 2 seconds","danger");
-        LinearLayout.LayoutParams dangerParams=new LinearLayout.LayoutParams(-1,dp(54));
-        dangerParams.topMargin=dp(18);panel.addView(reject,dangerParams);
-        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Finish survey")
-            .setView(panel).setNegativeButton("Continue recording",null)
-            .setNeutralButton("Incomplete",null)
-            .setPositiveButton("Complete",null).create();
-        dialog.setOnShowListener(v->{
-            armNotCountedHold(reject);
-            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(w->{
-                if(surveyPaused)endPause();
-                pendingSearchedArea=number(area.getText().toString());
-                dialog.dismiss();finish(false,number(length.getText().toString()));
-            });
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(w->{
-                Double meters=number(length.getText().toString());
-                Double sq=number(area.getText().toString());
-                if(effortRequired&&method.equals("line_transect")&&(meters==null||meters<=0)){
-                    length.setError("Validated line length is required for a completed transect");return;
-                }
-                if(sq!=null&&sq<=0){area.setError("Area must be positive");return;}
-                if(surveyPaused)endPause();
-                pendingSearchedArea=sq;dialog.dismiss();finish(true,meters);
-            });
-        });
+        LinearLayout actions=vertical();
+        actions.setPadding(dp(14),dp(5),dp(14),dp(6));
+        Button complete=UiKit.button(this,"Finish Complete","primary");
+        Button incomplete=UiKit.button(this,"End Incomplete","secondary");
+        Button cancel=UiKit.button(this,"Cancel Survey · Not Counted","danger");
+        for(Button button:new Button[]{complete,incomplete,cancel}){
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(54));
+            lp.bottomMargin=dp(10);
+            actions.addView(button,lp);
+        }
+        TextView details=label("Complete only after the required effort and stations. "+
+            "Incomplete preserves partial work. Cancel keeps an excluded audit record.",12,false);
+        details.setTextColor(MUTED);actions.addView(details);
+        AlertDialog dialog=new AlertDialog.Builder(this)
+            .setTitle("End Survey")
+            .setView(actions)
+            .setNegativeButton("Keep recording",null).create();
+        complete.setOnClickListener(v->{dialog.dismiss();showFinalizationForm(true);});
+        incomplete.setOnClickListener(v->{dialog.dismiss();showFinalizationForm(false);});
+        cancel.setOnClickListener(v->{dialog.dismiss();showNotCountedReason();});
+        dialog.show();
+    }
+    /** Record true effort, then validate the complete/incomplete classification. */
+    private void showFinalizationForm(boolean requestedComplete){
+        LinearLayout panel=vertical();
+        panel.setPadding(dp(15),dp(7),dp(15),dp(6));
+        boolean route=SurveyClosePolicy.routeLengthRequired(method);
+        boolean searchArea=SurveyClosePolicy.searchedAreaRequired(method);
+        boolean optionalLength=SurveyMethods.needsRouteLength(method)&&!route;
+        EditText length=edit(route?"Measured route length (m)":
+            "Searched length (m, optional)",
+            InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText area=edit(searchArea?"Measured area searched (m²)":
+            "Area searched (m², optional)",
+            InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        if(route||optionalLength)panel.addView(length);
+        if(searchArea||method.equals("visual_encounter")||
+            method.equals("ves_transect"))panel.addView(area);
+        TextView note=label(requestedComplete?
+            "LIKas will verify effort and station progress. Missing requirements "+
+            "are saved as Incomplete, not falsely marked Complete.":
+            "Partial effort and observations remain archived as Incomplete.",13,false);
+        note.setTextColor(MUTED);panel.addView(note);
+        AlertDialog dialog=new AlertDialog.Builder(this)
+            .setTitle(requestedComplete?"Finish Complete":"End Incomplete")
+            .setView(panel)
+            .setNegativeButton("Back",null)
+            .setPositiveButton(requestedComplete?"Confirm finish":"Save incomplete",null)
+            .create();
+        dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            .setOnClickListener(w->{
+                Double measured=number(length.getText().toString());
+                Double searched=number(area.getText().toString());
+                if(measured!=null&&measured<=0){length.setError("Enter positive length");return;}
+                if(searched!=null&&searched<=0){area.setError("Enter positive area");return;}
+                pendingSearchedArea=searched;
+                dialog.dismiss();
+                finish(requestedComplete,measured);
+            }));
         dialog.show();
     }
     private void finish(boolean complete,Double length){

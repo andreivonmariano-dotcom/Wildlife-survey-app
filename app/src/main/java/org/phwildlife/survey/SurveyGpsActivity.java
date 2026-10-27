@@ -79,9 +79,7 @@ public final class SurveyGpsActivity extends Activity {
         content.setBackgroundColor(UiKit.BG);
         content.addView(UiKit.title(this,stationMode?"Station GPS":"Survey GPS"));
         TextView explanation=new TextView(this);
-        explanation.setText(stationMode?
-            "Starts automatically after a fresh GPS fix with reported accuracy under 10 m.":
-            "Starts automatically after a fresh GPS fix with reported accuracy under 10 m.");
+        explanation.setText("Starts automatically after a fresh GPS fix with reported accuracy under 10 m.");
         explanation.setTextSize(15);
         explanation.setTextColor(UiKit.INK);
         explanation.setPadding(0,gap,0,gap);

@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,24);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,25);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -41,6 +41,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeTwentyTwo(d);
         upgradeTwentyThree(d);
         upgradeTwentyFour(d);
+        upgradeTwentyFive(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -79,6 +80,49 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<22)upgradeTwentyTwo(d);
         if(oldVersion<23)upgradeTwentyThree(d);
         if(oldVersion<24)upgradeTwentyFour(d);
+        if(oldVersion<25)upgradeTwentyFive(d);
+    }
+    /** Dedicated field protocols. Each detail belongs to its source survey/visit. */
+    private void upgradeTwentyFive(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS coverboard_units("+
+            "id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT,"+
+            "board_id TEXT NOT NULL,installed_at_utc TEXT NOT NULL,"+
+            "board_material TEXT,habitat TEXT,setup_notes TEXT,"+
+            "UNIQUE(event_id,board_id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS board_event ON coverboard_units(event_id)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS coverboard_checks("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,board_pk TEXT NOT NULL,"+
+            "checked_at_utc TEXT NOT NULL,observer TEXT NOT NULL,"+
+            "board_condition TEXT NOT NULL,substrate TEXT,"+
+            "temperature_c REAL,humidity_pct REAL,"+
+            "individuals_seen INTEGER NOT NULL DEFAULT 0,"+
+            "taxon_label TEXT,notes TEXT,"+
+            "FOREIGN KEY(board_pk) REFERENCES coverboard_units(id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS board_checks_fk ON coverboard_checks(board_pk,checked_at_utc)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS area_search_passes("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,station_id TEXT,"+
+            "area_id TEXT NOT NULL,started_at_utc TEXT NOT NULL,ended_at_utc TEXT NOT NULL,"+
+            "observer TEXT NOT NULL,measured_area_m2 REAL NOT NULL,"+
+            "route_length_m REAL,habitat TEXT,weather TEXT,"+
+            "repeat_pass INTEGER NOT NULL DEFAULT 0,"+
+            "duplicate_control_notes TEXT NOT NULL,notes TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS area_pass_event ON area_search_passes(event_id,started_at_utc)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS track_sign_efforts("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,station_id TEXT,"+
+            "route_id TEXT NOT NULL,started_at_utc TEXT NOT NULL,ended_at_utc TEXT NOT NULL,"+
+            "observer TEXT NOT NULL,verified_length_m REAL NOT NULL,"+
+            "substrate TEXT NOT NULL,weather TEXT,visibility TEXT,notes TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS sign_effort_event ON track_sign_efforts(event_id,started_at_utc)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS track_sign_encounters("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,"+
+            "effort_id INTEGER NOT NULL,recorded_at_utc TEXT NOT NULL,"+
+            "sign_type TEXT NOT NULL,taxon_label TEXT NOT NULL,"+
+            "age_class TEXT NOT NULL,identification_confidence TEXT NOT NULL,"+
+            "independent_event_key TEXT,substrate TEXT,notes TEXT,"+
+            "FOREIGN KEY(effort_id) REFERENCES track_sign_efforts(id),"+
+            "UNIQUE(event_id,independent_event_key))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS sign_encounter_event "+
+            "ON track_sign_encounters(event_id,effort_id)");
     }
     /** Optional links cannot change the original observer's call label. */
     private void upgradeTwentyFour(SQLiteDatabase d){

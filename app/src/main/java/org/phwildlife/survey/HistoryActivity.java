@@ -184,6 +184,11 @@ public class HistoryActivity extends Activity {
         deviceLp.topMargin=dp(7);rows.addView(devices,deviceLp);
         devices.setOnClickListener(v->startActivity(new Intent(this,TrapProtocolActivity.class)
             .putExtra("event_id",event)));
+        Button evidence=UiKit.button(this,"Coverboard / area / sign evidence","secondary");
+        LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,dp(52));
+        evidenceLp.topMargin=dp(6);rows.addView(evidence,evidenceLp);
+        evidence.setOnClickListener(v->startActivity(new Intent(this,FieldProtocolsActivity.class)
+            .putExtra("event_id",event)));
         appendObservations(event);
     }
     private void appendObservations(String event){

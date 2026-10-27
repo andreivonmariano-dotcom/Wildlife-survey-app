@@ -196,6 +196,8 @@ public class WelcomeActivity extends Activity {
             startActivity(new Intent(this,CallLibraryActivity.class)));
         toolRow(tools,"Camera and trap records",()->
             startActivity(new Intent(this,TrapProtocolActivity.class)));
+        toolRow(tools,"Coverboards, area search & signs",()->
+            startActivity(new Intent(this,FieldProtocolsActivity.class)));
         toolRow(tools,"Projects & stations",()->startActivity(new Intent(this,SitesActivity.class)));
         toolRow(tools,"Offline checklist",()->startActivity(new Intent(this,CatalogActivity.class)));
         toolRow(tools,"Fieldwork dashboard",()->startActivity(new Intent(this,DashboardActivity.class)));

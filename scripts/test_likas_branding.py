@@ -54,10 +54,12 @@ class LikasBrandingSmokeTest(unittest.TestCase):
         launch = (JAVA / "LikasLaunchActivity.java").read_text(encoding="utf-8")
         self.assertIn('new LikasForestView(this)', launch)
         self.assertIn('icon.setImageResource(R.drawable.likas_frog_icon)', launch)
-        self.assertIn('name=label("LIKAS",44,Color.rgb(239,243,223),true)', launch)
-        self.assertIn('action("Resume Survey",true)', launch)
-        self.assertIn('available?"Home & Tools":"New Survey"', launch)
-        self.assertIn("available?View.VISIBLE:View.GONE", launch)
+        self.assertIn('label("LIKAS",', launch)
+        self.assertIn('action("Resume survey",true)', launch)
+        self.assertIn('action("Open LIKAS",false)', launch)
+        self.assertIn('resumeButton.setVisibility(active?View.VISIBLE:View.GONE)', launch)
+        self.assertIn('home.putExtra("show_menu",true)', launch)
+        self.assertIn('statusView.setVisibility(status==null?View.VISIBLE:View.GONE)', launch)
 
     def test_pixel_forest_bounded_in_memory_and_frame_rate(self):
         forest = (JAVA / "LikasForestView.java").read_text(encoding="utf-8")

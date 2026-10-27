@@ -94,6 +94,16 @@ public final class StudyProtocolsActivity extends Activity {
                 android.widget.Toast.makeText(this,"Enter nonnegative reasonable effort thresholds",
                     android.widget.Toast.LENGTH_LONG).show();return;
             }
+            String selectedMethod=methods.get(method.getSelectedItemPosition());
+            boolean hasUnits=!"line_transect".equals(selectedMethod)&&
+                !"ves_transect".equals(selectedMethod)&&
+                !"opportunistic".equals(selectedMethod);
+            if(!hasUnits&&(minVisit>0||minUnit>0)){
+                visits.setError("This method has no recorded sampling visits or method units");
+                android.widget.Toast.makeText(this,
+                    "Use minimum effort minutes for an unsegmented transect or incidental log",
+                    android.widget.Toast.LENGTH_LONG).show();return;
+            }
             ContentValues row=new ContentValues();
             row.put("id",UUID.randomUUID().toString());
             row.put("project_id",projectIds.get(project.getSelectedItemPosition()));

@@ -336,6 +336,13 @@ public class MainActivity extends Activity implements LocationListener {
                }).setNegativeButton("Cancel",null).show();
         });
         taxonEntry.setOnClickListener(v->taxonEntry.showDropDown());
+        taxonEntry.setTooltipText("Hold a species name to open its offline reference");
+        taxonEntry.setOnLongClickListener(v->{
+            Intent reference=new Intent(this,TaxonDetailActivity.class);
+            reference.putExtra("taxon_query",taxonEntry.getText().toString());
+            startActivity(reference);
+            return true;
+        });
         taxonEntry.addTextChangedListener(new TextWatcher(){
             public void beforeTextChanged(CharSequence a,int b,int c,int d){}
             public void onTextChanged(CharSequence a,int b,int before,int count){refreshFavoriteIcon();}

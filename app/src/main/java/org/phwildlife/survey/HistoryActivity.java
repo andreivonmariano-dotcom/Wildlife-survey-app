@@ -131,7 +131,7 @@ public class HistoryActivity extends Activity {
                 card.setBackground(UiKit.surface(this));
                 TextView name=text(profile+" · "+SurveyMethods.displayLabel(profile,method),16);
                 name.setTypeface(null,Typeface.BOLD);card.addView(name);
-                TextView meta=text((site.isEmpty()?"No station":site)+" · "+date+
+                TextView meta=text((site.isEmpty()?"":site+" · ")+date+
                     "\n"+c.getInt(7)+" observations",12);
                 meta.setTextColor(UiKit.MUTED);card.addView(meta);
                 TextView badge=text(state+"  ›",13);badge.setTypeface(null,Typeface.BOLD);
@@ -156,6 +156,7 @@ public class HistoryActivity extends Activity {
         String outcome="active";
         String surveyMethod="";
         String surveyProfile="Birds";
+        String exclusionReason="";
         try(Cursor meta=db.getReadableDatabase().rawQuery(
             "SELECT COALESCE(station_id,''),method,started,ended,"+
                 "CASE WHEN outcome IS NOT NULL THEN outcome WHEN ended IS NULL "+
@@ -167,31 +168,40 @@ public class HistoryActivity extends Activity {
                 outcome=meta.getString(4);
                 surveyMethod=meta.getString(1);
                 surveyProfile=meta.getString(6);
+                exclusionReason=meta.getString(5);
                 String state=outcome.equals("not_counted")?"Canceled · Not counted":
                     outcome.equals("incomplete")?"Incomplete":
                     outcome.equals("complete")?"Complete":"Active";
                 rows.addView(text(state+" · "+SurveyMethods.displayLabel(surveyProfile,meta.getString(1))+
-                    "\nStation "+meta.getString(0)+
+                    (meta.getString(0).isEmpty()?"":"\nStation "+meta.getString(0))+
                     "\nStarted "+meta.getString(2)+
                     (meta.isNull(3)?"":"\nEnded "+meta.getString(3)),15));
-                if(outcome.equals("not_counted")&&!meta.getString(5).trim().isEmpty())
-                    rows.addView(text("Cancellation reason: "+meta.getString(5),14));
             }
         }
         if(outcome.equals("incomplete")||outcome.equals("not_counted")){
+            boolean hasAudit=false;
             try(Cursor changes=db.getReadableDatabase().rawQuery(
                 "SELECT reason,changed_at_utc,record_count "+
                 "FROM survey_outcome_audit WHERE event_id=? "+
                 "ORDER BY id DESC LIMIT 1",new String[]{event})){
                 if(changes.moveToFirst()){
-                    String explanation=changes.isNull(0)?"":changes.getString(0);
-                    String date=changes.isNull(1)?"":changes.getString(1);
-                    rows.addView(text("Outcome audit · "+date+
-                        "\n"+(explanation.trim().isEmpty()?
-                            "No reason saved for this earlier survey":explanation)+
-                        "\nRecords at closure: "+changes.getInt(2),14));
+                    hasAudit=true;
+                    String reason=changes.isNull(0)?"":changes.getString(0);
+                    String changed=changes.isNull(1)?"":changes.getString(1);
+                    int records=changes.getInt(2);
+                    Button audit=UiKit.button(this,"Closure details","quiet");
+                    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(46));
+                    rows.addView(audit,lp);
+                    audit.setOnClickListener(v->new AlertDialog.Builder(this)
+                        .setTitle("Survey closure audit")
+                        .setMessage("Changed: "+changed+"\nReason: "+
+                            (reason.trim().isEmpty()?"Not recorded":reason)+
+                            "\nRecords at closure: "+records)
+                        .setPositiveButton("Close",null).show());
                 }
             }
+            if(!hasAudit&&!exclusionReason.trim().isEmpty())
+                rows.addView(text("Reason: "+exclusionReason,13));
         }
         boolean birdOrHerp="Birds".equals(surveyProfile)||
             "Herpetofauna".equals(surveyProfile);

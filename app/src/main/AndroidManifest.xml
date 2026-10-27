@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
-    <application android:label="Wildlife Survey Beta 0.16" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
+    <application android:label="LIKAS" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
         <service android:name=".TrackService" android:exported="false" android:foregroundServiceType="location" />
         <activity android:name=".SurveyGpsActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".CameraActivity" android:screenOrientation="portrait" android:exported="false" />
@@ -20,7 +20,8 @@
         <activity android:name=".StationProgressActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".CatalogActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".HistoryActivity" android:exported="false" android:screenOrientation="portrait" />
-        <activity android:name=".WelcomeActivity" android:screenOrientation="portrait" android:exported="true">
+        <activity android:name=".WelcomeActivity" android:screenOrientation="portrait" android:exported="false" />
+        <activity android:name=".LikasLaunchActivity" android:screenOrientation="portrait" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

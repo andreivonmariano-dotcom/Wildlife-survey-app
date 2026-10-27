@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /** Shared offline schema, versioned migrations. Never drop a user observation table. */
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
-    public FieldDb(Context context){super(context,NAME,null,11);}
+    public FieldDb(Context context){super(context,NAME,null,12);}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -21,6 +21,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeNine(d);
         upgradeTen(d);
         upgradeEleven(d);
+        upgradeTwelve(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -46,6 +47,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<9)upgradeNine(d);
         if(oldVersion<10)upgradeTen(d);
         if(oldVersion<11)upgradeEleven(d);
+        if(oldVersion<12)upgradeTwelve(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -230,5 +232,26 @@ public final class FieldDb extends SQLiteOpenHelper {
             "PRIMARY KEY(template_id,sequence_number),UNIQUE(template_id,station_id))");
         d.execSQL("CREATE INDEX IF NOT EXISTS route_templates_project_method ON route_templates(project_id,method)");
         d.execSQL("ALTER TABLE surveys ADD COLUMN route_template_id TEXT");
+    }
+
+    /** Version 12: GPS elevation snapshots with explicit height datum and uncertainty. */
+    private void upgradeTwelve(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE field_records ADD COLUMN elevation_m REAL");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN elevation_vertical_accuracy_m REAL");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN elevation_datum TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN elevation_source TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN elevation_status TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN elevation_gps_at TEXT");
+        for(String table:new String[]{"point_counts","sampling_units","survey_stations"}){
+            d.execSQL("ALTER TABLE "+table+" ADD COLUMN elevation_m REAL");
+            d.execSQL("ALTER TABLE "+table+" ADD COLUMN elevation_vertical_accuracy_m REAL");
+            d.execSQL("ALTER TABLE "+table+" ADD COLUMN elevation_datum TEXT");
+            d.execSQL("ALTER TABLE "+table+" ADD COLUMN elevation_source TEXT");
+            d.execSQL("ALTER TABLE "+table+" ADD COLUMN elevation_status TEXT");
+        }
+        d.execSQL("ALTER TABLE sites ADD COLUMN elevation_m REAL");
+        d.execSQL("ALTER TABLE sites ADD COLUMN elevation_vertical_accuracy_m REAL");
+        d.execSQL("ALTER TABLE sites ADD COLUMN elevation_datum TEXT");
+        d.execSQL("ALTER TABLE sites ADD COLUMN elevation_source TEXT");
     }
 }

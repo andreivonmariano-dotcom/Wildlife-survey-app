@@ -1,9 +1,9 @@
 name: Build Android Debug APK
 on:
   push:
-    branches: [main, 'release/v0.27-integrated-ux-performance-qa', 'ui/v0.27.1-field-polish-quality-labels']
-  pull_request:
     branches: [main, 'release/v0.27-integrated-ux-performance-qa']
+  pull_request:
+    branches: [main, 'release/v0.27-integrated-ux-performance-qa', 'ui/v0.27.1-field-polish-quality-labels']
   workflow_dispatch:
 jobs:
   build:

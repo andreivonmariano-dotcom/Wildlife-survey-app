@@ -27,6 +27,7 @@ public final class StudyProtocolsActivity extends Activity {
     private LinearLayout screen,templates;
     private final ArrayList<String> projectIds=new ArrayList<>();
     private final ArrayList<String> methods=new ArrayList<>();
+    private final ArrayList<String> wildlifeProfiles=new ArrayList<>();
     private Spinner project,method;
     private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
     private TextView label(String value){
@@ -64,12 +65,12 @@ public final class StudyProtocolsActivity extends Activity {
         project.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,projects));
         screen.addView(label("Project"));screen.addView(project);
-        method=new Spinner(this);methods.clear();
+        method=new Spinner(this);methods.clear();wildlifeProfiles.clear();
         ArrayList<String> labels=new ArrayList<>();
         for(String group:new String[]{"Birds","Herpetofauna","Mammals"}){
             for(SurveyMethods.Method m:SurveyMethods.forProfile(group)){
-                if(methods.contains(m.code))continue;
-                methods.add(m.code);labels.add(group+" · "+m.label);
+                methods.add(m.code);wildlifeProfiles.add(group);
+                labels.add(group+" · "+m.label);
             }
         }
         method.setAdapter(new ArrayAdapter<String>(this,
@@ -107,6 +108,7 @@ public final class StudyProtocolsActivity extends Activity {
             row.put("id",UUID.randomUUID().toString());
             row.put("project_id",projectIds.get(project.getSelectedItemPosition()));
             row.put("method",methods.get(method.getSelectedItemPosition()));
+            row.put("survey_profile",wildlifeProfiles.get(method.getSelectedItemPosition()));
             row.put("name",title);row.put("min_visits",minVisit);
             row.put("min_minutes",minTime);row.put("min_units",minUnit);
             row.put("require_verified_gps",gps.isChecked()?1:0);
@@ -129,12 +131,14 @@ public final class StudyProtocolsActivity extends Activity {
         templates.removeAllViews();
         try(Cursor c=store.getReadableDatabase().rawQuery(
             "SELECT id,project_id,method,name,min_visits,min_minutes,min_units,"+
-            "require_verified_gps,require_protocol_photo "+
+            "require_verified_gps,require_protocol_photo,survey_profile "+
             "FROM study_protocol_templates ORDER BY created_at_utc DESC LIMIT 150",null)){
             if(c.getCount()==0)templates.addView(label("No custom templates yet."));
             while(c.moveToNext()){
                 String id=c.getString(0);
-                String detail=c.getString(3)+" · "+c.getString(1)+" · "+c.getString(2)+
+                String scope=c.isNull(9)?"Shared legacy":"Group: "+c.getString(9);
+                String detail=c.getString(3)+" · "+scope+" · "+c.getString(1)+
+                    " · "+c.getString(2)+
                     "\nVisits "+c.getInt(4)+" · minutes "+c.getInt(5)+" · units "+c.getInt(6)+
                     " · start GPS "+(c.getInt(7)>0?"required":"optional")+
                     " · photo "+(c.getInt(8)>0?"required":"optional");

@@ -91,7 +91,7 @@ public final class PhotoEvidence {
             while(c.moveToNext()){
                 String name=c.getString(0);
                 if(name==null||name.contains("/")||name.contains("..")||
-                    name.contains("\\\\"))
+                    name.indexOf((char)92)>=0)
                     throw new SecurityException("Unsafe stored observation photo path");
                 File f=new File(dir(ctx),name);
                 if(!f.isFile())throw new FileNotFoundException(

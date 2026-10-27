@@ -3,11 +3,18 @@ package org.phwildlife.survey;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /** Shared offline schema, versioned migrations. Never drop a user observation table. */
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
-    public FieldDb(Context context){super(context,NAME,null,11);}
+    private final Context appContext;
+    public FieldDb(Context context){super(context,NAME,null,12);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -21,6 +28,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeNine(d);
         upgradeTen(d);
         upgradeEleven(d);
+        upgradeTwelve(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -46,6 +54,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<9)upgradeNine(d);
         if(oldVersion<10)upgradeTen(d);
         if(oldVersion<11)upgradeEleven(d);
+        if(oldVersion<12)upgradeTwelve(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -215,6 +224,53 @@ public final class FieldDb extends SQLiteOpenHelper {
             "gps_status TEXT NOT NULL DEFAULT 'pending',"+
             "PRIMARY KEY(event_id,sequence_number),UNIQUE(event_id,station_id))");
         d.execSQL("CREATE INDEX IF NOT EXISTS survey_station_event ON survey_stations(event_id,visit_state)");
+    }
+
+    /** Version 12: GNSS provenance, plus a version-pinned offline mammal candidate catalog. */
+    private void upgradeTwelve(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_latitude REAL");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_longitude REAL");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_accuracy_m REAL");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_recorded_at TEXT");
+        // Legacy MDD imports displayed taxon keys with underscores as if they were names.
+        d.execSQL("UPDATE taxon_catalog SET scientific_name=REPLACE(scientific_name,'_',' ') "+
+            "WHERE taxon_key LIKE 'MDD:%' AND instr(scientific_name,'_')>0");
+        seedMddMammals(d);
+    }
+
+    private void seedMddMammals(SQLiteDatabase d){
+        try(InputStream input=appContext.getAssets().open("ph_mammals_mdd_v2_5.json")){
+            ByteArrayOutputStream output=new ByteArrayOutputStream();
+            byte[] chunk=new byte[8192];int n;
+            while((n=input.read(chunk))!=-1){
+                if(output.size()+n>2_000_000)throw new IllegalStateException("MDD asset unexpectedly large");
+                output.write(chunk,0,n);
+            }
+            JSONArray mammals=new JSONArray(new String(output.toByteArray(),StandardCharsets.UTF_8));
+            if(mammals.length()<20||mammals.length()>1200)
+                throw new IllegalStateException("MDD candidate count out of expected range");
+            SQLiteStatement stmt=d.compileStatement(
+                "INSERT OR IGNORE INTO taxon_catalog(taxon_key,taxon_group,common_name,"+
+                "scientific_name,family,source,source_version,region_codes,review_status,created_utc) "+
+                "VALUES(?,?,?,?,?,?,?,?,?,datetime('now'))");
+            for(int i=0;i<mammals.length();i++){
+                JSONObject name=mammals.getJSONObject(i);
+                stmt.clearBindings();
+                String[] fields={
+                    name.getString("taxon_key"),"Mammals",name.optString("common_name"),
+                    name.getString("scientific_name"),name.optString("family"),
+                    "ASM Mammal Diversity Database, DOI 10.5281/zenodo.21654811",
+                    "v2.5_2026-07-28","",name.getString("review_status")
+                };
+                for(int j=0;j<fields.length;j++)stmt.bindString(j+1,fields[j]);
+                stmt.executeInsert();
+            }
+            stmt.close();
+        }catch(java.io.FileNotFoundException missing){
+            android.util.Log.w("WildlifeSurvey","Bundled mammal asset not present; manual MDD import remains available");
+        }catch(Exception error){
+            android.util.Log.e("WildlifeSurvey","Could not seed bundled MDD v2.5 mammals",error);
+        }
     }
 
     /** Version 11: reusable point-count station identities, audit without data mutation. */

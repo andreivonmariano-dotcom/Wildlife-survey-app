@@ -1,6 +1,83 @@
-# Philippine Wildlife Survey Beta v0.15.0
+# Philippine Wildlife Survey Beta v0.16.1 (development branch)
 
 Offline Android wildlife field application for Birds, Herpetofauna and Mammals. Independent of SMART and KALUMBATA. No map UI in this release.
+
+## v0.16.1 GNSS field corrections
+
+Live GPS acceptance now checks Android elapsed realtime. The phone's wall
+clock no longer rejects an otherwise valid fix whose satellite timestamp
+appears slightly ahead. The continuous location service stays active after
+pressing Home or locking the screen. Android shows a foreground GPS
+notification, subject to notification permissions. The service may stop after
+force-stop, reboot, permission changes or device power restrictions.
+
+Sampling stations use the current live receiver fix. Valid readings under
+10 m start a station immediately. A compact GPS screen appears only when
+the current fix is insufficient. The full satellite sky map remains on the
+initial survey GPS screen. An explicit missing-GPS station start records a
+quality flag and no fabricated coordinates.
+
+## v0.16 survey-start GNSS accuracy gate (in development)
+All newly configured surveys pass through `SurveyGpsActivity` before `MainActivity`
+creates a survey row or begins the clock. An actual live GPS_PROVIDER fix must have
+device-reported horizontal accuracy **strictly better than 10 m**, be at most
+10 seconds old, contain valid coordinates, and not be marked as a mock fix.
+The GPS screen shows current reported accuracy, retains neither a stale fix
+nor a previous station coordinate, and permits explicit retry and cancellation.
+GPS problems can block survey launch in dense forest. This policy does not
+guarantee true horizontal position error better than 10 m.
+
+Survey-start coordinates, accuracy, and fix UTC timestamp are retained on
+the survey event in SQLite schema 12, and exported in `surveys.csv`. The
+migration adds columns without deleting historical records. Older events
+keep these fields null.
+
+## GNSS sky map and station-level acquisition (v0.16)
+The GPS preflight includes a north-up satellite sky plot with cardinal directions,
+30° and 60° elevation rings, color-coded satellite constellations, readable
+satellite identifiers and distinct rings around satellites contributing to the
+fix. Marker size indicates GNSS signal C/N0. Satellite metrics are diagnostic
+and do not independently prove horizontal position accuracy.
+
+Before each planned point-count visit, manually selected bird station visit,
+or structured herpetofauna/mammal station, the same preflight screen acquires
+a fresh GPS_PROVIDER fix. The station clock starts after the observer accepts
+a valid fix with reported horizontal accuracy **strictly below 10 m** and
+age no greater than 10 seconds, or explicitly selects a missing-GPS override.
+The latter leaves station coordinates NULL and records a GPS-quality warning.
+Survey-start GPS is never reused as the next station's location. Existing
+route station IDs and historic coordinates remain intact on repeat visits.
+Prior v0.15 visits can retain older, less precise historical measurements.
+
+Physical-handset testing under canopy and in open sky remains required,
+including checking permission prompts, GNSS diagnostics and explicit
+missing-GPS override. A phone receiver cannot guarantee actual 10 m error.
+
+## Taxonomy status and data sourcing
+The original starter taxa are incomplete for birds and herpetofauna.
+GitHub Actions downloads the **official MDD v2.5** CSV from Zenodo, verifies
+its published MD5 checksum, then filters extant non-domestic species with
+Philippine country membership. The CI build bundles this subset into the APK.
+On a fresh install or upgrade to schema 12, the app seeds the attributed
+offline mammal catalog automatically without replacing user-imported names.
+The current checksum-pinned build produced **246 Philippine mammal candidates**, including two entries with uncertain country membership flagged for review.
+The existing manual MDD CSV importer remains available. Local source builds
+that skip the build-time preparation script do not bundle this asset.
+
+MDD `sciName` is a genus-epithet key separated by an underscore. Displayed
+scientific names are converted to spaces; pre-existing MDD catalog names are
+normalized during migration. MDD's uncertain national membership and flagged
+taxa stay **unreviewed**. No Philippines-wide list establishes occurrence on
+an individual island, province, or sampling site.
+
+Emerson Y. Sy amphibian v2025-1 and reptile v2026-1 are selected references,
+but complete machine-readable files and reuse permissions must be verified
+before bundling. A structured, attributed CSV import path is already present.
+AviList v2026 is the selected bird taxonomic backbone; locality assessment is
+a separate evidence layer. The complete national species datasets are **not
+yet bundled** in this branch.
+
+See `docs/QA_v0_16.md` for GPS and taxonomy acceptance tests.
 
 ## Q2: repeatable routes with permanent stations
 For **bird point-count** monitoring, survey setup now offers:

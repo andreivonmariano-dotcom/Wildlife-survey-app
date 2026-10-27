@@ -35,7 +35,7 @@ public final class StudyProtocolExports {
     }
     public static void writeZip(ZipOutputStream zip,SQLiteDatabase db)throws Exception{
         write(zip,db,"study_protocol_templates.csv",
-            "SELECT id,project_id,method,name,min_visits,min_minutes,min_units,"+
+            "SELECT id,project_id,method,survey_profile,name,min_visits,min_minutes,min_units,"+
             "require_verified_gps,require_protocol_photo,created_at_utc "+
             "FROM study_protocol_templates ORDER BY project_id,method,created_at_utc");
         write(zip,db,"survey_study_requirements.csv",

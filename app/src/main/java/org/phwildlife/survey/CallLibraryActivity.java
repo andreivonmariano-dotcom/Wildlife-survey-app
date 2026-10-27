@@ -377,20 +377,29 @@ public final class CallLibraryActivity extends Activity {
         TextView labelHeader=label("Call annotations",17,true);
         body.addView(labelHeader);
         try(Cursor rows=database.getReadableDatabase().rawQuery(
-            "SELECT start_ms,end_ms,call_label,COALESCE(notes,'') "+
+            "SELECT start_ms,end_ms,call_label,COALESCE(notes,''),id,"+
+            "COALESCE(taxon_key,''),observation_id "+
             "FROM acoustic_labels WHERE clip_id=? ORDER BY start_ms,id",new String[]{clip})){
             if(rows.getCount()==0)body.addView(label("No call labels yet.",13,false));
             while(rows.moveToNext()){
                 long time=rows.getLong(0),until=rows.getLong(1);
                 String species=rows.getString(2),notes=rows.getString(3);
+                long annotationId=rows.getLong(4);
+                String linkedTaxon=rows.getString(5);
+                String linkedRecord=rows.isNull(6)?"":String.valueOf(rows.getLong(6));
                 Button annotation=UiKit.button(this,format(time)+"–"+format(until)+
-                    "  "+species+(notes.isEmpty()?"":"\n"+notes),"secondary");
+                    "  "+species+(linkedTaxon.isEmpty()?"":" · checklist linked")+
+                    (linkedRecord.isEmpty()?"":" · observation #"+linkedRecord)+
+                    "\nTap to play · hold to link evidence","secondary");
                 LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(69));
                 lp.bottomMargin=dp(7);body.addView(annotation,lp);
                 annotation.setOnClickListener(v->{
                     selectedMs=time;seek.setProgress((int)time);
                     spectrum.setCursor(time/(float)Math.max(1,clipDuration));
                     if(player!=null)player.seekTo((int)time);
+                });
+                annotation.setOnLongClickListener(v->{
+                    openLabelLinks(annotationId);return true;
                 });
             }
         }
@@ -442,7 +451,7 @@ public final class CallLibraryActivity extends Activity {
                     if(species.isEmpty())throw new IllegalArgumentException("Call ID required");
                     long from=Math.round(Double.parseDouble(start.getText().toString())*1000),
                         to=Math.round(Double.parseDouble(end.getText().toString())*1000);
-                    if(from<0||to<=from||to>clipDuration)
+                    if(!CallLinkPolicy.usableLabelRange(from,to,clipDuration))
                         throw new IllegalArgumentException("Select a valid time interval");
                     ContentValues v=new ContentValues();
                     v.put("clip_id",clip);v.put("start_ms",from);v.put("end_ms",to);
@@ -453,6 +462,99 @@ public final class CallLibraryActivity extends Activity {
                     selectedMs=from;showClip();
                 }catch(Exception e){notice("Label not saved: "+e.getMessage());}
             }).show();
+    }
+    /** Link a reviewed time range to the checklist and/or saved survey detection. */
+    private void openLabelLinks(long id){
+        new AlertDialog.Builder(this).setTitle("Call evidence links")
+            .setItems(new String[]{"Choose checklist taxon","Link saved observation",
+                "Clear checklist link","Clear observation link"},(dialog,which)->{
+                if(which==0)lookupChecklist(id);
+                else if(which==1)chooseObservation(id);
+                else{
+                    ContentValues v=new ContentValues();
+                    v.putNull(which==2?"taxon_key":"observation_id");
+                    v.put("review_status","unverified");
+                    database.getWritableDatabase().update("acoustic_labels",v,
+                        "id=?",new String[]{String.valueOf(id)});
+                    showClip();
+                }
+            }).setNegativeButton("Close",null).show();
+    }
+    private String[] annotationContext(long labelId){
+        try(Cursor c=database.getReadableDatabase().rawQuery(
+            "SELECT c.event_id,c.taxon_group FROM acoustic_labels a "+
+            "JOIN acoustic_clips c ON c.id=a.clip_id WHERE a.id=?",
+            new String[]{String.valueOf(labelId)})){
+            if(c.moveToFirst())return new String[]{c.getString(0),c.getString(1)};
+        }
+        throw new IllegalStateException("Saved call label not found");
+    }
+    private void lookupChecklist(long id){
+        EditText query=new EditText(this);query.setSingleLine(true);
+        query.setHint("Search scientific or common name");
+        new AlertDialog.Builder(this).setTitle("Find checklist species").setView(query)
+            .setNegativeButton("Cancel",null)
+            .setPositiveButton("Find",(d,w)->{
+                String value=query.getText().toString().trim();
+                if(value.length()<2){notice("Enter at least two characters");return;}
+                String[] context=annotationContext(id);
+                java.util.ArrayList<String> keys=new java.util.ArrayList<>();
+                java.util.ArrayList<String> names=new java.util.ArrayList<>();
+                try(Cursor c=database.getReadableDatabase().rawQuery(
+                    "SELECT taxon_key,scientific_name,COALESCE(common_name,'') "+
+                    "FROM taxon_catalog WHERE taxon_group=? AND "+
+                    "(scientific_name LIKE ? OR common_name LIKE ?) "+
+                    "ORDER BY scientific_name LIMIT 50",
+                    new String[]{context[1],"%"+value+"%","%"+value+"%"})){
+                    while(c.moveToNext()){
+                        keys.add(c.getString(0));
+                        names.add(c.getString(1)+(c.getString(2).isEmpty()?"":" · "+c.getString(2)));
+                    }
+                }
+                if(names.isEmpty()){notice("No matching checklist taxon. Keep a manual label.");return;}
+                new AlertDialog.Builder(this).setTitle("Assign checklist identity")
+                    .setItems(names.toArray(new String[0]),(dlg,index)->{
+                        ContentValues v=new ContentValues();
+                        v.put("taxon_key",keys.get(index));
+                        v.put("review_status","linked_unverified");
+                        database.getWritableDatabase().update("acoustic_labels",v,
+                            "id=?",new String[]{String.valueOf(id)});
+                        showClip();
+                    }).setNegativeButton("Cancel",null).show();
+            }).show();
+    }
+    private void chooseObservation(long labelId){
+        String[] context=annotationContext(labelId);
+        java.util.ArrayList<Long> recordIds=new java.util.ArrayList<>();
+        java.util.ArrayList<String> names=new java.util.ArrayList<>();
+        try(Cursor c=database.getReadableDatabase().rawQuery(
+            "SELECT id,COALESCE(raw_identification,''),detected_at "+
+            "FROM field_records WHERE event_id=? AND taxon_group=? AND deleted_at IS NULL "+
+            "ORDER BY detected_at DESC LIMIT 100",context)){
+            while(c.moveToNext()){
+                recordIds.add(c.getLong(0));
+                names.add("#"+c.getLong(0)+" · "+c.getString(1)+" · "+c.getString(2));
+            }
+        }
+        if(names.isEmpty()){notice("No saved "+context[1]+" observations in this survey");return;}
+        new AlertDialog.Builder(this).setTitle("Link saved survey observation")
+            .setItems(names.toArray(new String[0]),(d,index)->{
+                long record=recordIds.get(index);
+                try(Cursor check=database.getReadableDatabase().rawQuery(
+                    "SELECT event_id,taxon_group FROM field_records WHERE id=? "+
+                    "AND deleted_at IS NULL",new String[]{String.valueOf(record)})){
+                    if(!check.moveToFirst()||!CallLinkPolicy.sameSurveyAndGroup(
+                        context[0],check.getString(0),context[1],check.getString(1))){
+                        notice("Observation does not match this survey and taxon group");return;
+                    }
+                }
+                ContentValues v=new ContentValues();
+                v.put("observation_id",record);
+                v.put("review_status","linked_unverified");
+                database.getWritableDatabase().update("acoustic_labels",v,
+                    "id=?",new String[]{String.valueOf(labelId)});
+                showClip();
+            }).setNegativeButton("Cancel",null).show();
     }
     private void releasePlayer(){
         if(player!=null){

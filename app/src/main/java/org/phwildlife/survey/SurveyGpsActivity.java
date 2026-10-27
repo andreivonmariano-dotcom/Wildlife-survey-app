@@ -6,6 +6,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.GnssStatus;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -26,6 +31,34 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
     private TextView status;
     private Button startButton;
     private boolean listening = false;
+    private boolean gnssListening = false;
+    private TextView satelliteStatus;
+    private TextView signalStatus;
+    private final Handler ui = new Handler(Looper.getMainLooper());
+    private final GnssStatus.Callback satelliteCallback = new GnssStatus.Callback() {
+        @Override public void onStarted() {
+            if(satelliteStatus!=null)satelliteStatus.setText("GNSS receiver active · searching satellites");
+        }
+        @Override public void onStopped() {
+            if(satelliteStatus!=null)satelliteStatus.setText("GNSS receiver not tracking");
+        }
+        @Override public void onSatelliteStatusChanged(GnssStatus state) {
+            int used=0,visible=state.getSatelliteCount();
+            float sumCn0=0f;
+            int cn0Count=0;
+            for(int i=0;i<visible;i++){
+                if(state.usedInFix(i))used++;
+                float cn0=state.getCn0DbHz(i);
+                if(Float.isFinite(cn0)&&cn0>0){sumCn0+=cn0;cn0Count++;}
+            }
+            if(satelliteStatus!=null)satelliteStatus.setText(
+                "Satellites in fix: "+used+" · tracked: "+visible+
+                "\nSatellite count does not prove coordinate accuracy.");
+            if(signalStatus!=null)signalStatus.setText(
+                cn0Count==0?"GNSS signal quality: no C/N0 readings":
+                String.format(Locale.US,"Mean tracked C/N0: %.1f dB-Hz",sumCn0/cn0Count));
+        }
+    };
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -54,6 +87,17 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
         status.setText("Waiting for a new GPS position...");
         status.setPadding(0, gap, 0, gap);
         root.addView(status);
+        satelliteStatus = new TextView(this);
+        satelliteStatus.setText("Satellite information: waiting for receiver");
+        satelliteStatus.setTextSize(15);
+        satelliteStatus.setTextColor(UiKit.INK);
+        satelliteStatus.setPadding(0, gap/2, 0, gap/2);
+        root.addView(satelliteStatus);
+        signalStatus = new TextView(this);
+        signalStatus.setText("Signal strength: waiting");
+        signalStatus.setTextSize(14);
+        signalStatus.setTextColor(UiKit.INK);
+        root.addView(signalStatus);
 
         startButton = UiKit.button(this, "Start survey with verified GPS", "primary");
         startButton.setEnabled(false);
@@ -100,6 +144,9 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
         try {
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 0f, this);
             listening = true;
+            if(Build.VERSION.SDK_INT>=30)gnssListening=manager.registerGnssStatusCallback(
+                getMainExecutor(),satelliteCallback);
+            else gnssListening=manager.registerGnssStatusCallback(satelliteCallback,ui);
         } catch (SecurityException ex) {
             status.setText("Precise location permission is required.");
         } catch (RuntimeException ex) {
@@ -109,8 +156,9 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
 
     @Override public void onLocationChanged(Location fix) {
         long now = System.currentTimeMillis();
+        long ageMs=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
         boolean valid = LocationManager.GPS_PROVIDER.equals(fix.getProvider())
-            && fix.hasAccuracy()
+            && fix.hasAccuracy() && ageMs>=0 && ageMs<=GpsFixPolicy.MAX_FIX_AGE_MS
             && GpsFixPolicy.acceptable(fix.getLatitude(), fix.getLongitude(),
                 fix.getAccuracy(), fix.getTime(), now, fix.isFromMockProvider());
         qualifiedFix = valid ? new Location(fix) : null;
@@ -157,9 +205,16 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
     }
 
     private void stopListening() {
-        if (!listening || manager == null) return;
-        try { manager.removeUpdates(this); } catch (RuntimeException ignored) {}
-        listening = false;
+        if(manager==null)return;
+        if(listening){
+            try { manager.removeUpdates(this); } catch (RuntimeException ignored) {}
+            listening=false;
+        }
+        if(gnssListening){
+            try { manager.unregisterGnssStatusCallback(satelliteCallback); }
+            catch(RuntimeException ignored) {}
+            gnssListening=false;
+        }
     }
 
     @Override protected void onPause() {

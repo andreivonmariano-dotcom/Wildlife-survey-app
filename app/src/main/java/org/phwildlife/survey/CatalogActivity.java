@@ -40,7 +40,7 @@ public final class CatalogActivity extends Activity {
             if(mammal.moveToFirst())mdd=mammal.getInt(0);
         }
         info.setText("Catalog: "+total+" names ("+added+" from non-starter sources), including "+
-          mdd+" Philippine mammal candidates from MDD v2.5. The other groups still have incomplete starter lists.\\n\\n"+
+          mdd+" Philippine mammal candidates from MDD v2.5. The other groups still have incomplete starter lists.\n\n"+
           "For a versioned checklist, prepare UTF-8 CSV with headers:\n"+
           "taxon_key,taxon_group,common_name,scientific_name,family,source,source_version,region_codes,review_status\n\n"+
           "Taxon group: Birds, Reptiles, Amphibians or Mammals. Separate regional codes with |, for example MINDANAO|P:1102400000. A P: code is a PSGC province code. Leave region_codes blank when distribution is not documented. review_status: reviewed or unreviewed.\n\n"+

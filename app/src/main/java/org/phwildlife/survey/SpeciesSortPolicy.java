@@ -8,7 +8,7 @@ public final class SpeciesSortPolicy {
     public static final int ALPHABETICAL=0,FAMILY=1,GENUS=2,SCORE_HIGH=3,SCORE_LOW=4;
     public static final String[] SORT_LABELS={
         "Name · A to Z","Family · A to Z","Genus · A to Z",
-        "Habitat match · high to low","Habitat match · low to high"
+        "Screening score · high to low","Screening score · low to high"
     };
     public static final String[] FILTER_LABELS={
         "All scores","Likely","Unlikely","Insufficient Data"

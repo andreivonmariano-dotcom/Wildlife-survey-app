@@ -21,7 +21,7 @@ public final class FieldUiPolicy {
     }
     public static boolean routeSetup(String method){
         return "point_count".equals(method)||"line_transect".equals(method)
-            ||"ves_transect".equals(method)||"spotlight".equals(method);
+            ||"ves_transect".equals(method);
     }
     public static boolean pointStationSetup(String method){
         return "point_count".equals(method);

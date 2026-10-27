@@ -2,11 +2,13 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -19,126 +21,171 @@ import android.widget.TextView;
 import java.io.File;
 
 /**
- * LIKAS launch destination. No database migrations, camera or GPS subscriptions
- * are started here. Existing surveys are resumed explicitly by the observer.
+ * LIKAS startup entry. The forest is decorative, and both navigation choices
+ * remain native, readable controls. Never starts GPS or changes survey data.
  */
 public final class LikasLaunchActivity extends Activity {
-    private Button continueButton,newSurveyButton;
+    private static final int DEEP=Color.rgb(8,39,30);
+    private static final int CREAM=Color.rgb(239,243,223);
+    private static final int SAGE=Color.rgb(191,222,205);
+    private Button resumeButton,homeButton;
+
     private int dp(float n){return Math.round(getResources().getDisplayMetrics().density*n);}
-    private TextView label(String text,float size,int color,boolean bold){
-        TextView t=new TextView(this);t.setText(text);t.setTextColor(color);t.setTextSize(size);
+
+    private TextView label(String value,int size,int color,boolean strong){
+        TextView t=new TextView(this);
+        t.setText(value);
+        t.setTextColor(color);
+        t.setTextSize(size);
         t.setGravity(Gravity.CENTER);
-        if(bold)t.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
+        if(strong)t.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
         return t;
     }
+
+    /** One standard action shape: no duplicate drawables or developer-only labels. */
     private Button action(String title,boolean primary){
         Button b=new Button(this);
-        b.setText(title);b.setTextSize(17);b.setAllCaps(false);
+        b.setText(title);
+        b.setAllCaps(false);
+        b.setTextSize(16);
+        b.setMaxLines(2);
+        b.setGravity(Gravity.CENTER);
         b.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
-        GradientDrawable bg=new GradientDrawable();
-        bg.setColor(primary?Color.rgb(239,243,223):Color.argb(166,8,39,30));
-        bg.setCornerRadius(dp(16));
-        bg.setStroke(dp(1),primary?Color.rgb(239,243,223):Color.rgb(129,172,151));
-        b.setBackground(bg);b.setBackgroundTintList(null);
-        b.setTextColor(primary?Color.rgb(8,47,36):Color.rgb(239,243,223));
-        b.setMinHeight(dp(59));
+        float fontScale=getResources().getConfiguration().fontScale;
+        b.setMinHeight(dp(FieldLayoutPolicy.actionHeightDp(fontScale)+8));
+        b.setPadding(dp(14),dp(12),dp(14),dp(12));
+        styleAction(b,primary);
         return b;
     }
-    private String currentVersion(){
-        try{return getPackageManager().getPackageInfo(getPackageName(),0).versionName;}
-        catch(Exception e){return "development";}
+
+    private void styleAction(Button b,boolean primary){
+        int background=primary?CREAM:Color.argb(172,8,39,30);
+        int foreground=primary?DEEP:CREAM;
+        GradientDrawable shape=new GradientDrawable();
+        shape.setColor(background);
+        shape.setStroke(dp(1),primary?CREAM:Color.rgb(135,181,154));
+        shape.setCornerRadius(dp(15));
+        GradientDrawable mask=new GradientDrawable();
+        mask.setColor(Color.WHITE);
+        mask.setCornerRadius(dp(15));
+        b.setBackground(new RippleDrawable(
+            ColorStateList.valueOf(primary?Color.argb(40,8,39,30):Color.argb(45,255,255,255)),
+            shape,mask));
+        b.setBackgroundTintList(null);
+        b.setTextColor(foreground);
     }
+
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
-        getWindow().setStatusBarColor(Color.rgb(8,39,30));
-        getWindow().setNavigationBarColor(Color.rgb(8,39,30));
+        getWindow().setStatusBarColor(DEEP);
+        getWindow().setNavigationBarColor(DEEP);
+
         FrameLayout root=new FrameLayout(this);
-        root.setBackgroundColor(Color.rgb(8,39,30));
-        root.addView(new LikasForestView(this),new FrameLayout.LayoutParams(-1,-1));
-        View scrim=new View(this);
-        // Keep text contrast stable; the forest animates its own gradual daylight palette.
-        scrim.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-            new int[]{Color.argb(83,8,39,30),Color.argb(113,8,39,30),
-                Color.argb(216,8,39,30)}));
-        root.addView(scrim,new FrameLayout.LayoutParams(-1,-1));
+        root.setBackgroundColor(DEEP);
+        LikasForestView forest=new LikasForestView(this);
+        root.addView(forest,new FrameLayout.LayoutParams(-1,-1));
+
+        // Let the approved forest remain visible, with a darker action area.
+        View contrast=new View(this);
+        contrast.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        contrast.setBackground(new GradientDrawable(
+            GradientDrawable.Orientation.TOP_BOTTOM,
+            new int[]{Color.argb(84,8,39,30),Color.argb(46,8,39,30),
+                Color.argb(114,8,39,30),Color.argb(209,8,39,30)}));
+        root.addView(contrast,new FrameLayout.LayoutParams(-1,-1));
 
         LinearLayout content=new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
         content.setGravity(Gravity.CENTER_HORIZONTAL);
-        content.setPadding(dp(24),dp(24),dp(24),dp(24));
-        FrameLayout.LayoutParams cover=new FrameLayout.LayoutParams(-1,-1);
-        root.addView(content,cover);
+        content.setPadding(dp(23),dp(16),dp(23),dp(24));
+        root.addView(content,new FrameLayout.LayoutParams(-1,-1));
 
-        content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2.3f));
-        ImageView icon=new ImageView(this);
-        icon.setImageResource(R.drawable.likas_frog_icon);
-        icon.setContentDescription("Green pixel-art frog peeking from pond water");
-        content.addView(icon,new LinearLayout.LayoutParams(dp(148),dp(148)));
+        content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,.75f));
 
+        ImageView frog=new ImageView(this);
+        frog.setImageResource(R.drawable.likas_frog_icon);
+        frog.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        // The adjacent LIKAS wordmark supplies the spoken identity.
+        frog.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        int logoSize=getResources().getConfiguration().fontScale>=1.5f?dp(94):dp(116);
+        content.addView(frog,new LinearLayout.LayoutParams(logoSize,logoSize));
 
-        TextView name=label("LIKAS",44,Color.rgb(239,243,223),true);
-        name.setLetterSpacing(.15f);
-        LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(-1,-2);
-        nameLp.topMargin=dp(10);
-        content.addView(name,nameLp);
-        TextView subtitle=label("PHILIPPINE WILDLIFE SURVEY",13,
-            Color.rgb(192,225,208),true);
-        subtitle.setLetterSpacing(.11f);
-        LinearLayout.LayoutParams subtitleLp=new LinearLayout.LayoutParams(-1,-2);
-        subtitleLp.topMargin=dp(4);
-        content.addView(subtitle,subtitleLp);
-        content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2.4f));
+        TextView brand=label("LIKAS",40,CREAM,true);
+        brand.setLetterSpacing(.11f);
+        LinearLayout.LayoutParams brandLp=new LinearLayout.LayoutParams(-1,-2);
+        brandLp.topMargin=dp(4);
+        content.addView(brand,brandLp);
 
-        continueButton=action("Resume Survey",true);
-        content.addView(continueButton,new LinearLayout.LayoutParams(-1,dp(62)));
-        newSurveyButton=action("New Survey",false);
-        LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(60));
-        startLp.topMargin=dp(12);
-        content.addView(newSurveyButton,startLp);
-        newSurveyButton.setOnClickListener(v->{
+        TextView subtitle=label("Philippine wildlife surveys",14,SAGE,false);
+        LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
+        subLp.topMargin=dp(2);
+        content.addView(subtitle,subLp);
+
+        content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2.0f));
+
+        LinearLayout actions=new LinearLayout(this);
+        actions.setOrientation(LinearLayout.VERTICAL);
+        actions.setPadding(dp(14),dp(14),dp(14),dp(14));
+        GradientDrawable panel=new GradientDrawable();
+        panel.setColor(Color.argb(162,8,39,30));
+        panel.setStroke(dp(1),Color.argb(80,191,222,205));
+        panel.setCornerRadius(dp(21));
+        actions.setBackground(panel);
+        LinearLayout.LayoutParams panelLp=new LinearLayout.LayoutParams(-1,-2);
+        content.addView(actions,panelLp);
+
+        resumeButton=action("Resume survey",true);
+        actions.addView(resumeButton,new LinearLayout.LayoutParams(-1,-2));
+        resumeButton.setOnClickListener(v->{
+            if(!hasActiveSurvey()){
+                updateActions();
+                return;
+            }
+            startActivity(new Intent(this,MainActivity.class).putExtra("resume",true));
+            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+        });
+
+        // This always opens Home. It never silently starts a new field event.
+        homeButton=action("Open LIKAS",false);
+        LinearLayout.LayoutParams homeLp=new LinearLayout.LayoutParams(-1,-2);
+        homeLp.topMargin=dp(9);
+        actions.addView(homeButton,homeLp);
+        homeButton.setOnClickListener(v->{
             Intent home=new Intent(this,WelcomeActivity.class);
             home.putExtra("show_menu",true);
             startActivity(home);
             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
         });
-        continueButton.setOnClickListener(v->{
-            if(!hasActiveSurvey())return;
-            Intent resume=new Intent(this,MainActivity.class).putExtra("resume",true);
-            startActivity(resume);
-            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-        });
 
-        content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,.9f));
-        TextView version=label("v"+currentVersion(),12,
-            Color.rgb(171,202,180),false);
-        version.setLetterSpacing(.06f);
-        content.addView(version);
         setContentView(root);
     }
+
     private boolean hasActiveSurvey(){
         File file=getDatabasePath(FieldDb.NAME);
         if(!file.exists())return false;
-        try(SQLiteDatabase db=SQLiteDatabase.openDatabase(file.getAbsolutePath(),null,
-                SQLiteDatabase.OPEN_READONLY);
-            Cursor cursor=db.rawQuery("SELECT 1 FROM surveys WHERE ended IS NULL LIMIT 1",null)){
-            return cursor.moveToFirst();
-        }catch(Exception e){return false;}
+        try(SQLiteDatabase database=SQLiteDatabase.openDatabase(
+                file.getAbsolutePath(),null,SQLiteDatabase.OPEN_READONLY);
+            Cursor c=database.rawQuery(
+                "SELECT 1 FROM surveys WHERE ended IS NULL LIMIT 1",null)){
+            return c.moveToFirst();
+        }catch(Exception ignored){
+            // A failed read never deletes, migrates or closes an existing survey.
+            return false;
+        }
     }
+
+    private void updateActions(){
+        boolean active=hasActiveSurvey();
+        resumeButton.setVisibility(active?View.VISIBLE:View.GONE);
+        resumeButton.setEnabled(LikasUiRules.canContinue(active));
+        // The only visible action is primary if no unfinished survey exists.
+        styleAction(homeButton,!active);
+        homeButton.setContentDescription("Open LIKAS home and survey choices");
+        resumeButton.setContentDescription("Resume unfinished survey");
+    }
+
     @Override protected void onResume(){
         super.onResume();
-        boolean available=hasActiveSurvey();
-        continueButton.setVisibility(available?View.VISIBLE:View.GONE);
-        // Without an unfinished survey, New Survey becomes the primary action.
-        GradientDrawable newBg=new GradientDrawable();
-        newBg.setColor(available?Color.argb(170,8,39,30):Color.rgb(239,243,223));
-        newBg.setCornerRadius(dp(16));
-        newBg.setStroke(dp(1),Color.rgb(129,172,151));
-        newSurveyButton.setBackground(newBg);
-        newSurveyButton.setBackgroundTintList(null);
-        newSurveyButton.setTextColor(available?Color.rgb(239,243,223):Color.rgb(8,47,36));
-        newSurveyButton.setText(available?"Home & Tools":"New Survey");
-        continueButton.setEnabled(LikasUiRules.canContinue(available));
-        continueButton.setContentDescription(available?
-            "Continue the unfinished survey":"Continue survey unavailable. No active survey.");
+        if(resumeButton!=null&&homeButton!=null)updateActions();
     }
 }

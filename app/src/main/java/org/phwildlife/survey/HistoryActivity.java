@@ -8,6 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.text.InputType;
+import android.text.TextWatcher;
+import android.text.Editable;
+import android.view.Gravity;
+import android.graphics.Typeface;
 import android.view.View;
 import android.widget.*;
 import org.json.JSONObject;
@@ -18,13 +22,14 @@ public class HistoryActivity extends Activity {
     private LinearLayout rows,root;
     private String eventFilter;
     private String outcomeFilter="all";
+    private String surveySearch="";
     private static final String[] OUTCOME_LABELS={
         "All outcomes","Complete","Incomplete","Canceled / Not counted","Active"};
     private static final String[] OUTCOME_VALUES={
         "all","complete","incomplete","not_counted","active"};
     private static final int PAGE_SIZE=40;
     private int surveyOffset=0,observationOffset=0;
-    private final int INK=Color.rgb(29,57,40);
+    private final int INK=UiKit.INK;
     private int dp(int value){return (int)(value*getResources().getDisplayMetrics().density+0.5f);}
     private LinearLayout column(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;}
     private TextView text(String val,int size){TextView t=new TextView(this);t.setText(val);t.setTextSize(size);t.setTextColor(INK);t.setPadding(dp(5),dp(7),dp(5),dp(7));return t;}
@@ -33,11 +38,20 @@ public class HistoryActivity extends Activity {
     @Override public void onCreate(Bundle b){super.onCreate(b);db=new FieldDb(this);eventFilter=getIntent().getStringExtra("event_id");draw();}
     @Override protected void onDestroy(){super.onDestroy();db.close();}
     private void draw(){
-        root=column();root.setBackgroundColor(Color.rgb(247,249,247));root.setPadding(dp(12),dp(12),dp(12),dp(12));
-        root.addView(text(eventFilter==null?"Survey history":"Survey observations",23));
-        Button back=btn(eventFilter==null?"← Home":"← All surveys");
-        back.setOnClickListener(v->{if(eventFilter==null)finish();else{eventFilter=null;surveyOffset=0;observationOffset=0;draw();}});
-        root.addView(back);
+        root=column();root.setBackgroundColor(UiKit.BG);root.setPadding(dp(14),dp(10),dp(14),dp(10));
+        LinearLayout header=new LinearLayout(this);
+        header.setGravity(Gravity.CENTER_VERTICAL);
+        Button back=btn(eventFilter==null?"‹ Home":"‹ All surveys");
+        header.addView(back,new LinearLayout.LayoutParams(dp(112),dp(48)));
+        back.setOnClickListener(v->{
+            if(eventFilter==null)finish();
+            else{eventFilter=null;surveyOffset=0;observationOffset=0;draw();}
+        });
+        TextView heading=text(eventFilter==null?"Survey history":"Observations",20);
+        heading.setTypeface(null,Typeface.BOLD);
+        heading.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
+        header.addView(heading,new LinearLayout.LayoutParams(0,dp(52),1));
+        root.addView(header);
         if(eventFilter==null){
             Spinner outcomes=new Spinner(this);
             outcomes.setAdapter(new ArrayAdapter<String>(this,
@@ -55,6 +69,18 @@ public class HistoryActivity extends Activity {
                 @Override public void onNothingSelected(android.widget.AdapterView<?> parent){}
             });
             root.addView(outcomes);
+            EditText search=new EditText(this);search.setSingleLine(true);
+            search.setTextSize(15);search.setHint("Search group, method, station, date");
+            search.setText(surveySearch);
+            root.addView(search,new LinearLayout.LayoutParams(-1,dp(52)));
+            search.addTextChangedListener(new TextWatcher(){
+                public void beforeTextChanged(CharSequence s,int st,int n,int after){}
+                public void onTextChanged(CharSequence s,int st,int before,int count){
+                    surveySearch=s.toString().trim();surveyOffset=0;
+                    if(rows!=null){rows.removeAllViews();surveys();}
+                }
+                public void afterTextChanged(Editable value){}
+            });
         }
         ScrollView scroll=new ScrollView(this);
         rows=column();scroll.addView(rows);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
@@ -63,18 +89,44 @@ public class HistoryActivity extends Activity {
     }
     private void surveys(){
         try(Cursor c=db.getReadableDatabase().rawQuery(
-          "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),COALESCE(s.outcome,'active') FROM surveys s LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL WHERE (?='all' OR COALESCE(s.outcome,'active')=?) GROUP BY s.id ORDER BY s.started DESC LIMIT ? OFFSET ?",
-          new String[]{outcomeFilter,outcomeFilter,
+          "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,"+
+          "COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),"+
+          "COALESCE(s.outcome,'active') FROM surveys s "+
+          "LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL "+
+          "WHERE (?='all' OR COALESCE(s.outcome,'active')=?) "+
+          "AND (COALESCE(s.survey_profile,s.taxon_group,'Birds') LIKE ? OR "+
+          "COALESCE(s.method,'') LIKE ? OR COALESCE(s.station_id,'') LIKE ? OR "+
+          "COALESCE(s.started,'') LIKE ?) "+
+          "GROUP BY s.id ORDER BY s.started DESC LIMIT ? OFFSET ?",
+          new String[]{outcomeFilter,outcomeFilter,"%"+surveySearch+"%",
+              "%"+surveySearch+"%","%"+surveySearch+"%","%"+surveySearch+"%",
               String.valueOf(PAGE_SIZE),String.valueOf(surveyOffset)})){
             int rowsThisPage=c.getCount();
             if(rowsThisPage==0&&surveyOffset==0)
                 rows.addView(text("No surveys match this outcome.",15));
             while(c.moveToNext()){
                 String event=c.getString(0),profile=c.getString(1),method=c.getString(2),site=c.getString(3),date=c.getString(4);
-                String state=c.getString(8).equals("not_counted")?"NOT COUNTED":c.isNull(5)?"Active":c.getInt(6)==1?"Completed":"Incomplete";
-                Button item=UiKit.button(this,profile+" · "+method+"\n"+site+" · "+date+"\n"+state+" · "+c.getInt(7)+" records",state.equals("NOT COUNTED")?"danger":"secondary");
-                item.setOnClickListener(v->{eventFilter=event;observationOffset=0;draw();});
-                rows.addView(item);
+                String outcome=c.getString(8);
+                String state="not_counted".equals(outcome)?"Not counted":
+                    "complete".equals(outcome)?"Complete":
+                    "incomplete".equals(outcome)?"Incomplete":"Active";
+                LinearLayout card=column();card.setPadding(dp(12),dp(9),dp(12),dp(9));
+                card.setBackground(UiKit.surface(this));
+                TextView name=text(profile+" · "+SurveyMethods.lookup(profile,method).label,16);
+                name.setTypeface(null,Typeface.BOLD);card.addView(name);
+                TextView meta=text((site.isEmpty()?"No station":site)+" · "+date+
+                    "\n"+c.getInt(7)+" observations",12);
+                meta.setTextColor(UiKit.MUTED);card.addView(meta);
+                TextView badge=text(state+"  ›",13);badge.setTypeface(null,Typeface.BOLD);
+                badge.setTextColor("Not counted".equals(state)?Color.rgb(163,58,48):
+                    "Incomplete".equals(state)?UiKit.AMBER:UiKit.FOREST);
+                card.addView(badge);
+                card.setMinimumHeight(dp(100));card.setFocusable(true);
+                card.setContentDescription(profile+", "+state+", "+c.getInt(7)+
+                    " observations. Open survey.");
+                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+                lp.bottomMargin=dp(9);rows.addView(card,lp);
+                card.setOnClickListener(v->{eventFilter=event;observationOffset=0;draw();});
             }
             if(rowsThisPage==PAGE_SIZE){
                 Button more=UiKit.button(this,"Load older surveys","quiet");
@@ -121,6 +173,11 @@ public class HistoryActivity extends Activity {
         progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
             .putExtra("event_id",event)));
         rows.addView(progress);
+        Button sounds=UiKit.button(this,"♪ Call recordings and spectrograms","secondary");
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
+        lp.topMargin=dp(7);rows.addView(sounds,lp);
+        sounds.setOnClickListener(v->startActivity(new Intent(this,CallLibraryActivity.class)
+            .putExtra("event_id",event)));
         appendObservations(event);
     }
     private void appendObservations(String event){
@@ -134,9 +191,17 @@ public class HistoryActivity extends Activity {
                 long record=c.getLong(0);
                 String dist=c.isNull(4)?"distance unknown":String.format(Locale.US,"%.1f m",c.getDouble(4));
                 String point=c.getInt(8)>0?"Station "+c.getString(7)+" · "+(!c.isNull(9)?"Point ":"Visit ")+c.getInt(8)+"\n":"";
-                Button item=btn(point+c.getString(1)+" · "+c.getInt(3)+"\n"+c.getString(2)+" · "+c.getString(5)+" · "+dist+"\n"+c.getString(6));
-                item.setOnClickListener(v->recordDetail(record));
-                rows.addView(item);
+                LinearLayout card=column();card.setPadding(dp(13),dp(8),dp(13),dp(8));
+                card.setBackground(UiKit.surface(this));
+                TextView name=text(c.getString(1)+"  ×"+c.getInt(3),16);
+                name.setTypeface(null,Typeface.BOLD);card.addView(name);
+                TextView detail=text(point+c.getString(2)+" · "+c.getString(5)+
+                    " · "+dist+"\n"+c.getString(6),12);
+                detail.setTextColor(UiKit.MUTED);card.addView(detail);
+                card.setMinimumHeight(dp(85));card.setFocusable(true);
+                LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
+                cardLp.bottomMargin=dp(7);rows.addView(card,cardLp);
+                card.setOnClickListener(v->recordDetail(record));
             }
             if(pageCount==PAGE_SIZE){
                 Button more=UiKit.button(this,"Load more observations","quiet");

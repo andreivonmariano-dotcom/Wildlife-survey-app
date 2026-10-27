@@ -102,6 +102,35 @@ public final class TaxonSuggestionAdapter extends ArrayAdapter<String> implement
                             choices.add(common.isEmpty()?scientific:common+" · "+scientific);
                     }
                 }
+                // Older names can resolve to an accepted taxon through a reviewed
+                // crosswalk. The suggestion displays its accepted current label.
+                // Historic records and raw verbatim observations are never rewritten.
+                if(!term.isEmpty()){
+                    String aliasSql="SELECT c.common_name,c.scientific_name FROM "+
+                        "taxon_synonyms s JOIN taxon_catalog c ON c.taxon_key=s.taxon_key "+
+                        "WHERE c.taxon_group=? AND LOWER(s.alias_name) LIKE ? ESCAPE '!'"+
+                        (regional?" AND c.review_status='reviewed' AND (INSTR('|'||"+
+                            "COALESCE(c.region_codes,'')||'|','|'||?||'|')>0"+
+                            (selectedProvince.isEmpty()?"":" OR INSTR('|'||COALESCE(c.region_codes,'')||"+
+                                "'|','|'||?||'|')>0")+")":"")+
+                        " ORDER BY s.alias_name COLLATE NOCASE LIMIT 12";
+                    ArrayList<String> aliasArgs=new ArrayList<>();
+                    aliasArgs.add(selectedGroup);
+                    aliasArgs.add(TaxonSearchPolicy.contains(term));
+                    if(regional){
+                        aliasArgs.add(selectedRegion);
+                        if(!selectedProvince.isEmpty())aliasArgs.add("P:"+selectedProvince);
+                    }
+                    try(Cursor aliases=database.rawQuery(aliasSql,
+                            aliasArgs.toArray(new String[0]))){
+                        while(aliases.moveToNext()){
+                            String common=aliases.isNull(0)?"":aliases.getString(0);
+                            String scientific=aliases.isNull(1)?"":aliases.getString(1);
+                            if(!scientific.isEmpty())
+                                choices.add(common.isEmpty()?scientific:common+" · "+scientific);
+                        }
+                    }
+                }
                 // Only show historic data if the user is not asking for strictly
                 // documented regional evidence.
                 if(!regional){

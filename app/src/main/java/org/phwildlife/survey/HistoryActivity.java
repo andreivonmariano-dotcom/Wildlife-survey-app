@@ -17,6 +17,11 @@ public class HistoryActivity extends Activity {
     private FieldDb db;
     private LinearLayout rows,root;
     private String eventFilter;
+    private String outcomeFilter="all";
+    private static final String[] OUTCOME_LABELS={
+        "All outcomes","Complete","Incomplete","Canceled / Not counted","Active"};
+    private static final String[] OUTCOME_VALUES={
+        "all","complete","incomplete","not_counted","active"};
     private static final int PAGE_SIZE=40;
     private int surveyOffset=0,observationOffset=0;
     private final int INK=Color.rgb(29,57,40);
@@ -33,6 +38,24 @@ public class HistoryActivity extends Activity {
         Button back=btn(eventFilter==null?"← Home":"← All surveys");
         back.setOnClickListener(v->{if(eventFilter==null)finish();else{eventFilter=null;surveyOffset=0;observationOffset=0;draw();}});
         root.addView(back);
+        if(eventFilter==null){
+            Spinner outcomes=new Spinner(this);
+            outcomes.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_dropdown_item,OUTCOME_LABELS));
+            for(int i=0;i<OUTCOME_VALUES.length;i++)
+                if(OUTCOME_VALUES[i].equals(outcomeFilter)){outcomes.setSelection(i);break;}
+            outcomes.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+                @Override public void onItemSelected(android.widget.AdapterView<?> parent,
+                        View view,int position,long id){
+                    String selected=OUTCOME_VALUES[position];
+                    if(selected.equals(outcomeFilter))return;
+                    outcomeFilter=selected;surveyOffset=0;
+                    if(rows!=null){rows.removeAllViews();surveys();}
+                }
+                @Override public void onNothingSelected(android.widget.AdapterView<?> parent){}
+            });
+            root.addView(outcomes);
+        }
         ScrollView scroll=new ScrollView(this);
         rows=column();scroll.addView(rows);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         setContentView(root);
@@ -40,10 +63,12 @@ public class HistoryActivity extends Activity {
     }
     private void surveys(){
         try(Cursor c=db.getReadableDatabase().rawQuery(
-          "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),COALESCE(s.outcome,'active') FROM surveys s LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL GROUP BY s.id ORDER BY s.started DESC LIMIT ? OFFSET ?",
-          new String[]{String.valueOf(PAGE_SIZE),String.valueOf(surveyOffset)})){
+          "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),COALESCE(s.outcome,'active') FROM surveys s LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL WHERE (?='all' OR COALESCE(s.outcome,'active')=?) GROUP BY s.id ORDER BY s.started DESC LIMIT ? OFFSET ?",
+          new String[]{outcomeFilter,outcomeFilter,
+              String.valueOf(PAGE_SIZE),String.valueOf(surveyOffset)})){
             int rowsThisPage=c.getCount();
-            if(rowsThisPage==0&&surveyOffset==0)rows.addView(text("No saved surveys yet.",15));
+            if(rowsThisPage==0&&surveyOffset==0)
+                rows.addView(text("No surveys match this outcome.",15));
             while(c.moveToNext()){
                 String event=c.getString(0),profile=c.getString(1),method=c.getString(2),site=c.getString(3),date=c.getString(4);
                 String state=c.getString(8).equals("not_counted")?"NOT COUNTED":c.isNull(5)?"Active":c.getInt(6)==1?"Completed":"Incomplete";
@@ -59,8 +84,38 @@ public class HistoryActivity extends Activity {
         }
     }
     private void observations(String event){
-        try(Cursor meta=db.getReadableDatabase().rawQuery("SELECT COALESCE(station_id,''),method,started,ended,COALESCE(outcome,'active'),COALESCE(exclusion_reason,'') FROM surveys WHERE id=?",new String[]{event})){
-            if(meta.moveToFirst())rows.addView(text("Station "+meta.getString(0)+" · "+meta.getString(1)+"\n"+meta.getString(2)+"\n"+meta.getString(4)+(meta.getString(4).equals("not_counted")?"\nNOT COUNTED REASON: "+meta.getString(5):""),14));
+        String outcome="active";
+        try(Cursor meta=db.getReadableDatabase().rawQuery(
+            "SELECT COALESCE(station_id,''),method,started,ended,"+
+                "COALESCE(outcome,'active'),COALESCE(exclusion_reason,'') "+
+                "FROM surveys WHERE id=?",new String[]{event})){
+            if(meta.moveToFirst()){
+                outcome=meta.getString(4);
+                String state=outcome.equals("not_counted")?"Canceled · Not counted":
+                    outcome.equals("incomplete")?"Incomplete":
+                    outcome.equals("complete")?"Complete":"Active";
+                rows.addView(text(state+" · "+meta.getString(1)+
+                    "\nStation "+meta.getString(0)+
+                    "\nStarted "+meta.getString(2)+
+                    (meta.isNull(3)?"":"\nEnded "+meta.getString(3)),15));
+                if(outcome.equals("not_counted")&&!meta.getString(5).trim().isEmpty())
+                    rows.addView(text("Cancellation reason: "+meta.getString(5),14));
+            }
+        }
+        if(outcome.equals("incomplete")||outcome.equals("not_counted")){
+            try(Cursor changes=db.getReadableDatabase().rawQuery(
+                "SELECT reason,changed_at_utc,record_count "+
+                "FROM survey_outcome_audit WHERE event_id=? "+
+                "ORDER BY id DESC LIMIT 1",new String[]{event})){
+                if(changes.moveToFirst()){
+                    String explanation=changes.isNull(0)?"":changes.getString(0);
+                    String date=changes.isNull(1)?"":changes.getString(1);
+                    rows.addView(text("Outcome audit · "+date+
+                        "\n"+(explanation.trim().isEmpty()?
+                            "No reason saved for this earlier survey":explanation)+
+                        "\nRecords at closure: "+changes.getInt(2),14));
+                }
+            }
         }
         Button progress=UiKit.button(this,"Station progress","secondary");
         progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)

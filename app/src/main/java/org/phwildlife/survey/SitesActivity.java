@@ -17,10 +17,9 @@ public class SitesActivity extends Activity {
     private LinearLayout content;
     private Spinner projectSpinner;
     private ArrayList<String> pids=new ArrayList<>();
-    private final int GREEN=Color.rgb(35,105,73);
     private static String now(){return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US){{setTimeZone(TimeZone.getTimeZone("UTC"));}}.format(new Date());}
     private int dp(int v){return (int)(v*getResources().getDisplayMetrics().density+0.5);}
-    private TextView label(String t,int size){TextView x=new TextView(this);x.setText(t);x.setTextSize(size);x.setTextColor(Color.rgb(24,53,40));x.setPadding(dp(5),dp(8),dp(5),dp(8));return x;}
+    private TextView label(String t,int size){TextView x=new TextView(this);x.setText(t);x.setTextSize(size);x.setTextColor(UiKit.INK);x.setPadding(dp(5),dp(8),dp(5),dp(8));return x;}
     private Button btn(String t){return UiKit.button(this,t,"secondary");}
     private EditText edit(String hint,String value){EditText x=new EditText(this);x.setHint(hint);x.setText(value==null?"":value);x.setSingleLine(true);x.setTextSize(15);return x;}
     private LinearLayout column(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
@@ -28,14 +27,21 @@ public class SitesActivity extends Activity {
     @Override protected void onDestroy(){super.onDestroy();helper.close();}
     private String selectedProject(){int pos=projectSpinner==null?-1:projectSpinner.getSelectedItemPosition();return pos<0||pos>=pids.size()?"default":pids.get(pos);}
     private void render(){
-        LinearLayout root=column();root.setPadding(dp(16),dp(16),dp(16),dp(16));root.setBackgroundColor(Color.rgb(246,249,246));
-        root.addView(label("Projects",23));
-        root.addView(label("Create a project first. Survey routes generate their sampling stations automatically. Existing stations remain editable for location corrections and repeat visits.",13));
-        Button back=btn("← Home");back.setOnClickListener(v->finish());root.addView(back);
+        LinearLayout root=column();root.setPadding(dp(16),dp(16),dp(16),dp(16));root.setBackgroundColor(UiKit.BG);
+        Button back=btn("‹ Home");back.setOnClickListener(v->finish());root.addView(back);
+        root.addView(UiKit.title(this,"Projects & sites"));
+        TextView introduction=label("Organize your projects and repeat-visit stations.",13);
+        introduction.setTextColor(UiKit.MUTED);root.addView(introduction);
+        Button explanation=UiKit.button(this,"About station identities  ▾","quiet");
+        root.addView(explanation);
+        explanation.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Projects and station IDs")
+            .setMessage("Create a project before starting a survey. Survey routes generate permanent station IDs. You may correct a station's reference coordinates. Existing visit GPS snapshots remain unchanged.")
+            .setPositiveButton("Close",null).show());
         Spinner previous=projectSpinner;String selected=previous==null?"default":selectedProject();
         projectSpinner=new Spinner(this);pids.clear();ArrayList<String> projects=new ArrayList<>();
         try(Cursor c=helper.getReadableDatabase().rawQuery("SELECT id,name FROM projects ORDER BY name",null)){
-            while(c.moveToNext()){pids.add(c.getString(0));projects.add(c.getString(1)+" · "+c.getString(0));}
+            while(c.moveToNext()){pids.add(c.getString(0));projects.add(c.getString(1));}
         }
         projectSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,projects));
         int selectedIndex=pids.indexOf(selected);if(selectedIndex>=0)projectSpinner.setSelection(selectedIndex);
@@ -53,13 +59,13 @@ public class SitesActivity extends Activity {
     private void renderSites(){
         if(content==null)return;content.removeAllViews();
         String projectId=selectedProject();
-        content.addView(label("Saved sampling stations in "+projectId,17));
+        content.addView(UiKit.sectionTitle(this,"Sampling stations"));
         try(Cursor c=helper.getReadableDatabase().rawQuery("SELECT id,name,habitat,latitude,longitude FROM sites WHERE project_id=? ORDER BY id",new String[]{projectId})){
             if(c.getCount()==0)content.addView(label("No stations yet. Start a survey to generate stations automatically.",13));
             while(c.moveToNext()){
                 String id=c.getString(0);
                 String coords=c.isNull(3)?"No coordinates":String.format(Locale.US,"%.5f, %.5f",c.getDouble(3),c.getDouble(4));
-                Button edit=btn(c.getString(1)+" ("+id+")\n"+coords);
+                Button edit=btn(c.getString(1)+"\n"+coords);
                 edit.setAllCaps(false);
                 edit.setOnClickListener(v->siteDialog(id));
                 content.addView(edit);

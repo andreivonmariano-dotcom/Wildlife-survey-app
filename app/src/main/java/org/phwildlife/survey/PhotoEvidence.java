@@ -90,8 +90,12 @@ public final class PhotoEvidence {
             byte[] buffer=new byte[8192];
             while(c.moveToNext()){
                 String name=c.getString(0);
-                if(name.contains("/")||name.contains(".."))continue;
-                File f=new File(dir(ctx),name);if(!f.isFile())continue;
+                if(name==null||name.contains("/")||name.contains("..")||
+                    name.contains("\\\\"))
+                    throw new SecurityException("Unsafe stored observation photo path");
+                File f=new File(dir(ctx),name);
+                if(!f.isFile())throw new FileNotFoundException(
+                    "Missing observation photo: "+name);
                 zip.putNextEntry(new ZipEntry("photos/"+name));
                 try(InputStream in=new FileInputStream(f)){int n;while((n=in.read(buffer))!=-1)zip.write(buffer,0,n);}
                 zip.closeEntry();

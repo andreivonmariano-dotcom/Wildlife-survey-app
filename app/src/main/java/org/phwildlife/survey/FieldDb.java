@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,19);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,20);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -36,6 +36,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeSeventeen(d);
         upgradeEighteen(d);
         upgradeNineteen(d);
+        upgradeTwenty(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -69,6 +70,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<17)upgradeSeventeen(d);
         if(oldVersion<18)upgradeEighteen(d);
         if(oldVersion<19)upgradeNineteen(d);
+        if(oldVersion<20)upgradeTwenty(d);
     }
     /**
      * User-reviewed habitat references are stored apart from publisher taxon
@@ -84,6 +86,52 @@ public final class FieldDb extends SQLiteOpenHelper {
             "updated_utc TEXT NOT NULL)");
         d.execSQL("CREATE INDEX IF NOT EXISTS habitat_profile_review "+
             "ON taxon_habitat_profiles(review_status)");
+    }
+    /**
+     * Seed only independently checked ecological literature. Blank records
+     * are NOT populated from taxonomy or checklist geographic membership.
+     * INSERT OR IGNORE protects profiles already entered by the researcher.
+     */
+    private void upgradeTwenty(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE taxon_habitat_profiles ADD COLUMN source_url TEXT "+
+            "NOT NULL DEFAULT ''");
+        d.execSQL("ALTER TABLE taxon_habitat_profiles ADD COLUMN evidence_note TEXT "+
+            "NOT NULL DEFAULT ''");
+        String[][] verified={
+            {"WBCP2025:Pithecophaga_jefferyi","lowland|secondary",
+                "150","1450","Animal Diversity Web: Pithecophaga jefferyi",
+                "accessed-2026-10-27","https://animaldiversity.org/accounts/Pithecophaga_jefferyi/",
+                "Forest habitat and broad elevation range, 150–1450 m. Region-specific "+
+                "published statements are not strict physiological limits."},
+            {"MDD:1000915","secondary|lowland",
+                "","","Neri-Arboleda et al., Journal of Zoology",
+                "2002","https://doi.org/10.1017/S0952836902000997",
+                "Carlito syrichta: older scientific name Tarsius syrichta. "+
+                "Bohol study documents secondary lowland rainforest. "+
+                "No species-wide elevation limits assigned."},
+            {"SYAMP2025:001","riparian",
+                "","","Aznar et al., Barbourula busuangensis field study",
+                "2025","https://pmc.ncbi.nlm.nih.gov/articles/PMC11740736/",
+                "Clear, well-oxygenated forest streams. No species-wide "+
+                "elevation endpoints assigned."},
+            {"SYAMP2025:002","riparian|montane|lowland",
+                "","","IUCN, Threatened Amphibians of the World",
+                "2008","https://www.iucn-amphibians.org/wp-content/uploads/"+
+                    "sites/4/2018/11/TAW-Threatened-Species-Profiles_Part1.pdf",
+                "Source describes cool mountain streams in lowland and "+
+                "lower montane forest on Mindanao. No range endpoints assigned."}
+        };
+        for(String[] p:verified){
+            d.execSQL("INSERT OR IGNORE INTO taxon_habitat_profiles("+
+                "taxon_key,habitat_codes,strict_habitat,elevation_min_m,"+
+                "elevation_max_m,source,source_version,review_status,"+
+                "updated_utc,source_url,evidence_note) "+
+                "VALUES(?,?,0,?,?,?,?, 'reviewed',datetime('now'),?,?)",
+                new Object[]{p[0],p[1],
+                    p[2].isEmpty()?null:Double.valueOf(p[2]),
+                    p[3].isEmpty()?null:Double.valueOf(p[3]),
+                    p[4],p[5],p[6],p[7]});
+        }
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");

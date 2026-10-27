@@ -584,6 +584,7 @@ public class MainActivity extends Activity implements LocationListener {
         Intent screen=new Intent(this,SpeciesPickerActivity.class);
         screen.putExtra("group",group);
         screen.putExtra("profile",profile);
+        screen.putExtra("survey_id",eventId);
         screen.putExtra("geo_region",geographicRegion);
         screen.putExtra("province",adminProvince);
         if(habitatEntry!=null)screen.putExtra("habitat",habitatEntry.getText().toString());

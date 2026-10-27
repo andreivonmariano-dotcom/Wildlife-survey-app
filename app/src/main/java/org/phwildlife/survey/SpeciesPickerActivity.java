@@ -2,6 +2,7 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,6 +24,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ProgressBar;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.InputType;
 import java.util.Collections;
 import java.util.ArrayList;
@@ -46,12 +50,15 @@ public final class SpeciesPickerActivity extends Activity {
     private Spinner groups,views;
     private Button sortButton;
     private LinearLayout cards;
-    private TextView status;
+    private TextView status,siteSummary;
     private int generation=0,offset=0,sortMode=0,statusFilter=0;
     private String habitatCode="";
     private Double siteElevation=null,elevationUncertainty=null;
     private List<Species> loaded=new ArrayList<>();
     private boolean truncated=false;
+    private SharedPreferences surveyOptions;
+    private String preferencePrefix="";
+    private int savedGroupIndex=0,savedViewIndex=0;
     private String[] availableGroups;
     private String geographicRegion="PH",province="",habitat="";
     private static final int MAX_QUERY_ROWS=5000;
@@ -76,6 +83,34 @@ public final class SpeciesPickerActivity extends Activity {
             default:return "";
         }
     }
+    private int checked(int value,int upper){
+        return Math.max(0,Math.min(value,upper-1));
+    }
+    private String pref(String suffix){return preferencePrefix+suffix;}
+    private void restorePickerSettings(){
+        sortMode=checked(surveyOptions.getInt(pref("sort"),0),
+            SpeciesSortPolicy.SORT_LABELS.length);
+        statusFilter=checked(surveyOptions.getInt(pref("filter"),0),
+            SpeciesSortPolicy.FILTER_LABELS.length);
+        savedGroupIndex=checked(surveyOptions.getInt(pref("group"),0),availableGroups.length);
+        savedViewIndex=checked(surveyOptions.getInt(pref("view"),0),VIEWS.length);
+        habitatCode=surveyOptions.getString(pref("habitat"),habitatCode);
+        if(HabitatLikelihood.habitatIndex(habitatCode)==0)habitatCode="";
+        siteElevation=parseNumber(surveyOptions.getString(pref("elevation"),""));
+        elevationUncertainty=parseNumber(surveyOptions.getString(pref("uncertainty"),""));
+    }
+    private void savePickerSettings(){
+        if(surveyOptions==null)return;
+        surveyOptions.edit().putInt(pref("sort"),sortMode)
+            .putInt(pref("filter"),statusFilter)
+            .putInt(pref("group"),groups==null?0:groups.getSelectedItemPosition())
+            .putInt(pref("view"),views==null?0:views.getSelectedItemPosition())
+            .putString(pref("habitat"),habitatCode)
+            .putString(pref("elevation"),siteElevation==null?"":siteElevation.toString())
+            .putString(pref("uncertainty"),
+                elevationUncertainty==null?"":elevationUncertainty.toString())
+            .apply();
+    }
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);
         Intent request=getIntent();
@@ -91,6 +126,10 @@ public final class SpeciesPickerActivity extends Activity {
         habitat=request.getStringExtra("habitat");
         if(habitat==null)habitat="";
         habitatCode=guessHabitat(habitat);
+        String surveyId=request.getStringExtra("survey_id");
+        preferencePrefix="survey_"+(surveyId==null||surveyId.isEmpty()?"unknown":surveyId)+"_";
+        surveyOptions=getSharedPreferences("likas_species_picker",MODE_PRIVATE);
+        restorePickerSettings();
         getWindow().setStatusBarColor(UiKit.BG);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         LinearLayout root=new LinearLayout(this);
@@ -116,7 +155,8 @@ public final class SpeciesPickerActivity extends Activity {
 
         LinearLayout quick=new LinearLayout(this);
         quick.setGravity(Gravity.CENTER_VERTICAL);
-        sortButton=UiKit.button(this,"Sort & Filter · A–Z","secondary");
+        sortButton=UiKit.button(this,
+            "Sort & Filter · "+SpeciesSortPolicy.SORT_LABELS[sortMode],"secondary");
         sortButton.setOnClickListener(v->openSortFilter());
         quick.addView(sortButton,new LinearLayout.LayoutParams(0,dp(52),1.25f));
         Button conditions=UiKit.button(this,"Site conditions","quiet");
@@ -137,9 +177,8 @@ public final class SpeciesPickerActivity extends Activity {
             android.R.layout.simple_spinner_dropdown_item,VIEWS));
         controls.addView(views,new LinearLayout.LayoutParams(0,dp(48),1f));
         root.addView(controls);
-        for(int i=0;i<availableGroups.length;i++){
-            if(availableGroups[i].equals(group)){groups.setSelection(i);break;}
-        }
+        groups.setSelection(savedGroupIndex);
+        views.setSelection(savedViewIndex);
 
         Location fix=TrackService.currentFix();
         String gps="GPS position unavailable";
@@ -155,7 +194,12 @@ public final class SpeciesPickerActivity extends Activity {
         TextView model=text("Percentage = screening index, not occurrence probability. "+
             "Unassessed species stay selectable.",12,false);
         model.setTextColor(UiKit.MUTED);
-        model.setPadding(0,dp(6),0,dp(8));root.addView(model);
+        model.setPadding(0,dp(6),0,dp(4));root.addView(model);
+        siteSummary=text("",12,false);
+        siteSummary.setTextColor(UiKit.FOREST);
+        siteSummary.setPadding(0,0,0,dp(8));
+        root.addView(siteSummary);
+        updateSiteSummary();
         Button unknown=UiKit.button(this,"Use unidentified identification","secondary");
         root.addView(unknown);
         unknown.setOnClickListener(v->{
@@ -239,11 +283,13 @@ public final class SpeciesPickerActivity extends Activity {
                 sortMode=order.getSelectedItemPosition();
                 statusFilter=byStatus.getSelectedItemPosition();
                 sortButton.setText("Sort & Filter · "+SpeciesSortPolicy.SORT_LABELS[sortMode]);
+                savePickerSettings();
                 refresh();
             })
             .setNeutralButton("Reset",(dialog,which)->{
                 sortMode=0;statusFilter=0;
                 sortButton.setText("Sort & Filter · A–Z");
+                savePickerSettings();
                 refresh();
             })
             .setNegativeButton("Cancel",null).show();
@@ -254,6 +300,16 @@ public final class SpeciesPickerActivity extends Activity {
             double numeric=Double.parseDouble(value.trim());
             return Double.isFinite(numeric)?numeric:null;
         }catch(NumberFormatException ignored){return null;}
+    }
+    private void updateSiteSummary(){
+        if(siteSummary==null)return;
+        String habitatName=HabitatLikelihood.HABITATS[
+            HabitatLikelihood.habitatIndex(habitatCode)];
+        siteSummary.setText("Survey site: "+habitatName+
+            (siteElevation==null?" · elevation unassessed":
+                " · "+siteElevation+" m"+
+                (elevationUncertainty==null?"":" ±"+elevationUncertainty+" m"))+
+            " · settings saved for this survey");
     }
     private void openSiteConditions(){
         LinearLayout panel=new LinearLayout(this);
@@ -303,6 +359,8 @@ public final class SpeciesPickerActivity extends Activity {
                 }
                 habitatCode=HabitatLikelihood.codeAt(site.getSelectedItemPosition());
                 siteElevation=meters;elevationUncertainty=uncertainty;
+                savePickerSettings();
+                updateSiteSummary();
                 dialog.dismiss();
                 refresh();
             }));
@@ -384,6 +442,7 @@ public final class SpeciesPickerActivity extends Activity {
     }
     private void refresh(){
         if(search==null||cards==null)return;
+        savePickerSettings();
         final int ticket=++generation;
         final String term=search.getText().toString().trim();
         final String group=currentGroup();
@@ -478,12 +537,33 @@ public final class SpeciesPickerActivity extends Activity {
             meta.setTextColor(UiKit.MUTED);card.addView(meta);
         }
         String label=item.screening.scorePercent==null?
-            "Insufficient Data · no numeric score":
-            item.screening.scorePercent+"% screening score · "+item.screening.label;
+            "Insufficient Data · not scored":
+            item.screening.scorePercent+"% screening index · "+item.screening.label;
+        int indicator="Unlikely".equals(item.screening.label)?
+            Color.rgb(167,64,56):"Likely".equals(item.screening.label)?
+            Color.rgb(36,112,74):Color.rgb(123,94,31);
+        if(item.screening.scorePercent==null)indicator=UiKit.MUTED;
         TextView likelihood=text(label,14,true);
-        likelihood.setTextColor(UiKit.FOREST);
-        likelihood.setPadding(0,dp(7),0,0);
+        likelihood.setTextColor(indicator);
+        likelihood.setPadding(0,dp(7),0,dp(3));
         card.addView(likelihood);
+        // Colored indicator is paired with text; never rely on color alone.
+        if(item.screening.scorePercent!=null){
+            ProgressBar bar=new ProgressBar(this,null,
+                android.R.attr.progressBarStyleHorizontal);
+            bar.setMax(100);
+            bar.setProgress(item.screening.scorePercent);
+            bar.setProgressTintList(ColorStateList.valueOf(indicator));
+            bar.setProgressBackgroundTintList(
+                ColorStateList.valueOf(Color.rgb(226,231,226)));
+            LinearLayout.LayoutParams track=new LinearLayout.LayoutParams(-1,dp(7));
+            track.bottomMargin=dp(3);
+            card.addView(bar,track);
+            bar.setContentDescription(label+
+                ". Screening index, not a measured probability of occurrence.");
+        }
+        likelihood.setContentDescription(label+
+            ". Tap for the documented basis of this screening assessment.");
         likelihood.setOnClickListener(v->new AlertDialog.Builder(this)
             .setTitle("Preliminary field-screening score")
             .setMessage(item.screening.explanation+
@@ -516,6 +596,10 @@ public final class SpeciesPickerActivity extends Activity {
         result.putExtra("species_group",group);
         setResult(RESULT_OK,result);
         finish();
+    }
+    @Override protected void onPause(){
+        savePickerSettings();
+        super.onPause();
     }
     @Override protected void onDestroy(){
         generation++;

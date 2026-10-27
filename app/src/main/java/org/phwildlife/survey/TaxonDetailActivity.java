@@ -202,6 +202,30 @@ public final class TaxonDetailActivity extends Activity {
             sourceLink("Bird vocalizations on xeno-canto",
                 col(c,"sound_url"),"https://www.xeno-canto.org/species/");
             paragraph("Source record ID",col(c,"taxon_key"));
+            try(Cursor ecology=database.rawQuery(
+                "SELECT habitat_codes,elevation_min_m,elevation_max_m,"+
+                    "source,source_version,review_status,source_url,evidence_note "+
+                    "FROM taxon_habitat_profiles WHERE taxon_key=? LIMIT 1",
+                new String[]{key})){
+                if(ecology.moveToFirst()){
+                    String habitats=ecology.getString(0).replace("|",", ");
+                    paragraph("Reviewed habitat codes",habitats);
+                    String low=ecology.isNull(1)?"Unassessed":ecology.getString(1)+" m";
+                    String high=ecology.isNull(2)?"Unassessed":ecology.getString(2)+" m";
+                    paragraph("Published elevation reference","Minimum: "+low+
+                        " · Maximum: "+high);
+                    paragraph("Habitat reference",ecology.getString(3)+
+                        " ("+ecology.getString(4)+")");
+                    paragraph("Scope and limitations",
+                        ecology.isNull(7)?"":ecology.getString(7));
+                    if(!ecology.isNull(6)&&
+                        ecology.getString(6).startsWith("https://")){
+                        String cited=ecology.getString(6);
+                        sourceLink("Open habitat study",cited,"https://");
+                    }
+                }else paragraph("Habitat / elevation profile",
+                    "Unassessed. No reviewed ecological profile installed.");
+            }
             if(col(c,"review_status").equals("unreviewed"))
                 paragraph("Review status","Not independently reviewed for regional occurrence");
             StringBuilder names=new StringBuilder();

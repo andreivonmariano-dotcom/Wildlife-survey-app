@@ -713,8 +713,9 @@ public class WelcomeActivity extends Activity {
         i.putExtra("route_template_name",routeName);
         i.putExtra("custom_survey",custom);
         i.putExtra("basic_log_only",m.basicLog);
-        currentScreen="home";homeVisible=true;
-        getPreferences(MODE_PRIVATE).edit().putString("screen","home").commit();
+        // Preserve the setup selections until the survey has actually started.
+        // Canceling GPS acquisition must return to this same configured screen.
+        persistSetup();
         startActivity(i);
     }
     private void persistSetup(){

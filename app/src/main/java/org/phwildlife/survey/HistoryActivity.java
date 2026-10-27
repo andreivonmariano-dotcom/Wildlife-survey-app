@@ -165,16 +165,13 @@ public class HistoryActivity extends Activity {
             JSONObject original=snapshot(c);
             String title=original.optString("raw_identification","Observation "+id);
             new AlertDialog.Builder(this).setTitle(title)
-              .setMessage("Review or correct this record. Original values remain in the audit history.")
-              .setNegativeButton("Cancel",null)
-              .setNeutralButton("Edit", (dlg,w)->edit(id,original))
-              .setPositiveButton("More",(dlg,w)->new AlertDialog.Builder(this).setTitle("Record actions")
-                  .setItems(new String[]{"Edit observation","View photo evidence","View edit history","Delete observation"},(d,index)->{
-                      if(index==0)edit(id,original);
-                      else if(index==1)viewPhotos(id);
-                      else if(index==2)audit(id);
-                      else deletePrompt(id,original);
-                  }).show()).show();
+              .setItems(new String[]{"Edit observation","Photos","Edit history","Delete observation"},(dialog,index)->{
+                  if(index==0)edit(id,original);
+                  else if(index==1)viewPhotos(id);
+                  else if(index==2)audit(id);
+                  else deletePrompt(id,original);
+              })
+              .setNegativeButton("Back",null).show();
         }catch(Exception e){Toast.makeText(this,"Cannot open record: "+e.getMessage(),Toast.LENGTH_LONG).show();}
     }
     private void viewPhotos(long record){

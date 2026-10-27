@@ -39,6 +39,13 @@ public final class SurveyMethods {
         for(Method m:forProfile(profile))if(m.code.equals(code))return m;
         return forProfile(profile)[0];
     }
+    /** Never call an unknown historical method by another method's name. */
+    public static String displayLabel(String profile,String code){
+        if(code==null||code.trim().isEmpty())return "Method not recorded";
+        for(Method option:forProfile(profile))
+            if(option.code.equals(code))return option.label;
+        return code.replace('_',' ');
+    }
     public static String[] displayNames(String profile) {
         Method[] a=forProfile(profile);String[] v=new String[a.length];
         for(int i=0;i<a.length;i++)v[i]=a[i].label+(a[i].basicLog?" · basic log":"");

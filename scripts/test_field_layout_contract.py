@@ -63,7 +63,7 @@ class FieldLayoutContractTest(unittest.TestCase):
         self.assertIn('"Start without GPS · mark start missing"',self.gps)
         self.assertIn('start_gps_recorded_at_utc,start_gps_status',self.recorder)
         self.assertIn('"missing_at_survey_start"',self.recorder)
-        self.assertIn("recordedCount(", src("SurveyHudReader.java"))
+        self.assertIn("recordedCount(", (JAVA / "SurveyHudReader.java").read_text(encoding="utf-8"))
 
     def test_unified_palette_and_action_colors(self):
         text=self.styles

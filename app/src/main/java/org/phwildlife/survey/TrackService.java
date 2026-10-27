@@ -44,6 +44,9 @@ public final class TrackService extends Service implements LocationListener {
             .getBoolean("user_stopped",false);
     }
     public static void startGnss(android.content.Context context){
+        // A visible user action explicitly clears a prior notification stop.
+        context.getSharedPreferences("likas_gps_control",MODE_PRIVATE).edit()
+            .putBoolean("user_stopped",false).apply();
         Intent request=new Intent(context,TrackService.class).setAction(ACTION_ACQUIRE);
         if(Build.VERSION.SDK_INT>=26)context.startForegroundService(request);
         else context.startService(request);

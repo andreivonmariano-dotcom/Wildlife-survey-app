@@ -239,6 +239,9 @@ public final class SpeciesPickerActivity extends Activity {
         context.setTextColor(UiKit.FOREST);root.addView(context);
         TextView model=text("ⓘ About species scores",12,false);
         model.setTextColor(UiKit.FOREST);
+        model.setMinHeight(dp(44));
+        model.setGravity(Gravity.CENTER_VERTICAL);
+        model.setFocusable(true);
         model.setPadding(0,dp(3),0,dp(3));
         model.setOnClickListener(v->new AlertDialog.Builder(this)
             .setTitle("Species screening score")

@@ -124,9 +124,16 @@ public class WelcomeActivity extends Activity {
         TextView caption=text(detail,12,false);caption.setTextColor(MUTED);
         caption.setPadding(0,0,0,0);tile.addView(caption);
         tile.setMinimumHeight(dp(104));tile.setFocusable(true);
+        name.setMaxLines(3);caption.setMaxLines(3);
         tile.setContentDescription(title+", "+detail);
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1f);
-        lp.rightMargin=dp(7);
+        boolean stacked=FieldLayoutPolicy.stackSurveyTiles(
+            getResources().getConfiguration().screenWidthDp,
+            getResources().getConfiguration().fontScale);
+        LinearLayout.LayoutParams lp=stacked?
+            new LinearLayout.LayoutParams(-1,-2):
+            new LinearLayout.LayoutParams(0,-2,1f);
+        if(stacked)lp.bottomMargin=dp(8);
+        else lp.rightMargin=dp(7);
         parent.addView(tile,lp);
         tile.setOnClickListener(v->tap.run());
     }
@@ -172,12 +179,15 @@ public class WelcomeActivity extends Activity {
         }else{
             main.addView(step("NEW","Choose wildlife group"));
             LinearLayout first=new LinearLayout(this);
-            first.setOrientation(LinearLayout.HORIZONTAL);
+            first.setOrientation(FieldLayoutPolicy.stackSurveyTiles(
+                getResources().getConfiguration().screenWidthDp,
+                getResources().getConfiguration().fontScale)?
+                LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
             surveyTile(first,"Birds","Counts and transects",()->setup("Birds",false));
             surveyTile(first,"Herpetofauna","Calls and encounters",()->setup("Herpetofauna",false));
             main.addView(first);
             LinearLayout second=new LinearLayout(this);
-            second.setOrientation(LinearLayout.HORIZONTAL);
+            second.setOrientation(first.getOrientation());
             surveyTile(second,"Mammals","Signs and stations",()->setup("Mammals",false));
             surveyTile(second,"Custom","Other field methods",()->customPicker());
             LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(-1,-2);

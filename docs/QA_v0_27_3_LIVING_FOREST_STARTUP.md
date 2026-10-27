@@ -42,3 +42,11 @@ No modification to survey event creation, GPS, altitude, taxon catalogs, SQLite 
 7. Confirm existing installed APK and new candidate use the same signing certificate, application ID and increasing versionCode before trying an in-place update.
 
 No stable release claim is made until the field acceptance gates pass.
+
+## Automated verification and direct deliverable (2026-10-27)
+- PR #35, source build commit `775b9c822d178ef2634f9a5a646bb729563bc1c0`. GitHub Actions run `40537117613`: **success**. Python source tests, JVM tests and Android debug assembly passed.
+- CI artifact `wildlife-survey-debug-apk` (#12748084046) contains one `app-debug.apk`.
+- Verified APK filename delivered in the current chat: `LIKAS-v0.27.3-RC4-living-forest-debug.apk`, size **1,392,591 bytes**, SHA-256 **`9a51219aacc8d841ef105ea853fa7a10f9005029b94765df0794876841479fe3`**.
+- Embedded manifest contains `org.phwildlife.survey.beta08` and `0.27.3-rc4`; `app/build.gradle` declares versionCode 49. Both approved 2172×724 WebP files are embedded unchanged: day SHA-256 `8b62eda698354db6d410964a342e5ccbe8cd284e3577a51fc72e4839dface76f`, night SHA-256 `a21568f109b863cb86a27b8dfae87aebfa656914252232b6c70fc0c95f1467af`.
+- The APK Signature Scheme v2 X.509 certificate SHA-256 is `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, byte-identical to the certificate used by the v0.27.2 RC3 test APK. Identity/signing continuity passes, but a real older-database installation and field test remain pending.
+- All motion is native Android Canvas drawing; original scene photos remain static underneath animated elements. No MP4/GIF visual preview is presented as an exact app capture.

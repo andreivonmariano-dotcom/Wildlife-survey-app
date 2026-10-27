@@ -560,6 +560,13 @@ public final class SpeciesPickerActivity extends Activity {
         status.setText("Finding "+group+"…");
         worker.execute(()->{
             try{
+                if(elevationMode==0&&!surveyId.isEmpty()){
+                    try(FieldDb helper=new FieldDb(getApplicationContext())){
+                        StationEnvironmentStore.recordImprovedMsl(
+                            helper.getWritableDatabase(),surveyId,visitId,stationId,
+                            TrackService.currentFix());
+                    }
+                }
                 List<Species> results=searchCatalog(group,term,onlyLocal,
                     siteCode,altitude,uncertainty);
                 boolean capped=results.size()>MAX_QUERY_ROWS;

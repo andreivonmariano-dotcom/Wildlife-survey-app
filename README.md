@@ -1,3 +1,13 @@
+# LIKAS v0.27.2 RC3 | Startup menu refinement
+
+**Review candidate:** `0.27.2-rc3` (versionCode 48), preserving app ID `org.phwildlife.survey.beta08` and SQLite schema 27. This is **part 1** of the screen-by-screen UI audit.
+
+The startup landing uses the approved pond-frog logo, the full-resolution day/night forest, restrained contrast and a small action panel. **Open LIKAS** leads to Home; a separate **Resume survey** appears only for an unfinished event. Developer-style version text and misleading conditional labels are removed. An unreadable survey archive produces a warning, not a false empty state.
+
+See [startup screen audit](docs/QA_v0_27_2_STARTUP_MENU.md). The Home menu and later screens are not part of this patch. Handset testing remains open.
+
+---
+
 # LIKAS v0.27.1 RC2 | Field screen polish and truthful GPS accuracy
 
 **Development candidate**: `0.27.1-rc2` (versionCode 47). Retains app ID `org.phwildlife.survey.beta08` and SQLite schema 27.

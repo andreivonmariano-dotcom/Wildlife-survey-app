@@ -529,12 +529,15 @@ public class WelcomeActivity extends Activity {
         if(methodIndex<0||choices==null||methodIndex>=choices.length)return;
         try(FieldDb store=new FieldDb(this);
             Cursor c=store.getReadableDatabase().rawQuery(
-                "SELECT id,name,min_visits,min_minutes,min_units FROM study_protocol_templates "+
-                "WHERE project_id=? AND method=? ORDER BY name",
-                new String[]{projectId(),choices[methodIndex].code})){
+                "SELECT id,name,min_visits,min_minutes,min_units,survey_profile "+
+                "FROM study_protocol_templates WHERE project_id=? AND method=? "+
+                "AND (survey_profile=? OR survey_profile IS NULL) "+
+                "ORDER BY CASE WHEN survey_profile IS NULL THEN 1 ELSE 0 END,name",
+                new String[]{projectId(),choices[methodIndex].code,profile})){
             while(c.moveToNext()){
                 studyTemplateIds.add(c.getString(0));
-                labels.add(c.getString(1)+" · "+c.getInt(2)+" visits, "+
+                String scope=c.isNull(5)?" · shared legacy":"";
+                labels.add(c.getString(1)+scope+" · "+c.getInt(2)+" visits, "+
                     c.getInt(3)+" min, "+c.getInt(4)+" units");
             }
         }

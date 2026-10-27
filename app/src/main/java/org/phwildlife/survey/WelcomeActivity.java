@@ -56,7 +56,11 @@ public class WelcomeActivity extends Activity {
     }
     private Button button(String label){return UiKit.button(this,label,"secondary");}
     private LinearLayout vertical(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
-    @Override public void onCreate(Bundle state){super.onCreate(state);buildShell();
+    @Override public void onCreate(Bundle state){super.onCreate(state);
+        getWindow().setStatusBarColor(BG);
+        getWindow().setNavigationBarColor(BG);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        buildShell();
         String screen=getPreferences(MODE_PRIVATE).getString("screen","home");
         String rememberedProfile=getPreferences(MODE_PRIVATE).getString("profile","Birds");
         boolean rememberedCustom=getPreferences(MODE_PRIVATE).getBoolean("custom",false);
@@ -105,11 +109,13 @@ public class WelcomeActivity extends Activity {
         logo.setContentDescription("LIKAS mark");
         header.addView(logo,new LinearLayout.LayoutParams(dp(52),dp(52)));
         LinearLayout brand=vertical();brand.setPadding(dp(12),0,0,0);
-        brand.addView(text("LIKAS",26,true));
+        TextView wordmark=text("LIKAS",25,true);
+        wordmark.setPadding(0,0,0,0);brand.addView(wordmark);
         TextView sub=text("Philippine Wildlife Survey",12,false);
+        sub.setPadding(0,dp(2),0,0);
         sub.setTextColor(MUTED);brand.addView(sub);
-        header.addView(brand,new LinearLayout.LayoutParams(0,-2,1));
-        Button back=UiKit.button(this,"‹ Start","quiet");
+        header.addView(brand,new LinearLayout.LayoutParams(0,dp(56),1));
+        Button back=UiKit.button(this,"‹ Back","quiet");
         back.setTextSize(13);back.setOnClickListener(v->finish());
         header.addView(back,new LinearLayout.LayoutParams(dp(88),dp(46)));
         LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
@@ -126,7 +132,9 @@ public class WelcomeActivity extends Activity {
             TextView notice=text("Finish the active survey before creating another.",12,false);
             notice.setTextColor(MUTED);main.addView(notice);
         }else{
-            main.addView(text("New survey",17,true));
+            TextView prompt=text("Select a survey group",16,true);
+        prompt.setPadding(dp(3),dp(5),dp(3),dp(8));
+        main.addView(prompt);
             card("Birds","",()->setup("Birds",false));
             card("Herpetofauna","",()->setup("Herpetofauna",false));
             card("Mammals","",()->setup("Mammals",false));
@@ -134,7 +142,7 @@ public class WelcomeActivity extends Activity {
         }
         Button toolsToggle=UiKit.button(this,"Data & Tools  ▾","secondary");
         LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(54));
-        toolMargin.topMargin=dp(15);main.addView(toolsToggle,toolMargin);
+        toolMargin.topMargin=dp(10);main.addView(toolsToggle,toolMargin);
         LinearLayout tools=vertical();
         tools.setVisibility(View.GONE);
         toolsToggle.setOnClickListener(v->{
@@ -186,13 +194,14 @@ public class WelcomeActivity extends Activity {
     }
     private void card(String name,String desc,Runnable action){
         LinearLayout wrapper=vertical();
-        wrapper.setPadding(dp(12),dp(11),dp(12),dp(13));
+        wrapper.setPadding(dp(14),dp(7),dp(12),dp(7));
         wrapper.setBackground(UiKit.surface(this));
-        TextView h=text(name+"  ›",19,true);wrapper.addView(h);
+        TextView h=text(name+"   ›",17,true);
+        h.setPadding(dp(2),dp(9),dp(2),dp(9));wrapper.addView(h);
         if(desc!=null&&!desc.isEmpty()){
             TextView sub=text(desc,13,false);sub.setTextColor(MUTED);wrapper.addView(sub);
         }
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(11);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(9);
         main.addView(wrapper,lp);wrapper.setOnClickListener(v->action.run());
     }
     private void customPicker(){

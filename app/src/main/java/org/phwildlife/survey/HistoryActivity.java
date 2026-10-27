@@ -17,6 +17,8 @@ public class HistoryActivity extends Activity {
     private FieldDb db;
     private LinearLayout rows,root;
     private String eventFilter;
+    private static final int PAGE_SIZE=40;
+    private int surveyOffset=0,observationOffset=0;
     private final int INK=Color.rgb(29,57,40);
     private int dp(int value){return (int)(value*getResources().getDisplayMetrics().density+0.5f);}
     private LinearLayout column(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;}
@@ -29,7 +31,7 @@ public class HistoryActivity extends Activity {
         root=column();root.setBackgroundColor(Color.rgb(247,249,247));root.setPadding(dp(12),dp(12),dp(12),dp(12));
         root.addView(text(eventFilter==null?"Survey history":"Survey observations",23));
         Button back=btn(eventFilter==null?"← Home":"← All surveys");
-        back.setOnClickListener(v->{if(eventFilter==null)finish();else{eventFilter=null;draw();}});
+        back.setOnClickListener(v->{if(eventFilter==null)finish();else{eventFilter=null;surveyOffset=0;observationOffset=0;draw();}});
         root.addView(back);
         ScrollView scroll=new ScrollView(this);
         rows=column();scroll.addView(rows);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
@@ -38,14 +40,21 @@ public class HistoryActivity extends Activity {
     }
     private void surveys(){
         try(Cursor c=db.getReadableDatabase().rawQuery(
-          "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),COALESCE(s.outcome,'active') FROM surveys s LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL GROUP BY s.id ORDER BY s.started DESC",null)){
-            if(c.getCount()==0)rows.addView(text("No saved surveys yet.",15));
+          "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),COALESCE(s.outcome,'active') FROM surveys s LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL GROUP BY s.id ORDER BY s.started DESC LIMIT ? OFFSET ?",
+          new String[]{String.valueOf(PAGE_SIZE),String.valueOf(surveyOffset)})){
+            int rowsThisPage=c.getCount();
+            if(rowsThisPage==0&&surveyOffset==0)rows.addView(text("No saved surveys yet.",15));
             while(c.moveToNext()){
                 String event=c.getString(0),profile=c.getString(1),method=c.getString(2),site=c.getString(3),date=c.getString(4);
                 String state=c.getString(8).equals("not_counted")?"NOT COUNTED":c.isNull(5)?"Active":c.getInt(6)==1?"Completed":"Incomplete";
                 Button item=UiKit.button(this,profile+" · "+method+"\n"+site+" · "+date+"\n"+state+" · "+c.getInt(7)+" records",state.equals("NOT COUNTED")?"danger":"secondary");
-                item.setOnClickListener(v->{eventFilter=event;draw();});
+                item.setOnClickListener(v->{eventFilter=event;observationOffset=0;draw();});
                 rows.addView(item);
+            }
+            if(rowsThisPage==PAGE_SIZE){
+                Button more=UiKit.button(this,"Load older surveys","quiet");
+                rows.addView(more);
+                more.setOnClickListener(v->{rows.removeView(more);surveyOffset+=PAGE_SIZE;surveys();});
             }
         }
     }
@@ -57,9 +66,15 @@ public class HistoryActivity extends Activity {
         progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
             .putExtra("event_id",event)));
         rows.addView(progress);
+        appendObservations(event);
+    }
+    private void appendObservations(String event){
         try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,u.station_id,''),COALESCE(p.sequence_number,u.sequence_number,0),r.point_count_id,r.sampling_unit_id FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id LEFT JOIN sampling_units u ON u.id=r.sampling_unit_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,u.sequence_number,0),r.detected_at,r.id",new String[]{event})){
-            if(c.getCount()==0)rows.addView(text("No detections recorded. The survey event remains saved.",14));
+            "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,u.station_id,''),COALESCE(p.sequence_number,u.sequence_number,0),r.point_count_id,r.sampling_unit_id FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id LEFT JOIN sampling_units u ON u.id=r.sampling_unit_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,u.sequence_number,0),r.detected_at,r.id LIMIT ? OFFSET ?",
+            new String[]{event,String.valueOf(PAGE_SIZE),String.valueOf(observationOffset)})){
+            int pageCount=c.getCount();
+            if(pageCount==0&&observationOffset==0)
+                rows.addView(text("No detections recorded. The survey event remains saved.",14));
             while(c.moveToNext()){
                 long record=c.getLong(0);
                 String dist=c.isNull(4)?"distance unknown":String.format(Locale.US,"%.1f m",c.getDouble(4));
@@ -67,6 +82,13 @@ public class HistoryActivity extends Activity {
                 Button item=btn(point+c.getString(1)+" · "+c.getInt(3)+"\n"+c.getString(2)+" · "+c.getString(5)+" · "+dist+"\n"+c.getString(6));
                 item.setOnClickListener(v->recordDetail(record));
                 rows.addView(item);
+            }
+            if(pageCount==PAGE_SIZE){
+                Button more=UiKit.button(this,"Load more observations","quiet");
+                rows.addView(more);
+                more.setOnClickListener(v->{
+                    rows.removeView(more);observationOffset+=PAGE_SIZE;appendObservations(event);
+                });
             }
         }
     }

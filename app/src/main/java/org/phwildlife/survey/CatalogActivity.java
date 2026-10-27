@@ -15,6 +15,7 @@ import java.util.*;
 public final class CatalogActivity extends Activity {
     private static final int PICK=891,PICK_MDD=892,MAX=25*1024*1024;
     private FieldDb db;private TextView info;
+    private volatile boolean importing=false;
     @Override public void onCreate(Bundle b){
         super.onCreate(b);db=new FieldDb(this);
         LinearLayout layout=new LinearLayout(this);layout.setOrientation(LinearLayout.VERTICAL);
@@ -165,7 +166,28 @@ public final class CatalogActivity extends Activity {
         if((req!=PICK&&req!=PICK_MDD)||outcome!=RESULT_OK||data==null)return;
         Uri uri=data.getData();if(uri==null)return;
         if(req==PICK_MDD){importMdd(uri);return;}
-        try{
+        if(importing){info.setText("Another checklist import is running");return;}
+        importing=true;
+        info.setText("Checking checklist file…");
+        new Thread(()->{
+            try{
+                List<Map<String,String>> valid=validateChecklist(uri);
+                runOnUiThread(()->{
+                    if(isFinishing()||isDestroyed()){importing=false;return;}
+                    new AlertDialog.Builder(this).setTitle("Import checklist?")
+                        .setMessage("Import "+valid.size()+" names? Existing observations stay unchanged.")
+                        .setNegativeButton("Cancel",(dialog,which)->importing=false)
+                        .setPositiveButton("Import",(dialog,which)->applyInBackground(valid))
+                        .setOnCancelListener(dialog->importing=false).show();
+                });
+            }catch(Exception ex){
+                importing=false;
+                runOnUiThread(()->{if(!isFinishing()&&!isDestroyed())
+                    info.setText("Checklist validation failed: "+ex.getMessage());});
+            }
+        },"LIKAS-Checklist-Validation").start();
+    }
+    private List<Map<String,String>> validateChecklist(Uri uri)throws Exception{
             byte[] csv=read(uri);
             List<List<String>> lines=parse(new String(csv,StandardCharsets.UTF_8));
             if(lines.size()<2)throw new Exception("Checklist CSV has no species rows");
@@ -196,11 +218,42 @@ public final class CatalogActivity extends Activity {
                 valid.add(map);
                 if(valid.size()>45000)throw new Exception("Maximum 45,000 species names per import");
             }
-            new AlertDialog.Builder(this).setTitle("Import checklist?")
-                .setMessage("Upsert "+valid.size()+" entries. Source and version are stored per name. Existing observations are not modified.")
-                .setNegativeButton("Cancel",null)
-                .setPositiveButton("Import",(d,w)->apply(valid)).show();
-        }catch(Exception ex){info.setText("Checklist validation failed: "+ex.getMessage());}
+        return valid;
+    }
+    private void applyInBackground(List<Map<String,String>> rows){
+        info.setText("Importing "+rows.size()+" names…");
+        new Thread(()->{
+            int changed=0;
+            try(FieldDb helper=new FieldDb(getApplicationContext())){
+                SQLiteDatabase writable=helper.getWritableDatabase();
+                writable.beginTransaction();
+                try(android.database.sqlite.SQLiteStatement statement=writable.compileStatement(
+                    "INSERT OR REPLACE INTO taxon_catalog(taxon_key,taxon_group,common_name,"+
+                    "scientific_name,family,source,source_version,region_codes,review_status,created_utc) "+
+                    "VALUES(?,?,?,?,?,?,?,?,?,datetime('now'))")){
+                    String[] keys={"taxon_key","taxon_group","common_name","scientific_name",
+                        "family","source","source_version","region_codes","review_status"};
+                    for(Map<String,String> row:rows){
+                        statement.clearBindings();
+                        for(int i=0;i<keys.length;i++)
+                            statement.bindString(i+1,row.get(keys[i]));
+                        statement.executeInsert();
+                        changed++;
+                    }
+                    writable.setTransactionSuccessful();
+                }finally{writable.endTransaction();}
+                final int count=changed;
+                runOnUiThread(()->{
+                    if(!isFinishing()&&!isDestroyed()){
+                        refresh();
+                        info.append("\nImported "+count+" checklist entries.");
+                    }
+                });
+            }catch(Exception ex){
+                runOnUiThread(()->{if(!isFinishing()&&!isDestroyed())
+                    info.setText("Import rolled back: "+ex.getMessage());});
+            }finally{importing=false;}
+        },"LIKAS-Checklist-Import").start();
     }
     private byte[] read(Uri uri)throws Exception{
         ByteArrayOutputStream out=new ByteArrayOutputStream();
@@ -231,24 +284,5 @@ public final class CatalogActivity extends Activity {
         if(quotes)throw new Exception("Unclosed CSV quote");
         if(field.length()>0||!row.isEmpty()){row.add(field.toString());all.add(row);}
         return all;
-    }
-    private void apply(List<Map<String,String>> rows){
-        SQLiteDatabase d=db.getWritableDatabase();int changed=0;
-        d.beginTransaction();
-        try{
-            android.database.sqlite.SQLiteStatement statement=d.compileStatement(
-                "INSERT OR REPLACE INTO taxon_catalog(taxon_key,taxon_group,common_name,scientific_name,"+
-                "family,source,source_version,region_codes,review_status,created_utc) VALUES(?,?,?,?,?,?,?,?,?,datetime('now'))");
-            for(Map<String,String> r:rows){
-                statement.clearBindings();
-                String[] keys={"taxon_key","taxon_group","common_name","scientific_name","family","source","source_version","region_codes","review_status"};
-                for(int j=0;j<keys.length;j++)statement.bindString(j+1,r.get(keys[j]));
-                statement.executeInsert();changed++;
-            }
-            d.setTransactionSuccessful();
-            info.setText("Imported "+changed+" entries.");
-        }catch(Exception ex){info.setText("Import rolled back: "+ex.getMessage());}
-        finally{d.endTransaction();}
-        refresh();
     }
 }

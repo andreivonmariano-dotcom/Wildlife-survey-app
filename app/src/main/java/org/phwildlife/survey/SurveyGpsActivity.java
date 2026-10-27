@@ -29,6 +29,7 @@ public final class SurveyGpsActivity extends Activity {
     private static final int REQUEST_FINE=413, REQUEST_NOTIFY=414;
     private LocationManager manager;
     private boolean stationMode;
+    private boolean receiverStartedInThisScreen=false;
     private boolean skyRegistered=false;
     private Location qualifiedFix;
     private TextView status,satelliteStatus,signalStatus;
@@ -131,7 +132,13 @@ public final class SurveyGpsActivity extends Activity {
             content.addView(missing);
         }
         Button retry=UiKit.button(this,"Check current GPS again","secondary");
-        retry.setOnClickListener(v->{ensureReceiver();updateLocation();});
+        retry.setOnClickListener(v->{
+            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
+                try{TrackService.startGnss(this);receiverStartedInThisScreen=true;}
+                catch(Exception e){status.setText("GPS could not restart");}
+            }
+            ensureReceiver();updateLocation();
+        });
         content.addView(retry);
         Button settings=UiKit.button(this,"Location settings","secondary");
         settings.setOnClickListener(v->startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
@@ -164,7 +171,11 @@ public final class SurveyGpsActivity extends Activity {
             return;
         }
         if(!TrackService.isRunning()){
-            try{TrackService.startGnss(this);}
+            if(TrackService.wasStopped(this)&&(stationMode||receiverStartedInThisScreen)){
+                status.setText("GPS was stopped. Tap Check current GPS again to restart.");
+                return;
+            }
+            try{TrackService.startGnss(this);receiverStartedInThisScreen=true;}
             catch(Exception e){status.setText("Continuous GPS could not start: "+e.getClass().getSimpleName());}
         }
         if(Build.VERSION.SDK_INT>=33 &&

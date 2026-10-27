@@ -39,7 +39,14 @@ public final class TrackService extends Service implements LocationListener {
         return fix==null?null:new Location(fix);
     }
     public static boolean isRunning(){return receiverRunning;}
+    public static boolean wasStopped(android.content.Context context){
+        return context.getSharedPreferences("likas_gps_control",MODE_PRIVATE)
+            .getBoolean("user_stopped",false);
+    }
     public static void startGnss(android.content.Context context){
+        // A visible user action explicitly clears a prior notification stop.
+        context.getSharedPreferences("likas_gps_control",MODE_PRIVATE).edit()
+            .putBoolean("user_stopped",false).apply();
         Intent request=new Intent(context,TrackService.class).setAction(ACTION_ACQUIRE);
         if(Build.VERSION.SDK_INT>=26)context.startForegroundService(request);
         else context.startService(request);
@@ -64,7 +71,18 @@ public final class TrackService extends Service implements LocationListener {
     @Override public void onCreate(){super.onCreate();manager=(LocationManager)getSystemService(LOCATION_SERVICE);db=new FieldDb(this);}
     @Override public int onStartCommand(Intent intent,int flags,int startId){
         String action=intent==null?ACTION_ACQUIRE:intent.getAction();
-        if(ACTION_END.equals(action)){stopRecording();return START_NOT_STICKY;}
+        if(ACTION_END.equals(action)){
+            getSharedPreferences("likas_gps_control",MODE_PRIVATE)
+                .edit().putBoolean("user_stopped",true).apply();
+            stopRecording();return START_NOT_STICKY;
+        }
+        if(ACTION_ACQUIRE.equals(action)){
+            getSharedPreferences("likas_gps_control",MODE_PRIVATE)
+                .edit().putBoolean("user_stopped",false).apply();
+        }else if(wasStopped(this)){
+            // A notification Stop GPS choice must survive process restarts.
+            stopRecording();return START_NOT_STICKY;
+        }
         if(ACTION_STOP.equals(action)){
             if(eventId!=null)updateState("stopped");
             eventId=null;previous=null;lastElapsed=0;

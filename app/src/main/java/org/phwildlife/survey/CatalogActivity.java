@@ -55,6 +55,15 @@ public final class CatalogActivity extends Activity {
             result.append("\\n").append(group).append(": ").append(sourced);
             if(sourced==0)result.append(" (catalog missing)");
         }
+        int reviewedProfiles=0;
+        try(Cursor ecology=db.getReadableDatabase().rawQuery(
+            "SELECT COUNT(*) FROM taxon_habitat_profiles "+
+                "WHERE review_status='reviewed'",null)){
+            if(ecology.moveToFirst())reviewedProfiles=ecology.getInt(0);
+        }
+        result.append("\\nHabitat profiles with checked references: ")
+            .append(reviewedProfiles).append(" / 1503 catalog entries");
+        result.append("\\nUnassessed habitat/elevation fields are left blank.");
         result.append("\\nSource records include national candidates. Local presence is not verified.");
         info.setText(result.toString().replace("\\\\n","\\n"));
     }

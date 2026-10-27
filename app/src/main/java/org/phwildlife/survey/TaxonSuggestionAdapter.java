@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,6 +26,68 @@ public final class TaxonSuggestionAdapter extends ArrayAdapter<String> implement
     private final Filter searchFilter=new SearchFilter();
     private String group,geographicRegion,provincePsgc;
     private boolean documentedOnly;
+    private java.util.Map<String,String> detailByName=new LinkedHashMap<>();
+    private static final class SearchItems {
+        final List<String> names;
+        final java.util.Map<String,String> metadata;
+        SearchItems(List<String> names,java.util.Map<String,String> metadata){
+            this.names=names;this.metadata=metadata;
+        }
+    }
+    private int dp(float value){
+        return Math.round(getContext().getResources().getDisplayMetrics().density*value);
+    }
+    @Override public View getView(int position,View convertView,ViewGroup parent){
+        LinearLayout row;
+        if(convertView instanceof LinearLayout)row=(LinearLayout)convertView;
+        else{
+            row=new LinearLayout(getContext());
+            row.setOrientation(LinearLayout.VERTICAL);
+            row.setPadding(dp(12),dp(7),dp(12),dp(7));
+            TextView name=new TextView(getContext());
+            name.setTextSize(15);name.setTextColor(UiKit.INK);
+            name.setMaxLines(2);
+            row.addView(name);
+            TextView meta=new TextView(getContext());
+            meta.setTextSize(12);meta.setTextColor(UiKit.MUTED);
+            meta.setMaxLines(2);
+            row.addView(meta);
+        }
+        String item=getItem(position);
+        TextView heading=(TextView)row.getChildAt(0);
+        TextView detail=(TextView)row.getChildAt(1);
+        heading.setText(item);
+        String description=detailByName.get(item);
+        detail.setText(description==null?"":description);
+        detail.setVisibility(description==null||description.isEmpty()?View.GONE:View.VISIBLE);
+        return row;
+    }
+    @Override public View getDropDownView(int position,View convertView,ViewGroup parent){
+        return getView(position,convertView,parent);
+    }
+    private static String detail(String endemism,String iucn,String philippines,
+            String synonym,String region){
+        StringBuilder s=new StringBuilder();
+        if(endemism!=null&&!endemism.isEmpty())s.append(endemism);
+        if(iucn!=null&&!iucn.isEmpty()){
+            if(s.length()>0)s.append(" · ");
+            s.append("IUCN ").append(iucn);
+        }
+        if(philippines!=null&&!philippines.isEmpty()){
+            if(s.length()>0)s.append(" · ");
+            s.append("PH ").append(philippines);
+        }
+        if(synonym!=null&&!synonym.isEmpty()){
+            if(s.length()>0)s.append(" · ");
+            s.append("Prior name: ").append(synonym.length()>48?
+                synonym.substring(0,45)+"…":synonym);
+        }
+        if(region!=null&&region.contains("MINDANAO")){
+            if(s.length()>0)s.append(" · ");
+            s.append("Mindanao listed");
+        }
+        return s.toString();
+    }
     public TaxonSuggestionAdapter(Context context,FieldDb helper,
             String group,String geographicRegion,String provincePsgc,boolean documentedOnly){
         super(context,android.R.layout.simple_dropdown_item_1line,new ArrayList<String>());
@@ -45,6 +110,7 @@ public final class TaxonSuggestionAdapter extends ArrayAdapter<String> implement
             final boolean regional=TaxonSearchPolicy.hasDocumentedRegion(
                 documentedOnly,selectedRegion);
             LinkedHashSet<String> choices=new LinkedHashSet<>();
+            LinkedHashMap<String,String> metadata=new LinkedHashMap<>();
             for(String unknown:Taxa.unknownLabels(selectedGroup)){
                 if(term.isEmpty()||unknown.toLowerCase(java.util.Locale.ROOT).contains(term))
                     choices.add(unknown);
@@ -62,7 +128,8 @@ public final class TaxonSuggestionAdapter extends ArrayAdapter<String> implement
                     while(c.moveToNext())choices.add(c.getString(0));
                 }
                 StringBuilder sql=new StringBuilder(
-                    "SELECT common_name,scientific_name FROM taxon_catalog WHERE taxon_group=?");
+                    "SELECT common_name,scientific_name,distribution_status,iucn_red_list,"+
+                    "ph_red_list,synonym_text,region_codes FROM taxon_catalog WHERE taxon_group=?");
                 ArrayList<String> args=new ArrayList<>();
                 args.add(selectedGroup);
                 if(regional){
@@ -111,15 +178,21 @@ public final class TaxonSuggestionAdapter extends ArrayAdapter<String> implement
                     while(c.moveToNext()){
                         String common=c.isNull(0)?"":c.getString(0);
                         String scientific=c.isNull(1)?"":c.getString(1);
-                        if(!scientific.isEmpty())
-                            choices.add(common.isEmpty()?scientific:common+" · "+scientific);
+                        if(!scientific.isEmpty()){
+                            String label=common.isEmpty()?scientific:common+" · "+scientific;
+                            choices.add(label);
+                            metadata.put(label,detail(c.getString(2),c.getString(3),
+                                c.getString(4),c.getString(5),c.getString(6)));
+                        }
                     }
                 }
                 // Older names can resolve to an accepted taxon through a reviewed
                 // crosswalk. The suggestion displays its accepted current label.
                 // Historic records and raw verbatim observations are never rewritten.
                 if(!term.isEmpty()){
-                    String aliasSql="SELECT c.common_name,c.scientific_name FROM "+
+                    String aliasSql="SELECT c.common_name,c.scientific_name,"+
+                        "c.distribution_status,c.iucn_red_list,c.ph_red_list,"+
+                        "s.alias_name,c.region_codes FROM "+
                         "taxon_synonyms s JOIN taxon_catalog c ON c.taxon_key=s.taxon_key "+
                         "WHERE c.taxon_group=? AND LOWER(s.alias_name) LIKE ? ESCAPE '!'"+
                         (regional?" AND c.review_status='reviewed' AND (INSTR('|'||"+
@@ -139,8 +212,13 @@ public final class TaxonSuggestionAdapter extends ArrayAdapter<String> implement
                         while(aliases.moveToNext()){
                             String common=aliases.isNull(0)?"":aliases.getString(0);
                             String scientific=aliases.isNull(1)?"":aliases.getString(1);
-                            if(!scientific.isEmpty())
-                                choices.add(common.isEmpty()?scientific:common+" · "+scientific);
+                            if(!scientific.isEmpty()){
+                                String label=common.isEmpty()?scientific:common+" · "+scientific;
+                                choices.add(label);
+                                metadata.put(label,detail(aliases.getString(2),
+                                    aliases.getString(3),aliases.getString(4),
+                                    aliases.getString(5),aliases.getString(6)));
+                            }
                         }
                     }
                 }
@@ -177,16 +255,16 @@ public final class TaxonSuggestionAdapter extends ArrayAdapter<String> implement
                 values.add(value);
             }
             FilterResults result=new FilterResults();
-            result.values=values;
+            result.values=new SearchItems(values,metadata);
             result.count=values.size();
             return result;
         }
         @Override protected void publishResults(CharSequence constraint,FilterResults results){
             clear();
-            if(results!=null&&results.values instanceof List){
-                @SuppressWarnings("unchecked")
-                List<String> names=(List<String>)results.values;
-                addAll(names);
+            if(results!=null&&results.values instanceof SearchItems){
+                SearchItems items=(SearchItems)results.values;
+                detailByName=items.metadata;
+                addAll(items.names);
             }
             notifyDataSetChanged();
         }

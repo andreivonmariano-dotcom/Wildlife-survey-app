@@ -194,6 +194,7 @@ public final class LikasForestView extends View {
         render(playing?(now-animationStartedMs)*.001f:0f);
         destination.set(0,0,getWidth(),getHeight());
         ink.setFilterBitmap(false);
+        ink.setAlpha(255);
         target.drawBitmap(scene,null,destination,ink);
         if(playing&&ValueAnimator.areAnimatorsEnabled())
             postInvalidateDelayed(FRAME_DELAY_MS);

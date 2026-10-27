@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## Latest approved direction | 2026-10-27, Asia/Manila (RC4 living forest startup)
+- Current working branch: `feature/v0.27.3-startup-living-forest`, based on startup-only PR #34 `ui/likas-startup-screen-r1-20261027`. Older `main` remains at `f1ef6583647d05ae3cbbb915b2f54370150be33c` (historical app baseline). Version `0.27.3-rc4`, versionCode 49, Android ID `org.phwildlife.survey.beta08`, schema 27 unchanged.
+- Owner superseded RC3 branding placement: **Remove frog from startup only**, retain exact approved frog as launcher icon; display **LIKAS** with **"Explore. Record. Conserve."**; show the dynamically detected installed version in a compact **top-right** chip.
+- Owner explicitly requested genuine animated water/lake, falling waterfalls, travelling clouds, daytime birds, nighttime fireflies, moving glowing sun/moon. Implemented in `LikasForestView.java` as new Canvas motion layers anchored to the approved high-resolution panoramas, with dawn/dusk and battery saver/reduced-motion handling. Source imagery remains untouched.
+- `Open LIKAS` and contextual `Resume survey` remain the only startup actions. Survey data, taxonomy, GPS, elevation, photos/audio and scientific exports remain untouched.
+- Status: **coded; automated tests/APK not yet reported at this snapshot**. Contract test: `scripts/test_v0273_living_forest.py`, QA: `docs/QA_v0_27_3_LIVING_FOREST_STARTUP.md`. Full CI, APK identity/signature verification and physical Android animation/UX testing remain to be recorded.
+- Immediate next: open review PR against #34, execute CI and verify artifact. Deliver new RC4 APK directly in-chat only after verifying exact file. Then field-review startup motion/wordmark. Move to the Welcome/Home screen as the next independent part of the declutter project.
+
+---
+
 **Update: 2026-10-27, Asia/Manila | Startup UI audit, part 1**
 - Connected GitHub repository `andreivonmariano-dotcom/Wildlife-survey-app`. Default `main` observed at `f1ef6583647d05ae3cbbb915b2f54370150be33c`, still containing legacy v0.15 app source. Previous details beneath this update document an *earlier* snapshot and are not the latest feature baseline.
 - Working baseline: PR #31 `release/v0.27-integrated-ux-performance-qa` (v0.27.0 RC1), followed by PR #33 `ui/v0.27.1-field-polish-quality-labels` (v0.27.1 RC2). Neither is merged to main. RC2 Python/JUnit/Android CI passed, but real-handset testing remains open.

@@ -246,8 +246,9 @@ public class MainActivity extends Activity implements LocationListener {
         methodRow.addView(methodName,weighted(1f));
         lineRow=horizontal();lineEntry=edit("Transect magnetic bearing °",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         lineRow.addView(lineEntry,new LinearLayout.LayoutParams(-1,-2));
-        methodRow.addView(lineRow,weighted(0.9f));
         content.addView(methodRow);
+        // Avoid splitting the method name and bearing input on narrow phones.
+        content.addView(lineRow,new LinearLayout.LayoutParams(-1,-2));
         LinearLayout utilityRow=horizontal();
         pauseButton=UiKit.button(this,"Pause effort","secondary");
         utilityRow.addView(pauseButton,new LinearLayout.LayoutParams(0,dp(47),1));

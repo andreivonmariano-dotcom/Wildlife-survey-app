@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,25);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,26);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -42,6 +42,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeTwentyThree(d);
         upgradeTwentyFour(d);
         upgradeTwentyFive(d);
+        upgradeTwentySix(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -81,6 +82,51 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<23)upgradeTwentyThree(d);
         if(oldVersion<24)upgradeTwentyFour(d);
         if(oldVersion<25)upgradeTwentyFive(d);
+        if(oldVersion<26)upgradeTwentySix(d);
+    }
+    /** Configurable study effort and direct, original-photo survey evidence. */
+    private void upgradeTwentySix(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS spotlight_passes("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,"+
+            "station_id TEXT,route_id TEXT NOT NULL,observer TEXT NOT NULL,"+
+            "started_at_utc TEXT NOT NULL,ended_at_utc TEXT NOT NULL,"+
+            "beam_width_m REAL NOT NULL,visibility_m REAL NOT NULL,"+
+            "distance_m REAL NOT NULL,beam_type TEXT NOT NULL,"+
+            "weather TEXT,repeat_pass INTEGER NOT NULL DEFAULT 0,"+
+            "duplicate_control_notes TEXT NOT NULL,notes TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS spotlight_event ON spotlight_passes(event_id,started_at_utc)");
+        d.execSQL("ALTER TABLE coverboard_checks ADD COLUMN latitude REAL");
+        d.execSQL("ALTER TABLE coverboard_checks ADD COLUMN longitude REAL");
+        d.execSQL("ALTER TABLE coverboard_checks ADD COLUMN gps_accuracy_m REAL");
+        d.execSQL("ALTER TABLE coverboard_checks ADD COLUMN gps_timestamp_utc TEXT");
+        d.execSQL("ALTER TABLE coverboard_checks ADD COLUMN gps_status TEXT NOT NULL DEFAULT 'missing'");
+        d.execSQL("ALTER TABLE track_sign_encounters ADD COLUMN latitude REAL");
+        d.execSQL("ALTER TABLE track_sign_encounters ADD COLUMN longitude REAL");
+        d.execSQL("ALTER TABLE track_sign_encounters ADD COLUMN gps_accuracy_m REAL");
+        d.execSQL("ALTER TABLE track_sign_encounters ADD COLUMN gps_timestamp_utc TEXT");
+        d.execSQL("ALTER TABLE track_sign_encounters ADD COLUMN gps_status TEXT NOT NULL DEFAULT 'missing'");
+        d.execSQL("CREATE TABLE IF NOT EXISTS protocol_media("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,"+
+            "target_type TEXT NOT NULL,target_id INTEGER NOT NULL,"+
+            "file_name TEXT NOT NULL UNIQUE,mime_type TEXT NOT NULL,"+
+            "added_utc TEXT NOT NULL,source_note TEXT NOT NULL)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS protocol_media_target "+
+            "ON protocol_media(target_type,target_id)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS study_protocol_templates("+
+            "id TEXT PRIMARY KEY,project_id TEXT NOT NULL,method TEXT NOT NULL,"+
+            "name TEXT NOT NULL,min_visits INTEGER NOT NULL DEFAULT 0,"+
+            "min_minutes INTEGER NOT NULL DEFAULT 0,min_units INTEGER NOT NULL DEFAULT 0,"+
+            "require_verified_gps INTEGER NOT NULL DEFAULT 0,"+
+            "require_protocol_photo INTEGER NOT NULL DEFAULT 0,"+
+            "created_at_utc TEXT NOT NULL)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS study_template_project "+
+            "ON study_protocol_templates(project_id,method)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS survey_study_protocols("+
+            "event_id TEXT PRIMARY KEY,template_id TEXT NOT NULL,"+
+            "template_name TEXT NOT NULL,min_visits INTEGER NOT NULL,"+
+            "min_minutes INTEGER NOT NULL,min_units INTEGER NOT NULL,"+
+            "require_verified_gps INTEGER NOT NULL,"+
+            "require_protocol_photo INTEGER NOT NULL,applied_at_utc TEXT NOT NULL)");
     }
     /** Dedicated field protocols. Each detail belongs to its source survey/visit. */
     private void upgradeTwentyFive(SQLiteDatabase d){

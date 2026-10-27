@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.view.Gravity;
 import android.widget.Button;
 import android.widget.TextView;
@@ -34,8 +35,15 @@ public final class UiKit {
     }
     Button b=new Button(a);b.setAllCaps(false);b.setText(title);b.setTextSize(15);b.setTypeface(null,Typeface.BOLD);
     b.setTextColor(foreground);b.setMinHeight(dp(a,50));b.setPadding(dp(a,10),dp(a,5),dp(a,10),dp(a,5));
-    GradientDrawable shape=new GradientDrawable();shape.setColor(fill);shape.setStroke(dp(a,1),stroke);shape.setCornerRadius(dp(a,13));
-    b.setBackground(shape);b.setBackgroundTintList(null);
+    b.setGravity(Gravity.CENTER);
+    GradientDrawable shape=new GradientDrawable();
+    shape.setColor(fill);shape.setStroke(dp(a,1),stroke);shape.setCornerRadius(dp(a,13));
+    GradientDrawable mask=new GradientDrawable();
+    mask.setColor(Color.WHITE);mask.setCornerRadius(dp(a,13));
+    int feedback=(type.equals("secondary")||type.equals("quiet"))
+        ?Color.argb(27,28,91,62):Color.argb(50,255,255,255);
+    b.setBackground(new RippleDrawable(ColorStateList.valueOf(feedback),shape,mask));
+    b.setBackgroundTintList(null);
     return b;
   }
   public static GradientDrawable surface(Activity a) {

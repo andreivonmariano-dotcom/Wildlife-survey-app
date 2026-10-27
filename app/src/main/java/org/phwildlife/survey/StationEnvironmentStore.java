@@ -38,6 +38,26 @@ public final class StationEnvironmentStore{
                 elevation.verticalUncertaintyMeters,elevation.datum,
                 elevation.status,elevation.fresh?utc(elevation.utcMs):null,visit});
     }
+    /**
+     * A GPS fix may first report ellipsoid height, then gain an MSL
+     * conversion a few seconds later. Upgrade only the missing MSL fields.
+     * An already usable station-start MSL sample is immutable.
+     */
+    public static void recordImprovedMsl(SQLiteDatabase d,String event,String visit,
+            String station,Location latest){
+        if(!ids(event,visit))return;
+        GpsElevation.Sample sample=GpsElevation.read(latest);
+        if(!sample.usableForHabitat)return;
+        ensureRow(d,event,visit,station);
+        d.execSQL("UPDATE station_environment SET elevation_msl_m=?,"+
+                "vertical_uncertainty_m=?,elevation_datum='MSL',"+
+                "elevation_source='later_verified_msl',fix_time_utc=?,"+
+                "updated_utc=datetime('now') WHERE visit_id=? "+
+                "AND elevation_source IN ('not_available','stale_or_unqualified',"+
+                    "'no_altitude','ellipsoid_only','unverified_vertical_accuracy')",
+            new Object[]{sample.mslMeters,sample.verticalUncertaintyMeters,
+                utc(sample.utcMs),visit});
+    }
     /** Manual MSL measurements are kept in distinct fields from the GNSS snapshot. */
     public static void recordManualElevation(SQLiteDatabase d,String event,String visit,
             String station,Double msl,Double uncertainty){

@@ -1,3 +1,39 @@
+# LIKAS | Philippine Wildlife Survey v0.18.1 Auto GPS Beta
+
+## Automatic field acquisition
+- After the researcher finishes survey setup and selects Start Survey,
+  the GNSS preflight automatically begins the survey on a **fresh
+  GPS_PROVIDER fix with reported horizontal accuracy strictly below 10 m**.
+  The second green Start control is no longer needed. A guarded launch
+  prevents multiple survey activities from repeated location callbacks.
+- Planned and custom station GPS acquisition follows the same automatic
+  rule after selecting the sampling station. Missing-GPS override remains
+  an explicit documented field decision.
+- No automatic start occurs while the preflight screen is paused. Existing
+  background GNSS operation and the ongoing location notification remain.
+- Choosing **Choose checklist area by GPS** now automatically selects the
+  unambiguous containing administrative province's coarse island checklist
+  scope. Near-boundary and uncertain polygon matches leave the manual scope
+  intact; the app does not guess the nearest checklist across an island boundary.
+- National candidate taxa remain searchable, with separately reviewed local
+  matches ranked higher. Selecting an area is **not** proof of a species'
+  occurrence at the observer's location.
+
+## Versioned taxonomic synonyms
+- SQLite schema 14 adds `taxon_synonyms` linked by accepted catalog keys,
+  leaving historical raw identifications unchanged.
+- The offline taxonomy page accepts a versioned synonym CSV:
+  `accepted_taxon_key,alias_name,source,source_version`.
+- Import validation rejects unknown accepted keys and rolls back the entire
+  transaction. Searching an alias suggests its current catalog name.
+- No synonym data have been invented or bundled. Complete Emerson Sy reptile
+  and amphibian records still need original permissioned source files.
+  The comprehensive Philippines bird occurrence crosswalk to AviList 2026
+  is still pending source reconciliation.
+
+See `docs/QA_v0_18_1_AUTOMATIC_GPS.md` for real-handset acceptance checks.
+This is a development beta, not a fully verified national wildlife checklist.
+
 # LIKAS | Philippine Wildlife Survey v0.18.0 Taxonomy Beta (development)
 
 ## Taxonomy coverage status

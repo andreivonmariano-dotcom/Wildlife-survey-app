@@ -423,7 +423,23 @@ public final class SpeciesPickerActivity extends Activity {
     }
     private void appendPage(){
         int stop=Math.min(offset+PAGE,loaded.size());
-        for(int i=offset;i<stop;i++)addSpecies(loaded.get(i));
+        for(int i=offset;i<stop;i++){
+            Species item=loaded.get(i);
+            if(sortMode==SpeciesSortPolicy.FAMILY||sortMode==SpeciesSortPolicy.GENUS){
+                String group=sortMode==SpeciesSortPolicy.FAMILY?item.family:
+                    SpeciesSortPolicy.genus(item.scientific);
+                String preceding=i==0?"":(sortMode==SpeciesSortPolicy.FAMILY?
+                    loaded.get(i-1).family:SpeciesSortPolicy.genus(loaded.get(i-1).scientific));
+                if(i==0||!group.equalsIgnoreCase(preceding)){
+                    TextView section=text(group.isEmpty()?"Unassigned family/genus":group,
+                        14,true);
+                    section.setTextColor(UiKit.FOREST);
+                    section.setPadding(dp(3),dp(9),0,dp(8));
+                    cards.addView(section);
+                }
+            }
+            addSpecies(item);
+        }
         offset=stop;
         status.setText(offset+" / "+loaded.size()+" names · "+
             SpeciesSortPolicy.SORT_LABELS[sortMode]+
@@ -463,7 +479,7 @@ public final class SpeciesPickerActivity extends Activity {
         }
         String label=item.screening.scorePercent==null?
             "Insufficient Data · no numeric score":
-            item.screening.scorePercent+"% habitat match · "+item.screening.label;
+            item.screening.scorePercent+"% screening score · "+item.screening.label;
         TextView likelihood=text(label,14,true);
         likelihood.setTextColor(UiKit.FOREST);
         likelihood.setPadding(0,dp(7),0,0);

@@ -197,7 +197,12 @@ public class MainActivity extends Activity implements LocationListener {
     private LinearLayout vertical(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;}
     private LinearLayout horizontal(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.HORIZONTAL);c.setGravity(Gravity.CENTER_VERTICAL);return c;}
     private LinearLayout.LayoutParams weighted(float wt){return new LinearLayout.LayoutParams(0,-2,wt);}
-    private TextView section(String title){TextView t=label(title,13,true);t.setTextColor(MUTED);return t;}
+    private TextView section(String title){
+        TextView t=label(title,14,true);
+        t.setTextColor(UiKit.FOREST);
+        t.setPadding(dp(2),dp(14),dp(2),dp(8));
+        return t;
+    }
     private void disclosureTarget(TextView view){
         view.setMinHeight(dp(46));
         view.setGravity(Gravity.CENTER_VERTICAL);

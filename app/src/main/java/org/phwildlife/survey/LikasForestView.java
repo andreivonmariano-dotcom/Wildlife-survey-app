@@ -26,6 +26,8 @@ import java.util.Calendar;
  */
 public final class LikasForestView extends View {
     private static final long FRAME_INTERVAL_MS = 33L;
+    private static final float[] FALL_X={.536f,.627f,.744f};
+    private static final float[] FALL_Y={.565f,.553f,.555f};
     private static final String DAY_HD = "likas_forest/forest_day_hd.webp";
     private static final String NIGHT_HD = "likas_forest/forest_night_hd.webp";
     private static final String DAY_FALLBACK = "likas_forest/forest_day.webp";
@@ -234,18 +236,17 @@ public final class LikasForestView extends View {
 
     private void drawWaterfalls(Canvas c,float t,int w,int h){
         // Normalized coordinates align with waterfalls in the approved panorama.
-        float[] xPositions={.536f,.627f,.744f};
-        float[] origins={.565f,.553f,.555f};
+
         effectPaint.setStrokeCap(Paint.Cap.ROUND);
         effectPaint.setStrokeWidth(Math.max(1.2f,w*.003f));
-        for(int fall=0;fall<xPositions.length;fall++){
-            float center=screenX(xPositions[fall]);
+        for(int fall=0;fall<FALL_X.length;fall++){
+            float center=screenX(FALL_X[fall]);
             if(center<-w*.08f||center>w*1.08f)continue;
             for(int stream=0;stream<5;stream++){
                 float x=center+(stream-2)*w*.007f;
                 float drop=(t*(36f+stream*4f)+stream*h*.043f+fall*h*.07f)
                     %(h*.15f);
-                float y=h*origins[fall]+drop;
+                float y=h*FALL_Y[fall]+drop;
                 float end=Math.min(y+h*.036f,h*.69f);
                 if(end<=y)continue;
                 effectPaint.setColor(Color.argb(56+(stream%3)*16,
@@ -278,9 +279,9 @@ public final class LikasForestView extends View {
             c.drawLine(x-length*.5f,y,x+length*.5f,y,effectPaint);
         }
         // Expanding rings at the falls' receiving pool.
-        float[] splashSources={.536f,.627f,.744f};
-        for(int i=0;i<splashSources.length;i++){
-            float x=screenX(splashSources[i]);
+
+        for(int i=0;i<FALL_X.length;i++){
+            float x=screenX(FALL_X[i]);
             if(x<0||x>w)continue;
             float phase=(t*.35f+i*.37f)%1f;
             float radius=w*(.01f+phase*.044f);

@@ -43,8 +43,22 @@ public final class TrapProtocolActivity extends Activity {
         android.widget.Toast.makeText(this,message,android.widget.Toast.LENGTH_LONG).show();
     }
     private static String now(){
+        return utc(System.currentTimeMillis());
+    }
+    private static String utc(long millis){
         SimpleDateFormat f=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US);
-        f.setTimeZone(TimeZone.getTimeZone("UTC"));return f.format(new Date());
+        f.setTimeZone(TimeZone.getTimeZone("UTC"));return f.format(new Date(millis));
+    }
+    private static String validatedUtc(String input){
+        try{
+            SimpleDateFormat f=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US);
+            f.setTimeZone(TimeZone.getTimeZone("UTC"));f.setLenient(false);
+            Date date=f.parse(input.trim());
+            if(date==null||date.getTime()>System.currentTimeMillis()||
+                date.getTime()<946684800000L||!utc(date.getTime()).equals(input.trim()))
+                return null;
+            return utc(date.getTime());
+        }catch(Exception e){return null;}
     }
     private boolean writable(){
         if(eventId==null)return false;
@@ -153,9 +167,14 @@ public final class TrapProtocolActivity extends Activity {
     private void addDeployment(){
         LinearLayout form=column();form.setPadding(dp(14),dp(6),dp(14),dp(6));
         EditText device=field("Unique camera/trap identifier",false);
+        EditText deployed=field("Deployed UTC: yyyy-MM-ddTHH:mm:ssZ",false);
+        deployed.setSingleLine(true);
+        deployed.setText(now());
         EditText length=field("Pitfall fence length in m (if relevant)",true);
         EditText notes=field("Equipment type, layout, bait and setup notes",false);
         form.addView(device);
+        form.addView(label("Actual deployment time in UTC. Adjust for existing equipment.",12));
+        form.addView(deployed);
         if("drift_fence_check".equals(method))form.addView(length);
         form.addView(notes);
         AlertDialog dialog=new AlertDialog.Builder(this)
@@ -165,6 +184,8 @@ public final class TrapProtocolActivity extends Activity {
             .setOnClickListener(w->{
                 String key=device.getText().toString().trim();
                 if(key.isEmpty()){device.setError("Device ID required");return;}
+                String startTime=validatedUtc(deployed.getText().toString());
+                if(startTime==null){deployed.setError("Enter past or current UTC time");return;}
                 Double meters=parse(length.getText().toString());
                 if(!length.getText().toString().trim().isEmpty()&&
                     (meters==null||meters<=0)){length.setError("Positive fence length required");return;}
@@ -172,7 +193,7 @@ public final class TrapProtocolActivity extends Activity {
                 row.put("id",UUID.randomUUID().toString());
                 row.put("event_id",eventId);row.put("station_id",station);
                 row.put("method",method);row.put("device_id",key);
-                row.put("deployed_at_utc",now());row.put("status","deployed");
+                row.put("deployed_at_utc",startTime);row.put("status","deployed");
                 if(meters!=null)row.put("fence_length_m",meters);
                 row.put("setup_notes",notes.getText().toString().trim());
                 try{

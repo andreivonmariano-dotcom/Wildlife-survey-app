@@ -24,6 +24,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ProgressBar;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.InputType;
 import java.util.Collections;
 import java.util.ArrayList;
@@ -518,12 +521,33 @@ public final class SpeciesPickerActivity extends Activity {
             meta.setTextColor(UiKit.MUTED);card.addView(meta);
         }
         String label=item.screening.scorePercent==null?
-            "Insufficient Data · no numeric score":
-            item.screening.scorePercent+"% screening score · "+item.screening.label;
+            "Insufficient Data · not scored":
+            item.screening.scorePercent+"% screening index · "+item.screening.label;
+        int indicator="Unlikely".equals(item.screening.label)?
+            Color.rgb(167,64,56):"Likely".equals(item.screening.label)?
+            Color.rgb(36,112,74):Color.rgb(123,94,31);
+        if(item.screening.scorePercent==null)indicator=UiKit.MUTED;
         TextView likelihood=text(label,14,true);
-        likelihood.setTextColor(UiKit.FOREST);
-        likelihood.setPadding(0,dp(7),0,0);
+        likelihood.setTextColor(indicator);
+        likelihood.setPadding(0,dp(7),0,dp(3));
         card.addView(likelihood);
+        // Colored indicator is paired with text; never rely on color alone.
+        if(item.screening.scorePercent!=null){
+            ProgressBar bar=new ProgressBar(this,null,
+                android.R.attr.progressBarStyleHorizontal);
+            bar.setMax(100);
+            bar.setProgress(item.screening.scorePercent);
+            bar.setProgressTintList(ColorStateList.valueOf(indicator));
+            bar.setProgressBackgroundTintList(
+                ColorStateList.valueOf(Color.rgb(226,231,226)));
+            LinearLayout.LayoutParams track=new LinearLayout.LayoutParams(-1,dp(7));
+            track.bottomMargin=dp(3);
+            card.addView(bar,track);
+            bar.setContentDescription(label+
+                ". Screening index, not a measured probability of occurrence.");
+        }
+        likelihood.setContentDescription(label+
+            ". Tap for the documented basis of this screening assessment.");
         likelihood.setOnClickListener(v->new AlertDialog.Builder(this)
             .setTitle("Preliminary field-screening score")
             .setMessage(item.screening.explanation+

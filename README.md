@@ -24,13 +24,21 @@ Research protocols should decide whether to adopt a comparable station-level
 threshold after handset testing.
 
 ## Taxonomy status and data sourcing
-The bundled starter taxa are not a complete national checklist. The existing
-offline importer can already ingest the official MDD v2.5 national mammal
-candidates from the source CSV (by exact file name, taxonomic/source fields and
-countryDistribution). A **complete Philippine mammal catalog is installed only
-after the researcher imports that source file**. National occurrence membership
-does not establish an individual island, province, or sampling-site range.
-Taxa flagged by MDD as needing review remain unreviewed.
+The original starter taxa are incomplete for birds and herpetofauna.
+GitHub Actions downloads the **official MDD v2.5** CSV from Zenodo, verifies
+its published MD5 checksum, then filters extant non-domestic species with
+Philippine country membership. The CI build bundles this subset into the APK.
+On a fresh install or upgrade to schema 12, the app seeds the attributed
+offline mammal catalog automatically without replacing user-imported names.
+The first successful build produced **244 Philippine mammal candidates**.
+The existing manual MDD CSV importer remains available. Local source builds
+that skip the build-time preparation script do not bundle this asset.
+
+MDD `sciName` is a genus-epithet key separated by an underscore. Displayed
+scientific names are converted to spaces; pre-existing MDD catalog names are
+normalized during migration. MDD's uncertain national membership and flagged
+taxa stay **unreviewed**. No Philippines-wide list establishes occurrence on
+an individual island, province, or sampling site.
 
 Emerson Y. Sy amphibian v2025-1 and reptile v2026-1 are selected references,
 but complete machine-readable files and reuse permissions must be verified

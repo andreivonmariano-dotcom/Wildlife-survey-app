@@ -71,6 +71,7 @@ public final class TrackService extends Service implements LocationListener {
     private boolean foreground=false;
     private boolean subscribed=false;
     private final ExecutorService altitudeWorker=Executors.newSingleThreadExecutor();
+    private final ExecutorService trackWriter=Executors.newSingleThreadExecutor();
     private AltitudeConverter altitudeConverter;
     private long lastConversionRequest=0;
     private static String iso(long t){SimpleDateFormat s=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US);s.setTimeZone(TimeZone.getTimeZone("UTC"));return s.format(new Date(t));}
@@ -236,16 +237,26 @@ public final class TrackService extends Service implements LocationListener {
         record(l,step,true,reason);
     }
     private void record(Location l,double step,boolean accepted,String reason){
-        try{
-            SQLiteDatabase d=db.getWritableDatabase();
-            d.beginTransaction();
+        if(eventId==null||db==null)return;
+        final String survey=eventId,time=iso(System.currentTimeMillis());
+        final double lat=l.getLatitude(),lon=l.getLongitude(),distance=total;
+        final Float accuracy=l.hasAccuracy()?l.getAccuracy():null;
+        trackWriter.execute(()->{
             try{
-                d.execSQL("INSERT INTO track_points(event_id,recorded_at,latitude,longitude,accuracy_m,segment_m,accepted,reason) VALUES(?,?,?,?,?,?,?,?)",
-                  new Object[]{eventId,iso(System.currentTimeMillis()),l.getLatitude(),l.getLongitude(),l.hasAccuracy()?l.getAccuracy():null,step,accepted?1:0,reason});
-                if(accepted)d.execSQL("UPDATE surveys SET gps_track_m=? WHERE id=? AND ended IS NULL",new Object[]{total,eventId});
-                d.setTransactionSuccessful();
-            }finally{d.endTransaction();}
-        }catch(Exception ignored){}
+                SQLiteDatabase d=db.getWritableDatabase();
+                d.beginTransaction();
+                try{
+                    d.execSQL("INSERT INTO track_points(event_id,recorded_at,latitude,longitude,"+
+                        "accuracy_m,segment_m,accepted,reason) VALUES(?,?,?,?,?,?,?,?)",
+                        new Object[]{survey,time,lat,lon,accuracy,step,accepted?1:0,reason});
+                    if(accepted)d.execSQL("UPDATE surveys SET gps_track_m=? "+
+                        "WHERE id=? AND ended IS NULL",new Object[]{distance,survey});
+                    d.setTransactionSuccessful();
+                }finally{d.endTransaction();}
+            }catch(Exception error){
+                android.util.Log.e("LIKAS-GNSS","GPS audit write failed",error);
+            }
+        });
     }
     private void stopRecording(){
         if(manager!=null)try{manager.removeUpdates(this);}catch(Exception ignored){}
@@ -261,7 +272,8 @@ public final class TrackService extends Service implements LocationListener {
     @Override public void onDestroy(){
         if(manager!=null)try{manager.removeUpdates(this);}catch(Exception ignored){}
         receiverRunning=false;latestFix=null;subscribed=false;
-        if(db!=null)db.close();
+        trackWriter.execute(()->{if(db!=null)db.close();});
+        trackWriter.shutdown();
         altitudeWorker.shutdownNow();
         super.onDestroy();
     }

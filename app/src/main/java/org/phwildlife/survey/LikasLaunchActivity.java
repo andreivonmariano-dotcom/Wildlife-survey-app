@@ -131,6 +131,7 @@ public final class LikasLaunchActivity extends Activity {
         newSurveyButton.setBackground(newBg);
         newSurveyButton.setBackgroundTintList(null);
         newSurveyButton.setTextColor(available?Color.WHITE:Color.rgb(21,64,45));
+        newSurveyButton.setText(available?"Home & Tools":"New Survey");
         continueButton.setEnabled(LikasUiRules.canContinue(available));
         continueButton.setContentDescription(available?
             "Continue the unfinished survey":"Continue survey unavailable. No active survey.");

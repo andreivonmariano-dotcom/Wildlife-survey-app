@@ -661,6 +661,17 @@ public class MainActivity extends Activity implements LocationListener {
         if(SurveyMethods.isBirdLine(profile,method) && (line==null||line<0||line>=360)){
             toast("Enter transect MAGNETIC bearing from 0 to 359°");return;
         }
+        // Timer and database entry begin only after an independently acquired GPS fix.
+        Intent launchGps=getIntent();
+        double startLatitude=launchGps.getDoubleExtra("start_gps_latitude",Double.NaN);
+        double startLongitude=launchGps.getDoubleExtra("start_gps_longitude",Double.NaN);
+        float startAccuracy=launchGps.getFloatExtra("start_gps_accuracy_m",Float.NaN);
+        long startGpsTime=launchGps.getLongExtra("start_gps_recorded_at_ms",0L);
+        if(!GpsFixPolicy.acceptable(startLatitude,startLongitude,startAccuracy,
+            startGpsTime,System.currentTimeMillis(),false)){
+            toast("Survey-start GPS missing, too old, or not better than 10 m. Retry setup.");
+            finish();return;
+        }
         eventId="SV-"+System.currentTimeMillis();startedAt=System.currentTimeMillis();pointNotice=false;
         int target=method.equals("point_count")?pointTargetSeconds:0;
         lineBearing=SurveyMethods.isBirdLine(profile,method)?line:null;
@@ -672,8 +683,9 @@ public class MainActivity extends Activity implements LocationListener {
               "area_km2,point_radius_m,planned_duration_s,geographic_region_id,"+
               "geographic_selection_method,regional_taxa_version,admin_province_name,"+
               "admin_province_psgc,admin_boundary_version,admin_boundary_status,"+
-              "planned_route_m,planned_station_spacing_m,planned_station_count,route_design) "+
-              "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+              "planned_route_m,planned_station_spacing_m,planned_station_count,route_design,"+
+              "start_gps_latitude,start_gps_longitude,start_gps_accuracy_m,start_gps_recorded_at) "+
+              "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
               new Object[]{eventId,method,iso(startedAt),lineBearing,group,target,profile,
                 "",observerName,basicLogOnly?"basic_log_only":"beta_standardized",projectId,
                 regionLabel,stratumAreaKm2,pointRadiusM,plannedDurationSeconds,geographicRegion,
@@ -683,7 +695,8 @@ public class MainActivity extends Activity implements LocationListener {
                 method.equals("point_count")?plannedStationCount:null,
                 method.equals("point_count")?"planned_chainage_point_route":
                 method.equals("line_transect")||method.equals("ves_transect")?
-                    "continuous_planned_route":"unsegmented_method"});
+                    "continuous_planned_route":"unsegmented_method",
+                startLatitude,startLongitude,(double)startAccuracy,iso(startGpsTime)});
             if(method.equals("point_count")&&plannedStationCount>0){
                 int created=routeTemplateId.isEmpty()?
                     RoutePlan.create(database,eventId,projectId,plannedRouteMeters,plannedSpacingMeters,startedAt):
@@ -707,6 +720,8 @@ public class MainActivity extends Activity implements LocationListener {
         else if(requiresGenericUnit())
             stationId="";
         active=true;beginButton.setText("Finish survey");
+        if(gpsView!=null)gpsView.setText(String.format(Locale.US,
+            "Survey-start GPS: %.6f, %.6f · ±%.1f m",startLatitude,startLongitude,startAccuracy));
         saveButton.setEnabled(!hasStationUnits());
         if(hasStationUnits()&&pointNextButton!=null){
             if(method.equals("point_count")&&plannedStationCount>0)
@@ -1590,8 +1605,8 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at FROM sites",
               "station_id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at");
             csv(z,"surveys.csv",
-              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id FROM surveys",
-              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id");
+              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id,start_gps_latitude,start_gps_longitude,start_gps_accuracy_m,start_gps_recorded_at FROM surveys",
+              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id,start_gps_latitude,start_gps_longitude,start_gps_accuracy_m,start_gps_recorded_at_utc");
             csv(z,"observations.csv",
               "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,COALESCE(s.outcome,'active'),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection,r.identification_confidence,r.identification_review_note FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
               "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection,identification_confidence,identification_review_note");

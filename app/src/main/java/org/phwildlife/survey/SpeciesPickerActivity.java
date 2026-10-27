@@ -177,19 +177,32 @@ public final class SpeciesPickerActivity extends Activity {
         header.addView(back,new LinearLayout.LayoutParams(dp(82),dp(48)));
         back.setOnClickListener(v->finish());
         root.addView(header);
-        TextView guide=text("Offline checklist · select a name to return to your observation",12,false);
-        guide.setTextColor(UiKit.MUTED);root.addView(guide);
 
         search=new EditText(this);
         search.setSingleLine(true);search.setTextSize(16);
         search.setHint("Search common, scientific or older name");
-        LinearLayout.LayoutParams searchParams=new LinearLayout.LayoutParams(-1,dp(56));
-        searchParams.topMargin=dp(10);root.addView(search,searchParams);
+        LinearLayout searchRow=new LinearLayout(this);
+        searchRow.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams searchParams=new LinearLayout.LayoutParams(0,dp(54),1f);
+        searchRow.addView(search,searchParams);
+        Button unknown=UiKit.button(this,"Unidentified","secondary");
+        unknown.setTextSize(12);
+        unknown.setContentDescription("Record an unidentified species");
+        LinearLayout.LayoutParams unknownSpace=new LinearLayout.LayoutParams(dp(122),dp(54));
+        unknownSpace.leftMargin=dp(7);
+        searchRow.addView(unknown,unknownSpace);
+        root.addView(searchRow);
+        unknown.setOnClickListener(v->{
+            String[] unknowns=Taxa.unknownLabels(currentGroup());
+            new AlertDialog.Builder(this).setTitle("Unidentified observation")
+                .setItems(unknowns,(dialog,which)->select(unknowns[which],currentGroup()))
+                .setNegativeButton("Back",null).show();
+        });
 
         LinearLayout quick=new LinearLayout(this);
         quick.setGravity(Gravity.CENTER_VERTICAL);
         sortButton=UiKit.button(this,
-            "Sort & Filter · "+SpeciesSortPolicy.SORT_LABELS[sortMode],"secondary");
+            "Sort · "+SpeciesSortPolicy.SORT_LABELS[sortMode],"secondary");
         sortButton.setOnClickListener(v->openSortFilter());
         quick.addView(sortButton,new LinearLayout.LayoutParams(0,dp(52),1.25f));
         Button conditions=UiKit.button(this,"Site conditions","quiet");
@@ -214,33 +227,31 @@ public final class SpeciesPickerActivity extends Activity {
         views.setSelection(savedViewIndex);
 
         Location fix=TrackService.currentFix();
-        String gps="GPS position unavailable";
+        String gps="GPS unavailable";
         if(fix!=null&&fix.hasAccuracy()){
             long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
             if(age>=0&&age<=10000L)
-                gps=String.format(Locale.US,"Recent GPS ±%.1f m",fix.getAccuracy());
+                gps=String.format(Locale.US,"GPS ±%.1f m",fix.getAccuracy());
         }
         String scope=island(geographicRegion);
         TextView context=text((scope.isEmpty()?"National checklist":scope+" checklist area")+
             (province.isEmpty()?"":" · "+province)+" · "+gps,12,false);
         context.setTextColor(UiKit.FOREST);root.addView(context);
-        TextView model=text("Percentage = screening index, not occurrence probability. "+
-            "Unassessed species stay selectable.",12,false);
-        model.setTextColor(UiKit.MUTED);
-        model.setPadding(0,dp(6),0,dp(4));root.addView(model);
+        TextView model=text("ⓘ About species scores",12,false);
+        model.setTextColor(UiKit.FOREST);
+        model.setPadding(0,dp(3),0,dp(3));
+        model.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Species screening score")
+            .setMessage("Scores summarize reviewed habitat and elevation evidence. "+
+                "They are not probabilities of occurrence or proof of absence. "+
+                "Unassessed species remain selectable.")
+            .setPositiveButton("Close",null).show());
+        root.addView(model);
         siteSummary=text("",12,false);
         siteSummary.setTextColor(UiKit.FOREST);
         siteSummary.setPadding(0,0,0,dp(8));
         root.addView(siteSummary);
         updateSiteSummary();
-        Button unknown=UiKit.button(this,"Use unidentified identification","secondary");
-        root.addView(unknown);
-        unknown.setOnClickListener(v->{
-            String[] unknowns=Taxa.unknownLabels(currentGroup());
-            new AlertDialog.Builder(this).setTitle("Unidentified observation")
-                .setItems(unknowns,(dialog,which)->select(unknowns[which],currentGroup()))
-                .setNegativeButton("Back",null).show();
-        });
         status=text("Loading offline species…",12,false);
         status.setTextColor(UiKit.MUTED);status.setPadding(0,dp(9),0,dp(7));
         root.addView(status);
@@ -315,13 +326,13 @@ public final class SpeciesPickerActivity extends Activity {
             .setPositiveButton("Apply",(dialog,which)->{
                 sortMode=order.getSelectedItemPosition();
                 statusFilter=byStatus.getSelectedItemPosition();
-                sortButton.setText("Sort & Filter · "+SpeciesSortPolicy.SORT_LABELS[sortMode]);
+                sortButton.setText("Sort · "+SpeciesSortPolicy.SORT_LABELS[sortMode]);
                 savePickerSettings();
                 refresh();
             })
             .setNeutralButton("Reset",(dialog,which)->{
                 sortMode=0;statusFilter=0;
-                sortButton.setText("Sort & Filter · A–Z");
+                sortButton.setText("Sort · A–Z");
                 savePickerSettings();
                 refresh();
             })
@@ -365,7 +376,7 @@ public final class SpeciesPickerActivity extends Activity {
                 (elevationUncertainty==null?"":" ±"+elevationUncertainty+" m");
         else reading=liveElevation().label();
         siteSummary.setText("Habitat: "+habitatName+" · "+reading+
-            "\nSaved for this survey and sampling visit");
+            "");
     }
     private void openSiteConditions(){
         LinearLayout panel=new LinearLayout(this);
@@ -612,7 +623,7 @@ public final class SpeciesPickerActivity extends Activity {
             addSpecies(item);
         }
         offset=stop;
-        status.setText(offset+" / "+loaded.size()+" names · "+
+        status.setText(offset+" / "+loaded.size()+" species · "+
             SpeciesSortPolicy.SORT_LABELS[sortMode]+
             (truncated?" · narrow your search to see all matches":""));
         if(offset<loaded.size()){

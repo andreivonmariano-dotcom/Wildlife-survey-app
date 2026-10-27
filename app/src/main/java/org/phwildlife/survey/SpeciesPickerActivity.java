@@ -58,18 +58,23 @@ public final class SpeciesPickerActivity extends Activity {
     private String visitId="",stationId="",surveyId="";
     private boolean gpsAutoTracking=false;
     private String lastGpsElevationKey="";
+    private Double lastScoredGpsMeters=null;
     private final Runnable gpsMonitor=new Runnable(){
         @Override public void run(){
             if(!gpsAutoTracking||isFinishing()||isDestroyed())return;
             if(elevationMode==0){
                 GpsElevation.Sample fix=GpsElevation.read(TrackService.currentFix());
-                String state=fix.usableForHabitat?
-                    String.valueOf(Math.round(fix.mslMeters)):"unavailable";
-                if(!state.equals(lastGpsElevationKey)){
-                    lastGpsElevationKey=state;
-                    updateSiteSummary();
-                    refresh();
-                }
+                String state=fix.usableForHabitat?"available":"unavailable";
+                boolean availabilityChanged=!state.equals(lastGpsElevationKey);
+                boolean movedEnough=fix.usableForHabitat&&
+                    lastScoredGpsMeters!=null&&
+                    Math.abs(fix.mslMeters-lastScoredGpsMeters)>=25.0;
+                lastGpsElevationKey=state;
+                lastScoredGpsMeters=fix.usableForHabitat?fix.mslMeters:null;
+                updateSiteSummary();
+                // Avoid resetting scroll position for ordinary GNSS altitude
+                // noise. Re-rank only on acquisition/loss or material change.
+                if(availabilityChanged||movedEnough)refresh();
             }
             ui.postDelayed(this,5000L);
         }

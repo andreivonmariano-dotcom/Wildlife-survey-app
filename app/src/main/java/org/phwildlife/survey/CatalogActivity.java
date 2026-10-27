@@ -29,9 +29,9 @@ public final class CatalogActivity extends Activity {
         layout.addView(help);
         help.setOnClickListener(v->new AlertDialog.Builder(this)
             .setTitle("Checklist CSV format")
-            .setMessage("UTF-8 CSV columns:\\n"+
+            .setMessage("UTF-8 CSV columns:\n"+
                 "taxon_key, taxon_group, common_name, scientific_name, family, source, "+
-                "source_version, region_codes, review_status\\n\\n"+
+                "source_version, region_codes, review_status\n\n"+
                 "Taxon group: Birds, Reptiles, Amphibians or Mammals. "+
                 "Use reviewed or unreviewed. Regional occurrence needs separate evidence. "+
                 "National taxonomy does not verify presence at a survey station. "+
@@ -52,8 +52,8 @@ public final class CatalogActivity extends Activity {
             if(mammal.moveToFirst())mdd=mammal.getInt(0);
         }
         info.setText("Installed names: "+total+
-            "\\nPhilippine mammal candidates: "+mdd+
-            "\\nBird and herpetofauna checklists: partial");
+            "\nPhilippine mammal candidates: "+mdd+
+            "\nBird and herpetofauna checklists: partial");
     }
     private void pickMdd(){
         Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);

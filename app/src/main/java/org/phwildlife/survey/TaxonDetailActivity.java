@@ -116,6 +116,7 @@ public final class TaxonDetailActivity extends Activity {
         if(divider>=0)query=query.substring(divider+3).trim();
         String pattern="%"+TaxonSearchPolicy.escapeLike(query.toLowerCase(Locale.ROOT))+"%";
         ArrayList<String> names=new ArrayList<>(),keys=new ArrayList<>();
+        java.util.HashSet<String> acceptedNames=new java.util.HashSet<>();
         try(Cursor c=db.getReadableDatabase().rawQuery(
             "SELECT taxon_key,common_name,scientific_name FROM taxon_catalog WHERE "+
                 "taxon_key=? OR LOWER(scientific_name)=LOWER(?) OR "+
@@ -123,12 +124,16 @@ public final class TaxonDetailActivity extends Activity {
                 "LOWER(scientific_name) LIKE ? ESCAPE '!' OR "+
                 "LOWER(common_name) LIKE ? ESCAPE '!' "+
                 "ORDER BY CASE WHEN LOWER(scientific_name)=LOWER(?) THEN 0 ELSE 1 END,"+
-                "scientific_name COLLATE NOCASE LIMIT 32",
+                "CASE WHEN taxon_key LIKE 'STARTER:%' THEN 1 ELSE 0 END,"+
+                "scientific_name COLLATE NOCASE LIMIT 64",
             new String[]{query,query,query,pattern,pattern,query})){
             while(c.moveToNext()){
-                keys.add(c.getString(0));
                 String common=c.isNull(1)?"":c.getString(1);
                 String scientific=c.getString(2);
+                // An old starter and an official checklist may describe one species.
+                // Prefer the attributed source above the starter, never duplicate it.
+                if(!acceptedNames.add(scientific.toLowerCase(Locale.ROOT)))continue;
+                keys.add(c.getString(0));
                 names.add((common.isEmpty()?"":common+" · ")+scientific);
             }
         }catch(Exception ex){showMessage("Catalog search unavailable.");return;}

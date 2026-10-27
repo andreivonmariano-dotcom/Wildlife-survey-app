@@ -22,7 +22,11 @@ public final class CatalogActivity extends Activity {
         layout.setPadding(22,22,22,22);layout.setBackgroundColor(UiKit.BG);
         layout.addView(UiKit.title(this,"Offline taxonomy"));
         info=new TextView(this);info.setTextSize(15);info.setTextColor(UiKit.INK);layout.addView(info);
-        Button choose=UiKit.button(this,"Import species checklist CSV","primary");
+        Button species=UiKit.button(this,"Find species information","primary");
+        layout.addView(species);
+        species.setOnClickListener(v->startActivity(
+            new Intent(this,TaxonDetailActivity.class)));
+        Button choose=UiKit.button(this,"Import species checklist CSV","secondary");
         layout.addView(choose);choose.setOnClickListener(v->pick());
         Button synonyms=UiKit.button(this,"Import name synonyms CSV","secondary");
         layout.addView(synonyms);synonyms.setOnClickListener(v->pickSynonyms());

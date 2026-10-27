@@ -96,6 +96,7 @@ public class MainActivity extends Activity implements LocationListener {
     private boolean nearEndNotified=false;
     private Double pendingSearchedArea=null;
     private boolean plannedRouteCompleted=false;
+    private String pendingEndReason=null;
     private TextView trackingView;
     private Double stratumAreaKm2=null,lineBearing=null,pointRadiusM=null;
     private int pointTargetSeconds=600;
@@ -917,6 +918,45 @@ public class MainActivity extends Activity implements LocationListener {
         dialog.show();
     }
     /** Record true effort, then validate the complete/incomplete classification. */
+    private String completionChecklist(){
+        if(eventId==null)return "Survey has not started";
+        StringBuilder result=new StringBuilder();
+        if(hasStationUnits()){
+            int[] visits=visitProgress();
+            int waiting=0;
+            if(method.equals("point_count")&&plannedStationCount>0){
+                try(Cursor c=db.getReadableDatabase().rawQuery(
+                    "SELECT COUNT(*) FROM survey_stations WHERE event_id=? "+
+                    "AND visit_state<>'completed'",new String[]{eventId})){
+                    if(c.moveToFirst())waiting=c.getInt(0);
+                }catch(Exception ignored){}
+            }
+            result.append(visits[0]>0?"✓":"○")
+                .append(" Recorded sampling visits: ").append(visits[0]).append("\n");
+            result.append(visits[0]>0&&visits[0]==visits[1]?"✓":"○")
+                .append(" Completed sampling visits: ").append(visits[1])
+                .append("/").append(visits[0]).append("\n");
+            if(plannedStationCount>0)
+                result.append(waiting==0?"✓":"○")
+                    .append(" Planned stations completed: ")
+                    .append(plannedStationCount-waiting).append("/")
+                    .append(plannedStationCount).append("\n");
+            if(pointCountId!=null||samplingUnitId!=null)
+                result.append("○ Current sampling visit closes with the survey\n");
+        }else if(plannedDurationSeconds>0){
+            long activeMs=Math.max(0,System.currentTimeMillis()-startedAt-
+                currentPausedMs(System.currentTimeMillis()));
+            result.append(activeMs>=1000L*plannedDurationSeconds?"✓":"○")
+                .append(" Planned active effort: ").append(activeMs/1000)
+                .append("/").append(plannedDurationSeconds).append(" seconds\n");
+        }
+        if(SurveyClosePolicy.routeLengthRequired(method))
+            result.append("○ Measured transect length and route confirmation required\n");
+        if(SurveyClosePolicy.searchedAreaRequired(method))
+            result.append("○ Measured search area required\n");
+        result.append("✓ Saved detections remain in the field archive");
+        return result.toString();
+    }
     private void showFinalizationForm(boolean requestedComplete){
         LinearLayout panel=vertical();
         panel.setPadding(dp(15),dp(7),dp(15),dp(6));
@@ -929,6 +969,12 @@ public class MainActivity extends Activity implements LocationListener {
         EditText area=edit(searchArea?"Measured area searched (m²)":
             "Area searched (m², optional)",
             InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        if(requestedComplete){
+            TextView checklist=label(completionChecklist(),13,false);
+            checklist.setTextColor(INK);
+            checklist.setPadding(dp(3),dp(3),dp(3),dp(12));
+            panel.addView(checklist);
+        }
         if(route||optionalLength)panel.addView(length);
         final CheckBox confirmedRoute=new CheckBox(this);
         confirmedRoute.setText("I completed the planned transect route");
@@ -936,14 +982,19 @@ public class MainActivity extends Activity implements LocationListener {
         if(route&&requestedComplete)panel.addView(confirmedRoute);
         if(searchArea||method.equals("visual_encounter")||
             method.equals("ves_transect"))panel.addView(area);
+        EditText incompleteReason=edit("Reason for ending early (optional)",
+            InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        if(!requestedComplete)panel.addView(incompleteReason);
         TextView note=label(requestedComplete?
             "LIKas will verify effort and station progress. Missing requirements "+
             "are saved as Incomplete, not falsely marked Complete.":
             "Partial effort and observations remain archived as Incomplete.",13,false);
         note.setTextColor(MUTED);panel.addView(note);
+        ScrollView reviewScroll=new ScrollView(this);
+        reviewScroll.addView(panel);
         AlertDialog dialog=new AlertDialog.Builder(this)
             .setTitle(requestedComplete?"Finish Complete":"End Incomplete")
-            .setView(panel)
+            .setView(reviewScroll)
             .setNegativeButton("Back",null)
             .setPositiveButton(requestedComplete?"Confirm finish":"Save incomplete",null)
             .create();
@@ -954,6 +1005,7 @@ public class MainActivity extends Activity implements LocationListener {
                 if(measured!=null&&measured<=0){length.setError("Enter positive length");return;}
                 if(searched!=null&&searched<=0){area.setError("Enter positive area");return;}
                 pendingSearchedArea=searched;
+                pendingEndReason=requestedComplete?null:incompleteReason.getText().toString().trim();
                 plannedRouteCompleted=route&&requestedComplete&&confirmedRoute.isChecked();
                 dialog.dismiss();
                 finish(requestedComplete,measured);
@@ -1018,6 +1070,12 @@ public class MainActivity extends Activity implements LocationListener {
             length,SurveyClosePolicy.searchedAreaRequired(method),pendingSearchedArea);
         if(complete&&SurveyClosePolicy.INCOMPLETE.equals(outcome))
             toast("Required effort or stations unfinished: saved as Incomplete");
+        String finalReason=reason;
+        if(SurveyClosePolicy.INCOMPLETE.equals(outcome)){
+            String statusReason="Survey effort, route, or sampling requirements not completed";
+            finalReason=pendingEndReason==null||pendingEndReason.trim().isEmpty()?
+                statusReason:pendingEndReason.trim()+" | "+statusReason;
+        }
         complete=SurveyClosePolicy.COMPLETE.equals(outcome);
         SQLiteDatabase writable=db.getWritableDatabase();
         writable.beginTransaction();
@@ -1033,10 +1091,11 @@ public class MainActivity extends Activity implements LocationListener {
                 if(c.moveToFirst())records=c.getInt(0);
             }
             writable.execSQL("INSERT INTO survey_outcome_audit(event_id,previous_outcome,new_outcome,changed_at_utc,reason,record_count) VALUES(?,?,?,?,?,?)",
-                new Object[]{eventId,"active",outcome,iso(endedAt),reason,records});
+                new Object[]{eventId,"active",outcome,iso(endedAt),finalReason,records});
             writable.setTransactionSuccessful();
         }finally{writable.endTransaction();}
         pendingSearchedArea=null;
+        pendingEndReason=null;
         getSharedPreferences("field_drafts",MODE_PRIVATE).edit().remove("draft_"+eventId).commit();
         active=false;eventId=null;clearMark();
         getSharedPreferences("field_resume",MODE_PRIVATE).edit().putString("screen","home").commit();

@@ -100,7 +100,6 @@ public final class CallLibraryActivity extends Activity {
             }
         }
         draw();
-        ui.post(updateCursor);
     }
     private boolean canRecord(){
         if(eventId==null)return false;
@@ -390,7 +389,13 @@ public final class CallLibraryActivity extends Activity {
         if(selectedClip!=null){selectedClip=null;draw();return;}
         super.onBackPressed();
     }
+    @Override protected void onResume(){
+        super.onResume();
+        ui.removeCallbacks(updateCursor);
+        ui.post(updateCursor);
+    }
     @Override protected void onPause(){
+        ui.removeCallbacks(updateCursor);
         if(recorder!=null&&recorder.isCapturing())recorder.stop();
         if(player!=null&&player.isPlaying())player.pause();
         super.onPause();

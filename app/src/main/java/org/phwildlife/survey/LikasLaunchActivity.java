@@ -46,7 +46,7 @@ public final class LikasLaunchActivity extends Activity {
     }
     private String currentVersion(){
         try{return getPackageManager().getPackageInfo(getPackageName(),0).versionName;}
-        catch(Exception e){return "0.17.0-beta";}
+        catch(Exception e){return "0.17.1-beta";}
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
@@ -55,7 +55,9 @@ public final class LikasLaunchActivity extends Activity {
         FrameLayout root=new FrameLayout(this);
         root.setBackgroundColor(Color.rgb(12,40,32));
         root.addView(new LikasForestView(this),new FrameLayout.LayoutParams(-1,-1));
-        View scrim=new View(this);scrim.setBackgroundColor(Color.argb(42,0,23,15));
+        View scrim=new View(this);
+        int hour=java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY);
+        scrim.setBackgroundColor(Color.argb(LikasUiRules.isNight(hour)?46:25,0,23,15));
         root.addView(scrim,new FrameLayout.LayoutParams(-1,-1));
 
         LinearLayout content=new LinearLayout(this);
@@ -124,8 +126,9 @@ public final class LikasLaunchActivity extends Activity {
     @Override protected void onResume(){
         super.onResume();
         boolean available=hasActiveSurvey();
-        continueButton.setEnabled(available);
-        continueButton.setAlpha(available?1f:.5f);
+        continueButton.setEnabled(LikasUiRules.canContinue(available));
+        // Disabled action remains legible instead of nearly disappearing.
+        continueButton.setAlpha(available?1f:.82f);
         continueButton.setContentDescription(available?
             "Continue the unfinished survey":"Continue survey unavailable. No active survey.");
     }

@@ -35,16 +35,6 @@ public final class LikasForestView extends View {
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
 
-    static float daylightAtMinute(int minute){
-        if(minute<300||minute>=1140)return 0f;
-        if(minute<420)return smooth((minute-300)/120f);
-        if(minute<=1050)return 1f;
-        return 1f-smooth((minute-1050)/90f);
-    }
-    private static float smooth(float x){
-        x=Math.max(0f,Math.min(1f,x));
-        return x*x*(3f-2f*x);
-    }
     static int mix(int a,int b,float t){
         t=Math.max(0f,Math.min(1f,t));
         return Color.rgb(
@@ -52,7 +42,14 @@ public final class LikasForestView extends View {
             Math.round(Color.green(a)+(Color.green(b)-Color.green(a))*t),
             Math.round(Color.blue(a)+(Color.blue(b)-Color.blue(a))*t));
     }
-    private static int color(String value){return Color.parseColor(value);}
+    private static final java.util.Map<String,Integer> COLORS=new java.util.HashMap<>();
+    private static int color(String value){
+        Integer cached=COLORS.get(value);
+        if(cached!=null)return cached;
+        int parsed=Color.parseColor(value);
+        COLORS.put(value,parsed);
+        return parsed;
+    }
     private void rect(int x,int y,int w,int h,int shade){
         if(w<=0||h<=0)return;
         ink.setColor(shade);
@@ -80,7 +77,7 @@ public final class LikasForestView extends View {
         for(int n=0;n<3;n++){
             int x=((n*99+55+(int)(second*(n%2==0?1.6f:-1.1f)))%310+310)%310-48;
             int y=31+n*21;
-            for(int shift:new int[]{-310,0,310}){
+            for(int shift=-310;shift<=310;shift+=310){
                 rect(x+shift,y+7,54,6,cloud);
                 rect(x+shift+7,y+3,31,12,cloud);
                 rect(x+shift+17,y,18,10,cloud);
@@ -204,7 +201,7 @@ public final class LikasForestView extends View {
     private void updateDaylight(boolean initial){
         Calendar clock=Calendar.getInstance();
         int minute=clock.get(Calendar.HOUR_OF_DAY)*60+clock.get(Calendar.MINUTE);
-        float desired=daylightAtMinute(minute);
+        float desired=LikasUiRules.daylightFactor(minute);
         if(initial)light=desired;
         else light+=Math.max(-.025f,Math.min(.025f,desired-light));
         lastClockCheck=SystemClock.uptimeMillis();

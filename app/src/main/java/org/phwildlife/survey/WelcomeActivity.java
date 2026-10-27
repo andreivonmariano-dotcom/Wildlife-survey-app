@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 /** Home and survey setup. Never starts the camera or a survey without a user choice. */
 public class WelcomeActivity extends Activity {
-    private final int BG=Color.rgb(245,249,245),INK=Color.rgb(23,58,39),GREEN=Color.rgb(34,102,72),MUTED=Color.rgb(99,116,104);
+    private final int BG=UiKit.BG,INK=UiKit.INK,GREEN=UiKit.FOREST,MUTED=UiKit.MUTED;
     private LinearLayout main,root; private String profile="Birds";
     private boolean custom=false;
     private String currentScreen="home";
@@ -91,16 +91,40 @@ public class WelcomeActivity extends Activity {
     private boolean homeVisible=true;
     private String lastHomeActiveSurvey=null;
     private void buildShell(){
-        root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(18),dp(18),dp(18),dp(18));
+        root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(16),dp(12),dp(16),dp(12));
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
-        main=vertical();main.setPadding(0,0,0,dp(22));scroll.addView(main);
+        main=vertical();main.setPadding(0,0,0,dp(24));scroll.addView(main);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,-1));
         setContentView(root);
     }
     private void heading(String title,String subtitle) {
-        main.addView(text(title,28,true));
-        TextView s=text(subtitle,14,false);s.setTextColor(MUTED);main.addView(s);
-        Space space=new Space(this);main.addView(space,new LinearLayout.LayoutParams(1,dp(20)));
+        TextView h=text(title,24,true);h.setPadding(dp(2),dp(6),0,0);
+        main.addView(h);
+        if(subtitle!=null&&!subtitle.isEmpty()){
+            TextView s=text(subtitle,13,false);s.setTextColor(MUTED);
+            s.setPadding(dp(2),dp(2),0,dp(10));main.addView(s);
+        }
+    }
+    private TextView step(String number,String title){
+        TextView label=text(number+"   "+title,16,true);
+        label.setTextColor(UiKit.FOREST);
+        label.setPadding(dp(3),dp(14),dp(3),dp(9));
+        return label;
+    }
+    private void surveyTile(LinearLayout parent,String title,String detail,Runnable tap){
+        LinearLayout tile=vertical();tile.setGravity(Gravity.CENTER_VERTICAL);
+        tile.setPadding(dp(14),dp(10),dp(8),dp(10));
+        tile.setBackground(UiKit.surface(this));
+        TextView name=text(title,17,true);name.setPadding(0,0,0,dp(3));
+        tile.addView(name);
+        TextView caption=text(detail,12,false);caption.setTextColor(MUTED);
+        caption.setPadding(0,0,0,0);tile.addView(caption);
+        tile.setMinimumHeight(dp(104));tile.setFocusable(true);
+        tile.setContentDescription(title+", "+detail);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1f);
+        lp.rightMargin=dp(7);
+        parent.addView(tile,lp);
+        tile.setOnClickListener(v->tap.run());
     }
     private void home(){
         homeVisible=true;currentScreen="home";main.removeAllViews();
@@ -122,22 +146,40 @@ public class WelcomeActivity extends Activity {
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
-            TextView banner=text("Unfinished survey",16,true);
-            banner.setTextColor(GREEN);main.addView(banner);
-            Button resume=UiKit.button(this,"Continue Survey","primary");
+            LinearLayout activeCard=vertical();
+            activeCard.setPadding(dp(14),dp(10),dp(14),dp(12));
+            activeCard.setBackground(UiKit.surface(this));
+            TextView banner=text("Survey in progress",17,true);
+            banner.setTextColor(GREEN);activeCard.addView(banner);
+            try(FieldDb d=new FieldDb(this);Cursor c=d.getReadableDatabase().rawQuery(
+                "SELECT COALESCE(survey_profile,taxon_group,'Birds'),method,COALESCE(project_id,'default') "+
+                "FROM surveys WHERE id=?",new String[]{unfinished})){
+                if(c.moveToFirst()){
+                    String methodName=SurveyMethods.lookup(c.getString(0),c.getString(1)).label;
+                    TextView detail=text(c.getString(0)+" · "+methodName+"\nProject: "+c.getString(2),13,false);
+                    detail.setTextColor(MUTED);activeCard.addView(detail);
+                }
+            }catch(Exception ignored){}
+            Button resume=UiKit.button(this,"Resume Survey","primary");
             resume.setOnClickListener(v->startActivity(
                 new Intent(this,MainActivity.class).putExtra("resume",true)));
-            main.addView(resume);
-            TextView notice=text("End this survey to start another.",12,false);
-            notice.setTextColor(MUTED);main.addView(notice);
+            activeCard.addView(resume,new LinearLayout.LayoutParams(-1,dp(56)));
+            TextView note=text("Finish or end this survey before starting another.",12,false);
+            note.setTextColor(MUTED);activeCard.addView(note);
+            main.addView(activeCard);
         }else{
-            TextView prompt=text("Select a survey group",16,true);
-        prompt.setPadding(dp(3),dp(5),dp(3),dp(8));
-        main.addView(prompt);
-            card("Birds","",()->setup("Birds",false));
-            card("Herpetofauna","",()->setup("Herpetofauna",false));
-            card("Mammals","",()->setup("Mammals",false));
-            card("Custom survey","",()->customPicker());
+            main.addView(step("NEW","Choose wildlife group"));
+            LinearLayout first=new LinearLayout(this);
+            first.setOrientation(LinearLayout.HORIZONTAL);
+            surveyTile(first,"Birds","Counts and transects",()->setup("Birds",false));
+            surveyTile(first,"Herpetofauna","Calls and encounters",()->setup("Herpetofauna",false));
+            main.addView(first);
+            LinearLayout second=new LinearLayout(this);
+            second.setOrientation(LinearLayout.HORIZONTAL);
+            surveyTile(second,"Mammals","Signs and stations",()->setup("Mammals",false));
+            surveyTile(second,"Custom","Other field methods",()->customPicker());
+            LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(-1,-2);
+            secondLp.topMargin=dp(9);main.addView(second,secondLp);
         }
         Button toolsToggle=UiKit.button(this,"History & tools  ▾","secondary");
         LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(54));
@@ -214,24 +256,33 @@ public class WelcomeActivity extends Activity {
     private void setup(String selected,boolean isCustom){
         homeVisible=false;currentScreen="setup";profile=selected;custom=isCustom;
         main.removeAllViews();
-        Button back=button("← Back");main.addView(back);
+        Button back=button("‹ Back");
+        LinearLayout.LayoutParams backLp=new LinearLayout.LayoutParams(dp(112),dp(48));
+        main.addView(back,backLp);
         back.setOnClickListener(v->{if(custom)customPicker();else home();});
         heading((custom?"Custom · ":"")+profile+" survey",
-            "Select method and project.");
+            "Set method, location, and effort before starting.");
         choices=SurveyMethods.forProfile(profile);
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){
             SurveyMethods.Method m=choices[i];
             String label=m.label+(m.basicLog?" · basic log":"");
             RadioButton rb=new RadioButton(this);
-            rb.setId(1000+i);rb.setText(label);rb.setTextSize(16);rb.setTextColor(INK);
+            rb.setId(1000+i);rb.setText(label);rb.setTextSize(15);rb.setTextColor(INK);
+            rb.setButtonTintList(ColorStateList.valueOf(UiKit.POND));
+            rb.setMinHeight(dp(48));
             rb.setPadding(dp(4),dp(10),dp(4),dp(10));
             methodChoices.addView(rb);
 
         }
         methodChoices.check(1000);
-        main.addView(text("Survey method",18,true));main.addView(methodChoices);
-        main.addView(text("Survey details",18,true));
+        main.addView(step("01","Survey method"));
+        LinearLayout methodsCard=vertical();
+        methodsCard.setPadding(dp(12),dp(6),dp(10),dp(6));
+        methodsCard.setBackground(UiKit.surface(this));
+        methodsCard.addView(methodChoices);
+        main.addView(methodsCard);
+        main.addView(step("02","Project and location"));
         projectChoice=new Spinner(this);
         projectKeys.clear();
         ArrayList<String> names=new ArrayList<>();
@@ -283,6 +334,7 @@ public class WelcomeActivity extends Activity {
         boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
         gpsLookupButton.setOnClickListener(v->suggestBoundary());
         // Sampling stations are assigned within field visits, never in survey setup.
+        main.addView(step("03","Observer and effort"));
         observerEntry=new EditText(this);
         observerEntry.setTextSize(16);observerEntry.setSingleLine(true);
         observerEntry.setHint("Observer (optional)");
@@ -408,7 +460,8 @@ public class WelcomeActivity extends Activity {
             advancedToggle.setText(open?"− Hide additional details":"＋ Additional survey details");
         });
 
-        Button start=UiKit.button(this,"Start "+profile+" survey","primary");
+        main.addView(step("04","Begin survey"));
+        Button start=UiKit.button(this,"Continue to GPS · "+profile,"primary");
         LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(58));
         startLp.topMargin=dp(16);main.addView(start,startLp);
         start.setOnClickListener(v->startSelected());

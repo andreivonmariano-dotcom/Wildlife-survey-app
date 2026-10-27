@@ -53,8 +53,8 @@ public final class CallLibraryActivity extends Activity {
                 if(seek!=null)seek.setProgress(pos);
                 if(spectrum!=null)spectrum.setCursor(pos/(float)Math.max(1,clipDuration));
                 if(playbackTime!=null)playbackTime.setText(format(pos)+" / "+format(clipDuration));
+                ui.postDelayed(this,250);
             }
-            ui.postDelayed(this,250);
         }
     };
     private int dp(int value){return (int)(value*getResources().getDisplayMetrics().density+.5f);}
@@ -309,7 +309,14 @@ public final class CallLibraryActivity extends Activity {
                         seek.setProgress((int)clipDuration);
                     });
                 }
-                if(player.isPlaying())player.pause();else player.start();
+                if(player.isPlaying()){
+                    player.pause();
+                    ui.removeCallbacks(updateCursor);
+                }else{
+                    player.start();
+                    ui.removeCallbacks(updateCursor);
+                    ui.post(updateCursor);
+                }
             }catch(Exception e){notice("Playback failed: "+e.getMessage());releasePlayer();}
         });
         label.setOnClickListener(v->newLabel(clip));
@@ -391,8 +398,6 @@ public final class CallLibraryActivity extends Activity {
     }
     @Override protected void onResume(){
         super.onResume();
-        ui.removeCallbacks(updateCursor);
-        ui.post(updateCursor);
     }
     @Override protected void onPause(){
         ui.removeCallbacks(updateCursor);

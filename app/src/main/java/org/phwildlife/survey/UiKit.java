@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.view.Gravity;
 import android.widget.Button;
 import android.widget.TextView;
@@ -44,8 +45,21 @@ public final class UiKit {
         a.getResources().getConfiguration().fontScale)));
     b.setPadding(dp(a,10),dp(a,6),dp(a,10),dp(a,6));
     GradientDrawable shape=new GradientDrawable();shape.setColor(fill);shape.setStroke(dp(a,1),stroke);shape.setCornerRadius(dp(a,14));
-    b.setBackground(shape);b.setBackgroundTintList(null);
+    GradientDrawable mask=new GradientDrawable();
+    mask.setColor(Color.WHITE);mask.setCornerRadius(dp(a,14));
+    int feedback=("secondary".equals(type)||"quiet".equals(type)||"outline-danger".equals(type))
+        ? Color.argb(25,35,100,71) : Color.argb(52,255,255,255);
+    b.setBackground(new RippleDrawable(ColorStateList.valueOf(feedback),shape,mask));
+    b.setBackgroundTintList(null);
     return b;
+  }
+  /** Short, readable section titles for research and field-management screens. */
+  public static TextView sectionTitle(Activity a,String title) {
+    TextView t=new TextView(a);
+    t.setText(title);t.setTextColor(FOREST);
+    t.setTextSize(17);t.setTypeface(null,Typeface.BOLD);
+    t.setPadding(dp(a,4),dp(a,14),dp(a,4),dp(a,8));
+    return t;
   }
   public static GradientDrawable surface(Activity a) {
     GradientDrawable d=new GradientDrawable();d.setColor(Color.WHITE);

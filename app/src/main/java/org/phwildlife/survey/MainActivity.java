@@ -294,6 +294,13 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(detectRow);
         markTime.setOnClickListener(v->markDetection());
         markButton.setOnClickListener(v->openCamera());
+        if(FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile)){
+            Button sound=UiKit.button(this,"♪ Record / Review Calls","secondary");
+            sound.setContentDescription("Record, view spectrogram and label bird or amphibian calls");
+            LinearLayout.LayoutParams soundLp=new LinearLayout.LayoutParams(-1,dp(52));
+            soundLp.topMargin=dp(7);content.addView(sound,soundLp);
+            sound.setOnClickListener(v->openCallLibrary());
+        }
         LinearLayout markRow=horizontal();
         markRowView=markRow;
         markRow.setVisibility(View.GONE);
@@ -377,12 +384,17 @@ public class MainActivity extends Activity implements LocationListener {
         detectionSpinner=new Spinner(this);
         detectionSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,new String[]{"Visual","Auditory","Both","Sign","Camera"}));
         row.addView(detectionSpinner,weighted(0.8f));content.addView(row);
+        LinearLayout birdQuick=vertical();
         birdMeasurements=vertical();
         distanceSourceSpinner=new Spinner(this);
         distanceSourceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Unknown","Estimated","Measured"}));
-        birdMeasurements.addView(label("Distance method",12,false));
-        birdMeasurements.addView(distanceSourceSpinner);
+        birdQuick.addView(label("Distance method",13,true));
+        birdQuick.addView(distanceSourceSpinner);
+        if(FieldUiPolicy.birdDetails(profile)){
+            content.addView(section("Bird distance sampling"));
+            content.addView(birdQuick);
+        }
         firstPositionSpinner=new Spinner(this);
         firstPositionSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Unknown","Yes","No"}));
@@ -394,7 +406,7 @@ public class MainActivity extends Activity implements LocationListener {
         birdMeasurements.addView(label("Movement at first detection",12,false));
         birdMeasurements.addView(movementSpinner);
         if(FieldUiPolicy.birdDetails(profile))content.addView(birdMeasurements);
-        TextView birdToggle=label("▾ Bird distance details",13,true);
+        TextView birdToggle=label("＋ First position and movement",13,true);
         birdToggle.setTextColor(GREEN);disclosureTarget(birdToggle);
         if(profile.equals("Birds")){
             // Keep the distance sampling quality items accessible in one tap.
@@ -403,13 +415,14 @@ public class MainActivity extends Activity implements LocationListener {
             birdToggle.setOnClickListener(v->{
                 boolean show=birdMeasurements.getVisibility()!=View.VISIBLE;
                 birdMeasurements.setVisibility(show?View.VISIBLE:View.GONE);
-                birdToggle.setText(show?"▴ Hide bird distance details":"▾ Bird distance details");
+                birdToggle.setText(show?"− Hide first position and movement":"＋ First position and movement");
             });
         }
+        LinearLayout herpQuick=vertical();
         herpPanel=vertical();
         microhabitatEntry=edit("Microhabitat (stream edge, litter, canopy...)",
             InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        herpPanel.addView(microhabitatEntry);
+        herpQuick.addView(microhabitatEntry);
         herpHeightEntry=edit("Height above ground (m, optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         herpPanel.addView(herpHeightEntry);
         tempEntry=edit("Air temperature °C",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED);
@@ -426,45 +439,54 @@ public class MainActivity extends Activity implements LocationListener {
         callScoreSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Not scored","0 — no calls","1 — individuals distinguishable","2 — overlapping calls","3 — full chorus"}));
         callScoreLabel=label("Amphibian call index (0–3)",12,false);
-        herpPanel.addView(callScoreLabel);herpPanel.addView(callScoreSpinner);
+        herpQuick.addView(callScoreLabel);herpQuick.addView(callScoreSpinner);
         lifeStageSpinner=new Spinner(this);
         lifeStageSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Life stage not recorded","Egg","Larva / tadpole","Juvenile","Subadult","Adult","Unknown"}));
-        herpPanel.addView(label("Life stage",12,false));herpPanel.addView(lifeStageSpinner);
+        herpQuick.addView(label("Life stage",13,true));herpQuick.addView(lifeStageSpinner);
         noiseSpinner=new Spinner(this);
         noiseSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Noise not assessed","0 — none","1 — slight","2 — moderate","3 — serious","4 — severe"}));
         noiseLabel=label("Background noise during amphibian listening",12,false);
-        herpPanel.addView(noiseLabel);herpPanel.addView(noiseSpinner);
-        if(FieldUiPolicy.herpetofaunaDetails(profile))content.addView(herpPanel);
-        TextView herpToggle=label("▾ Amphibian / reptile environment",13,true);
+        herpQuick.addView(noiseLabel);herpQuick.addView(noiseSpinner);
+        if(FieldUiPolicy.herpetofaunaDetails(profile)){
+            content.addView(section("Herpetofauna field evidence"));
+            content.addView(herpQuick);
+            content.addView(herpPanel);
+        }
+        TextView herpToggle=label("＋ Weather and substrate details",13,true);
         herpToggle.setTextColor(GREEN);disclosureTarget(herpToggle);
         if(profile.equals("Herpetofauna")){
             content.addView(herpToggle);herpPanel.setVisibility(View.GONE);
             herpToggle.setOnClickListener(v->{
                 boolean open=herpPanel.getVisibility()!=View.VISIBLE;
                 herpPanel.setVisibility(open?View.VISIBLE:View.GONE);
-                herpToggle.setText(open?"▴ Hide environment":"▾ Amphibian / reptile environment");
+                herpToggle.setText(open?"− Hide weather and substrate":"＋ Weather and substrate details");
             });
         }
+        LinearLayout mammalQuick=vertical();
         mammalPanel=vertical();
         evidenceSpinner=new Spinner(this);
         evidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Evidence not recorded","Direct sighting","Track","Scat","Burrow / den","Camera image","Acoustic detection","Live capture","Other sign"}));
-        mammalPanel.addView(label("Type of evidence",12,false));mammalPanel.addView(evidenceSpinner);
+        mammalQuick.addView(label("Type of evidence",13,true));mammalQuick.addView(evidenceSpinner);
         deviceEntry=edit("Equipment or trap ID (optional)",InputType.TYPE_CLASS_TEXT);
-        mammalPanel.addView(deviceEntry);
+        mammalQuick.addView(deviceEntry);
         perchEntry=edit("Height above ground (m, optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         mammalPanel.addView(perchEntry);
-        if(FieldUiPolicy.mammalDetails(profile))content.addView(mammalPanel);
-        TextView mammalToggle=label("▾ Mammal evidence details",13,true);
+        if(FieldUiPolicy.mammalDetails(profile)){
+            content.addView(section("Mammal evidence"));
+            content.addView(mammalQuick);
+            content.addView(mammalPanel);
+        }
+        TextView mammalToggle=label("＋ Additional mammal measurements",13,true);
         mammalToggle.setTextColor(GREEN);disclosureTarget(mammalToggle);
         if(profile.equals("Mammals")){
             content.addView(mammalToggle);mammalPanel.setVisibility(View.GONE);
             mammalToggle.setOnClickListener(v->{
                 boolean open=mammalPanel.getVisibility()!=View.VISIBLE;
                 mammalPanel.setVisibility(open?View.VISIBLE:View.GONE);
-                mammalToggle.setText(open?"▴ Hide mammal evidence":"▾ Mammal evidence details");
+                mammalToggle.setText(open?"− Hide additional measurements":"＋ Additional mammal measurements");
             });
         }
         LinearLayout photoRow=horizontal();
@@ -1518,6 +1540,16 @@ public class MainActivity extends Activity implements LocationListener {
         markedObserverFix=freshObserverFix();
         showMarkStatus();persistDraft();
     }
+    private void openCallLibrary(){
+        if(!active||eventId==null){toast("Start a survey before recording sound");return;}
+        persistDraft();
+        Intent audio=new Intent(this,CallLibraryActivity.class);
+        audio.putExtra("event_id",eventId);
+        audio.putExtra("taxon_group",group);
+        audio.putExtra("method",method);
+        audio.putExtra("station_id",stationId);
+        startActivity(audio);
+    }
     private void openCamera(){
         if(!active){toast("Start survey first");return;}
         Intent intent=new Intent(this,CameraActivity.class);
@@ -1910,6 +1942,7 @@ public class MainActivity extends Activity implements LocationListener {
             DistanceExport.write(z,exportDb.getReadableDatabase());
             ResearchExports.write(z,exportDb.getReadableDatabase());
             PhotoEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
+            AcousticEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             DataAudit.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             csv(exportDb,z,"distance_review.csv",
               "SELECT r.id,r.event_id,r.taxon_group,r.raw_identification,r.horizontal_m,r.perpendicular_m,r.individual_count,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,s.method,COALESCE(p.station_id,s.station_id),s.effort_length_m,s.point_target_s,s.region_label,s.area_km2,s.complete,r.point_count_id,r.protocol_window_flag FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' AND COALESCE(s.outcome,'active')='complete' AND (s.method='point_count' OR s.method='line_transect')",

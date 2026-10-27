@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,22);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,23);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -39,6 +39,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeTwenty(d);
         upgradeTwentyOne(d);
         upgradeTwentyTwo(d);
+        upgradeTwentyThree(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -75,6 +76,24 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<20)upgradeTwenty(d);
         if(oldVersion<21)upgradeTwentyOne(d);
         if(oldVersion<22)upgradeTwentyTwo(d);
+        if(oldVersion<23)upgradeTwentyThree(d);
+    }
+    /** Permanent research audio metadata. Audio stays in app-private files until export. */
+    private void upgradeTwentyThree(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS acoustic_clips("+
+            "id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT,"+
+            "taxon_group TEXT NOT NULL,method TEXT NOT NULL,filename TEXT NOT NULL UNIQUE,"+
+            "recorded_at_utc TEXT NOT NULL,duration_ms INTEGER NOT NULL,"+
+            "sample_rate_hz INTEGER NOT NULL,channels INTEGER NOT NULL,"+
+            "format TEXT NOT NULL DEFAULT 'WAV_PCM16',"+
+            "notes TEXT,recording_status TEXT NOT NULL DEFAULT 'saved')");
+        d.execSQL("CREATE INDEX IF NOT EXISTS clip_event ON acoustic_clips(event_id,recorded_at_utc)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS acoustic_labels("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,clip_id TEXT NOT NULL,"+
+            "start_ms INTEGER NOT NULL,end_ms INTEGER NOT NULL,"+
+            "call_label TEXT NOT NULL,notes TEXT,reviewed_at_utc TEXT NOT NULL,"+
+            "FOREIGN KEY(clip_id) REFERENCES acoustic_clips(id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS call_clip ON acoustic_labels(clip_id,start_ms)");
     }
     /** Provenance for missing GPS at survey start. Do not backfill coordinates. */
     private void upgradeTwentyTwo(SQLiteDatabase d){

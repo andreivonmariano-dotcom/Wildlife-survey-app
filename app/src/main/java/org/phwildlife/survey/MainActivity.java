@@ -831,7 +831,7 @@ public class MainActivity extends Activity implements LocationListener {
                         routeTemplateName,plannedRouteMeters,plannedSpacingMeters,startedAt);
                 }
             }
-            StudyProtocols.apply(database,eventId,projectId,method,
+            StudyProtocols.apply(database,eventId,projectId,method,profile,
                 getIntent().getStringExtra("study_protocol_id"),iso(startedAt));
             database.setTransactionSuccessful();
         }catch(Exception ex){

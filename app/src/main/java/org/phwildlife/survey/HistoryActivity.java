@@ -44,7 +44,11 @@ public class HistoryActivity extends Activity {
     private Button btn(String val){return UiKit.button(this,val,"secondary");}
     private EditText field(String hint,String init){EditText v=new EditText(this);v.setHint(hint);v.setText(init==null?"":init);v.setSingleLine(true);return v;}
     @Override public void onCreate(Bundle b){super.onCreate(b);db=new FieldDb(this);eventFilter=getIntent().getStringExtra("event_id");draw();}
-    @Override protected void onDestroy(){super.onDestroy();db.close();}
+    @Override protected void onDestroy(){
+        searchHandler.removeCallbacksAndMessages(null);
+        db.close();
+        super.onDestroy();
+    }
     private void draw(){
         root=column();root.setBackgroundColor(UiKit.BG);root.setPadding(dp(14),dp(10),dp(14),dp(10));
         LinearLayout header=new LinearLayout(this);
@@ -452,9 +456,5 @@ public class HistoryActivity extends Activity {
             }
         }
         new AlertDialog.Builder(this).setTitle("Record edit history").setMessage(msg.toString()).setPositiveButton("Close",null).show();
-    }
-    @Override protected void onDestroy(){
-        searchHandler.removeCallbacksAndMessages(null);
-        super.onDestroy();
     }
 }

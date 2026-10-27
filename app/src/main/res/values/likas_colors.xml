@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="likas_icon_background">#08271E</color>
+    <color name="likas_forest">#1C5B3E</color>
+    <color name="likas_canopy">#133F31</color>
+    <color name="likas_moss">#718E42</color>
+    <color name="likas_water">#639899</color>
+    <color name="likas_cream">#FFF0C1</color>
+    <color name="likas_mist">#B6D8D1</color>
+</resources>

@@ -57,7 +57,9 @@ public final class LikasLaunchActivity extends Activity {
         root.addView(new LikasForestView(this),new FrameLayout.LayoutParams(-1,-1));
         View scrim=new View(this);
         // Keep text contrast stable; the forest animates its own gradual daylight palette.
-        scrim.setBackgroundColor(Color.argb(34,0,23,15));
+        scrim.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+            new int[]{Color.argb(80,4,25,20),Color.argb(105,2,22,18),
+                Color.argb(197,4,25,19)}));
         root.addView(scrim,new FrameLayout.LayoutParams(-1,-1));
 
         LinearLayout content=new LinearLayout(this);
@@ -69,19 +71,17 @@ public final class LikasLaunchActivity extends Activity {
 
         content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2.3f));
         ImageView icon=new ImageView(this);
-        icon.setImageResource(R.drawable.likas_mark);
-        icon.setContentDescription("LIKAS field survey mark, a leaf with a compass needle");
-        content.addView(icon,new LinearLayout.LayoutParams(dp(89),dp(89)));
+        icon.setImageResource(R.drawable.likas_launcher_art);
+        icon.setContentDescription("Approved LIKAS pixel-art rainforest emblem");
+        content.addView(icon,new LinearLayout.LayoutParams(dp(164),dp(164)));
 
-        TextView name=label("LIKAS",48,Color.WHITE,true);
-        name.setLetterSpacing(.14f);
-        LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(-1,-2);
-        nameLp.topMargin=dp(13);content.addView(name,nameLp);
 
         TextView subtitle=label("PHILIPPINE WILDLIFE SURVEY",13,
             Color.rgb(230,245,225),true);
         subtitle.setLetterSpacing(.11f);
-        content.addView(subtitle);
+        LinearLayout.LayoutParams subtitleLp=new LinearLayout.LayoutParams(-1,-2);
+        subtitleLp.topMargin=dp(16);
+        content.addView(subtitle,subtitleLp);
         content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2.4f));
 
         continueButton=action("Resume Survey",true);

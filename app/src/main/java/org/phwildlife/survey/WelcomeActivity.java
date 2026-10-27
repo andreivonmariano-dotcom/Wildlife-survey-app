@@ -107,8 +107,8 @@ public class WelcomeActivity extends Activity {
         LinearLayout header=new LinearLayout(this);
         header.setGravity(Gravity.CENTER_VERTICAL);
         header.setOrientation(LinearLayout.HORIZONTAL);
-        ImageView logo=new ImageView(this);logo.setImageResource(R.drawable.likas_mark);
-        logo.setContentDescription("LIKAS mark");
+        ImageView logo=new ImageView(this);logo.setImageResource(R.drawable.likas_launcher_art);
+        logo.setContentDescription("LIKAS rainforest emblem");
         header.addView(logo,new LinearLayout.LayoutParams(dp(52),dp(52)));
         LinearLayout brand=vertical();brand.setPadding(dp(12),0,0,0);
         TextView wordmark=text("LIKAS",25,true);

@@ -38,7 +38,11 @@ public final class UiKit {
       case "pond":fill=POND;stroke=POND;break;
     }
     Button b=new Button(a);b.setAllCaps(false);b.setText(title);b.setTextSize(15);b.setTypeface(null,Typeface.BOLD);
-    b.setTextColor(foreground);b.setMinHeight(dp(a,48));b.setPadding(dp(a,10),dp(a,5),dp(a,10),dp(a,5));
+    b.setTextColor(foreground);
+    b.setGravity(Gravity.CENTER);b.setMaxLines(3);
+    b.setMinHeight(dp(a,FieldLayoutPolicy.actionHeightDp(
+        a.getResources().getConfiguration().fontScale)));
+    b.setPadding(dp(a,10),dp(a,6),dp(a,10),dp(a,6));
     GradientDrawable shape=new GradientDrawable();shape.setColor(fill);shape.setStroke(dp(a,1),stroke);shape.setCornerRadius(dp(a,14));
     b.setBackground(shape);b.setBackgroundTintList(null);
     return b;

@@ -226,7 +226,7 @@ public final class CatalogActivity extends Activity {
         List<List<String>> lines=parse(new String(read(uri),StandardCharsets.UTF_8));
         if(lines.size()<2)throw new Exception("Empty synonym CSV");
         List<String> headers=lines.get(0);
-        if(!headers.isEmpty())headers.set(0,headers.get(0).replace("\\ufeff",""));
+        if(!headers.isEmpty())headers.set(0,headers.get(0).replace("\uFEFF",""));
         String[] required={"accepted_taxon_key","alias_name","source","source_version"};
         for(String key:required)if(!headers.contains(key))
             throw new Exception("Missing CSV column: "+key);

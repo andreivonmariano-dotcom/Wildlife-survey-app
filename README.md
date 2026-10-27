@@ -1,3 +1,22 @@
+# LIKAS v0.19.3: source-checked habitat and persistent species picker
+
+- Introduces color-coded 0–100 screening index bars with Likely, Unlikely,
+  Insufficient Data and Not Scored text labels; **not probability of occurrence**.
+- Adds four source-checked habitat profiles, citing Animal Diversity Web,
+  two amphibian references and a tarsier field study. Remaining 1,499 taxa
+  are unassessed for published habitat/elevation. No invented values.
+- SQLite schema 20 stores source URL and evidence notes beside each habitat
+  profile, without altering historical observation data.
+- Saves Sort & Filter (A–Z, family, genus, high/low index and status filter),
+  selected habitat and measured elevation/uncertainty **per survey**.
+- Species detail pages show source references and ecological evidence when
+  they exist. Unassessed fields remain unfilled.
+- See `docs/HABITAT_ECOLOGY_COVERAGE_v0_19_3.md` and
+  `docs/QA_v0_19_3_HABITAT_PROFILES.md`.
+
+This is a beta feature. Screenshots and physical-phone survey tests are
+required before promotion to a field release.
+
 # LIKAS | Philippine Wildlife Survey v0.18.3 Source Evidence Beta
 
 ## Species detail and regional evidence

@@ -141,16 +141,69 @@ public final class StudyProtocolsActivity extends Activity {
                     " · photo "+(c.getInt(8)>0?"required":"optional");
                 Button item=UiKit.button(this,detail,"secondary");
                 item.setAllCaps(false);item.setMinHeight(dp(80));templates.addView(item);
+                String methodCode=c.getString(2),name=c.getString(3);
+                int oldVisits=c.getInt(4),oldMinutes=c.getInt(5),oldUnits=c.getInt(6);
+                boolean oldGps=c.getInt(7)!=0,oldPhoto=c.getInt(8)!=0;
                 item.setOnClickListener(v->new AlertDialog.Builder(this)
-                    .setTitle("Delete this template?")
-                    .setMessage("Existing surveys retain their original copied requirements.")
-                    .setNegativeButton("Keep",null)
-                    .setPositiveButton("Delete",(d,w)->{
-                        store.getWritableDatabase().delete("study_protocol_templates",
-                            "id=?",new String[]{id});reloadTemplates();
-                    }).show());
+                    .setTitle(name)
+                    .setItems(new String[]{"Edit template","Delete template"},(dialog,which)->{
+                        if(which==0)editTemplate(id,methodCode,name,oldVisits,
+                            oldMinutes,oldUnits,oldGps,oldPhoto);
+                        else new AlertDialog.Builder(this)
+                            .setTitle("Delete this template?")
+                            .setMessage("Past survey requirements stay unchanged.")
+                            .setNegativeButton("Keep",null)
+                            .setPositiveButton("Delete",(d,w)->{
+                                store.getWritableDatabase().delete(
+                                    "study_protocol_templates","id=?",new String[]{id});
+                                reloadTemplates();
+                            }).show();
+                    }).setNegativeButton("Close",null).show());
             }
         }
+    }
+    private void editTemplate(String id,String code,String existingName,
+            int oldVisits,int oldMinutes,int oldUnits,boolean oldGps,boolean oldPhoto){
+        LinearLayout panel=new LinearLayout(this);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setPadding(dp(18),dp(7),dp(18),dp(8));
+        EditText title=entry("Template name",false);title.setText(existingName);
+        EditText visits=entry("Minimum visits",true);visits.setText(String.valueOf(oldVisits));
+        EditText minutes=entry("Minimum active effort minutes",true);
+        minutes.setText(String.valueOf(oldMinutes));
+        EditText units=entry("Minimum documented effort units",true);
+        units.setText(String.valueOf(oldUnits));
+        CheckBox gps=new CheckBox(this);gps.setText("Verified survey-start GPS required");
+        gps.setChecked(oldGps);
+        CheckBox photo=new CheckBox(this);photo.setText("At least one archived photo");
+        photo.setChecked(oldPhoto);
+        panel.addView(title);panel.addView(visits);panel.addView(minutes);
+        panel.addView(units);panel.addView(gps);panel.addView(photo);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Edit study requirements")
+            .setView(panel).setNegativeButton("Cancel",null)
+            .setPositiveButton("Save changes",null).create();
+        dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            .setOnClickListener(w->{
+                String label=title.getText().toString().trim();
+                Integer a=parse(visits),b=parse(minutes),c=parse(units);
+                if(label.isEmpty()){title.setError("Name required");return;}
+                if(a==null||b==null||c==null||a>2000||b>43200||c>100000){
+                    units.setError("Check effort thresholds");return;
+                }
+                if(("line_transect".equals(code)||"ves_transect".equals(code)||
+                    "opportunistic".equals(code))&&(a>0||c>0)){
+                    visits.setError("This method has no station or unit visit count");return;
+                }
+                ContentValues update=new ContentValues();
+                update.put("name",label);update.put("min_visits",a);
+                update.put("min_minutes",b);update.put("min_units",c);
+                update.put("require_verified_gps",gps.isChecked()?1:0);
+                update.put("require_protocol_photo",photo.isChecked()?1:0);
+                store.getWritableDatabase().update("study_protocol_templates",
+                    update,"id=?",new String[]{id});
+                dialog.dismiss();reloadTemplates();
+            }));
+        dialog.show();
     }
     @Override protected void onDestroy(){store.close();super.onDestroy();}
 }

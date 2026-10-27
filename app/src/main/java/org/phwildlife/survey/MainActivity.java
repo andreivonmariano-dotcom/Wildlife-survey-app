@@ -230,6 +230,8 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView.setOnClickListener(v->showGpsDetail());
         gpsView.setMinHeight(dp(44));
         gpsView.setGravity(Gravity.CENTER_VERTICAL);
+        gpsView.setFocusable(true);
+        gpsView.setContentDescription("Current GPS status. Open GPS details");
         hud.addView(gpsView);
         startGpsBanner=label("Initial GPS missing · location unverified",12,true);
         startGpsBanner.setTextColor(UiKit.AMBER);

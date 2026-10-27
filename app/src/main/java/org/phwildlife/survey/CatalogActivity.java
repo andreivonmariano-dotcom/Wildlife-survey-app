@@ -13,7 +13,7 @@ import java.util.*;
 
 /** Import a versioned, explicitly attributed checklist supplied by the researcher. */
 public final class CatalogActivity extends Activity {
-    private static final int PICK=891,PICK_MDD=892,MAX=25*1024*1024;
+    private static final int PICK=891,PICK_MDD=892,PICK_SYNONYMS=893,MAX=25*1024*1024;
     private FieldDb db;private TextView info;
     private volatile boolean importing=false;
     @Override public void onCreate(Bundle b){
@@ -24,6 +24,8 @@ public final class CatalogActivity extends Activity {
         info=new TextView(this);info.setTextSize(15);info.setTextColor(UiKit.INK);layout.addView(info);
         Button choose=UiKit.button(this,"Import attributed species CSV","primary");
         layout.addView(choose);choose.setOnClickListener(v->pick());
+        Button synonyms=UiKit.button(this,"Import name synonyms CSV","secondary");
+        layout.addView(synonyms);synonyms.setOnClickListener(v->pickSynonyms());
         Button mammals=UiKit.button(this,"Import Philippine mammals from MDD v2.5 CSV","secondary");
         layout.addView(mammals);mammals.setOnClickListener(v->pickMdd());
         Button sources=UiKit.button(this,"Catalog sources and versions","secondary");
@@ -191,11 +193,110 @@ public final class CatalogActivity extends Activity {
         i.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"text/csv","text/comma-separated-values","text/plain","application/octet-stream"});
         startActivityForResult(i,PICK);
     }
+    private void pickSynonyms(){
+        Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("*/*");
+        i.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{
+            "text/csv","text/comma-separated-values","text/plain","application/octet-stream"});
+        startActivityForResult(i,PICK_SYNONYMS);
+    }
+    private void importSynonyms(Uri uri){
+        if(importing){info.setText("A checklist import is already running");return;}
+        importing=true;info.setText("Checking scientific-name synonyms…");
+        new Thread(()->{
+            try{
+                List<Map<String,String>> rows=validateSynonyms(uri);
+                runOnUiThread(()->{
+                    if(isFinishing()||isDestroyed()){importing=false;return;}
+                    new AlertDialog.Builder(this).setTitle("Import old scientific names?")
+                        .setMessage(rows.size()+" synonym links will be matched to installed "+
+                            "taxon IDs. Historic observations stay unchanged.")
+                        .setNegativeButton("Cancel",(dialog,which)->importing=false)
+                        .setOnCancelListener(dialog->importing=false)
+                        .setPositiveButton("Import",(dialog,which)->applySynonyms(rows)).show();
+                });
+            }catch(Exception e){
+                importing=false;
+                runOnUiThread(()->{if(!isFinishing()&&!isDestroyed())
+                    info.setText("Synonym CSV invalid: "+e.getMessage());});
+            }
+        },"LIKAS-Synonym-Validation").start();
+    }
+    private List<Map<String,String>> validateSynonyms(Uri uri)throws Exception{
+        List<List<String>> lines=parse(new String(read(uri),StandardCharsets.UTF_8));
+        if(lines.size()<2)throw new Exception("Empty synonym CSV");
+        List<String> headers=lines.get(0);
+        if(!headers.isEmpty())headers.set(0,headers.get(0).replace("\uFEFF",""));
+        String[] required={"accepted_taxon_key","alias_name","source","source_version"};
+        for(String key:required)if(!headers.contains(key))
+            throw new Exception("Missing CSV column: "+key);
+        ArrayList<Map<String,String>> rows=new ArrayList<>();
+        java.util.HashSet<String> seen=new java.util.HashSet<>();
+        for(int i=1;i<lines.size();i++){
+            List<String> values=lines.get(i);
+            if(values.size()==1&&values.get(0).trim().isEmpty())continue;
+            if(values.size()!=headers.size())throw new Exception("Malformed row "+(i+1));
+            Map<String,String> row=new HashMap<>();
+            for(int n=0;n<headers.size();n++)
+                row.put(headers.get(n),values.get(n).trim());
+            for(String key:required)if(row.get(key).isEmpty())
+                throw new Exception("Missing "+key+" at row "+(i+1));
+            String unique=row.get("accepted_taxon_key")+"|"+
+                row.get("alias_name").toLowerCase(Locale.ROOT)+"|"+
+                row.get("source")+"|"+row.get("source_version");
+            if(!seen.add(unique))throw new Exception("Duplicate synonym link at row "+(i+1));
+            rows.add(row);
+            if(rows.size()>45000)throw new Exception("Maximum 45,000 synonym names");
+        }
+        if(rows.isEmpty())throw new Exception("No valid synonyms");
+        return rows;
+    }
+    private void applySynonyms(List<Map<String,String>> rows){
+        info.setText("Importing verified synonyms…");
+        new Thread(()->{
+            try(FieldDb helper=new FieldDb(getApplicationContext())){
+                SQLiteDatabase database=helper.getWritableDatabase();
+                int[] inserted={0};
+                database.beginTransaction();
+                try{
+                    try(android.database.sqlite.SQLiteStatement exists=database.compileStatement(
+                        "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_key=?");
+                        android.database.sqlite.SQLiteStatement insert=database.compileStatement(
+                        "INSERT OR REPLACE INTO taxon_synonyms("+
+                        "taxon_key,alias_name,source,source_version) VALUES(?,?,?,?)")){
+                        for(Map<String,String> row:rows){
+                            exists.clearBindings();
+                            exists.bindString(1,row.get("accepted_taxon_key"));
+                            if(exists.simpleQueryForLong()!=1L)
+                                throw new IllegalArgumentException("Unknown accepted taxon key: "+
+                                    row.get("accepted_taxon_key"));
+                            insert.clearBindings();
+                            String[] values={row.get("accepted_taxon_key"),
+                                row.get("alias_name"),row.get("source"),
+                                row.get("source_version")};
+                            for(int i=0;i<values.length;i++)
+                                insert.bindString(i+1,values[i]);
+                            insert.executeInsert();inserted[0]++;
+                        }
+                    }
+                    database.setTransactionSuccessful();
+                }finally{database.endTransaction();}
+                runOnUiThread(()->{if(!isFinishing()&&!isDestroyed())
+                    info.setText("Imported "+inserted[0]+
+                        " synonyms. Original survey names remain intact.");});
+            }catch(Exception e){
+                runOnUiThread(()->{if(!isFinishing()&&!isDestroyed())
+                    info.setText("Synonyms not imported: "+e.getMessage());});
+            }finally{importing=false;}
+        },"LIKAS-Synonym-Import").start();
+    }
     @Override protected void onActivityResult(int req,int outcome,Intent data){
         super.onActivityResult(req,outcome,data);
-        if((req!=PICK&&req!=PICK_MDD)||outcome!=RESULT_OK||data==null)return;
+        if((req!=PICK&&req!=PICK_MDD&&req!=PICK_SYNONYMS)||
+            outcome!=RESULT_OK||data==null)return;
         Uri uri=data.getData();if(uri==null)return;
         if(req==PICK_MDD){importMdd(uri);return;}
+        if(req==PICK_SYNONYMS){importSynonyms(uri);return;}
         if(importing){info.setText("Another checklist import is running");return;}
         importing=true;
         info.setText("Checking checklist file…");

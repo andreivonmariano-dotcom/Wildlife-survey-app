@@ -1,6 +1,6 @@
 # LIKAS development instructions
 
-This file directs development assistants to follow `docs/LIKAS_MASTER_PROJECT_SPEC_v1.0.md` and the rules below.
+**Mandatory governance:** Follow `docs/LIKAS_MASTER_PROJECT_SPEC_v1.0.md` for product and scientific requirements. Follow `docs/LIKAS_DIRECT_DOWNLOAD_POLICY.md` for **every downloadable handoff**, including APKs, images and ZIPs. Deliver real attached files with direct chat download links, never GitHub navigation pages as substitutes.
 
 LIKAS | STRICT PROJECT INSTRUCTIONS | Companion to v1.0 master specification
 
@@ -35,5 +35,9 @@ Read README, data dictionary, protocols, QA plan, and current code before change
 
 Approved design direction
 Modern field UI with restrained retro forest branding. Tropical time-adaptive forest startup art should be high-resolution and smooth. Preferred minimalist app icon: a pixel frog's upper face emerging from pond water, with no lily pad. Do not claim current repo assets are final just from filenames.
+
+
+Direct download delivery | mandatory DL-01
+Read and follow LIKAS_DIRECT_DOWNLOAD_POLICY.md for every APK, image, ZIP, PDF, CSV, animation, or other delivered file. Provide a verified direct sandbox file-download link in the chat, never a GitHub repository, release page, CI artifact listing, or external website as the primary download. Put the actual file in /mnt/data and verify it exists before linking. For each new LIKAS APK, link the newly built version, not an earlier APK. If no direct file is accessible, state that the file is not directly downloadable and do not invent a link or substitute an external redirect. GitHub source links are supplemental only.
 
 Canonical master: LIKAS_MASTER_PROJECT_SPEC_v1.0.md, 27 October 2026.

@@ -111,6 +111,8 @@ public class MainActivity extends Activity implements LocationListener {
     private float bearing=Float.NaN,pitch=Float.NaN;
     private Double markedBearing=null,markedPitch=null;
     private Location location;
+    // Observer position belongs to the detection time, not the later Save tap.
+    private Location markedObserverFix;
     private boolean pointNotice=false;
     private int dp(float n){return (int)(getResources().getDisplayMetrics().density*n+0.5f);}
 
@@ -1375,9 +1377,19 @@ public class MainActivity extends Activity implements LocationListener {
                 c.getDouble(0),plannedRouteMeters,c.getString(1)));
         }catch(Exception ignored){}
     }
+    /** Freeze actual, fresh GNSS coordinates when a detection is first marked. */
+    private Location freshObserverFix(){
+        Location fix=TrackService.currentFix();
+        if(fix==null)fix=location;
+        if(fix==null||!LocationManager.GPS_PROVIDER.equals(fix.getProvider())||!fix.hasAccuracy())return null;
+        long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
+        return GpsFixPolicy.acceptableElapsed(fix.getLatitude(),fix.getLongitude(),
+            fix.getAccuracy(),age,fix.isFromMockProvider())?new Location(fix):null;
+    }
     private void markDetection(){
         if(!active){toast("Start a survey first");return;}
         markedAt=System.currentTimeMillis();
+        markedObserverFix=freshObserverFix();
         showMarkStatus();persistDraft();
     }
     private void openCamera(){
@@ -1386,7 +1398,7 @@ public class MainActivity extends Activity implements LocationListener {
         startActivityForResult(intent,CAMERA_REQ);
     }
     private void clearMark(){
-        markedAt=0;markedBearing=null;markedPitch=null;
+        markedAt=0;markedObserverFix=null;markedBearing=null;markedPitch=null;
         if(bearingStatusView!=null)bearingStatusView.setText("Time and bearing not marked");
         queueDraft();
     }
@@ -1398,6 +1410,23 @@ public class MainActivity extends Activity implements LocationListener {
         else bearingStatusView.setText("Time and bearing not marked");
     }
     private static Double number(String v){try{return Double.parseDouble(v.trim());}catch(Exception e){return null;}}
+    /** Catalog provenance comes from source records, never from display punctuation. */
+    private String scientificSource(String taxonGroup,String scientific){
+        if(scientific!=null&&!scientific.isEmpty()){
+            try(Cursor source=db.getReadableDatabase().rawQuery(
+                "SELECT source,source_version FROM taxon_catalog "+
+                "WHERE taxon_group=? AND scientific_name=? LIMIT 1",
+                new String[]{taxonGroup,scientific})){
+                if(source.moveToFirst())return "catalog:"+source.getString(0)+"|"+source.getString(1);
+            }catch(Exception ignored){}
+            for(String entry:Taxa.forGroup(taxonGroup)){
+                String[] parts=entry.split("\\|",2);
+                if(parts.length==2&&scientific.equalsIgnoreCase(parts[1]))
+                    return "offline_starter_v0.4";
+            }
+        }
+        return "user_entered";
+    }
     private void save(){
         if(!active){toast("Start survey first");return;}
         if(method.equals("point_count")&&pointCountId==null){
@@ -1457,14 +1486,14 @@ public class MainActivity extends Activity implements LocationListener {
           &&(!method.equals("line_transect")||perp!=null)
           &&(!method.equals("point_count")||pointRadiusM==null||distance<=pointRadiusM)
           &&!movement.equals("Flyover")&&!movement.equals("Entering after start");
-        Location loc=location;
+        Location loc=markedAt>0?markedObserverFix:freshObserverFix();
         Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),acc=loc==null?null:loc.getAccuracy();
         db.getWritableDatabase().execSQL(
             "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,identification_level,regional_evidence_status,geo_region_at_detection,identification_confidence,identification_review_note) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{eventId,iso(first),group,id[0],id[1],raw,count,detectionSpinner.getSelectedItem().toString(),
                 distance,markedBearing,markedPitch,perp,lat,lon,acc,
                 habitatEntry.getText().toString().trim(),behaviorEntry.getText().toString().trim(),
-                notesEntry.getText().toString().trim(),sensorQuality,raw.contains(" · ")?"offline_starter_v0.4":"user_entered",
+                notesEntry.getText().toString().trim(),sensorQuality,scientificSource(group,id[1]),
                 distanceMethod,firstPosition,movement,candidate?1:0,iso(System.currentTimeMillis()),
                 method.equals("point_count")?pointCountId:null,inWindow?"within":"outside",
                 profile.equals("Herpetofauna")?temp:null,profile.equals("Herpetofauna")?humidity:null,
@@ -1660,7 +1689,10 @@ public class MainActivity extends Activity implements LocationListener {
             if(result==RESULT_OK && data!=null){
                 float az=data.getFloatExtra("bearing_deg",Float.NaN);
                 float inclination=data.getFloatExtra("pitch_deg",Float.NaN);
-                if(markedAt==0)markedAt=data.getLongExtra("captured_at",System.currentTimeMillis());
+                if(markedAt==0){
+                    markedAt=data.getLongExtra("captured_at",System.currentTimeMillis());
+                    markedObserverFix=data.getParcelableExtra("capture_observer_fix");
+                }
                 markedBearing=Float.isNaN(az)?null:(double)az;
                 markedPitch=Float.isNaN(inclination)?null:(double)inclination;
                 sensorQuality=data.getIntExtra("sensor_quality",-1);
@@ -1806,6 +1838,13 @@ public class MainActivity extends Activity implements LocationListener {
             d.put("firstPosition",firstPositionSpinner.getSelectedItemPosition());
             d.put("movement",movementSpinner.getSelectedItemPosition());
             d.put("markedTime",markedAt);
+            if(markedObserverFix!=null){
+                d.put("markedGpsLat",markedObserverFix.getLatitude());
+                d.put("markedGpsLon",markedObserverFix.getLongitude());
+                d.put("markedGpsAccuracy",markedObserverFix.getAccuracy());
+                d.put("markedGpsTime",markedObserverFix.getTime());
+                d.put("markedGpsElapsed",markedObserverFix.getElapsedRealtimeNanos());
+            }
             d.put("bearing",markedBearing==null?JSONObject.NULL:markedBearing);
             d.put("pitch",markedPitch==null?JSONObject.NULL:markedPitch);
             d.put("sensorQuality",sensorQuality);
@@ -1854,6 +1893,16 @@ public class MainActivity extends Activity implements LocationListener {
             advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);
             detailToggle.setText(detailShown?"− Hide ecology details":"＋ Ecology, habitat and notes (optional)");
             markedAt=d.optLong("markedTime",0);
+            markedObserverFix=null;
+            if(markedAt>0&&d.has("markedGpsLat")&&d.has("markedGpsLon")&&
+                d.has("markedGpsAccuracy")&&d.has("markedGpsTime")){
+                markedObserverFix=new Location(LocationManager.GPS_PROVIDER);
+                markedObserverFix.setLatitude(d.optDouble("markedGpsLat"));
+                markedObserverFix.setLongitude(d.optDouble("markedGpsLon"));
+                markedObserverFix.setAccuracy((float)d.optDouble("markedGpsAccuracy"));
+                markedObserverFix.setTime(d.optLong("markedGpsTime"));
+                markedObserverFix.setElapsedRealtimeNanos(d.optLong("markedGpsElapsed",0));
+            }
             markedBearing=d.isNull("bearing")?null:d.optDouble("bearing");
             markedPitch=d.isNull("pitch")?null:d.optDouble("pitch");
             sensorQuality=d.optInt("sensorQuality",-1);

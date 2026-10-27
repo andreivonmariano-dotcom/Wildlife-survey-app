@@ -55,7 +55,7 @@ public final class AcousticEvidence {
             "FROM acoustic_clips ORDER BY recorded_at_utc");
         csv(zip,db,"acoustic_labels.csv",
             "SELECT id,clip_id,start_ms,end_ms,call_label,notes,reviewed_at_utc,"+
-            "taxon_key,observation_id,COALESCE(review_status,'unverified') "+
+            "taxon_key,observation_id,selected_frequency_hz,COALESCE(review_status,'unverified') "+
             "FROM acoustic_labels ORDER BY clip_id,start_ms,id");
         File folder=directory(context);
         try(Cursor c=db.rawQuery(

@@ -11,7 +11,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-/** Import a versioned, explicitly attributed checklist supplied by the researcher. */
+/** Local versioned wildlife reference catalog, preinstalled with the application. */
 public final class CatalogActivity extends Activity {
     private static final int PICK=891,PICK_MDD=892,PICK_SYNONYMS=893,PICK_EVIDENCE=894,PICK_ALL=895,MAX=25*1024*1024;
     private FieldDb db;private TextView info;
@@ -20,7 +20,7 @@ public final class CatalogActivity extends Activity {
         super.onCreate(b);db=new FieldDb(this);
         LinearLayout layout=new LinearLayout(this);layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(22,22,22,22);layout.setBackgroundColor(UiKit.BG);
-        layout.addView(UiKit.title(this,"Offline taxonomy"));
+        layout.addView(UiKit.title(this,"Species checklists"));
         info=new TextView(this);info.setTextSize(15);info.setTextColor(UiKit.INK);layout.addView(info);
         Button species=UiKit.button(this,"Find species information","primary");
         layout.addView(species);
@@ -30,32 +30,8 @@ public final class CatalogActivity extends Activity {
         layout.addView(regions);
         regions.setOnClickListener(v->startActivity(
             new Intent(this,RegionalChecklistActivity.class)));
-        Button installAll=UiKit.button(this,
-            "Install complete Philippine checklists (ZIP)","primary");
-        layout.addView(installAll);
-        installAll.setOnClickListener(v->pickAllChecklists());
-        Button choose=UiKit.button(this,"Import species checklist CSV","secondary");
-        layout.addView(choose);choose.setOnClickListener(v->pick());
-        Button evidence=UiKit.button(this,"Import regional evidence CSV","secondary");
-        layout.addView(evidence);evidence.setOnClickListener(v->pickEvidence());
-        Button synonyms=UiKit.button(this,"Import name synonyms CSV","secondary");
-        layout.addView(synonyms);synonyms.setOnClickListener(v->pickSynonyms());
-        Button mammals=UiKit.button(this,"Import Philippine mammals from MDD v2.5 CSV","secondary");
-        layout.addView(mammals);mammals.setOnClickListener(v->pickMdd());
         Button sources=UiKit.button(this,"Catalog sources and versions","secondary");
         layout.addView(sources);sources.setOnClickListener(v->showCatalogSources());
-        Button help=UiKit.button(this,"Checklist import guide  ⓘ","quiet");
-        layout.addView(help);
-        help.setOnClickListener(v->new AlertDialog.Builder(this)
-            .setTitle("Checklist CSV format")
-            .setMessage("UTF-8 CSV columns:\n"+
-                "taxon_key, taxon_group, common_name, scientific_name, family, source, "+
-                "source_version, region_codes, review_status\n\n"+
-                "Taxon group: Birds, Reptiles, Amphibians or Mammals. "+
-                "Use reviewed or unreviewed. Regional occurrence needs separate evidence. "+
-                "National taxonomy does not verify presence at a survey station. "+
-                "For mammals use the official MDD v2.5 source file.")
-            .setPositiveButton("Close",null).show());
         Button back=UiKit.button(this,"‹ Home","secondary");layout.addView(back);back.setOnClickListener(v->finish());
         ScrollView scroll=new ScrollView(this);
         scroll.addView(layout);
@@ -63,25 +39,24 @@ public final class CatalogActivity extends Activity {
     }
     @Override protected void onDestroy(){super.onDestroy();db.close();}
     private void refresh(){
-        java.util.HashMap<String,int[]> counts=new java.util.HashMap<>();
-        int total=0,starter=0;
+        java.util.Map<String,int[]> counts=new java.util.HashMap<>();
         try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT taxon_group,COUNT(*),SUM(CASE WHEN taxon_key LIKE 'STARTER:%' "+
-            "THEN 1 ELSE 0 END) FROM taxon_catalog GROUP BY taxon_group",null)){
-            while(c.moveToNext()){
-                counts.put(c.getString(0),new int[]{c.getInt(1),c.getInt(2)});
-                total+=c.getInt(1);starter+=c.getInt(2);
-            }
+            "SELECT taxon_group,COUNT(*),"+
+            "SUM(CASE WHEN taxon_key LIKE 'STARTER:%' THEN 1 ELSE 0 END),"+
+            "SUM(CASE WHEN taxon_key NOT LIKE 'STARTER:%' THEN 1 ELSE 0 END) "+
+            "FROM taxon_catalog GROUP BY taxon_group",null)){
+            while(c.moveToNext())
+                counts.put(c.getString(0),new int[]{c.getInt(1),c.getInt(2),c.getInt(3)});
         }
-        StringBuilder result=new StringBuilder("Offline catalog · "+total+" names");
-        for(String category:new String[]{"Birds","Amphibians","Reptiles","Mammals"}){
-            int[] row=counts.get(category);
-            int all=row==null?0:row[0],legacy=row==null?0:row[1];
-            result.append("\n").append(category).append(": ").append(all);
-            if(legacy>0)result.append(" (").append(legacy).append(" starter)");
+        StringBuilder result=new StringBuilder("Available offline · ready for field use");
+        for(String group:new String[]{"Birds","Amphibians","Reptiles","Mammals"}){
+            int[] data=counts.get(group);
+            int sourced=data==null?0:data[2];
+            result.append("\\n").append(group).append(": ").append(sourced);
+            if(sourced==0)result.append(" (catalog missing)");
         }
-        result.append("\nNational candidates are not verified local sightings.");
-        info.setText(result.toString());
+        result.append("\\nSource records include national candidates. Local presence is not verified.");
+        info.setText(result.toString().replace("\\\\n","\\n"));
     }
     private void showCatalogSources(){
         StringBuilder sources=new StringBuilder();

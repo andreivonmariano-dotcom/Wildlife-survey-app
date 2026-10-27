@@ -23,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.text.InputType;
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -42,14 +44,17 @@ public final class SpeciesPickerActivity extends Activity {
     private final Runnable delayed=this::refresh;
     private EditText search;
     private Spinner groups,views;
+    private Button sortButton;
     private LinearLayout cards;
     private TextView status;
-    private int generation=0,offset=0;
-    private boolean more=false;
+    private int generation=0,offset=0,sortMode=0,statusFilter=0;
+    private String habitatCode="";
+    private Double siteElevation=null,elevationUncertainty=null;
+    private List<Species> loaded=new ArrayList<>();
+    private boolean truncated=false;
     private String[] availableGroups;
     private String geographicRegion="PH",province="",habitat="";
-    private String lastQuery="",lastGroup="";
-    private boolean lastLocal=false;
+    private static final int MAX_QUERY_ROWS=5000;
     private int dp(int n){return Math.round(getResources().getDisplayMetrics().density*n);}
     private TextView text(String value,int size,boolean strong){
         TextView v=new TextView(this);
@@ -85,6 +90,7 @@ public final class SpeciesPickerActivity extends Activity {
         if(province==null)province="";
         habitat=request.getStringExtra("habitat");
         if(habitat==null)habitat="";
+        habitatCode=guessHabitat(habitat);
         getWindow().setStatusBarColor(UiKit.BG);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         LinearLayout root=new LinearLayout(this);
@@ -107,6 +113,18 @@ public final class SpeciesPickerActivity extends Activity {
         search.setHint("Search common, scientific or older name");
         LinearLayout.LayoutParams searchParams=new LinearLayout.LayoutParams(-1,dp(56));
         searchParams.topMargin=dp(10);root.addView(search,searchParams);
+
+        LinearLayout quick=new LinearLayout(this);
+        quick.setGravity(Gravity.CENTER_VERTICAL);
+        sortButton=UiKit.button(this,"Sort & Filter · A–Z","secondary");
+        sortButton.setOnClickListener(v->openSortFilter());
+        quick.addView(sortButton,new LinearLayout.LayoutParams(0,dp(52),1.25f));
+        Button conditions=UiKit.button(this,"Site conditions","quiet");
+        LinearLayout.LayoutParams conditionSpace=new LinearLayout.LayoutParams(0,dp(52),1f);
+        conditionSpace.leftMargin=dp(6);
+        quick.addView(conditions,conditionSpace);
+        conditions.setOnClickListener(v->openSiteConditions());
+        root.addView(quick);
 
         LinearLayout controls=new LinearLayout(this);
         controls.setGravity(Gravity.CENTER_VERTICAL);
@@ -134,10 +152,8 @@ public final class SpeciesPickerActivity extends Activity {
         TextView context=text((scope.isEmpty()?"National checklist":scope+" checklist area")+
             (province.isEmpty()?"":" · "+province)+" · "+gps,12,false);
         context.setTextColor(UiKit.FOREST);root.addView(context);
-        TextView model=text("Occurrence probability: "+
-            OccurrenceEvidencePolicy.probabilityStatus()+
-            "\nElevation: not modeled · Landcover: not modeled"+
-            (habitat.trim().isEmpty()?"":"\nField habitat: "+habitat+" (not scored)"),12,false);
+        TextView model=text("Percentage = screening index, not occurrence probability. "+
+            "Unassessed species stay selectable.",12,false);
         model.setTextColor(UiKit.MUTED);
         model.setPadding(0,dp(6),0,dp(8));root.addView(model);
         Button unknown=UiKit.button(this,"Use unidentified identification","secondary");
@@ -180,11 +196,125 @@ public final class SpeciesPickerActivity extends Activity {
     private String currentGroup(){
         return availableGroups[Math.max(0,groups.getSelectedItemPosition())];
     }
+    private static String guessHabitat(String notes){
+        if(notes==null)return "";
+        String value=notes.toLowerCase(Locale.ROOT);
+        if(value.contains("mangrove")||value.contains("coastal"))return "mangrove";
+        if(value.contains("mossy"))return "mossy";
+        if(value.contains("montane"))return "montane";
+        if(value.contains("secondary"))return "secondary";
+        if(value.contains("dipterocarp")||value.contains("lowland"))return "lowland";
+        if(value.contains("grassland"))return "grassland";
+        if(value.contains("plantation")||value.contains("agricult"))return "agriculture";
+        if(value.contains("wetland")||value.contains("marsh"))return "wetland";
+        if(value.contains("riparian")||value.contains("stream"))return "riparian";
+        if(value.contains("urban")||value.contains("settlement"))return "urban";
+        return "";
+    }
+    private void openSortFilter(){
+        LinearLayout panel=new LinearLayout(this);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setPadding(dp(18),dp(8),dp(18),dp(8));
+        panel.addView(text("Order by",14,true));
+        Spinner order=new Spinner(this);
+        order.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,SpeciesSortPolicy.SORT_LABELS));
+        order.setSelection(sortMode);
+        panel.addView(order);
+        TextView filterLabel=text("Show likelihood status",14,true);
+        filterLabel.setPadding(0,dp(15),0,0);
+        panel.addView(filterLabel);
+        Spinner byStatus=new Spinner(this);
+        byStatus.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,SpeciesSortPolicy.FILTER_LABELS));
+        byStatus.setSelection(statusFilter);
+        panel.addView(byStatus);
+        TextView note=text("Percentage sorts use a source-based habitat match index. "+
+            "Scores with missing evidence appear last.",12,false);
+        note.setTextColor(UiKit.MUTED);note.setPadding(0,dp(14),0,0);
+        panel.addView(note);
+        new AlertDialog.Builder(this).setTitle("Sort & Filter")
+            .setView(panel)
+            .setPositiveButton("Apply",(dialog,which)->{
+                sortMode=order.getSelectedItemPosition();
+                statusFilter=byStatus.getSelectedItemPosition();
+                sortButton.setText("Sort & Filter · "+SpeciesSortPolicy.SORT_LABELS[sortMode]);
+                refresh();
+            })
+            .setNeutralButton("Reset",(dialog,which)->{
+                sortMode=0;statusFilter=0;
+                sortButton.setText("Sort & Filter · A–Z");
+                refresh();
+            })
+            .setNegativeButton("Cancel",null).show();
+    }
+    private static Double parseNumber(String value){
+        if(value==null||value.trim().isEmpty())return null;
+        try{
+            double numeric=Double.parseDouble(value.trim());
+            return Double.isFinite(numeric)?numeric:null;
+        }catch(NumberFormatException ignored){return null;}
+    }
+    private void openSiteConditions(){
+        LinearLayout panel=new LinearLayout(this);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setPadding(dp(18),dp(7),dp(18),dp(7));
+        panel.addView(text("Observed habitat",14,true));
+        Spinner site=new Spinner(this);
+        site.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,HabitatLikelihood.HABITATS));
+        site.setSelection(HabitatLikelihood.habitatIndex(habitatCode));
+        panel.addView(site);
+        TextView elevationLabel=text("Site elevation (meters, optional)",14,true);
+        elevationLabel.setPadding(0,dp(12),0,0);
+        panel.addView(elevationLabel);
+        EditText elevation=new EditText(this);
+        elevation.setSingleLine(true);
+        elevation.setHint("Manually measured elevation");
+        elevation.setInputType(InputType.TYPE_CLASS_NUMBER|
+            InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED);
+        if(siteElevation!=null)elevation.setText(String.valueOf(siteElevation));
+        panel.addView(elevation);
+        panel.addView(text("Elevation uncertainty (m, optional)",13,false));
+        EditText accuracy=new EditText(this);
+        accuracy.setSingleLine(true);accuracy.setHint("Default ±100 m");
+        accuracy.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        if(elevationUncertainty!=null)
+            accuracy.setText(String.valueOf(elevationUncertainty));
+        panel.addView(accuracy);
+        TextView note=text("Landcover and terrain maps are not yet installed. "+
+            "Only reviewed species habitat profiles affect the score.",12,false);
+        note.setTextColor(UiKit.MUTED);note.setPadding(0,dp(9),0,0);
+        panel.addView(note);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Site conditions")
+            .setView(panel).setNegativeButton("Cancel",null)
+            .setPositiveButton("Apply",null).create();
+        dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            .setOnClickListener(w->{
+                String rawElevation=elevation.getText().toString().trim();
+                String rawAccuracy=accuracy.getText().toString().trim();
+                Double meters=parseNumber(rawElevation);
+                Double uncertainty=parseNumber(rawAccuracy);
+                if(!rawElevation.isEmpty()&&meters==null){
+                    elevation.setError("Enter a valid number");return;
+                }
+                if(!rawAccuracy.isEmpty()&&(uncertainty==null||uncertainty<0)){
+                    accuracy.setError("Enter nonnegative meters");return;
+                }
+                habitatCode=HabitatLikelihood.codeAt(site.getSelectedItemPosition());
+                siteElevation=meters;elevationUncertainty=uncertainty;
+                dialog.dismiss();
+                refresh();
+            }));
+        dialog.show();
+    }
     private static final class Species {
         String key,group,common,scientific,family,origin,iucn,ph,source,version;
         int evidence;
+        HabitatLikelihood.Result screening;
     }
-    private List<Species> searchPage(String group,String term,boolean local,int first)throws Exception{
+    private List<Species> searchCatalog(String group,String term,boolean local,
+            String siteCode,Double altitude,Double uncertainty)throws Exception{
         List<Species> list=new ArrayList<>();
         String island=island(geographicRegion);
         String provinceMatch="EXISTS(SELECT 1 FROM taxon_occurrence_evidence e "+
@@ -198,8 +328,11 @@ public final class SpeciesPickerActivity extends Activity {
         StringBuilder sql=new StringBuilder(
             "SELECT c.taxon_key,c.taxon_group,c.common_name,c.scientific_name,"+
             "c.family,c.distribution_status,c.iucn_red_list,c.ph_red_list,"+
-            "c.source,c.source_version,"+evidence+" AS evidence_rank "+
-            "FROM taxon_catalog c WHERE c.taxon_group=? "+
+            "c.source,c.source_version,"+evidence+" AS evidence_rank,"+
+            "p.habitat_codes,p.strict_habitat,p.elevation_min_m,"+
+            "p.elevation_max_m,p.review_status "+
+            "FROM taxon_catalog c LEFT JOIN taxon_habitat_profiles p "+
+            "ON p.taxon_key=c.taxon_key WHERE c.taxon_group=? "+
             "AND (c.taxon_key NOT LIKE 'STARTER:%' OR NOT EXISTS "+
             "(SELECT 1 FROM taxon_catalog newer WHERE newer.taxon_group=c.taxon_group "+
             "AND LOWER(newer.scientific_name)=LOWER(c.scientific_name) "+
@@ -211,18 +344,19 @@ public final class SpeciesPickerActivity extends Activity {
                 "LOWER(c.scientific_name) LIKE ? ESCAPE '!' OR EXISTS "+
                 "(SELECT 1 FROM taxon_synonyms s WHERE s.taxon_key=c.taxon_key "+
                 "AND LOWER(s.alias_name) LIKE ? ESCAPE '!'))");
-            String search="%"+TaxonSearchPolicy.escapeLike(term.toLowerCase(Locale.ROOT))+"%";
-            args.add(search);args.add(search);args.add(search);
+            String pattern="%"+TaxonSearchPolicy.escapeLike(
+                term.toLowerCase(Locale.ROOT))+"%";
+            args.add(pattern);args.add(pattern);args.add(pattern);
         }
         if(local){
             sql.append(" AND (").append(provinceMatch).append(" OR ")
                 .append(islandMatch).append(")");
             args.add(province);args.add(island);
         }
-        sql.append(" ORDER BY evidence_rank DESC,"+
-            "CASE WHEN c.taxon_key LIKE 'STARTER:%' THEN 1 ELSE 0 END,"+
-            "c.common_name COLLATE NOCASE,c.scientific_name COLLATE NOCASE LIMIT ? OFFSET ?");
-        args.add(String.valueOf(PAGE+1));args.add(String.valueOf(first));
+        // Current national catalogs contain <1000 taxa per group. This cap
+        // prevents memory exhaustion from future unreviewed giant uploads.
+        sql.append(" ORDER BY c.scientific_name COLLATE NOCASE LIMIT ?");
+        args.add(String.valueOf(MAX_QUERY_ROWS+1));
         try(FieldDb helper=new FieldDb(getApplicationContext())){
             SQLiteDatabase db=helper.getReadableDatabase();
             try(Cursor c=db.rawQuery(sql.toString(),args.toArray(new String[0]))){
@@ -233,7 +367,16 @@ public final class SpeciesPickerActivity extends Activity {
                     item.family=string(c,4);item.origin=string(c,5);
                     item.iucn=string(c,6);item.ph=string(c,7);
                     item.source=string(c,8);item.version=string(c,9);
-                    item.evidence=c.getInt(10);list.add(item);
+                    item.evidence=c.getInt(10);
+                    String profileHabitats=string(c,11);
+                    boolean strict=!c.isNull(12)&&c.getInt(12)!=0;
+                    Double min=c.isNull(13)?null:c.getDouble(13);
+                    Double max=c.isNull(14)?null:c.getDouble(14);
+                    boolean reviewed="reviewed".equals(string(c,15));
+                    item.screening=HabitatLikelihood.assess(item.evidence,
+                        siteCode,altitude,uncertainty,
+                        profileHabitats,strict,min,max,reviewed);
+                    list.add(item);
                 }
             }
         }
@@ -241,46 +384,61 @@ public final class SpeciesPickerActivity extends Activity {
     }
     private void refresh(){
         if(search==null||cards==null)return;
-        offset=0;generation++;
+        final int ticket=++generation;
+        final String term=search.getText().toString().trim();
+        final String group=currentGroup();
+        final boolean onlyLocal=views.getSelectedItemPosition()==1;
+        final int sorting=sortMode,filter=statusFilter;
+        final String siteCode=habitatCode;
+        final Double altitude=siteElevation,uncertainty=elevationUncertainty;
+        offset=0;loaded=new ArrayList<>();truncated=false;
         cards.removeAllViews();
-        more=false;
-        lastQuery=search.getText().toString().trim();
-        lastGroup=currentGroup();
-        lastLocal=views.getSelectedItemPosition()==1;
-        appendPage();
-    }
-    private void appendPage(){
-        final int ticket=generation,first=offset;
-        final String term=lastQuery,group=lastGroup;
-        final boolean onlyLocal=lastLocal;
-        status.setText("Searching "+group+"…");
+        status.setText("Finding "+group+"…");
         worker.execute(()->{
             try{
-                List<Species> result=searchPage(group,term,onlyLocal,first);
+                List<Species> results=searchCatalog(group,term,onlyLocal,
+                    siteCode,altitude,uncertainty);
+                boolean capped=results.size()>MAX_QUERY_ROWS;
+                if(capped)results=results.subList(0,MAX_QUERY_ROWS);
+                List<Species> filtered=new ArrayList<>();
+                for(Species species:results)
+                    if(SpeciesSortPolicy.keep(filter,species.screening.label))
+                        filtered.add(species);
+                Collections.sort(filtered,(a,b)->SpeciesSortPolicy.compare(sorting,
+                    a.common,a.scientific,a.family,a.screening.scorePercent,
+                    b.common,b.scientific,b.family,b.screening.scorePercent));
                 ui.post(()->{
                     if(isFinishing()||isDestroyed()||ticket!=generation)return;
-                    int shown=Math.min(result.size(),PAGE);
-                    for(int i=0;i<shown;i++)addSpecies(result.get(i));
-                    offset=first+shown;
-                    more=result.size()>PAGE;
-                    if(more){
-                        Button next=UiKit.button(this,"Load more species","secondary");
-                        cards.addView(next);
-                        next.setOnClickListener(v->{cards.removeView(next);appendPage();});
-                    }
-                    status.setText(offset+" names shown"+(more?" · more available":"")+
-                        (onlyLocal?" · documented area records":" · national catalog"));
-                    if(offset==0)
-                        cards.addView(text(onlyLocal?
-                            "No documented records for this area in the installed sources. "+
-                            "Switch to All species to record any identification.":
-                            "No catalog match. Use an unidentified or verbatim entry.",14,false));
+                    loaded=filtered;truncated=capped;
+                    appendPage();
                 });
             }catch(Exception error){
-                ui.post(()->{if(!isFinishing()&&!isDestroyed()&&ticket==generation)
-                    status.setText("Catalog search error: "+error.getClass().getSimpleName());});
+                ui.post(()->{
+                    if(isFinishing()||isDestroyed()||ticket!=generation)return;
+                    status.setText("Catalog unavailable: "+
+                        error.getClass().getSimpleName());
+                });
             }
         });
+    }
+    private void appendPage(){
+        int stop=Math.min(offset+PAGE,loaded.size());
+        for(int i=offset;i<stop;i++)addSpecies(loaded.get(i));
+        offset=stop;
+        status.setText(offset+" / "+loaded.size()+" names · "+
+            SpeciesSortPolicy.SORT_LABELS[sortMode]+
+            (truncated?" · narrow your search to see all matches":""));
+        if(offset<loaded.size()){
+            Button next=UiKit.button(this,"Load more species","secondary");
+            cards.addView(next);
+            next.setOnClickListener(v->{
+                cards.removeView(next);
+                appendPage();
+            });
+        }else if(offset==0){
+            cards.addView(text("No matches for these filters. "+
+                "Change Sort & Filter or show All species.",14,false));
+        }
     }
     private void addSpecies(Species item){
         LinearLayout card=new LinearLayout(this);
@@ -303,6 +461,19 @@ public final class SpeciesPickerActivity extends Activity {
             TextView meta=text(identifiers.toString(),12,false);
             meta.setTextColor(UiKit.MUTED);card.addView(meta);
         }
+        String label=item.screening.scorePercent==null?
+            "Insufficient Data · no numeric score":
+            item.screening.scorePercent+"% habitat match · "+item.screening.label;
+        TextView likelihood=text(label,14,true);
+        likelihood.setTextColor(UiKit.FOREST);
+        likelihood.setPadding(0,dp(7),0,0);
+        card.addView(likelihood);
+        likelihood.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Preliminary field-screening score")
+            .setMessage(item.screening.explanation+
+                "\n\nThis percentage is a weighted screening index, not the "+
+                "statistical chance the species occurs here.")
+            .setPositiveButton("Close",null).show());
         TextView range=text(OccurrenceEvidencePolicy.title(item.evidence),13,true);
         range.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
         range.setPadding(0,dp(7),0,dp(3));card.addView(range);

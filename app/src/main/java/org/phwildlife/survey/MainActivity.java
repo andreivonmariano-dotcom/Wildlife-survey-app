@@ -263,9 +263,9 @@ public class MainActivity extends Activity implements LocationListener {
         checklistNote=label("Geographic suggestions: "+GeoRegions.label(geographicRegion),13,true);
         checklistNote.setTextColor(UiKit.FOREST);content.addView(checklistNote);
         regionalOnlyChoice=new CheckBox(this);
-        regionalOnlyChoice.setText("Show regional suggestions only (partial curated list)");
+        regionalOnlyChoice.setText("Show verified regional suggestions only (partial list)");
         regionalOnlyChoice.setTextSize(13);
-        regionalOnlyChoice.setChecked(!geographicRegion.equals("PH")&&!geographicRegion.equals("OTHER"));
+        regionalOnlyChoice.setChecked(false); // National candidate names remain searchable by default.
         content.addView(regionalOnlyChoice);
         regionalOnlyChoice.setOnCheckedChangeListener((b,only)->updateTaxaSuggestions(false));
         LinearLayout speciesRow=horizontal();

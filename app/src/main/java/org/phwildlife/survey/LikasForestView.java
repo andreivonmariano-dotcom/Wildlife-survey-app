@@ -25,7 +25,7 @@ public final class LikasForestView extends View {
     private boolean playing=false,night=false;
     private int width,height;
 
-    public LikasForestView(Context context){super(context);setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+    public LikasForestView(Context context){super(context);
         setContentDescription("Illustrated Philippine lowland rainforest background");}
     private int rgb(String hex){return Color.parseColor(hex);}
     private void palette(){

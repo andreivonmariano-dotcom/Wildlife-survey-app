@@ -38,10 +38,9 @@ public final class CallAudioRecorder {
         writer.start();
     }
     public synchronized void stop(){
+        // Allow the active read to finish. Calling stop() across threads can
+        // return ERROR_INVALID_OPERATION and discard otherwise valid audio.
         capturing=false;
-        if(recorder!=null){
-            try{recorder.stop();}catch(IllegalStateException ignored){}
-        }
     }
     private void capture(File destination,Listener listener){
         long frames=0;String error=null;

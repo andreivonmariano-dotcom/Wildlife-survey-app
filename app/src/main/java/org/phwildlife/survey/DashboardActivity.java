@@ -33,7 +33,7 @@ public class DashboardActivity extends Activity {
         LinearLayout bar=new LinearLayout(this);bar.setOrientation(LinearLayout.HORIZONTAL);bar.setGravity(Gravity.CENTER_VERTICAL);
         Button back=UiKit.button(this,"← Home","secondary");bar.addView(back);back.setOnClickListener(v->finish());
         root.addView(bar);root.addView(UiKit.title(this,"Fieldwork dashboard"));
-        TextView note=label("Offline summaries of saved activity. These are descriptive counts, not ecological density estimates.",13);
+        TextView note=label("Recorded survey counts · not density estimates",13);
         note.setTextColor(UiKit.MUTED);root.addView(note);
         ScrollView scroll=new ScrollView(this);page=vertical();scroll.addView(page);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         Button check=UiKit.button(this,"Check database integrity","secondary");
@@ -92,7 +92,7 @@ public class DashboardActivity extends Activity {
         try(Cursor c=helper.getReadableDatabase().rawQuery("SELECT COALESCE(survey_profile,taxon_group,'Birds'),COALESCE(station_id,'Unassigned'),started,CASE WHEN outcome='not_counted' THEN 'Not Counted' WHEN ended IS NULL THEN 'Active' WHEN complete=1 THEN 'Completed' ELSE 'Incomplete' END FROM surveys ORDER BY started DESC LIMIT 8",null)){
             while(c.moveToNext())page.addView(label(c.getString(0)+" · "+c.getString(1)+"\n"+c.getString(2)+" · "+c.getString(3),14));
         }
-        page.addView(label("Scientific model eligibility must be checked using detection assumptions, valid effort, sampling frames and species-level datasets.",12));
+        page.addView(label("Check survey effort and records before scientific analysis.",12));
         setContentView(root);
     }
 }

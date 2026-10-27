@@ -399,16 +399,16 @@ public class WelcomeActivity extends Activity {
         boundaryMessage.setText("Acquiring a new GPS position from this phone. No saved sampling station is used.");
         pendingGpsListener=new LocationListener(){
             @Override public void onLocationChanged(Location gps){
-                cancelGpsLookup();
-                if(boundaryMessage==null||!currentScreen.equals("setup"))return;
+                if(boundaryMessage==null||!currentScreen.equals("setup")){cancelGpsLookup();return;}
                 if(!gps.hasAccuracy()||gps.getAccuracy()>150f||
                     Math.abs(System.currentTimeMillis()-gps.getTime())>30000||
                     gps.isFromMockProvider()){
-                    boundaryMessage.setText("Fresh GPS precision is insufficient for province assignment ("+
+                    boundaryMessage.setText("Waiting for a better live GPS reading ("+
                         (gps.hasAccuracy()?"±"+Math.round(gps.getAccuracy())+" m":"unknown accuracy")+
-                        "). Retry in open sky or choose an area manually.");
+                        "). Will keep trying for up to 25 seconds.");
                     return;
                 }
+                cancelGpsLookup();
                 BoundaryLookup.Match match=BoundaryLookup.find(WelcomeActivity.this,
                     gps.getLatitude(),gps.getLongitude(),gps.getAccuracy());
                 boundaryMessage.setText(String.format(Locale.US,
@@ -454,7 +454,7 @@ public class WelcomeActivity extends Activity {
                 "No new GPS fix within 25 seconds. Move to open sky and retry, or select manually.");
         };
         try{
-            manager.requestSingleUpdate(LocationManager.GPS_PROVIDER,listener,Looper.getMainLooper());
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000L,0f,listener,Looper.getMainLooper());
             gpsHandler.postDelayed(gpsTimeout,25000);
         }catch(Exception ex){
             cancelGpsLookup();

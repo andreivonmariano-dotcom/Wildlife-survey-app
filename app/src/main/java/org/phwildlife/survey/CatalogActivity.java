@@ -103,7 +103,7 @@ public final class CatalogActivity extends Activity {
                                         statement.clearBindings();
                                         String[] values={
                                             "MDD:"+entry.get("id"),"Mammals",entry.get("mainCommonName"),
-                                            entry.get("sciName"),entry.get("family"),
+                                            entry.get("sciName").replace('_',' '),entry.get("family"),
                                             "ASM Mammal Diversity Database, DOI 10.5281/zenodo.21654811",
                                             "v2.5_2026-07-28","",isTrue(entry.get("flagged"))?"unreviewed":"reviewed"
                                         };

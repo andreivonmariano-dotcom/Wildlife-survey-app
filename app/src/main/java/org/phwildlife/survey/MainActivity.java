@@ -307,6 +307,12 @@ public class MainActivity extends Activity implements LocationListener {
             deviceLp.topMargin=dp(7);content.addView(devices,deviceLp);
             devices.setOnClickListener(v->openTrapProtocol());
         }
+        if(FieldProtocolPolicy.supported(method)){
+            Button methodRecords=UiKit.button(this,"▣ Method Effort & Evidence","secondary");
+            LinearLayout.LayoutParams methodLp=new LinearLayout.LayoutParams(-1,dp(52));
+            methodLp.topMargin=dp(7);content.addView(methodRecords,methodLp);
+            methodRecords.setOnClickListener(v->openFieldProtocol());
+        }
         LinearLayout markRow=horizontal();
         markRowView=markRow;
         markRow.setVisibility(View.GONE);
@@ -1021,6 +1027,14 @@ public class MainActivity extends Activity implements LocationListener {
             result.append("○ Measured transect length and route confirmation required\n");
         if(SurveyClosePolicy.searchedAreaRequired(method))
             result.append("○ Measured search area required\n");
+        if(FieldProtocolPolicy.supported(method)){
+            int[] f=methodCompleteness();
+            boolean complete=FieldProtocolPolicy.canComplete(method,f[0],f[1],f[2]);
+            result.append(complete?"✓":"○").append(" Protocol effort: ")
+                .append(f[0]).append(" units or passes, ")
+                .append(f[1]).append(" uninspected boards, ")
+                .append(f[2]).append(" invalid effort entries\n");
+        }
         if(TrapProtocolPolicy.supported(method)){
             int[] d=deviceCompleteness();
             boolean ready=TrapProtocolPolicy.canComplete(d[0],d[1],d[2],d[3]);
@@ -1142,6 +1156,11 @@ public class MainActivity extends Activity implements LocationListener {
             plannedDurationSeconds,effortTime,
             SurveyClosePolicy.routeLengthRequired(method),plannedRouteCompleted,
             length,SurveyClosePolicy.searchedAreaRequired(method),pendingSearchedArea);
+        if(complete&&!excluded&&FieldProtocolPolicy.supported(method)){
+            int[] data=methodCompleteness();
+            if(!FieldProtocolPolicy.canComplete(method,data[0],data[1],data[2]))
+                outcome=SurveyClosePolicy.INCOMPLETE;
+        }
         if(complete&&!excluded&&TrapProtocolPolicy.supported(method)){
             int[] device=deviceCompleteness();
             if(!TrapProtocolPolicy.canComplete(device[0],device[1],device[2],device[3]))
@@ -1558,6 +1577,49 @@ public class MainActivity extends Activity implements LocationListener {
         markedAt=System.currentTimeMillis();
         markedObserverFix=freshObserverFix();
         showMarkStatus();persistDraft();
+    }
+    private void openFieldProtocol(){
+        if(!active||eventId==null){toast("Start a survey to record method effort");return;}
+        if(requiresGenericUnit()&&samplingUnitId==null){
+            toast("Start a sampling station before recording protocol effort");return;
+        }
+        persistDraft();
+        Intent i=new Intent(this,FieldProtocolsActivity.class);
+        i.putExtra("event_id",eventId);
+        i.putExtra("station_id",stationId);
+        startActivity(i);
+    }
+    private int[] methodCompleteness(){
+        int units=0,unchecked=0,invalid=0;
+        if(eventId==null||!FieldProtocolPolicy.supported(method))
+            return new int[]{0,0,0};
+        if(method.equals("coverboard_search")){
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT COUNT(*),COALESCE(SUM(CASE WHEN NOT EXISTS ("+
+                "SELECT 1 FROM coverboard_checks x WHERE x.board_pk=b.id "+
+                "AND x.board_condition<>'Missing / not inspected') THEN 1 ELSE 0 END),0) "+
+                "FROM coverboard_units b WHERE b.event_id=?",
+                new String[]{eventId})){
+                if(c.moveToFirst()){units=c.getInt(0);unchecked=c.getInt(1);}
+            }
+        }else if(method.equals("area_search")){
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT COUNT(*),COALESCE(SUM(CASE WHEN measured_area_m2<=0 "+
+                "OR ended_at_utc<=started_at_utc OR TRIM(duplicate_control_notes)='' "+
+                "THEN 1 ELSE 0 END),0) "+
+                "FROM area_search_passes WHERE event_id=?",new String[]{eventId})){
+                if(c.moveToFirst()){units=c.getInt(0);invalid=c.getInt(1);}
+            }
+        }else{
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT COUNT(*),COALESCE(SUM(CASE WHEN verified_length_m<=0 "+
+                "OR ended_at_utc<=started_at_utc OR TRIM(substrate)='' "+
+                "THEN 1 ELSE 0 END),0) "+
+                "FROM track_sign_efforts WHERE event_id=?",new String[]{eventId})){
+                if(c.moveToFirst()){units=c.getInt(0);invalid=c.getInt(1);}
+            }
+        }
+        return new int[]{units,unchecked,invalid};
     }
     private void openTrapProtocol(){
         if(!active||eventId==null){toast("Start survey before device checks");return;}
@@ -1994,6 +2056,7 @@ public class MainActivity extends Activity implements LocationListener {
             PhotoEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             AcousticEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             TrapEvidence.writeZip(z,exportDb.getReadableDatabase());
+            FieldProtocolEvidence.writeZip(z,exportDb.getReadableDatabase());
             DataAudit.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
             csv(exportDb,z,"distance_review.csv",
               "SELECT r.id,r.event_id,r.taxon_group,r.raw_identification,r.horizontal_m,r.perpendicular_m,r.individual_count,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,s.method,COALESCE(p.station_id,s.station_id),s.effort_length_m,s.point_target_s,s.region_label,s.area_km2,s.complete,r.point_count_id,r.protocol_window_flag FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' AND COALESCE(s.outcome,'active')='complete' AND (s.method='point_count' OR s.method='line_transect')",

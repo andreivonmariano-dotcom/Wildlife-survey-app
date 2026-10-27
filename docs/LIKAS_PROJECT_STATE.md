@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## Current direction | 2026-10-28, Asia/Manila | Separate static and moving sprite layers
+- Owner rejected the prior pixel displacement/warping animations as visually unacceptable. **Do not reuse** image-warp, canvas-only simulated ripple or generalized overlay techniques as the final rainforest animation.
+- New design is a **true layered pixel scene**: immutable terrain, mountains, trunks and foreground rocks, plus transparent independent sprite-frame images for river, waterfalls, clouds and wildlife, with separate swaying leaf-cluster sprites. Match the approved day/night Philippine rainforest composition and retain the no-logo-in-background rule.
+- A proof-of-concept asset pack was generated in this conversation: `LIKAS_layered_rainforest_prototype_A.zip` (432×756 frames, 48 independent frames per lighting mode, 12 sprite frames per second), with offline `index.html` layer toggles, `build_scene.py`, source stills, sprite frame PNGs, and day/night video previews. Dawn/dusk uses local device time in the preview; a manual override is strictly for visual review.
+- **Visual QA is not complete.** Waterfall and lake sprites are cut from the original art with changing native detail frames, not fully redrawn by a human animator. Some clouds and birds are still embedded in the static source, and mask boundaries and canopy sprite pivots need art-direction review. Source stills and independent dynamic assets have not been pushed as binaries to GitHub.
+- **Not integrated into APK.** Latest v0.27.3 RC4 test APK continues to use the rejected prior runtime and must not be advertised as containing this layered design. No new APK compiled or device tested for Prototype A.
+- Immediate next: review the new layers/videos for quality; refine waterfall keyframes, remove fixed cloud/bird remnants, and polish masked rock edges. After owner approval, import sprite assets and timeline logic into Android, implement reduced-motion and app pause/resume, test the signed APK on devices, and provide a fresh direct downloadable APK.
+- Source of truth for branch status is `feature/v0.27.3-startup-living-forest`; default `main` verified as `f1ef6583647d05ae3cbbb915b2f54370150be33c` in this session. Archive files exist only in the current conversation and are not safely transferable via historical sandbox links.
+
+---
+
+
 ## Latest visual direction | 28 October 2026, Asia/Manila | Pixel rainforest concept and frame-loop prototype
 - Owner approved the new Philippine rainforest visual concept and requested a coherent **retro pixel-art transformation**, actual animated water, waterfall streams, rustling foliage and travelling clouds, plus automatic day/night selection based on the phone's clock.
 - The preceding `v0.27.3-rc4` overlay-only renderer does not meet that request. Its static WebP layers with generated Canvas overlays are **superseded** as the target design. Do not describe RC4 as the new pixel-animation build.

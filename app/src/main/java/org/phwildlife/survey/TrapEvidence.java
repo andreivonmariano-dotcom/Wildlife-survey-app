@@ -46,9 +46,9 @@ public final class TrapEvidence {
             "ORDER BY d.event_id,x.checked_at_utc");
         write(zip,db,"trap_captures.csv",
             "SELECT z.id,z.check_id,d.event_id,d.method,d.device_id,z.taxon_label,"+
-            "z.individual_mark,z.captured_at_utc,z.released_at_utc,z.disposition,z.notes "+
+            "z.individual_mark,z.logged_at_utc,z.released_at_utc,z.disposition,z.notes "+
             "FROM trap_captures z JOIN trap_checks x ON x.id=z.check_id "+
             "JOIN trap_deployments d ON d.id=x.deployment_id "+
-            "ORDER BY d.event_id,z.captured_at_utc");
+            "ORDER BY d.event_id,z.logged_at_utc");
     }
 }

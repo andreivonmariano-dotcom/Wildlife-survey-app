@@ -71,8 +71,10 @@ public class WelcomeActivity extends Activity {
     }
     @Override protected void onResume(){
         super.onResume();
-        if(root!=null&&homeVisible)home();
-        else if(root!=null&&"setup".equals(currentScreen)&&projectChoice!=null)
+        if(root!=null&&homeVisible){
+            String current=activeSurvey();
+            if(!java.util.Objects.equals(current,lastHomeActiveSurvey))home();
+        }else if(root!=null&&"setup".equals(currentScreen)&&projectChoice!=null)
             refreshProjectOptions();
     }
     @Override protected void onPause(){
@@ -81,6 +83,7 @@ public class WelcomeActivity extends Activity {
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);home();}
     private boolean isSurveyActive(){return activeSurvey()!=null;}
     private boolean homeVisible=true;
+    private String lastHomeActiveSurvey=null;
     private void buildShell(){
         root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(18),dp(18),dp(18),dp(18));
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
@@ -112,6 +115,7 @@ public class WelcomeActivity extends Activity {
         LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
         headerLp.bottomMargin=dp(18);main.addView(header,headerLp);
         String unfinished=activeSurvey();
+        lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
             TextView banner=text("Unfinished survey",16,true);
             banner.setTextColor(GREEN);main.addView(banner);
@@ -183,8 +187,6 @@ public class WelcomeActivity extends Activity {
     private void card(String name,String desc,Runnable action){
         LinearLayout wrapper=vertical();
         wrapper.setPadding(dp(12),dp(11),dp(12),dp(13));
-        android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
-        bg.setColor(Color.WHITE);bg.setCornerRadius(dp(14));bg.setStroke(dp(1),Color.rgb(218,232,219));
         wrapper.setBackground(UiKit.surface(this));
         TextView h=text(name+"  ›",19,true);wrapper.addView(h);
         if(desc!=null&&!desc.isEmpty()){

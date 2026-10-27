@@ -36,11 +36,11 @@ public final class LikasLaunchActivity extends Activity {
         b.setText(title);b.setTextSize(17);b.setAllCaps(false);
         b.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
         GradientDrawable bg=new GradientDrawable();
-        bg.setColor(primary?Color.rgb(237,245,234):Color.argb(45,16,45,35));
+        bg.setColor(primary?Color.rgb(239,243,223):Color.argb(166,8,39,30));
         bg.setCornerRadius(dp(16));
-        bg.setStroke(dp(1),primary?Color.rgb(237,245,234):Color.rgb(222,238,224));
+        bg.setStroke(dp(1),primary?Color.rgb(239,243,223):Color.rgb(129,172,151));
         b.setBackground(bg);b.setBackgroundTintList(null);
-        b.setTextColor(primary?Color.rgb(21,64,45):Color.WHITE);
+        b.setTextColor(primary?Color.rgb(8,47,36):Color.rgb(239,243,223));
         b.setMinHeight(dp(59));
         return b;
     }
@@ -50,16 +50,16 @@ public final class LikasLaunchActivity extends Activity {
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
-        getWindow().setStatusBarColor(Color.rgb(15,43,34));
-        getWindow().setNavigationBarColor(Color.rgb(14,37,29));
+        getWindow().setStatusBarColor(Color.rgb(8,39,30));
+        getWindow().setNavigationBarColor(Color.rgb(8,39,30));
         FrameLayout root=new FrameLayout(this);
-        root.setBackgroundColor(Color.rgb(12,40,32));
+        root.setBackgroundColor(Color.rgb(8,39,30));
         root.addView(new LikasForestView(this),new FrameLayout.LayoutParams(-1,-1));
         View scrim=new View(this);
         // Keep text contrast stable; the forest animates its own gradual daylight palette.
         scrim.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-            new int[]{Color.argb(80,4,25,20),Color.argb(105,2,22,18),
-                Color.argb(197,4,25,19)}));
+            new int[]{Color.argb(83,8,39,30),Color.argb(113,8,39,30),
+                Color.argb(216,8,39,30)}));
         root.addView(scrim,new FrameLayout.LayoutParams(-1,-1));
 
         LinearLayout content=new LinearLayout(this);
@@ -76,13 +76,13 @@ public final class LikasLaunchActivity extends Activity {
         content.addView(icon,new LinearLayout.LayoutParams(dp(148),dp(148)));
 
 
-        TextView name=label("LIKAS",44,Color.WHITE,true);
+        TextView name=label("LIKAS",44,Color.rgb(239,243,223),true);
         name.setLetterSpacing(.15f);
         LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(-1,-2);
         nameLp.topMargin=dp(10);
         content.addView(name,nameLp);
         TextView subtitle=label("PHILIPPINE WILDLIFE SURVEY",13,
-            Color.rgb(230,245,225),true);
+            Color.rgb(192,225,208),true);
         subtitle.setLetterSpacing(.11f);
         LinearLayout.LayoutParams subtitleLp=new LinearLayout.LayoutParams(-1,-2);
         subtitleLp.topMargin=dp(4);
@@ -110,7 +110,7 @@ public final class LikasLaunchActivity extends Activity {
 
         content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,.9f));
         TextView version=label("v"+currentVersion(),12,
-            Color.rgb(218,235,220),false);
+            Color.rgb(171,202,180),false);
         version.setLetterSpacing(.06f);
         content.addView(version);
         setContentView(root);
@@ -130,12 +130,12 @@ public final class LikasLaunchActivity extends Activity {
         continueButton.setVisibility(available?View.VISIBLE:View.GONE);
         // Without an unfinished survey, New Survey becomes the primary action.
         GradientDrawable newBg=new GradientDrawable();
-        newBg.setColor(available?Color.argb(70,16,45,35):Color.rgb(237,245,234));
+        newBg.setColor(available?Color.argb(170,8,39,30):Color.rgb(239,243,223));
         newBg.setCornerRadius(dp(16));
-        newBg.setStroke(dp(1),Color.rgb(222,238,224));
+        newBg.setStroke(dp(1),Color.rgb(129,172,151));
         newSurveyButton.setBackground(newBg);
         newSurveyButton.setBackgroundTintList(null);
-        newSurveyButton.setTextColor(available?Color.WHITE:Color.rgb(21,64,45));
+        newSurveyButton.setTextColor(available?Color.rgb(239,243,223):Color.rgb(8,47,36));
         newSurveyButton.setText(available?"Home & Tools":"New Survey");
         continueButton.setEnabled(LikasUiRules.canContinue(available));
         continueButton.setContentDescription(available?

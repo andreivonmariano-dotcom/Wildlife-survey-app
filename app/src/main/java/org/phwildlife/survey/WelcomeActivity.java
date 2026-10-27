@@ -43,7 +43,8 @@ public class WelcomeActivity extends Activity {
     private TextView templateHint;
     private boolean updatingRouteChoices=false;
     private TextView stationCountPreview,routeHeader,spacingHeader,repeatHeader;
-    private Spinner projectChoice, geographicChoice;
+    private Spinner projectChoice, geographicChoice,studyChoice;
+    private final ArrayList<String> studyTemplateIds=new ArrayList<>();
     private BoundaryLookup.Match suggested;
     private String geographicMethod=GeoRegions.BOUNDARY_METHOD;
     private TextView boundaryMessage;
@@ -80,8 +81,9 @@ public class WelcomeActivity extends Activity {
         if(root!=null&&homeVisible){
             String current=activeSurvey();
             if(!java.util.Objects.equals(current,lastHomeActiveSurvey))home();
-        }else if(root!=null&&"setup".equals(currentScreen)&&projectChoice!=null)
-            refreshProjectOptions();
+        }else if(root!=null&&"setup".equals(currentScreen)&&projectChoice!=null){
+            refreshProjectOptions();refreshStudyChoices();
+        }
     }
     @Override protected void onPause(){
         cancelGpsLookup();persistSetup();super.onPause();
@@ -198,6 +200,8 @@ public class WelcomeActivity extends Activity {
             startActivity(new Intent(this,TrapProtocolActivity.class)));
         toolRow(tools,"Coverboards, area search & signs",()->
             startActivity(new Intent(this,FieldProtocolsActivity.class)));
+        toolRow(tools,"Study protocol templates",()->
+            startActivity(new Intent(this,StudyProtocolsActivity.class)));
         toolRow(tools,"Projects & stations",()->startActivity(new Intent(this,SitesActivity.class)));
         toolRow(tools,"Offline checklist",()->startActivity(new Intent(this,CatalogActivity.class)));
         toolRow(tools,"Fieldwork dashboard",()->startActivity(new Intent(this,DashboardActivity.class)));
@@ -282,6 +286,7 @@ public class WelcomeActivity extends Activity {
 
         }
         methodChoices.check(1000);
+        methodChoices.setOnCheckedChangeListener((group,checked)->refreshStudyChoices());
         main.addView(step("01","Survey method"));
         LinearLayout methodsCard=vertical();
         methodsCard.setPadding(dp(12),dp(6),dp(10),dp(6));
@@ -303,6 +308,7 @@ public class WelcomeActivity extends Activity {
             public void onNothingSelected(android.widget.AdapterView<?> parent){}
             public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
                 refreshRouteTemplates();
+                refreshStudyChoices();
             }
         });
         LinearLayout projectRow=new LinearLayout(this);
@@ -467,10 +473,44 @@ public class WelcomeActivity extends Activity {
         });
 
         main.addView(step("04","Begin survey"));
+        main.addView(text("Study completion requirements",14,true));
+        studyChoice=new Spinner(this);
+        main.addView(studyChoice,new LinearLayout.LayoutParams(-1,dp(54)));
+        Button manageStudies=UiKit.button(this,"Manage study protocols","secondary");
+        main.addView(manageStudies,new LinearLayout.LayoutParams(-1,dp(48)));
+        manageStudies.setOnClickListener(v->
+            startActivity(new Intent(this,StudyProtocolsActivity.class)));
+        refreshStudyChoices();
         Button start=UiKit.button(this,"Continue to GPS · "+profile,"primary");
         LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(58));
         startLp.topMargin=dp(16);main.addView(start,startLp);
         start.setOnClickListener(v->startSelected());
+    }
+    private void refreshStudyChoices(){
+        if(studyChoice==null||projectChoice==null||methodChoices==null||
+            methodChoices.getCheckedRadioButtonId()<1000||projectKeys.isEmpty())return;
+        String earlier=studyTemplateIds.isEmpty()?"":studyTemplateIds.get(
+            Math.min(studyChoice.getSelectedItemPosition()<0?0:
+                studyChoice.getSelectedItemPosition(),studyTemplateIds.size()-1));
+        ArrayList<String> labels=new ArrayList<>();labels.add("Standard LIKAS requirements");
+        studyTemplateIds.clear();studyTemplateIds.add("");
+        int methodIndex=methodChoices.getCheckedRadioButtonId()-1000;
+        if(methodIndex<0||choices==null||methodIndex>=choices.length)return;
+        try(FieldDb store=new FieldDb(this);
+            Cursor c=store.getReadableDatabase().rawQuery(
+                "SELECT id,name,min_visits,min_minutes,min_units FROM study_protocol_templates "+
+                "WHERE project_id=? AND method=? ORDER BY name",
+                new String[]{projectId(),choices[methodIndex].code})){
+            while(c.moveToNext()){
+                studyTemplateIds.add(c.getString(0));
+                labels.add(c.getString(1)+" · "+c.getInt(2)+" visits, "+
+                    c.getInt(3)+" min, "+c.getInt(4)+" units");
+            }
+        }
+        studyChoice.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,labels));
+        int selected=studyTemplateIds.indexOf(earlier);
+        studyChoice.setSelection(Math.max(0,selected));
     }
     /** Project edits refresh without clearing method, route length or checklist controls. */
     private void refreshProjectOptions(){
@@ -820,6 +860,11 @@ public class WelcomeActivity extends Activity {
         i.putExtra("route_template_name",routeName);
         i.putExtra("custom_survey",custom);
         i.putExtra("basic_log_only",m.basicLog);
+        if(studyChoice!=null&&!studyTemplateIds.isEmpty()){
+            int index=studyChoice.getSelectedItemPosition();
+            i.putExtra("study_protocol_id",studyTemplateIds.get(
+                Math.max(0,Math.min(index,studyTemplateIds.size()-1))));
+        }
         // Preserve the setup selections until the survey has actually started.
         // Canceling GPS acquisition must return to this same configured screen.
         persistSetup();

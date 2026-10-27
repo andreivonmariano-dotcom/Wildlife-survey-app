@@ -36,7 +36,15 @@ jobs:
       - name: Validate taxonomy source and import rules
         run: python3 -m unittest discover -s scripts -p 'test_*.py'
       - name: Prepare attributed offline Philippine mammals from official MDD v2.5
-        run: python3 scripts/prepare_mdd_mammals.py
+        run: |
+          for attempt in 1 2 3; do
+            if python3 scripts/prepare_mdd_mammals.py; then exit 0; fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "MDD source unavailable after three verified attempts" >&2
+              exit 1
+            fi
+            sleep 12
+          done
       - name: Build debug APK
         run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
       - uses: actions/upload-artifact@v4

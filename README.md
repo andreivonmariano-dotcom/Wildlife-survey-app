@@ -1,3 +1,37 @@
+# LIKAS v0.27.0 RC1 | Philippine wildlife surveys
+
+LIKAS is an offline-first Android field-research app for Philippine birds, reptiles, amphibians and mammals. It stores individual observations, sampling effort, GNSS quality, acoustic evidence, device histories and archived survey outcomes without requiring internet during fieldwork.
+
+**Current build:** `0.27.0-rc1` (versionCode 46, Android app ID `org.phwildlife.survey.beta08`). This is a **release candidate**, not a certified stable field release. Physical-device, long-session power and old-installation restore tests are still required.
+
+## Field workflow
+
+1. On Home, select Birds, Herpetofauna, Mammals or Custom.
+2. Choose the survey method, project, route and optional study-specific completion rules.
+3. Use automatic verified GPS, or explicitly start without a fix and retain missing-location provenance.
+4. Record a point/transect or structured visit, identify or mark unknown species, attach photographs or sound evidence, and record method-specific effort.
+5. Select **End Survey** at any time. Finish **Complete** only when method and study criteria pass. **Incomplete** keeps partial work. **Not Counted** records the canceled event and reason.
+6. Review the archived results and export a research ZIP with CSV data, original retained photographs, WAV files and evidence links.
+
+A ZIP export is a **research-data export**, not a proven full reinstallable app backup. Copy it to a secure location before upgrading. Do not uninstall a field installation without checking your recovery route.
+
+## Release-candidate changes
+
+- Smaller phones and increased system font sizes receive stacked Home cards, larger readable actions, and a responsive observation footer.
+- Station progress and GNSS path summary database queries run on a bounded background worker. Survey clock timing and GPS fix validation remain unchanged.
+- ZIP export reads from its dedicated database connection.
+- SQLite v27 adds wildlife-group scope to new study templates. Existing templates remain marked Shared legacy, and survey rule snapshots stay unchanged.
+- CI validates real SQL migrations from v23 to v27, retained observation/trap/acoustic records, SQLite backup/restore roundtrips, and the Android APK/JVM tests.
+- The release candidate combines the feature PR series in [integration PR #31](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/pull/31).
+
+See [v0.27 screen and release QA](docs/QA_v0_27_INTEGRATION_SCREEN_MATRIX.md) for the screen-by-screen acceptance matrix, data-integrity tests, power measurements, limitations and launch gate.
+
+## Older development history
+
+The sections below document earlier feature milestones and their source limitations at the time. They are historical notes, not the current v0.27 specification.
+
+---
+
 # LIKAS v0.19.3: source-checked habitat and persistent species picker
 
 - Introduces color-coded 0–100 screening index bars with Likely, Unlikely,

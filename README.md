@@ -1,4 +1,28 @@
-# Philippine Wildlife Survey Beta v0.16.1 (development branch)
+# LIKAS | Philippine Wildlife Survey v0.17.0 Beta (development)
+
+LIKAS is the working app identity. This development branch is a UI and stability
+pass, not a change to the Android package or installed SQLite records.
+
+## v0.17 LIKAS launch and field usability
+- Original leaf-and-compass vector mark and adaptive Android launcher icon.
+- Startup screen with **Start New Survey**, **Continue Survey** (only active for
+  an unfinished session) and the installed version.
+- Original Canvas-animated Philippine lowland rainforest with emergent crowns,
+  buttressed trunks, palms and mist. The palette changes at local day/night
+  boundaries. Rendering stops when the launcher screen is hidden.
+- A shorter field Home menu with management screens folded under **Data & Tools**.
+- Cleaner survey setup wording, fewer permanently visible instructions and a
+  collapsible taxonomy CSV guide.
+- Reduced database polling from the recording clock and asynchronous draft
+  preference writes. Large survey ZIP exports now run off the UI thread.
+- Observation GPS is frozen at detection mark or camera capture, with invalid
+  or missing fixes kept null. Taxonomy provenance is read from the catalog
+  instead of guessed from the displayed label.
+
+**Status:** CI and Java tests do not replace device tests. Preserve the installed
+signing identity and back up local survey data before installing.
+For acceptance criteria, read `docs/QA_v0_17_LIKAS.md`. The complete national
+species catalog and additional background import work remain future stages.
 
 Offline Android wildlife field application for Birds, Herpetofauna and Mammals. Independent of SMART and KALUMBATA. No map UI in this release.
 

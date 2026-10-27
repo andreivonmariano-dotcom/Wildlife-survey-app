@@ -268,24 +268,24 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout sessionSettings=vertical();
         sessionSettings.setVisibility(View.GONE);
         sessionSettings.addView(vibrationChoice);
-        TextView sessionToggle=label("Vibration settings  ▾",13,true);
+        TextView sessionToggle=label("Haptic alert  ▾",13,true);
         sessionToggle.setTextColor(GREEN);disclosureTarget(sessionToggle);
         sessionToggle.setPadding(dp(6),dp(7),dp(6),dp(8));
         sessionToggle.setOnClickListener(v->{
             boolean expanded=sessionSettings.getVisibility()!=View.VISIBLE;
             sessionSettings.setVisibility(expanded?View.VISIBLE:View.GONE);
-            sessionToggle.setText(expanded?"Vibration settings  ▴":"Vibration settings  ▾");
+            sessionToggle.setText(expanded?"Haptic alert  ▴":"Haptic alert  ▾");
         });
         // Optional settings are placed below the observation form.
         pointNextButton=UiKit.button(this,"Finish point · Next station","camera");
         content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,dp(53)));
         pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
         pointNextButton.setOnClickListener(v->{if(method.equals("point_count"))nextPoint();else nextSamplingUnit();});
-        trackingView=label("GPS track: awaiting location",14,true);
+        trackingView=label("Track: awaiting GPS",12,true);
         trackingView.setTextColor(UiKit.BLUE);
         content.addView(trackingView);
         trackingView.setVisibility(method.equals("line_transect")||method.equals("ves_transect")?View.VISIBLE:View.GONE);
-        content.addView(section("Mark detection"));
+
         LinearLayout detectRow=horizontal();
         Button markTime=UiKit.button(this,"Mark now","secondary");
         detectRow.addView(markTime,weighted(0.9f));
@@ -325,31 +325,33 @@ public class MainActivity extends Activity implements LocationListener {
         clear.setOnClickListener(v->clearMark());
         markRow.addView(clear);
         content.addView(markRow);
-        content.addView(section("Species"));
-        Button identifySpecies=UiKit.button(this,"Find species","primary");
-        identifySpecies.setContentDescription("Open full offline species list and identification reference");
-        LinearLayout.LayoutParams pickerSpace=new LinearLayout.LayoutParams(-1,dp(58));
-        pickerSpace.bottomMargin=dp(6);content.addView(identifySpecies,pickerSpace);
-        identifySpecies.setOnClickListener(v->openSpeciesPicker());
+        // One row combines direct entry and the complete offline checklist.
         // Complete species selection now lives on its own page.
         // Retain direct text entry for novel/unidentified field observations.
         LinearLayout speciesRow=horizontal();
         taxonEntry=new AutoCompleteTextView(this);
-        taxonEntry.setTextSize(18);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
-        taxonEntry.setThreshold(100);taxonEntry.setHint("Species name or field ID");
+        taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
+        taxonEntry.setThreshold(100);taxonEntry.setHint("Species or field ID");
         taxonEntry.setSelectAllOnFocus(true);
-        speciesRow.addView(taxonEntry,new LinearLayout.LayoutParams(0,-2,1));
-        Button unknownBtn=UiKit.button(this,"Unidentified","secondary");
-        unknownBtn.setTextSize(12);
-        LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(dp(127),dp(52));
-        unknownLp.leftMargin=dp(6);speciesRow.addView(unknownBtn,unknownLp);
-        favoriteButton=UiKit.button(this,"☆","secondary");
+        speciesRow.addView(taxonEntry,new LinearLayout.LayoutParams(0,dp(52),1));
+        Button identifySpecies=UiKit.button(this,"Browse","secondary");
+        identifySpecies.setContentDescription("Search offline species checklist");
+        LinearLayout.LayoutParams browseLp=new LinearLayout.LayoutParams(dp(94),dp(52));
+        browseLp.leftMargin=dp(8);speciesRow.addView(identifySpecies,browseLp);
+        identifySpecies.setOnClickListener(v->openSpeciesPicker());
+        content.addView(speciesRow);
+        LinearLayout speciesActions=horizontal();
+        Button unknownBtn=UiKit.button(this,"Unidentified","quiet");
+        unknownBtn.setTextSize(13);
+        LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(0,dp(46),1);
+        speciesActions.addView(unknownBtn,unknownLp);
+        favoriteButton=UiKit.button(this,"☆","quiet");
         favoriteButton.setTextSize(22);
-        LinearLayout.LayoutParams starP=new LinearLayout.LayoutParams(dp(48),dp(52));
-        starP.leftMargin=dp(4);speciesRow.addView(favoriteButton,starP);
+        LinearLayout.LayoutParams starP=new LinearLayout.LayoutParams(dp(52),dp(46));
+        starP.leftMargin=dp(6);speciesActions.addView(favoriteButton,starP);
         favoriteButton.setContentDescription("Add or remove favorite species");
         favoriteButton.setOnClickListener(v->toggleFavorite());
-        content.addView(speciesRow);
+        content.addView(speciesActions);
         unknownBtn.setOnClickListener(v->{
             String[] choices=Taxa.unknownLabels(group);
             new AlertDialog.Builder(this).setTitle("Record unidentified "+group.toLowerCase(Locale.US))
@@ -504,7 +506,7 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout photoRow=horizontal();
         Button photoButton=UiKit.button(this,"Add photo","secondary");
         photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(49),2));
-        photoStatus=label("No photo attached",12,false);
+        photoStatus=label("",12,false);
         photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));
         content.addView(photoRow);
         photoButton.setOnClickListener(v->pickPhoto());
@@ -637,7 +639,7 @@ public class MainActivity extends Activity implements LocationListener {
         startActivityForResult(intent,PHOTO_PICK);
     }
     private void showPendingPhoto(){
-        if(photoStatus!=null)photoStatus.setText(pendingPhoto==null?"No photo selected":"Photo ready · copied offline");
+        if(photoStatus!=null)photoStatus.setText(pendingPhoto==null?"":"Photo saved locally");
         if(photoPreview!=null){
             photoPreview.setVisibility(pendingPhoto==null?View.GONE:View.VISIBLE);
             if(pendingPhoto!=null)PhotoEvidence.preview(this,pendingPhoto,photoPreview);

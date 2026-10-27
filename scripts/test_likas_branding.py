@@ -53,7 +53,7 @@ class LikasBrandingSmokeTest(unittest.TestCase):
         self.assertEqual(application.attrib[ANDROID + "icon"], "@mipmap/ic_launcher")
         launch = (JAVA / "LikasLaunchActivity.java").read_text(encoding="utf-8")
         self.assertIn('new LikasForestView(this)', launch)
-        self.assertIn('icon.setImageResource(R.drawable.likas_frog_icon)', launch)
+        self.assertNotIn('icon.setImageResource(', launch)
         self.assertIn('label("LIKAS",', launch)
         self.assertIn('action("Resume survey",true)', launch)
         self.assertIn('action("Open LIKAS",false)', launch)

@@ -97,6 +97,8 @@ public class MainActivity extends Activity implements LocationListener {
     private Double pendingSearchedArea=null;
     private boolean plannedRouteCompleted=false;
     private String pendingEndReason=null;
+    private String startGpsStatus="";
+    private TextView startGpsBanner;
     private TextView trackingView;
     private Double stratumAreaKm2=null,lineBearing=null,pointRadiusM=null;
     private int pointTargetSeconds=600;
@@ -288,6 +290,10 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView.setTextColor(MUTED);
         gpsView.setOnClickListener(v->showGpsDetail());
         content.addView(gpsView);
+        startGpsBanner=label("Start location missing · GPS readings will be captured later",12,true);
+        startGpsBanner.setTextColor(UiKit.AMBER);
+        content.addView(startGpsBanner);
+        refreshStartGpsBanner();
         content.addView(section("Species"));
         Button identifySpecies=UiKit.button(this,"Find species","primary");
         identifySpecies.setContentDescription("Open full offline species list and identification reference");
@@ -616,8 +622,13 @@ public class MainActivity extends Activity implements LocationListener {
         if(noiseSpinner!=null)noiseSpinner.setVisibility(listening?View.VISIBLE:View.GONE);
         if(noiseLabel!=null)noiseLabel.setVisibility(listening?View.VISIBLE:View.GONE);
     }
+    private void refreshStartGpsBanner(){
+        if(startGpsBanner==null)return;
+        boolean missing="missing_at_survey_start".equals(startGpsStatus);
+        startGpsBanner.setVisibility(missing?View.VISIBLE:View.GONE);
+    }
     private void restoreEvent(){
-        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id,method,started,COALESCE(taxon_group,'Birds'),COALESCE(survey_profile,'Birds'),COALESCE(station_id,''),COALESCE(observer_name,''),COALESCE(point_target_s,600),COALESCE(protocol_status,'legacy'),COALESCE(project_id,'default'),COALESCE(region_label,''),area_km2,transect_az,point_radius_m FROM surveys WHERE ended IS NULL ORDER BY started DESC LIMIT 1",null)){
+        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id,method,started,COALESCE(taxon_group,'Birds'),COALESCE(survey_profile,'Birds'),COALESCE(station_id,''),COALESCE(observer_name,''),COALESCE(point_target_s,600),COALESCE(protocol_status,'legacy'),COALESCE(project_id,'default'),COALESCE(region_label,''),area_km2,transect_az,point_radius_m,COALESCE(start_gps_status,'legacy_start_location_unrecorded') FROM surveys WHERE ended IS NULL ORDER BY started DESC LIMIT 1",null)){
             if(c.moveToFirst()){
                 eventId=c.getString(0);method=c.getString(1);String time=c.getString(2);
                 group=c.getString(3);profile=c.getString(4);stationId=c.getString(5);
@@ -627,6 +638,7 @@ public class MainActivity extends Activity implements LocationListener {
                 stratumAreaKm2=c.isNull(11)?null:c.getDouble(11);
                 lineBearing=c.isNull(12)?null:c.getDouble(12);
                 pointRadiusM=c.isNull(13)?null:c.getDouble(13);
+                startGpsStatus=c.getString(14);
                 startedAt=parseIso(time);active=true;
             }
         }catch(Exception ignored){}
@@ -685,19 +697,21 @@ public class MainActivity extends Activity implements LocationListener {
         if(SurveyMethods.isBirdLine(profile,method) && (line==null||line<0||line>=360)){
             toast("Enter transect MAGNETIC bearing from 0 to 359°");return;
         }
-        // Timer and database entry begin only after an independently acquired GPS fix.
+        // Default start requires verified GNSS. The observer can explicitly flag a missing fix.
         Intent launchGps=getIntent();
+        boolean withoutGps=launchGps.getBooleanExtra("start_without_gps",false);
         double startLatitude=launchGps.getDoubleExtra("start_gps_latitude",Double.NaN);
         double startLongitude=launchGps.getDoubleExtra("start_gps_longitude",Double.NaN);
         float startAccuracy=launchGps.getFloatExtra("start_gps_accuracy_m",Float.NaN);
         long startGpsTime=launchGps.getLongExtra("start_gps_recorded_at_ms",0L);
         long startElapsedNanos=launchGps.getLongExtra("start_gps_elapsed_nanos",0L);
         long monotonicAgeMs=(SystemClock.elapsedRealtimeNanos()-startElapsedNanos)/1000000L;
-        if(startElapsedNanos<=0||!GpsFixPolicy.acceptableElapsed(
-            startLatitude,startLongitude,startAccuracy,monotonicAgeMs,false)){
+        if(!withoutGps&&(startElapsedNanos<=0||!GpsFixPolicy.acceptableElapsed(
+            startLatitude,startLongitude,startAccuracy,monotonicAgeMs,false))){
             toast("Survey-start GPS missing, too old, or not better than 10 m. Retry setup.");
             finish();return;
         }
+        startGpsStatus=withoutGps?"missing_at_survey_start":"verified_start_fix_under_10m";
         eventId="SV-"+System.currentTimeMillis();startedAt=System.currentTimeMillis();pointNotice=false;
         int target=method.equals("point_count")?pointTargetSeconds:0;
         lineBearing=SurveyMethods.isBirdLine(profile,method)?line:null;
@@ -710,8 +724,9 @@ public class MainActivity extends Activity implements LocationListener {
               "geographic_selection_method,regional_taxa_version,admin_province_name,"+
               "admin_province_psgc,admin_boundary_version,admin_boundary_status,"+
               "planned_route_m,planned_station_spacing_m,planned_station_count,route_design,"+
-              "start_gps_latitude,start_gps_longitude,start_gps_accuracy_m,start_gps_recorded_at) "+
-              "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+              "start_gps_latitude,start_gps_longitude,start_gps_accuracy_m,start_gps_recorded_at,"+
+              "start_gps_status) "+
+              "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
               new Object[]{eventId,method,iso(startedAt),lineBearing,group,target,profile,
                 "",observerName,basicLogOnly?"basic_log_only":"beta_standardized",projectId,
                 regionLabel,stratumAreaKm2,pointRadiusM,plannedDurationSeconds,geographicRegion,
@@ -722,7 +737,9 @@ public class MainActivity extends Activity implements LocationListener {
                 method.equals("point_count")?"planned_chainage_point_route":
                 method.equals("line_transect")||method.equals("ves_transect")?
                     "continuous_planned_route":"unsegmented_method",
-                startLatitude,startLongitude,(double)startAccuracy,iso(startGpsTime)});
+                withoutGps?null:startLatitude,withoutGps?null:startLongitude,
+                withoutGps?null:(double)startAccuracy,withoutGps?null:iso(startGpsTime),
+                startGpsStatus});
             if(method.equals("point_count")&&plannedStationCount>0){
                 int created=routeTemplateId.isEmpty()?
                     RoutePlan.create(database,eventId,projectId,plannedRouteMeters,plannedSpacingMeters,startedAt):
@@ -747,8 +764,11 @@ public class MainActivity extends Activity implements LocationListener {
             stationId="";
         active=true;
         if(endSurveyButton!=null)endSurveyButton.setEnabled(true);
-        if(gpsView!=null)gpsView.setText(String.format(Locale.US,
-            "Survey-start GPS: %.6f, %.6f · ±%.1f m",startLatitude,startLongitude,startAccuracy));
+        if(gpsView!=null)gpsView.setText(withoutGps?
+            "GPS pending · no initial survey position":
+            String.format(Locale.US,"Survey-start GPS: %.6f, %.6f · ±%.1f m",
+                startLatitude,startLongitude,startAccuracy));
+        refreshStartGpsBanner();
         saveButton.setEnabled(!hasStationUnits());
         if(hasStationUnits()&&pointNextButton!=null){
             if(method.equals("point_count")&&plannedStationCount>0)
@@ -759,7 +779,8 @@ public class MainActivity extends Activity implements LocationListener {
         surveyPaused=false;pauseStartedAt=0;accumulatedPausedMs=0;unitPausedMs=0;
         if(method.equals("line_transect")||method.equals("ves_transect"))startTracking();
         lineEntry.setEnabled(false);showGroups();status();
-        toast(method.equals("point_count")&&plannedStationCount>0?
+        toast(withoutGps?"Survey started · initial GPS missing and flagged":
+            method.equals("point_count")&&plannedStationCount>0?
             plannedStationCount+" stations planned. Start the first count on arrival.":"Survey started");
     }
 
@@ -2113,11 +2134,14 @@ public class MainActivity extends Activity implements LocationListener {
             String.format(Locale.US,"%.6f, %.6f\nReported accuracy: ±%.1f m\nProvider: %s",
                 fix.getLatitude(),fix.getLongitude(),
                 fix.hasAccuracy()?fix.getAccuracy():Float.NaN,fix.getProvider());
+        if("missing_at_survey_start".equals(startGpsStatus))
+            message="Survey-start coordinates are missing and remain unverified. "+
+                "New detections or station visits can capture fresh GPS.\n\n"+message;
         AlertDialog.Builder details=new AlertDialog.Builder(this)
             .setTitle("Observer GPS").setMessage(message)
             .setPositiveButton("Close",null);
-        if(TrackService.wasStopped(this)){
-            details.setNeutralButton("Restart GPS",(dialog,which)->{
+        if(TrackService.wasStopped(this)||!TrackService.isRunning()){
+            details.setNeutralButton("Start GPS",(dialog,which)->{
                 try{
                     TrackService.startGnss(this);
                     if(!surveyPaused&&(method.equals("line_transect")||

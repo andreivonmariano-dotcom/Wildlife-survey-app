@@ -27,9 +27,12 @@ public final class HabitatLikelihood {
     public static final class Result{
         public final String label,explanation;
         public final int points;
+        /** A 0-100 screening index, never a measured probability. Null = unassessed. */
+        public final Integer scorePercent;
         public final boolean habitatConflict,elevationConflict;
-        private Result(String label,int points,boolean h,boolean e,String reason){
-            this.label=label;this.points=points;
+        private Result(String label,int points,Integer percentage,
+                boolean h,boolean e,String reason){
+            this.label=label;this.points=points;this.scorePercent=percentage;
             habitatConflict=h;elevationConflict=e;explanation=reason;
         }
     }
@@ -80,7 +83,20 @@ public final class HabitatLikelihood {
             why.append(matchElev?"Elevation matches":conflictElev?
                 "Elevation well outside reviewed range":"Elevation unknown/uncertain");
         }
-        why.append(". Screening only; not an occupancy probability.");
-        return new Result(label,points,conflictHabitat,conflictElev,why.toString());
+        // Transparent relative index, NOT "probability of occurrence".
+        // A cited provincial record contributes 60, an island record 45.
+        // A reviewed matching habitat contributes 25, elevation 15.
+        // Either independently reviewed conflict subtracts 25.
+        // Missing geographic evidence alone never subtracts points.
+        int value=rank==2?60:rank==1?45:0;
+        if(matchHabitat)value+=25;
+        if(matchElev)value+=15;
+        if(conflictHabitat)value-=25;
+        if(conflictElev)value-=25;
+        Integer score=rank>0||(profileReviewed&&
+            ((matchHabitat&&matchElev)||(conflictHabitat&&conflictElev)))?
+            Math.max(0,Math.min(100,value)):null;
+        why.append(". Screening index, not a calibrated occurrence probability.");
+        return new Result(label,points,score,conflictHabitat,conflictElev,why.toString());
     }
 }

@@ -42,6 +42,21 @@ public final class HabitatLikelihoodTest {
         assertEquals("Insufficient Data",rate(0,"",945d,45d,"",false,
             1000d,1700d,true).label);
     }
+    @Test public void indexIsWeightedAndBounded(){
+        assertEquals(Integer.valueOf(60),rate(2,"",null,null,
+            "",false,null,null,false).scorePercent);
+        assertEquals(Integer.valueOf(45),rate(1,"",null,null,
+            "",false,null,null,false).scorePercent);
+        assertEquals(Integer.valueOf(100),rate(2,"montane",850d,25d,
+            "montane",true,500d,1500d,true).scorePercent);
+        assertEquals(Integer.valueOf(0),rate(0,"grassland",50d,25d,
+            "mossy",true,1000d,2400d,true).scorePercent);
+        assertNull(rate(0,"",null,null,"",false,null,null,false).scorePercent);
+    }
+    @Test public void unreviewedHabitatDoesNotChangeIndex(){
+        assertEquals(Integer.valueOf(60),rate(2,"urban",50d,10d,
+            "mossy",true,1000d,2200d,false).scorePercent);
+    }
     @Test public void labelsAreNotProbabilities(){
         String label=rate(2,"lowland",200d,10d,"lowland",false,0d,1500d,true).label;
         assertEquals("Likely",label);

@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,23);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,24);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -40,6 +40,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeTwentyOne(d);
         upgradeTwentyTwo(d);
         upgradeTwentyThree(d);
+        upgradeTwentyFour(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -77,6 +78,36 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<21)upgradeTwentyOne(d);
         if(oldVersion<22)upgradeTwentyTwo(d);
         if(oldVersion<23)upgradeTwentyThree(d);
+        if(oldVersion<24)upgradeTwentyFour(d);
+    }
+    /** Optional links cannot change the original observer's call label. */
+    private void upgradeTwentyFour(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN taxon_key TEXT");
+        d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN observation_id INTEGER");
+        d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN review_status TEXT DEFAULT 'unverified'");
+        d.execSQL("CREATE INDEX IF NOT EXISTS call_taxon ON acoustic_labels(taxon_key)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS trap_deployments("+
+            "id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT,"+
+            "method TEXT NOT NULL,device_id TEXT NOT NULL,"+
+            "deployed_at_utc TEXT NOT NULL,retrieved_at_utc TEXT,"+
+            "status TEXT NOT NULL DEFAULT 'deployed',"+
+            "fence_length_m REAL,setup_notes TEXT,"+
+            "UNIQUE(event_id,method,device_id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS trap_deployment_event "+
+            "ON trap_deployments(event_id,method)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS trap_checks("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,deployment_id TEXT NOT NULL,"+
+            "checked_at_utc TEXT NOT NULL,operational INTEGER NOT NULL,"+
+            "outage_minutes REAL,device_condition TEXT,observations INTEGER NOT NULL DEFAULT 0,"+
+            "observer_notes TEXT,FOREIGN KEY(deployment_id) REFERENCES trap_deployments(id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS trap_checks_device "+
+            "ON trap_checks(deployment_id,checked_at_utc)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS trap_captures("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,check_id INTEGER NOT NULL,"+
+            "taxon_label TEXT NOT NULL,individual_mark TEXT,captured_at_utc TEXT NOT NULL,"+
+            "released_at_utc TEXT,disposition TEXT NOT NULL,notes TEXT,"+
+            "FOREIGN KEY(check_id) REFERENCES trap_checks(id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS trap_captures_check ON trap_captures(check_id)");
     }
     /** Permanent research audio metadata. Audio stays in app-private files until export. */
     private void upgradeTwentyThree(SQLiteDatabase d){

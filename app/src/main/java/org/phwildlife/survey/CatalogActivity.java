@@ -87,7 +87,7 @@ public final class CatalogActivity extends Activity {
                 runOnUiThread(()->new AlertDialog.Builder(this)
                     .setTitle("Import Philippine mammal candidates?")
                     .setMessage(selected.size()+" living, non-domestic taxa have Philippines in the MDD v2.5 country list. "+
-                        "Their island/province distribution is NOT verified. Replace matching MDD IDs only.")
+                        "Their island/province distribution is NOT verified. MDD flagged taxa stay unreviewed. Replace matching MDD IDs only.")
                     .setNegativeButton("Cancel",(d,w)->refresh())
                     .setPositiveButton("Import",(d,w)->{
                         new Thread(()->{
@@ -105,7 +105,7 @@ public final class CatalogActivity extends Activity {
                                             "MDD:"+entry.get("id"),"Mammals",entry.get("mainCommonName"),
                                             entry.get("sciName"),entry.get("family"),
                                             "ASM Mammal Diversity Database, DOI 10.5281/zenodo.21654811",
-                                            "v2.5_2026-07-28","","reviewed"
+                                            "v2.5_2026-07-28","",isTrue(entry.get("flagged"))?"unreviewed":"reviewed"
                                         };
                                         for(int j=0;j<values.length;j++)statement.bindString(j+1,
                                             values[j]==null?"":values[j]);

@@ -661,7 +661,7 @@ public class WelcomeActivity extends Activity {
                 }
             }
         }
-        Intent i=new Intent(this,MainActivity.class);
+        Intent i=new Intent(this,SurveyGpsActivity.class);
         i.putExtra("transect_bearing",lineBearingEntry.getText().toString().trim());
         i.putExtra("create_new",true);
         i.putExtra("survey_profile",profile);

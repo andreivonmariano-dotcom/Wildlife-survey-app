@@ -93,6 +93,19 @@ public final class TaxonSuggestionAdapter extends ArrayAdapter<String> implement
                     args.add(TaxonSearchPolicy.prefix(term));
                     args.add(TaxonSearchPolicy.prefix(term));
                 }
+                // Rank independently documented island matches first, but never
+                // remove national candidates with unassessed local occurrence.
+                if(!regional&&selectedRegion!=null&&
+                    !selectedRegion.equals("PH")&&!selectedRegion.equals("OTHER")){
+                    sql.append("CASE WHEN review_status='reviewed' AND ("+
+                        "INSTR('|'||COALESCE(region_codes,'')||'|','|'||?||'|')>0");
+                    args.add(selectedRegion);
+                    if(!selectedProvince.isEmpty()){
+                        sql.append(" OR INSTR('|'||COALESCE(region_codes,'')||'|','|'||?||'|')>0");
+                        args.add("P:"+selectedProvince);
+                    }
+                    sql.append(") THEN 0 ELSE 1 END,");
+                }
                 sql.append(" common_name COLLATE NOCASE,scientific_name COLLATE NOCASE LIMIT 55");
                 try(Cursor c=database.rawQuery(sql.toString(),args.toArray(new String[0]))){
                     while(c.moveToNext()){

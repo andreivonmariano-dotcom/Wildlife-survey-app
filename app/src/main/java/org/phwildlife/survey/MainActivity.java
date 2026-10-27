@@ -194,6 +194,11 @@ public class MainActivity extends Activity implements LocationListener {
     private LinearLayout horizontal(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.HORIZONTAL);c.setGravity(Gravity.CENTER_VERTICAL);return c;}
     private LinearLayout.LayoutParams weighted(float wt){return new LinearLayout.LayoutParams(0,-2,wt);}
     private TextView section(String title){TextView t=label(title,13,true);t.setTextColor(MUTED);return t;}
+    private void disclosureTarget(TextView view){
+        view.setMinHeight(dp(46));
+        view.setGravity(Gravity.CENTER_VERTICAL);
+        view.setFocusable(true);
+    }
     private void draw(){
         LinearLayout root=vertical();root.setBackgroundColor(BACK);root.setPadding(dp(12),dp(5),dp(12),dp(7));
         LinearLayout top=horizontal();
@@ -242,7 +247,7 @@ public class MainActivity extends Activity implements LocationListener {
         sessionSettings.setVisibility(View.GONE);
         sessionSettings.addView(vibrationChoice);
         TextView sessionToggle=label("Vibration settings  ▾",13,true);
-        sessionToggle.setTextColor(GREEN);
+        sessionToggle.setTextColor(GREEN);disclosureTarget(sessionToggle);
         sessionToggle.setPadding(dp(6),dp(7),dp(6),dp(8));
         sessionToggle.setOnClickListener(v->{
             boolean expanded=sessionSettings.getVisibility()!=View.VISIBLE;
@@ -372,7 +377,7 @@ public class MainActivity extends Activity implements LocationListener {
         birdMeasurements.addView(movementSpinner);
         if(FieldUiPolicy.birdDetails(profile))content.addView(birdMeasurements);
         TextView birdToggle=label("▾ Bird distance details",13,true);
-        birdToggle.setTextColor(GREEN);
+        birdToggle.setTextColor(GREEN);disclosureTarget(birdToggle);
         if(profile.equals("Birds")){
             // Keep the distance sampling quality items accessible in one tap.
             content.addView(birdToggle);
@@ -415,7 +420,7 @@ public class MainActivity extends Activity implements LocationListener {
         herpPanel.addView(noiseLabel);herpPanel.addView(noiseSpinner);
         if(FieldUiPolicy.herpetofaunaDetails(profile))content.addView(herpPanel);
         TextView herpToggle=label("▾ Amphibian / reptile environment",13,true);
-        herpToggle.setTextColor(GREEN);
+        herpToggle.setTextColor(GREEN);disclosureTarget(herpToggle);
         if(profile.equals("Herpetofauna")){
             content.addView(herpToggle);herpPanel.setVisibility(View.GONE);
             herpToggle.setOnClickListener(v->{
@@ -435,7 +440,7 @@ public class MainActivity extends Activity implements LocationListener {
         mammalPanel.addView(perchEntry);
         if(FieldUiPolicy.mammalDetails(profile))content.addView(mammalPanel);
         TextView mammalToggle=label("▾ Mammal evidence details",13,true);
-        mammalToggle.setTextColor(GREEN);
+        mammalToggle.setTextColor(GREEN);disclosureTarget(mammalToggle);
         if(profile.equals("Mammals")){
             content.addView(mammalToggle);mammalPanel.setVisibility(View.GONE);
             mammalToggle.setOnClickListener(v->{
@@ -456,7 +461,7 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
         detailToggle=label("＋ More observation details",14,true);
-        detailToggle.setTextColor(GREEN);content.addView(detailToggle);
+        detailToggle.setTextColor(GREEN);disclosureTarget(detailToggle);content.addView(detailToggle);
         advancedPanel=vertical();
         habitatEntry=edit("Habitat / microhabitat",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         behaviorEntry=edit("Behavior / reproductive evidence",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);

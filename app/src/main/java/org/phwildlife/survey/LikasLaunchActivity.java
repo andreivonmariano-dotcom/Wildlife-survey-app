@@ -29,6 +29,7 @@ public final class LikasLaunchActivity extends Activity {
     private static final int CREAM=Color.rgb(239,243,223);
     private static final int SAGE=Color.rgb(191,222,205);
     private Button resumeButton,homeButton;
+    private TextView statusView;
 
     private int dp(float n){return Math.round(getResources().getDisplayMetrics().density*n);}
 
@@ -134,10 +135,15 @@ public final class LikasLaunchActivity extends Activity {
         LinearLayout.LayoutParams panelLp=new LinearLayout.LayoutParams(-1,-2);
         content.addView(actions,panelLp);
 
+        statusView=label("Unable to check saved surveys.",13,CREAM,false);
+        statusView.setPadding(dp(4),0,dp(4),dp(12));
+        statusView.setVisibility(View.GONE);
+        actions.addView(statusView);
+
         resumeButton=action("Resume survey",true);
         actions.addView(resumeButton,new LinearLayout.LayoutParams(-1,-2));
         resumeButton.setOnClickListener(v->{
-            if(!hasActiveSurvey()){
+            if(!Boolean.TRUE.equals(activeSurveyStatus())){
                 updateActions();
                 return;
             }
@@ -160,7 +166,8 @@ public final class LikasLaunchActivity extends Activity {
         setContentView(root);
     }
 
-    private boolean hasActiveSurvey(){
+    /** Null means unreadable database, never "there are no surveys". */
+    private Boolean activeSurveyStatus(){
         File file=getDatabasePath(FieldDb.NAME);
         if(!file.exists())return false;
         try(SQLiteDatabase database=SQLiteDatabase.openDatabase(
@@ -169,13 +176,15 @@ public final class LikasLaunchActivity extends Activity {
                 "SELECT 1 FROM surveys WHERE ended IS NULL LIMIT 1",null)){
             return c.moveToFirst();
         }catch(Exception ignored){
-            // A failed read never deletes, migrates or closes an existing survey.
-            return false;
+            // Unreadable is not equivalent to no unfinished survey.
+            return null;
         }
     }
 
     private void updateActions(){
-        boolean active=hasActiveSurvey();
+        Boolean status=activeSurveyStatus();
+        boolean active=Boolean.TRUE.equals(status);
+        statusView.setVisibility(status==null?View.VISIBLE:View.GONE);
         resumeButton.setVisibility(active?View.VISIBLE:View.GONE);
         resumeButton.setEnabled(LikasUiRules.canContinue(active));
         // The only visible action is primary if no unfinished survey exists.

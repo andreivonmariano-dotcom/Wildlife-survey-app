@@ -117,7 +117,7 @@ public final class CallLibraryActivity extends Activity {
         Button back=UiKit.button(this,selectedClip!=null?"‹ Library":"‹ Back","secondary");
         header.addView(back,new LinearLayout.LayoutParams(dp(105),dp(48)));
         back.setOnClickListener(v->{
-            if(recorder!=null&&recorder.isCapturing()){notice("Stop recording before leaving");return;}
+            if(recorder!=null){notice("Stop recording and finish saving before leaving");return;}
             if(selectedClip!=null){releasePlayer();selectedClip=null;draw();}
             else finish();
         });
@@ -191,8 +191,11 @@ public final class CallLibraryActivity extends Activity {
         }
     }
     private void startRecord(){
-        if(!canRecord()||recorder!=null&&recorder.isCapturing()){
+        if(!canRecord()){
             notice("An active survey is required for recording");return;
+        }
+        if(recorder!=null){
+            notice("Previous audio is still being saved");return;
         }
         String key=UUID.randomUUID().toString().substring(0,8);
         pendingFilename="clip_"+System.currentTimeMillis()+"_"+key+".wav";

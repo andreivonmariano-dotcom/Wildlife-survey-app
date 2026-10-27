@@ -57,9 +57,7 @@ public class MainActivity extends Activity implements LocationListener {
             Location live=TrackService.currentFix();
             if(live!=null){
                 location=live;
-                if(gpsView!=null)gpsView.setText(String.format(Locale.US,
-                    "Continuous GPS: %.5f, %.5f · ±%.1f m",live.getLatitude(),
-                    live.getLongitude(),live.hasAccuracy()?live.getAccuracy():Float.NaN));
+                updateGpsLabel(live);
             }
             status();
             handler.postDelayed(this,1000);
@@ -68,6 +66,7 @@ public class MainActivity extends Activity implements LocationListener {
     private final int BACK=Color.rgb(247,249,246),INK=Color.rgb(22,51,38),GREEN=Color.rgb(37,104,74),MUTED=Color.rgb(95,116,101);
     private FieldDb db; private LocationManager locations;
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
+    private LinearLayout markRowView;
     private Button pauseButton,progressButton;
     private CheckBox vibrationChoice,regionalOnlyChoice;
     private Spinner confidenceSpinner;
@@ -224,7 +223,6 @@ public class MainActivity extends Activity implements LocationListener {
         methodRow.addView(lineRow,weighted(0.9f));
         content.addView(methodRow);
         beginButton=UiKit.button(this,active?"Finish survey":"Start survey","warning");
-        content.addView(beginButton,new LinearLayout.LayoutParams(-1,dp(47)));
         beginButton.setOnClickListener(v->toggleEvent());
         LinearLayout utilityRow=horizontal();
         pauseButton=UiKit.button(this,"Pause effort","secondary");
@@ -233,6 +231,7 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout.LayoutParams progressLp=new LinearLayout.LayoutParams(0,dp(47),1);
         progressLp.leftMargin=dp(7);utilityRow.addView(progressButton,progressLp);
         content.addView(utilityRow);
+        progressButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
         pauseButton.setOnClickListener(v->togglePause());
         progressButton.setOnClickListener(v->openProgress());
         vibrationChoice=new CheckBox(this);
@@ -241,7 +240,20 @@ public class MainActivity extends Activity implements LocationListener {
         vibrationChoice.setChecked(getSharedPreferences("field_prefs",MODE_PRIVATE).getBoolean("vibrate_warnings",false));
         vibrationChoice.setOnCheckedChangeListener((button,enabled)->
             getSharedPreferences("field_prefs",MODE_PRIVATE).edit().putBoolean("vibrate_warnings",enabled).apply());
-        content.addView(vibrationChoice);
+        LinearLayout sessionSettings=vertical();
+        sessionSettings.setVisibility(View.GONE);
+        sessionSettings.addView(vibrationChoice);
+        sessionSettings.addView(beginButton,new LinearLayout.LayoutParams(-1,dp(48)));
+        TextView sessionToggle=label("Session options  ▾",13,true);
+        sessionToggle.setTextColor(GREEN);
+        sessionToggle.setPadding(dp(6),dp(7),dp(6),dp(8));
+        sessionToggle.setOnClickListener(v->{
+            boolean expanded=sessionSettings.getVisibility()!=View.VISIBLE;
+            sessionSettings.setVisibility(expanded?View.VISIBLE:View.GONE);
+            sessionToggle.setText(expanded?"Session options  ▴":"Session options  ▾");
+        });
+        content.addView(sessionToggle);
+        content.addView(sessionSettings);
         pointNextButton=UiKit.button(this,"Finish point · Next station","camera");
         content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,dp(53)));
         pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
@@ -250,7 +262,7 @@ public class MainActivity extends Activity implements LocationListener {
         trackingView.setTextColor(UiKit.BLUE);
         content.addView(trackingView);
         trackingView.setVisibility(method.equals("line_transect")||method.equals("ves_transect")?View.VISIBLE:View.GONE);
-        content.addView(section("DETECTION"));
+        content.addView(section("Mark detection"));
         LinearLayout detectRow=horizontal();
         Button markTime=UiKit.button(this,"Mark now","secondary");
         detectRow.addView(markTime,weighted(0.9f));
@@ -260,7 +272,9 @@ public class MainActivity extends Activity implements LocationListener {
         markTime.setOnClickListener(v->markDetection());
         markButton.setOnClickListener(v->openCamera());
         LinearLayout markRow=horizontal();
-        bearingStatusView=label("Time and bearing not marked",12,false);
+        markRowView=markRow;
+        markRow.setVisibility(View.GONE);
+        bearingStatusView=label("",12,false);
         bearingStatusView.setTextColor(MUTED);
         markRow.addView(bearingStatusView,weighted(1));
         TextView clear=label("Clear mark",12,true);
@@ -269,18 +283,31 @@ public class MainActivity extends Activity implements LocationListener {
         clear.setOnClickListener(v->clearMark());
         markRow.addView(clear);
         content.addView(markRow);
-        gpsView=label("GPS: awaiting fix",11,false);
+        gpsView=label("GPS: searching · tap for details",12,false);
         gpsView.setTextColor(MUTED);
+        gpsView.setOnClickListener(v->showGpsDetail());
         content.addView(gpsView);
-        content.addView(section("SPECIES / IDENTIFICATION"));
-        checklistNote=label("Geographic suggestions: "+GeoRegions.label(geographicRegion),13,true);
-        checklistNote.setTextColor(UiKit.FOREST);content.addView(checklistNote);
+        content.addView(section("Species"));
+        LinearLayout catalogOptions=vertical();
+        checklistNote=label("Area: "+GeoRegions.label(geographicRegion),12,false);
+        checklistNote.setTextColor(MUTED);catalogOptions.addView(checklistNote);
         regionalOnlyChoice=new CheckBox(this);
         regionalOnlyChoice.setText("Show verified regional suggestions only (partial list)");
         regionalOnlyChoice.setTextSize(13);
         regionalOnlyChoice.setChecked(false); // National candidate names remain searchable by default.
-        content.addView(regionalOnlyChoice);
+        catalogOptions.addView(regionalOnlyChoice);
+        catalogOptions.setVisibility(View.GONE);
+        TextView filters=label("Species search options  ▾",12,true);
+        filters.setPadding(dp(6),dp(5),dp(6),dp(7));
+        filters.setTextColor(GREEN);
+        filters.setOnClickListener(v->{
+            boolean expanded=catalogOptions.getVisibility()!=View.VISIBLE;
+            catalogOptions.setVisibility(expanded?View.VISIBLE:View.GONE);
+            filters.setText(expanded?"Species search options  ▴":"Species search options  ▾");
+        });
         regionalOnlyChoice.setOnCheckedChangeListener((b,only)->updateTaxaSuggestions(false));
+        content.addView(catalogOptions);
+        content.addView(filters);
         LinearLayout speciesRow=horizontal();
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(18);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
@@ -323,11 +350,12 @@ public class MainActivity extends Activity implements LocationListener {
         countLine.addView(countView,new LinearLayout.LayoutParams(dp(48),-2));
         Button plus=button("+");countLine.addView(plus,new LinearLayout.LayoutParams(dp(55),dp(46)));
         content.addView(countLine);
-        content.addView(label("Identification confidence",12,true));
+        LinearLayout confidenceBlock=vertical();
+        confidenceBlock.addView(label("Identification confidence",12,true));
         confidenceSpinner=new Spinner(this);
         confidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Field-identified (not expert verified)","Probable","Uncertain","Unidentified"}));
-        content.addView(confidenceSpinner);
+        confidenceBlock.addView(confidenceSpinner);
         minus.setOnClickListener(v->{count=Math.max(1,count-1);countView.setText(""+count);queueDraft();});
         plus.setOnClickListener(v->{count=Math.min(9999,count+1);countView.setText(""+count);queueDraft();});
         LinearLayout row=horizontal();
@@ -449,6 +477,7 @@ public class MainActivity extends Activity implements LocationListener {
         notesEntry.setSingleLine(false);notesEntry.setMinLines(2);
         identificationNote=edit("Identification evidence / uncertainty (optional)",
             InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        advancedPanel.addView(confidenceBlock);
         advancedPanel.addView(identificationNote);
         advancedPanel.addView(habitatEntry);advancedPanel.addView(behaviorEntry);advancedPanel.addView(notesEntry);
         advancedPanel.setVisibility(View.GONE);content.addView(advancedPanel);
@@ -1409,11 +1438,13 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void clearMark(){
         markedAt=0;markedObserverFix=null;markedBearing=null;markedPitch=null;
-        if(bearingStatusView!=null)bearingStatusView.setText("Time and bearing not marked");
+        if(bearingStatusView!=null)bearingStatusView.setText("");
+        if(markRowView!=null)markRowView.setVisibility(View.GONE);
         queueDraft();
     }
     private void showMarkStatus(){
         if(bearingStatusView==null)return;
+        if(markRowView!=null)markRowView.setVisibility(markedAt>0?View.VISIBLE:View.GONE);
         if(markedBearing!=null)
             bearingStatusView.setText(String.format(Locale.US,"Bearing %.0f° magnetic · pitch %+.0f°",markedBearing,markedPitch));
         else if(markedAt>0) bearingStatusView.setText("Detection time marked · bearing optional");
@@ -1989,9 +2020,33 @@ public class MainActivity extends Activity implements LocationListener {
         if(code==71&&results.length>0&&results[0]==PackageManager.PERMISSION_GRANTED
             &&active&&(method.equals("line_transect")||method.equals("ves_transect")))startTracking();
     }
+    private void updateGpsLabel(Location fix){
+        if(gpsView==null)return;
+        if(fix==null||!fix.hasAccuracy()){
+            gpsView.setText("GPS: searching · tap for details");
+            gpsView.setTextColor(UiKit.AMBER);
+            return;
+        }
+        long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
+        boolean qualified=GpsFixPolicy.acceptableElapsed(fix.getLatitude(),fix.getLongitude(),
+            fix.getAccuracy(),age,fix.isFromMockProvider());
+        gpsView.setText(String.format(Locale.US,"GPS ±%.1f m · %s · details",
+            fix.getAccuracy(),qualified?"ready":"low quality"));
+        gpsView.setTextColor(qualified?UiKit.FOREST:UiKit.AMBER);
+    }
+    private void showGpsDetail(){
+        Location fix=TrackService.currentFix();
+        if(fix==null)fix=location;
+        String message=fix==null?"No recent GPS reading":
+            String.format(Locale.US,"%.6f, %.6f\nReported accuracy: ±%.1f m\nProvider: %s",
+                fix.getLatitude(),fix.getLongitude(),
+                fix.hasAccuracy()?fix.getAccuracy():Float.NaN,fix.getProvider());
+        new AlertDialog.Builder(this).setTitle("Observer GPS").setMessage(message)
+            .setPositiveButton("Close",null).show();
+    }
     @Override public void onLocationChanged(Location l){
         location=l;
-        if(gpsView!=null)gpsView.setText(String.format(Locale.US,"Observer GPS: %.5f, %.5f · ±%.0f m",l.getLatitude(),l.getLongitude(),l.getAccuracy()));
+        updateGpsLabel(l);
     }
     private void toast(String s){Toast.makeText(this,s,Toast.LENGTH_SHORT).show();}
 

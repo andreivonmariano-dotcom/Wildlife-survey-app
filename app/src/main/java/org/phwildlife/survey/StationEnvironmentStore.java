@@ -38,6 +38,16 @@ public final class StationEnvironmentStore{
                 elevation.verticalUncertaintyMeters,elevation.datum,
                 elevation.status,elevation.fresh?utc(elevation.utcMs):null,visit});
     }
+    /** Manual MSL measurements are kept in distinct fields from the GNSS snapshot. */
+    public static void recordManualElevation(SQLiteDatabase d,String event,String visit,
+            String station,Double msl,Double uncertainty){
+        if(!ids(event,visit))return;
+        ensureRow(d,event,visit,station);
+        d.execSQL("UPDATE station_environment SET manual_elevation_msl_m=?,"+
+                "manual_vertical_uncertainty_m=?,updated_utc=datetime('now') "+
+                "WHERE visit_id=?",
+            new Object[]{msl,uncertainty,visit});
+    }
     /** Never replace an earlier station GPS fix with manually entered elevation. */
     public static void recordHabitat(SQLiteDatabase d,String event,String visit,
             String station,String habitat){

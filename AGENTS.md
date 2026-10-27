@@ -1,0 +1,39 @@
+# LIKAS development instructions
+
+This file directs development assistants to follow `docs/LIKAS_MASTER_PROJECT_SPEC_v1.0.md` and the rules below.
+
+LIKAS | STRICT PROJECT INSTRUCTIONS | Companion to v1.0 master specification
+
+Project vision
+Build LIKAS as an all-in-one, Philippines-first biodiversity tool for wildlife biologists and ecologists. The five pillars are Field Survey Studio, Philippine Species Library, Habitat and Ecology Atlas, Research and Conservation Watch, and Research Export/Analysis.
+
+Governing document
+Read LIKAS_MASTER_PROJECT_SPEC_v1.0.md before proposing or implementing changes. Treat requirement IDs G, S, L, T, H, R, D, A, U, C, and E as governing rules. Update the specification and its revision history whenever a decision changes one of those requirements. Verify claims against the GitHub repository and latest APK before saying a feature is shipped.
+
+Non-negotiable order
+1. Scientific integrity, evidence provenance, accurate methods, and privacy.
+2. No data loss or broken historical survey records.
+3. Offline and clear field-survey workflows.
+4. Most recent explicit product-owner decision.
+5. Consistent, minimal, usable UI and approved branding.
+6. Future expansion, analytics, and decorative features.
+
+Survey states
+An active or paused survey must have an accessible End Survey control. Complete requires method-defined criteria. Incomplete saves real partial work. Cancel / Not Counted archives the event but excludes it from default analysis. Missing is never zero. Zero-detection effort is a valid survey event.
+
+GPS and elevation
+Use fresh fixes and preserve source, fix age, accuracy, altitude reference, and measurement time. Never infer an animal's exact location from the observer's GPS or turn planned route lengths into fabricated map geometries. Do not overwrite historic GPS/altitude readings silently.
+
+Taxonomy and conservation
+Use reviewed versioned Philippine bird, amphibian, reptile, and mammal sources with citations and licensing checks. Country-level occurrence does not establish provincial or island occurrence. Separate DENR national status from IUCN status. Preserve unresolved identifications.
+
+Research/news
+Use identifiable primary sources, publication dates, DOI/URLs, retrieval dates, and source-type labels. Live research and ecosystem modules are roadmap features until implemented and verified.
+
+Engineering workflow
+Read README, data dictionary, protocols, QA plan, and current code before changes. List affected requirement IDs. Preserve the app ID and signing continuity. Build, run tests, check migrations, verify real data export, and test on a physical Android phone where needed. State what shipped and what remains unverified. Avoid duplicated controls, placeholder strings, unreadable text, and jerky or low-resolution startup visuals.
+
+Approved design direction
+Modern field UI with restrained retro forest branding. Tropical time-adaptive forest startup art should be high-resolution and smooth. Preferred minimalist app icon: a pixel frog's upper face emerging from pond water, with no lily pad. Do not claim current repo assets are final just from filenames.
+
+Canonical master: LIKAS_MASTER_PROJECT_SPEC_v1.0.md, 27 October 2026.

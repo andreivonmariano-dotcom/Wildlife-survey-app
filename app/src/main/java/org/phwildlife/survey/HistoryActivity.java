@@ -109,7 +109,8 @@ public class HistoryActivity extends Activity {
                 String outcome=c.getString(8);
                 String state="not_counted".equals(outcome)?"Not counted":
                     "complete".equals(outcome)?"Complete":
-                    "incomplete".equals(outcome)?"Incomplete":"Active";
+                    "incomplete".equals(outcome)?"Incomplete":
+                    c.isNull(5)?"Active":c.getInt(6)==1?"Complete":"Incomplete";
                 LinearLayout card=column();card.setPadding(dp(12),dp(9),dp(12),dp(9));
                 card.setBackground(UiKit.surface(this));
                 TextView name=text(profile+" · "+SurveyMethods.lookup(profile,method).label,16);

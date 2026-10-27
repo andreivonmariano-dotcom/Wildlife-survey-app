@@ -241,7 +241,7 @@ public class MainActivity extends Activity implements LocationListener {
         groupBar=horizontal();content.addView(groupBar);showGroups();
         LinearLayout methodRow=horizontal();
         // The method was already chosen in survey setup. Do not offer a second, disabled selector.
-        TextView methodName=label(SurveyMethods.lookup(profile,method).label,14,true);
+        TextView methodName=label(SurveyMethods.displayLabel(profile,method),14,true);
         methodName.setTextColor(UiKit.FOREST);
         methodRow.addView(methodName,weighted(1f));
         lineRow=horizontal();lineEntry=edit("Transect magnetic bearing °",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);

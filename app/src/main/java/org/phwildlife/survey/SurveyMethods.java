@@ -20,7 +20,7 @@ public final class SurveyMethods {
         if("Herpetofauna".equals(profile))return new Method[]{
             new Method("visual_encounter","Visual encounter (VES)","Active timed search for reptiles and amphibians.",false),
             new Method("ves_transect","Transect VES","Systematic searches along a defined terrestrial or riparian route.",false),
-            new Method("amphibian_calls","Amphibian calling","Timed listening for amphibian calls at a station.",true),
+            new Method("amphibian_calls","Amphibian calling","Timed station listening with call index, saved WAV, spectrogram and time-coded labels.",false),
             new Method("coverboard_search","Cover-board search","Inspect predefined cover objects and record inspection effort.",true),
             new Method("drift_fence_check","Pitfall / drift fence check","Record detections during trap inspections. Trap-deployment data are not yet captured.",true),
             new Method("opportunistic","Opportunistic","Record incidental reptiles and amphibians.",false)

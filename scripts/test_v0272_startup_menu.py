@@ -14,8 +14,13 @@ class LikasStartupMenuTests(unittest.TestCase):
     def test_resume_never_starts_an_unfinished_session_implicitly(self):
         self.assertIn('resumeButton.setVisibility(active?View.VISIBLE:View.GONE)', CODE)
         self.assertIn('resumeButton.setEnabled(LikasUiRules.canContinue(active))', CODE)
-        self.assertIn('if(!hasActiveSurvey())', CODE)
+        self.assertIn('if(!Boolean.TRUE.equals(activeSurveyStatus()))', CODE)
         self.assertIn('new Intent(this,MainActivity.class).putExtra("resume",true)', CODE)
+
+    def test_unreadable_database_is_not_treated_as_no_surveys(self):
+        self.assertIn('private Boolean activeSurveyStatus()', CODE)
+        self.assertIn('statusView.setVisibility(status==null?View.VISIBLE:View.GONE)', CODE)
+        self.assertIn('return null;', CODE)
 
     def test_home_action_is_named_truthfully(self):
         self.assertIn('action("Open LIKAS",false)', CODE)

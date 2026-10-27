@@ -1,9 +1,9 @@
 name: Build Android Debug APK
 on:
   push:
-    branches: [main, 'feature/v0.16-gps-preflight', 'feature/v0.17-likas-ui', 'feature/v0.17.1-ui-review', 'feature/v0.18-taxonomy', 'feature/v0.18.1-auto-gps', 'feature/v0.18.2-sy-checklists', 'feature/v0.18.3-species-evidence', 'feature/v0.18.4-wbcp-birds', 'feature/v0.18.4-survey-close-actions', 'feature/v0.18.6-complete-checklists', 'feature/v0.18.7-bundled-checklists', 'feature/v0.19-identify-species', 'feature/v0.19.2-species-sort-score', 'feature/v0.19.3-habitat-profiles-ui', 'feature/v0.19.4-auto-elevation', 'feature/v0.19.5-ui-audit-cleanup', 'feature/v0.19.6-forest-branding-field-flow', 'feature/v0.19.7-approved-artwork', 'feature/v0.19.8-minimal-frog-icon', 'feature/v0.19.9-frog-theme-smooth-forest', 'feature/v0.20-optional-survey-start-gps']
+    branches: [main, 'feature/v0.16-gps-preflight', 'feature/v0.17-likas-ui', 'feature/v0.17.1-ui-review', 'feature/v0.18-taxonomy', 'feature/v0.18.1-auto-gps', 'feature/v0.18.2-sy-checklists', 'feature/v0.18.3-species-evidence', 'feature/v0.18.4-wbcp-birds', 'feature/v0.18.4-survey-close-actions', 'feature/v0.18.6-complete-checklists', 'feature/v0.18.7-bundled-checklists', 'feature/v0.19-identify-species', 'feature/v0.19.2-species-sort-score', 'feature/v0.19.3-habitat-profiles-ui', 'feature/v0.19.4-auto-elevation', 'feature/v0.19.5-ui-audit-cleanup', 'feature/v0.19.6-forest-branding-field-flow', 'feature/v0.19.7-approved-artwork', 'feature/v0.19.8-minimal-frog-icon', 'feature/v0.19.9-frog-theme-smooth-forest', 'feature/v0.20-optional-survey-start-gps', 'feature/v0.21-field-layout-refresh']
   pull_request:
-    branches: ['feature/v0.19.9-frog-theme-smooth-forest', 'feature/v0.19.8-minimal-frog-icon', main]
+    branches: ['feature/v0.20-optional-survey-start-gps', 'feature/v0.19.9-frog-theme-smooth-forest', main]
   workflow_dispatch:
 jobs:
   build:
@@ -49,10 +49,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="v0.20.0-beta"
+          TAG="v0.21.0-beta"
           FILE="app/build/outputs/apk/debug/app-debug.apk"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$FILE" --clobber
           else
-            gh release create "$TAG" "$FILE" --title "LIKAS Beta v0.20.0" --notes "Survey start without verified GPS, explicit nullable position and provenance in export, compact GNSS choice and existing frog/HD forest visuals. Handset testing remains required." --prerelease --target "$GITHUB_SHA"
+            gh release create "$TAG" "$FILE" --title "LIKAS Beta v0.21.0" --notes "Fixed observation Save dock, persistent End Survey, frog-branded Home and simplified four-part survey setup; GPS provenance preserved. Handset testing remains required." --prerelease --target "$GITHUB_SHA"
           fi

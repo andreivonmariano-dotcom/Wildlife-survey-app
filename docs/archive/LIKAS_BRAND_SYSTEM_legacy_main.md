@@ -1,3 +1,5 @@
+> Historical branding notes from the legacy v0.15 main branch. Current frog artwork and HD forest assets remain the release authority.
+
 # LIKAS identity: retro wildlife field app
 
 ## Brand direction

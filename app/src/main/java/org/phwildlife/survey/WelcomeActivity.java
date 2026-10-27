@@ -24,13 +24,15 @@ import java.util.ArrayList;
 
 /** Home and survey setup. Never starts the camera or a survey without a user choice. */
 public class WelcomeActivity extends Activity {
-    private final int BG=Color.rgb(245,249,245),INK=Color.rgb(23,58,39),GREEN=Color.rgb(34,102,72),MUTED=Color.rgb(99,116,104);
+    private final int BG=UiKit.BG,INK=UiKit.INK,GREEN=UiKit.FOREST,MUTED=UiKit.MUTED;
     private LinearLayout main,root; private String profile="Birds";
     private boolean custom=false;
     private String currentScreen="home";
     private static final int GPS_PERMISSION_REQUEST=71;
     private final Handler gpsHandler=new Handler(Looper.getMainLooper());
     private LocationListener pendingGpsListener;
+    private int gpsLookupGeneration=0;
+    private boolean gpsPolygonResolving=false;
     private Runnable gpsTimeout;
     private Button gpsLookupButton;
     private EditText durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry,radiusEntry,transectDurationEntry,routeLengthEntry,customSpacingEntry;
@@ -40,8 +42,11 @@ public class WelcomeActivity extends Activity {
     private CheckBox saveTemplateChoice;
     private TextView templateHint;
     private boolean updatingRouteChoices=false;
-    private TextView stationCountPreview;
-    private Spinner projectChoice, geographicChoice;
+    private TextView stationCountPreview,routeHeader,spacingHeader,repeatHeader;
+    private Spinner projectChoice, geographicChoice,studyChoice;
+    private TextView studyToggle;
+    private LinearLayout studyOptions;
+    private final ArrayList<String> studyTemplateIds=new ArrayList<>();
     private BoundaryLookup.Match suggested;
     private String geographicMethod=GeoRegions.BOUNDARY_METHOD;
     private TextView boundaryMessage;
@@ -56,21 +61,31 @@ public class WelcomeActivity extends Activity {
     }
     private Button button(String label){return UiKit.button(this,label,"secondary");}
     private LinearLayout vertical(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
-    @Override public void onCreate(Bundle state){super.onCreate(state);buildShell();
+    @Override public void onCreate(Bundle state){super.onCreate(state);
+        getWindow().setStatusBarColor(BG);
+        getWindow().setNavigationBarColor(BG);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        buildShell();
         String screen=getPreferences(MODE_PRIVATE).getString("screen","home");
         String rememberedProfile=getPreferences(MODE_PRIVATE).getString("profile","Birds");
         boolean rememberedCustom=getPreferences(MODE_PRIVATE).getBoolean("custom",false);
-        if(screen.equals("setup")&&!isSurveyActive()){setup(rememberedProfile,rememberedCustom);restoreSetup();}
+        boolean showMenu=getIntent().getBooleanExtra("show_menu",false);
+        if(showMenu)home();
+        else if(screen.equals("setup")&&!isSurveyActive()){setup(rememberedProfile,rememberedCustom);restoreSetup();}
         else if(screen.equals("custom")&&!isSurveyActive())customPicker();
         else home();
-        if(isSurveyActive()&&getSharedPreferences("field_resume",MODE_PRIVATE).getString("screen","home").equals("survey"))
+        if(!showMenu&&isSurveyActive()&&
+            getSharedPreferences("field_resume",MODE_PRIVATE).getString("screen","home").equals("survey"))
             startActivity(new Intent(this,MainActivity.class).putExtra("resume",true));
     }
     @Override protected void onResume(){
         super.onResume();
-        if(root!=null&&homeVisible)home();
-        else if(root!=null&&"setup".equals(currentScreen)&&projectChoice!=null)
-            refreshProjectOptions();
+        if(root!=null&&homeVisible){
+            String current=activeSurvey();
+            if(!java.util.Objects.equals(current,lastHomeActiveSurvey))home();
+        }else if(root!=null&&"setup".equals(currentScreen)&&projectChoice!=null){
+            refreshProjectOptions();refreshStudyChoices();
+        }
     }
     @Override protected void onPause(){
         cancelGpsLookup();persistSetup();super.onPause();
@@ -78,100 +93,171 @@ public class WelcomeActivity extends Activity {
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);home();}
     private boolean isSurveyActive(){return activeSurvey()!=null;}
     private boolean homeVisible=true;
+    private String lastHomeActiveSurvey=null;
     private void buildShell(){
-        root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(18),dp(18),dp(18),dp(18));
+        root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(16),dp(12),dp(16),dp(12));
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
-        main=vertical();main.setPadding(0,0,0,dp(22));scroll.addView(main);
+        main=vertical();main.setPadding(0,0,0,dp(24));scroll.addView(main);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,-1));
         setContentView(root);
     }
     private void heading(String title,String subtitle) {
-        main.addView(text(title,28,true));
-        TextView s=text(subtitle,14,false);s.setTextColor(MUTED);main.addView(s);
-        Space space=new Space(this);main.addView(space,new LinearLayout.LayoutParams(1,dp(20)));
+        TextView h=text(title,24,true);h.setPadding(dp(2),dp(6),0,0);
+        main.addView(h);
+        if(subtitle!=null&&!subtitle.isEmpty()){
+            TextView s=text(subtitle,13,false);s.setTextColor(MUTED);
+            s.setPadding(dp(2),dp(2),0,dp(10));main.addView(s);
+        }
+    }
+    private TextView step(String number,String title){
+        TextView label=text(number+"   "+title,16,true);
+        label.setTextColor(UiKit.FOREST);
+        label.setPadding(dp(3),dp(14),dp(3),dp(9));
+        return label;
+    }
+    private void surveyTile(LinearLayout parent,String title,String detail,Runnable tap){
+        LinearLayout tile=vertical();tile.setGravity(Gravity.CENTER_VERTICAL);
+        tile.setPadding(dp(14),dp(10),dp(8),dp(10));
+        tile.setBackground(UiKit.surface(this));
+        TextView name=text(title,17,true);name.setPadding(0,0,0,dp(3));
+        tile.addView(name);
+        TextView caption=text(detail,12,false);caption.setTextColor(MUTED);
+        caption.setPadding(0,0,0,0);tile.addView(caption);
+        tile.setMinimumHeight(dp(104));tile.setFocusable(true);
+        name.setMaxLines(3);caption.setMaxLines(3);
+        tile.setContentDescription(title+", "+detail);
+        boolean stacked=FieldLayoutPolicy.stackSurveyTiles(
+            getResources().getConfiguration().screenWidthDp,
+            getResources().getConfiguration().fontScale);
+        LinearLayout.LayoutParams lp=stacked?
+            new LinearLayout.LayoutParams(-1,-2):
+            new LinearLayout.LayoutParams(0,-2,1f);
+        if(stacked)lp.bottomMargin=dp(8);
+        else lp.rightMargin=dp(7);
+        parent.addView(tile,lp);
+        tile.setOnClickListener(v->tap.run());
     }
     private void home(){
         homeVisible=true;currentScreen="home";main.removeAllViews();
-                LinearLayout banner=vertical();banner.setPadding(dp(16),dp(15),dp(16),dp(15));
-        android.graphics.drawable.GradientDrawable hero=new android.graphics.drawable.GradientDrawable();
-        hero.setColor(UiKit.INK);hero.setCornerRadius(dp(17));banner.setBackground(hero);
-        TextView tag=text("LIKAS",32,true);tag.setTextColor(Color.rgb(255,240,193));
-        TextView welcome=text("WILDLIFE SURVEY",14,true);welcome.setTextColor(Color.rgb(194,225,183));
-        TextView desc=text("Philippine biodiversity field records",13,false);desc.setTextColor(Color.rgb(217,234,222));
-        banner.addView(tag);banner.addView(welcome);banner.addView(desc);
-        LinearLayout.LayoutParams heroLp=new LinearLayout.LayoutParams(-1,-2);heroLp.bottomMargin=dp(15);main.addView(banner,heroLp);
-        if(activeSurvey()!=null){
-            main.addView(text("An unfinished survey is available. Resume it to continue recording.",14,true));
-            Button resume=UiKit.button(this,"Resume active survey","primary");
-            resume.setOnClickListener(v->startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
-            main.addView(resume);
-            main.addView(text("Finish the active survey to start a different survey.",12,false));
-        } else {
-            main.addView(text("New survey",18,true));
-            card("Bird survey","Point counts, line transects and observations.",()->setup("Birds",false));
-            card("Herpetofauna survey","Reptiles and amphibians under a suitable shared method.",()->setup("Herpetofauna",false));
-            card("Mammal survey","Direct observations, tracks and signs, specialist logs.",()->setup("Mammals",false));
-            card("Custom survey","Choose category, method and duration.",()->customPicker());
-        }
-        main.addView(text("Field data & management",18,true));
-        card("Fieldwork dashboard","Survey counts, monitoring activity and detected-taxa summaries.",
-            ()->startActivity(new Intent(this,DashboardActivity.class)));
-        card("Scientific data review","Check route links, station GPS, sampling effort, observation data and photo archive.",
-            ()->startActivity(new Intent(this,AuditActivity.class)));
-        card("Survey history","Review visits, edit records and inspect correction history.",
-            ()->startActivity(new Intent(this,HistoryActivity.class)));
-        card("Projects","Create projects and review survey-generated stations.",
-            ()->startActivity(new Intent(this,SitesActivity.class)));
-        card("Offline species checklist","Review installed taxa and import an attributed, versioned taxonomic CSV.",
-            ()->startActivity(new Intent(this,CatalogActivity.class)));
-        card("Legacy backup importer","Import an older ZIP only when migrating legacy records.",
-            ()->startActivity(new Intent(this,ImportActivity.class)));
-        main.addView(text("Recent surveys",18,true));
-        recentSurveys();
-        TextView note=text("The camera stays off until you open it during a survey.",12,false);
-        note.setTextColor(MUTED);main.addView(note);
-    }
-    private void recentSurveys(){
-        try{
-            String path=getDatabasePath(FieldDb.NAME).getAbsolutePath();
-            if(!new java.io.File(path).exists()){main.addView(text("No surveys yet.",13,false));return;}
-            try(SQLiteDatabase d=SQLiteDatabase.openDatabase(path,null,SQLiteDatabase.OPEN_READONLY);
-                Cursor c=d.rawQuery(
-                    "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),"+
-                    "COALESCE(p.name,s.project_id,'General field project'),s.started,s.ended,"+
-                    "COALESCE(s.outcome,'active'),COALESCE(s.planned_station_count,0),"+
-                    "COALESCE(s.planned_route_m,0) FROM surveys s "+
-                    "LEFT JOIN projects p ON p.id=s.project_id ORDER BY s.started DESC LIMIT 5",null)){
-                if(c.getCount()==0)main.addView(text("No surveys yet.",13,false));
-                while(c.moveToNext()){
-                    String id=c.getString(0),taxon=c.getString(1),project=c.getString(2);
-                    String date=c.getString(3)==null?"":c.getString(3);
-                    String outcome=c.getString(5).replace('_',' ');
-                    String design=c.getInt(6)>0?c.getInt(6)+" planned stations":
-                        c.getDouble(7)>0?String.format(Locale.US,"%.2f km route",c.getDouble(7)/1000.0):
-                        "survey";
-                    card(taxon+" · "+project,
-                        date.substring(0,Math.min(10,date.length()))+" · "+design+" · "+outcome,
-                        ()->startActivity(new Intent(this,HistoryActivity.class).putExtra("event_id",id)));
+        LinearLayout header=new LinearLayout(this);
+        header.setGravity(Gravity.CENTER_VERTICAL);
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        ImageView logo=new ImageView(this);logo.setImageResource(R.drawable.likas_frog_icon);
+        logo.setContentDescription("LIKAS frog pond logo");
+        header.addView(logo,new LinearLayout.LayoutParams(dp(52),dp(52)));
+        LinearLayout brand=vertical();brand.setPadding(dp(12),0,0,0);
+        TextView wordmark=text("LIKAS",25,true);
+        wordmark.setPadding(0,0,0,0);brand.addView(wordmark);
+        TextView sub=text("Philippine Wildlife Survey",12,false);
+        sub.setPadding(0,dp(2),0,0);
+        sub.setTextColor(MUTED);brand.addView(sub);
+        header.addView(brand,new LinearLayout.LayoutParams(0,dp(56),1));
+        LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
+        headerLp.bottomMargin=dp(18);main.addView(header,headerLp);
+        String unfinished=activeSurvey();
+        lastHomeActiveSurvey=unfinished;
+        if(unfinished!=null){
+            LinearLayout activeCard=vertical();
+            activeCard.setPadding(dp(14),dp(10),dp(14),dp(12));
+            activeCard.setBackground(UiKit.surface(this));
+            TextView banner=text("Survey in progress",17,true);
+            banner.setTextColor(GREEN);activeCard.addView(banner);
+            try(FieldDb d=new FieldDb(this);Cursor c=d.getReadableDatabase().rawQuery(
+                "SELECT COALESCE(survey_profile,taxon_group,'Birds'),method,COALESCE(project_id,'default') "+
+                "FROM surveys WHERE id=?",new String[]{unfinished})){
+                if(c.moveToFirst()){
+                    String methodName=SurveyMethods.lookup(c.getString(0),c.getString(1)).label;
+                    TextView detail=text(c.getString(0)+" · "+methodName+"\nProject: "+c.getString(2),13,false);
+                    detail.setTextColor(MUTED);activeCard.addView(detail);
                 }
-            }
-        }catch(Exception e){main.addView(text("History is accessible from the management screen.",12,false));}
+            }catch(Exception ignored){}
+            Button resume=UiKit.button(this,"Resume Survey","primary");
+            resume.setOnClickListener(v->startActivity(
+                new Intent(this,MainActivity.class).putExtra("resume",true)));
+            activeCard.addView(resume,new LinearLayout.LayoutParams(-1,dp(56)));
+            main.addView(activeCard);
+        }else{
+            main.addView(step("NEW","Choose wildlife group"));
+            LinearLayout first=new LinearLayout(this);
+            first.setOrientation(FieldLayoutPolicy.stackSurveyTiles(
+                getResources().getConfiguration().screenWidthDp,
+                getResources().getConfiguration().fontScale)?
+                LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+            surveyTile(first,"Birds","Counts and transects",()->setup("Birds",false));
+            surveyTile(first,"Herpetofauna","Calls and encounters",()->setup("Herpetofauna",false));
+            main.addView(first);
+            LinearLayout second=new LinearLayout(this);
+            second.setOrientation(first.getOrientation());
+            surveyTile(second,"Mammals","Signs and stations",()->setup("Mammals",false));
+            surveyTile(second,"Custom","Other field methods",()->customPicker());
+            LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(-1,-2);
+            secondLp.topMargin=dp(9);main.addView(second,secondLp);
+        }
+        LinearLayout shortcutRow=new LinearLayout(this);
+        shortcutRow.setOrientation(LinearLayout.HORIZONTAL);
+        Button history=UiKit.button(this,"Survey history","secondary");
+        shortcutRow.addView(history,new LinearLayout.LayoutParams(0,dp(52),1));
+        history.setOnClickListener(v->startActivity(new Intent(this,HistoryActivity.class)));
+        Button catalog=UiKit.button(this,"Species checklist","secondary");
+        LinearLayout.LayoutParams catalogLp=new LinearLayout.LayoutParams(0,dp(52),1);
+        catalogLp.leftMargin=dp(8);shortcutRow.addView(catalog,catalogLp);
+        catalog.setOnClickListener(v->startActivity(new Intent(this,CatalogActivity.class)));
+        LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
+        shortcutsLp.topMargin=dp(14);main.addView(shortcutRow,shortcutsLp);
+        Button toolsToggle=UiKit.button(this,"More tools  ▾","quiet");
+        LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(54));
+        toolMargin.topMargin=dp(10);main.addView(toolsToggle,toolMargin);
+        LinearLayout tools=vertical();
+        tools.setVisibility(View.GONE);
+        toolsToggle.setOnClickListener(v->{
+            boolean expanded=tools.getVisibility()!=View.VISIBLE;
+            tools.setVisibility(expanded?View.VISIBLE:View.GONE);
+            toolsToggle.setText(expanded?"Less tools  ▴":"More tools  ▾");
+        });
+        tools.addView(text("Field evidence",13,true));
+        toolRow(tools,"Sound recordings",()->
+            startActivity(new Intent(this,CallLibraryActivity.class)));
+        toolRow(tools,"Camera and trap records",()->
+            startActivity(new Intent(this,TrapProtocolActivity.class)));
+        toolRow(tools,"Other method evidence",()->
+            startActivity(new Intent(this,FieldProtocolsActivity.class)));
+        tools.addView(text("Projects and reporting",13,true));
+        toolRow(tools,"Projects & stations",()->startActivity(new Intent(this,SitesActivity.class)));
+        toolRow(tools,"Study protocols",()->
+            startActivity(new Intent(this,StudyProtocolsActivity.class)));
+        toolRow(tools,"Fieldwork dashboard",()->startActivity(new Intent(this,DashboardActivity.class)));
+        toolRow(tools,"Scientific data review",()->startActivity(new Intent(this,AuditActivity.class)));
+        toolRow(tools,"Import previous backup",()->startActivity(new Intent(this,ImportActivity.class)));
+        main.addView(tools);
+    }
+    private void toolRow(LinearLayout parent,String name,Runnable action){
+        TextView item=text(name+"   ›",16,true);
+        item.setPadding(dp(16),dp(14),dp(12),dp(14));
+        item.setBackground(UiKit.surface(this));
+        item.setFocusable(true);
+        item.setMinHeight(dp(48));
+        item.setGravity(Gravity.CENTER_VERTICAL);
+        item.setContentDescription("Open "+name);
+        LinearLayout.LayoutParams margins=new LinearLayout.LayoutParams(-1,-2);
+        margins.bottomMargin=dp(8);parent.addView(item,margins);
+        item.setOnClickListener(v->action.run());
     }
     private void card(String name,String desc,Runnable action){
         LinearLayout wrapper=vertical();
-        wrapper.setPadding(dp(12),dp(11),dp(12),dp(13));
-        android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
-        bg.setColor(Color.WHITE);bg.setCornerRadius(dp(14));bg.setStroke(dp(1),Color.rgb(218,232,219));
+        wrapper.setPadding(dp(14),dp(7),dp(12),dp(7));
         wrapper.setBackground(UiKit.surface(this));
-        TextView h=text(name+"  ›",19,true);wrapper.addView(h);
-        TextView sub=text(desc,13,false);sub.setTextColor(MUTED);wrapper.addView(sub);
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(11);
+        TextView h=text(name+"   ›",17,true);
+        h.setPadding(dp(2),dp(9),dp(2),dp(9));wrapper.addView(h);
+        if(desc!=null&&!desc.isEmpty()){
+            TextView sub=text(desc,13,false);sub.setTextColor(MUTED);wrapper.addView(sub);
+        }
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(9);
         main.addView(wrapper,lp);wrapper.setOnClickListener(v->action.run());
     }
     private void customPicker(){
         homeVisible=false;currentScreen="custom";main.removeAllViews();
         Button back=UiKit.button(this,"← Back","secondary");main.addView(back);back.setOnClickListener(v->home());
-        heading("Custom survey","Choose one category. The survey will use only methods suited to that category.");
+        heading("Custom survey","Select a wildlife group.");
         card("Birds","Custom bird survey",()->setup("Birds",true));
         card("Herpetofauna","Custom reptile and amphibian survey",()->setup("Herpetofauna",true));
         card("Mammals","Custom mammal survey",()->setup("Mammals",true));
@@ -179,26 +265,34 @@ public class WelcomeActivity extends Activity {
     private void setup(String selected,boolean isCustom){
         homeVisible=false;currentScreen="setup";profile=selected;custom=isCustom;
         main.removeAllViews();
-        Button back=button("← Back");main.addView(back);
+        Button back=button("‹ Back");
+        LinearLayout.LayoutParams backLp=new LinearLayout.LayoutParams(dp(112),dp(48));
+        main.addView(back,backLp);
         back.setOnClickListener(v->{if(custom)customPicker();else home();});
         heading((custom?"Custom · ":"")+profile+" survey",
-            "Choose a project and survey design. Stations are created during the survey.");
+            "Set method, location, and effort before starting.");
         choices=SurveyMethods.forProfile(profile);
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){
             SurveyMethods.Method m=choices[i];
             String label=m.label+(m.basicLog?" · basic log":"");
             RadioButton rb=new RadioButton(this);
-            rb.setId(1000+i);rb.setText(label);rb.setTextSize(16);rb.setTextColor(INK);
+            rb.setId(1000+i);rb.setText(label);rb.setTextSize(15);rb.setTextColor(INK);
+            rb.setButtonTintList(ColorStateList.valueOf(UiKit.POND));
+            rb.setMinHeight(dp(48));
             rb.setPadding(dp(4),dp(10),dp(4),dp(10));
             methodChoices.addView(rb);
-            TextView desc=text(m.description,12,false);
-            desc.setTextColor(MUTED);desc.setPadding(dp(36),0,dp(4),dp(7));
-            methodChoices.addView(desc);
+
         }
         methodChoices.check(1000);
-        main.addView(text("Survey method",18,true));main.addView(methodChoices);
-        main.addView(text("Survey details",18,true));
+        methodChoices.setOnCheckedChangeListener((group,checked)->refreshStudyChoices());
+        main.addView(step("01","Survey method"));
+        LinearLayout methodsCard=vertical();
+        methodsCard.setPadding(dp(12),dp(6),dp(10),dp(6));
+        methodsCard.setBackground(UiKit.surface(this));
+        methodsCard.addView(methodChoices);
+        main.addView(methodsCard);
+        main.addView(step("02","Project and location"));
         projectChoice=new Spinner(this);
         projectKeys.clear();
         ArrayList<String> names=new ArrayList<>();
@@ -208,17 +302,26 @@ public class WelcomeActivity extends Activity {
         }
         if(names.isEmpty()){projectKeys.add("default");names.add("General field project");}
         projectChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));
-        main.addView(text("Project",13,false));main.addView(projectChoice);
+        main.addView(text("Project",13,false));
         projectChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
             public void onNothingSelected(android.widget.AdapterView<?> parent){}
             public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
                 refreshRouteTemplates();
+                refreshStudyChoices();
             }
         });
-        Button projectManage=UiKit.button(this,"Create or manage projects","secondary");
+        LinearLayout projectRow=new LinearLayout(this);
+        projectRow.setOrientation(LinearLayout.HORIZONTAL);
+        projectRow.setGravity(Gravity.CENTER_VERTICAL);
+        projectRow.addView(projectChoice,new LinearLayout.LayoutParams(0,dp(52),1f));
+        Button projectManage=UiKit.button(this,"Manage","secondary");
+        LinearLayout.LayoutParams manageWidth=new LinearLayout.LayoutParams(dp(110),dp(52));
+        manageWidth.leftMargin=dp(8);
+        projectRow.addView(projectManage,manageWidth);
+        main.addView(projectRow);
+        projectManage.setContentDescription("Manage projects and sampling stations");
         projectManage.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
-        main.addView(projectManage);
-        main.addView(text("Geographic checklist area",16,true));
+        main.addView(text("Checklist region",16,true));
         geographicChoice=new Spinner(this);
         geographicChoice.setAdapter(new ArrayAdapter<String>(
             this,android.R.layout.simple_spinner_dropdown_item,GeoRegions.LABELS));
@@ -227,20 +330,22 @@ public class WelcomeActivity extends Activity {
         geographicChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
             public void onNothingSelected(android.widget.AdapterView<?> parent){}
             public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
+                if(gpsPolygonResolving){
+                    gpsLookupGeneration++;
+                    gpsPolygonResolving=false;
+                }
                 if(suggested!=null&&!GeoRegions.idAt(position).equals(suggested.checklistRegion)){
                     suggested=null;geographicMethod=GeoRegions.BOUNDARY_METHOD;
                 }
             }
         });
-        gpsLookupButton=UiKit.button(this,"Suggest checklist using current GPS","secondary");
+        gpsLookupButton=UiKit.button(this,"Choose checklist area by GPS","secondary");
         main.addView(gpsLookupButton);
-        boundaryMessage=text("Uses a fresh GPS reading from this phone and offline province polygons. No station is needed. GPS suggestions are optional and do not confirm species presence.",12,false);
+        boundaryMessage=text("Select a region or use GPS to suggest one.",12,false);
         boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
         gpsLookupButton.setOnClickListener(v->suggestBoundary());
-        TextView geographyNote=text("Manual island-group selection for offline species suggestions. This is not GPS boundary verification or the study-area stratum. Regional evidence is incomplete, and unexpected species remain recordable.",12,false);
-        geographyNote.setTextColor(MUTED);
-        main.addView(geographyNote);
         // Sampling stations are assigned within field visits, never in survey setup.
+        main.addView(step("03","Observer and effort"));
         observerEntry=new EditText(this);
         observerEntry.setTextSize(16);observerEntry.setSingleLine(true);
         observerEntry.setHint("Observer (optional)");
@@ -260,7 +365,7 @@ public class WelcomeActivity extends Activity {
         radiusEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         radiusEntry.setHint("Fixed point-count radius (m, optional)");
         main.addView(radiusEntry);
-        main.addView(text("Planned survey route",17,true));
+        routeHeader=text("Planned route",17,true);main.addView(routeHeader);
         routeLengthEntry=new EditText(this);
         routeLengthEntry.setSingleLine(true);routeLengthEntry.setTextSize(17);
         routeLengthEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -269,7 +374,7 @@ public class WelcomeActivity extends Activity {
         spacingChoice=new Spinner(this);
         spacingChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"100 m","250 m","500 m","Custom spacing"}));
-        main.addView(text("Distance between point-count stations",13,false));
+        spacingHeader=text("Distance between stations",13,false);main.addView(spacingHeader);
         main.addView(spacingChoice);
         spacingChoice.setSelection(1);
         customSpacingEntry=new EditText(this);
@@ -278,10 +383,10 @@ public class WelcomeActivity extends Activity {
         customSpacingEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         customSpacingEntry.setVisibility(View.GONE);main.addView(customSpacingEntry);
         stationCountPreview=text("",13,true);stationCountPreview.setTextColor(GREEN);main.addView(stationCountPreview);
-        main.addView(text("Repeat monitoring route (bird point count)",14,true));
+        repeatHeader=text("Repeat monitoring route",14,true);main.addView(repeatHeader);
         templateChoice=new Spinner(this);
         main.addView(templateChoice);
-        templateHint=text("Use a saved route to revisit the same permanent station IDs, or create a new route.",12,false);
+        templateHint=text("Saved routes reuse permanent stations.",12,false);
         templateHint.setTextColor(MUTED);main.addView(templateHint);
         saveTemplateChoice=new CheckBox(this);
         saveTemplateChoice.setText("Save this route for future monitoring");
@@ -346,17 +451,101 @@ public class WelcomeActivity extends Activity {
         updateRoutePreview();
         regionEntry=new EditText(this);regionEntry.setSingleLine(true);
         regionEntry.setHint("Stratum / region label (optional)");
-        main.addView(regionEntry);
+        LinearLayout extraDetails=vertical();
+        extraDetails.addView(regionEntry);
         areaEntry=new EditText(this);areaEntry.setSingleLine(true);
         areaEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         areaEntry.setHint("Stratum area (km², optional)");
-        main.addView(areaEntry);
-        TextView help=text("The whole-survey clock always runs. Timed methods get a separate station/interval clock; it continues into overtime after its target. Specialist equipment checks use elapsed time and device-effort logs.",12,false);
-        help.setTextColor(MUTED);main.addView(help);
-        Button start=UiKit.button(this,"Start "+profile+" survey","primary");
+        extraDetails.addView(areaEntry);
+        extraDetails.setVisibility(View.GONE);
+        TextView advancedToggle=text("＋ Additional survey details",14,true);
+        advancedToggle.setTextColor(GREEN);
+        advancedToggle.setMinHeight(dp(48));
+        advancedToggle.setGravity(Gravity.CENTER_VERTICAL);
+        advancedToggle.setFocusable(true);
+        main.addView(advancedToggle);
+        main.addView(extraDetails);
+        advancedToggle.setOnClickListener(v->{
+            boolean open=extraDetails.getVisibility()!=View.VISIBLE;
+            extraDetails.setVisibility(open?View.VISIBLE:View.GONE);
+            advancedToggle.setText(open?"− Hide additional details":"＋ Additional survey details");
+        });
+
+        main.addView(step("04","Begin survey"));
+        studyOptions=vertical();
+        studyOptions.setVisibility(View.GONE);
+        studyChoice=new Spinner(this);
+        studyOptions.addView(studyChoice,new LinearLayout.LayoutParams(-1,dp(52)));
+        Button manageStudies=UiKit.button(this,"Manage study templates","quiet");
+        studyOptions.addView(manageStudies,new LinearLayout.LayoutParams(-1,dp(46)));
+        manageStudies.setOnClickListener(v->
+            startActivity(new Intent(this,StudyProtocolsActivity.class)));
+        studyToggle=text("＋ Study rules (optional)",14,true);
+        studyToggle.setTextColor(GREEN);studyToggle.setMinHeight(dp(48));
+        studyToggle.setGravity(Gravity.CENTER_VERTICAL);studyToggle.setFocusable(true);
+        studyToggle.setOnClickListener(v->{
+            boolean open=studyOptions.getVisibility()!=View.VISIBLE;
+            studyOptions.setVisibility(open?View.VISIBLE:View.GONE);
+            refreshStudyTitle();
+        });
+        main.addView(studyToggle);main.addView(studyOptions);
+        studyChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+            public void onNothingSelected(android.widget.AdapterView<?> parent){}
+            public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
+                refreshStudyTitle();
+            }
+        });
+        refreshStudyChoices();
+        Button start=UiKit.button(this,"Continue to GPS · "+profile,"primary");
         LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(58));
         startLp.topMargin=dp(16);main.addView(start,startLp);
         start.setOnClickListener(v->startSelected());
+    }
+    private void refreshStudyTitle(){
+        if(studyToggle==null||studyChoice==null||studyOptions==null)return;
+        if(studyOptions.getVisibility()==View.VISIBLE){
+            studyToggle.setText("− Hide study rules");return;
+        }
+        String id=selectedStudyId();
+        if(id.isEmpty())studyToggle.setText("＋ Study rules (optional)");
+        else{
+            String title=studyChoice.getSelectedItem()==null?"Custom":
+                studyChoice.getSelectedItem().toString();
+            int cutoff=title.indexOf(" · ");
+            studyToggle.setText("＋ Study: "+(cutoff>0?title.substring(0,cutoff):title));
+        }
+    }
+    private String selectedStudyId(){
+        int index=studyChoice==null?-1:studyChoice.getSelectedItemPosition();
+        return index>=0&&index<studyTemplateIds.size()?studyTemplateIds.get(index):"";
+    }
+    private void refreshStudyChoices(){
+        if(studyChoice==null||projectChoice==null||methodChoices==null||
+            methodChoices.getCheckedRadioButtonId()<1000||projectKeys.isEmpty())return;
+        String earlier=selectedStudyId();
+        ArrayList<String> labels=new ArrayList<>();labels.add("Standard LIKAS requirements");
+        studyTemplateIds.clear();studyTemplateIds.add("");
+        int methodIndex=methodChoices.getCheckedRadioButtonId()-1000;
+        if(methodIndex<0||choices==null||methodIndex>=choices.length)return;
+        try(FieldDb store=new FieldDb(this);
+            Cursor c=store.getReadableDatabase().rawQuery(
+                "SELECT id,name,min_visits,min_minutes,min_units,survey_profile "+
+                "FROM study_protocol_templates WHERE project_id=? AND method=? "+
+                "AND (survey_profile=? OR survey_profile IS NULL) "+
+                "ORDER BY CASE WHEN survey_profile IS NULL THEN 1 ELSE 0 END,name",
+                new String[]{projectId(),choices[methodIndex].code,profile})){
+            while(c.moveToNext()){
+                studyTemplateIds.add(c.getString(0));
+                String scope=c.isNull(5)?" · shared legacy":"";
+                labels.add(c.getString(1)+scope+" · "+c.getInt(2)+" visits, "+
+                    c.getInt(3)+" min, "+c.getInt(4)+" units");
+            }
+        }
+        studyChoice.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,labels));
+        int selected=studyTemplateIds.indexOf(earlier);
+        studyChoice.setSelection(Math.max(0,selected));
+        refreshStudyTitle();
     }
     /** Project edits refresh without clearing method, route length or checklist controls. */
     private void refreshProjectOptions(){
@@ -378,72 +567,84 @@ public class WelcomeActivity extends Activity {
         int index=projectChoice==null?-1:projectChoice.getSelectedItemPosition();
         return index<0||index>=projectKeys.size()?"default":projectKeys.get(index);
     }
-    /** Live GPS fix, not a cached site coordinate or getLastKnownLocation. */
+    /** The GPS selector uses the containing official polygon, never a nearest guess. */
+    private boolean usableChecklistGps(Location gps){
+        if(gps==null||!LocationManager.GPS_PROVIDER.equals(gps.getProvider())||
+            !gps.hasAccuracy())return false;
+        long age=(android.os.SystemClock.elapsedRealtimeNanos()-
+            gps.getElapsedRealtimeNanos())/1000000L;
+        return GeoChecklistPolicy.acceptableLocation(gps.getLatitude(),gps.getLongitude(),
+            gps.getAccuracy(),age,gps.isFromMockProvider());
+    }
+    private void applyGpsChecklistScope(Location gps){
+        if(gpsPolygonResolving)return;
+        cancelGpsLookup();
+        final int token=gpsLookupGeneration;
+        gpsPolygonResolving=true;
+        if(boundaryMessage!=null)boundaryMessage.setText("Matching GPS to checklist area…");
+        final Location accepted=new Location(gps);
+        new Thread(()->{
+            final BoundaryLookup.Match match=BoundaryLookup.find(
+                getApplicationContext(),accepted.getLatitude(),accepted.getLongitude(),
+                accepted.getAccuracy());
+            runOnUiThread(()->{
+                if(gpsLookupGeneration!=token||isFinishing()||
+                    !"setup".equals(currentScreen)||geographicChoice==null)return;
+                gpsPolygonResolving=false;
+                if(!GeoChecklistPolicy.canAutoSelect(match.status,match.checklistRegion)){
+                    suggested=null;
+                    geographicMethod=GeoRegions.BOUNDARY_METHOD;
+                    boundaryMessage.setText("Area uncertain ("+match.status+"). "+
+                        "Select the checklist area manually.");
+                    return;
+                }
+                // The observer has already requested GPS area selection. No extra dialog.
+                geographicChoice.setSelection(GeoRegions.index(match.checklistRegion));
+                suggested=match;
+                geographicMethod="fresh_phone_gps_polygon_auto";
+                boundaryMessage.setText("Selected "+GeoRegions.label(match.checklistRegion)+
+                    " · "+match.province+" · GPS ±"+
+                    Math.round(accepted.getAccuracy())+" m"+
+                    "\nArea selection does not confirm species presence.");
+                persistSetup();
+            });
+        },"LIKAS-Checklist-GPS-Area").start();
+    }
     private void suggestBoundary(){
-        if(boundaryMessage==null)return;
-        // A new lookup must never reuse a previously confirmed administrative label.
+        if(boundaryMessage==null||!"setup".equals(currentScreen))return;
+        cancelGpsLookup();
         suggested=null;geographicMethod=GeoRegions.BOUNDARY_METHOD;
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
-            boundaryMessage.setText("Precise location permission is needed for a GPS-based checklist suggestion. You can still choose a region manually.");
+            boundaryMessage.setText("Precise location required. You can select an area manually.");
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION},GPS_PERMISSION_REQUEST);
             return;
         }
         LocationManager manager=(LocationManager)getSystemService(LOCATION_SERVICE);
         if(manager==null||!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            boundaryMessage.setText("Phone GPS is off. Turn on location services or select the checklist region manually.");
+            boundaryMessage.setText("Turn on phone GPS or choose an area manually.");
             return;
         }
-        cancelGpsLookup();
-        if(gpsLookupButton!=null){gpsLookupButton.setEnabled(false);gpsLookupButton.setText("Locating…");}
-        boundaryMessage.setText("Acquiring a new GPS position from this phone. No saved sampling station is used.");
+        if(gpsLookupButton!=null){
+            gpsLookupButton.setEnabled(false);gpsLookupButton.setText("Locating…");
+        }
+        boundaryMessage.setText("Waiting for a fresh GPS fix below 10 m…");
+        Location live=TrackService.currentFix();
+        if(usableChecklistGps(live)){applyGpsChecklistScope(live);return;}
         pendingGpsListener=new LocationListener(){
             @Override public void onLocationChanged(Location gps){
-                cancelGpsLookup();
-                if(boundaryMessage==null||!currentScreen.equals("setup"))return;
-                if(!gps.hasAccuracy()||gps.getAccuracy()>150f||
-                    Math.abs(System.currentTimeMillis()-gps.getTime())>30000||
-                    gps.isFromMockProvider()){
-                    boundaryMessage.setText("Fresh GPS precision is insufficient for province assignment ("+
-                        (gps.hasAccuracy()?"±"+Math.round(gps.getAccuracy())+" m":"unknown accuracy")+
-                        "). Retry in open sky or choose an area manually.");
+                if(pendingGpsListener!=this||!"setup".equals(currentScreen))return;
+                if(!usableChecklistGps(gps)){
+                    boundaryMessage.setText("Waiting for GPS below 10 m"+
+                        (gps.hasAccuracy()?" · currently ±"+Math.round(gps.getAccuracy())+" m":"")+"…");
                     return;
                 }
-                BoundaryLookup.Match match=BoundaryLookup.find(WelcomeActivity.this,
-                    gps.getLatitude(),gps.getLongitude(),gps.getAccuracy());
-                boundaryMessage.setText(String.format(Locale.US,
-                    "Phone GPS %.5f, %.5f · ±%.0f m\nProvince: %s · %s\n%s",
-                    gps.getLatitude(),gps.getLongitude(),gps.getAccuracy(),
-                    match.province,match.psgc,match.status));
-                if(!match.status.equals("suggestion_only")){
-                    new android.app.AlertDialog.Builder(WelcomeActivity.this)
-                        .setTitle("Geographic uncertainty")
-                        .setMessage("The GPS-based administrative match is "+match.status+
-                            ". No checklist area was changed. Use a new GPS fix or select manually.")
-                        .setPositiveButton("Close",null).show();
-                    return;
-                }
-                new android.app.AlertDialog.Builder(WelcomeActivity.this)
-                    .setTitle("Use GPS-based checklist suggestion?")
-                    .setMessage("Current phone position: "+
-                        String.format(Locale.US,"%.5f, %.5f · ±%.0f m",gps.getLatitude(),
-                            gps.getLongitude(),gps.getAccuracy())+
-                        "\nProvince: "+match.province+
-                        "\nSuggested island-group list: "+GeoRegions.label(match.checklistRegion)+
-                        "\nThis is an administrative boundary suggestion, not species-range evidence.")
-                    .setNegativeButton("Keep manual selection",null)
-                    .setPositiveButton("Apply suggestion",(dialog,which)->{
-                        geographicChoice.setSelection(GeoRegions.index(match.checklistRegion));
-                        suggested=match;
-                        geographicMethod="fresh_phone_gps_polygon_confirmed";
-                        boundaryMessage.setText("Current GPS confirmed · "+match.province+
-                            " · "+GeoRegions.label(match.checklistRegion)+
-                            " · "+BoundaryLookup.VERSION);
-                    }).show();
+                applyGpsChecklistScope(gps);
             }
             @Override public void onProviderDisabled(String provider){
                 cancelGpsLookup();
-                if(boundaryMessage!=null)boundaryMessage.setText("GPS was disabled. Select a region manually.");
+                if(boundaryMessage!=null)
+                    boundaryMessage.setText("GPS disabled. Select the checklist area manually.");
             }
         };
         final LocationListener listener=pendingGpsListener;
@@ -451,18 +652,20 @@ public class WelcomeActivity extends Activity {
             if(pendingGpsListener!=listener)return;
             cancelGpsLookup();
             if(boundaryMessage!=null)boundaryMessage.setText(
-                "No new GPS fix within 25 seconds. Move to open sky and retry, or select manually.");
+                "GPS unavailable after 30 seconds. Select an area manually or retry.");
         };
         try{
-            manager.requestSingleUpdate(LocationManager.GPS_PROVIDER,listener,Looper.getMainLooper());
-            gpsHandler.postDelayed(gpsTimeout,25000);
-        }catch(Exception ex){
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000L,0f,
+                listener,Looper.getMainLooper());
+            gpsHandler.postDelayed(gpsTimeout,30000L);
+        }catch(Exception e){
             cancelGpsLookup();
-            boundaryMessage.setText("Could not obtain GPS: "+ex.getClass().getSimpleName()+
-                ". You can select the area manually.");
+            boundaryMessage.setText("GPS unavailable. Select the checklist area manually.");
         }
     }
     private void cancelGpsLookup(){
+        gpsLookupGeneration++;
+        gpsPolygonResolving=false;
         if(gpsTimeout!=null){gpsHandler.removeCallbacks(gpsTimeout);gpsTimeout=null;}
         if(pendingGpsListener!=null){
             try{
@@ -471,8 +674,10 @@ public class WelcomeActivity extends Activity {
             }catch(Exception ignored){}
             pendingGpsListener=null;
         }
-        if(gpsLookupButton!=null){gpsLookupButton.setEnabled(true);
-            gpsLookupButton.setText("Suggest checklist using current GPS");}
+        if(gpsLookupButton!=null){
+            gpsLookupButton.setEnabled(true);
+            gpsLookupButton.setText("Choose checklist area by GPS");
+        }
     }
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){
         super.onRequestPermissionsResult(request,permissions,results);
@@ -482,9 +687,7 @@ public class WelcomeActivity extends Activity {
         else if(boundaryMessage!=null)
             boundaryMessage.setText("Precise GPS access was not granted. Use the manual geographic checklist choice.");
     }
-    private boolean supportsRoute(String code){
-        return code.equals("point_count")||code.equals("line_transect")||code.equals("ves_transect");
-    }
+    private boolean supportsRoute(String code){return FieldUiPolicy.routeSetup(code);}
     private double spacingMeters(){
         int pos=spacingChoice==null?1:spacingChoice.getSelectedItemPosition();
         if(pos==0)return 100;
@@ -499,6 +702,10 @@ public class WelcomeActivity extends Activity {
         if(choice<0||choice>=choices.length)return;
         String method=choices[choice].code;
         boolean route=supportsRoute(method);
+        routeHeader.setVisibility(route?View.VISIBLE:View.GONE);
+        boolean points=FieldUiPolicy.pointStationSetup(method);
+        repeatHeader.setVisibility(points?View.VISIBLE:View.GONE);
+        spacingHeader.setVisibility(points?View.VISIBLE:View.GONE);
         routeLengthEntry.setVisibility(route?View.VISIBLE:View.GONE);
         if(spacingChoice!=null)spacingChoice.setVisibility(method.equals("point_count")?View.VISIBLE:View.GONE);
         if(customSpacingEntry!=null)customSpacingEntry.setVisibility(
@@ -513,11 +720,10 @@ public class WelcomeActivity extends Activity {
             if(spacing<=0){stationCountPreview.setText("Select a positive station spacing.");return;}
             int stations=SurveyMath.stations(length,spacing);
             double last=(stations-1)*spacing;
-            stationCountPreview.setText(stations+" planned points at 0, "+(int)spacing+
-                " ... "+(int)last+" m. Remaining route beyond final point: "+
-                Math.max(0,(int)Math.round(length-last))+" m.");
+            stationCountPreview.setText(stations+" points · "+(int)spacing+
+                " m spacing · last station at "+(int)last+" m");
         }else stationCountPreview.setText(String.format(Locale.US,
-            "Continuous %.2f km transect. No point-count stations will be generated.",length/1000.0));
+            "Planned transect · %.2f km",length/1000.0));
     }
     private String selectedTemplateId(){
         if(templateChoice==null)return "";
@@ -568,13 +774,13 @@ public class WelcomeActivity extends Activity {
                         Math.abs(spacing-500)<0.001?2:3;
                     spacingChoice.setSelection(idx);
                     if(idx==3)customSpacingEntry.setText(String.format(Locale.US,"%.1f",spacing));
-                    templateHint.setText("Using saved route: "+c.getString(3)+
-                        ". Reuses station IDs and existing baseline positions. Each new visit saves fresh GPS.");
+                    templateHint.setText("Saved route: "+c.getString(3)+
+                        " · same stations, fresh GPS at each visit");
                 }else{
                     templateHint.setText("Saved route is unavailable. Select New route.");
                 }
             }catch(Exception e){templateHint.setText("Route could not be read. Select New route.");}
-        }else templateHint.setText("New route creates station IDs once; save the route to revisit them on later survey dates.");
+        }else templateHint.setText("New route · permanent station IDs assigned at start");
         routeLengthEntry.setEnabled(!saved);
         spacingChoice.setEnabled(!saved);
         customSpacingEntry.setEnabled(!saved);
@@ -661,7 +867,7 @@ public class WelcomeActivity extends Activity {
                 }
             }
         }
-        Intent i=new Intent(this,MainActivity.class);
+        Intent i=new Intent(this,SurveyGpsActivity.class);
         i.putExtra("transect_bearing",lineBearingEntry.getText().toString().trim());
         i.putExtra("create_new",true);
         i.putExtra("survey_profile",profile);
@@ -689,8 +895,14 @@ public class WelcomeActivity extends Activity {
         i.putExtra("route_template_name",routeName);
         i.putExtra("custom_survey",custom);
         i.putExtra("basic_log_only",m.basicLog);
-        currentScreen="home";homeVisible=true;
-        getPreferences(MODE_PRIVATE).edit().putString("screen","home").commit();
+        if(studyChoice!=null&&!studyTemplateIds.isEmpty()){
+            int index=studyChoice.getSelectedItemPosition();
+            i.putExtra("study_protocol_id",studyTemplateIds.get(
+                Math.max(0,Math.min(index,studyTemplateIds.size()-1))));
+        }
+        // Preserve the setup selections until the survey has actually started.
+        // Canceling GPS acquisition must return to this same configured screen.
+        persistSetup();
         startActivity(i);
     }
     private void persistSetup(){
@@ -710,7 +922,8 @@ public class WelcomeActivity extends Activity {
              .putInt("methodChoice",methodChoices.getCheckedRadioButtonId()-1000)
              .putInt("projectChoice",projectChoice.getSelectedItemPosition())
              .putInt("geographicChoice",geographicChoice.getSelectedItemPosition())
-             .putString("geographicMethod",geographicMethod);
+             .putString("geographicMethod",geographicMethod)
+             .putString("studyTemplateId",selectedStudyId());
         }
         e.commit();
     }
@@ -736,6 +949,10 @@ public class WelcomeActivity extends Activity {
         if(geo>=0&&geo<geographicChoice.getCount())geographicChoice.setSelection(geo);
         // Reconfirm polygon-based suggestions on a new session.
         geographicMethod=GeoRegions.BOUNDARY_METHOD;
+        refreshStudyChoices();
+        String savedStudy=p.getString("studyTemplateId","");
+        int studyIndex=studyTemplateIds.indexOf(savedStudy);
+        if(studyIndex>=0)studyChoice.setSelection(studyIndex);
     }
     private String activeSurvey(){
         try{

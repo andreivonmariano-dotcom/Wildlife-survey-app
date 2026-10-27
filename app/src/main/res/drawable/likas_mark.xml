@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Small, intentional field mark: rainforest leaf and north pointer. -->
+    <path android:fillColor="#163C31"
+        android:pathData="M54,7 A47,47 0,1 1,54 101 A47,47 0,1 1,54 7 Z" />
+    <path android:fillColor="#00000000" android:strokeColor="#88B994"
+        android:strokeWidth="1.8"
+        android:pathData="M54,12 A42,42 0,1 1,54 96 A42,42 0,1 1,54 12 Z" />
+    <path android:fillColor="#D7E8BC"
+        android:pathData="M35,72 L34,59 L38,47 L47,38 L63,32 L75,30 L77,30 L76,43 L71,56 L62,66 L50,73 L40,75 Z"/>
+    <path android:fillColor="#276647"
+        android:pathData="M39,72 L45,62 L54,53 L68,42 L71,43 L61,55 L52,66 L43,75 Z"/>
+    <path android:fillColor="#86B687"
+        android:pathData="M48,57 L42,51 L43,48 L53,54 Z"/>
+    <path android:fillColor="#86B687"
+        android:pathData="M56,51 L61,40 L64,39 L60,53 Z"/>
+    <path android:fillColor="#F2D486"
+        android:pathData="M54,18 L60,31 L54,28 L48,31 Z"/>
+    <path android:fillColor="#D7E8BC"
+        android:pathData="M52,84 L56,84 L54,89 Z"/>
+</vector>

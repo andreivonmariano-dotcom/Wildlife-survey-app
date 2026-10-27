@@ -11,13 +11,15 @@ import android.widget.TextView;
 /** Small shared visual system for the offline survey application. */
 public final class UiKit {
   private UiKit(){}
-  public static final int BG=Color.rgb(246,249,246);
-  public static final int INK=Color.rgb(13,49,39);
-  public static final int FOREST=Color.rgb(28,91,62);
-  public static final int MUTED=Color.rgb(97,116,104);
+  // Field palette pairs with the LIKAS pond frog icon and stays legible in sunlight.
+  public static final int BG=Color.rgb(245,247,240);
+  public static final int INK=Color.rgb(21,54,41);
+  public static final int FOREST=Color.rgb(35,100,71);
+  public static final int POND=Color.rgb(51,126,115);
+  public static final int MUTED=Color.rgb(88,111,101);
   public static final int BLUE=Color.rgb(40,88,137);
-  public static final int AMBER=Color.rgb(153,92,28);
-  public static final int BORDER=Color.rgb(216,230,218);
+  public static final int AMBER=Color.rgb(164,102,44);
+  public static final int BORDER=Color.rgb(215,227,215);
   private static int dp(Activity a,int n){return (int)(a.getResources().getDisplayMetrics().density*n+0.5);}
   public static TextView title(Activity a,String title) {
     TextView t=new TextView(a);t.setText(title);t.setTextSize(23);t.setTypeface(null,Typeface.BOLD);
@@ -31,15 +33,22 @@ public final class UiKit {
       case "warning":fill=AMBER;stroke=AMBER;break;
       case "quiet":fill=BG;stroke=BORDER;foreground=FOREST;break;
       case "danger":fill=Color.rgb(166,53,48);stroke=fill;break;
+      case "outline-danger":fill=Color.WHITE;stroke=Color.rgb(181,77,61);
+          foreground=Color.rgb(154,51,42);break;
+      case "pond":fill=POND;stroke=POND;break;
     }
     Button b=new Button(a);b.setAllCaps(false);b.setText(title);b.setTextSize(15);b.setTypeface(null,Typeface.BOLD);
-    b.setTextColor(foreground);b.setMinHeight(dp(a,50));b.setPadding(dp(a,10),dp(a,5),dp(a,10),dp(a,5));
-    GradientDrawable shape=new GradientDrawable();shape.setColor(fill);shape.setStroke(dp(a,1),stroke);shape.setCornerRadius(dp(a,13));
+    b.setTextColor(foreground);
+    b.setGravity(Gravity.CENTER);b.setMaxLines(3);
+    b.setMinHeight(dp(a,FieldLayoutPolicy.actionHeightDp(
+        a.getResources().getConfiguration().fontScale)));
+    b.setPadding(dp(a,10),dp(a,6),dp(a,10),dp(a,6));
+    GradientDrawable shape=new GradientDrawable();shape.setColor(fill);shape.setStroke(dp(a,1),stroke);shape.setCornerRadius(dp(a,14));
     b.setBackground(shape);b.setBackgroundTintList(null);
     return b;
   }
   public static GradientDrawable surface(Activity a) {
     GradientDrawable d=new GradientDrawable();d.setColor(Color.WHITE);
-    d.setStroke(dp(a,1),BORDER);d.setCornerRadius(dp(a,15));return d;
+    d.setStroke(dp(a,1),BORDER);d.setCornerRadius(dp(a,16));return d;
   }
 }

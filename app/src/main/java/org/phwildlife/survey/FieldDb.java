@@ -3,11 +3,18 @@ package org.phwildlife.survey;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /** Shared offline schema, versioned migrations. Never drop a user observation table. */
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
-    public FieldDb(Context context){super(context,NAME,null,11);}
+    private final Context appContext;
+    public FieldDb(Context context){super(context,NAME,null,27);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -21,6 +28,22 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeNine(d);
         upgradeTen(d);
         upgradeEleven(d);
+        upgradeTwelve(d);
+        upgradeThirteen(d);
+        upgradeFourteen(d);
+        upgradeFifteen(d);
+        upgradeSixteen(d);
+        upgradeSeventeen(d);
+        upgradeEighteen(d);
+        upgradeNineteen(d);
+        upgradeTwenty(d);
+        upgradeTwentyOne(d);
+        upgradeTwentyTwo(d);
+        upgradeTwentyThree(d);
+        upgradeTwentyFour(d);
+        upgradeTwentyFive(d);
+        upgradeTwentySix(d);
+        upgradeTwentySeven(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -46,6 +69,274 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<9)upgradeNine(d);
         if(oldVersion<10)upgradeTen(d);
         if(oldVersion<11)upgradeEleven(d);
+        if(oldVersion<12)upgradeTwelve(d);
+        if(oldVersion<13)upgradeThirteen(d);
+        if(oldVersion<14)upgradeFourteen(d);
+        if(oldVersion<15)upgradeFifteen(d);
+        if(oldVersion<16)upgradeSixteen(d);
+        if(oldVersion<17)upgradeSeventeen(d);
+        if(oldVersion<18)upgradeEighteen(d);
+        if(oldVersion<19)upgradeNineteen(d);
+        if(oldVersion<20)upgradeTwenty(d);
+        if(oldVersion<21)upgradeTwentyOne(d);
+        if(oldVersion<22)upgradeTwentyTwo(d);
+        if(oldVersion<23)upgradeTwentyThree(d);
+        if(oldVersion<24)upgradeTwentyFour(d);
+        if(oldVersion<25)upgradeTwentyFive(d);
+        if(oldVersion<26)upgradeTwentySix(d);
+        if(oldVersion<27)upgradeTwentySeven(d);
+    }
+    /**
+     * Pre-v27 templates had no wildlife profile. Preserve those template IDs and
+     * frozen survey snapshots; NULL means explicitly shared legacy scope.
+     */
+    private void upgradeTwentySeven(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE study_protocol_templates ADD COLUMN survey_profile TEXT");
+        d.execSQL("CREATE INDEX IF NOT EXISTS study_template_taxon_scope "+
+            "ON study_protocol_templates(project_id,method,survey_profile)");
+    }
+    /** Configurable study effort and direct, original-photo survey evidence. */
+    private void upgradeTwentySix(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS spotlight_passes("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,"+
+            "station_id TEXT,route_id TEXT NOT NULL,observer TEXT NOT NULL,"+
+            "started_at_utc TEXT NOT NULL,ended_at_utc TEXT NOT NULL,"+
+            "beam_width_m REAL NOT NULL,visibility_m REAL NOT NULL,"+
+            "distance_m REAL NOT NULL,beam_type TEXT NOT NULL,"+
+            "weather TEXT,repeat_pass INTEGER NOT NULL DEFAULT 0,"+
+            "duplicate_control_notes TEXT NOT NULL,notes TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS spotlight_event ON spotlight_passes(event_id,started_at_utc)");
+        d.execSQL("ALTER TABLE coverboard_checks ADD COLUMN latitude REAL");
+        d.execSQL("ALTER TABLE coverboard_checks ADD COLUMN longitude REAL");
+        d.execSQL("ALTER TABLE coverboard_checks ADD COLUMN gps_accuracy_m REAL");
+        d.execSQL("ALTER TABLE coverboard_checks ADD COLUMN gps_timestamp_utc TEXT");
+        d.execSQL("ALTER TABLE coverboard_checks ADD COLUMN gps_status TEXT NOT NULL DEFAULT 'missing'");
+        d.execSQL("ALTER TABLE track_sign_encounters ADD COLUMN latitude REAL");
+        d.execSQL("ALTER TABLE track_sign_encounters ADD COLUMN longitude REAL");
+        d.execSQL("ALTER TABLE track_sign_encounters ADD COLUMN gps_accuracy_m REAL");
+        d.execSQL("ALTER TABLE track_sign_encounters ADD COLUMN gps_timestamp_utc TEXT");
+        d.execSQL("ALTER TABLE track_sign_encounters ADD COLUMN gps_status TEXT NOT NULL DEFAULT 'missing'");
+        d.execSQL("CREATE TABLE IF NOT EXISTS protocol_media("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,"+
+            "target_type TEXT NOT NULL,target_id INTEGER NOT NULL,"+
+            "file_name TEXT NOT NULL UNIQUE,mime_type TEXT NOT NULL,"+
+            "added_utc TEXT NOT NULL,source_note TEXT NOT NULL)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS protocol_media_target "+
+            "ON protocol_media(target_type,target_id)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS study_protocol_templates("+
+            "id TEXT PRIMARY KEY,project_id TEXT NOT NULL,method TEXT NOT NULL,"+
+            "name TEXT NOT NULL,min_visits INTEGER NOT NULL DEFAULT 0,"+
+            "min_minutes INTEGER NOT NULL DEFAULT 0,min_units INTEGER NOT NULL DEFAULT 0,"+
+            "require_verified_gps INTEGER NOT NULL DEFAULT 0,"+
+            "require_protocol_photo INTEGER NOT NULL DEFAULT 0,"+
+            "created_at_utc TEXT NOT NULL)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS study_template_project "+
+            "ON study_protocol_templates(project_id,method)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS survey_study_protocols("+
+            "event_id TEXT PRIMARY KEY,template_id TEXT NOT NULL,"+
+            "template_name TEXT NOT NULL,min_visits INTEGER NOT NULL,"+
+            "min_minutes INTEGER NOT NULL,min_units INTEGER NOT NULL,"+
+            "require_verified_gps INTEGER NOT NULL,"+
+            "require_protocol_photo INTEGER NOT NULL,applied_at_utc TEXT NOT NULL)");
+    }
+    /** Dedicated field protocols. Each detail belongs to its source survey/visit. */
+    private void upgradeTwentyFive(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS coverboard_units("+
+            "id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT,"+
+            "board_id TEXT NOT NULL,installed_at_utc TEXT NOT NULL,"+
+            "board_material TEXT,habitat TEXT,setup_notes TEXT,"+
+            "UNIQUE(event_id,board_id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS board_event ON coverboard_units(event_id)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS coverboard_checks("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,board_pk TEXT NOT NULL,"+
+            "checked_at_utc TEXT NOT NULL,observer TEXT NOT NULL,"+
+            "board_condition TEXT NOT NULL,substrate TEXT,"+
+            "temperature_c REAL,humidity_pct REAL,"+
+            "individuals_seen INTEGER NOT NULL DEFAULT 0,"+
+            "taxon_label TEXT,notes TEXT,"+
+            "FOREIGN KEY(board_pk) REFERENCES coverboard_units(id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS board_checks_fk ON coverboard_checks(board_pk,checked_at_utc)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS area_search_passes("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,station_id TEXT,"+
+            "area_id TEXT NOT NULL,started_at_utc TEXT NOT NULL,ended_at_utc TEXT NOT NULL,"+
+            "observer TEXT NOT NULL,measured_area_m2 REAL NOT NULL,"+
+            "route_length_m REAL,habitat TEXT,weather TEXT,"+
+            "repeat_pass INTEGER NOT NULL DEFAULT 0,"+
+            "duplicate_control_notes TEXT NOT NULL,notes TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS area_pass_event ON area_search_passes(event_id,started_at_utc)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS track_sign_efforts("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,station_id TEXT,"+
+            "route_id TEXT NOT NULL,started_at_utc TEXT NOT NULL,ended_at_utc TEXT NOT NULL,"+
+            "observer TEXT NOT NULL,verified_length_m REAL NOT NULL,"+
+            "substrate TEXT NOT NULL,weather TEXT,visibility TEXT,notes TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS sign_effort_event ON track_sign_efforts(event_id,started_at_utc)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS track_sign_encounters("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL,"+
+            "effort_id INTEGER NOT NULL,recorded_at_utc TEXT NOT NULL,"+
+            "sign_type TEXT NOT NULL,taxon_label TEXT NOT NULL,"+
+            "age_class TEXT NOT NULL,identification_confidence TEXT NOT NULL,"+
+            "independent_event_key TEXT,substrate TEXT,notes TEXT,"+
+            "FOREIGN KEY(effort_id) REFERENCES track_sign_efforts(id),"+
+            "UNIQUE(event_id,independent_event_key))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS sign_encounter_event "+
+            "ON track_sign_encounters(event_id,effort_id)");
+    }
+    /** Optional links cannot change the original observer's call label. */
+    private void upgradeTwentyFour(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN taxon_key TEXT");
+        d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN observation_id INTEGER");
+        d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN selected_frequency_hz REAL");
+        d.execSQL("ALTER TABLE acoustic_labels ADD COLUMN review_status TEXT DEFAULT 'unverified'");
+        d.execSQL("CREATE INDEX IF NOT EXISTS call_taxon ON acoustic_labels(taxon_key)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS trap_deployments("+
+            "id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT,"+
+            "method TEXT NOT NULL,device_id TEXT NOT NULL,"+
+            "deployed_at_utc TEXT NOT NULL,retrieved_at_utc TEXT,"+
+            "status TEXT NOT NULL DEFAULT 'deployed',"+
+            "fence_length_m REAL,setup_notes TEXT,"+
+            "UNIQUE(event_id,method,device_id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS trap_deployment_event "+
+            "ON trap_deployments(event_id,method)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS trap_checks("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,deployment_id TEXT NOT NULL,"+
+            "checked_at_utc TEXT NOT NULL,operational INTEGER NOT NULL,"+
+            "outage_minutes REAL,device_condition TEXT,observations INTEGER NOT NULL DEFAULT 0,"+
+            "observer_notes TEXT,FOREIGN KEY(deployment_id) REFERENCES trap_deployments(id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS trap_checks_device "+
+            "ON trap_checks(deployment_id,checked_at_utc)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS trap_captures("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,check_id INTEGER NOT NULL,"+
+            "taxon_label TEXT NOT NULL,individual_mark TEXT,logged_at_utc TEXT NOT NULL,"+
+            "released_at_utc TEXT,disposition TEXT NOT NULL,notes TEXT,"+
+            "FOREIGN KEY(check_id) REFERENCES trap_checks(id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS trap_captures_check ON trap_captures(check_id)");
+    }
+    /** Permanent research audio metadata. Audio stays in app-private files until export. */
+    private void upgradeTwentyThree(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS acoustic_clips("+
+            "id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT,"+
+            "taxon_group TEXT NOT NULL,method TEXT NOT NULL,filename TEXT NOT NULL UNIQUE,"+
+            "recorded_at_utc TEXT NOT NULL,duration_ms INTEGER NOT NULL,"+
+            "sample_rate_hz INTEGER NOT NULL,channels INTEGER NOT NULL,"+
+            "format TEXT NOT NULL DEFAULT 'WAV_PCM16',"+
+            "notes TEXT,recording_status TEXT NOT NULL DEFAULT 'saved')");
+        d.execSQL("CREATE INDEX IF NOT EXISTS clip_event ON acoustic_clips(event_id,recorded_at_utc)");
+        d.execSQL("CREATE TABLE IF NOT EXISTS acoustic_labels("+
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,clip_id TEXT NOT NULL,"+
+            "start_ms INTEGER NOT NULL,end_ms INTEGER NOT NULL,"+
+            "call_label TEXT NOT NULL,notes TEXT,reviewed_at_utc TEXT NOT NULL,"+
+            "FOREIGN KEY(clip_id) REFERENCES acoustic_clips(id))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS call_clip ON acoustic_labels(clip_id,start_ms)");
+    }
+    /** Provenance for missing GPS at survey start. Do not backfill coordinates. */
+    private void upgradeTwentyTwo(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_status TEXT");
+        d.execSQL("UPDATE surveys SET start_gps_status=CASE "+
+            "WHEN start_gps_latitude IS NOT NULL AND start_gps_longitude IS NOT NULL "+
+            "THEN 'legacy_start_fix_present' ELSE 'legacy_start_location_unrecorded' END "+
+            "WHERE start_gps_status IS NULL");
+    }
+    /**
+     * User-reviewed habitat references are stored apart from publisher taxon
+     * rows. Missing habitat/elevation evidence must not imply absence.
+     */
+    private void upgradeNineteen(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS taxon_habitat_profiles("+
+            "taxon_key TEXT PRIMARY KEY NOT NULL,habitat_codes TEXT NOT NULL,"+
+            "strict_habitat INTEGER NOT NULL DEFAULT 0,"+
+            "elevation_min_m REAL,elevation_max_m REAL,"+
+            "source TEXT NOT NULL,source_version TEXT NOT NULL,"+
+            "review_status TEXT NOT NULL DEFAULT 'unreviewed',"+
+            "updated_utc TEXT NOT NULL)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS habitat_profile_review "+
+            "ON taxon_habitat_profiles(review_status)");
+    }
+    /**
+     * Seed only independently checked ecological literature. Blank records
+     * are NOT populated from taxonomy or checklist geographic membership.
+     * INSERT OR IGNORE protects profiles already entered by the researcher.
+     */
+    private void upgradeTwenty(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE taxon_habitat_profiles ADD COLUMN source_url TEXT "+
+            "NOT NULL DEFAULT ''");
+        d.execSQL("ALTER TABLE taxon_habitat_profiles ADD COLUMN evidence_note TEXT "+
+            "NOT NULL DEFAULT ''");
+        String[][] verified={
+            {"WBCP2025:Pithecophaga_jefferyi","lowland|secondary",
+                "150","1450","Animal Diversity Web: Pithecophaga jefferyi",
+                "accessed-2026-10-27","https://animaldiversity.org/accounts/Pithecophaga_jefferyi/",
+                "Forest habitat and broad elevation range, 150–1450 m. Region-specific "+
+                "published statements are not strict physiological limits."},
+            {"MDD:1000915","secondary|lowland",
+                "","","Neri-Arboleda et al., Journal of Zoology",
+                "2002","https://doi.org/10.1017/S0952836902000997",
+                "Carlito syrichta: older scientific name Tarsius syrichta. "+
+                "Bohol study documents secondary lowland rainforest. "+
+                "No species-wide elevation limits assigned."},
+            {"SYAMP2025:001","riparian",
+                "","","Aznar et al., Barbourula busuangensis field study",
+                "2025","https://pmc.ncbi.nlm.nih.gov/articles/PMC11740736/",
+                "Clear, well-oxygenated forest streams. No species-wide "+
+                "elevation endpoints assigned."},
+            {"SYAMP2025:002","riparian|montane|lowland",
+                "","","IUCN, Threatened Amphibians of the World",
+                "2008","https://www.iucn-amphibians.org/wp-content/uploads/"+
+                    "sites/4/2018/11/TAW-Threatened-Species-Profiles_Part1.pdf",
+                "Source describes cool mountain streams in lowland and "+
+                "lower montane forest on Mindanao. No range endpoints assigned."}
+        };
+        for(String[] p:verified){
+            d.execSQL("INSERT OR IGNORE INTO taxon_habitat_profiles("+
+                "taxon_key,habitat_codes,strict_habitat,elevation_min_m,"+
+                "elevation_max_m,source,source_version,review_status,"+
+                "updated_utc,source_url,evidence_note) "+
+                "VALUES(?,?,0,?,?,?,?, 'reviewed',datetime('now'),?,?)",
+                new Object[]{p[0],p[1],
+                    p[2].isEmpty()?null:Double.valueOf(p[2]),
+                    p[3].isEmpty()?null:Double.valueOf(p[3]),
+                    p[4],p[5],p[6],p[7]});
+        }
+    }
+    /** Captures per-visit environmental measurements, not site-wide estimates. */
+    private void upgradeTwentyOne(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS station_environment("+
+            "visit_id TEXT PRIMARY KEY,event_id TEXT NOT NULL,station_id TEXT NOT NULL,"+
+            "habitat_code TEXT,habitat_source TEXT,"+
+            "manual_elevation_msl_m REAL,manual_vertical_uncertainty_m REAL,"+
+            "elevation_msl_m REAL,elevation_hae_m REAL,"+
+            "vertical_uncertainty_m REAL,elevation_datum TEXT,"+
+            "elevation_source TEXT NOT NULL DEFAULT 'not_available',"+
+            "fix_time_utc TEXT,updated_utc TEXT)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS station_env_event "+
+            "ON station_environment(event_id,station_id)");
+        // Narrow, traceable starting set for Mindanao ecology. These
+        // observations are never interpreted as strict habitat exclusions.
+        String[][] mindanao={
+            {"SYREP2026:001","wetland|riparian|mangrove",
+                "", "850", "Animal Diversity Web: Crocodylus mindorensis",
+                "accessed-2026-10-27",
+                "https://animaldiversity.org/accounts/Crocodylus_mindorensis/",
+                "Natural ponds, marshes, freshwater creeks and rivers; observed "+
+                "up to 850 m. The recorded upper occurrence does not certify "+
+                "absence above 850 m."},
+            {"WBCP2025:Dicaeum_nigrilore","montane|mossy",
+                "900", "", "EcoRegistros: Dicaeum nigrilore",
+                "accessed-2026-10-27",
+                "https://www.ecoregistros.org/sheet/Dicaeum-nigrilore-nigrilore",
+                "Mindanao montane and submontane moist forest, reported above "+
+                "900 m. One published habitat description is not a strict range."}
+        };
+        for(String[] row:mindanao){
+            d.execSQL("INSERT OR IGNORE INTO taxon_habitat_profiles("+
+                "taxon_key,habitat_codes,strict_habitat,elevation_min_m,"+
+                "elevation_max_m,source,source_version,review_status,"+
+                "updated_utc,source_url,evidence_note) "+
+                "VALUES(?,?,0,?,?,?,?,'reviewed',datetime('now'),?,?)",
+                new Object[]{row[0],row[1],
+                    row[2].isEmpty()?null:Double.valueOf(row[2]),
+                    row[3].isEmpty()?null:Double.valueOf(row[3]),
+                    row[4],row[5],row[6],row[7]});
+        }
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -215,6 +506,120 @@ public final class FieldDb extends SQLiteOpenHelper {
             "gps_status TEXT NOT NULL DEFAULT 'pending',"+
             "PRIMARY KEY(event_id,sequence_number),UNIQUE(event_id,station_id))");
         d.execSQL("CREATE INDEX IF NOT EXISTS survey_station_event ON survey_stations(event_id,visit_state)");
+    }
+
+    /**
+     * First install and upgrades both install national wildlife catalogs locally.
+     * The database upgrade is transactional. A corrupted embedded asset aborts
+     * the upgrade rather than saving a partial species list or field record.
+     */
+    private void upgradeEighteen(SQLiteDatabase db){
+        BundledCatalog.seed(appContext,db);
+    }
+
+    /** Taxonomic sources may link to external references; no images are bundled. */
+    private void upgradeSeventeen(SQLiteDatabase database){
+        for(String column:new String[]{"source_url","ebird_url","sound_url"}){
+            database.execSQL("ALTER TABLE taxon_catalog ADD COLUMN "+column+" TEXT");
+        }
+    }
+    /** Version 12: GNSS provenance, plus a version-pinned offline mammal candidate catalog. */
+    /**
+     * The presence of a taxon in a checklist and the evidence that a
+     * taxon occurs in a particular locality are two different facts.
+     * Only explicit attributed occurrence evidence belongs here.
+     */
+    private void upgradeSixteen(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS taxon_occurrence_evidence("+
+            "taxon_key TEXT NOT NULL,area_type TEXT NOT NULL,"+
+            "area_label TEXT NOT NULL,evidence_basis TEXT NOT NULL,"+
+            "evidence_text TEXT NOT NULL,source TEXT NOT NULL,"+
+            "source_version TEXT NOT NULL,source_url TEXT NOT NULL DEFAULT '',"+
+            "review_status TEXT NOT NULL DEFAULT 'source_listed',"+
+            "PRIMARY KEY(taxon_key,area_type,area_label,source,source_version))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS evidence_area "+
+            "ON taxon_occurrence_evidence(area_type,area_label)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS evidence_taxon "+
+            "ON taxon_occurrence_evidence(taxon_key)");
+    }
+
+    /** Detailed fields from the source's published checklist, not live IUCN claims. */
+    private void upgradeFifteen(SQLiteDatabase d){
+        for(String name:new String[]{"order_name","subfamily","subgenus","authority",
+            "authority_year","distribution_text","distribution_status","ph_red_list",
+            "iucn_red_list","cites","synonym_text","taxonomic_note"}){
+            d.execSQL("ALTER TABLE taxon_catalog ADD COLUMN "+name+" TEXT");
+        }
+        d.execSQL("CREATE INDEX IF NOT EXISTS catalog_group_region_codes "+
+            "ON taxon_catalog(taxon_group,region_codes)");
+    }
+
+    /** Version 14: attributed synonym crosswalk, independent of historic observations. */
+    private void upgradeFourteen(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS taxon_synonyms("+
+            "taxon_key TEXT NOT NULL,alias_name TEXT NOT NULL,"+
+            "source TEXT NOT NULL,source_version TEXT NOT NULL,"+
+            "PRIMARY KEY(taxon_key,alias_name,source,source_version))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS synonym_alias_nocase "+
+            "ON taxon_synonyms(alias_name COLLATE NOCASE)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS synonym_taxon_key "+
+            "ON taxon_synonyms(taxon_key)");
+    }
+
+    /** Version 13 improves large versioned checklist lookup without changing observations. */
+    private void upgradeThirteen(SQLiteDatabase d){
+        d.execSQL("CREATE INDEX IF NOT EXISTS catalog_group_scientific_nocase "+
+            "ON taxon_catalog(taxon_group,scientific_name COLLATE NOCASE)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS catalog_group_common_nocase "+
+            "ON taxon_catalog(taxon_group,common_name COLLATE NOCASE)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS catalog_source_version "+
+            "ON taxon_catalog(source,source_version)");
+    }
+
+    private void upgradeTwelve(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_latitude REAL");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_longitude REAL");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_accuracy_m REAL");
+        d.execSQL("ALTER TABLE surveys ADD COLUMN start_gps_recorded_at TEXT");
+        // Legacy MDD imports displayed taxon keys with underscores as if they were names.
+        d.execSQL("UPDATE taxon_catalog SET scientific_name=REPLACE(scientific_name,'_',' ') "+
+            "WHERE taxon_key LIKE 'MDD:%' AND instr(scientific_name,'_')>0");
+        seedMddMammals(d);
+    }
+
+    private void seedMddMammals(SQLiteDatabase d){
+        try(InputStream input=appContext.getAssets().open("ph_mammals_mdd_v2_5.json")){
+            ByteArrayOutputStream output=new ByteArrayOutputStream();
+            byte[] chunk=new byte[8192];int n;
+            while((n=input.read(chunk))!=-1){
+                if(output.size()+n>2_000_000)throw new IllegalStateException("MDD asset unexpectedly large");
+                output.write(chunk,0,n);
+            }
+            JSONArray mammals=new JSONArray(new String(output.toByteArray(),StandardCharsets.UTF_8));
+            if(mammals.length()<20||mammals.length()>1200)
+                throw new IllegalStateException("MDD candidate count out of expected range");
+            SQLiteStatement stmt=d.compileStatement(
+                "INSERT OR IGNORE INTO taxon_catalog(taxon_key,taxon_group,common_name,"+
+                "scientific_name,family,source,source_version,region_codes,review_status,created_utc) "+
+                "VALUES(?,?,?,?,?,?,?,?,?,datetime('now'))");
+            for(int i=0;i<mammals.length();i++){
+                JSONObject name=mammals.getJSONObject(i);
+                stmt.clearBindings();
+                String[] fields={
+                    name.getString("taxon_key"),"Mammals",name.optString("common_name"),
+                    name.getString("scientific_name"),name.optString("family"),
+                    "ASM Mammal Diversity Database, DOI 10.5281/zenodo.21654811",
+                    "v2.5_2026-07-28","",name.getString("review_status")
+                };
+                for(int j=0;j<fields.length;j++)stmt.bindString(j+1,fields[j]);
+                stmt.executeInsert();
+            }
+            stmt.close();
+        }catch(java.io.FileNotFoundException missing){
+            android.util.Log.w("WildlifeSurvey","Bundled mammal asset not present; manual MDD import remains available");
+        }catch(Exception error){
+            android.util.Log.e("WildlifeSurvey","Could not seed bundled MDD v2.5 mammals",error);
+        }
     }
 
     /** Version 11: reusable point-count station identities, audit without data mutation. */

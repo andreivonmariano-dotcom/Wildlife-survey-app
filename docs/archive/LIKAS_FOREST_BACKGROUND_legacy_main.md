@@ -1,3 +1,5 @@
+> Historical branding notes from the legacy v0.15 main branch. Current frog artwork and HD forest assets remain the release authority.
+
 # LIKAS pixel forest startup background
 
 This package is for the **LIKAS** Android startup screen. It does not modify `WelcomeActivity` or its buttons.

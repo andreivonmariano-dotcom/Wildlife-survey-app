@@ -1,6 +1,8 @@
 name: Build Android Debug APK
 on:
   push:
+    branches: [main, 'release/v0.27-integrated-ux-performance-qa']
+  pull_request:
     branches: [main]
   workflow_dispatch:
 jobs:
@@ -31,6 +33,23 @@ jobs:
           if [ ! -f .signing/wildlife-beta08.keystore ]; then
             keytool -genkeypair -keystore .signing/wildlife-beta08.keystore -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Wildlife Survey Beta Debug, O=Field Research, C=PH" -noprompt
           fi
+      - name: Validate taxonomy source and import rules
+        run: python3 -m unittest discover -s scripts -p 'test_*.py'
+      - name: Cache checksum-pinned mammal taxonomy source
+        uses: actions/cache@v4
+        with:
+          path: .taxonomy-cache/mdd-v2.5.csv
+          key: mdd-v2.5-533e662fd5b8f66a5f56c191e7efac44
+      - name: Prepare attributed offline Philippine mammals from official MDD v2.5
+        run: |
+          for attempt in 1 2 3; do
+            if python3 scripts/prepare_mdd_mammals.py; then exit 0; fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "MDD source unavailable after three verified attempts" >&2
+              exit 1
+            fi
+            sleep 12
+          done
       - name: Build debug APK
         run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
       - uses: actions/upload-artifact@v4
@@ -39,13 +58,14 @@ jobs:
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
       - name: Publish APK directly to GitHub Releases
+        if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="v0.15.0-beta"
+          TAG="v0.27.0-rc1"
           FILE="app/build/outputs/apk/debug/app-debug.apk"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$FILE" --clobber
           else
-            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.15" --notes "Repeat survey route templates with fixed station IDs, scientific data QA screen and ZIP flags, corrected station-only effort, and MDD v2.5 Philippine mammal CSV import." --prerelease --target "$GITHUB_SHA"
+            gh release create "$TAG" "$FILE" --title "LIKAS release candidate v0.27.0" --notes "Integrated wildlife methods, small-screen fixes, background progress reads and tested additive SQLite migration. Handset QA pending." --prerelease --target "$GITHUB_SHA"
           fi

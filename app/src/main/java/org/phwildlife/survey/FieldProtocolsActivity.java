@@ -2,6 +2,10 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.location.Location;
+import android.os.SystemClock;
+import android.net.Uri;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -30,6 +34,9 @@ public final class FieldProtocolsActivity extends Activity {
     private LinearLayout records;
     private String eventId,stationId="",method="";
     private long surveyStartMs=0;
+    private static final int PICK_EVIDENCE=7191;
+    private String pendingTargetType;
+    private long pendingTargetId=0;
 
     private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
     private LinearLayout col(){LinearLayout l=new LinearLayout(this);
@@ -80,6 +87,58 @@ public final class FieldProtocolsActivity extends Activity {
             new String[]{eventId,method})){
             return c.moveToFirst()&&c.isNull(0);
         }
+    }
+    /** Only a fresh under-10 m GNSS location is recorded as verified. */
+    private void stampGps(ContentValues values){
+        Location fix=TrackService.currentFix();
+        if(fix!=null){
+            long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1_000_000L;
+            if(GpsFixPolicy.acceptableElapsed(fix.getLatitude(),fix.getLongitude(),
+                    fix.getAccuracy(),age,fix.isFromMockProvider())){
+                values.put("latitude",fix.getLatitude());
+                values.put("longitude",fix.getLongitude());
+                values.put("gps_accuracy_m",fix.getAccuracy());
+                values.put("gps_timestamp_utc",utc(fix.getTime()));
+                values.put("gps_status","verified_under_10m");
+                return;
+            }
+        }
+        values.put("gps_status","missing_or_unverified");
+    }
+    private String gpsSummary(Cursor c,int start){
+        return "verified_under_10m".equals(c.getString(start))?
+            String.format(Locale.US,"GPS %.6f, %.6f ±%.1f m",
+                c.getDouble(start+1),c.getDouble(start+2),c.getDouble(start+3)):
+            "GPS missing / unverified";
+    }
+    private int photoCount(String type,long target){
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT COUNT(*) FROM protocol_media WHERE target_type=? AND target_id=?",
+            new String[]{type,String.valueOf(target)})){
+            return c.moveToFirst()?c.getInt(0):0;
+        }
+    }
+    private void choosePhoto(String type,long target){
+        if(!active()){toast("Photo capture requires the active station");return;}
+        pendingTargetType=type;pendingTargetId=target;
+        Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("image/*");intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivityForResult(intent,PICK_EVIDENCE);
+    }
+    @Override protected void onActivityResult(int request,int result,Intent data){
+        super.onActivityResult(request,result,data);
+        if(request!=PICK_EVIDENCE)return;
+        if(result==RESULT_OK&&data!=null&&data.getData()!=null&&
+            pendingTargetType!=null&&active()){
+            try{
+                ProtocolEvidencePhotos.attach(this,db.getWritableDatabase(),eventId,
+                    pendingTargetType,pendingTargetId,data.getData());
+                toast("Photo linked to original field evidence");
+                draw();
+            }catch(Exception err){toast("Photo not saved: "+err.getMessage());}
+        }
+        pendingTargetType=null;pendingTargetId=0;
     }
     private boolean validInterval(EditText start,EditText end){
         Long from=millis(start.getText().toString());
@@ -187,14 +246,20 @@ public final class FieldProtocolsActivity extends Activity {
                     .setOnClickListener(v->inspectBoard(pk,board));
                 try(Cursor checks=db.getReadableDatabase().rawQuery(
                     "SELECT checked_at_utc,observer,board_condition,individuals_seen,"+
-                    "COALESCE(taxon_label,''),COALESCE(notes,'') FROM coverboard_checks "+
+                    "COALESCE(taxon_label,''),COALESCE(notes,''),id,"+
+                    "gps_status,latitude,longitude,gps_accuracy_m FROM coverboard_checks "+
                     "WHERE board_pk=? ORDER BY checked_at_utc DESC LIMIT 30",
                     new String[]{pk})){
                     while(checks.moveToNext()){
+                        long checkId=checks.getLong(6);
                         card.addView(text(checks.getString(0)+" · "+checks.getString(1)+
                             " · "+checks.getString(2)+"\n"+
                             checks.getInt(3)+" individuals · "+checks.getString(4)+
-                            " · "+checks.getString(5),12));
+                            " · "+checks.getString(5)+"\n"+
+                            gpsSummary(checks,7)+" · "+photoCount("coverboard_check",checkId)+
+                            " photos",12));
+                        if(active())action("Attach photo to this inspection",card,false)
+                            .setOnClickListener(v->choosePhoto("coverboard_check",checkId));
                     }
                 }
             }
@@ -288,8 +353,16 @@ public final class FieldProtocolsActivity extends Activity {
                 values.put("individuals_seen",count);
                 values.put("taxon_label",taxon.getText().toString().trim());
                 values.put("notes",notes.getText().toString().trim());
-                db.getWritableDatabase().insertOrThrow("coverboard_checks",null,values);
+                stampGps(values);
+                long checkId=db.getWritableDatabase().insertOrThrow(
+                    "coverboard_checks",null,values);
                 dialog.dismiss();draw();
+                new AlertDialog.Builder(this).setTitle("Inspection saved")
+                    .setMessage("GNSS quality and time were recorded with this inspection. "+
+                        "Attach a source photograph to this exact board check?")
+                    .setNegativeButton("Later",null)
+                    .setPositiveButton("Attach photo",(d,i)->
+                        choosePhoto("coverboard_check",checkId)).show();
             }));
         dialog.show();
     }
@@ -507,15 +580,21 @@ public final class FieldProtocolsActivity extends Activity {
                     .setOnClickListener(v->newSign(id));
                 try(Cursor signs=db.getReadableDatabase().rawQuery(
                     "SELECT sign_type,taxon_label,age_class,identification_confidence,"+
-                    "COALESCE(independent_event_key,''),COALESCE(notes,'') "+
+                    "COALESCE(independent_event_key,''),COALESCE(notes,''),id,"+
+                    "gps_status,latitude,longitude,gps_accuracy_m "+
                     "FROM track_sign_encounters WHERE effort_id=? ORDER BY id",
                     new String[]{String.valueOf(id)})){
                     if(signs.getCount()==0)card.addView(text("No signs detected · valid zero result",12));
                     while(signs.moveToNext()){
+                        long signId=signs.getLong(6);
                         card.addView(text(signs.getString(0)+" · "+signs.getString(1)+
                             " · "+signs.getString(2)+" · "+signs.getString(3)+
                             "\nEncounter key "+signs.getString(4)+
-                            " · "+signs.getString(5),12));
+                            " · "+signs.getString(5)+"\n"+
+                            gpsSummary(signs,7)+" · "+photoCount("track_sign",signId)+
+                            " photos",12));
+                        if(active())action("Attach photo to this sign",card,false)
+                            .setOnClickListener(v->choosePhoto("track_sign",signId));
                     }
                 }
             }
@@ -616,9 +695,17 @@ public final class FieldProtocolsActivity extends Activity {
                 if(!eventKey.isEmpty())row.put("independent_event_key",eventKey);
                 row.put("substrate",substrate.getText().toString().trim());
                 row.put("notes",notes.getText().toString().trim());
+                stampGps(row);
                 try{
-                    db.getWritableDatabase().insertOrThrow("track_sign_encounters",null,row);
+                    long signId=db.getWritableDatabase().insertOrThrow(
+                        "track_sign_encounters",null,row);
                     dialog.dismiss();draw();
+                    new AlertDialog.Builder(this).setTitle("Sign saved")
+                        .setMessage("GNSS quality was saved. Attach a photograph "+
+                            "to this individual sign encounter?")
+                        .setNegativeButton("Later",null)
+                        .setPositiveButton("Attach photo",(d,i)->
+                            choosePhoto("track_sign",signId)).show();
                 }catch(Exception ex){key.setError("Encounter key already used in this survey");}
             }));
         dialog.show();

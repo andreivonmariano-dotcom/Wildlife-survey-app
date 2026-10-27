@@ -238,8 +238,10 @@ public final class SpeciesPickerActivity extends Activity {
         TextView context=text("ⓘ  "+(scope.isEmpty()?"Philippine checklist":scope+" checklist")+
             (province.isEmpty()?"":" · "+province)+" · "+gps,12,false);
         context.setTextColor(UiKit.FOREST);
-        context.setMinHeight(dp(42));
+        context.setMinHeight(dp(48));
         context.setGravity(Gravity.CENTER_VERTICAL);
+        context.setFocusable(true);
+        context.setContentDescription("Checklist context and species screening information");
         context.setOnClickListener(v->new AlertDialog.Builder(this)
             .setTitle("Checklist and species screening")
             .setMessage("Regional and habitat evidence help organize the offline list. "+

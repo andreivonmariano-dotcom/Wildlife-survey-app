@@ -27,6 +27,10 @@ public class HistoryActivity extends Activity {
     private String surveySearch="";
     private final Handler searchHandler=new Handler(Looper.getMainLooper());
     private Runnable pendingSearch;
+    private static final String OUTCOME_SQL=
+        "CASE WHEN s.outcome IS NOT NULL THEN s.outcome "+
+        "WHEN s.ended IS NULL THEN 'active' "+
+        "WHEN COALESCE(s.complete,0)=1 THEN 'complete' ELSE 'incomplete' END";
     private static final String[] OUTCOME_LABELS={
         "All outcomes","Complete","Incomplete","Canceled / Not counted","Active"};
     private static final String[] OUTCOME_VALUES={
@@ -49,7 +53,10 @@ public class HistoryActivity extends Activity {
         header.addView(back,new LinearLayout.LayoutParams(dp(112),dp(48)));
         back.setOnClickListener(v->{
             if(eventFilter==null)finish();
-            else{eventFilter=null;surveyOffset=0;observationOffset=0;draw();}
+            else{
+                if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
+                eventFilter=null;surveyOffset=0;observationOffset=0;draw();
+            }
         });
         TextView heading=text(eventFilter==null?"Survey history":"Observations",20);
         heading.setTypeface(null,Typeface.BOLD);
@@ -84,7 +91,7 @@ public class HistoryActivity extends Activity {
                     if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
                     pendingSearch=()->{
                         surveyOffset=0;
-                        if(rows!=null){rows.removeAllViews();surveys();}
+                        if(eventFilter==null&&rows!=null){rows.removeAllViews();surveys();}
                     };
                     searchHandler.postDelayed(pendingSearch,220L);
                 }
@@ -100,9 +107,9 @@ public class HistoryActivity extends Activity {
         try(Cursor c=db.getReadableDatabase().rawQuery(
           "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,"+
           "COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),"+
-          "COALESCE(s.outcome,'active') FROM surveys s "+
+          OUTCOME_SQL+" FROM surveys s "+
           "LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL "+
-          "WHERE (?='all' OR COALESCE(s.outcome,'active')=?) "+
+          "WHERE (?='all' OR "+OUTCOME_SQL+"=?) "+
           "AND (COALESCE(s.survey_profile,s.taxon_group,'Birds') LIKE ? OR "+
           "COALESCE(s.method,'') LIKE ? OR COALESCE(s.station_id,'') LIKE ? OR "+
           "COALESCE(s.started,'') LIKE ?) "+
@@ -151,7 +158,9 @@ public class HistoryActivity extends Activity {
         String surveyProfile="Birds";
         try(Cursor meta=db.getReadableDatabase().rawQuery(
             "SELECT COALESCE(station_id,''),method,started,ended,"+
-                "COALESCE(outcome,'active'),COALESCE(exclusion_reason,''),"+
+                "CASE WHEN outcome IS NOT NULL THEN outcome WHEN ended IS NULL "+
+                "THEN 'active' WHEN COALESCE(complete,0)=1 THEN 'complete' "+
+                "ELSE 'incomplete' END,COALESCE(exclusion_reason,''),"+
                 "COALESCE(survey_profile,taxon_group,'Birds') "+
                 "FROM surveys WHERE id=?",new String[]{event})){
             if(meta.moveToFirst()){
@@ -433,5 +442,9 @@ public class HistoryActivity extends Activity {
             }
         }
         new AlertDialog.Builder(this).setTitle("Record edit history").setMessage(msg.toString()).setPositiveButton("Close",null).show();
+    }
+    @Override protected void onDestroy(){
+        searchHandler.removeCallbacksAndMessages(null);
+        super.onDestroy();
     }
 }

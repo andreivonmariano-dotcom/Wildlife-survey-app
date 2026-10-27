@@ -47,7 +47,7 @@ import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity implements LocationListener {
-    private static final int EXPORT_DOC=22, CAMERA_REQ=23, PHOTO_PICK=24, STATION_GPS_REQ=25;
+    private static final int EXPORT_DOC=22, CAMERA_REQ=23, PHOTO_PICK=24, STATION_GPS_REQ=25, IDENTIFY_SPECIES_REQ=26;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final Runnable delayedDraftSave=()->persistDraft();
     private final Runnable visibleTimer=new Runnable(){
@@ -286,6 +286,11 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView.setOnClickListener(v->showGpsDetail());
         content.addView(gpsView);
         content.addView(section("Species"));
+        Button identifySpecies=UiKit.button(this,"Identify Species","primary");
+        identifySpecies.setContentDescription("Open full offline species list and identification reference");
+        LinearLayout.LayoutParams pickerSpace=new LinearLayout.LayoutParams(-1,dp(58));
+        pickerSpace.bottomMargin=dp(6);content.addView(identifySpecies,pickerSpace);
+        identifySpecies.setOnClickListener(v->openSpeciesPicker());
         LinearLayout catalogOptions=vertical();
         checklistNote=label("Area: "+GeoRegions.label(geographicRegion),12,false);
         checklistNote.setTextColor(MUTED);catalogOptions.addView(checklistNote);
@@ -304,12 +309,12 @@ public class MainActivity extends Activity implements LocationListener {
             filters.setText(expanded?"Species search options  ▴":"Species search options  ▾");
         });
         regionalOnlyChoice.setOnCheckedChangeListener((b,only)->updateTaxaSuggestions(false));
-        content.addView(catalogOptions);
-        content.addView(filters);
+        // Complete species selection now lives on its own page.
+        // Retain direct text entry for novel/unidentified field observations.
         LinearLayout speciesRow=horizontal();
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(18);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
-        taxonEntry.setThreshold(1);taxonEntry.setHint("Search common or scientific name");
+        taxonEntry.setThreshold(100);taxonEntry.setHint("Selected species / enter verbatim name");
         taxonEntry.setSelectAllOnFocus(true);
         speciesRow.addView(taxonEntry,new LinearLayout.LayoutParams(0,-2,1));
         Button unknownBtn=UiKit.button(this,"Unidentified","secondary");
@@ -572,6 +577,18 @@ public class MainActivity extends Activity implements LocationListener {
             starred=c.moveToFirst();
         }catch(Exception ignored){}
         favoriteButton.setText(starred?"★":"☆");
+    }
+    private void openSpeciesPicker(){
+        if(!active){toast("Start a survey first");return;}
+        persistDraft();
+        Intent screen=new Intent(this,SpeciesPickerActivity.class);
+        screen.putExtra("group",group);
+        screen.putExtra("profile",profile);
+        screen.putExtra("geo_region",geographicRegion);
+        screen.putExtra("province",adminProvince);
+        if(habitatEntry!=null)screen.putExtra("habitat",habitatEntry.getText().toString());
+        startActivityForResult(screen,IDENTIFY_SPECIES_REQ);
+        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
     }
     private void pickPhoto(){
         Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -1767,6 +1784,26 @@ public class MainActivity extends Activity implements LocationListener {
     }
     @Override protected void onActivityResult(int req,int result,Intent data){
         super.onActivityResult(req,result,data);
+        if(req==IDENTIFY_SPECIES_REQ){
+            if(result==RESULT_OK&&data!=null&&taxonEntry!=null){
+                String label=data.getStringExtra("species_label");
+                String selectedGroup=data.getStringExtra("species_group");
+                if(label!=null&&!label.trim().isEmpty()){
+                    if(profile.equals("Herpetofauna")&&selectedGroup!=null&&
+                        (selectedGroup.equals("Amphibians")||selectedGroup.equals("Reptiles"))&&
+                        !method.equals("amphibian_calls")){
+                        group=selectedGroup;
+                        showGroups();
+                        updateTaxaSuggestions(false);
+                    }
+                    taxonEntry.setText(label);
+                    taxonEntry.setSelection(taxonEntry.length());
+                    refreshFavoriteIcon();
+                    queueDraft();
+                }
+            }
+            return;
+        }
         if(req==STATION_GPS_REQ){
             if(result==RESULT_OK&&data!=null)stationGpsResult(data);
             return;

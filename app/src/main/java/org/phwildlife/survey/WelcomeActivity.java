@@ -228,32 +228,6 @@ public class WelcomeActivity extends Activity {
         margins.bottomMargin=dp(8);parent.addView(item,margins);
         item.setOnClickListener(v->action.run());
     }
-    private void recentSurveys(){
-        try{
-            String path=getDatabasePath(FieldDb.NAME).getAbsolutePath();
-            if(!new java.io.File(path).exists()){main.addView(text("No surveys yet.",13,false));return;}
-            try(SQLiteDatabase d=SQLiteDatabase.openDatabase(path,null,SQLiteDatabase.OPEN_READONLY);
-                Cursor c=d.rawQuery(
-                    "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),"+
-                    "COALESCE(p.name,s.project_id,'General field project'),s.started,s.ended,"+
-                    "COALESCE(s.outcome,'active'),COALESCE(s.planned_station_count,0),"+
-                    "COALESCE(s.planned_route_m,0) FROM surveys s "+
-                    "LEFT JOIN projects p ON p.id=s.project_id ORDER BY s.started DESC LIMIT 5",null)){
-                if(c.getCount()==0)main.addView(text("No surveys yet.",13,false));
-                while(c.moveToNext()){
-                    String id=c.getString(0),taxon=c.getString(1),project=c.getString(2);
-                    String date=c.getString(3)==null?"":c.getString(3);
-                    String outcome=c.getString(5).replace('_',' ');
-                    String design=c.getInt(6)>0?c.getInt(6)+" planned stations":
-                        c.getDouble(7)>0?String.format(Locale.US,"%.2f km route",c.getDouble(7)/1000.0):
-                        "survey";
-                    card(taxon+" · "+project,
-                        date.substring(0,Math.min(10,date.length()))+" · "+design+" · "+outcome,
-                        ()->startActivity(new Intent(this,HistoryActivity.class).putExtra("event_id",id)));
-                }
-            }
-        }catch(Exception e){main.addView(text("History is accessible from the management screen.",12,false));}
-    }
     private void card(String name,String desc,Runnable action){
         LinearLayout wrapper=vertical();
         wrapper.setPadding(dp(14),dp(7),dp(12),dp(7));

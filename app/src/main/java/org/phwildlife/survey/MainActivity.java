@@ -55,12 +55,13 @@ public class MainActivity extends Activity implements LocationListener {
     private final Runnable visibleTimer=new Runnable(){
         @Override public void run(){
             status();
+            updateGpsReadout();
             handler.postDelayed(this,1000);
         }
     };
     private final int BACK=Color.rgb(247,249,246),INK=Color.rgb(22,51,38),GREEN=Color.rgb(37,104,74),MUTED=Color.rgb(95,116,101);
     private FieldDb db; private LocationManager locations;
-    private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
+    private TextView bearingStatusView,gpsView,elevationView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private Button pauseButton,progressButton;
     private CheckBox vibrationChoice,regionalOnlyChoice;
     private Spinner confidenceSpinner;
@@ -104,6 +105,8 @@ public class MainActivity extends Activity implements LocationListener {
     private float bearing=Float.NaN,pitch=Float.NaN;
     private Double markedBearing=null,markedPitch=null;
     private Location location;
+    // A manual elevation applies only to the next saved detection, not future visits.
+    private Double manualElevationMeters=null;
     private boolean pointNotice=false;
     private int dp(float n){return (int)(getResources().getDisplayMetrics().density*n+0.5f);}
 
@@ -259,6 +262,10 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView=label("GPS: awaiting fix",11,false);
         gpsView.setTextColor(MUTED);
         content.addView(gpsView);
+        elevationView=label("Elevation: awaiting fresh GPS · tap to edit",12,false);
+        elevationView.setTextColor(UiKit.BLUE);
+        elevationView.setOnClickListener(v->editElevation());
+        content.addView(elevationView);
         content.addView(section("SPECIES / IDENTIFICATION"));
         checklistNote=label("Geographic suggestions: "+GeoRegions.label(geographicRegion),13,true);
         checklistNote.setTextColor(UiKit.FOREST);content.addView(checklistNote);
@@ -465,7 +472,7 @@ public class MainActivity extends Activity implements LocationListener {
             startActivity(new Intent(this,HistoryActivity.class).putExtra("event_id",eventId));
         });
         setContentView(root);
-        updateMethods();refreshAutocomplete();status();
+        updateMethods();refreshAutocomplete();status();updateGpsReadout();
         watchDraftFields();
 
     }
@@ -1822,8 +1829,55 @@ public class MainActivity extends Activity implements LocationListener {
             &&active&&(method.equals("line_transect")||method.equals("ves_transect")))startTracking();
     }
     @Override public void onLocationChanged(Location l){
-        location=l;
-        if(gpsView!=null)gpsView.setText(String.format(Locale.US,"Observer GPS: %.5f, %.5f · ±%.0f m",l.getLatitude(),l.getLongitude(),l.getAccuracy()));
+        if(location==null||l.getElapsedRealtimeNanos()>=location.getElapsedRealtimeNanos())
+            location=new Location(l);
+        updateGpsReadout();
+    }
+    private void editElevation(){
+        EditText entry=edit("Elevation in meters",InputType.TYPE_CLASS_NUMBER|
+            InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED);
+        if(manualElevationMeters!=null)
+            entry.setText(String.format(Locale.US,"%.1f",manualElevationMeters));
+        new AlertDialog.Builder(this).setTitle("Elevation for next observation")
+            .setMessage("GPS elevation is automatic. A manual correction affects the next saved observation only. Its height reference is recorded as unspecified.")
+            .setView(entry).setNegativeButton("Cancel",null)
+            .setNeutralButton("Use GPS",(d,w)->{
+                manualElevationMeters=null;updateGpsReadout();
+            })
+            .setPositiveButton("Apply manual",(d,w)->{
+                Double n=number(entry.getText().toString());
+                if(n==null||n< -500||n>9000||!Double.isFinite(n)){
+                    toast("Enter a valid elevation from -500 to 9000 meters");return;
+                }
+                manualElevationMeters=n;updateGpsReadout();
+            }).show();
+    }
+    private void updateGpsReadout(){
+        long now=System.currentTimeMillis();
+        Location fresh=RoutePlan.acceptable(location,now)?location:null;
+        if(gpsView!=null){
+            if(fresh==null)gpsView.setText("Observer GPS: waiting for a fresh fix (30 s, <=75 m)");
+            else gpsView.setText(String.format(Locale.US,
+                "Observer GPS: %.5f, %.5f · horizontal ±%.0f m",
+                fresh.getLatitude(),fresh.getLongitude(),fresh.getAccuracy()));
+        }
+        if(elevationView==null)return;
+        ElevationFix.Reading value=manualElevationMeters!=null?
+            ElevationFix.manual(manualElevationMeters):ElevationFix.fromGps(fresh,now);
+        if(value.meters!=null){
+            String reference="mean_sea_level".equals(value.datum)?"MSL":
+                "wgs84_ellipsoid".equals(value.datum)?"WGS84 ellipsoid":"datum unspecified";
+            String uncertainty=value.verticalAccuracyM==null?" · vertical accuracy unknown":
+                String.format(Locale.US," · vertical ±%.0f m",value.verticalAccuracyM);
+            elevationView.setText(String.format(Locale.US,
+                "Elevation: %.1f m %s%s · tap to edit",value.meters,reference,
+                manualElevationMeters!=null?" · manual":uncertainty));
+        }else if("poor_vertical_accuracy".equals(value.status))
+            elevationView.setText(String.format(Locale.US,
+                "Elevation: uncertain (vertical ±%.0f m) · tap to edit",value.verticalAccuracyM));
+        else if("altitude_unavailable".equals(value.status))
+            elevationView.setText("Elevation: unavailable in GPS fix · tap to edit");
+        else elevationView.setText("Elevation: awaiting fresh GPS fix · tap to edit");
     }
     private void toast(String s){Toast.makeText(this,s,Toast.LENGTH_SHORT).show();}
 

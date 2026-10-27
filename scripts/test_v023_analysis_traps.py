@@ -7,7 +7,7 @@ def read(name):return (CODE/name).read_text(encoding="utf-8")
 class V023Audit(unittest.TestCase):
     def test_v24_additive_migration(self):
         db=read("FieldDb.java")
-        self.assertIn("super(context,NAME,null,26)",db)
+        self.assertIn("super(context,NAME,null,27)",db)
         self.assertIn("if(oldVersion<24)upgradeTwentyFour(d)",db)
         for name in ("acoustic_labels ADD COLUMN taxon_key",
                      "acoustic_labels ADD COLUMN observation_id",

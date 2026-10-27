@@ -95,6 +95,7 @@ public class MainActivity extends Activity implements LocationListener {
     private int pointSequence=0,plannedDurationSeconds=0;
     private boolean nearEndNotified=false;
     private Double pendingSearchedArea=null;
+    private boolean plannedRouteCompleted=false;
     private TextView trackingView;
     private Double stratumAreaKm2=null,lineBearing=null,pointRadiusM=null;
     private int pointTargetSeconds=600;
@@ -929,6 +930,10 @@ public class MainActivity extends Activity implements LocationListener {
             "Area searched (m², optional)",
             InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         if(route||optionalLength)panel.addView(length);
+        final CheckBox confirmedRoute=new CheckBox(this);
+        confirmedRoute.setText("I completed the planned transect route");
+        confirmedRoute.setTextColor(INK);
+        if(route&&requestedComplete)panel.addView(confirmedRoute);
         if(searchArea||method.equals("visual_encounter")||
             method.equals("ves_transect"))panel.addView(area);
         TextView note=label(requestedComplete?
@@ -949,6 +954,7 @@ public class MainActivity extends Activity implements LocationListener {
                 if(measured!=null&&measured<=0){length.setError("Enter positive length");return;}
                 if(searched!=null&&searched<=0){area.setError("Enter positive area");return;}
                 pendingSearchedArea=searched;
+                plannedRouteCompleted=route&&requestedComplete&&confirmedRoute.isChecked();
                 dialog.dismiss();
                 finish(requestedComplete,measured);
             }));
@@ -964,34 +970,8 @@ public class MainActivity extends Activity implements LocationListener {
         long endedAt=System.currentTimeMillis();
         // A recorded target is evaluated against active effort, not transport or pauses.
         long effortTime=Math.max(0,endedAt-startedAt-accumulatedPausedMs);
-        if(!excluded&&complete&&plannedDurationSeconds>0&&effortTime<plannedDurationSeconds*1000L){
-            complete=false;toast("Shorter than planned effort: saved as incomplete");
-        }
         if(requiresGenericUnit()&&samplingUnitId!=null)closeUnit(null,null,null,null,null);
-        if(requiresGenericUnit()){
-            try(Cursor c=db.getReadableDatabase().rawQuery(
-                "SELECT COUNT(*) FROM sampling_units WHERE event_id=? AND COALESCE(completed,0)=0",
-                new String[]{eventId})){
-                if(c.moveToFirst()&&c.getInt(0)>0)complete=false;
-            }
-        }
-        if(method.equals("point_count")){
-            if(pointCountId!=null)closePoint();
-            if(plannedStationCount>0){
-                int remaining=0;
-                try(Cursor planned=db.getReadableDatabase().rawQuery(
-                    "SELECT COUNT(*) FROM survey_stations WHERE event_id=? AND visit_state='planned'",
-                    new String[]{eventId})){
-                    if(planned.moveToFirst())remaining=planned.getInt(0);
-                }
-                if(remaining>0){complete=false;toast(remaining+" planned points not yet visited; survey marked incomplete");}
-            }
-            try(Cursor c=db.getReadableDatabase().rawQuery(
-                "SELECT COUNT(*) FROM point_counts WHERE event_id=? AND COALESCE(completed,0)=0",
-                new String[]{eventId})){
-                if(c.moveToFirst()&&c.getInt(0)>0)complete=false;
-            }
-        }
+        if(method.equals("point_count")&&pointCountId!=null)closePoint();
         if(method.equals("line_transect")||method.equals("ves_transect"))stopTracking();
         TrackService.stopGnss(this);
         // Stationary and station-based search effort excludes travel between visits.
@@ -1011,7 +991,34 @@ public class MainActivity extends Activity implements LocationListener {
             }
             effortTime=visitsMs;
         }
-        String outcome=excluded?"not_counted":complete?"complete":"incomplete";
+        boolean stationBased=method.equals("point_count")||requiresGenericUnit();
+        int visitCount=0,unfinishedVisits=0,missedPlanned=0;
+        if(stationBased){
+            String table=method.equals("point_count")?"point_counts":"sampling_units";
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT COUNT(*),COALESCE(SUM(CASE WHEN completed=1 THEN 0 ELSE 1 END),0) "+
+                "FROM "+table+" WHERE event_id=?",new String[]{eventId})){
+                if(c.moveToFirst()){
+                    visitCount=c.getInt(0);
+                    unfinishedVisits=c.getInt(1);
+                }
+            }
+            if(method.equals("point_count")&&plannedStationCount>0){
+                try(Cursor c=db.getReadableDatabase().rawQuery(
+                    "SELECT COUNT(*) FROM survey_stations WHERE event_id=? "+
+                    "AND visit_state<>'completed'",new String[]{eventId})){
+                    if(c.moveToFirst())missedPlanned=c.getInt(0);
+                }
+            }
+        }
+        String outcome=SurveyClosePolicy.resolve(complete,excluded,stationBased,
+            visitCount,unfinishedVisits,missedPlanned,
+            plannedDurationSeconds,effortTime,
+            SurveyClosePolicy.routeLengthRequired(method),plannedRouteCompleted,
+            length,SurveyClosePolicy.searchedAreaRequired(method),pendingSearchedArea);
+        if(complete&&SurveyClosePolicy.INCOMPLETE.equals(outcome))
+            toast("Required effort or stations unfinished: saved as Incomplete");
+        complete=SurveyClosePolicy.COMPLETE.equals(outcome);
         SQLiteDatabase writable=db.getWritableDatabase();
         writable.beginTransaction();
         try{

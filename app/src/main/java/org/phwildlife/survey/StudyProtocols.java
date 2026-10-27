@@ -23,15 +23,16 @@ public final class StudyProtocols {
             (!rule.photo||photoCount>0);
     }
     public static void apply(SQLiteDatabase db,String eventId,String projectId,
-            String method,String templateId,String nowUtc){
+            String method,String profile,String templateId,String nowUtc){
         if(templateId==null||templateId.isEmpty())return;
         db.execSQL("INSERT INTO survey_study_protocols(event_id,template_id,"+
             "template_name,min_visits,min_minutes,min_units,require_verified_gps,"+
             "require_protocol_photo,applied_at_utc) "+
             "SELECT ?,id,name,min_visits,min_minutes,min_units,require_verified_gps,"+
             "require_protocol_photo,? FROM study_protocol_templates "+
-            "WHERE id=? AND project_id=? AND method=?",
-            new Object[]{eventId,nowUtc,templateId,projectId,method});
+            "WHERE id=? AND project_id=? AND method=? "+
+            "AND (survey_profile=? OR survey_profile IS NULL)",
+            new Object[]{eventId,nowUtc,templateId,projectId,method,profile});
         try(Cursor c=db.rawQuery("SELECT COUNT(*) FROM survey_study_protocols "+
             "WHERE event_id=?",new String[]{eventId})){
             if(!c.moveToFirst()||c.getInt(0)!=1)

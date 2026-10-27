@@ -272,6 +272,9 @@ public final class FieldProtocolsActivity extends Activity {
                 if(count>0&&taxon.getText().toString().trim().isEmpty()){
                     taxon.setError("Use species, genus or unidentified");return;
                 }
+                if(condition.getSelectedItemPosition()==2&&count>0){
+                    n.setError("A missing board cannot have observed individuals");return;
+                }
                 ContentValues values=new ContentValues();
                 values.put("board_pk",pk);values.put("checked_at_utc",utc(System.currentTimeMillis()));
                 values.put("observer",who);
@@ -340,6 +343,17 @@ public final class FieldProtocolsActivity extends Activity {
                     observer.setError("Observer required");return;
                 }
                 if(!validInterval(started,ended))return;
+                boolean alreadySearched=false;
+                try(Cursor previous=db.getReadableDatabase().rawQuery(
+                    "SELECT COUNT(*) FROM area_search_passes WHERE event_id=? AND area_id=?",
+                    new String[]{eventId,area.getText().toString().trim()})){
+                    if(previous.moveToFirst())alreadySearched=previous.getInt(0)>0;
+                }
+                if(alreadySearched&&!repeat.isChecked()){
+                    repeat.setError("This area already has a pass; flag repeated coverage");
+                    toast("Mark this search as a repeated pass to prevent double counting");
+                    return;
+                }
                 Double areaSize=quantity(measured),distance=quantity(route);
                 if(areaSize==null||!FieldProtocolPolicy.validArea(areaSize)){
                     measured.setError("Measured area must be positive");return;
@@ -362,7 +376,7 @@ public final class FieldProtocolsActivity extends Activity {
                 if(distance!=null)row.put("route_length_m",distance);
                 row.put("habitat",habitat.getText().toString().trim());
                 row.put("weather",weather.getText().toString().trim());
-                row.put("repeat_pass",repeat.isChecked()?1:0);
+                row.put("repeat_pass",repeat.isChecked()||alreadySearched?1:0);
                 row.put("duplicate_control_notes",duplicatePlan);
                 row.put("notes",notes.getText().toString().trim());
                 db.getWritableDatabase().insertOrThrow("area_search_passes",null,row);

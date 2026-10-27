@@ -30,6 +30,8 @@ public final class SurveyGpsActivity extends Activity {
     private LocationManager manager;
     private boolean stationMode;
     private boolean receiverStartedInThisScreen=false;
+    private boolean acquisitionVisible=false;
+    private boolean launchCommitted=false;
     private boolean skyRegistered=false;
     private Location qualifiedFix;
     private TextView status,satelliteStatus,signalStatus;
@@ -78,13 +80,9 @@ public final class SurveyGpsActivity extends Activity {
         content.addView(UiKit.title(this,stationMode?"Station GPS check":"Acquire survey-start GPS"));
         TextView explanation=new TextView(this);
         explanation.setText(stationMode?
-            "Using the continuous GPS already running for this survey. "+
-            "If a fresh fix is below 10 m, the station can start immediately. "+
-            "No sky map or new satellite search is required.":
-            "Waiting for a live GNSS position. Reported horizontal accuracy must be below "+
-            "10 m and the fix must be at most 10 seconds old. "+
-            "Acquisition continues in the background with a notification. "+
-            "Reported uncertainty does not guarantee the true field error.");
+            "Checking live GPS. This station starts automatically below 10 m.":
+            "Survey starts automatically after a fresh, non-mock GNSS fix below 10 m. "+
+            "Acquisition remains active in the background.");
         explanation.setTextSize(15);
         explanation.setTextColor(UiKit.INK);
         explanation.setPadding(0,gap,0,gap);
@@ -120,6 +118,8 @@ public final class SurveyGpsActivity extends Activity {
             "Start survey with verified GPS","primary");
         startButton.setEnabled(false);
         startButton.setOnClickListener(v->launchWithFix());
+        // Survey and station setup are already explicit actions. No second Start tap.
+        startButton.setVisibility(View.GONE);
         content.addView(startButton);
         if(stationMode){
             Button missing=UiKit.button(this,"Start without GPS · flag missing","warning");
@@ -154,6 +154,7 @@ public final class SurveyGpsActivity extends Activity {
     }
     @Override protected void onResume(){
         super.onResume();
+        acquisitionVisible=true;
         ensureReceiver();
         if(!stationMode)registerSkyStatus();
         ui.removeCallbacks(refresh);
@@ -207,6 +208,11 @@ public final class SurveyGpsActivity extends Activity {
         boolean good=validFix(current);
         qualifiedFix=good?new Location(current):null;
         startButton.setEnabled(good);
+        if(good&&acquisitionVisible&&!launchCommitted&&!isFinishing()){
+            status.setText("GPS verified · starting "+(stationMode?"station":"survey")+"…");
+            launchWithFix();
+            return;
+        }
         if(current==null){
             status.setText("GNSS running. Waiting for first location fix. "+
                 "Move to open sky if satellite signals are weak.");
@@ -218,13 +224,14 @@ public final class SurveyGpsActivity extends Activity {
             current.getLatitude(),current.getLongitude());
         String accuracy=current.hasAccuracy()?
             String.format(Locale.US,"±%.1f m",current.getAccuracy()):"unknown";
-        status.setText((good?"GPS ready · tap Start": "Waiting for a fresher, more accurate fix")+
+        status.setText((good?"GPS ready · starting": "Waiting for a fresher, more accurate fix")+
             "\nCoordinates: "+coords+"\nReported accuracy: "+accuracy+
             "\nFix age: "+String.format(Locale.US,"%.1f s",shownAge)+
             (current.isFromMockProvider()?"\nMock location rejected":"")+
             "\nContinuous GPS: "+(TrackService.isRunning()?"active":"stopped"));
     }
     private void launchWithFix(){
+        if(launchCommitted||!acquisitionVisible||isFinishing())return;
         Location fix=TrackService.currentFix();
         if(!validFix(fix)){
             qualifiedFix=null;
@@ -232,6 +239,7 @@ public final class SurveyGpsActivity extends Activity {
             status.setText("GPS fix expired or no longer meets 10 m. Waiting for another update.");
             return;
         }
+        launchCommitted=true;
         if(stationMode){finishStation(fix);return;}
         Intent launch=new Intent(this,MainActivity.class);
         if(getIntent().getExtras()!=null)launch.putExtras(getIntent().getExtras());
@@ -240,10 +248,17 @@ public final class SurveyGpsActivity extends Activity {
         launch.putExtra("start_gps_accuracy_m",fix.getAccuracy());
         launch.putExtra("start_gps_recorded_at_ms",fix.getTime());
         launch.putExtra("start_gps_elapsed_nanos",fix.getElapsedRealtimeNanos());
-        startActivity(launch);
-        finish();
+        try{
+            startActivity(launch);
+            finish();
+        }catch(RuntimeException e){
+            launchCommitted=false;
+            status.setText("Could not open survey: "+e.getClass().getSimpleName());
+        }
     }
     private void finishStation(Location fix){
+        if(isFinishing())return;
+        launchCommitted=true;
         Intent result=new Intent();
         result.putExtra("station_kind",getIntent().getStringExtra("station_kind"));
         result.putExtra("station_id",getIntent().getStringExtra("station_id"));
@@ -260,6 +275,7 @@ public final class SurveyGpsActivity extends Activity {
     }
     @Override public void onBackPressed(){cancel();}
     @Override protected void onPause(){
+        acquisitionVisible=false;
         ui.removeCallbacks(refresh);
         if(skyRegistered&&manager!=null){
             try{manager.unregisterGnssStatusCallback(satelliteCallback);}catch(Exception ignored){}

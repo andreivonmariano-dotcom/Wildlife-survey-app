@@ -50,11 +50,10 @@ public final class StudyProtocolsActivity extends Activity {
         screen=new LinearLayout(this);screen.setOrientation(LinearLayout.VERTICAL);
         screen.setPadding(dp(14),dp(12),dp(14),dp(18));screen.setBackgroundColor(UiKit.BG);
         scroll.addView(screen);setContentView(scroll);
-        Button back=UiKit.button(this,"‹ Home","secondary");
+        Button back=UiKit.button(this,"‹ Back","secondary");
         back.setOnClickListener(v->finish());screen.addView(back);
         screen.addView(label("Study protocol templates"));
-        screen.addView(label("Define extra completion requirements per project and survey method. "+
-            "Each chosen template is copied into a survey when it starts."));
+        screen.addView(label("Rules are copied into each new survey. Past surveys keep their original rules."));
         project=new Spinner(this);
         ArrayList<String> projects=new ArrayList<>();projectIds.clear();
         try(Cursor c=store.getReadableDatabase().rawQuery(

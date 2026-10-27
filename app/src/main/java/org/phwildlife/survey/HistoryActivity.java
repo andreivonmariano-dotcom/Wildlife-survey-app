@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.Editable;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.graphics.Typeface;
 import android.view.View;
@@ -23,6 +25,12 @@ public class HistoryActivity extends Activity {
     private String eventFilter;
     private String outcomeFilter="all";
     private String surveySearch="";
+    private final Handler searchHandler=new Handler(Looper.getMainLooper());
+    private Runnable pendingSearch;
+    private static final String OUTCOME_SQL=
+        "CASE WHEN s.outcome IS NOT NULL THEN s.outcome "+
+        "WHEN s.ended IS NULL THEN 'active' "+
+        "WHEN COALESCE(s.complete,0)=1 THEN 'complete' ELSE 'incomplete' END";
     private static final String[] OUTCOME_LABELS={
         "All outcomes","Complete","Incomplete","Canceled / Not counted","Active"};
     private static final String[] OUTCOME_VALUES={
@@ -36,7 +44,11 @@ public class HistoryActivity extends Activity {
     private Button btn(String val){return UiKit.button(this,val,"secondary");}
     private EditText field(String hint,String init){EditText v=new EditText(this);v.setHint(hint);v.setText(init==null?"":init);v.setSingleLine(true);return v;}
     @Override public void onCreate(Bundle b){super.onCreate(b);db=new FieldDb(this);eventFilter=getIntent().getStringExtra("event_id");draw();}
-    @Override protected void onDestroy(){super.onDestroy();db.close();}
+    @Override protected void onDestroy(){
+        searchHandler.removeCallbacksAndMessages(null);
+        db.close();
+        super.onDestroy();
+    }
     private void draw(){
         root=column();root.setBackgroundColor(UiKit.BG);root.setPadding(dp(14),dp(10),dp(14),dp(10));
         LinearLayout header=new LinearLayout(this);
@@ -45,7 +57,10 @@ public class HistoryActivity extends Activity {
         header.addView(back,new LinearLayout.LayoutParams(dp(112),dp(48)));
         back.setOnClickListener(v->{
             if(eventFilter==null)finish();
-            else{eventFilter=null;surveyOffset=0;observationOffset=0;draw();}
+            else{
+                if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
+                eventFilter=null;surveyOffset=0;observationOffset=0;draw();
+            }
         });
         TextView heading=text(eventFilter==null?"Survey history":"Observations",20);
         heading.setTypeface(null,Typeface.BOLD);
@@ -76,8 +91,13 @@ public class HistoryActivity extends Activity {
             search.addTextChangedListener(new TextWatcher(){
                 public void beforeTextChanged(CharSequence s,int st,int n,int after){}
                 public void onTextChanged(CharSequence s,int st,int before,int count){
-                    surveySearch=s.toString().trim();surveyOffset=0;
-                    if(rows!=null){rows.removeAllViews();surveys();}
+                    surveySearch=s.toString().trim();
+                    if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
+                    pendingSearch=()->{
+                        surveyOffset=0;
+                        if(eventFilter==null&&rows!=null){rows.removeAllViews();surveys();}
+                    };
+                    searchHandler.postDelayed(pendingSearch,220L);
                 }
                 public void afterTextChanged(Editable value){}
             });
@@ -91,9 +111,9 @@ public class HistoryActivity extends Activity {
         try(Cursor c=db.getReadableDatabase().rawQuery(
           "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,"+
           "COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),"+
-          "COALESCE(s.outcome,'active') FROM surveys s "+
+          OUTCOME_SQL+" FROM surveys s "+
           "LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL "+
-          "WHERE (?='all' OR COALESCE(s.outcome,'active')=?) "+
+          "WHERE (?='all' OR "+OUTCOME_SQL+"=?) "+
           "AND (COALESCE(s.survey_profile,s.taxon_group,'Birds') LIKE ? OR "+
           "COALESCE(s.method,'') LIKE ? OR COALESCE(s.station_id,'') LIKE ? OR "+
           "COALESCE(s.started,'') LIKE ?) "+
@@ -103,7 +123,7 @@ public class HistoryActivity extends Activity {
               String.valueOf(PAGE_SIZE),String.valueOf(surveyOffset)})){
             int rowsThisPage=c.getCount();
             if(rowsThisPage==0&&surveyOffset==0)
-                rows.addView(text("No surveys match this outcome.",15));
+                rows.addView(text("No matching surveys",15));
             while(c.moveToNext()){
                 String event=c.getString(0),profile=c.getString(1),method=c.getString(2),site=c.getString(3),date=c.getString(4);
                 String outcome=c.getString(8);
@@ -113,9 +133,9 @@ public class HistoryActivity extends Activity {
                     c.isNull(5)?"Active":c.getInt(6)==1?"Complete":"Incomplete";
                 LinearLayout card=column();card.setPadding(dp(12),dp(9),dp(12),dp(9));
                 card.setBackground(UiKit.surface(this));
-                TextView name=text(profile+" · "+SurveyMethods.lookup(profile,method).label,16);
+                TextView name=text(profile+" · "+SurveyMethods.displayLabel(profile,method),16);
                 name.setTypeface(null,Typeface.BOLD);card.addView(name);
-                TextView meta=text((site.isEmpty()?"No station":site)+" · "+date+
+                TextView meta=text((site.isEmpty()?"":site+" · ")+date+
                     "\n"+c.getInt(7)+" observations",12);
                 meta.setTextColor(UiKit.MUTED);card.addView(meta);
                 TextView badge=text(state+"  ›",13);badge.setTypeface(null,Typeface.BOLD);
@@ -138,57 +158,81 @@ public class HistoryActivity extends Activity {
     }
     private void observations(String event){
         String outcome="active";
+        String surveyMethod="";
+        String surveyProfile="Birds";
+        String exclusionReason="";
         try(Cursor meta=db.getReadableDatabase().rawQuery(
             "SELECT COALESCE(station_id,''),method,started,ended,"+
-                "COALESCE(outcome,'active'),COALESCE(exclusion_reason,'') "+
+                "CASE WHEN outcome IS NOT NULL THEN outcome WHEN ended IS NULL "+
+                "THEN 'active' WHEN COALESCE(complete,0)=1 THEN 'complete' "+
+                "ELSE 'incomplete' END,COALESCE(exclusion_reason,''),"+
+                "COALESCE(survey_profile,taxon_group,'Birds') "+
                 "FROM surveys WHERE id=?",new String[]{event})){
             if(meta.moveToFirst()){
                 outcome=meta.getString(4);
+                surveyMethod=meta.getString(1);
+                surveyProfile=meta.getString(6);
+                exclusionReason=meta.getString(5);
                 String state=outcome.equals("not_counted")?"Canceled · Not counted":
                     outcome.equals("incomplete")?"Incomplete":
                     outcome.equals("complete")?"Complete":"Active";
-                rows.addView(text(state+" · "+meta.getString(1)+
-                    "\nStation "+meta.getString(0)+
+                rows.addView(text(state+" · "+SurveyMethods.displayLabel(surveyProfile,meta.getString(1))+
+                    (meta.getString(0).isEmpty()?"":"\nStation "+meta.getString(0))+
                     "\nStarted "+meta.getString(2)+
                     (meta.isNull(3)?"":"\nEnded "+meta.getString(3)),15));
-                if(outcome.equals("not_counted")&&!meta.getString(5).trim().isEmpty())
-                    rows.addView(text("Cancellation reason: "+meta.getString(5),14));
             }
         }
         if(outcome.equals("incomplete")||outcome.equals("not_counted")){
+            boolean hasAudit=false;
             try(Cursor changes=db.getReadableDatabase().rawQuery(
                 "SELECT reason,changed_at_utc,record_count "+
                 "FROM survey_outcome_audit WHERE event_id=? "+
                 "ORDER BY id DESC LIMIT 1",new String[]{event})){
                 if(changes.moveToFirst()){
-                    String explanation=changes.isNull(0)?"":changes.getString(0);
-                    String date=changes.isNull(1)?"":changes.getString(1);
-                    rows.addView(text("Outcome audit · "+date+
-                        "\n"+(explanation.trim().isEmpty()?
-                            "No reason saved for this earlier survey":explanation)+
-                        "\nRecords at closure: "+changes.getInt(2),14));
+                    hasAudit=true;
+                    String reason=changes.isNull(0)?"":changes.getString(0);
+                    String changed=changes.isNull(1)?"":changes.getString(1);
+                    int records=changes.getInt(2);
+                    Button audit=UiKit.button(this,"Closure details","quiet");
+                    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(46));
+                    rows.addView(audit,lp);
+                    audit.setOnClickListener(v->new AlertDialog.Builder(this)
+                        .setTitle("Survey closure audit")
+                        .setMessage("Changed: "+changed+"\nReason: "+
+                            (reason.trim().isEmpty()?"Not recorded":reason)+
+                            "\nRecords at closure: "+records)
+                        .setPositiveButton("Close",null).show());
                 }
             }
+            if(!hasAudit&&!exclusionReason.trim().isEmpty())
+                rows.addView(text("Reason: "+exclusionReason,13));
         }
-        Button progress=UiKit.button(this,"Station progress","secondary");
-        progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
-            .putExtra("event_id",event)));
-        rows.addView(progress);
-        Button sounds=UiKit.button(this,"♪ Call recordings and spectrograms","secondary");
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
-        lp.topMargin=dp(7);rows.addView(sounds,lp);
-        sounds.setOnClickListener(v->startActivity(new Intent(this,CallLibraryActivity.class)
-            .putExtra("event_id",event)));
-        Button devices=UiKit.button(this,"Camera / trap deployment history","secondary");
-        LinearLayout.LayoutParams deviceLp=new LinearLayout.LayoutParams(-1,dp(52));
-        deviceLp.topMargin=dp(7);rows.addView(devices,deviceLp);
-        devices.setOnClickListener(v->startActivity(new Intent(this,TrapProtocolActivity.class)
-            .putExtra("event_id",event)));
-        Button evidence=UiKit.button(this,"Coverboard / area / sign evidence","secondary");
-        LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,dp(52));
-        evidenceLp.topMargin=dp(6);rows.addView(evidence,evidenceLp);
-        evidence.setOnClickListener(v->startActivity(new Intent(this,FieldProtocolsActivity.class)
-            .putExtra("event_id",event)));
+        boolean birdOrHerp="Birds".equals(surveyProfile)||
+            "Herpetofauna".equals(surveyProfile);
+        boolean trap=TrapProtocolPolicy.supported(surveyMethod);
+        boolean field=FieldProtocolPolicy.supported(surveyMethod);
+        if(birdOrHerp){
+            Button sounds=UiKit.button(this,"Sound recordings","secondary");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(48));
+            lp.topMargin=dp(5);rows.addView(sounds,lp);
+            sounds.setOnClickListener(v->startActivity(new Intent(this,CallLibraryActivity.class)
+                .putExtra("event_id",event)));
+        }
+        if(trap||field){
+            Button evidence=UiKit.button(this,trap?"Device checks & captures":"Method effort & evidence","secondary");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(48));
+            lp.topMargin=dp(5);rows.addView(evidence,lp);
+            final Class<?> destination=trap?TrapProtocolActivity.class:FieldProtocolsActivity.class;
+            evidence.setOnClickListener(v->startActivity(new Intent(this,destination)
+                .putExtra("event_id",event)));
+        }
+        if("point_count".equals(surveyMethod)||SurveyMethods.timedInterval(surveyMethod)){
+            Button progress=UiKit.button(this,"Station & effort progress","quiet");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(48));
+            lp.topMargin=dp(5);rows.addView(progress,lp);
+            progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
+                .putExtra("event_id",event)));
+        }
         appendObservations(event);
     }
     private void appendObservations(String event){

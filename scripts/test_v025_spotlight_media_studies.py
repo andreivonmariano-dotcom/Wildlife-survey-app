@@ -56,7 +56,7 @@ class V025Protocols(unittest.TestCase):
     def test_templates_are_user_selectable_and_project_scoped(self):
         home=src("WelcomeActivity.java")
         for term in ("studyChoice=new Spinner","refreshStudyChoices()",
-                     "study_protocol_id","Manage study protocols",
+                     "study_protocol_id","Manage study templates",
                      "StudyProtocolsActivity.class"):
             self.assertIn(term,home)
         editor=src("StudyProtocolsActivity.java")

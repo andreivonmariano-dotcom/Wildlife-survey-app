@@ -230,6 +230,8 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView.setOnClickListener(v->showGpsDetail());
         gpsView.setMinHeight(dp(44));
         gpsView.setGravity(Gravity.CENTER_VERTICAL);
+        gpsView.setFocusable(true);
+        gpsView.setContentDescription("Current GPS status. Open GPS details");
         hud.addView(gpsView);
         startGpsBanner=label("Initial GPS missing · location unverified",12,true);
         startGpsBanner.setTextColor(UiKit.AMBER);
@@ -241,7 +243,7 @@ public class MainActivity extends Activity implements LocationListener {
         groupBar=horizontal();content.addView(groupBar);showGroups();
         LinearLayout methodRow=horizontal();
         // The method was already chosen in survey setup. Do not offer a second, disabled selector.
-        TextView methodName=label(SurveyMethods.lookup(profile,method).label,14,true);
+        TextView methodName=label(SurveyMethods.displayLabel(profile,method),14,true);
         methodName.setTextColor(UiKit.FOREST);
         methodRow.addView(methodName,weighted(1f));
         lineRow=horizontal();lineEntry=edit("Transect magnetic bearing °",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -268,28 +270,29 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout sessionSettings=vertical();
         sessionSettings.setVisibility(View.GONE);
         sessionSettings.addView(vibrationChoice);
-        TextView sessionToggle=label("Vibration settings  ▾",13,true);
+        TextView sessionToggle=label("Haptic alert  ▾",13,true);
         sessionToggle.setTextColor(GREEN);disclosureTarget(sessionToggle);
         sessionToggle.setPadding(dp(6),dp(7),dp(6),dp(8));
         sessionToggle.setOnClickListener(v->{
             boolean expanded=sessionSettings.getVisibility()!=View.VISIBLE;
             sessionSettings.setVisibility(expanded?View.VISIBLE:View.GONE);
-            sessionToggle.setText(expanded?"Vibration settings  ▴":"Vibration settings  ▾");
+            sessionToggle.setText(expanded?"Haptic alert  ▴":"Haptic alert  ▾");
         });
         // Optional settings are placed below the observation form.
         pointNextButton=UiKit.button(this,"Finish point · Next station","camera");
         content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,dp(53)));
         pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
         pointNextButton.setOnClickListener(v->{if(method.equals("point_count"))nextPoint();else nextSamplingUnit();});
-        trackingView=label("GPS track: awaiting location",14,true);
+        trackingView=label("Track: awaiting GPS",12,true);
         trackingView.setTextColor(UiKit.BLUE);
         content.addView(trackingView);
         trackingView.setVisibility(method.equals("line_transect")||method.equals("ves_transect")?View.VISIBLE:View.GONE);
-        content.addView(section("Mark detection"));
+
         LinearLayout detectRow=horizontal();
         Button markTime=UiKit.button(this,"Mark now","secondary");
         detectRow.addView(markTime,weighted(0.9f));
-        markButton=UiKit.button(this,"Open camera","camera");
+        markButton=UiKit.button(this,"Measure bearing","secondary");
+        markButton.setContentDescription("Open sighting camera to capture detection bearing and pitch");
         detectRow.addView(markButton,weighted(1.1f));
         content.addView(detectRow);
         markTime.setOnClickListener(v->markDetection());
@@ -325,31 +328,33 @@ public class MainActivity extends Activity implements LocationListener {
         clear.setOnClickListener(v->clearMark());
         markRow.addView(clear);
         content.addView(markRow);
-        content.addView(section("Species"));
-        Button identifySpecies=UiKit.button(this,"Find species","primary");
-        identifySpecies.setContentDescription("Open full offline species list and identification reference");
-        LinearLayout.LayoutParams pickerSpace=new LinearLayout.LayoutParams(-1,dp(58));
-        pickerSpace.bottomMargin=dp(6);content.addView(identifySpecies,pickerSpace);
-        identifySpecies.setOnClickListener(v->openSpeciesPicker());
+        // One row combines direct entry and the complete offline checklist.
         // Complete species selection now lives on its own page.
         // Retain direct text entry for novel/unidentified field observations.
         LinearLayout speciesRow=horizontal();
         taxonEntry=new AutoCompleteTextView(this);
-        taxonEntry.setTextSize(18);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
-        taxonEntry.setThreshold(100);taxonEntry.setHint("Species name or field ID");
+        taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
+        taxonEntry.setThreshold(100);taxonEntry.setHint("Species or field ID");
         taxonEntry.setSelectAllOnFocus(true);
-        speciesRow.addView(taxonEntry,new LinearLayout.LayoutParams(0,-2,1));
-        Button unknownBtn=UiKit.button(this,"Unidentified","secondary");
-        unknownBtn.setTextSize(12);
-        LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(dp(127),dp(52));
-        unknownLp.leftMargin=dp(6);speciesRow.addView(unknownBtn,unknownLp);
-        favoriteButton=UiKit.button(this,"☆","secondary");
+        speciesRow.addView(taxonEntry,new LinearLayout.LayoutParams(0,dp(52),1));
+        Button identifySpecies=UiKit.button(this,"Browse","secondary");
+        identifySpecies.setContentDescription("Search offline species checklist");
+        LinearLayout.LayoutParams browseLp=new LinearLayout.LayoutParams(dp(94),dp(52));
+        browseLp.leftMargin=dp(8);speciesRow.addView(identifySpecies,browseLp);
+        identifySpecies.setOnClickListener(v->openSpeciesPicker());
+        content.addView(speciesRow);
+        LinearLayout speciesActions=horizontal();
+        Button unknownBtn=UiKit.button(this,"Unidentified","quiet");
+        unknownBtn.setTextSize(13);
+        LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(0,dp(46),1);
+        speciesActions.addView(unknownBtn,unknownLp);
+        favoriteButton=UiKit.button(this,"☆","quiet");
         favoriteButton.setTextSize(22);
-        LinearLayout.LayoutParams starP=new LinearLayout.LayoutParams(dp(48),dp(52));
-        starP.leftMargin=dp(4);speciesRow.addView(favoriteButton,starP);
+        LinearLayout.LayoutParams starP=new LinearLayout.LayoutParams(dp(52),dp(46));
+        starP.leftMargin=dp(6);speciesActions.addView(favoriteButton,starP);
         favoriteButton.setContentDescription("Add or remove favorite species");
         favoriteButton.setOnClickListener(v->toggleFavorite());
-        content.addView(speciesRow);
+        content.addView(speciesActions);
         unknownBtn.setOnClickListener(v->{
             String[] choices=Taxa.unknownLabels(group);
             new AlertDialog.Builder(this).setTitle("Record unidentified "+group.toLowerCase(Locale.US))
@@ -504,7 +509,8 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout photoRow=horizontal();
         Button photoButton=UiKit.button(this,"Add photo","secondary");
         photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(49),2));
-        photoStatus=label("No photo attached",12,false);
+        photoStatus=label("",12,false);
+        photoStatus.setVisibility(View.GONE);
         photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));
         content.addView(photoRow);
         photoButton.setOnClickListener(v->pickPhoto());
@@ -637,7 +643,10 @@ public class MainActivity extends Activity implements LocationListener {
         startActivityForResult(intent,PHOTO_PICK);
     }
     private void showPendingPhoto(){
-        if(photoStatus!=null)photoStatus.setText(pendingPhoto==null?"No photo selected":"Photo ready · copied offline");
+        if(photoStatus!=null){
+            photoStatus.setText(pendingPhoto==null?"":"Photo saved locally");
+            photoStatus.setVisibility(pendingPhoto==null?View.GONE:View.VISIBLE);
+        }
         if(photoPreview!=null){
             photoPreview.setVisibility(pendingPhoto==null?View.GONE:View.VISIBLE);
             if(pendingPhoto!=null)PhotoEvidence.preview(this,pendingPhoto,photoPreview);
@@ -849,7 +858,8 @@ public class MainActivity extends Activity implements LocationListener {
             pauseButton.setEnabled(active);
         }
         if(pauseStatusView!=null){
-            pauseStatusView.setText(surveyPaused?"EFFORT PAUSED · records stay stored · resume to continue":"");
+            pauseStatusView.setText(surveyPaused?"Effort paused · resume to continue":"");
+            pauseStatusView.setVisibility(surveyPaused?View.VISIBLE:View.GONE);
         }
         if(saveButton!=null&&active)saveButton.setEnabled(!surveyPaused&&
             (!method.equals("point_count")||pointCountId!=null)&&
@@ -1874,6 +1884,7 @@ public class MainActivity extends Activity implements LocationListener {
             sessionClockView.setText("Survey not started");
             eventView.setText("No active sampling unit");
             progressView.setText("");
+            progressView.setVisibility(View.GONE);
             return;
         }
         long now=System.currentTimeMillis();
@@ -1928,9 +1939,9 @@ public class MainActivity extends Activity implements LocationListener {
             }else if(hasStationUnits()){
                 int[] counts=visitProgress();
                 progressView.setText(counts[1]+"/"+counts[0]+" visits complete");
-            }else if(target>0){
-                progressView.setText("Target "+timeFmt(target));
             }else progressView.setText("");
+            progressView.setVisibility(progressView.getText().length()>0?
+                View.VISIBLE:View.GONE);
         }
         if((method.equals("line_transect")||method.equals("ves_transect"))&&
             (lastTrackFetchMs==0||now-lastTrackFetchMs>=4000L)){

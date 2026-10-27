@@ -32,7 +32,7 @@ jobs:
             keytool -genkeypair -keystore .signing/wildlife-beta08.keystore -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Wildlife Survey Beta Debug, O=Field Research, C=PH" -noprompt
           fi
       - name: Build debug APK
-        run: gradle --no-daemon :app:assembleDebug
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
       - uses: actions/upload-artifact@v4
         with:
           name: wildlife-survey-debug-apk
@@ -42,10 +42,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="v0.14.1-beta"
+          TAG="v0.15.0-beta"
           FILE="app/build/outputs/apk/debug/app-debug.apk"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$FILE" --clobber
           else
-            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.14.1" --notes "Remove duplicated station creation and selection, use fresh on-device GPS for checklist suggestions, retain project-first auto-generated sampling stations." --prerelease --target "$GITHUB_SHA"
+            gh release create "$TAG" "$FILE" --title "Wildlife Survey Beta v0.15" --notes "Repeat survey route templates with fixed station IDs, scientific data QA screen and ZIP flags, corrected station-only effort, and MDD v2.5 Philippine mammal CSV import." --prerelease --target "$GITHUB_SHA"
           fi

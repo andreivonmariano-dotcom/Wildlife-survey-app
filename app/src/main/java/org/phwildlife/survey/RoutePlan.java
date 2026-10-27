@@ -19,9 +19,7 @@ public final class RoutePlan {
         f.setTimeZone(TimeZone.getTimeZone("UTC"));return f.format(new Date(time));
     }
     public static int count(double lengthM,double spacingM){
-        if(!Double.isFinite(lengthM)||!Double.isFinite(spacingM)||lengthM<0||spacingM<=0)
-            throw new IllegalArgumentException("Invalid route length or spacing");
-        return (int)Math.floor((lengthM+1e-7)/spacingM)+1;
+        return SurveyMath.stations(lengthM,spacingM);
     }
     public static String newSiteId(){
         return "STN-"+UUID.randomUUID().toString().replace("-","").substring(0,12).toUpperCase(Locale.US);
@@ -41,6 +39,62 @@ public final class RoutePlan {
                 new Object[]{event,id,i+1,offset,"planned"});
         }
         return n;
+    }
+    /** Create a durable route template using the survey's existing, immutable station IDs. */
+    public static String saveTemplate(SQLiteDatabase d,String event,String project,
+            String name,double lengthM,double spacingM,long now){
+        if(name==null||name.trim().length()<3||name.trim().length()>100)
+            throw new IllegalArgumentException("Route template name must be 3–100 characters");
+        String id="RTE-"+UUID.randomUUID().toString().replace("-","").substring(0,12).toUpperCase(Locale.US);
+        int stations=plannedCount(d,event);
+        if(stations<2||stations!=count(lengthM,spacingM))
+            throw new IllegalStateException("Route station count does not match design");
+        d.execSQL("INSERT INTO route_templates(id,project_id,name,method,planned_length_m,"+
+            "station_spacing_m,station_count,created_at_utc) VALUES(?, ?, ?, 'point_count', ?, ?, ?, ?)",
+            new Object[]{id,project,name.trim(),lengthM,spacingM,stations,utc(now)});
+        d.execSQL("INSERT INTO route_template_stations(template_id,station_id,sequence_number,chainage_m) "+
+            "SELECT ?,station_id,sequence_number,planned_chainage_m FROM survey_stations "+
+            "WHERE event_id=? ORDER BY sequence_number",new Object[]{id,event});
+        d.execSQL("UPDATE surveys SET route_template_id=? WHERE id=?",new Object[]{id,event});
+        return id;
+    }
+    /**
+     * Revisit a saved route using the exact station IDs from prior fieldwork.
+     * Fresh GPS is sampled independently during each visit, and the site coordinate
+     * remains available for comparison. This method never duplicates site rows.
+     */
+    public static int reuseTemplate(SQLiteDatabase d,String template,String project,String event,
+            double expectedLength,double expectedSpacing){
+        int count=0;
+        try(Cursor c=d.rawQuery(
+            "SELECT station_id,sequence_number,chainage_m,planned_length_m,station_spacing_m,"+
+            "station_count,project_id FROM route_template_stations ts "+
+            "JOIN route_templates rt ON rt.id=ts.template_id "+
+            "WHERE ts.template_id=? ORDER BY sequence_number",
+            new String[]{template})){
+            while(c.moveToNext()){
+                if(!project.equals(c.getString(6))||
+                   Math.abs(expectedLength-c.getDouble(3))>0.001||
+                   Math.abs(expectedSpacing-c.getDouble(4))>0.001||
+                   count(c.getDouble(3),c.getDouble(4))!=c.getInt(5))
+                    throw new IllegalArgumentException("Saved route does not match the survey design");
+                String stationId=c.getString(0);
+                try(Cursor site=d.rawQuery("SELECT 1 FROM sites WHERE id=? AND project_id=?",
+                    new String[]{stationId,project})){
+                    if(!site.moveToFirst())throw new IllegalStateException("Template station is missing or belongs to another project");
+                }
+                int seq=c.getInt(1);
+                if(seq!=count+1)throw new IllegalStateException("Template station ordering is inconsistent");
+                d.execSQL("INSERT INTO survey_stations(event_id,station_id,sequence_number,"+
+                    "planned_chainage_m,visit_state) VALUES(?,?,?,?,'planned')",
+                    new Object[]{event,stationId,seq,c.getDouble(2)});
+                count++;
+            }
+        }
+        if(count<2||count!=count(expectedLength,expectedSpacing))
+            throw new IllegalStateException("Saved route contains an unexpected number of stations");
+        d.execSQL("UPDATE surveys SET route_template_id=? WHERE id=?",new Object[]{template,event});
+        return count;
     }
     public static final class Next {
         public final String stationId;

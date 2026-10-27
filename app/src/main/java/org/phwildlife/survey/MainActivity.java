@@ -95,6 +95,8 @@ public class MainActivity extends Activity implements LocationListener {
     private int pointTargetSeconds=600;
     private double plannedRouteMeters=0,plannedSpacingMeters=0;
     private int plannedStationCount=0;
+    private String routeTemplateId="",routeTemplateName="";
+    private boolean saveRouteTemplate=false;
     private boolean basicLogOnly=false;
     private boolean active=false,detailShown=false;
     private long startedAt=0,markedAt=0;
@@ -144,6 +146,9 @@ public class MainActivity extends Activity implements LocationListener {
             plannedDurationSeconds=launch.getIntExtra("planned_duration_s",0);
             plannedRouteMeters=launch.getDoubleExtra("planned_route_m",0);
             plannedSpacingMeters=launch.getDoubleExtra("planned_spacing_m",0);
+            routeTemplateId=nonNull(launch.getStringExtra("route_template_id"));
+            routeTemplateName=nonNull(launch.getStringExtra("route_template_name"));
+            saveRouteTemplate=launch.getBooleanExtra("save_route_template",false);
             if(method.equals("point_count")&&plannedSpacingMeters>0)
                 plannedStationCount=RoutePlan.count(plannedRouteMeters,plannedSpacingMeters);
         }
@@ -680,11 +685,21 @@ public class MainActivity extends Activity implements LocationListener {
                 method.equals("line_transect")||method.equals("ves_transect")?
                     "continuous_planned_route":"unsegmented_method"});
             if(method.equals("point_count")&&plannedStationCount>0){
-                int created=RoutePlan.create(database,eventId,projectId,
-                    plannedRouteMeters,plannedSpacingMeters,startedAt);
-                if(created!=plannedStationCount)throw new IllegalStateException("Planned station count mismatch");
+                int created=routeTemplateId.isEmpty()?
+                    RoutePlan.create(database,eventId,projectId,plannedRouteMeters,plannedSpacingMeters,startedAt):
+                    RoutePlan.reuseTemplate(database,routeTemplateId,projectId,eventId,
+                        plannedRouteMeters,plannedSpacingMeters);
+                if(created!=plannedStationCount)
+                    throw new IllegalStateException("Planned station count mismatch");
+                if(routeTemplateId.isEmpty()&&saveRouteTemplate){
+                    routeTemplateId=RoutePlan.saveTemplate(database,eventId,projectId,
+                        routeTemplateName,plannedRouteMeters,plannedSpacingMeters,startedAt);
+                }
             }
             database.setTransactionSuccessful();
+        }catch(Exception ex){
+            toast("Could not start survey: "+ex.getMessage());
+            eventId=null;return;
         }finally{database.endTransaction();}
         // No station is visited at survey launch. The first GPS point is captured on arrival.
         if(method.equals("point_count")&&plannedStationCount>0)
@@ -935,6 +950,23 @@ public class MainActivity extends Activity implements LocationListener {
             }
         }
         if(method.equals("line_transect")||method.equals("ves_transect"))stopTracking();
+        // Stationary and station-based search effort excludes travel between visits.
+        // Preserve session clock separately. Never substitute the full survey duration
+        // for sampling effort in an analytical effort denominator.
+        if(method.equals("point_count")||requiresGenericUnit()){
+            long visitsMs=0;
+            String visitTable=method.equals("point_count")?"point_counts":"sampling_units";
+            try(Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT started,ended,COALESCE(unit_paused_ms,0) FROM "+visitTable+
+                " WHERE event_id=? AND ended IS NOT NULL",new String[]{eventId})){
+                while(c.moveToNext()){
+                    long began=parseIso(c.getString(0)),stopped=parseIso(c.getString(1));
+                    if(began>0&&stopped>=began)
+                        visitsMs+=Math.max(0,stopped-began-c.getLong(2));
+                }
+            }
+            effortTime=visitsMs;
+        }
         String outcome=excluded?"not_counted":complete?"complete":"incomplete";
         SQLiteDatabase writable=db.getWritableDatabase();
         writable.beginTransaction();
@@ -1470,7 +1502,7 @@ public class MainActivity extends Activity implements LocationListener {
         long wallElapsed=Math.max(0,now-startedAt);
         long activeElapsed=Math.max(0,wallElapsed-currentPausedMs(now));
         sessionClockView.setText("TOTAL SESSION "+timeFmt(wallElapsed/1000)+
-            "  ·  ACTIVE EFFORT "+timeFmt(activeElapsed/1000));
+            "  ·  SESSION EXCL. PAUSES "+timeFmt(activeElapsed/1000));
         long unitElapsed=-1,target=0;
         String label="SURVEY";
         if(method.equals("point_count")){
@@ -1558,8 +1590,8 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at FROM sites",
               "station_id,project_id,name,habitat,latitude,longitude,coordinate_uncertainty_m,notes,created_at,updated_at");
             csv(z,"surveys.csv",
-              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design FROM surveys",
-              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design");
+              "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id FROM surveys",
+              "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id");
             csv(z,"observations.csv",
               "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,COALESCE(s.outcome,'active'),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection,r.identification_confidence,r.identification_review_note FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
               "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection,identification_confidence,identification_review_note");
@@ -1569,6 +1601,12 @@ public class MainActivity extends Activity implements LocationListener {
             csv(z,"point_counts.csv",
               "SELECT p.id,p.event_id,p.station_id,p.sequence_number,p.started,p.ended,p.target_seconds,p.completed,p.notes,p.unit_paused_ms,COALESCE(s.outcome,'active'),p.planned_chainage_m,p.gps_latitude,p.gps_longitude,p.gps_accuracy_m,p.gps_recorded_at,p.gps_status FROM point_counts p JOIN surveys s ON s.id=p.event_id ORDER BY p.event_id,p.sequence_number",
               "point_count_id,event_id,station_id,sequence,start_utc,end_utc,target_seconds,completed,notes,unit_paused_ms,survey_outcome,planned_chainage_m,station_gps_lat,station_gps_lon,station_gps_accuracy_m,gps_fix_at_utc,gps_status");
+            csv(z,"route_templates.csv",
+              "SELECT id,project_id,name,method,planned_length_m,station_spacing_m,station_count,created_at_utc,notes FROM route_templates",
+              "route_template_id,project_id,route_name,method,planned_length_m,station_spacing_m,station_count,created_at_utc,notes");
+            csv(z,"route_template_stations.csv",
+              "SELECT template_id,station_id,sequence_number,chainage_m FROM route_template_stations ORDER BY template_id,sequence_number",
+              "route_template_id,station_id,sequence_number,planned_chainage_m");
             csv(z,"survey_stations.csv",
               "SELECT r.event_id,r.station_id,r.sequence_number,r.planned_chainage_m,r.visit_state,r.captured_at,r.gps_latitude,r.gps_longitude,r.gps_accuracy_m,r.gps_status,COALESCE(s.outcome,'active') FROM survey_stations r JOIN surveys s ON s.id=r.event_id ORDER BY r.event_id,r.sequence_number",
               "event_id,station_id,sequence_number,planned_chainage_m,visit_state,count_started_at_utc,station_lat,station_lon,station_gps_accuracy_m,gps_status,survey_outcome");
@@ -1587,6 +1625,7 @@ public class MainActivity extends Activity implements LocationListener {
             DistanceExport.write(z,db.getReadableDatabase());
             ResearchExports.write(z,db.getReadableDatabase());
             PhotoEvidence.writeZip(this,z,db.getReadableDatabase());
+            DataAudit.writeZip(this,z,db.getReadableDatabase());
             csv(z,"distance_review.csv",
               "SELECT r.id,r.event_id,r.taxon_group,r.raw_identification,r.horizontal_m,r.perpendicular_m,r.individual_count,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,s.method,COALESCE(p.station_id,s.station_id),s.effort_length_m,s.point_target_s,s.region_label,s.area_km2,s.complete,r.point_count_id,r.protocol_window_flag FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' AND COALESCE(s.outcome,'active')='complete' AND (s.method='point_count' OR s.method='line_transect')",
               "record_id,event_id,taxon_group,taxon,horizontal_m,perpendicular_m,group_size,distance_method,initial_position,movement_status,candidate_flag,survey_method,station_id,effort_length_m,point_target_s,region_label,area_km2,completed,point_count_id,window_flag");

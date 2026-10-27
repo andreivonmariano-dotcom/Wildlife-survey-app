@@ -34,7 +34,12 @@ public class WelcomeActivity extends Activity {
     private Runnable gpsTimeout;
     private Button gpsLookupButton;
     private EditText durationEntry,observerEntry,lineBearingEntry,regionEntry,areaEntry,radiusEntry,transectDurationEntry,routeLengthEntry,customSpacingEntry;
-    private Spinner spacingChoice;
+    private Spinner spacingChoice,templateChoice;
+    private final ArrayList<String> templateIds=new ArrayList<>();
+    private EditText templateName;
+    private CheckBox saveTemplateChoice;
+    private TextView templateHint;
+    private boolean updatingRouteChoices=false;
     private TextView stationCountPreview;
     private Spinner projectChoice, geographicChoice;
     private BoundaryLookup.Match suggested;
@@ -111,6 +116,8 @@ public class WelcomeActivity extends Activity {
         main.addView(text("Field data & management",18,true));
         card("Fieldwork dashboard","Survey counts, monitoring activity and detected-taxa summaries.",
             ()->startActivity(new Intent(this,DashboardActivity.class)));
+        card("Scientific data review","Check route links, station GPS, sampling effort, observation data and photo archive.",
+            ()->startActivity(new Intent(this,AuditActivity.class)));
         card("Survey history","Review visits, edit records and inspect correction history.",
             ()->startActivity(new Intent(this,HistoryActivity.class)));
         card("Projects","Create projects and review survey-generated stations.",
@@ -202,6 +209,12 @@ public class WelcomeActivity extends Activity {
         if(names.isEmpty()){projectKeys.add("default");names.add("General field project");}
         projectChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));
         main.addView(text("Project",13,false));main.addView(projectChoice);
+        projectChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+            public void onNothingSelected(android.widget.AdapterView<?> parent){}
+            public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
+                refreshRouteTemplates();
+            }
+        });
         Button projectManage=UiKit.button(this,"Create or manage projects","secondary");
         projectManage.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
         main.addView(projectManage);
@@ -265,6 +278,28 @@ public class WelcomeActivity extends Activity {
         customSpacingEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         customSpacingEntry.setVisibility(View.GONE);main.addView(customSpacingEntry);
         stationCountPreview=text("",13,true);stationCountPreview.setTextColor(GREEN);main.addView(stationCountPreview);
+        main.addView(text("Repeat monitoring route (bird point count)",14,true));
+        templateChoice=new Spinner(this);
+        main.addView(templateChoice);
+        templateHint=text("Use a saved route to revisit the same permanent station IDs, or create a new route.",12,false);
+        templateHint.setTextColor(MUTED);main.addView(templateHint);
+        saveTemplateChoice=new CheckBox(this);
+        saveTemplateChoice.setText("Save this route for future monitoring");
+        saveTemplateChoice.setChecked(true);main.addView(saveTemplateChoice);
+        templateName=new EditText(this);
+        templateName.setTextSize(16);templateName.setSingleLine(true);
+        templateName.setHint("Reusable route name");
+        templateName.setText("Bird route "+new java.text.SimpleDateFormat("yyyyMMdd-HHmm",Locale.US).format(new java.util.Date()));
+        main.addView(templateName);
+        saveTemplateChoice.setOnCheckedChangeListener((button,checked)->
+            templateName.setVisibility(checked?View.VISIBLE:View.GONE));
+        templateChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+            public void onNothingSelected(android.widget.AdapterView<?> parent){}
+            public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
+                if(!updatingRouteChoices)applyTemplateSelection();
+            }
+        });
+        refreshRouteTemplates();
         routeLengthEntry.addTextChangedListener(new android.text.TextWatcher(){
             public void beforeTextChanged(CharSequence s,int st,int c,int af){}
             public void onTextChanged(CharSequence s,int st,int before,int c){updateRoutePreview();}
@@ -301,6 +336,7 @@ public class WelcomeActivity extends Activity {
                 else transectDurationEntry.setText("120");
                 lineBearingEntry.setVisibility(profile.equals("Birds")&&choices[choice].code.equals("line_transect")?View.VISIBLE:View.GONE);
                 updateRoutePreview();
+                applyTemplateSelection();
             }
         });
         durationEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
@@ -475,13 +511,78 @@ public class WelcomeActivity extends Activity {
         if(method.equals("point_count")){
             double spacing=spacingMeters();
             if(spacing<=0){stationCountPreview.setText("Select a positive station spacing.");return;}
-            int stations=(int)Math.floor((length+1e-7)/spacing)+1;
+            int stations=SurveyMath.stations(length,spacing);
             double last=(stations-1)*spacing;
             stationCountPreview.setText(stations+" planned points at 0, "+(int)spacing+
                 " ... "+(int)last+" m. Remaining route beyond final point: "+
                 Math.max(0,(int)Math.round(length-last))+" m.");
         }else stationCountPreview.setText(String.format(Locale.US,
             "Continuous %.2f km transect. No point-count stations will be generated.",length/1000.0));
+    }
+    private String selectedTemplateId(){
+        if(templateChoice==null)return "";
+        int n=templateChoice.getSelectedItemPosition();
+        return n>=0&&n<templateIds.size()?templateIds.get(n):"";
+    }
+    private void refreshRouteTemplates(){
+        if(templateChoice==null)return;
+        String previous=selectedTemplateId();
+        templateIds.clear();
+        templateIds.add("");
+        ArrayList<String> labels=new ArrayList<>();
+        labels.add("New route · generate unique stations");
+        try(FieldDb f=new FieldDb(this);Cursor c=f.getReadableDatabase().rawQuery(
+                "SELECT id,name,planned_length_m,station_spacing_m,station_count FROM route_templates "+
+                "WHERE project_id=? AND method='point_count' ORDER BY name",
+                new String[]{projectId()})){
+            while(c.moveToNext()){
+                templateIds.add(c.getString(0));
+                labels.add(c.getString(1)+" · "+c.getInt(4)+" points ("+
+                    Math.round(c.getDouble(2))+" m / "+Math.round(c.getDouble(3))+" m)");
+            }
+        }catch(Exception ignored){}
+        updatingRouteChoices=true;
+        templateChoice.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,labels));
+        int n=templateIds.indexOf(previous);
+        templateChoice.setSelection(Math.max(0,n));
+        updatingRouteChoices=false;
+        applyTemplateSelection();
+    }
+    private void applyTemplateSelection(){
+        if(templateChoice==null||routeLengthEntry==null||spacingChoice==null)return;
+        String id=selectedTemplateId();
+        boolean pointCount=false;
+        int chosen=methodChoices.getCheckedRadioButtonId()-1000;
+        if(chosen>=0&&chosen<choices.length)pointCount="point_count".equals(choices[chosen].code);
+        boolean saved=pointCount&&!id.isEmpty();
+        if(saved){
+            try(FieldDb f=new FieldDb(this);Cursor c=f.getReadableDatabase().rawQuery(
+                    "SELECT planned_length_m,station_spacing_m,station_count,name FROM route_templates "+
+                    "WHERE id=? AND project_id=? AND method='point_count'",
+                    new String[]{id,projectId()})){
+                if(c.moveToFirst()){
+                    double km=c.getDouble(0)/1000.0,spacing=c.getDouble(1);
+                    routeLengthEntry.setText(String.format(Locale.US,"%.3f",km));
+                    int idx=Math.abs(spacing-100)<0.001?0:Math.abs(spacing-250)<0.001?1:
+                        Math.abs(spacing-500)<0.001?2:3;
+                    spacingChoice.setSelection(idx);
+                    if(idx==3)customSpacingEntry.setText(String.format(Locale.US,"%.1f",spacing));
+                    templateHint.setText("Using saved route: "+c.getString(3)+
+                        ". Reuses station IDs and existing baseline positions. Each new visit saves fresh GPS.");
+                }else{
+                    templateHint.setText("Saved route is unavailable. Select New route.");
+                }
+            }catch(Exception e){templateHint.setText("Route could not be read. Select New route.");}
+        }else templateHint.setText("New route creates station IDs once; save the route to revisit them on later survey dates.");
+        routeLengthEntry.setEnabled(!saved);
+        spacingChoice.setEnabled(!saved);
+        customSpacingEntry.setEnabled(!saved);
+        templateChoice.setVisibility(pointCount?View.VISIBLE:View.GONE);
+        templateHint.setVisibility(pointCount?View.VISIBLE:View.GONE);
+        saveTemplateChoice.setVisibility(pointCount&&!saved?View.VISIBLE:View.GONE);
+        templateName.setVisibility(pointCount&&!saved&&saveTemplateChoice.isChecked()?View.VISIBLE:View.GONE);
+        updateRoutePreview();
     }
     private void startSelected(){
         int choice=methodChoices.getCheckedRadioButtonId()-1000;
@@ -538,9 +639,25 @@ public class WelcomeActivity extends Activity {
                 if(!Double.isFinite(spacingM)||spacingM<50||spacingM>2000){
                     customSpacingEntry.setError("Spacing: 50 to 2000 m");return;
                 }
-                int points=(int)Math.floor((routeLengthM+1e-7)/spacingM)+1;
+                int points=SurveyMath.stations(routeLengthM,spacingM);
                 if(points<2||points>201){
                     routeLengthEntry.setError("Choose a route/spacing combination yielding 2–201 stations");return;
+                }
+            }
+        }
+        String templateId=m.code.equals("point_count")?selectedTemplateId():"";
+        boolean saveNewTemplate=m.code.equals("point_count")&&templateId.isEmpty()&&saveTemplateChoice.isChecked();
+        String routeName=saveNewTemplate?templateName.getText().toString().trim():"";
+        if(saveNewTemplate&&(routeName.length()<3||routeName.length()>100)){
+            templateName.setError("Give the route a unique name (3–100 characters)");return;
+        }
+        if(saveNewTemplate){
+            try(FieldDb f=new FieldDb(this);Cursor duplicate=f.getReadableDatabase().rawQuery(
+                "SELECT 1 FROM route_templates WHERE project_id=? AND method='point_count' AND name=?",
+                new String[]{projectId(),routeName})){
+                if(duplicate.moveToFirst()){
+                    templateName.setError("This route name already exists in the project. Reuse that route or enter another name.");
+                    return;
                 }
             }
         }
@@ -567,6 +684,9 @@ public class WelcomeActivity extends Activity {
         i.putExtra("planned_duration_s",plannedDuration);
         i.putExtra("planned_route_m",routeLengthM);
         i.putExtra("planned_spacing_m",spacingM);
+        i.putExtra("route_template_id",templateId);
+        i.putExtra("save_route_template",saveNewTemplate);
+        i.putExtra("route_template_name",routeName);
         i.putExtra("custom_survey",custom);
         i.putExtra("basic_log_only",m.basicLog);
         currentScreen="home";homeVisible=true;

@@ -289,7 +289,8 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout detectRow=horizontal();
         Button markTime=UiKit.button(this,"Mark now","secondary");
         detectRow.addView(markTime,weighted(0.9f));
-        markButton=UiKit.button(this,"Open camera","camera");
+        markButton=UiKit.button(this,"Measure bearing","secondary");
+        markButton.setContentDescription("Open sighting camera to capture detection bearing and pitch");
         detectRow.addView(markButton,weighted(1.1f));
         content.addView(detectRow);
         markTime.setOnClickListener(v->markDetection());
@@ -851,7 +852,8 @@ public class MainActivity extends Activity implements LocationListener {
             pauseButton.setEnabled(active);
         }
         if(pauseStatusView!=null){
-            pauseStatusView.setText(surveyPaused?"EFFORT PAUSED · records stay stored · resume to continue":"");
+            pauseStatusView.setText(surveyPaused?"Effort paused · resume to continue":"");
+            pauseStatusView.setVisibility(surveyPaused?View.VISIBLE:View.GONE);
         }
         if(saveButton!=null&&active)saveButton.setEnabled(!surveyPaused&&
             (!method.equals("point_count")||pointCountId!=null)&&
@@ -1876,6 +1878,7 @@ public class MainActivity extends Activity implements LocationListener {
             sessionClockView.setText("Survey not started");
             eventView.setText("No active sampling unit");
             progressView.setText("");
+            progressView.setVisibility(View.GONE);
             return;
         }
         long now=System.currentTimeMillis();
@@ -1930,9 +1933,9 @@ public class MainActivity extends Activity implements LocationListener {
             }else if(hasStationUnits()){
                 int[] counts=visitProgress();
                 progressView.setText(counts[1]+"/"+counts[0]+" visits complete");
-            }else if(target>0){
-                progressView.setText("Target "+timeFmt(target));
             }else progressView.setText("");
+            progressView.setVisibility(progressView.getText().length()>0?
+                View.VISIBLE:View.GONE);
         }
         if((method.equals("line_transect")||method.equals("ves_transect"))&&
             (lastTrackFetchMs==0||now-lastTrackFetchMs>=4000L)){

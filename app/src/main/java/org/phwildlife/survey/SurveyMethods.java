@@ -14,20 +14,20 @@ public final class SurveyMethods {
         if("Birds".equals(profile))return new Method[]{
             new Method("point_count","Point count","Stationary timed count. Record radial distance for distance sampling.",false),
             new Method("line_transect","Line transect","Walk a measured route. Record horizontal distance and bearing.",false),
-            new Method("area_search","Area search","Search a defined area and retain area, time and observer effort.",true),
+            new Method("area_search","Area search","Defined footprint, timed search passes, observer effort and duplicate controls.",false),
             new Method("opportunistic","Opportunistic","Record incidental encounters. Not a standardized absence survey.",false)
         };
         if("Herpetofauna".equals(profile))return new Method[]{
             new Method("visual_encounter","Visual encounter (VES)","Active timed search for reptiles and amphibians.",false),
             new Method("ves_transect","Transect VES","Systematic searches along a defined terrestrial or riparian route.",false),
             new Method("amphibian_calls","Amphibian calling","Timed station listening with call index, saved WAV, spectrogram and time-coded labels.",false),
-            new Method("coverboard_search","Cover-board search","Inspect predefined cover objects and record inspection effort.",true),
+            new Method("coverboard_search","Cover-board search","Board IDs, installation age, repeated inspections and environmental records.",false),
             new Method("drift_fence_check","Pitfall / drift fence check","Per-trap deployments, inspected effort, capture records and release audit.",false),
             new Method("opportunistic","Opportunistic","Record incidental reptiles and amphibians.",false)
         };
         return new Method[]{
             new Method("line_transect","Line transect","Record visual encounters along a measured route.",false),
-            new Method("track_sign","Track and sign survey","Record identifiable tracks, scat and other field signs.",true),
+            new Method("track_sign","Track and sign survey","Measured search routes, substrate, sign age, confidence and independent encounters.",false),
             new Method("spotlight","Spotlight survey","Nocturnal searches along a defined route or area.",true),
             new Method("camera_trap_check","Camera-trap check","Per-camera deployment, operation checks and retrieval audit.",false),
             new Method("bat_acoustic","Bat acoustic survey","Log acoustic detections. Recorder effort and call metadata are planned.",true),

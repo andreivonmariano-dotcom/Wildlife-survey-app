@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,15);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,16);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -32,6 +32,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeThirteen(d);
         upgradeFourteen(d);
         upgradeFifteen(d);
+        upgradeSixteen(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -61,6 +62,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<13)upgradeThirteen(d);
         if(oldVersion<14)upgradeFourteen(d);
         if(oldVersion<15)upgradeFifteen(d);
+        if(oldVersion<16)upgradeSixteen(d);
     }
     private void upgradeFour(SQLiteDatabase d){
         d.execSQL("CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT, created_at TEXT NOT NULL)");
@@ -233,6 +235,25 @@ public final class FieldDb extends SQLiteOpenHelper {
     }
 
     /** Version 12: GNSS provenance, plus a version-pinned offline mammal candidate catalog. */
+    /**
+     * The presence of a taxon in a checklist and the evidence that a
+     * taxon occurs in a particular locality are two different facts.
+     * Only explicit attributed occurrence evidence belongs here.
+     */
+    private void upgradeSixteen(SQLiteDatabase d){
+        d.execSQL("CREATE TABLE IF NOT EXISTS taxon_occurrence_evidence("+
+            "taxon_key TEXT NOT NULL,area_type TEXT NOT NULL,"+
+            "area_label TEXT NOT NULL,evidence_basis TEXT NOT NULL,"+
+            "evidence_text TEXT NOT NULL,source TEXT NOT NULL,"+
+            "source_version TEXT NOT NULL,source_url TEXT NOT NULL DEFAULT '',"+
+            "review_status TEXT NOT NULL DEFAULT 'source_listed',"+
+            "PRIMARY KEY(taxon_key,area_type,area_label,source,source_version))");
+        d.execSQL("CREATE INDEX IF NOT EXISTS evidence_area "+
+            "ON taxon_occurrence_evidence(area_type,area_label)");
+        d.execSQL("CREATE INDEX IF NOT EXISTS evidence_taxon "+
+            "ON taxon_occurrence_evidence(taxon_key)");
+    }
+
     /** Detailed fields from the source's published checklist, not live IUCN claims. */
     private void upgradeFifteen(SQLiteDatabase d){
         for(String name:new String[]{"order_name","subfamily","subgenus","authority",

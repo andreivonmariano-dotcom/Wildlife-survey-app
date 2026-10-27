@@ -13,7 +13,7 @@ import java.util.*;
 
 /** Import a versioned, explicitly attributed checklist supplied by the researcher. */
 public final class CatalogActivity extends Activity {
-    private static final int PICK=891,PICK_MDD=892,PICK_SYNONYMS=893,MAX=25*1024*1024;
+    private static final int PICK=891,PICK_MDD=892,PICK_SYNONYMS=893,PICK_EVIDENCE=894,MAX=25*1024*1024;
     private FieldDb db;private TextView info;
     private volatile boolean importing=false;
     @Override public void onCreate(Bundle b){
@@ -22,8 +22,18 @@ public final class CatalogActivity extends Activity {
         layout.setPadding(22,22,22,22);layout.setBackgroundColor(UiKit.BG);
         layout.addView(UiKit.title(this,"Offline taxonomy"));
         info=new TextView(this);info.setTextSize(15);info.setTextColor(UiKit.INK);layout.addView(info);
-        Button choose=UiKit.button(this,"Import species checklist CSV","primary");
+        Button species=UiKit.button(this,"Find species information","primary");
+        layout.addView(species);
+        species.setOnClickListener(v->startActivity(
+            new Intent(this,TaxonDetailActivity.class)));
+        Button regions=UiKit.button(this,"Mindanao & Davao species references","secondary");
+        layout.addView(regions);
+        regions.setOnClickListener(v->startActivity(
+            new Intent(this,RegionalChecklistActivity.class)));
+        Button choose=UiKit.button(this,"Import species checklist CSV","secondary");
         layout.addView(choose);choose.setOnClickListener(v->pick());
+        Button evidence=UiKit.button(this,"Import regional evidence CSV","secondary");
+        layout.addView(evidence);evidence.setOnClickListener(v->pickEvidence());
         Button synonyms=UiKit.button(this,"Import name synonyms CSV","secondary");
         layout.addView(synonyms);synonyms.setOnClickListener(v->pickSynonyms());
         Button mammals=UiKit.button(this,"Import Philippine mammals from MDD v2.5 CSV","secondary");
@@ -43,7 +53,9 @@ public final class CatalogActivity extends Activity {
                 "For mammals use the official MDD v2.5 source file.")
             .setPositiveButton("Close",null).show());
         Button back=UiKit.button(this,"‹ Home","secondary");layout.addView(back);back.setOnClickListener(v->finish());
-        setContentView(layout);refresh();
+        ScrollView scroll=new ScrollView(this);
+        scroll.addView(layout);
+        setContentView(scroll);refresh();
     }
     @Override protected void onDestroy(){super.onDestroy();db.close();}
     private void refresh(){
@@ -193,6 +205,118 @@ public final class CatalogActivity extends Activity {
         i.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"text/csv","text/comma-separated-values","text/plain","application/octet-stream"});
         startActivityForResult(i,PICK);
     }
+    private void pickEvidence(){
+        Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{
+            "text/csv","text/comma-separated-values","text/plain","application/octet-stream"});
+        startActivityForResult(intent,PICK_EVIDENCE);
+    }
+    private void importEvidence(Uri uri){
+        if(importing){info.setText("Another import is running");return;}
+        importing=true;
+        info.setText("Checking regional evidence…");
+        new Thread(()->{
+            try{
+                List<Map<String,String>> rows=readEvidenceRows(uri);
+                runOnUiThread(()->{
+                    if(isFinishing()||isDestroyed()){importing=false;return;}
+                    new AlertDialog.Builder(this)
+                        .setTitle("Import regional occurrence evidence?")
+                        .setMessage(rows.size()+" location references will be linked to "+
+                            "installed taxa. They are source listings, not observations "+
+                            "at this survey site.")
+                        .setNegativeButton("Cancel",(d,w)->importing=false)
+                        .setOnCancelListener(d->importing=false)
+                        .setPositiveButton("Import",(d,w)->writeEvidence(rows)).show();
+                });
+            }catch(Exception ex){
+                importing=false;
+                runOnUiThread(()->{if(!isFinishing()&&!isDestroyed())
+                    info.setText("Evidence CSV invalid: "+ex.getMessage());});
+            }
+        },"LIKAS-Evidence-Validation").start();
+    }
+    private List<Map<String,String>> readEvidenceRows(Uri uri)throws Exception{
+        List<List<String>> parsed=parse(new String(read(uri),StandardCharsets.UTF_8));
+        if(parsed.size()<2)throw new Exception("Empty regional evidence CSV");
+        List<String> headers=parsed.get(0);
+        if(!headers.isEmpty())headers.set(0,headers.get(0).replace("\ufeff",""));
+        String[] required={"taxon_key","area_type","area_label","evidence_basis",
+            "evidence_text","source","source_version","source_url","review_status"};
+        for(String field:required)if(!headers.contains(field))
+            throw new Exception("Missing column "+field);
+        ArrayList<Map<String,String>> rows=new ArrayList<>();
+        HashSet<String> duplicates=new HashSet<>();
+        for(int row=1;row<parsed.size();row++){
+            List<String> values=parsed.get(row);
+            if(values.size()==1&&values.get(0).trim().isEmpty())continue;
+            if(values.size()!=headers.size())
+                throw new Exception("Invalid number of values at row "+(row+1));
+            Map<String,String> entry=new HashMap<>();
+            for(int i=0;i<headers.size();i++)
+                entry.put(headers.get(i),values.get(i).trim());
+            for(String field:required)
+                if(!field.equals("source_url")&&entry.get(field).isEmpty())
+                    throw new Exception("Missing "+field+" at row "+(row+1));
+            String area=entry.get("area_type");
+            if(!area.equals("island")&&!area.equals("province"))
+                throw new Exception("Area type must be island or province");
+            String status=entry.get("review_status");
+            if(!status.equals("source_listed")&&!status.equals("unreviewed"))
+                throw new Exception("Occurrence review status not permitted");
+            if(entry.get("evidence_text").length()>8000)
+                throw new Exception("Excessive evidence text");
+            String id=entry.get("taxon_key")+"|"+area+"|"+entry.get("area_label")+"|"+
+                entry.get("source")+"|"+entry.get("source_version");
+            if(!duplicates.add(id))throw new Exception("Duplicate evidence row "+(row+1));
+            rows.add(entry);
+            if(rows.size()>45000)throw new Exception("Maximum 45,000 evidence rows");
+        }
+        if(rows.isEmpty())throw new Exception("No evidence rows");
+        return rows;
+    }
+    private void writeEvidence(List<Map<String,String>> rows){
+        info.setText("Importing regional evidence…");
+        new Thread(()->{
+            int inserted=0;
+            try(FieldDb helper=new FieldDb(getApplicationContext())){
+                SQLiteDatabase database=helper.getWritableDatabase();
+                database.beginTransaction();
+                try(android.database.sqlite.SQLiteStatement known=database.compileStatement(
+                        "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_key=?");
+                    android.database.sqlite.SQLiteStatement add=database.compileStatement(
+                        "INSERT OR REPLACE INTO taxon_occurrence_evidence("+
+                            "taxon_key,area_type,area_label,evidence_basis,evidence_text,"+
+                            "source,source_version,source_url,review_status) "+
+                            "VALUES(?,?,?,?,?,?,?,?,?)")){
+                    String[] fields={"taxon_key","area_type","area_label","evidence_basis",
+                        "evidence_text","source","source_version","source_url",
+                        "review_status"};
+                    for(Map<String,String> row:rows){
+                        known.clearBindings();known.bindString(1,row.get("taxon_key"));
+                        if(known.simpleQueryForLong()!=1L)
+                            throw new IllegalArgumentException("Import full source checklist first: "+
+                                row.get("taxon_key"));
+                        add.clearBindings();
+                        for(int i=0;i<fields.length;i++)
+                            add.bindString(i+1,row.getOrDefault(fields[i],""));
+                        add.executeInsert();
+                        inserted++;
+                    }
+                    database.setTransactionSuccessful();
+                }finally{database.endTransaction();}
+                final int count=inserted;
+                runOnUiThread(()->{if(!isFinishing()&&!isDestroyed())
+                    info.setText("Imported "+count+" source location records. "+
+                        "Species presence at your station remains unverified.");});
+            }catch(Exception ex){
+                runOnUiThread(()->{if(!isFinishing()&&!isDestroyed())
+                    info.setText("Evidence import rolled back: "+ex.getMessage());});
+            }finally{importing=false;}
+        },"LIKAS-Evidence-Import").start();
+    }
     private void pickSynonyms(){
         Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);
         i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("*/*");
@@ -292,11 +416,12 @@ public final class CatalogActivity extends Activity {
     }
     @Override protected void onActivityResult(int req,int outcome,Intent data){
         super.onActivityResult(req,outcome,data);
-        if((req!=PICK&&req!=PICK_MDD&&req!=PICK_SYNONYMS)||
+        if((req!=PICK&&req!=PICK_MDD&&req!=PICK_SYNONYMS&&req!=PICK_EVIDENCE)||
             outcome!=RESULT_OK||data==null)return;
         Uri uri=data.getData();if(uri==null)return;
         if(req==PICK_MDD){importMdd(uri);return;}
         if(req==PICK_SYNONYMS){importSynonyms(uri);return;}
+        if(req==PICK_EVIDENCE){importEvidence(uri);return;}
         if(importing){info.setText("Another checklist import is running");return;}
         importing=true;
         info.setText("Checking checklist file…");

@@ -34,6 +34,7 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
     private boolean gnssListening = false;
     private TextView satelliteStatus;
     private TextView signalStatus;
+    private SatelliteSkyView skyView;
     private final Handler ui = new Handler(Looper.getMainLooper());
     private final GnssStatus.Callback satelliteCallback = new GnssStatus.Callback() {
         @Override public void onStarted() {
@@ -41,8 +42,10 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
         }
         @Override public void onStopped() {
             if(satelliteStatus!=null)satelliteStatus.setText("GNSS receiver not tracking");
+            if(skyView!=null)skyView.clear();
         }
         @Override public void onSatelliteStatusChanged(GnssStatus state) {
+            if(skyView!=null)skyView.update(state);
             int used=0,visible=state.getSatelliteCount();
             float sumCn0=0f;
             int cn0Count=0;
@@ -98,6 +101,13 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
         signalStatus.setTextSize(14);
         signalStatus.setTextColor(UiKit.INK);
         root.addView(signalStatus);
+        skyView=new SatelliteSkyView(this);
+        root.addView(skyView,new LinearLayout.LayoutParams(-1,Math.round(290f*getResources().getDisplayMetrics().density)));
+        TextView legend=new TextView(this);
+        legend.setText("Sky plot: north up · edge = horizon · center = overhead · green = used in fix · gray = tracked only. Satellite labels: G GPS, E Galileo, R GLONASS, C BeiDou, J QZSS, S SBAS, I NavIC.");
+        legend.setTextSize(12);
+        legend.setTextColor(UiKit.INK);
+        root.addView(legend);
 
         startButton = UiKit.button(this, "Start survey with verified GPS", "primary");
         startButton.setEnabled(false);
@@ -205,6 +215,7 @@ public final class SurveyGpsActivity extends Activity implements LocationListene
     }
 
     private void stopListening() {
+        if(skyView!=null)skyView.clear();
         if(manager==null)return;
         if(listening){
             try { manager.removeUpdates(this); } catch (RuntimeException ignored) {}

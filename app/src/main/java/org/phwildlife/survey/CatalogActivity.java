@@ -13,7 +13,7 @@ import java.util.*;
 
 /** Import a versioned, explicitly attributed checklist supplied by the researcher. */
 public final class CatalogActivity extends Activity {
-    private static final int PICK=891,PICK_MDD=892,PICK_SYNONYMS=893,PICK_EVIDENCE=894,MAX=25*1024*1024;
+    private static final int PICK=891,PICK_MDD=892,PICK_SYNONYMS=893,PICK_EVIDENCE=894,PICK_ALL=895,MAX=25*1024*1024;
     private FieldDb db;private TextView info;
     private volatile boolean importing=false;
     @Override public void onCreate(Bundle b){
@@ -30,6 +30,10 @@ public final class CatalogActivity extends Activity {
         layout.addView(regions);
         regions.setOnClickListener(v->startActivity(
             new Intent(this,RegionalChecklistActivity.class)));
+        Button installAll=UiKit.button(this,
+            "Install complete Philippine checklists (ZIP)","primary");
+        layout.addView(installAll);
+        installAll.setOnClickListener(v->pickAllChecklists());
         Button choose=UiKit.button(this,"Import species checklist CSV","secondary");
         layout.addView(choose);choose.setOnClickListener(v->pick());
         Button evidence=UiKit.button(this,"Import regional evidence CSV","secondary");
@@ -99,6 +103,42 @@ public final class CatalogActivity extends Activity {
                 "Only legacy starter names are installed.":
                 sources.toString()+"\n\nSource membership is not proof of local occurrence.")
             .setPositiveButton("Close",null).show();
+    }
+    private void pickAllChecklists(){
+        if(importing){info.setText("Checklist installation in progress");return;}
+        Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/zip");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{
+            "application/zip","application/octet-stream"});
+        startActivityForResult(intent,PICK_ALL);
+    }
+    private void installAllChecklists(Uri uri){
+        if(importing){info.setText("A checklist installation is already running");return;}
+        importing=true;
+        info.setText("Installing birds, amphibians, reptiles and regional evidence…");
+        new Thread(()->{
+            try(java.io.InputStream stream=getContentResolver().openInputStream(uri)){
+                ChecklistPackImporter.Result count=
+                    ChecklistPackImporter.importZip(getApplicationContext(),stream);
+                runOnUiThread(()->{
+                    if(!isFinishing()&&!isDestroyed()){
+                        refresh();
+                        info.append("\nInstalled "+count.birds+" WBCP birds, "+
+                            count.amphibians+" Sy amphibians, "+
+                            count.reptiles+" Sy reptiles, "+
+                            count.evidence+" regional references and "+
+                            count.synonyms+" prior-name links.");
+                    }
+                });
+            }catch(Exception ex){
+                runOnUiThread(()->{
+                    if(!isFinishing()&&!isDestroyed())
+                        info.setText("Checklist not installed. Existing records are unchanged. "+
+                            ex.getMessage());
+                });
+            }finally{importing=false;}
+        },"LIKAS-Complete-Catalog-Install").start();
     }
     private void pickMdd(){
         Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -416,9 +456,11 @@ public final class CatalogActivity extends Activity {
     }
     @Override protected void onActivityResult(int req,int outcome,Intent data){
         super.onActivityResult(req,outcome,data);
-        if((req!=PICK&&req!=PICK_MDD&&req!=PICK_SYNONYMS&&req!=PICK_EVIDENCE)||
+        if((req!=PICK&&req!=PICK_MDD&&req!=PICK_SYNONYMS&&
+            req!=PICK_EVIDENCE&&req!=PICK_ALL)||
             outcome!=RESULT_OK||data==null)return;
         Uri uri=data.getData();if(uri==null)return;
+        if(req==PICK_ALL){installAllChecklists(uri);return;}
         if(req==PICK_MDD){importMdd(uri);return;}
         if(req==PICK_SYNONYMS){importSynonyms(uri);return;}
         if(req==PICK_EVIDENCE){importEvidence(uri);return;}

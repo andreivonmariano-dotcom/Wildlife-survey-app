@@ -1,7 +1,7 @@
 name: Build Android Debug APK
 on:
   push:
-    branches: [main, 'release/v0.27-integrated-ux-performance-qa']
+    branches: [main, 'release/v0.27-integrated-ux-performance-qa', 'ui/v0.27.1-field-polish-quality-labels']
   pull_request:
     branches: [main, 'release/v0.27-integrated-ux-performance-qa']
   workflow_dispatch:
@@ -62,10 +62,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="v0.27.1-rc2"
+          TAG="v0.27.2-rc3"
           FILE="app/build/outputs/apk/debug/app-debug.apk"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$FILE" --clobber
           else
-            gh release create "$TAG" "$FILE" --title "LIKAS release candidate v0.27.1" --notes "Integrated wildlife methods, station GPS accuracy display fix, screen clarity and tested additive SQLite migration. Handset QA pending." --prerelease --target "$GITHUB_SHA"
+            gh release create "$TAG" "$FILE" --title "LIKAS release candidate v0.27.2" --notes "Integrated wildlife methods, station GPS accuracy display fix, screen clarity and tested additive SQLite migration. Handset QA pending." --prerelease --target "$GITHUB_SHA"
           fi

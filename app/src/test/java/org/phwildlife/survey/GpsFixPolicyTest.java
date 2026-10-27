@@ -24,4 +24,17 @@ public final class GpsFixPolicyTest {
         assertFalse(GpsFixPolicy.acceptable(91, 125.5, 2f, NOW, NOW, false));
         assertFalse(GpsFixPolicy.acceptable(7.1, Double.NaN, 2f, NOW, NOW, false));
     }
+    @Test public void elapsedClockAcceptsAccurateFixWhenWallClockIsAhead(){
+        // The phone can report -0.2 s wall-clock age for a legitimate GNSS fix.
+        assertTrue(GpsFixPolicy.acceptableElapsed(7.1,125.5,3.8f,200,false));
+        assertTrue(GpsFixPolicy.acceptableElapsed(7.1,125.5,3.8f,-200,false));
+        assertFalse(GpsFixPolicy.acceptableElapsed(7.1,125.5,3.8f,-1001,false));
+        assertFalse(GpsFixPolicy.acceptableElapsed(7.1,125.5,3.8f,10001,false));
+    }
+    @Test public void elapsedClockStillRequiresSubTenMetersAndRealCoordinates(){
+        assertTrue(GpsFixPolicy.acceptableElapsed(7.1,125.5,9.9f,200,false));
+        assertFalse(GpsFixPolicy.acceptableElapsed(7.1,125.5,10f,200,false));
+        assertFalse(GpsFixPolicy.acceptableElapsed(7.1,125.5,3f,200,true));
+        assertFalse(GpsFixPolicy.acceptableElapsed(95,125.5,3f,200,false));
+    }
 }

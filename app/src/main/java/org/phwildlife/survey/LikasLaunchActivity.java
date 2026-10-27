@@ -71,16 +71,21 @@ public final class LikasLaunchActivity extends Activity {
 
         content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2.3f));
         ImageView icon=new ImageView(this);
-        icon.setImageResource(R.drawable.likas_launcher_art);
-        icon.setContentDescription("Approved LIKAS pixel-art rainforest emblem");
-        content.addView(icon,new LinearLayout.LayoutParams(dp(164),dp(164)));
+        icon.setImageResource(R.drawable.likas_frog_icon);
+        icon.setContentDescription("Green pixel-art frog peeking from pond water");
+        content.addView(icon,new LinearLayout.LayoutParams(dp(148),dp(148)));
 
 
+        TextView name=label("LIKAS",44,Color.WHITE,true);
+        name.setLetterSpacing(.15f);
+        LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(-1,-2);
+        nameLp.topMargin=dp(10);
+        content.addView(name,nameLp);
         TextView subtitle=label("PHILIPPINE WILDLIFE SURVEY",13,
             Color.rgb(230,245,225),true);
         subtitle.setLetterSpacing(.11f);
         LinearLayout.LayoutParams subtitleLp=new LinearLayout.LayoutParams(-1,-2);
-        subtitleLp.topMargin=dp(16);
+        subtitleLp.topMargin=dp(4);
         content.addView(subtitle,subtitleLp);
         content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2.4f));
 

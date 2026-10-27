@@ -40,6 +40,8 @@ class LikasBrandingSmokeTest(unittest.TestCase):
             self.assertEqual(hashlib.sha256((RES / name).read_bytes()).hexdigest(), expected)
         forest = ROOT / "app/src/main/assets/likas_forest"
         for name, expected in {
+            "forest_day_hd.webp": "8b62eda698354db6d410964a342e5ccbe8cd284e3577a51fc72e4839dface76f",
+            "forest_night_hd.webp": "a21568f109b863cb86a27b8dfae87aebfa656914252232b6c70fc0c95f1467af",
             "forest_day.webp": "d89e3707b5fdbb3c2317a678f77cb46caeb2754ad1893d46397f25ba9d6fad41",
             "forest_night.webp": "238e18a31c1ac5be631103fe4dd44d09aaddc39c54f469c7589baa392e53012b",
         }.items():
@@ -61,10 +63,14 @@ class LikasBrandingSmokeTest(unittest.TestCase):
         forest = (JAVA / "LikasForestView.java").read_text(encoding="utf-8")
         self.assertIn('likas_forest/forest_day.webp', forest)
         self.assertIn('likas_forest/forest_night.webp', forest)
-        self.assertIn("FRAME_INTERVAL_MS = 100L", forest)
+        self.assertIn("FRAME_INTERVAL_MS = 33L", forest)
         self.assertIn("postInvalidateDelayed(FRAME_INTERVAL_MS)", forest)
         self.assertIn("clockNightFraction()", forest)
-        self.assertIn("bitmapPaint.setFilterBitmap(false)", forest)
+        self.assertIn("imagePaint.setFilterBitmap(true)", forest)
+        self.assertIn("forest_day_hd.webp", forest)
+        self.assertIn("forest_night_hd.webp", forest)
+        self.assertIn("ForestMotionPolicy.pan(seconds)", forest)
+        self.assertIn("imageMatrix.postTranslate(x,", forest)
         self.assertIn("ValueAnimator.areAnimatorsEnabled()", forest)
         self.assertNotIn("WebView", forest)
         self.assertNotIn("requestLocationUpdates", forest)

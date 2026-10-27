@@ -1,6 +1,45 @@
-# Philippine Wildlife Survey Beta v0.15.0
+# Philippine Wildlife Survey Beta v0.16.0 (development branch)
 
 Offline Android wildlife field application for Birds, Herpetofauna and Mammals. Independent of SMART and KALUMBATA. No map UI in this release.
+
+## v0.16 survey-start GNSS accuracy gate (in development)
+All newly configured surveys pass through `SurveyGpsActivity` before `MainActivity`
+creates a survey row or begins the clock. An actual live GPS_PROVIDER fix must have
+device-reported horizontal accuracy **strictly better than 10 m**, be at most
+10 seconds old, contain valid coordinates, and not be marked as a mock fix.
+The GPS screen shows current reported accuracy, retains neither a stale fix
+nor a previous station coordinate, and permits explicit retry and cancellation.
+GPS problems can block survey launch in dense forest. This policy does not
+guarantee true horizontal position error better than 10 m.
+
+Survey-start coordinates, accuracy, and fix UTC timestamp are retained on
+the survey event in SQLite schema 12, and exported in `surveys.csv`. The
+migration adds columns without deleting historical records. Older events
+keep these fields null.
+
+**Important distinction:** Existing planned point-count station acceptance
+is still up to 75 m and 30 seconds, with missing-GPS warning override.
+Survey-start precision does not certify each later station/observation fix.
+Research protocols should decide whether to adopt a comparable station-level
+threshold after handset testing.
+
+## Taxonomy status and data sourcing
+The bundled starter taxa are not a complete national checklist. The existing
+offline importer can already ingest the official MDD v2.5 national mammal
+candidates from the source CSV (by exact file name, taxonomic/source fields and
+countryDistribution). A **complete Philippine mammal catalog is installed only
+after the researcher imports that source file**. National occurrence membership
+does not establish an individual island, province, or sampling-site range.
+Taxa flagged by MDD as needing review remain unreviewed.
+
+Emerson Y. Sy amphibian v2025-1 and reptile v2026-1 are selected references,
+but complete machine-readable files and reuse permissions must be verified
+before bundling. A structured, attributed CSV import path is already present.
+AviList v2026 is the selected bird taxonomic backbone; locality assessment is
+a separate evidence layer. The complete national species datasets are **not
+yet bundled** in this branch.
+
+See `docs/QA_v0_16.md` for GPS and taxonomy acceptance tests.
 
 ## Q2: repeatable routes with permanent stations
 For **bird point-count** monitoring, survey setup now offers:

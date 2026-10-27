@@ -263,7 +263,7 @@ public final class TrapProtocolActivity extends Activity {
         EditText notes=field("Condition, measurements and release notes",false);
         form.addView(taxon);form.addView(tag);form.addView(fate);form.addView(notes);
         AlertDialog dialog=new AlertDialog.Builder(this)
-            .setTitle("Log capture or pitfall encounter").setView(form)
+            .setTitle("Log inspected animal (time recorded now)").setView(form)
             .setNegativeButton("Cancel",null).setPositiveButton("Save capture",null).create();
         dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(w->{
@@ -272,7 +272,7 @@ public final class TrapProtocolActivity extends Activity {
                 ContentValues capture=new ContentValues();
                 capture.put("check_id",checkId);capture.put("taxon_label",name);
                 capture.put("individual_mark",tag.getText().toString().trim());
-                capture.put("captured_at_utc",now());
+                capture.put("logged_at_utc",now());
                 capture.put("disposition",fate.getSelectedItem().toString());
                 if(fate.getSelectedItemPosition()==0)capture.put("released_at_utc",now());
                 capture.put("notes",notes.getText().toString().trim());

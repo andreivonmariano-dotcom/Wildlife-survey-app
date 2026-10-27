@@ -49,7 +49,9 @@ public final class CatalogActivity extends Activity {
                 "For mammals use the official MDD v2.5 source file.")
             .setPositiveButton("Close",null).show());
         Button back=UiKit.button(this,"‹ Home","secondary");layout.addView(back);back.setOnClickListener(v->finish());
-        setContentView(layout);refresh();
+        ScrollView scroll=new ScrollView(this);
+        scroll.addView(layout);
+        setContentView(scroll);refresh();
     }
     @Override protected void onDestroy(){super.onDestroy();db.close();}
     private void refresh(){

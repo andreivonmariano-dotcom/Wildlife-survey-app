@@ -26,6 +26,8 @@ public final class CatalogActivity extends Activity {
         layout.addView(choose);choose.setOnClickListener(v->pick());
         Button mammals=UiKit.button(this,"Import Philippine mammals from MDD v2.5 CSV","secondary");
         layout.addView(mammals);mammals.setOnClickListener(v->pickMdd());
+        Button sources=UiKit.button(this,"Catalog sources and versions","secondary");
+        layout.addView(sources);sources.setOnClickListener(v->showCatalogSources());
         Button help=UiKit.button(this,"Checklist import guide  ⓘ","quiet");
         layout.addView(help);
         help.setOnClickListener(v->new AlertDialog.Builder(this)
@@ -43,18 +45,46 @@ public final class CatalogActivity extends Activity {
     }
     @Override protected void onDestroy(){super.onDestroy();db.close();}
     private void refresh(){
-        int total=0,added=0,mdd=0;
+        java.util.HashMap<String,int[]> counts=new java.util.HashMap<>();
+        int total=0,starter=0;
         try(Cursor c=db.getReadableDatabase().rawQuery(
-           "SELECT COUNT(*),SUM(CASE WHEN source<>'v0.12 offline starter' THEN 1 ELSE 0 END) FROM taxon_catalog",null)){
-           if(c.moveToFirst()){total=c.getInt(0);added=c.isNull(1)?0:c.getInt(1);}
+            "SELECT taxon_group,COUNT(*),SUM(CASE WHEN taxon_key LIKE 'STARTER:%' "+
+            "THEN 1 ELSE 0 END) FROM taxon_catalog GROUP BY taxon_group",null)){
+            while(c.moveToNext()){
+                counts.put(c.getString(0),new int[]{c.getInt(1),c.getInt(2)});
+                total+=c.getInt(1);starter+=c.getInt(2);
+            }
         }
-        try(Cursor mammal=db.getReadableDatabase().rawQuery(
-            "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_group='Mammals' AND taxon_key LIKE 'MDD:%'",null)){
-            if(mammal.moveToFirst())mdd=mammal.getInt(0);
+        StringBuilder result=new StringBuilder("Offline catalog · "+total+" names");
+        for(String category:new String[]{"Birds","Amphibians","Reptiles","Mammals"}){
+            int[] row=counts.get(category);
+            int all=row==null?0:row[0],legacy=row==null?0:row[1];
+            result.append("\n").append(category).append(": ").append(all);
+            if(legacy>0)result.append(" (").append(legacy).append(" starter)");
         }
-        info.setText("Installed names: "+total+
-            "\nPhilippine mammal candidates: "+mdd+
-            "\nBird and herpetofauna checklists: partial");
+        result.append("\nNational candidates are not verified local sightings.");
+        info.setText(result.toString());
+    }
+    private void showCatalogSources(){
+        StringBuilder sources=new StringBuilder();
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT taxon_group,source,source_version,COUNT(*) FROM taxon_catalog "+
+            "WHERE taxon_key NOT LIKE 'STARTER:%' "+
+            "GROUP BY taxon_group,source,source_version "+
+            "ORDER BY taxon_group,source LIMIT 40",null)){
+            while(c.moveToNext()){
+                if(sources.length()>0)sources.append("\n\n");
+                sources.append(c.getString(0)).append(" · ")
+                    .append(c.getInt(3)).append(" names\n")
+                    .append(c.getString(1)).append(" · ")
+                    .append(c.getString(2));
+            }
+        }
+        new AlertDialog.Builder(this).setTitle("Catalog sources and versions")
+            .setMessage(sources.length()==0?
+                "Only legacy starter names are installed.":
+                sources.toString()+"\n\nSource membership is not proof of local occurrence.")
+            .setPositiveButton("Close",null).show();
     }
     private void pickMdd(){
         Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);

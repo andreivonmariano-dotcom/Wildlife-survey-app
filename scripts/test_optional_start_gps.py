@@ -34,7 +34,7 @@ class SurveyStartGpsSmokeTest(unittest.TestCase):
 
     def test_migration_keeps_legacy_location_state_without_backfill(self):
         text=(CODE / "FieldDb.java").read_text(encoding="utf-8")
-        self.assertIn('super(context,NAME,null,26)',text)
+        self.assertIn('super(context,NAME,null,27)',text)
         self.assertIn('if(oldVersion<22)upgradeTwentyTwo(d)',text)
         self.assertIn('ALTER TABLE surveys ADD COLUMN start_gps_status TEXT',text)
         self.assertIn("'legacy_start_location_unrecorded'",text)

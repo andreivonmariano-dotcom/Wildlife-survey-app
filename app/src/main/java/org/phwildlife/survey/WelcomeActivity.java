@@ -553,9 +553,7 @@ public class WelcomeActivity extends Activity {
         else if(boundaryMessage!=null)
             boundaryMessage.setText("Precise GPS access was not granted. Use the manual geographic checklist choice.");
     }
-    private boolean supportsRoute(String code){
-        return code.equals("point_count")||code.equals("line_transect")||code.equals("ves_transect");
-    }
+    private boolean supportsRoute(String code){return FieldUiPolicy.routeSetup(code);}
     private double spacingMeters(){
         int pos=spacingChoice==null?1:spacingChoice.getSelectedItemPosition();
         if(pos==0)return 100;
@@ -571,8 +569,9 @@ public class WelcomeActivity extends Activity {
         String method=choices[choice].code;
         boolean route=supportsRoute(method);
         routeHeader.setVisibility(route?View.VISIBLE:View.GONE);
-        repeatHeader.setVisibility(method.equals("point_count")?View.VISIBLE:View.GONE);
-        spacingHeader.setVisibility(method.equals("point_count")?View.VISIBLE:View.GONE);
+        boolean points=FieldUiPolicy.pointStationSetup(method);
+        repeatHeader.setVisibility(points?View.VISIBLE:View.GONE);
+        spacingHeader.setVisibility(points?View.VISIBLE:View.GONE);
         routeLengthEntry.setVisibility(route?View.VISIBLE:View.GONE);
         if(spacingChoice!=null)spacingChoice.setVisibility(method.equals("point_count")?View.VISIBLE:View.GONE);
         if(customSpacingEntry!=null)customSpacingEntry.setVisibility(

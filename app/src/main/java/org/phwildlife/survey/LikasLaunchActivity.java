@@ -23,7 +23,7 @@ import java.io.File;
  * are started here. Existing surveys are resumed explicitly by the observer.
  */
 public final class LikasLaunchActivity extends Activity {
-    private Button continueButton;
+    private Button continueButton,newSurveyButton;
     private int dp(float n){return Math.round(getResources().getDisplayMetrics().density*n);}
     private TextView label(String text,float size,int color,boolean bold){
         TextView t=new TextView(this);t.setText(text);t.setTextColor(color);t.setTextSize(size);
@@ -86,11 +86,11 @@ public final class LikasLaunchActivity extends Activity {
 
         continueButton=action("Resume Survey",true);
         content.addView(continueButton,new LinearLayout.LayoutParams(-1,dp(62)));
-        Button start=action("New Survey",false);
+        newSurveyButton=action("New Survey",false);
         LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(60));
         startLp.topMargin=dp(12);
-        content.addView(start,startLp);
-        start.setOnClickListener(v->{
+        content.addView(newSurveyButton,startLp);
+        newSurveyButton.setOnClickListener(v->{
             Intent home=new Intent(this,WelcomeActivity.class);
             home.putExtra("show_menu",true);
             startActivity(home);
@@ -123,6 +123,14 @@ public final class LikasLaunchActivity extends Activity {
         super.onResume();
         boolean available=hasActiveSurvey();
         continueButton.setVisibility(available?View.VISIBLE:View.GONE);
+        // Without an unfinished survey, New Survey becomes the primary action.
+        GradientDrawable newBg=new GradientDrawable();
+        newBg.setColor(available?Color.argb(70,16,45,35):Color.rgb(237,245,234));
+        newBg.setCornerRadius(dp(16));
+        newBg.setStroke(dp(1),Color.rgb(222,238,224));
+        newSurveyButton.setBackground(newBg);
+        newSurveyButton.setBackgroundTintList(null);
+        newSurveyButton.setTextColor(available?Color.WHITE:Color.rgb(21,64,45));
         continueButton.setEnabled(LikasUiRules.canContinue(available));
         continueButton.setContentDescription(available?
             "Continue the unfinished survey":"Continue survey unavailable. No active survey.");

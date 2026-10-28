@@ -72,9 +72,9 @@ class CleanFieldUi(unittest.TestCase):
     def test_method_capture_tools_are_disclosed_without_hiding_recording_actions(self):
         recorder=src("MainActivity.java")
         self.assertIn('evidenceTools.setVisibility(View.GONE)',recorder)
-        self.assertIn('evidenceTools.addView(sound,soundLp)',recorder)
-        self.assertIn('evidenceTools.addView(devices,deviceLp)',recorder)
-        self.assertIn('evidenceTools.addView(methodRecords,methodLp)',recorder)
+        self.assertIn('evidenceTools.addView(sound,lp)',recorder)
+        self.assertIn('evidenceTools.addView(devices,lp)',recorder)
+        self.assertIn('evidenceTools.addView(methodRecords,lp)',recorder)
         self.assertIn('content.addView(FieldVisuals.section(this,"Record observation"',recorder)
         self.assertIn('UiKit.button(this,"Save Observation","primary")',recorder)
         self.assertIn('UiKit.button(this,"End Survey","outline-danger")',recorder)

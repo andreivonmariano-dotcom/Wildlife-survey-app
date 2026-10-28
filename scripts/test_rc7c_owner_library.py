@@ -41,8 +41,8 @@ class Rc7cOwnerLibraryTests(unittest.TestCase):
     def test_owned_photo_grant_is_scoped_and_has_original_rights(self):
         lock=json.loads((ROOT/"docs/RC7_DREIDREI_OWNER_APPROVED_LOCK_V1.json").read_text())
         owned=lock["items"]
-        self.assertEqual(len(owned),14)
-        self.assertEqual(len({r["photoId"] for r in owned}),14)
+        self.assertEqual(len(owned),26)
+        self.assertEqual(len({r["photoId"] for r in owned}),26)
         self.assertEqual(lock["permission"],photos.OWNER_GRANT)
         permitted=photos.all_philippine_names()
         for r in owned:
@@ -57,13 +57,13 @@ class Rc7cOwnerLibraryTests(unittest.TestCase):
 
     def test_original_cc_photos_and_owned_photos_not_confused(self):
         entries=photos.load_approval_lock()["items"]
-        self.assertEqual(len(entries),37)
-        self.assertEqual(len({r["photoId"] for r in entries}),37)
+        self.assertEqual(len(entries),49)
+        self.assertEqual(len({r["photoId"] for r in entries}),49)
         owners=[r for r in entries if r.get("rightsBasis")==photos.OWNER_GRANT]
         cc=[r for r in entries if r.get("rightsBasis")!=photos.OWNER_GRANT]
-        self.assertEqual(len(owners),14)
+        self.assertEqual(len(owners),26)
         self.assertEqual(len(cc),23)
-        self.assertEqual(entries[:14],owners)
+        self.assertEqual(entries[:26],owners)
         self.assertTrue(all(r["photoLicense"] in photos.LICENSES for r in cc))
 
     def test_forged_ownership_rejected(self):
@@ -93,7 +93,7 @@ class Rc7cOwnerLibraryTests(unittest.TestCase):
         db=(CODE/"FieldDb.java").read_text()
         self.assertIn("super(context,NAME,null,27)",db)
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 54",gradle)
-        self.assertIn("0.27.3-rc7c-owner-photos-preview",gradle)
+        self.assertIn("versionCode 55",gradle)
+        self.assertIn("0.27.3-rc7d-field-guide-device-preview",gradle)
 
 if __name__=="__main__":unittest.main()

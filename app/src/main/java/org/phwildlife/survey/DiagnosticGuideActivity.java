@@ -27,8 +27,11 @@ import java.util.Map;
 public final class DiagnosticGuideActivity extends Activity {
     private JSONObject bundle;
     private JSONArray profiles;
-    private Spinner left,right;
+    private Spinner left,right,groupSelect;
     private LinearLayout rows;
+    private final ArrayList<JSONObject> shown=new ArrayList<>();
+    private String requestedScientific="";
+    private static final String[] GROUPS={"Birds","Amphibians","Reptiles","Mammals"};
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int sp,boolean bold){
         TextView t=new TextView(this);
@@ -54,13 +57,21 @@ public final class DiagnosticGuideActivity extends Activity {
         try{
             JSONArray list=load(context).getJSONArray("profiles");
             for(int i=0;i<list.length();i++)
-                if(scientific.equalsIgnoreCase(list.getJSONObject(i).getString("scientificName")))
+                if(namesMatch(list.getJSONObject(i),scientific))
                     return true;
         }catch(Exception ignored){}
         return false;
     }
     private JSONObject profile(int index){
         return profiles.optJSONObject(index);
+    }
+    private static boolean namesMatch(JSONObject p,String name){
+        if(name==null||name.isEmpty())return false;
+        if(name.equalsIgnoreCase(p.optString("scientificName")))return true;
+        JSONArray aliases=p.optJSONArray("aliases");
+        if(aliases!=null)for(int i=0;i<aliases.length();i++)
+            if(name.equalsIgnoreCase(aliases.optString(i)))return true;
+        return false;
     }
     private String label(JSONObject profile){
         return profile.optString("commonName")+" · "+profile.optString("scientificName");
@@ -72,8 +83,9 @@ public final class DiagnosticGuideActivity extends Activity {
         root.setPadding(dp(16),dp(12),dp(16),dp(12));
         root.setBackgroundColor(UiKit.BG);
         root.addView(UiKit.title(this,"Field identification"));
-        TextView note=text("Two introductory Philippine raptor profiles. Morphology is "+
-            "source-checked, not independently reviewed as a taxonomic key.",13,false);
+        TextView note=text("Offline, citation-linked field characters. Peer-reviewed "+
+            "literature and museum references were checked; individual diagnostic "+
+            "keys still need specialist review.",13,false);
         note.setTextColor(UiKit.MUTED);root.addView(note);
         try{
             bundle=load(this);
@@ -84,24 +96,25 @@ public final class DiagnosticGuideActivity extends Activity {
                 "Existing survey and species catalog records are unchanged.",14,false));
             setContentView(root);return;
         }
-        ArrayList<String> options=new ArrayList<>();
-        for(int i=0;i<profiles.length();i++)options.add(label(profile(i)));
-        root.addView(UiKit.sectionTitle(this,"Compare visible characters"));
+        requestedScientific=getIntent().getStringExtra("scientific_name");
+        root.addView(FieldVisuals.section(this,"Compare visible characters",
+            "Select a wildlife group, then two reference species"));
+        groupSelect=new Spinner(this);
+        groupSelect.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,GROUPS));
+        root.addView(text("Wildlife group",12,true));root.addView(groupSelect);
         left=new Spinner(this);
         right=new Spinner(this);
-        ArrayAdapter<String> adapter=new ArrayAdapter<>(this,
-            android.R.layout.simple_spinner_dropdown_item,options);
-        left.setAdapter(adapter);
-        right.setAdapter(adapter);
-        int selected=0;
-        String requested=getIntent().getStringExtra("scientific_name");
+        int chosenGroup=0;
         for(int i=0;i<profiles.length();i++){
-            if(profile(i).optString("scientificName").equalsIgnoreCase(requested)){
-                selected=i;break;
+            JSONObject p=profile(i);
+            if(namesMatch(p,requestedScientific)){
+                for(int n=0;n<GROUPS.length;n++)
+                    if(GROUPS[n].equals(p.optString("group")))chosenGroup=n;
+                break;
             }
         }
-        left.setSelection(selected);
-        right.setSelection((selected+1)%profiles.length());
+        groupSelect.setSelection(chosenGroup);
         root.addView(text("Reference species",12,true));root.addView(left);
         root.addView(text("Compare with",12,true));root.addView(right);
         ScrollView scroll=new ScrollView(this);
@@ -121,6 +134,34 @@ public final class DiagnosticGuideActivity extends Activity {
         };
         left.setOnItemSelectedListener(listener);
         right.setOnItemSelectedListener(listener);
+        groupSelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override public void onItemSelected(AdapterView<?> parent,
+                    android.view.View view,int position,long id){configureGroup();}
+            @Override public void onNothingSelected(AdapterView<?> parent){}
+        });
+        configureGroup();
+    }
+    private void configureGroup(){
+        if(groupSelect==null||left==null||right==null)return;
+        shown.clear();
+        int position=groupSelect.getSelectedItemPosition();
+        if(position<0)return;
+        String group=GROUPS[position];
+        ArrayList<String> labels=new ArrayList<>();
+        for(int i=0;i<profiles.length();i++){
+            JSONObject p=profile(i);
+            if(group.equals(p.optString("group"))){
+                shown.add(p);labels.add(label(p));
+            }
+        }
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,labels);
+        left.setAdapter(adapter);right.setAdapter(adapter);
+        int selected=0;
+        for(int n=0;n<shown.size();n++)
+            if(namesMatch(shown.get(n),requestedScientific))selected=n;
+        if(shown.size()>0)left.setSelection(selected);
+        if(shown.size()>1)right.setSelection((selected+1)%shown.size());
         showComparison();
     }
     private Map<String,JSONObject> traits(JSONObject profile){
@@ -162,11 +203,12 @@ public final class DiagnosticGuideActivity extends Activity {
         int a=left.getSelectedItemPosition(),b=right.getSelectedItemPosition();
         if(a<0||b<0)return;
         rows.removeAllViews();
+        if(a>=shown.size()||b>=shown.size())return;
         if(a==b){
             rows.addView(text("Select a different species to compare characters.",14,false));
             return;
         }
-        JSONObject first=profile(a),second=profile(b);
+        JSONObject first=shown.get(a),second=shown.get(b);
         Map<String,JSONObject> traitsA=traits(first),traitsB=traits(second);
         LinkedHashMap<String,Boolean> fields=new LinkedHashMap<>();
         for(String field:traitsA.keySet())fields.put(field,true);
@@ -185,10 +227,21 @@ public final class DiagnosticGuideActivity extends Activity {
             lp.bottomMargin=dp(10);rows.addView(card,lp);
         }
         rows.addView(UiKit.sectionTitle(this,"Source records"));
+        java.util.HashSet<String> used=new java.util.HashSet<>();
+        for(JSONObject p:new JSONObject[]{first,second}){
+            JSONArray attributes=p.optJSONArray("traits");
+            if(attributes==null)continue;
+            for(int n=0;n<attributes.length();n++){
+                JSONObject trait=attributes.optJSONObject(n);
+                if(trait==null)continue;
+                JSONArray cited=trait.optJSONArray("sourceIds");
+                if(cited!=null)for(int q=0;q<cited.length();q++)used.add(cited.optString(q));
+            }
+        }
         JSONArray sources=bundle.optJSONArray("sourceList");
         if(sources!=null)for(int i=0;i<sources.length();i++){
             JSONObject entry=sources.optJSONObject(i);
-            if(entry==null)continue;
+            if(entry==null||!used.contains(entry.optString("id")))continue;
             String url=entry.optString("url");
             TextView credit=text(entry.optString("publisher")+" · "+
                 entry.optString("title")+"\nChecked "+entry.optString("accessed"),12,false);

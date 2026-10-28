@@ -97,6 +97,16 @@ public final class FieldBackupArchive {
     }
     /** A restore is allowed only into an empty workspace, never over field records. */
     public static boolean canRestore(Context ctx){
+        // Never replace a database with an uncheckpointed WAL or existing
+        // orphan media. In-place recovery is deliberately unsupported.
+        File base=ctx.getDatabasePath(FieldDb.NAME);
+        File wal=new File(base.getAbsolutePath()+"-wal");
+        if(wal.exists()&&wal.length()>0)return false;
+        for(String folder:new String[]{"record_media","acoustic"}){
+            File dir=new File(ctx.getFilesDir(),folder);
+            File[] existing=dir.listFiles();
+            if(existing!=null&&existing.length>0)return false;
+        }
         try(FieldDb f=new FieldDb(ctx)){
             SQLiteDatabase db=f.getReadableDatabase();
             for(String t:new String[]{"surveys","field_records","sightings",

@@ -72,8 +72,8 @@ class Rc7bFieldGuideTests(unittest.TestCase):
     def test_device_upgrade_data_schema_unchanged(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         database=(CODE/"FieldDb.java").read_text()
-        self.assertIn("versionCode 56",gradle)
-        self.assertIn("0.27.3-rc8-species-habitat-trait-preview",gradle)
+        self.assertIn("versionCode 57",gradle)
+        self.assertIn("0.27.3-rc8b-library-review-photo-compare",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",database)
 

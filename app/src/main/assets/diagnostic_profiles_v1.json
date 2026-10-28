@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "compiledDate": "2026-10-28",
   "reviewLevel": "Source-checked from scientific museum references and a peer-reviewed Philippine field inventory; Philippine taxonomic reviewer approval pending.",
-  "scope": "Cited offline identification and ecology accounts for eight example species, with versioned source taxonomy for other installed species. Not a verified key, site-occurrence record or species distribution model.",
+  "scope": "Ten cited offline introductory identification and ecology accounts for Philippine wildlife, with installed attributed taxonomic checklists for other species. No automated identification, locality prediction or independently reviewed diagnostic key.",
   "sourceList": [
     {
       "id": "wildalert-eagle",
@@ -79,6 +79,36 @@
       "title": "Kagwang natural-history account, Cynocephalus volans",
       "publisher": "Field Museum, Philippine Mammals",
       "url": "https://philippines.fieldmuseum.org/natural-history/narrative/4124",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "denr-croc-recovery-2005",
+      "title": "National Recovery Plan for the Philippine Crocodile, second edition, 2005–2008",
+      "publisher": "DENR Protected Areas and Wildlife Bureau / Royal Melbourne Zoological Gardens",
+      "url": "https://www.philchm.ph/wp-content/uploads/National-Recovery-Plan-for-Philippine-Crocodile.pdf",
+      "accessed": "2026-10-28",
+      "sourceYear": "2005"
+    },
+    {
+      "id": "adw-croc",
+      "title": "Crocodylus mindorensis species account",
+      "publisher": "University of Michigan Animal Diversity Web",
+      "url": "https://animaldiversity.org/accounts/Crocodylus_mindorensis/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "philcockatoo-report-2017",
+      "title": "Conservation of the Philippine Cockatoo, progress report Jan–Jun 2017",
+      "publisher": "Philippine Cockatoo Conservation Programme / Katala Foundation",
+      "url": "https://www.philippinecockatoo.org/images/Publications%20and%20articles/Reports/IPPF-PTPR%20Jan-June%202017.pdf",
+      "accessed": "2026-10-28",
+      "sourceYear": "2017"
+    },
+    {
+      "id": "denr-wildalert-cockatoo",
+      "title": "WildALERT Wildlife Guide: Red-vented Cockatoo species description",
+      "publisher": "Philippine Department of Environment and Natural Resources (DENR)",
+      "url": "https://faspselib.denr.gov.ph/uploads/materials/35733d95-8157-413b-9928-d7def4588461/ccd701d2-21ef-45b6-b2f8-702a8abc6208.pdf",
       "accessed": "2026-10-28"
     }
   ],
@@ -548,6 +578,116 @@
         "cautions": "Do not equate a membrane silhouette with species-level confirmation under difficult light. Record uncertainty and media sources.",
         "sourceIds": [
           "field-colugo"
+        ]
+      }
+    },
+    {
+      "scientificName": "Crocodylus mindorensis",
+      "commonName": "Philippine Crocodile",
+      "group": "Reptiles",
+      "assessment": "Introductory morphology and habitat sourced to DENR recovery plan and museum accounts; specialist diagnosis and current legal conservation status review pending.",
+      "traits": [
+        {
+          "field": "Overall form",
+          "value": "A relatively small freshwater crocodile with a broad head, armored dorsal scales and strong tail.",
+          "sourceIds": [
+            "denr-croc-recovery-2005"
+          ]
+        },
+        {
+          "field": "Dorsal coloration",
+          "value": "Dull brown to dark brown above, with darker transverse bands along back and tail; pale underside.",
+          "sourceIds": [
+            "denr-croc-recovery-2005"
+          ]
+        },
+        {
+          "field": "Nuchal / neck scales",
+          "value": "The nuchal-scale cluster and post-occipital scutes aid separation from C. porosus in trained, safe examination.",
+          "sourceIds": [
+            "denr-croc-recovery-2005"
+          ]
+        },
+        {
+          "field": "Habitat",
+          "value": "Freshwater rivers, marshes, ponds and lakes have been reported; disturbance and current local status vary.",
+          "sourceIds": [
+            "denr-croc-recovery-2005",
+            "adw-croc"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Never approach or handle a crocodile for scalation counts. Record distant photographic evidence and unresolved identification.",
+          "sourceIds": [
+            "denr-croc-recovery-2005"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Philippine Crocodile is an endemic freshwater crocodilian. Historical DENR accounts describe a fairly small-bodied species with a dark-banded back and tail, armored scales and a paler belly. Exact identification requires more than a distant silhouette.",
+        "habitat": "Historic Philippine recovery literature reports the species in freshwater wetlands, slow channels, rivers, swamps, pools and lakes. Habitat references do not establish presence at a particular station.",
+        "behavior": "Like other crocodilians it may bask at water margins and use aquatic cover. Note the actual observed behavior, water depth, current and surrounding disturbance rather than assuming habitat preference from one sighting.",
+        "fieldNotes": "From a safe distance, document body outline, head, neck and tail patterns, position on water or bank, GPS accuracy and camera direction. Do not approach, provoke or handle crocodiles for photographs.",
+        "cautions": "The DENR recovery plan is dated 2005, so its distribution and recovery status cannot represent a current population estimate. Keep age and exact locality claims separate from morphology. A remote crocodile sighting can remain Crocodylus sp.",
+        "sourceIds": [
+          "denr-croc-recovery-2005",
+          "adw-croc"
+        ]
+      }
+    },
+    {
+      "scientificName": "Cacatua haematuropygia",
+      "commonName": "Red-vented Cockatoo / Philippine Cockatoo",
+      "group": "Birds",
+      "assessment": "Introductory morphology sourced to DENR WildALERT guide and Philippine conservation program reports. Independent ornithological key review pending.",
+      "traits": [
+        {
+          "field": "Overall plumage",
+          "value": "Predominantly white bird with a short erectile crest and pale grey bill.",
+          "sourceIds": [
+            "denr-wildalert-cockatoo"
+          ]
+        },
+        {
+          "field": "Tail underside",
+          "value": "Red undertail coverts and yellowish underside of the tail help separate this species in a good view.",
+          "sourceIds": [
+            "denr-wildalert-cockatoo"
+          ]
+        },
+        {
+          "field": "Size",
+          "value": "About 30–31 cm total length in a DENR description, variable by measurement and individual.",
+          "sourceIds": [
+            "denr-wildalert-cockatoo"
+          ]
+        },
+        {
+          "field": "Habitat",
+          "value": "Historically associated with Philippine lowland forest and mangrove habitats.",
+          "sourceIds": [
+            "philcockatoo-report-2017"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Check the vent and tail in a clear view; avoid assigning escaped or captive white cockatoos from overall color.",
+          "sourceIds": [
+            "denr-wildalert-cockatoo",
+            "philcockatoo-report-2017"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Philippine or Red-vented Cockatoo is an endemic, mostly white parrot. A short pale crest, pinkish facial tones, red undertail coverts and yellowish underside to the tail distinguish the source-described plumage.",
+        "habitat": "Conservation records emphasize lowland forest and mangrove settings, especially trees used for nesting and foraging. Habitat association does not confirm occurrence at a chosen survey site.",
+        "behavior": "Reports document foraging, nesting and roosting site monitoring. A field record should distinguish flyovers, vocal contacts, feeding observations and nest activity.",
+        "fieldNotes": "Record bill and crest, underside of tail, visible red vent, number of birds, flight direction and any clear photographs or sounds. Avoid publishing sensitive nesting coordinates in shared exports.",
+        "cautions": "Some white cockatoos observed near settlements can be captive or escaped birds. Record uncertainty and distinguish wild population evidence from pet observations. Published older range figures should not be treated as current occupancy.",
+        "sourceIds": [
+          "denr-wildalert-cockatoo",
+          "philcockatoo-report-2017"
         ]
       }
     }

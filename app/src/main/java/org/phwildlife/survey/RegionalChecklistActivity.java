@@ -22,7 +22,7 @@ import java.util.Locale;
 /** Source-listed islands/provinces, not field-presence predictions. */
 public final class RegionalChecklistActivity extends Activity {
     private static final String[] AREAS={"Mindanao","Davao Region","Davao del Sur",
-        "Davao del Norte","Davao Oriental","Davao de Oro"};
+        "Davao del Norte","Davao Oriental","Davao de Oro","Davao Occidental"};
     private static final String[] GROUPS={"All wildlife","Birds","Amphibians",
         "Reptiles","Mammals"};
     private FieldDb db;
@@ -106,11 +106,14 @@ public final class RegionalChecklistActivity extends Activity {
             where="e.area_type='island' AND e.area_label='Mindanao'";
         }else if("Davao Region".equals(selected)){
             where="e.area_type='province' AND e.area_label IN ("+
-                "'Davao del Sur','Davao del Norte','Davao Oriental','Davao de Oro')";
+                "'Davao del Sur','Davao del Norte','Davao Oriental','Davao de Oro',"+
+                "'Davao Occidental')";
         }else{
             where="e.area_type='province' AND e.area_label=?";
             args.add(selected);
         }
+        // 'unreviewed' imports are candidates, never positive regional listings.
+        where+=" AND e.review_status='source_listed'";
         int selectedGroup=groupFilter==null?-1:groupFilter.getSelectedItemPosition();
         if(selectedGroup>0){
             where+=" AND c.taxon_group=?";
@@ -141,7 +144,9 @@ public final class RegionalChecklistActivity extends Activity {
         }
         adapter.notifyDataSetChanged();
         status.setText(selected+" · "+ids.size()+" source-listed taxa"+
-            (ids.isEmpty()?"\nImport regional evidence through Offline taxonomy first.":""));
+            ("Davao Region".equals(selected)?
+                "\nProvince records only. Davao City evidence is not separately assessed here.":"")+
+            (ids.isEmpty()?"\nNo matching reviewed source listings in the installed catalog.":""));
     }
     @Override protected void onDestroy(){db.close();super.onDestroy();}
 }

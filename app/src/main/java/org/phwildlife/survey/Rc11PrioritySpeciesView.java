@@ -37,6 +37,7 @@ public final class Rc11PrioritySpeciesView {
         "Natural history","Conservation"};
     private static final String[] ICONS={"search","leaf","pin","tracks","shield"};
     private static JSONObject matrix;
+    private static JSONObject primary;
     private static final JSONObject[] packs=new JSONObject[PACKS.length];
     private static int dp(Activity a,float n){
         return Math.round(a.getResources().getDisplayMetrics().density*n);
@@ -54,6 +55,7 @@ public final class Rc11PrioritySpeciesView {
     }
     private static synchronized void load(Activity a){
         if(matrix==null)matrix=asset(a,"rc8_evidence_comparisons_v1.json",450000);
+        if(primary==null)primary=asset(a,"rc12_primary_diagnoses_v1.json",55000);
         for(int i=0;i<PACKS.length;i++)
             if(packs[i]==null)packs[i]=asset(a,PACKS[i],65000);
     }
@@ -92,7 +94,25 @@ public final class Rc11PrioritySpeciesView {
         load(a);
         ArrayList<Fact> list=new ArrayList<>();
         HashSet<String> seen=new HashSet<>();
-        // The recent species-specific research is presented ahead of older matrix summaries.
+        // Original treatments precede source summaries, without changing approval status.
+        JSONArray original=primary.optJSONArray("records");
+        if(original!=null)for(int i=0;i<original.length();i++){
+            JSONObject species=original.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("limitation"),item.optString("sourceLocation"),
+                    item.optString("reviewState"));
+            }
+        }
+        // Later species-specific summaries and category-matched evidence.
         for(JSONObject pack:packs){
             JSONArray rows=pack.optJSONArray("records");
             if(rows==null)continue;
@@ -261,6 +281,7 @@ public final class Rc11PrioritySpeciesView {
         references.setPadding(dp(a,9),dp(a,6),dp(a,9),dp(a,12));
         references.addView(text(a,"References · specialist review in progress",
             12,false,UiKit.MUTED));
+        Rc12ScientificReview.add(a,references,scientific);
         HashSet<String> unique=new HashSet<>();
         if(!citation.isEmpty()){
             references.addView(text(a,"Taxonomy · "+citation,12,false,UiKit.MUTED));

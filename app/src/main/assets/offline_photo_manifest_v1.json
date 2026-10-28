@@ -1,0 +1,85 @@
+{
+  "edition": "2026-10-28",
+  "mediaType": "photograph",
+  "downloadPolicy": "License checked against Wikimedia Commons file page; preview resized to 440px. Keep full attribution and license links.",
+  "items": [
+    {
+      "id": "species_eagle",
+      "category": "species",
+      "taxon": "Pithecophaga jefferyi",
+      "fileName": "Pithecophaga jefferyi.jpg",
+      "author": "scorpious18 (Flickr)",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pithecophaga_jefferyi.jpg",
+      "caption": "Captive Philippine Eagle photographed in Davao City",
+      "offlineAsset": "offline_photos/species_eagle.jpg",
+      "edited": "Resized preview only; no content alteration"
+    },
+    {
+      "id": "species_tarsier",
+      "category": "species",
+      "taxon": "Carlito syrichta",
+      "fileName": "Tarsier animal.jpg",
+      "author": "EwaSik",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tarsier_animal.jpg",
+      "caption": "Philippine tarsier photographed on Bohol",
+      "offlineAsset": "offline_photos/species_tarsier.jpg",
+      "edited": "Resized preview only; no content alteration"
+    },
+    {
+      "id": "species_frog",
+      "category": "species",
+      "taxon": "Polypedates leucomystax",
+      "fileName": "Polypedates leucomystax 290816938.jpg",
+      "author": "Kai Squires",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Polypedates_leucomystax_290816938.jpg",
+      "caption": "Tree frog reference photographed in the Philippines",
+      "offlineAsset": "offline_photos/species_frog.jpg",
+      "edited": "Resized preview only; no content alteration"
+    },
+    {
+      "id": "species_kaloula",
+      "category": "species",
+      "taxon": "Kaloula pulchra",
+      "fileName": "Kaloula pulchra 1.jpg",
+      "author": "HAH",
+      "license": "CC BY 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.5/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kaloula_pulchra_1.jpg",
+      "caption": "Asian painted frog photographed in Thailand; identification reference only",
+      "offlineAsset": "offline_photos/species_kaloula.jpg",
+      "edited": "Resized preview only; no content alteration"
+    },
+    {
+      "id": "habitat_mangrove",
+      "category": "habitat",
+      "habitat": "mangrove",
+      "fileName": "Palawan Island, Mangrove trees, Philippines.jpg",
+      "author": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Palawan_Island,_Mangrove_trees,_Philippines.jpg",
+      "caption": "Tidal mangrove trees on Palawan",
+      "offlineAsset": "offline_photos/habitat_mangrove.jpg",
+      "edited": "Resized preview only; no content alteration"
+    },
+    {
+      "id": "habitat_mossy",
+      "category": "habitat",
+      "habitat": "mossy-forest",
+      "fileName": "Mossy Forest of Dulang-dulang.jpg",
+      "author": "Nairbest10",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mossy_Forest_of_Dulang-dulang.jpg",
+      "caption": "Mossy forest on Mount Dulang-dulang",
+      "offlineAsset": "offline_photos/habitat_mossy.jpg",
+      "edited": "Resized preview only; no content alteration"
+    }
+  ]
+}

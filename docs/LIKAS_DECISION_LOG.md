@@ -37,3 +37,6 @@ The owner identified the current working version as LIKAS v0.27.3 RC4, verified 
 ## How to append
 
 Create a dated heading: `YYYY-MM-DD | Decision | Accepted / Replaced / Deferred`. State what changed, why it affects future work, source/reference, and any prior decision superseded. Do not erase historical entries.
+
+### 2026-10-28 | Prototype D recovery, sprite-by-sprite QA, cross-branch PR checks | Pending original media and GitHub enforcement
+The owner accepted continuing from v0.27.4 PR #36 and requested original Prototype D asset recovery, per-sprite inspection, and mandatory checks across the repository. Original approved-candidate ZIP is missing from accessible file sources and must not be substituted. A source/asset inspector with synthetic 28-layer tests passed CI. Trusted pull_request_target lineage checks were installed on main, RC4, and staged v0.27.4, with RC4 and PR #36 checks passing after a guard fix. Private GitHub plan/integration restrictions block actual repository-wide enforced rulesets/branch protection; report tests as running, not non-bypassable. Keep startup on RC4 until real pack approval and device testing. See `docs/LIKAS_PROJECT_STATE.md` and v0.27.4 audit.

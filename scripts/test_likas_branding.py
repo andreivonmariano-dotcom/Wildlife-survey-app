@@ -47,19 +47,18 @@ class LikasBrandingSmokeTest(unittest.TestCase):
         }.items():
             self.assertEqual(hashlib.sha256((forest / name).read_bytes()).hexdigest(), expected)
 
-    def test_startup_is_offline_and_has_resume(self):
-        manifest = ET.parse(RES.parent / "AndroidManifest.xml").getroot()
-        application = manifest.find("application")
-        self.assertEqual(application.attrib[ANDROID + "icon"], "@mipmap/ic_launcher")
-        launch = (JAVA / "LikasLaunchActivity.java").read_text(encoding="utf-8")
-        self.assertIn('new LikasForestView(this)', launch)
-        self.assertNotIn('icon.setImageResource(', launch)
-        self.assertIn('label("LIKAS",', launch)
-        self.assertIn('action("Resume survey",true)', launch)
-        self.assertIn('action("Open LIKAS",false)', launch)
-        self.assertIn('resumeButton.setVisibility(active?View.VISIBLE:View.GONE)', launch)
-        self.assertIn('home.putExtra("show_menu",true)', launch)
-        self.assertIn('statusView.setVisibility(status==null?View.VISIBLE:View.GONE)', launch)
+    def test_minimal_startup_is_offline_and_home_preserves_resume(self):
+        manifest=ET.parse(RES.parent/"AndroidManifest.xml").getroot()
+        self.assertEqual(manifest.find("application").attrib[ANDROID+"icon"],
+                         "@mipmap/ic_launcher")
+        launch=(JAVA/"LikasLaunchActivity.java").read_text(encoding="utf-8")
+        home=(JAVA/"WelcomeActivity.java").read_text(encoding="utf-8")
+        self.assertIn('brand.setText("LIKAS")',launch)
+        self.assertIn('new Intent(this,WelcomeActivity.class)',launch)
+        self.assertIn('ValueAnimator.areAnimatorsEnabled()',launch)
+        self.assertIn('home.putExtra("show_menu",true)',launch)
+        self.assertNotIn('new LikasForestView(this)',launch)
+        self.assertIn('new Intent(this,MainActivity.class).putExtra("resume",true)',home)
 
     def test_pixel_forest_bounded_in_memory_and_frame_rate(self):
         forest = (JAVA / "LikasForestView.java").read_text(encoding="utf-8")

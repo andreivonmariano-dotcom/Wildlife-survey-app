@@ -1,6 +1,6 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
-**State revision:** 1.6  
+**State revision:** 1.7  
 **Recorded:** 28 October 2026, Asia/Manila  
 **Repository:** `andreivonmariano-dotcom/Wildlife-survey-app` (private)  
 **Branch checked:** `main`  
@@ -19,6 +19,16 @@
 **Future work must follow the RC4 → 0.27.4 staged sprite-player lineage**, preserve accepted original artwork, screen semantics and 5 FPS individual sprite direction, and check real current branch code and artifacts before release claims. Do not select a build baseline solely from GitHub's default branch.
 
 ---
+
+## 28 October 2026 | Q1/Q2/Q3 verified RC4 continuation, separate sprite QA and guarded pull requests
+
+- **App baseline:** LIKAS v0.27.3 RC4 (versionCode 49, SQLite schema 27). Next source stage is draft PR #36, `feature/v0.27.4-layered-sprite-player-stage`, synchronized with updated RC4 via merge `93e705bdc168249eb2384d2ceacec287982c77ad`. Current source history is 0 commits behind RC4; `main` itself is still historical v0.15 code, and obsolete PR #37 is closed.
+- **Missing original Prototype D ZIP:** Asset recovery searched GitHub, current accessible Project and Library files, local workdir and owner's connected Drive. Neither the recorded 9,350,494-byte `LIKAS_Layered_Sprites_5FPS_Prototype_D.zip` nor inner 1,488,772-byte `android/likas_sprite_assets.zip` was found. Inner ZIP recorded SHA-256 `def85e227587fdadee75956b6f105b57feb38f2bff27c6889c1f1edbfc042498`. Do not fabricate a replacement or claim the source-stage APK already contains it.
+- **Q2 per-component test tool:** New `scripts/inspect_likas_sprite_layers.py` checks 28 separately animated day/night components, ZIP/hash, alpha, frame counts, geometry, atlas and frame variation, and produces visual contact strips once original ZIP is available. `scripts/test_likas_sprite_layer_audit.py` uses synthetic test sprites. CI run `40634485653` passed this source-test stage. **No real Prototype D media or Android sprite playback has been tested.**
+- **Q3 cross-branch PR checks:** Trusted `scripts/check_pr_against_rc4.py` and `.github/workflows/likas-pr-lineage.yml` added to `main`, RC4 and v0.27.4. RC4 and PR #36 subsequently passed lineage checks (e.g. 40634727804 and 40634775181). The first guard accidentally required the yet-unconnected sprite class in RC4; fixed and retested. The existing v0.27.4 CI still requires proper RC4 ancestry and matching debug signing key.
+- **Hard limitation:** GitHub private-repo rulesets GET produced `403 Upgrade to GitHub Pro or make this repository public`. Branch-protection GET produced `403 Resource not accessible by integration`. **No mandatory, non-bypassable repository-wide merge rule has been configured.** Do not equate runnable CI workflows with enforced merge protection.
+- **Safety:** Current RC4 startup and scientific survey data are unchanged. A source-build of the unconnected player is NOT a new v0.27.4 animation APK. Exact asset recovery, review, versionCode >=50, Android handset decoder/performance QA, data-preserving upgrade test and direct APK delivery remain pending.
+- **Source audit:** `docs/QA_v0_27_4_ACTIVE_BRANCH_SPRITE_AUDIT.md` on v0.27.4 records the full audit and follow-on tests.
 
 ## Mission
 

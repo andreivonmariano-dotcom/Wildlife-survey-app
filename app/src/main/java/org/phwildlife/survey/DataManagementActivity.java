@@ -15,6 +15,9 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /** Private, opt-in local data deletion. Does not modify the scientific catalog. */
 public final class DataManagementActivity extends Activity {
@@ -22,6 +25,8 @@ public final class DataManagementActivity extends Activity {
     private LinearLayout sections;
     private final ArrayList<String> surveyIds=new ArrayList<>();
     private Spinner surveyChoice;
+    private final ExecutorService deletionWorker=Executors.newSingleThreadExecutor();
+    private boolean deleting;
     private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
@@ -96,9 +101,10 @@ public final class DataManagementActivity extends Activity {
                 if(index>=0&&index<surveyIds.size()){
                     String id=surveyIds.get(index);
                     confirm("selected survey","DELETE",()->{
-                        FieldDataDeletion.Report result=FieldDataDeletion.deleteSurvey(
-                            this,helper.getWritableDatabase(),id);
-                        success(result);
+                        try(FieldDb local=new FieldDb(getApplicationContext())){
+                            return resultText(FieldDataDeletion.deleteSurvey(
+                                getApplicationContext(),local.getWritableDatabase(),id));
+                        }
                     });
                 }
             });
@@ -108,8 +114,10 @@ public final class DataManagementActivity extends Activity {
         Button deleteAllSurveys=button("Delete all archived surveys and their evidence",()->
             confirm("ALL surveys, observations, photos, audio and sampling effort",
                 "DELETE SURVEYS",()->{
-                    FieldDataDeletion.Report result=FieldDataDeletion.deleteAllSurveys(
-                        this,helper.getWritableDatabase());success(result);
+                    try(FieldDb local=new FieldDb(getApplicationContext())){
+                        return resultText(FieldDataDeletion.deleteAllSurveys(
+                            getApplicationContext(),local.getWritableDatabase()));
+                    }
                 }));
         deleteAllSurveys.setEnabled(active==0);
         label("Projects, sites and reusable plans",
@@ -120,24 +128,29 @@ public final class DataManagementActivity extends Activity {
         Button deleteWorkspace=button("Delete project and station register",()->
             confirm("ALL projects, stations, routes and study templates",
                 "DELETE WORKSPACE",()->{
-                    FieldDataDeletion.clearWorkspace(helper.getWritableDatabase());
-                    showMessage("Project and station register cleared.");show();
+                    try(FieldDb local=new FieldDb(getApplicationContext())){
+                        FieldDataDeletion.clearWorkspace(local.getWritableDatabase());
+                        return "Project and station register cleared.";
+                    }
                 }));
         deleteWorkspace.setEnabled(surveys==0);
         label("Species preferences",favorites+" favorite species");
         button("Clear favorite species",()->
             confirm("favorite species list","CLEAR FAVORITES",()->{
-                FieldDataDeletion.clearFavorites(helper.getWritableDatabase());
-                showMessage("Species favorites cleared.");show();
+                try(FieldDb local=new FieldDb(getApplicationContext())){
+                    FieldDataDeletion.clearFavorites(local.getWritableDatabase());
+                    return "Species favorites cleared.";
+                }
             }));
         label("Reset all my field data","Deletes surveys, media, projects, stations, "+
             "routes, study templates and favorites. Source reference catalogs remain installed.");
         Button resetAll=button("Delete all my saved field data",()->
             confirm("ALL user-created research records and attached media",
                 "DELETE ALL",()->{
-                    FieldDataDeletion.Report result=FieldDataDeletion.clearAll(
-                        this,helper.getWritableDatabase());
-                    success(result);
+                    try(FieldDb local=new FieldDb(getApplicationContext())){
+                        return resultText(FieldDataDeletion.clearAll(
+                            getApplicationContext(),local.getWritableDatabase()));
+                    }
                 }));
         resetAll.setEnabled(active==0);
         if(active>0)sections.addView(FieldVisuals.context(this,
@@ -176,20 +189,23 @@ public final class DataManagementActivity extends Activity {
             .setItems(names.toArray(new String[0]),(dialog,selected)->{
                 String id=ids.get(selected);
                 confirm("selected "+table+" item","DELETE",()->{
-                    SQLiteDatabase db=helper.getWritableDatabase();
-                    switch(index){
-                        case 0:FieldDataDeletion.deleteSite(db,id);break;
-                        case 1:FieldDataDeletion.deleteProject(db,id);break;
-                        case 2:FieldDataDeletion.deleteRoute(db,id);break;
-                        case 3:FieldDataDeletion.deleteStudyTemplate(db,id);break;
-                        default:return;
+                    try(FieldDb local=new FieldDb(getApplicationContext())){
+                        SQLiteDatabase db=local.getWritableDatabase();
+                        switch(index){
+                            case 0:FieldDataDeletion.deleteSite(db,id);break;
+                            case 1:FieldDataDeletion.deleteProject(db,id);break;
+                            case 2:FieldDataDeletion.deleteRoute(db,id);break;
+                            case 3:FieldDataDeletion.deleteStudyTemplate(db,id);break;
+                            default:return "No saved item selected.";
+                        }
+                        return "Selected saved item deleted.";
                     }
-                    showMessage("Selected saved item deleted.");show();
                 });
             })
             .setNegativeButton("Cancel",null).show();
     }
-    private void confirm(String scope,String phrase,Runnable action){
+    private void confirm(String scope,String phrase,Callable<String> action){
+        if(deleting)return;
         EditText input=new EditText(this);
         input.setSingleLine(true);
         input.setTextSize(18);
@@ -209,22 +225,40 @@ public final class DataManagementActivity extends Activity {
                     showMessage("Nothing deleted. Confirmation phrase did not match.");
                     return;
                 }
-                try{action.run();}
-                catch(Exception error){
-                    showMessage("Deletion stopped: "+error.getMessage());show();
-                }
+                if(deleting)return;
+                deleting=true;
+                AlertDialog progress=new AlertDialog.Builder(this)
+                    .setTitle("Deleting selected records")
+                    .setMessage("Applying the confirmed change to local storage.")
+                    .setCancelable(false).create();
+                progress.show();
+                deletionWorker.execute(()->{
+                    String report;
+                    try{report=action.call();}
+                    catch(Exception error){report="Deletion stopped: "+error.getMessage();}
+                    final String message=report;
+                    runOnUiThread(()->{
+                        deleting=false;
+                        progress.dismiss();
+                        if(isFinishing()||isDestroyed())return;
+                        showMessage(message);
+                        show();
+                    });
+                });
             }).show();
     }
-    private void success(FieldDataDeletion.Report report){
-        showMessage(report.deletedSurveys+" surveys deleted. "+
+    private String resultText(FieldDataDeletion.Report report){
+        return report.deletedSurveys+" surveys deleted. "+
             report.deletedFiles+" linked media files removed."+
             (report.failedFiles>0?" "+report.failedFiles+
-                " media files could not be removed.":""));
-        show();
+                " media files could not be removed.":"");
     }
     private void showMessage(String message){
         new AlertDialog.Builder(this).setTitle("Saved data")
             .setMessage(message).setPositiveButton("Close",null).show();
     }
-    @Override protected void onDestroy(){helper.close();super.onDestroy();}
+    @Override protected void onDestroy(){
+        deletionWorker.shutdown();
+        helper.close();super.onDestroy();
+    }
 }

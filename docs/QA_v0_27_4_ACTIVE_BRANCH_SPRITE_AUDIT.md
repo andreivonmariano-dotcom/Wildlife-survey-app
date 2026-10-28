@@ -46,3 +46,24 @@
 6. Deliver a **newly built verified APK** as a direct chat download, not a previous release or GitHub-only link.
 
 **No new v0.27.4 APK was created in this audit.** A successful source build is not a successful 5 FPS sprite playback test.
+
+## Follow-on Q1/Q2/Q3 | 28 October 2026 | Asset recovery and merge checks
+
+**Asset recovery:** Searched all accessible conversation/Project files, the personal Library, the local working filesystem, the private GitHub repository tree and the owner's connected Google Drive. The exact `LIKAS_Layered_Sprites_5FPS_Prototype_D.zip` or its nested `android/likas_sprite_assets.zip` is not available in these sources. The recorded 1,488,772-byte ZIP and SHA256 are provenance identifiers, not evidence of locally available binary. Do not silently substitute the separate 7.5 MB parallax/browser prototype or new procedural art. No asset was committed or runtime sprite connection performed. The Prototype D art is a **review candidate**, not a finally accepted image pack.
+
+**Per-layer tester:** `scripts/inspect_likas_sprite_layers.py` can audit all 28 independent layers across day/night, preserving component kind and atlas identity. It checks ZIP CRC, recorded SHA256, all fixed/rocks plates, 4 waterfalls and river per mode, expected 20/40-frame lengths for 5 FPS motion, geometry and sheet coverage. With Pillow it compares *every RGBA frame* for movement and produces five-frame review strips for each component. `scripts/test_likas_sprite_layer_audit.py` provides deliberately **synthetic** 28-layer fixtures that exercise missing-layer and unapproved-hash rejection. These passing test fixtures are **not tests of real Prototype D pixel art**. Once the actual archive is recovered, run:
+
+```bash
+python3 -m pip install Pillow
+python3 scripts/inspect_likas_sprite_layers.py --archive /path/to/likas_sprite_assets.zip --output /path/to/review_strips
+```
+
+Do not use `--skip-hash-check` for owner art.
+
+**Trusted PR gate:** `scripts/check_pr_against_rc4.py` and `.github/workflows/likas-pr-lineage.yml` are staged in `main`, RC4 and v0.27.4 branches. The new `pull_request_target` checks read **trusted base-branch code only** and inspect PR-head files through Git objects. They never execute PR-supplied scripts. A first iteration incorrectly expected a sprite player in RC4 itself, and was corrected. PR #35 (RC4) and #36 (v0.27.4) subsequently passed source-lineage checks; latest run details are in GitHub Actions.
+
+**Limits:** GitHub returned `403 Upgrade to GitHub Pro or make this repository public` for private repository rulesets and `403 Resource not accessible by integration` for existing branch protection. These checks run but are **not verified as required merge checks across all branches**. The account's GitHub plan and repository settings must permit protection before claiming a non-bypassable rule. Existing historical PRs targeting other old branches do not all inherit the new workflow.
+
+**Branch synchronization:** The RC4 branch received the trusted read-only PR checks. The v0.27.4 branch was merged with that updated RC4 history through commit `93e705bdc168249eb2384d2ceacec287982c77ad`; GitHub compare again reported **0 commits behind RC4**. No Android app entrypoint, database, species catalog or exports were modified by this merge.
+
+**Release remains blocked:** No user-approved binary pack exists in this session. Native sprite atlas playback and visual quality are unverified on Android. No newly versioned v0.27.4 APK was produced or distributed.

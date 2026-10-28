@@ -237,7 +237,9 @@ public final class TaxonDetailActivity extends Activity {
             latin.setTypeface(null,Typeface.BOLD_ITALIC);
             latin.setPadding(0,dp(3),0,dp(3));
             content.addView(latin);
-            if(!OfflineFieldLibrary.addSpecies(this,content,scientific)){
+            boolean detailed=OfflineFieldLibrary.addSpecies(this,content,scientific);
+            boolean rc7=Rc7FieldAccounts.add(this,content,scientific);
+            if(!detailed&&!rc7){
                 content.addView(FieldVisuals.context(this,
                     "A detailed account is not yet source-checked for this species. "+
                     "The installed taxonomy and original checklist source remain available below."));

@@ -174,5 +174,6 @@ public final class Rc9ProfileCompleteness {
             body.setVisibility(show?View.VISIBLE:View.GONE);
             toggle.setText(show?"Hide source evidence and gaps  ▴":"Read source evidence and gaps  ▾");
         });
+        Rc10ResearchBatch.add(a,parent,scientific);
     }
 }

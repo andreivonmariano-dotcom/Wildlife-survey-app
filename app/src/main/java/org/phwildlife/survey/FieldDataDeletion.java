@@ -193,6 +193,7 @@ public final class FieldDataDeletion {
                 db.delete(table,null,null);
             }
             for(String table:WORKSPACE_TABLES)db.delete(table,null,null);
+            seedDefaultProject(db);
             db.delete("taxa_favorites",null,null);
             db.setTransactionSuccessful();
         }finally{db.endTransaction();}

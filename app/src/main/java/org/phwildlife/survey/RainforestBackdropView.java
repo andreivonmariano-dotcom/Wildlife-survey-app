@@ -37,6 +37,7 @@ public final class RainforestBackdropView extends View {
     private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path path = new Path();
     private final int[] colors = new int[9];
+    private final float[] currentLight = new float[4];
     private final PowerManager powerManager;
     private LinearGradient sky;
     private boolean ambientEnabled = true;
@@ -100,6 +101,7 @@ public final class RainforestBackdropView extends View {
         if (minute == lastMinute) return;
         lastMinute = minute;
         float[] weights = RainforestMotion.lightWeights(minute);
+        System.arraycopy(weights, 0, currentLight, 0, weights.length);
         for (int k = 0; k < colors.length; k++) {
             float red = 0, green = 0, blue = 0;
             for (int i = 0; i < 4; i++) {
@@ -113,9 +115,8 @@ public final class RainforestBackdropView extends View {
     }
 
     private void color(int argb) {
-        p.reset();
-        p.setAntiAlias(true);
-        p.setFilterBitmap(true);
+        // Keep Paint allocated and configured. Resetting it for every leaf
+        // creates avoidable UI-thread work on high-refresh-rate devices.
         p.setStyle(Paint.Style.FILL);
         p.setColor(argb);
     }
@@ -174,7 +175,7 @@ public final class RainforestBackdropView extends View {
     }
 
     private void starsAndSun(Canvas c, float time) {
-        float[] w = RainforestMotion.lightWeights(lastMinute);
+        float[] w = currentLight;
         float night = w[3], day = w[0] + w[1];
         if (day > 0.02f) {
             circle(c, alpha(0xFFFFF5C3, Math.round(180 * day)), 279, 46, 17);
@@ -335,7 +336,7 @@ public final class RainforestBackdropView extends View {
     }
 
     private void fireflies(Canvas c, float t) {
-        float[] weights = RainforestMotion.lightWeights(lastMinute);
+        float[] weights = currentLight;
         float strength = weights[3] + weights[2]*.15f;
         if (strength <= .01f) return;
         for (int i = 0; i < 11; i++) {

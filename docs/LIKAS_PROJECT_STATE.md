@@ -1,6 +1,6 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
-**State revision:** 1.7  
+**State revision:** 1.8  
 **Recorded:** 28 October 2026, Asia/Manila  
 **Repository:** `andreivonmariano-dotcom/Wildlife-survey-app` (private)  
 **Branch checked:** `main`  
@@ -29,6 +29,13 @@
 - **Hard limitation:** GitHub private-repo rulesets GET produced `403 Upgrade to GitHub Pro or make this repository public`. Branch-protection GET produced `403 Resource not accessible by integration`. **No mandatory, non-bypassable repository-wide merge rule has been configured.** Do not equate runnable CI workflows with enforced merge protection.
 - **Safety:** Current RC4 startup and scientific survey data are unchanged. A source-build of the unconnected player is NOT a new v0.27.4 animation APK. Exact asset recovery, review, versionCode >=50, Android handset decoder/performance QA, data-preserving upgrade test and direct APK delivery remain pending.
 - **Source audit:** `docs/QA_v0_27_4_ACTIVE_BRANCH_SPRITE_AUDIT.md` on v0.27.4 records the full audit and follow-on tests.
+
+## 28 October 2026 | Owner partitions LIKAS development across chats
+
+- **Startup animation:** Developed in a separate owner-directed conversation, associated with the existing RC4-derived `feature/v0.27.4-layered-sprite-player-stage` branch.
+- **Core wildlife biology app features:** This conversation uses new isolated branch `feature/likas-core-fieldwork-post-rc4` based on actual `feature/v0.27.3-startup-living-forest` (RC4, code 49, SQLite 27), not historical `main`.
+- **Do not edit startup assets or screen in core branch.** Core scope is field surveys, observations, species catalogs, habitat/ecological evidence, scientific reviews/exports, research information, offline reliability and non-startup UX. See core branch `docs/LIKAS_CORE_FIELDWORK_WORKSTREAM.md`.
+- **Status:** Scope division and GitHub documentation only. No new application features or APK built; next core module awaits owner selection. Neither workstream should rebase from the older v0.15 default code.
 
 ## Mission
 

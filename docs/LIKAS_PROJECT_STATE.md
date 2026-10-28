@@ -1,5 +1,19 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Verified RC4 lineage, active-branch safeguards and Prototype D audit
+- **Owner confirmed Q1/Q2/Q3:** Continue from the real `feature/v0.27.4-layered-sprite-player-stage` branch, audit the RC4 startup, and institute strict version-control gates after the obsolete v0.16 incident.
+- **Verified ancestry:** `feature/v0.27.4-layered-sprite-player-stage` descends from RC4 commit `458e786827ba73bebabf5c373e2080015c5fd38c`; it was ahead by 12 commits and behind by 0 at the start of this task. The default `main` is historical v0.15 and is not the active development baseline. Closed PR #37 remains obsolete.
+- **Source audit:** `LikasLaunchActivity` correctly preserves the LIKAS wordmark, Explore. Record. Conserve. tagline, dynamic top-right version, contextual Resume survey and Open LIKAS action. RC4 still instantiates `LikasForestView`. The staged `LikasSpriteForestView` is intentionally disconnected. No Prototype D atlas ZIP is bundled, so **no v0.27.4 APK with layered sprites exists**.
+- **Version-control additions:** Added `AGENTS.md`, `docs/LIKAS_RELEASE_LINEAGE_POLICY.md`, `config/likas_active_lineage.json`, `scripts/check_likas_active_lineage.py`, and `scripts/test_likas_active_lineage.py`. This pins RC4 ancestry, versionCode at least 49, app ID, schema 27, accepted 5 FPS per-sprite timing and expected Prototype D pack checksum; release activation requires versionCode at least 50 and matching ZIP.
+- **CI:** Updated existing branch workflow to fetch full Git history, reject wrong release ancestry before build, and reject PR builds signed by a different certificate. No new signing key is generated on PR runs. First test run failed from an unclosed parenthesis in the newly added Python test; fixed by commit `11aa02d36f0fcab7a013063800aa295c067656e0`. Final run outcome must be checked before reporting CI green.
+- **Renderer reliability:** Changed native 5 FPS source to fail once and log missing/invalid sprite assets, avoid handler teardown races, and serialize visibility-triggered frame scheduling via `AtomicBoolean`. No active startup class or survey/SQLite code changed.
+- **Detailed review:** `docs/QA_v0_27_4_ACTIVE_BRANCH_SPRITE_AUDIT.md` describes the code-vs-design audit and remaining image artifacts. Physical Android WebP atlas decode, battery, frame cadence, accessibility, in-place upgrade and field survey regression are not verified.
+- **Blocker:** Exact Prototype D `android/likas_sprite_assets.zip` is absent from repository and current accessible Project files. Recorded SHA-256 `def85e227587fdadee75956b6f105b57feb38f2bff27c6889c1f1edbfc042498`. Do not substitute generated art or activate the sprite class without it.
+- **Next:** Verify final CI run and pin its commit; retrieve/import and inspect the exact approved sprite ZIP, connect it only with valid media, increment versionCode >49, run full CI and on-device research-data regression, then provide a newly built direct downloadable APK. PR #36 remains draft.
+
+---
+
+
 ## Latest development stage | 28 October 2026, Asia/Manila | Prototype D waterfall refine + Android sprite source
 - Owner requested Q1/Q2/Q3 together: refine each waterfall sheet, clean duplicated static detail, and build an Android sprite player from separate 5 FPS parts with phone-local day/night selection and battery-aware playback.
 - **Local Prototype D created:** `LIKAS_Layered_Sprites_5FPS_Prototype_D.zip`, 9,350,494 bytes, SHA-256 `3eaf56a026a070eccf498857b1510171c5e892dee22f3932f663667b36a93aab`. Its `android/likas_sprite_assets.zip` is 1,488,772 bytes, SHA-256 `def85e227587fdadee75956b6f105b57feb38f2bff27c6889c1f1edbfc042498`. Complete with individual transparent PNG frames, 28 component sprite sheets, day/night stills, frame editor/repack scripts, Android Java player, offline layer viewer and 5 FPS day/night MP4 previews.

@@ -1,0 +1,57 @@
+name: LIKAS Scientific Core QA
+
+on:
+  push:
+    branches:
+      - feature/likas-core-fieldwork-post-rc4
+  pull_request:
+    branches:
+      - feature/v0.27.3-startup-living-forest
+
+permissions:
+  contents: read
+
+jobs:
+  core-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require current RC4 lineage and scientific package identity
+        run: |
+          git merge-base --is-ancestor 458e786827ba73bebabf5c373e2080015c5fd38c HEAD
+          grep -F "applicationId 'org.phwildlife.survey.beta08'" app/build.gradle
+          grep -F "versionCode 49" app/build.gradle
+          grep -F "super(context,NAME,null,27)" app/src/main/java/org/phwildlife/survey/FieldDb.java
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+      - name: Install Android SDK
+        run: sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0' 'platform-tools'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - name: Python source tests, science evidence tests and migration checks
+        run: python3 -m unittest discover -s scripts -p 'test_*.py'
+      - uses: actions/cache@v4
+        with:
+          path: .taxonomy-cache/mdd-v2.5.csv
+          key: mdd-v2.5-533e662fd5b8f66a5f56c191e7efac44
+      - name: Prepare checksum-pinned MDD taxonomy
+        run: python3 scripts/prepare_mdd_mammals.py
+      - uses: actions/cache/restore@v4
+        with:
+          path: .signing/wildlife-beta08.keystore
+          key: wildlife-v08-beta-debug-signing-v1
+      - name: Require existing release-candidate signing identity
+        run: |
+          test -s .signing/wildlife-beta08.keystore
+          keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/likas-rc4-certificate.der
+          echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/likas-rc4-certificate.der' | sha256sum -c -
+      - name: Run JVM unit tests and compile Android preview
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
+      - name: Verify assembly artifact exists (not published)
+        run: test -s app/build/outputs/apk/debug/app-debug.apk

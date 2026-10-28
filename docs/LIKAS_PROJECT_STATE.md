@@ -1,6 +1,6 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
-**State revision:** 1.9  
+**State revision:** 1.10  
 **Recorded:** 28 October 2026, Asia/Manila  
 **Repository:** `andreivonmariano-dotcom/Wildlife-survey-app` (private)  
 **Branch checked:** `main`  
@@ -46,6 +46,17 @@
 - **Scientific data review:** `AuditActivity` no longer runs multi-query read-only `DataAudit.run` synchronously on the UI thread; uses dedicated executor and lifecycle-safe result rendering without write access.
 - **Testing and constraints:** New synthetic SQLite tests, source contract tests and `.github/workflows/core-science-qa.yml` compile/test code with signing and RC4 lineage checks, no published APK. CI run `40646116315` succeeded on application source commit `16ac4d01eb4dd441140ea667b93d8581ac9ae2c2`; later test/doc-only commits need freshest CI status checked. App ID, schema 27, code 49, survey records and startup assets unchanged. Real phone upgrade, survey, long-run GNSS, evidence attachment, exports and accessibility remain pending.
 - **Architecture priorities:** The 2,413-line `MainActivity`, synchronous Dashboard/History DB reads, GNSS writer queue/failure recovery, data restore and separate taxonomy sources are logged as risks, not measured defects. Priority later: isolate survey session/repositories and independently review source-dated occurrence, ecological and conservation evidence.
+
+## 28 October 2026 | Biodiversity workspace redesign in core branch, source verified
+
+- **Owner-approved direction:** Q1 Home becomes a coordinated biodiversity workspace, Q2 live field recorder should be less crowded, Q3 species reference should foreground identification and source-backed ecology. Startup animation remains owned by another chat, and formal field testing remains deferred.
+- **Source:** `feature/likas-core-fieldwork-post-rc4`, draft PR #38, on the genuine RC4 lineage, not historical `main` or obsolete v0.16.
+- **Home changed:** Visible fieldwork methods and Resume; Projects & stations, recent survey, History, Dashboard, direct Species Library search; secondary tools under disclosure.
+- **Recorder changed:** Method-specific audio/device/evidence controls grouped behind disclosure. Mark now, Measure bearing, station navigation, Save Observation, Review Records and End Survey remain accessible, with unchanged Complete/Incomplete/Not Counted behaviors and no DB schema changes.
+- **Species reference changed:** `CatalogActivity` is Species Library with live source-count summaries; `TaxonDetailActivity` separates taxonomy, conservation, habitat and regional references and marks diagnostic keys unavailable where not installed. `SpeciesPickerActivity` replaces uncalibrated `% Likely` cards and visible score sorts/filters with geography/habitat/elevation source descriptions and name/family/genus sorting.
+- **Verification:** CI Python/JVM/Android build passed `40652463202` at app code commit `d939960f8a7fc5e90f9ad90b1298209bbc6e1f0f` and RC4 lineage gate passed `40652467141`. Remaining branch updates after that code are only project documentation. No release APK, versionCode change, schema migration, handset screen inspection, new taxonomic traits, or sprite media integration. See `docs/LIKAS_BIODIVERSITY_WORKSPACE_V1.md` on core branch.
+- **Merge boundary:** Keep PR #38 draft until owner reviews real screens and confirms compatibility with the separate startup branch. Preserve existing field observations, signing identity and unfinished surveys.
+
 
 ## Mission
 

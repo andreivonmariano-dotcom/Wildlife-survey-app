@@ -97,7 +97,7 @@ class Rc7cOwnerLibraryTests(unittest.TestCase):
         db=(CODE/"FieldDb.java").read_text()
         self.assertIn("super(context,NAME,null,27)",db)
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 57",gradle)
-        self.assertIn("0.27.3-rc8b-library-review-photo-compare",gradle)
+        self.assertIn("versionCode 58",gradle)
+        self.assertIn("0.27.3-rc9-profile-differential-annotation-preview",gradle)
 
 if __name__=="__main__":unittest.main()

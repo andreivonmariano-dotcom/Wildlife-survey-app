@@ -87,6 +87,28 @@ class CoreEvidenceTests(unittest.TestCase):
                 "SELECT e.taxon_key FROM taxon_occurrence_evidence e WHERE "+where).fetchall()]
         self.assertEqual(["SRC:1"],ids)
 
+    def test_regional_name_filter_accepts_synonyms(self):
+        self.assertIn("SELECT 1 FROM taxon_synonyms a WHERE a.taxon_key=c.taxon_key", REGIONAL)
+        self.assertIn("AND LOWER(a.alias_name) LIKE ? ESCAPE '!'", REGIONAL)
+        self.assertIn("args.add(pattern);args.add(pattern);args.add(pattern)", REGIONAL)
+        with conn() as db:
+            records = db.execute(
+                "SELECT DISTINCT e.taxon_key FROM taxon_occurrence_evidence e "
+                "JOIN taxon_catalog c ON c.taxon_key=e.taxon_key "
+                "WHERE e.review_status='source_listed' AND e.area_type='province' "
+                "AND e.area_label='Davao Occidental' AND ("
+                "LOWER(c.common_name) LIKE ? OR LOWER(c.scientific_name) LIKE ? "
+                "OR EXISTS(SELECT 1 FROM taxon_synonyms a "
+                "WHERE a.taxon_key=c.taxon_key AND LOWER(a.alias_name) LIKE ?))",
+                ("%oldus one%",)*3).fetchall()
+        self.assertEqual([("SRC:1",)], records)
+
+    def test_regional_empty_and_large_results_are_honest(self):
+        self.assertIn("LIMIT 1001", REGIONAL)
+        self.assertIn("if(ids.size()==1000){capped=true;break;}", REGIONAL)
+        self.assertIn("Regional catalog unavailable:", REGIONAL)
+        self.assertIn("searchHandler.postDelayed(searchRefresh,180L)", REGIONAL)
+
     def test_unreviewed_source_row_remains_in_audit_database(self):
         with conn() as db:
             rows=db.execute("SELECT taxon_key,review_status FROM taxon_occurrence_evidence "

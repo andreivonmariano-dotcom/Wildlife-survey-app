@@ -56,9 +56,9 @@ class Rc6RestoreAndNavigationContracts(unittest.TestCase):
                       (JAVA/"HistoryActivity.java").read_text())
     def test_three_credible_and_distinct_new_species(self):
         pack=json.loads((ROOT/"app/src/main/assets/diagnostic_profiles_v1.json").read_text())
-        self.assertEqual(16,len(pack["profiles"]))
+        self.assertEqual(17,len(pack["profiles"]))
         sources={s["id"] for s in pack["sourceList"]}
-        for name in ("Dicaeum quadricolor","Platymantis insulatus","Varanus olivaceus"):
+        for name in ("Dicaeum quadricolor","Platymantis insulatus","Varanus olivaceus","Bubalus mindorensis"):
             account=next(x for x in pack["profiles"] if x["scientificName"]==name)
             self.assertTrue(account["assessment"])
             for trait in account["traits"]:

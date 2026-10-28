@@ -315,7 +315,7 @@ public final class Rc11PrioritySpeciesView {
         TextView meta=text(a,subtitle,13,false,UiKit.MUTED);
         LinearLayout.LayoutParams metaLp=new LinearLayout.LayoutParams(-1,-2);
         metaLp.bottomMargin=dp(a,11);parent.addView(meta,metaLp);
-        OfflinePhotoEvidence.addForTaxon(a,parent,scientific);
+        OfflinePhotoEvidence.addCompactForTaxon(a,parent,scientific);
         ArrayList<Fact> facts=facts(a,scientific);
         if(!facts.isEmpty()){
             TextView heading=text(a,"Field reference",13,true,UiKit.FOREST);

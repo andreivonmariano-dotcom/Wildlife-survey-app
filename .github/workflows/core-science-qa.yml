@@ -55,3 +55,12 @@ jobs:
         run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
       - name: Verify assembly artifact exists (not published)
         run: test -s app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Attach verified development APK for direct chat delivery
+        if: github.ref == 'refs/heads/feature/likas-core-fieldwork-post-rc4' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: LIKAS-RC4-scientific-core-preview-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

@@ -58,3 +58,13 @@ RC11B adds `OfflinePhotoEvidence.addCompactForTaxon`. The new card shows a 126 �
 **New build:** `0.27.3-rc11b-compact-species-photo-preview`, versionCode **61**, same package, signing identity and SQLite schema 27. Scientific Core workflow `40722666968` succeeded, artifact `12831311855`. Verified direct signed APK `/mnt/data/LIKAS-v0.27.3-RC11B-compact-species-photo-debug.apk`, size **9,417,157 bytes**, SHA-256 `0a9ec40f19f5c7e45e6a4179ec38ab655e7bc5e610f63c5eb78a5ae3eeb63416`. ZIP validity, 96 source keys, 64 research notes and all 58 licensed JPEGs confirmed. APK v2 certificate SHA-256 remains `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`.
 
 **Device QA:** The RC11B emulator run is `40722666750`. Check its final result and real 320dp screenshot before claiming RC11B on-device acceptance. Earlier RC11 versionCode 60 has already passed nine instrumentation tests, but that screenshot preceded the compact photo correction. Physical-phone acceptance remains open.
+
+## RC11C final visual copy pass
+
+The RC11B 320dp device test `40722666750` passed **9 of 9 instrumentation tests**. Visual review of its real Philippine Eagle screenshot confirms the identification card is visible on the first screen, but the thumbnail credit showed a redundant prefix such as `© (c)`, and the tiny “Field reference” subheading repeated the adjacent content.
+
+RC11C removes that heading. In the compact photo credit only, it avoids a second copyright mark and the redundant trailing “all rights reserved” text already present in the original author field. The full author and original license strings remain unchanged in the photo manifest and the expanded legal citation. Source-note and taxonomic data remain unchanged.
+
+Current target: `0.27.3-rc11c-compact-species-preview`, versionCode **62**, original Android package and pinned signing certificate, SQLite 27. New Scientific Core QA run `40723795196` succeeded; artifact `12831302845` was independently checked as ZIP-valid, 9,417,101 bytes, SHA-256 `19cfd177992190599084798e3389be60b47cc247c5ed876f21c1fb589d405eb0`. Source assets contain 96 priority keys, 64 cited research statements and all 58 approved JPEGs. APK v2 signing certificate SHA-256 matches `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Direct verified conversation file: `/mnt/data/LIKAS-v0.27.3-RC11C-compact-species-debug.apk`.
+
+RC11C emulator run `40723773212` remains a separate verification gate. Do not cite 9/9 for this precise binary before its final result and the associated screenshot have been read.

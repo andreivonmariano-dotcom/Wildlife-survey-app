@@ -41,7 +41,8 @@ public final class CatalogActivity extends Activity {
         layout.addView(compare);
         compare.setOnClickListener(v->startActivity(
             new Intent(this,DiagnosticGuideActivity.class)));
-        TextView sourceHeading=UiKit.sectionTitle(this,"Installed scientific references");
+        LinearLayout sourceHeading=FieldVisuals.section(this,
+            "Installed scientific references","Source edition and coverage");
         layout.addView(sourceHeading);
         info=new TextView(this);
         info.setTextSize(14);

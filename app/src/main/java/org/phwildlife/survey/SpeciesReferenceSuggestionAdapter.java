@@ -5,6 +5,12 @@ import android.database.Cursor;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.graphics.Typeface;
+import android.graphics.Color;
+import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Locale;
@@ -20,10 +26,36 @@ public final class SpeciesReferenceSuggestionAdapter
         helper=db;groupFilter=group;
     }
     public void setGroup(String group){groupFilter=group;}
+    @Override public View getView(int position,View convertView,ViewGroup parent){
+        TextView view=convertView instanceof TextView?(TextView)convertView:
+            new TextView(getContext());
+        int dp=Math.round(getContext().getResources().getDisplayMetrics().density);
+        view.setText(getItem(position));
+        view.setTextSize(14);
+        view.setTextColor(UiKit.INK);
+        view.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        view.setMaxLines(2);
+        view.setEllipsize(TextUtils.TruncateAt.END);
+        view.setMinHeight(48*dp);
+        view.setPadding(12*dp,7*dp,12*dp,7*dp);
+        view.setBackgroundColor(Color.WHITE);
+        return view;
+    }
+    @Override public View getDropDownView(int position,View convertView,ViewGroup parent){
+        return getView(position,convertView,parent);
+    }
+
     @Override public Filter getFilter(){return filter;}
     private final class Search extends Filter {
         @Override protected FilterResults performFiltering(CharSequence input){
             String name=input==null?"":input.toString().trim();
+            if(name.length()<2){
+                FilterResults empty=new FilterResults();
+                empty.values=new ArrayList<String>();
+                empty.count=0;
+                return empty;
+            }
+
             String group=groupFilter;
             String like=TaxonSearchPolicy.contains(name);
             String where=group==null||group.isEmpty()?"":" AND c.taxon_group=?";
@@ -43,7 +75,7 @@ public final class SpeciesReferenceSuggestionAdapter
             if(group!=null&&!group.isEmpty())args.add(group);
             try(Cursor c=helper.getReadableDatabase().rawQuery(
                     sql,args.toArray(new String[0]))){
-                while(c.moveToNext()&&list.size()<24){
+                while(c.moveToNext()&&list.size()<8){
                     String scientific=c.getString(2);
                     if(scientific==null||!seen.add(scientific.toLowerCase(Locale.ROOT)))continue;
                     String common=c.getString(1);

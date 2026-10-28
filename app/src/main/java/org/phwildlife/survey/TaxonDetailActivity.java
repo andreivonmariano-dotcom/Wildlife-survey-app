@@ -70,7 +70,9 @@ public final class TaxonDetailActivity extends Activity {
         search.setTextSize(15);
         search.setThreshold(1);
         search.setHint("Common, scientific, or former name");
-        search.setAdapter(new SpeciesReferenceSuggestionAdapter(this,db,null));
+        SpeciesReferenceSuggestionAdapter autocomplete=
+            new SpeciesReferenceSuggestionAdapter(this,db,null);
+        search.setAdapter(autocomplete);
         search.setDropDownHeight(dp(300));
         search.setOnItemClickListener((parent,view,position,id)->{
             lookup(parent.getItemAtPosition(position).toString());
@@ -78,7 +80,11 @@ public final class TaxonDetailActivity extends Activity {
         input.addView(search,new LinearLayout.LayoutParams(0,dp(52),1f));
         Button dropdown=UiKit.button(this,"▾","quiet");
         dropdown.setContentDescription("Show species suggestions");
-        dropdown.setOnClickListener(v->{search.requestFocus();search.showDropDown();});
+        dropdown.setOnClickListener(v->{
+            search.requestFocus();
+            autocomplete.getFilter().filter(search.getText().toString(),
+                count->{if(count>0)search.showDropDown();});
+        });
         input.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(52)));
         Button find=UiKit.button(this,"Find","secondary");
         find.setOnClickListener(v->lookup(search.getText().toString()));

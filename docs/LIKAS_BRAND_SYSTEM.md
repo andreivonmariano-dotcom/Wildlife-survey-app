@@ -27,7 +27,7 @@ A deliberately limited pixel-art identity inspired by a tropical Philippine fore
 
 The earlier forest day/night artwork, dedicated `ForestBackdropView` class, and startup-scene instructions have been removed at the owner's direction. The existing static welcome UI remains in place. No new background or animation is selected yet. The adaptive launcher icon and named LIKAS colors are separate brand resources and remain installed.
 
-The main menu is still its existing Android layout. Its hero typography and action colors now use the LIKAS identity. The animated forest itself is **not yet attached** to the activity. The other LIKAS development chat can connect it without changing the recording workflow.
+The installed main menu remains the existing static Android layout. A separate four-state rainforest visual prototype was produced on 28 October 2026 for review, but its art and motion were **not** installed into the Android activity. See `docs/LIKAS_STARTUP_V2_CONCEPT.md`. Do not reconnect the retired forest implementation.
 
 ## Small screen and accessibility
 

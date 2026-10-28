@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Scientific feature workstream separated from startup animation
+
+- **Owner direction:** The startup animation and its image assets are being developed in a different conversation. This core-development conversation must not modify or assess the startup background, sprites, startup typography or app icon unless later explicitly requested.
+- **Core-only branch:** `feature/likas-core-fieldwork-post-rc4`, derived directly from `feature/v0.27.3-startup-living-forest` (v0.27.3 RC4, code 49, SQLite schema 27). Parallel `feature/v0.27.4-layered-sprite-player-stage` remains for startup development.
+- **Scope:** Field recording, survey lifecycle, species/checklists, habitat/ecological data, research/news, analyses, scientific exports, offline reliability, app usability outside startup, and database integrity.
+- **Governance:** `docs/LIKAS_CORE_FIELDWORK_WORKSTREAM.md` documents scope exclusions, preserved app identity/data semantics, and potential scientific priorities.
+- **No feature code or APK changed** in this scope-separation action. First target is pending user selection; protect other branch work from conflicting changes.
+
+---
+
+
 ## Latest sprite-art milestone | 28 October 2026, Asia/Manila | 5 FPS independent pixel elements
 - Owner explicitly requested Q1 Q2 Q3: refine waterfall flow, give river its own continuously looping current sprites, and isolate more cloud/foreground foliage motion. The **accepted target frame timing is 5 FPS per animated portion (200ms)**, not 16/24 FPS whole-scene warping.
 - Current conversation generated **Prototype C**: `LIKAS_Individual_Rainforest_Sprites_5FPS_Prototype_C.zip`, size **14,972,272 bytes**, SHA-256 `43a024066310dcf96c000062a0d13d762c653379598a7a98cd1f8846297f7c48`. This is a separate editable asset pack, not a built APK or approved final artwork.

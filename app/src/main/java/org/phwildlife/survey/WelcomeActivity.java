@@ -252,6 +252,8 @@ public class WelcomeActivity extends Activity {
             startActivity(new Intent(this,StudyProtocolsActivity.class)));
         toolRow(tools,"Scientific data review",()->
             startActivity(new Intent(this,AuditActivity.class)));
+        toolRow(tools,"Manage saved data",()->
+            startActivity(new Intent(this,DataManagementActivity.class)));
         toolRow(tools,"Import previous backup",()->
             startActivity(new Intent(this,ImportActivity.class)));
         main.addView(tools);

@@ -45,6 +45,8 @@ def audit(sha):
             errors.append("Changed Android applicationId")
         if code < 49:
             errors.append("Outdated versionCode; required >= 49")
+        if code >= 50 and name == "0.27.3-rc4":
+            errors.append("VersionCode increased without changing versionName")
         if "super(context,NAME,null,27)" not in field:
             errors.append("SQLite schema 27 missing")
         if "if(oldVersion<27)upgradeTwentySeven(d)" not in field:
@@ -66,12 +68,12 @@ def audit(sha):
             if not minimal_startup:
                 errors.append("No verified RC4 launch-to-Home Resume Survey path")
         player_active = bool(re.search(r"new\s+LikasSpriteForestView\s*\(", launch))
-        if player_active or code >= 50:
+        if player_active:
             sprite = text_at(sha,"app/src/main/java/org/phwildlife/survey/LikasSpriteForestView.java")
             if "FRAME_MS=200L" not in sprite:
                 errors.append("5 FPS independent sprite renderer missing")
         archive = git("show", f"{sha}:{ASSET}")
-        if player_active or code >= 50:
+        if player_active:
             if code < 50 or name == "0.27.3-rc4":
                 errors.append("Sprite activation must use new versionCode >= 50 and new name")
             if not player_active:

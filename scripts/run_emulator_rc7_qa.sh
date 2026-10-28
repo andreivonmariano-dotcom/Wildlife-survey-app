@@ -12,7 +12,7 @@ adb shell wm density 240
 echo '=== Load previously signed RC7C preview ==='
 test -s /tmp/likas-rc7c.apk
 adb install -r /tmp/likas-rc7c.apk
-adb shell am start -W -n "$PKG/.LikasLaunchActivity" | tee emulator-qa/previous-launch.txt
+adb shell am start -W -n "$PKG/org.phwildlife.survey.LikasLaunchActivity" | tee emulator-qa/previous-launch.txt
 sleep 8
 adb shell am force-stop "$PKG"
 adb shell run-as "$PKG" ls databases/ | tee emulator-qa/previous-databases.txt
@@ -32,7 +32,7 @@ cmp -s emulator-qa/previous-db.sqlite emulator-qa/after-upgrade-db.sqlite
 echo 'EXISTING SQLITE DATABASE BYTES PRESERVED THROUGH INSTALL'
 
 echo '=== Verify 320dp startup and version ==='
-adb shell am start -W -n "$PKG/.LikasLaunchActivity" | tee emulator-qa/new-launch.txt
+adb shell am start -W -n "$PKG/org.phwildlife.survey.LikasLaunchActivity" | tee emulator-qa/new-launch.txt
 sleep 4
 adb shell dumpsys package "$PKG" | grep -E 'versionCode|versionName' | head -5 > emulator-qa/version.txt
 adb exec-out screencap -p > emulator-qa/startup.png
@@ -47,7 +47,7 @@ grep -Eq 'OK \([12] tests?\)' emulator-qa/instrumentation.txt
 echo 'DEVICE BACKUP TEST PASSED'
 
 echo '=== Screenshot and UI hierarchy at 320dp ==='
-adb shell am start -W -n "$PKG/.LikasLaunchActivity" | tee emulator-qa/post-test-launch.txt
+adb shell am start -W -n "$PKG/org.phwildlife.survey.LikasLaunchActivity" | tee emulator-qa/post-test-launch.txt
 sleep 3
 adb exec-out screencap -p > emulator-qa/post-test.png
 adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true

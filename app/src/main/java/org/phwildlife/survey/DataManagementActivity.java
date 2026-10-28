@@ -49,12 +49,13 @@ public final class DataManagementActivity extends Activity {
     private void label(String name,String subtitle){
         sections.addView(FieldVisuals.section(this,name,subtitle));
     }
-    private void button(String name,Runnable action){
+    private Button button(String name,Runnable action){
         Button b=UiKit.button(this,name,"secondary");
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(54));
         lp.bottomMargin=dp(7);
         sections.addView(b,lp);
         b.setOnClickListener(v->action.run());
+        return b;
     }
     private void show(){
         sections.removeAllViews();
@@ -104,23 +105,25 @@ public final class DataManagementActivity extends Activity {
             if(surveys>150)sections.addView(FieldVisuals.context(this,
                 "Showing the newest 150 archived surveys. Other surveys remain saved."));
         }
-        button("Delete all archived surveys and their evidence",()->
+        Button deleteAllSurveys=button("Delete all archived surveys and their evidence",()->
             confirm("ALL surveys, observations, photos, audio and sampling effort",
                 "DELETE SURVEYS",()->{
                     FieldDataDeletion.Report result=FieldDataDeletion.deleteAllSurveys(
                         this,helper.getWritableDatabase());success(result);
                 }));
+        deleteAllSurveys.setEnabled(active==0);
         label("Projects, sites and reusable plans",
             projects+" projects · "+sites+" stations · "+routes+" routes · "+
                 studies+" study templates");
         button("Delete one station, project, route or study template",()->
             chooseWorkspaceRecord());
-        button("Delete project and station register",()->
+        Button deleteWorkspace=button("Delete project and station register",()->
             confirm("ALL projects, stations, routes and study templates",
                 "DELETE WORKSPACE",()->{
                     FieldDataDeletion.clearWorkspace(helper.getWritableDatabase());
                     showMessage("Project and station register cleared.");show();
                 }));
+        deleteWorkspace.setEnabled(surveys==0);
         label("Species preferences",favorites+" favorite species");
         button("Clear favorite species",()->
             confirm("favorite species list","CLEAR FAVORITES",()->{
@@ -129,13 +132,14 @@ public final class DataManagementActivity extends Activity {
             }));
         label("Reset all my field data","Deletes surveys, media, projects, stations, "+
             "routes, study templates and favorites. Source reference catalogs remain installed.");
-        button("Delete all my saved field data",()->
+        Button resetAll=button("Delete all my saved field data",()->
             confirm("ALL user-created research records and attached media",
                 "DELETE ALL",()->{
                     FieldDataDeletion.Report result=FieldDataDeletion.clearAll(
                         this,helper.getWritableDatabase());
                     success(result);
                 }));
+        resetAll.setEnabled(active==0);
         if(active>0)sections.addView(FieldVisuals.context(this,
             "Active or paused surveys are protected. Use End Survey before any reset."));
         sections.addView(FieldVisuals.context(this,

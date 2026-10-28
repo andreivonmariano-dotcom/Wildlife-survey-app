@@ -49,14 +49,26 @@ public final class HabitatRecordsActivity extends Activity {
         other.leftMargin=dp(8);
         tabs.addView(recordsTab,other);
         root.addView(tabs);
+        Button researchToggle=UiKit.button(this,"Habitat research tools  ▾","secondary");
+        researchToggle.setContentDescription("Expand source-linked habitat comparisons and species associations");
+        root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(48)));
+        LinearLayout researchTools=new LinearLayout(this);
+        researchTools.setOrientation(LinearLayout.VERTICAL);
+        researchTools.setVisibility(android.view.View.GONE);
+        root.addView(researchTools);
+        researchToggle.setOnClickListener(v->{
+            boolean open=researchTools.getVisibility()!=android.view.View.VISIBLE;
+            researchTools.setVisibility(open?android.view.View.VISIBLE:android.view.View.GONE);
+            researchToggle.setText(open?"Hide habitat research tools  ▴":"Habitat research tools  ▾");
+        });
         Button compareHabitat=UiKit.button(this,"Compare habitat traits","secondary");
         compareHabitat.setContentDescription("Compare fifteen cited habitat formations and their field indicators");
-        root.addView(compareHabitat,new LinearLayout.LayoutParams(-1,dp(49)));
+        researchTools.addView(compareHabitat,new LinearLayout.LayoutParams(-1,dp(49)));
         Button references=UiKit.button(this,"Published species–habitat links","quiet");
         references.setContentDescription("Open source-linked species and habitat ecology references");
         references.setOnClickListener(v->startActivity(
             new Intent(this,HabitatSpeciesEvidenceActivity.class)));
-        root.addView(references,new LinearLayout.LayoutParams(-1,dp(49)));
+        researchTools.addView(references,new LinearLayout.LayoutParams(-1,dp(49)));
         compareHabitat.setOnClickListener(v->startActivity(new Intent(this,Rc8TraitComparisonActivity.class)
             .putExtra("comparison_mode","habitat")));
         guideTab.setOnClickListener(v->{selectedTab=0;render();});

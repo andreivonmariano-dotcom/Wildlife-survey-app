@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | RC7B species, credited iNaturalist photography and phone-sized UI
+
+- **Owner request:** complete 34 RC7A draft biology summaries, use credited iNaturalist photographs, prioritize dreidrei, refine species library, verify RC6-to-RC7B upgrade.
+- **Branch:** feature/likas-core-fieldwork-post-rc4, draft PR #38. Version 0.27.3-rc7b-literature-inat-preview, versionCode 53, unchanged app ID org.phwildlife.survey.beta08 and SQLite 27. No changes to survey lifecycle.
+- **Species:** 34 newly written, individually cited literature summaries, 19 birds/amphibians and 15 reptiles/mammals, displayed by Rc7LiteratureNotes. Literature source links and scientific caveats are present; independent expert key review remains pending. Earlier introductory profiles total 17; no claim of 51 specialist-validated profiles.
+- **Photography:** the sample of dreidrei public API photos showed all rights reserved, so none of these were bundled. Independent licensed iNaturalist sources: 75 candidates for the 34 draft species, 23 visually accepted from 21 account contributors, 21 CC BY-NC and two CC BY. See docs/RC7_INAT_APPROVED_LOCK_V1.json.zlib.b64 and its SHA-256 gate in scripts/audit_inaturalist_photos.py. Per-photo licenses, original credit, photo and observation links, exact medium JPEG digests and reviewer identity are pinned. Workflow requires 23/23 bundled and credits verified. The 23 new photo-linked RC7A source cards now have accurate licensed-photo markers. No new images from rights-restricted sources are included.
+- **UI:** Rc7SpeciesLibraryActivity stacks group/filter controls under 385dp and presents compact cards with downsampled licensed thumbnails. Keeps existing source-backed taxonomy, regional evidence, and independent global/national conservation categories.
+- **Automated science:** scripts/test_rc7b_field_guides.py, updated scripts/test_rc7a_library.py, and Android CI checksum/attribution photo gate. Main reference docs/LIKAS_RC7B_FIELD_GUIDES_INAT_MEDIA_QA.md. CI final run and binary checksum must be recorded after artifact completion.
+- **Pending:** physical-device RC6 to RC7B over-install and science data preservation, actual small-phone screenshots/accessibility, real backup-restore round trip, scientific specialist account review, and explicit copyright grants for all-rights-reserved photos. PR remains draft.
+
+---
+
 ## 28 October 2026 | RC7A implemented: 48 source-matched research cards, offline browse UI and iNaturalist audit
 
 - **Owner selected:** All three RC7 tasks: first 48 enriched priority candidates, permanent photo licensing/attribution pipeline emphasizing user `dreidrei` at https://www.inaturalist.org/people/dreidrei, and an integrated source-aware Species Library interface. The source checklists remain WBCP 2025 (761 bird records), Emerson Y. Sy 2025-1 (116 amphibians), Sy 2026-1 (380 reptile taxon entries) and MDD 2.5 (246 mammal country candidates), totaling 1,503 source records in the private research catalog. Original survey evidence stays untouched.

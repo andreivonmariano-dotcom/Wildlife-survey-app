@@ -210,6 +210,11 @@ public class WelcomeActivity extends Activity {
         dashboard.setOnClickListener(v->startActivity(new Intent(this,DashboardActivity.class)));
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
         shortcutsLp.topMargin=dp(9);main.addView(shortcutRow,shortcutsLp);
+        Button dataManager=UiKit.button(this,"Manage saved data","quiet");
+        LinearLayout.LayoutParams dataLp=new LinearLayout.LayoutParams(-1,dp(50));
+        dataLp.topMargin=dp(5);main.addView(dataManager,dataLp);
+        dataManager.setOnClickListener(v->startActivity(
+            new Intent(this,DataManagementActivity.class)));
 
         main.addView(FieldVisuals.section(this,"Species Library","Source-linked offline references"));
         Button catalog=UiKit.button(this,"Search Species Library","primary");
@@ -259,8 +264,6 @@ public class WelcomeActivity extends Activity {
             startActivity(new Intent(this,StudyProtocolsActivity.class)));
         toolRow(tools,"Scientific data review",()->
             startActivity(new Intent(this,AuditActivity.class)));
-        toolRow(tools,"Manage saved data",()->
-            startActivity(new Intent(this,DataManagementActivity.class)));
         toolRow(tools,"Import previous backup",()->
             startActivity(new Intent(this,ImportActivity.class)));
         main.addView(tools);

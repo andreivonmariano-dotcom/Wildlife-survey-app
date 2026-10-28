@@ -43,7 +43,7 @@ class Rc10BatchTwoContracts(unittest.TestCase):
         reader=(JAVA/"Rc10ResearchBatch.java").read_text()
         self.assertIn("rc10_research_batch1_v1.json",reader)
         self.assertIn("rc10_research_batch2_v1.json",reader)
-        self.assertIn("new JSONObject[]{source,secondSource}",reader)
+        self.assertIn("new JSONObject[]{source,secondSource,thirdSource}",reader)
         self.assertIn("Read original reference",reader)
         recorder=(JAVA/"MainActivity.java").read_text()
         self.assertIn('UiKit.button(this,"Mark detection","secondary")',recorder)

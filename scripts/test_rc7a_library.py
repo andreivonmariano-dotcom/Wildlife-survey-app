@@ -51,8 +51,8 @@ class Rc7aLibraryTests(unittest.TestCase):
         m=json.loads((ASSETS/"offline_inaturalist_manifest_v1.json").read_text())
         lock=photo.load_approval_lock()
         self.assertEqual(m["items"],[]) # Generated only from the reviewed lock at build time.
-        self.assertEqual(len(lock["items"]),37)
-        self.assertEqual(len({x["photoId"] for x in lock["items"]}),37)
+        self.assertEqual(len(lock["items"]),49)
+        self.assertEqual(len({x["photoId"] for x in lock["items"]}),49)
         targets=photo.all_philippine_names()
         for item in lock["items"]:
             self.assertTrue(photo.valid_approved(item,targets))

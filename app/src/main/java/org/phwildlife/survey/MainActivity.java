@@ -304,63 +304,120 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(detectRow);
         markTime.setOnClickListener(v->markDetection());
         markButton.setOnClickListener(v->openCamera());
-        // One field-method shortcut is always visible; the rest stay optional.
-        FieldQuickActions.Kind quickAction=FieldQuickActions.forSurvey(profile,method);
-        if(quickAction!=FieldQuickActions.Kind.NONE){
-            Button quickCapture=UiKit.button(this,FieldQuickActions.label(quickAction),"pond");
-            LinearLayout.LayoutParams captureParams=new LinearLayout.LayoutParams(-1,dp(50));
-            captureParams.topMargin=dp(7);
-            content.addView(quickCapture,captureParams);
-            quickCapture.setOnClickListener(v->{
-                switch(quickAction){
-                    case CALLS:openCallLibrary();break;
-                    case PHOTO:pickPhoto();break;
-                    case DEVICES:openTrapProtocol();break;
-                    case METHOD_EVIDENCE:openFieldProtocol();break;
-                    default:break;
-                }
-            });
-        }
-        // Only method-specific tools are folded away. Time/bearing marking stays visible.
+        // Saved preferences are scoped to the method, never a particular observation.
+        android.content.SharedPreferences quickPrefs=getSharedPreferences(
+            "likas_method_quick_actions",MODE_PRIVATE);
+        String quickKey=FieldQuickActions.preferenceKey(profile,method);
+        FieldQuickActions.Kind[] chosen={FieldQuickActions.resolve(profile,method,
+            quickPrefs.getString(quickKey,null))};
+        FieldQuickActions.Kind[] available=FieldQuickActions.choices(profile,method);
+        LinearLayout captureRow=horizontal();
+        Button quickCapture=UiKit.button(this,FieldQuickActions.label(chosen[0]),"pond");
+        captureRow.addView(quickCapture,new LinearLayout.LayoutParams(0,
+            dp(FieldLayoutPolicy.actionHeightDp(
+                getResources().getConfiguration().fontScale)),1));
+        Button changeQuick=UiKit.button(this,"Change","secondary");
+        LinearLayout.LayoutParams changeLp=new LinearLayout.LayoutParams(dp(105),
+            dp(FieldLayoutPolicy.actionHeightDp(
+                getResources().getConfiguration().fontScale)));
+        changeLp.leftMargin=dp(8);
+        captureRow.addView(changeQuick,changeLp);
+        LinearLayout.LayoutParams captureLp=new LinearLayout.LayoutParams(-1,-2);
+        captureLp.topMargin=dp(7);
+        content.addView(captureRow,captureLp);
+        quickCapture.setOnClickListener(v->{
+            switch(chosen[0]){
+                case CALLS:openCallLibrary();break;
+                case PHOTO:pickPhoto();break;
+                case DEVICES:openTrapProtocol();break;
+                case METHOD_EVIDENCE:openFieldProtocol();break;
+                default:break;
+            }
+        });
+
+        // Other tools stay in one expandable group without repeated actions.
         LinearLayout evidenceTools=vertical();
         evidenceTools.setVisibility(View.GONE);
-        if((FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile))&&
-                quickAction!=FieldQuickActions.Kind.CALLS){
-            Button sound=UiKit.button(this,"♪ Record / Review Calls","secondary");
-            sound.setContentDescription("Record, view spectrogram and label bird or amphibian calls");
-            LinearLayout.LayoutParams soundLp=new LinearLayout.LayoutParams(-1,dp(52));
-            soundLp.topMargin=dp(7);evidenceTools.addView(sound,soundLp);
+        Button[] optionalCalls={null},optionalDevices={null},optionalMethod={null};
+        if(FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile)){
+            Button sound=UiKit.button(this,"Record / review calls","secondary");
+            sound.setContentDescription("Open calls, spectrogram and time labels");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
+            lp.topMargin=dp(7);evidenceTools.addView(sound,lp);
+            optionalCalls[0]=sound;
             sound.setOnClickListener(v->openCallLibrary());
         }
-        if(TrapProtocolPolicy.supported(method)&&
-                quickAction!=FieldQuickActions.Kind.DEVICES){
-            Button devices=UiKit.button(this,"▣ Devices, Checks & Captures","secondary");
-            LinearLayout.LayoutParams deviceLp=new LinearLayout.LayoutParams(-1,dp(52));
-            deviceLp.topMargin=dp(7);evidenceTools.addView(devices,deviceLp);
+        if(TrapProtocolPolicy.supported(method)){
+            Button devices=UiKit.button(this,"Devices, checks & captures","secondary");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
+            lp.topMargin=dp(7);evidenceTools.addView(devices,lp);
+            optionalDevices[0]=devices;
             devices.setOnClickListener(v->openTrapProtocol());
         }
-        if(FieldProtocolPolicy.supported(method)&&
-                quickAction!=FieldQuickActions.Kind.METHOD_EVIDENCE){
-            Button methodRecords=UiKit.button(this,"▣ Method Effort & Evidence","secondary");
-            LinearLayout.LayoutParams methodLp=new LinearLayout.LayoutParams(-1,dp(52));
-            methodLp.topMargin=dp(7);evidenceTools.addView(methodRecords,methodLp);
+        if(FieldProtocolPolicy.supported(method)){
+            Button methodRecords=UiKit.button(this,"Method effort & evidence","secondary");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
+            lp.topMargin=dp(7);evidenceTools.addView(methodRecords,lp);
+            optionalMethod[0]=methodRecords;
             methodRecords.setOnClickListener(v->openFieldProtocol());
         }
-        if(evidenceTools.getChildCount()>0){
-            Button evidenceToggle=UiKit.button(this,"Audio, devices & evidence  ▾","quiet");
-            LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,dp(48));
-            evidenceLp.topMargin=dp(7);
-            content.addView(evidenceToggle,evidenceLp);
-            content.addView(evidenceTools);
-            evidenceToggle.setOnClickListener(v->{
-                boolean open=evidenceTools.getVisibility()!=View.VISIBLE;
-                evidenceTools.setVisibility(open?View.VISIBLE:View.GONE);
-                evidenceToggle.setText(open?"Audio, devices & evidence  ▴":
-                    "Audio, devices & evidence  ▾");
-                evidenceToggle.setContentDescription(open?
-                    "Hide method evidence tools":"Show method evidence tools");
-            });
-        }
+        Button evidenceToggle=UiKit.button(this,"Other evidence tools  ▾","quiet");
+        LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,
+            dp(FieldLayoutPolicy.actionHeightDp(
+                getResources().getConfiguration().fontScale)));
+        evidenceLp.topMargin=dp(7);
+        content.addView(evidenceToggle,evidenceLp);
+        content.addView(evidenceTools);
+        evidenceToggle.setOnClickListener(v->{
+            boolean open=evidenceTools.getVisibility()!=View.VISIBLE;
+            evidenceTools.setVisibility(open?View.VISIBLE:View.GONE);
+            evidenceToggle.setText(open?"Other evidence tools  ▴":
+                "Other evidence tools  ▾");
+            evidenceToggle.setContentDescription(open?
+                "Hide other evidence capture tools":"Show other evidence capture tools");
+        });
+        Runnable reflectQuick=()->{
+            quickCapture.setText(FieldQuickActions.label(chosen[0]));
+            quickCapture.setContentDescription("Quick capture: "+
+                FieldQuickActions.label(chosen[0]));
+            quickCapture.setVisibility(chosen[0]==FieldQuickActions.Kind.NONE?
+                View.GONE:View.VISIBLE);
+            if(optionalCalls[0]!=null)
+                optionalCalls[0].setVisibility(chosen[0]==FieldQuickActions.Kind.CALLS?
+                    View.GONE:View.VISIBLE);
+            if(optionalDevices[0]!=null)
+                optionalDevices[0].setVisibility(chosen[0]==FieldQuickActions.Kind.DEVICES?
+                    View.GONE:View.VISIBLE);
+            if(optionalMethod[0]!=null)
+                optionalMethod[0].setVisibility(chosen[0]==FieldQuickActions.Kind.METHOD_EVIDENCE?
+                    View.GONE:View.VISIBLE);
+            int visible=0;
+            for(int n=0;n<evidenceTools.getChildCount();n++)
+                if(evidenceTools.getChildAt(n).getVisibility()==View.VISIBLE)visible++;
+            evidenceToggle.setVisibility(visible>0?View.VISIBLE:View.GONE);
+            if(visible==0)evidenceTools.setVisibility(View.GONE);
+        };
+        reflectQuick.run();
+        changeQuick.setOnClickListener(v->{
+            String[] labels=new String[available.length+1];
+            labels[0]="Method default · "+
+                FieldQuickActions.label(FieldQuickActions.forSurvey(profile,method));
+            for(int n=0;n<available.length;n++)
+                labels[n+1]=FieldQuickActions.label(available[n]);
+            new AlertDialog.Builder(this)
+                .setTitle("Quick action for "+SurveyMethods.displayLabel(profile,method))
+                .setItems(labels,(dialog,selection)->{
+                    if(selection==0){
+                        quickPrefs.edit().remove(quickKey).apply();
+                        chosen[0]=FieldQuickActions.forSurvey(profile,method);
+                    }else{
+                        chosen[0]=available[selection-1];
+                        quickPrefs.edit().putString(quickKey,chosen[0].name()).apply();
+                    }
+                    reflectQuick.run();
+                })
+                .setNegativeButton("Cancel",null).show();
+        });
         LinearLayout markRow=horizontal();
         markRowView=markRow;
         markRow.setVisibility(View.GONE);

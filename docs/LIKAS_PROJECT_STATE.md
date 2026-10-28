@@ -1,5 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Q1 Q2 Q3: asset recovery, layer-by-layer testing and cross-branch PR gate
+
+- **Source baseline:** `feature/v0.27.4-layered-sprite-player-stage`, descended from RC4 versionCode 49, SQLite 27. Following trusted workflow additions on RC4, synchronized histories using merge `93e705bdc168249eb2384d2ceacec287982c77ad`, with 0 commits behind RC4.
+- **Q1 recovery:** Exact Prototype D archive `android/likas_sprite_assets.zip` (recorded 1,488,772 bytes; SHA256 `def85e227587fdadee75956b6f105b57feb38f2bff27c6889c1f1edbfc042498`) was **not found** in accessible Project/conversation files, personal Library, local files, GitHub tree, or connected owner's Google Drive. The asset is a recorded review candidate, not final owner-approved artwork. Runtime player remains disconnected. No fabricated/replacement art and no v0.27.4 APK.
+- **Q2 sprite audit:** Added `scripts/inspect_likas_sprite_layers.py` to inspect every individual component, all 28 sheets, RGBA frame variation, expected 5 FPS 20/40-frame counts, static/rocks geometry, mask/alpha and atlas bounds; it emits review strips per sprite if the real ZIP is supplied. Added `scripts/test_likas_sprite_layer_audit.py` with synthetic 28-layer fixtures. CI source/regression checks passed on commit `2ebbeeb16238f8be72ac9f652e36e759a575316c` (run `40634485653`). The actual source art has **not** been pixel-tested.
+- **Q3 controls:** Created trusted PR-head Git-object reader `scripts/check_pr_against_rc4.py` and `.github/workflows/likas-pr-lineage.yml` on `main`, RC4, and v0.27.4. Branch checks pass on the current RC4 and v0.27.4 PRs. First iteration rejected RC4 itself for lacking an intentionally unconnected sprite class; corrected on all three branches. The feature branch also retains its existing full-history lineage and signing checks in Android CI.
+- **Enforcement limit:** GitHub returned private repository rulesets `403 Upgrade to GitHub Pro or make this repository public` and branch protection `403 Resource not accessible by integration`. The workflow checks execute, but **repository-wide mandatory branch/merge protection was not enabled**. Do not claim non-bypassable checks until settings and entitlement permit them.
+- **Verification:** GitHub Actions run `40634775181` passed trusted PR gate on synchronized stage head `93e705bd...`. CI build on merge commit was in progress during this note; check latest run before claiming final status. No physical handset sprite, FPS, power, TalkBack or database upgrade test was performed.
+- **Next:** Recover the *exact* Prototype D source ZIP, inspect each real day/night sprite and approve the corrected appearance; import with checksum, connect player, increase versionCode >= 50, pass CI plus physical phone QA, and provide an actual new APK directly in chat. PR #36 stays draft. Details: `docs/QA_v0_27_4_ACTIVE_BRANCH_SPRITE_AUDIT.md`.
+
+---
+
+
 ## 28 October 2026 | Verified RC4 lineage, active-branch safeguards and Prototype D audit
 - **Owner confirmed Q1/Q2/Q3:** Continue from the real `feature/v0.27.4-layered-sprite-player-stage` branch, audit the RC4 startup, and institute strict version-control gates after the obsolete v0.16 incident.
 - **Verified ancestry:** `feature/v0.27.4-layered-sprite-player-stage` descends from RC4 commit `458e786827ba73bebabf5c373e2080015c5fd38c`; it was ahead by 12 commits and behind by 0 at the start of this task. The default `main` is historical v0.15 and is not the active development baseline. Closed PR #37 remains obsolete.

@@ -239,6 +239,7 @@ public final class TaxonDetailActivity extends Activity {
             content.addView(latin);
             OfflinePhotoEvidence.addForTaxon(this,content,scientific);
             boolean detailed=OfflineFieldLibrary.addSpecies(this,content,scientific);
+            boolean literature=Rc7LiteratureNotes.add(this,content,scientific);
             boolean rc7=Rc7FieldAccounts.add(this,content,scientific);
             if(!detailed&&!rc7){
                 content.addView(FieldVisuals.context(this,

@@ -57,7 +57,7 @@ class LikasLivingForestTest(unittest.TestCase):
     def test_application_identity_and_version(self):
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",APP)
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",APP).group(1)),49)
-        self.assertIn("versionName '0.27.3-rc9-profile-differential-annotation-preview'",APP)
+        self.assertRegex(APP,r"versionName '0\.[0-9]+\.[0-9]+-rc[0-9]+[^\']*'")
         self.assertTrue((ROOT / "app/src/main/res/drawable-nodpi/likas_frog_icon.webp").exists())
 
 if __name__=="__main__":

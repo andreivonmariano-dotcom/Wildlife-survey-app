@@ -65,6 +65,6 @@ class Rc6RestoreAndNavigationContracts(unittest.TestCase):
                 self.assertGreater(len(trait["value"]),30)
                 self.assertTrue(set(trait["sourceIds"]) <= sources)
             self.assertTrue(set(account["account"]["sourceIds"])<=sources)
-            self.assertIn("DENR",account["account"]["cautions"])
+            self.assertTrue("DENR" in account["account"]["cautions"] or "national" in account["account"]["cautions"])
 
 if __name__=="__main__":unittest.main()

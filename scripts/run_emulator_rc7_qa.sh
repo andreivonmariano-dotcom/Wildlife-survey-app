@@ -39,6 +39,8 @@ adb exec-out screencap -p > emulator-qa/startup.png
 adb shell am force-stop "$PKG"
 
 echo '=== Run actual SQLite backup and restore round trip ==='
+# Upgrade protection was already verified. Use a clean disposable workspace for the round trip.
+adb shell pm clear "$PKG"
 adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 adb shell am instrument -w -r \
   -e class org.phwildlife.survey.BackupRoundTripInstrumentedTest \

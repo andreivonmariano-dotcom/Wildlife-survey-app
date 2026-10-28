@@ -1,59 +1,34 @@
-package org.phwildlife.survey;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import java.util.Locale;
-
-/** Honest, offline view of existing habitat and environmental visit records. */
-public final class HabitatRecordsActivity extends Activity {
-    private FieldDb helper;
-    private LinearLayout items;
-    private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
-    private TextView label(String text,int size){
-        TextView value=new TextView(this);value.setText(text);
-        value.setTextColor(UiKit.INK);value.setTextSize(size);
-        value.setPadding(dp(3),dp(5),dp(3),dp(5));
-        return value;
-    }
-    @Override public void onCreate(Bundle state){
-        super.onCreate(state);helper=new FieldDb(this);
-        LinearLayout root=new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(dp(16),dp(12),dp(16),dp(12));
-        root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.title(this,"Habitat & Ecology"));
-        TextView note=label("Offline site and visit records, not a mapped habitat "+
-            "classification or a species-distribution prediction.",13);
-        note.setTextColor(UiKit.MUTED);root.addView(note);
-        Button stations=UiKit.button(this,"Projects & station habitats","secondary");
-        stations.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
-        root.addView(stations,new LinearLayout.LayoutParams(-1,dp(52)));
-        ScrollView scroll=new ScrollView(this);
-        items=new LinearLayout(this);
-        items.setOrientation(LinearLayout.VERTICAL);
-        scroll.addView(items);
-        root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        Button back=UiKit.button(this,"Back to workspace","quiet");
-        back.setOnClickListener(v->finish());
-        root.addView(back,new LinearLayout.LayoutParams(-1,dp(52)));
-        setContentView(root);
-    }
-    @Override protected void onResume(){super.onResume();render();}
-    private String value(Cursor c,int col,String fallback){
-        return c.isNull(col)||c.getString(col).trim().isEmpty()?fallback:c.getString(col);
-    }
     private void render(){
         if(items==null)return;
         items.removeAllViews();
         SQLiteDatabase db=helper.getReadableDatabase();
-        OfflineFieldLibrary.addHabitats(this,items);
+        guideTab.setText(selectedTab==0?"Habitat guide  ●":"Habitat guide");
+        recordsTab.setText(selectedTab==1?"My site records  ●":"My site records");
+        if(selectedTab==0){
+            Button filter=UiKit.button(this,"Filter: "+habitatGroup+"  ▾","quiet");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(50));
+            lp.topMargin=dp(8);
+            items.addView(filter,lp);
+            final String[] groups={"All habitats","Terrestrial","Edaphic",
+                "Coastal","Aquatic","Human-modified"};
+            filter.setOnClickListener(v->new android.app.AlertDialog.Builder(this)
+                .setTitle("Choose habitat group")
+                .setItems(groups,(dialog,index)->{
+                    habitatGroup=groups[index];render();
+                }).setNegativeButton("Cancel",null).show());
+            if("All habitats".equals(habitatGroup))
+                OfflineFieldLibrary.addHabitats(this,items);
+            else OfflineFieldLibrary.addHabitats(this,items,habitatGroup);
+            items.addView(FieldVisuals.context(this,
+                "Use the habitat descriptions as field reference only. "+
+                "Your actual sampling-station measurements remain separate."));
+            return;
+        }
+        Button stations=UiKit.button(this,"Manage projects & sampling stations","secondary");
+        stations.setOnClickListener(v->startActivity(
+            new Intent(this,SitesActivity.class)));
+        LinearLayout.LayoutParams stationLp=new LinearLayout.LayoutParams(-1,dp(52));
+        stationLp.topMargin=dp(7);items.addView(stations,stationLp);
         items.addView(FieldVisuals.section(this,"Site habitat register",
             "Human-entered descriptions, not inferred vegetation types"));
         try(Cursor c=db.rawQuery("SELECT id,name,COALESCE(habitat,''),"+

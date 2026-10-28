@@ -65,7 +65,7 @@ class Rc7dPhotoReliabilityTests(unittest.TestCase):
             self.assertTrue(record["sourceUrl"].startswith("https://"))
             self.assertTrue(record["caution"])
             self.assertNotIn("specialist_approved",record["reviewStatus"])
-        self.assertEqual(48-len(enriched),31)
+        self.assertEqual(48-len(enriched),0)
 
     def test_device_instrumentation_and_upgrade_contract(self):
         folder=ROOT/"app/src/androidTest/java/org/phwildlife/survey"

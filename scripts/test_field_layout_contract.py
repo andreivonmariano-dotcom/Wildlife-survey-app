@@ -52,12 +52,14 @@ class FieldLayoutContractTest(unittest.TestCase):
     def test_four_part_setup_preserves_real_field_inputs(self):
         text=self.home
         for heading in ('step("01","Survey method")','step("02","Project and location")',
-                        'step("03","Observer and effort")','step("04","Begin survey")'):
+                        'step("03","Sampling effort")','step("04","Begin survey")'):
             self.assertIn(heading,text)
         for entry in ('projectChoice','geographicChoice','spacingChoice','routeLengthEntry',
                       'durationEntry','observerEntry','regionEntry','areaEntry'):
             self.assertIn(entry,text)
-        self.assertIn('start.setOnClickListener(v->startSelected())',text)
+        self.assertIn('setupStartButton.setOnClickListener(v->startSelected())',text)
+        self.assertIn('setupFooter.setVisibility(View.VISIBLE)',text)
+        self.assertIn('extraDetails.addView(observerEntry)',text)
 
     def test_gps_skip_and_exports_are_unchanged(self):
         self.assertIn('"Start without GPS · mark start missing"',self.gps)

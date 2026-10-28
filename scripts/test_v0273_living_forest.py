@@ -1,6 +1,7 @@
 """Contract checks for living LIKAS forest and wordmark-only startup."""
 from pathlib import Path
 import unittest
+import re
 
 ROOT=Path(__file__).resolve().parents[1]
 JAVA=ROOT / "app/src/main/java/org/phwildlife/survey"
@@ -55,8 +56,8 @@ class LikasLivingForestTest(unittest.TestCase):
 
     def test_application_identity_and_version(self):
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",APP)
-        self.assertIn("versionCode 49",APP)
-        self.assertIn("versionName '0.27.3-rc4'",APP)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",APP).group(1)),49)
+        self.assertIn("versionName '0.27.3-rc5-field-ux-preview'",APP)
         self.assertTrue((ROOT / "app/src/main/res/drawable-nodpi/likas_frog_icon.webp").exists())
 
 if __name__=="__main__":

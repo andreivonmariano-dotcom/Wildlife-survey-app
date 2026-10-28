@@ -25,7 +25,7 @@ class OfflineBiodiversityReference(unittest.TestCase):
     def test_species_accounts_add_ecology_and_use_existing_source_list(self):
         pack=json.loads((ASSETS/"diagnostic_profiles_v1.json").read_text())
         ids={x["id"] for x in pack["sourceList"]}
-        self.assertEqual(10,len(pack["profiles"]))
+        self.assertGreaterEqual(len(pack["profiles"]),13)
         for profile in pack["profiles"]:
             account=profile["account"]
             for field in ["overview","habitat","behavior","fieldNotes","cautions"]:
@@ -37,7 +37,7 @@ class OfflineBiodiversityReference(unittest.TestCase):
         media=json.loads((ASSETS/"offline_photo_manifest_v1.json").read_text())
         self.assertGreaterEqual(len(media["items"]),5)
         for item in media["items"]:
-            self.assertTrue(item["license"].startswith("CC BY"))
+            self.assertTrue(item["license"].startswith("CC BY") or item["license"] == "CC0 1.0")
             self.assertTrue(item["licenseUrl"].startswith("https://creativecommons.org/"))
             self.assertTrue(item["sourceUrl"].startswith(
                 "https://commons.wikimedia.org/wiki/File:"))

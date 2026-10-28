@@ -1,5 +1,8 @@
 # LIKAS development instructions
 
+**ACTIVE BRANCH OVERRIDE (28 October 2026):** The GitHub default `main` still contains historical v0.15.0 and must **not** be used as the baseline for LIKAS Android changes. The current user-confirmed app is **v0.27.3 RC4** (versionCode 49, SQLite 27) on `feature/v0.27.3-startup-living-forest`. The next development source is `feature/v0.27.4-layered-sprite-player-stage` (PR #36) and contains a staged 5 FPS sprite player but no integrated approved binary pack. Before any edit/build, examine active-branch state and CI lineage guard `scripts/check_likas_active_lineage.py` on that branch. The mistaken v0.16 preview branch (closed PR #37) is obsolete. Any new installable version must use versionCode at least 50, matching package/signing identity and verified media. Do not treat a default branch, filename or successful historical build as proof of latest release.
+
+
 **Mandatory continuity (CC-01):** Before each new LIKAS development task, read `docs/LIKAS_CROSS_CHAT_CONTINUITY_POLICY.md`, `docs/LIKAS_PROJECT_STATE.md`, and `docs/LIKAS_DECISION_LOG.md`, then confirm current source HEAD. After every meaningful change or accepted decision, update the project-state file and append decisions. Never rely solely on previous chats or wait until a chat reaches its limit. Do not ask the owner to repeat already recorded decisions.
 
 **Mandatory governance:** Follow `docs/LIKAS_MASTER_PROJECT_SPEC_v1.0.md` for product and scientific requirements. Follow `docs/LIKAS_DIRECT_DOWNLOAD_POLICY.md` for **every downloadable handoff**, including APKs, images and ZIPs. Deliver real attached files with direct chat download links, never GitHub navigation pages as substitutes.

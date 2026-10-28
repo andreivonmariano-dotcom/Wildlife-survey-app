@@ -242,7 +242,7 @@ The target information architecture has five top-level destinations: **Survey**,
 
 **U-02 | Preferred icon direction.** A small pixel-art frog with only the upper portion of its face above pond water. No lily pad, no crowded landscape, no tiny lettering. Review the actual final approved image before replacing the installed launcher.
 
-**U-03 | Startup background reset (revised 28 October 2026).** Retire the previously generated day/night forest plates, animation code, and scenery-specific instructions. Keep the existing readable static welcome screen and working navigation during this reset. No replacement startup scenery, animation, or time-based transition is approved yet. Any future scenery must be separately reviewed for composition, resolution, smoothness, accessibility, and battery use before implementation.
+**U-03 | Minimal title startup (owner revision, 28 October 2026).** Replace the animated day/night forest startup scene with a text-only LIKAS wordmark on a simple solid forest-green background. Transition automatically to Home through a short, accessibility-aware fade/scale animation. Honor system reduced-motion settings and let the user skip motion by tapping. Resume Survey stays available on Home, not as an extra startup button. Keep the approved launcher icon and historical field records unchanged. No heavy scene renderer or forced long splash delay.
 
 **U-04 | Performance and accessibility.** Limit animation to ambient/startup surfaces and suspend it when hidden. Respect reduced-motion preferences and battery constraints. Provide a static fallback. All labels, buttons, timers, and warnings must be actual accessible UI controls, not embedded words in artwork.
 
@@ -360,3 +360,5 @@ A failed P0 regression blocks release. A feature without field validation must b
 **Revision history:** v1.0, 27 October 2026: Initial unified charter, evidence and source rules, field-survey state model, platform pillars, technical governance, and phased roadmap.
 
 **v1.0.1, 28 October 2026:** U-03 amended by the product owner's explicit startup-scene reset. Retired the unused forest image plates, `ForestBackdropView`, and dedicated forest-background instructions. Kept launcher icon and shared brand colors. New scenery remains undecided; no APK/device validation is claimed.
+
+**v1.0.2, 28 October 2026:** User superseded earlier forest scene directions with a minimalist wordmark-to-Home transition. T/H/L specifications reinforced: source-checked offline habitat and species accounts need dated row-level citations and licensing-compliant, visibly credited photographs; never auto-fill unsupported diagnostic or locality facts. Starter offline reference accounts are not a substitute for full licensed taxon coverage. Accessibility and source-provenance rules unchanged.

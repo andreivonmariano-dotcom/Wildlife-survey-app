@@ -76,6 +76,48 @@ public final class OfflineFieldLibrary {
             target.addView(citation);
         }
     }
+    public interface SpeciesChoice {
+        void choose(String scientificName);
+    }
+    public static int[] availableCounts(Activity a){
+        JSONArray species=read(a,"diagnostic_profiles_v1.json").optJSONArray("profiles");
+        JSONArray habitats=read(a,"offline_habitat_profiles_v1.json").optJSONArray("profiles");
+        return new int[]{species==null?0:species.length(),
+            habitats==null?0:habitats.length()};
+    }
+    public static void addSpeciesDirectory(Activity a,LinearLayout target,
+            SpeciesChoice choice){
+        JSONArray species=read(a,"diagnostic_profiles_v1.json").optJSONArray("profiles");
+        if(species==null||species.length()==0)return;
+        target.addView(FieldVisuals.section(a,"Browse detailed field guides",
+            "Ten introductory, source-checked species accounts"));
+        LinearLayout all=new LinearLayout(a);
+        all.setOrientation(LinearLayout.VERTICAL);
+        all.setVisibility(View.GONE);
+        java.util.HashSet<String> featured=new java.util.HashSet<>();
+        for(int i=0;i<species.length();i++){
+            JSONObject entry=species.optJSONObject(i);
+            if(entry==null)continue;
+            String group=entry.optString("group");
+            String scientific=entry.optString("scientificName");
+            String title=entry.optString("commonName");
+            if(scientific.isEmpty())continue;
+            Button action=UiKit.button(a,title+"  ·  "+group,"secondary");
+            action.setOnClickListener(v->choice.choose(scientific));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,49));
+            lp.bottomMargin=dp(a,6);
+            if(featured.add(group))target.addView(action,lp);
+            else all.addView(action,lp);
+        }
+        Button more=UiKit.button(a,"More detailed accounts  ▾","quiet");
+        target.addView(more,new LinearLayout.LayoutParams(-1,dp(a,48)));
+        target.addView(all);
+        more.setOnClickListener(v->{
+            boolean show=all.getVisibility()!=View.VISIBLE;
+            all.setVisibility(show?View.VISIBLE:View.GONE);
+            more.setText(show?"Fewer accounts  ▴":"More detailed accounts  ▾");
+        });
+    }
     /** Source checked only; absent account is clearly labeled, not populated by guesswork. */
     public static boolean addSpecies(Activity a,LinearLayout target,String scientific){
         JSONObject bundle=read(a,"diagnostic_profiles_v1.json");

@@ -22,7 +22,7 @@ jobs:
         run: |
           git merge-base --is-ancestor 458e786827ba73bebabf5c373e2080015c5fd38c HEAD
           grep -F "applicationId 'org.phwildlife.survey.beta08'" app/build.gradle
-          grep -F "versionCode 49" app/build.gradle
+          python3 -c 'import re; text=open("app/build.gradle").read(); match=re.search(r"versionCode\s+(\d+)",text); assert match and int(match.group(1))>=49, "RC4 versionCode downgrade"'
           grep -F "super(context,NAME,null,27)" app/src/main/java/org/phwildlife/survey/FieldDb.java
       - uses: actions/setup-java@v4
         with:
@@ -71,7 +71,7 @@ jobs:
         if: github.ref == 'refs/heads/feature/likas-core-fieldwork-post-rc4' && github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC4-scientific-core-preview-debug
+          name: LIKAS-RC5-field-ux-preview-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14

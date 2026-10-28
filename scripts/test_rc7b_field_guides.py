@@ -42,8 +42,8 @@ class Rc7bFieldGuideTests(unittest.TestCase):
                     self.assertEqual(fact["sourceUrl"],item["sourceUrl"])
 
     def test_reviewed_media_is_only_noncommercial_compatible_cc(self):
-        self.assertEqual(len(self.lock),37)
-        self.assertEqual(len({x["photoId"] for x in self.lock}),37)
+        self.assertEqual(len(self.lock),49)
+        self.assertEqual(len({x["photoId"] for x in self.lock}),49)
         targets=photos.all_philippine_names()
         for item in self.lock:
             self.assertTrue(photos.valid_approved(item,targets))
@@ -72,8 +72,8 @@ class Rc7bFieldGuideTests(unittest.TestCase):
     def test_device_upgrade_data_schema_unchanged(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         database=(CODE/"FieldDb.java").read_text()
-        self.assertIn("versionCode 54",gradle)
-        self.assertIn("0.27.3-rc7c-owner-photos-preview",gradle)
+        self.assertIn("versionCode 55",gradle)
+        self.assertIn("0.27.3-rc7d-field-guide-device-preview",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",database)
 

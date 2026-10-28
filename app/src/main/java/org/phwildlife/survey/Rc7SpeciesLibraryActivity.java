@@ -117,6 +117,19 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             right.leftMargin=dp(8);filters.addView(scope,right);
         }
         root.addView(filters);
+        Button researchToggle=UiKit.button(this,"Research and comparison tools  ▾","secondary");
+        researchToggle.setContentDescription("Expand research comparisons, photographic evidence and regional sources");
+        root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(48)));
+        LinearLayout researchPanel=new LinearLayout(this);
+        researchPanel.setOrientation(LinearLayout.VERTICAL);
+        researchPanel.setVisibility(View.GONE);
+        root.addView(researchPanel);
+        researchPanel.addView(label("Cited scientific comparisons and geographic evidence. No tool confirms a site observation.",12,false));
+        researchToggle.setOnClickListener(v->{
+            boolean open=researchPanel.getVisibility()!=View.VISIBLE;
+            researchPanel.setVisibility(open?View.VISIBLE:View.GONE);
+            researchToggle.setText(open?"Hide research tools  ▴":"Research and comparison tools  ▾");
+        });
         LinearLayout tools=new LinearLayout(this);
         tools.setOrientation(screenDp<385f?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         Button region=UiKit.button(this,"Regional evidence","quiet");
@@ -129,16 +142,16 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         tools.addView(compare,screenDp<385f?
             new LinearLayout.LayoutParams(-1,dp(46)):
             new LinearLayout.LayoutParams(0,dp(48),1));
-        root.addView(tools);
+        researchPanel.addView(tools);
         Button comparePhotos=UiKit.button(this,"Compare offline wildlife photos","secondary");
         comparePhotos.setContentDescription("Compare two offline wildlife photographs with cited identification traits");
         comparePhotos.setOnClickListener(v->startActivity(
             new Intent(this,Rc8PhotoComparisonActivity.class)));
-        root.addView(comparePhotos,new LinearLayout.LayoutParams(-1,dp(48)));
+        researchPanel.addView(comparePhotos,new LinearLayout.LayoutParams(-1,dp(48)));
         Button differences=UiKit.button(this,"Cited differential characters","quiet");
         differences.setOnClickListener(v->startActivity(
             new Intent(this,Rc9DifferentialActivity.class)));
-        root.addView(differences,new LinearLayout.LayoutParams(-1,dp(45)));
+        researchPanel.addView(differences,new LinearLayout.LayoutParams(-1,dp(45)));
         status=label("",13,false);root.addView(status);
         ScrollView scroll=new ScrollView(this);
         results=new LinearLayout(this);results.setOrientation(LinearLayout.VERTICAL);

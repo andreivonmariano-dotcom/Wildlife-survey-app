@@ -18,6 +18,7 @@ public final class Rc10ResearchBatch {
     private Rc10ResearchBatch(){}
     private static JSONObject source;
     private static JSONObject secondSource;
+    private static JSONObject thirdSource;
     private static int dp(Activity a,int v){
         return Math.round(a.getResources().getDisplayMetrics().density*v);
     }
@@ -38,11 +39,12 @@ public final class Rc10ResearchBatch {
     private static synchronized void load(Activity a){
         if(source==null)source=readBatch(a,"rc10_research_batch1_v1.json");
         if(secondSource==null)secondSource=readBatch(a,"rc10_research_batch2_v1.json");
+        if(thirdSource==null)thirdSource=readBatch(a,"rc10_research_batch3_v1.json");
     }
     private static JSONObject forTaxon(Activity a,String scientific){
         if(scientific==null)return null;
         load(a);
-        for(JSONObject batch:new JSONObject[]{source,secondSource}){
+        for(JSONObject batch:new JSONObject[]{source,secondSource,thirdSource}){
             JSONArray list=batch.optJSONArray("records");
             if(list==null)continue;
             for(int i=0;i<list.length();i++){

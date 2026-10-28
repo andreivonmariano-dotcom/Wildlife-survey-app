@@ -1,3 +1,11 @@
+# LIKAS v0.27.3 RC4 | Living forest startup
+
+**Preview candidate:** `0.27.3-rc4` (versionCode 49). Startup-only changes: the approved tropical forest now has native Android animated ripples, waterfall streams, moving clouds, day birds, night fireflies, moving sun light and a halo following the painted moon. The startup uses a wordmark only with **Explore. Record. Conserve.**, and shows the actual installed version in the top-right corner. The previously approved pixel frog remains the Android launcher icon. Motion is disabled by Android reduced-motion preference and slows in battery saver mode.
+
+The full local survey engine, SQLite schema 27, GPS/elevation records and scientific exports are unchanged. See [RC4 startup QA](docs/QA_v0_27_3_LIVING_FOREST_STARTUP.md) for device testing and performance limitations. Live handset testing remains open.
+
+---
+
 # LIKAS v0.27.2 RC3 | Startup menu refinement
 
 **Review candidate:** `0.27.2-rc3` (versionCode 48), preserving app ID `org.phwildlife.survey.beta08` and SQLite schema 27. This is **part 1** of the screen-by-screen UI audit.

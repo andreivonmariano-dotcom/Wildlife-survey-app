@@ -14,7 +14,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TextView;
@@ -101,25 +100,34 @@ public final class LikasLaunchActivity extends Activity {
         content.setPadding(dp(23),dp(16),dp(23),dp(24));
         root.addView(content,new FrameLayout.LayoutParams(-1,-1));
 
-        content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,.75f));
+        // Read the actual installed version rather than hardcoding a release number.
+        String installedVersion=installedVersion();
+        if(!installedVersion.isEmpty()){
+            TextView version=label(installedVersion,12,SAGE,false);
+            version.setPadding(dp(10),dp(6),dp(10),dp(6));
+            GradientDrawable versionBg=new GradientDrawable();
+            versionBg.setColor(Color.argb(140,8,39,30));
+            versionBg.setCornerRadius(dp(10));
+            version.setBackground(versionBg);
+            FrameLayout.LayoutParams versionLp=new FrameLayout.LayoutParams(
+                -2,-2,Gravity.TOP|Gravity.END);
+            versionLp.topMargin=dp(12);
+            versionLp.rightMargin=dp(16);
+            root.addView(version,versionLp);
+        }
 
-        ImageView icon=new ImageView(this);
-        icon.setImageResource(R.drawable.likas_frog_icon);
-        icon.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        // The adjacent LIKAS wordmark supplies the spoken identity.
-        icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        int logoSize=getResources().getConfiguration().fontScale>=1.5f?dp(94):dp(116);
-        content.addView(icon,new LinearLayout.LayoutParams(logoSize,logoSize));
+        // Typography is the entire startup identity. Frog art remains the installed launcher.
+        content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,1.0f));
+        int brandSize=getResources().getConfiguration().fontScale>=1.5f?40:48;
+        TextView brand=label("LIKAS",brandSize,CREAM,true);
+        brand.setLetterSpacing(.13f);
+        brand.setContentDescription("LIKAS");
+        content.addView(brand,new LinearLayout.LayoutParams(-1,-2));
 
-        TextView brand=label("LIKAS",40,CREAM,true);
-        brand.setLetterSpacing(.11f);
-        LinearLayout.LayoutParams brandLp=new LinearLayout.LayoutParams(-1,-2);
-        brandLp.topMargin=dp(4);
-        content.addView(brand,brandLp);
-
-        TextView subtitle=label("Philippine wildlife surveys",14,SAGE,false);
+        TextView subtitle=label("Explore. Record. Conserve.",16,SAGE,false);
+        subtitle.setLetterSpacing(.018f);
         LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
-        subLp.topMargin=dp(2);
+        subLp.topMargin=dp(8);
         content.addView(subtitle,subLp);
 
         content.addView(new Space(this),new LinearLayout.LayoutParams(1,0,2.0f));
@@ -164,6 +172,13 @@ public final class LikasLaunchActivity extends Activity {
         });
 
         setContentView(root);
+    }
+
+    private String installedVersion(){
+        try{
+            String name=getPackageManager().getPackageInfo(getPackageName(),0).versionName;
+            return name==null||name.trim().isEmpty()?"":"v"+name;
+        }catch(Exception unavailable){return "";}
     }
 
     /** Null means unreadable database, never "there are no surveys". */

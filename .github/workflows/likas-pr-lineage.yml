@@ -1,0 +1,27 @@
+name: LIKAS RC4 PR lineage gate
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  rc4-source-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch trusted default-branch audit code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fetch candidate commit without running its code
+        env:
+          CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: git fetch --no-tags origin "$CANDIDATE_SHA"
+      - name: Require RC4 ancestry and reviewed sprite assets
+        env:
+          CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python3 scripts/check_pr_against_rc4.py "$CANDIDATE_SHA"

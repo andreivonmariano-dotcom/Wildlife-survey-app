@@ -27,11 +27,11 @@ class LikasStartupMenuTests(unittest.TestCase):
         self.assertIn('home.putExtra("show_menu",true)', CODE)
         self.assertNotIn('"New Survey"', CODE)
         self.assertNotIn('"Home & Tools"', CODE)
-        self.assertNotIn('getPackageInfo(', CODE)
+        self.assertIn('getPackageInfo(getPackageName(),0).versionName', CODE)
 
     def test_approved_art_and_readable_native_actions(self):
         self.assertIn('new LikasForestView(this)', CODE)
-        self.assertIn('R.drawable.likas_frog_icon', CODE)
+        self.assertNotIn('icon.setImageResource', CODE)
         self.assertIn('FieldLayoutPolicy.actionHeightDp(fontScale)', CODE)
         self.assertIn('new RippleDrawable(', CODE)
         self.assertIn('View.IMPORTANT_FOR_ACCESSIBILITY_NO', CODE)

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "compiledDate": "2026-10-28",
   "reviewLevel": "Source-checked from scientific museum references and a peer-reviewed Philippine field inventory; Philippine taxonomic reviewer approval pending.",
-  "scope": "Offline visible-morphology comparison for Birds, Amphibians, Reptiles, Mammals, not an automated identification, occurrence model, or validated key.",
+  "scope": "Cited offline identification and ecology accounts for eight example species, with versioned source taxonomy for other installed species. Not a verified key, site-occurrence record or species distribution model.",
   "sourceList": [
     {
       "id": "wildalert-eagle",
@@ -131,7 +131,19 @@
             "adw-eagle"
           ]
         }
-      ]
+      ],
+      "account": {
+        "overview": "A large forest raptor endemic to the Philippines. Its very large hooked bill, long shaggy crest and contrasting brown upperparts with paler underparts provide a recognizable combination. A confirmed field identification still needs an adequate view and exclusion of other large raptors.",
+        "habitat": "Associated with forested habitats. Record canopy condition, terrain and observed perching or flight behavior at the actual station, rather than using the species as automatic evidence of intact forest.",
+        "behavior": "A forest-associated predator with powerful talons and a broad-winged flight silhouette. Record vocalizations, perch heights and direction of movement separately from the taxon identification.",
+        "fieldNotes": "Use photographs showing head, bill, tail and upper/underwing where available. Record whether the bird was perched, soaring or only briefly glimpsed.",
+        "cautions": "Avoid using distant silhouette or a single crest view as a complete diagnostic key. Do not equate a national conservation listing with a confirmed local sighting.",
+        "sourceIds": [
+          "wildalert-eagle",
+          "adw-eagle"
+        ],
+        "photoId": "species_eagle"
+      }
     },
     {
       "scientificName": "Spilornis holospilus",
@@ -181,7 +193,18 @@
             "denr-serpent"
           ]
         }
-      ]
+      ],
+      "account": {
+        "overview": "A Philippine serpent-eagle, recognizable in favorable views by contrasting yellow bare facial skin, white spotting on dark brown plumage and bold tail/wing markings. These field features are useful but should be compared with age and viewing conditions.",
+        "habitat": "Published records describe forest, woodland edges and wooded country. Log the site habitat independently; forest-edge use cannot be inferred at a GPS point from a species description.",
+        "behavior": "A diurnal raptor often observed perched or in flight. Describe call, flight height and perch type when witnessed.",
+        "fieldNotes": "Photograph head and facial skin, body spotting, wing pattern and tail if visible. Poor-light yellow color perception can mislead.",
+        "cautions": "Do not force a serpent-eagle determination from an unphotographed distant raptor. Confirm using documented sources and locality evidence.",
+        "sourceIds": [
+          "denr-serpent",
+          "itis-serpent"
+        ]
+      }
     },
     {
       "scientificName": "Polypedates leucomystax",
@@ -224,7 +247,18 @@
             "nparks-polypedates"
           ]
         }
-      ]
+      ],
+      "account": {
+        "overview": "A long-limbed rhacophorid tree frog with expanded finger and toe tips. Dorsal color ranges through browns, greys or yellow tones, sometimes with four thin lengthwise stripes. Pattern variability makes one-color identification unreliable.",
+        "habitat": "Documented from forests, shrubs, grasses and disturbed or settled areas. Habitat context supports recording but is not an identification character by itself.",
+        "behavior": "Primarily nocturnal and insectivorous. The source describes use of shrubs and trees. Separate observed calling activity from visual detection.",
+        "fieldNotes": "Document dorsal pattern, finger/toe discs, tympanum and full body length if possible. At calling sites record recording equipment, call time and water-body context.",
+        "cautions": "Do not identify every four-striped frog as this species. Confirm current Philippine taxonomy and local look-alikes.",
+        "sourceIds": [
+          "nparks-polypedates"
+        ],
+        "photoId": "species_frog"
+      }
     },
     {
       "scientificName": "Kaloula pulchra",
@@ -275,7 +309,19 @@
             "nparks-kaloula"
           ]
         }
-      ]
+      ],
+      "account": {
+        "overview": "A stocky microhylid frog with relatively small head, short hind legs and broad pale bands bordered by dark coloration along the sides. Color and body shape together aid recognition.",
+        "habitat": "Frequently described near developed and disturbed areas. The source mentions calls before and after heavy rains and use of tree trunks. A location in built-up habitat is not proof of identity.",
+        "behavior": "Calling is especially noted around heavy rainfall. Record call context, time since rain and acoustic evidence when available.",
+        "fieldNotes": "Photograph lateral bands and dorsal head markings. For calls record frequency and exact time rather than inferring species from rainfall alone.",
+        "cautions": "Taxonomic sources describe introductions in the Philippines; do not label as Philippine endemic. Verify local status from cited checklist evidence.",
+        "sourceIds": [
+          "nparks-kaloula",
+          "asw-kaloula"
+        ],
+        "photoId": "species_kaloula"
+      }
     },
     {
       "scientificName": "Hydrosaurus pustulatus",
@@ -318,7 +364,17 @@
             "zookeys-agusan-2026"
           ]
         }
-      ]
+      ],
+      "account": {
+        "overview": "A large Philippine sailfin lizard with a distinctive upright flattened crest or sail and an elongated tail. Development of the sail differs across age and sex, so photographs should capture proportions and scales.",
+        "habitat": "Philippine inventory evidence reports riparian and mangrove-associated settings. Record riverbank, overhanging branches and substrate directly.",
+        "behavior": "Often associated with waterways, where individuals may use branches and banks. The source documents habitat association, not behavior at every site.",
+        "fieldNotes": "Document lateral profile, dorsal sail, tail, foot scalation, age stage and microhabitat. Protect exact sensitive nest locations in exports.",
+        "cautions": "A generic sailfin-like lizard silhouette is not a specialist-validated diagnosis. Do not assign species from habitat alone.",
+        "sourceIds": [
+          "zookeys-agusan-2026"
+        ]
+      }
     },
     {
       "scientificName": "Varanus cumingi",
@@ -361,7 +417,17 @@
             "zookeys-agusan-2026"
           ]
         }
-      ]
+      ],
+      "account": {
+        "overview": "A monitor lizard in the Philippine water-monitor complex. The published Mindanao inventory describes a conspicuous yellow-and-dark contrast, including the head. Exact determination among related monitors requires anatomical comparison.",
+        "habitat": "Documented in a Mindanao wetland inventory. Wetlands and adjacent vegetation provide context; published park records are not proof of presence at a surveyed site.",
+        "behavior": "Record movement, thermoregulation, water use, tracks or basking only as personally observed events.",
+        "fieldNotes": "Record complete head and body patterns, scale characteristics, tail pattern and a size reference in photographs.",
+        "cautions": "Monitor-lizard taxonomy and island populations need specialist review. Avoid assuming a species from yellow markings alone.",
+        "sourceIds": [
+          "zookeys-agusan-2026"
+        ]
+      }
     },
     {
       "scientificName": "Carlito syrichta",
@@ -411,7 +477,19 @@
             "mdd-tarsier"
           ]
         }
-      ]
+      ],
+      "account": {
+        "overview": "A small nocturnal Philippine primate with very large forward-facing eyes, long hind limbs and a tail tufted toward its end. Earlier literature uses the name Tarsius syrichta; the installed profile uses the accepted genus Carlito.",
+        "habitat": "Described in tropical forest, including shrubs, bamboo, understory and second-growth vegetation. Night-time perch substrate and vegetation height are useful site records.",
+        "behavior": "Arboreal and nocturnal, with rapid leaping locomotion. Its diet is largely insects and other small animals; avoid approaching resting animals for photographs.",
+        "fieldNotes": "Record observed eye/head proportions, perch height, canopy level and activity period. Distinguish direct sightings from calls or signs.",
+        "cautions": "Historical names do not imply a new sighting or exact island presence. Keep uncertain observations at higher taxonomic rank.",
+        "sourceIds": [
+          "mdd-tarsier",
+          "adw-tarsier"
+        ],
+        "photoId": "species_tarsier"
+      }
     },
     {
       "scientificName": "Cynocephalus volans",
@@ -461,7 +539,17 @@
             "field-colugo"
           ]
         }
-      ]
+      ],
+      "account": {
+        "overview": "The Philippine colugo, locally called kagwang, is a nocturnal arboreal mammal with a broad gliding membrane extending between limbs. It is a dermopteran, not a lemur or a flying bat.",
+        "habitat": "The Field Museum account describes use of southern Philippine forests, including regenerating disturbed forest. Record the actual canopy and tree conditions at detection points.",
+        "behavior": "Nocturnal foliage feeder that glides between trees. Observed gliding direction, tree identity, time and height can aid interpreting sightings.",
+        "fieldNotes": "Look for broad membrane outlines, speckled fur and head proportions. Record whether the sighting was a glide, rest or feeding activity.",
+        "cautions": "Do not equate a membrane silhouette with species-level confirmation under difficult light. Record uncertainty and media sources.",
+        "sourceIds": [
+          "field-colugo"
+        ]
+      }
     }
   ]
 }

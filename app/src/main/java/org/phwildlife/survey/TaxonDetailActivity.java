@@ -237,6 +237,7 @@ public final class TaxonDetailActivity extends Activity {
             latin.setTypeface(null,Typeface.BOLD_ITALIC);
             latin.setPadding(0,dp(3),0,dp(3));
             content.addView(latin);
+            OfflinePhotoEvidence.addForTaxon(this,content,scientific);
             boolean detailed=OfflineFieldLibrary.addSpecies(this,content,scientific);
             boolean rc7=Rc7FieldAccounts.add(this,content,scientific);
             if(!detailed&&!rc7){
@@ -278,6 +279,15 @@ public final class TaxonDetailActivity extends Activity {
             sourceLink("Bird vocalizations on xeno-canto",
                 col(c,"sound_url"),"https://www.xeno-canto.org/species/");
             paragraph("Source record ID",col(c,"taxon_key"));
+            Button iNat=UiKit.button(this,"iNaturalist photos · dreidrei (online)","quiet");
+            iNat.setOnClickListener(v->startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://www.inaturalist.org/observations?user_id=dreidrei"+
+                    "&taxon_name="+Uri.encode(scientific)+"&photos=true"))));
+            content.addView(iNat);
+            paragraph("iNaturalist media scope",
+                "Photographs are external community observations. They do not confirm "+
+                "presence at this survey site. The app bundles only individually reviewed "+
+                "and licensed offline media.");
             content.addView(FieldVisuals.section(this,"Habitat and elevation",""));
             try(Cursor ecology=database.rawQuery(
                 "SELECT habitat_codes,elevation_min_m,elevation_max_m,"+

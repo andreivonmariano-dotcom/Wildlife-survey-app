@@ -145,6 +145,55 @@
       "publisher": "BirdLife International",
       "url": "https://birdlifedata.blob.core.windows.net/red-data-books/gallplat.pdf",
       "accessed": "2026-10-28"
+    },
+    {
+      "id": "birdlife-cebu-2021",
+      "title": "Cebu Flowerpecker factsheet, 2021 assessment and detailed ecology",
+      "publisher": "BirdLife International DataZone",
+      "url": "https://datazone.birdlife.org/species/factsheet/Cebu-Flowerpecker-Dicaeum-quadricolor",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "iucn-cebu-ident",
+      "title": "Dicaeum quadricolor identification and scientific account",
+      "publisher": "IUCN Red List of Threatened Species",
+      "url": "https://doi.org/10.2305/IUCN.UK.2018-2.RLTS.T22717507A134203874.en",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "amnh-gigantes",
+      "title": "Platymantis insulatus taxonomy, type locality and historical habitat",
+      "publisher": "American Museum of Natural History Amphibian Species of the World",
+      "url": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-insulatus",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "asg-gigantes-2020",
+      "title": "Gigantes Limestone Frog: 2020 conservation needs workshop assessment",
+      "publisher": "Amphibian Ark and IUCN SSC Amphibian Specialist Group",
+      "url": "https://www.conservationneeds.org/summaryreport/5388?AspxAutoDetectCookieSupport=1",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "froglog-gigantes",
+      "title": "Decreasing population size of the Philippine limestone frog Platymantis insulatus",
+      "publisher": "Alcala, Bucol, Alcala and Brown, FrogLog 104",
+      "url": "https://www.iucn-amphibians.org/wp-content/uploads/sites/4/2018/12/FrogLog104.pdf",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "iucn-monitor-gray",
+      "title": "Varanus olivaceus Philippine monitor species profile",
+      "publisher": "IUCN SSC Monitor Lizard Specialist Group",
+      "url": "https://iucn-mlsg.org/species/philippine-species/varanus-olivaceus/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "cites-gray-key",
+      "title": "Varanus olivaceus morphology, diagnostic features and island distribution",
+      "publisher": "CITES identification guide",
+      "url": "https://cites.unia.es/file.php/1/files/ID_Guide_Lizards_BFN.pdf",
+      "accessed": "2026-10-28"
     }
   ],
   "profiles": [
@@ -888,6 +937,170 @@
           "birdlife-mindoro-account"
         ],
         "photoId": "species_mindoro_heart"
+      }
+    },
+    {
+      "scientificName": "Dicaeum quadricolor",
+      "commonName": "Cebu Flowerpecker",
+      "group": "Birds",
+      "assessment": "IUCN/BirdLife descriptive account; global CR status from 2021 assessment, not a verified survey-site record.",
+      "traits": [
+        {
+          "field": "General build",
+          "value": "Small (about 11–12 cm), relatively stocky flowerpecker with a short, stout bill.",
+          "sourceIds": [
+            "iucn-cebu-ident"
+          ]
+        },
+        {
+          "field": "Adult male",
+          "value": "Blackish head, bright red mantle/back, yellow-green rump, dark wings and grey-white lower parts.",
+          "sourceIds": [
+            "iucn-cebu-ident"
+          ]
+        },
+        {
+          "field": "Female plumage",
+          "value": "Duller dark greyish upperparts and brownish-grey underparts. Female identification needs specialist comparison.",
+          "sourceIds": [
+            "iucn-cebu-ident"
+          ]
+        },
+        {
+          "field": "Historical distribution",
+          "value": "Endemic to Cebu, recorded in fragmented forest patches. An island name is not confirmation at an individual point.",
+          "sourceIds": [
+            "birdlife-cebu-2021"
+          ]
+        },
+        {
+          "field": "Global conservation",
+          "value": "BirdLife cites Critically Endangered in its 2021 assessment. The population estimate shown there traces to 2005.",
+          "sourceIds": [
+            "birdlife-cebu-2021"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Cebu Flowerpecker is a tiny endemic passerine with contrasting male plumage. The published identification description emphasizes a red male mantle, yellow-green rump, dark head, and short stout bill. Females are less distinctive.",
+        "habitat": "BirdLife documents remaining Cebu forest fragments, including karst-associated canopy and secondary forest beside native vegetation. Historic patch use must not become a prediction of present presence at a station.",
+        "behavior": "The cited factsheet documents foraging on fruits and flowering plants. Field records should distinguish direct feeding observations from a generic fruiting-tree association.",
+        "fieldNotes": "Record sex, back and rump plumage, bill form, vocalization, canopy height, camera direction and observer effort. Avoid publishing precise breeding locations and keep uncertain flowerpeckers unidentified.",
+        "cautions": "The global CR category is from the 2021 BirdLife assessment. Do not present the 2005 population estimate as a 2026 count or as a DENR national legal designation. No source confirms this bird at a particular LIKAS survey site.",
+        "sourceIds": [
+          "birdlife-cebu-2021",
+          "iucn-cebu-ident"
+        ]
+      }
+    },
+    {
+      "scientificName": "Platymantis insulatus",
+      "commonName": "Gigantes Limestone Frog",
+      "group": "Amphibians",
+      "assessment": "Source-backed island and limestone microhabitat summary; no specialist-validated individual morphological key.",
+      "traits": [
+        {
+          "field": "Family and taxonomy",
+          "value": "Ceratobatrachidae, genus Platymantis; formerly cited as the spelling Platymantis insulata in some publications.",
+          "sourceIds": [
+            "amnh-gigantes"
+          ]
+        },
+        {
+          "field": "Type locality",
+          "value": "South Gigante Island in Iloilo, Philippines; the original type locality is not the full present-day occurrence range.",
+          "sourceIds": [
+            "amnh-gigantes"
+          ]
+        },
+        {
+          "field": "Microhabitat",
+          "value": "Limestone crevices, cave mouths and rock fissures in surveys reported by Alcala and colleagues.",
+          "sourceIds": [
+            "froglog-gigantes"
+          ]
+        },
+        {
+          "field": "Published range",
+          "value": "American Museum of Natural History describes limestone outcrops in primary and secondary forest on South Gigante Island.",
+          "sourceIds": [
+            "amnh-gigantes"
+          ]
+        },
+        {
+          "field": "Global status",
+          "value": "2020 amphibian conservation needs summary reports the IUCN category Critically Endangered; no national category is assigned in that summary.",
+          "sourceIds": [
+            "asg-gigantes-2020"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "A Philippine endemic frog documented from limestone habitats of the Gigantes island group. Older literature uses the alternate spelling Platymantis insulata. Its diagnostic characters need independent morphological review beyond the source-based habitat and locality descriptions.",
+        "habitat": "Published field records associate this frog with cracks, caves, fissures, and humid limestone outcrops. Note karst substrate, shelter type, rainfall, temperature and direct observation separately.",
+        "behavior": "The cited limestone field research focused on counts under changing weather and rainfall conditions. Those sampling results should not be generalized into fixed daily activity or breeding rules.",
+        "fieldNotes": "Photograph lateral, dorsal, hands and feet where visible without disturbing crevices. Log encounter position and actual search time. A rock-associated frog elsewhere in the Philippines is not automatically this species.",
+        "cautions": "The source assessment labels global Critically Endangered and leaves national assessment separate. South Gigante type locality does not establish occupancy at any new island or station. Retain Platymantis sp. for uncertain records.",
+        "sourceIds": [
+          "amnh-gigantes",
+          "asg-gigantes-2020",
+          "froglog-gigantes"
+        ]
+      }
+    },
+    {
+      "scientificName": "Varanus olivaceus",
+      "commonName": "Gray’s Monitor / Butaan",
+      "group": "Reptiles",
+      "assessment": "Source-checked ecological and morphology summary from IUCN SSC specialist group and CITES field identification guide.",
+      "traits": [
+        {
+          "field": "General form",
+          "value": "Large monitor with muscular limbs, a strong compressed tail and a prominently rounded snout.",
+          "sourceIds": [
+            "cites-gray-key"
+          ]
+        },
+        {
+          "field": "Adult snout",
+          "value": "Identification guide notes slit-like nostrils placed closer to snout tip than the eye.",
+          "sourceIds": [
+            "cites-gray-key"
+          ]
+        },
+        {
+          "field": "Ecological habit",
+          "value": "Specialist source describes arboreal forest use and pressure from deforestation and forest fragmentation.",
+          "sourceIds": [
+            "iucn-monitor-gray"
+          ]
+        },
+        {
+          "field": "Historical range",
+          "value": "Published Philippine sources discuss southern Luzon, Polillo, Catanduanes and other nearby islands, with local evidence gaps.",
+          "sourceIds": [
+            "iucn-monitor-gray",
+            "cites-gray-key"
+          ]
+        },
+        {
+          "field": "Global status",
+          "value": "IUCN SSC Monitor Lizard Specialist Group lists global Vulnerable, with assessment date 2021.",
+          "sourceIds": [
+            "iucn-monitor-gray"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "Gray’s monitor, or Butaan, is a large endemic Philippine monitor lizard with a strong laterally compressed tail and rounded snout. Specialist descriptions compare morphology with other Philippine monitors; a large dark lizard alone is not enough for identification.",
+        "habitat": "The specialist profile describes the species in forests and notes pressure from habitat fragmentation. Forest characteristics and historical range descriptions are not proof of occurrence at any individual survey station.",
+        "behavior": "Published accounts associate this monitor with climbing and forest use. Record observed substrate and behavior without assigning an exact feeding event or habitat score from the literature alone.",
+        "fieldNotes": "Record snout shape, dorsal scales, tail cross-section, approximate length only where measured safely, tree position and high-quality photographs. Keep ambiguous monitor encounters at genus level.",
+        "cautions": "A 2021 global Vulnerable category differs from DENR national classification. The IUCN specialist source highlights uncertainty for some geographic records. Do not infer natural occurrence from released or captive individuals.",
+        "sourceIds": [
+          "iucn-monitor-gray",
+          "cites-gray-key"
+        ]
       }
     }
   ]

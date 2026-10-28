@@ -40,9 +40,15 @@ class Rc7aLibraryTests(unittest.TestCase):
 
     def test_manifest_never_claims_download_without_source(self):
         m=json.loads((ASSETS/"offline_inaturalist_manifest_v1.json").read_text())
-        lock=json.loads((ROOT/"docs/RC7_INAT_APPROVED_LOCK_V1.json").read_text())
-        self.assertEqual(m["items"],[])
-        self.assertEqual(lock["items"],[])
+        lock=photo.load_approval_lock()
+        self.assertEqual(m["items"],[]) # Generated only from the reviewed lock at build time.
+        self.assertEqual(len(lock["items"]),23)
+        self.assertEqual(len({x["photoId"] for x in lock["items"]}),23)
+        targets=photo.all_philippine_names()
+        for item in lock["items"]:
+            self.assertTrue(photo.valid_approved(item,targets))
+            self.assertNotEqual(item["observer"].casefold(),"dreidrei")
+            self.assertIn(item["photoLicense"],{"cc-by","cc-by-nc"})
 
     def test_api_proposals_reject_all_rights_reserved(self):
         obs={"id":123,"quality_grade":"research",
@@ -87,7 +93,7 @@ class Rc7aLibraryTests(unittest.TestCase):
     def test_ui_filters_preserve_offline_source_links(self):
         screen=(CODE/"Rc7SpeciesLibraryActivity.java").read_text()
         for token in ("taxon_catalog","taxon_synonyms",
-                      "Rc7FieldAccounts.priority","Existing cited guides",
+                      "Rc7FieldAccounts.priority","Published literature notes",
                       "Offline photograph","RegionalChecklistActivity",
                       "DiagnosticGuideActivity","taxon_key","LIMIT 2200"):
             self.assertIn(token,screen)

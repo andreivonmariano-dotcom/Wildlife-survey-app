@@ -1,5 +1,12 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Mandatory APK link with every app update
+
+- **Explicit standing owner instruction:** Whenever LIKAS application code is updated and an APK is built, provide a **verified direct download link to the actual newly built APK in the same response**, without waiting for a separate request. Never substitute a GitHub Actions page or older APK. If compilation, signature verification or direct delivery fails, state that no new downloadable APK is available rather than suggesting the update is installed.
+- **Latest verified downloadable preview this conversation:** `LIKAS-scientific-core-QoL-2026-10-28-preview-debug.apk`, 1,426,823 bytes, SHA-256 `32b784b2a4d339d5b8a0b9679188d556bda202d39dc47914c56d5c01537e6f1a`. Built in successful core QA run `40660009190` from application code SHA `80e8240ac811e96682de3aa66069ded8c5559714`. AndroidManifest: `org.phwildlife.survey.beta08`, `0.27.3-rc4`, versionCode 49. V2 certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. It is a development preview only, not a stable field release. A sandbox file link is session-local and must be freshly verified in every new chat.
+- **No app code changed in recording this instruction**. This is a documentation-only continuity update. Protect owner records and the startup animation workstream.
+
+
 ## 28 October 2026 | Three scientific-core UI follow-ups implemented in draft #38
 
 - Active non-startup branch `feature/likas-core-fieldwork-post-rc4` adds shared minimalist headings, one method-aware call/photo/trap/evidence shortcut and a source-cited diagnostic comparison screen. `LikasLaunchActivity`, forest assets and frog icon remain owned by the parallel startup chat.

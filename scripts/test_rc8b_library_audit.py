@@ -10,7 +10,10 @@ CODE=ROOT/"app/src/main/java/org/phwildlife/survey"
 load=lambda name:json.loads((A/name).read_text(encoding="utf-8"))
 M=load("rc8_evidence_comparisons_v1.json")
 H=load("rc8_species_habitat_links_v1.json")
-P=load("offline_inaturalist_manifest_v1.json")
+import sys
+sys.path.insert(0,str(ROOT/"scripts"))
+import audit_inaturalist_photos as photos
+P={"items":photos.load_approval_lock()["items"]}
 D=load("diagnostic_profiles_v1.json")
 PRIORITY=load("rc7a_field_cards_v1.json")["accounts"]+load("rc7b_field_cards_v1.json")["accounts"]
 CLAIMS={r["scientificName"]:r for r in M["species"]}
@@ -49,7 +52,7 @@ class Rc8bScientificAudit(unittest.TestCase):
         self.assertEqual(len({p["photoId"] for p in P["items"]}),49)
         self.assertEqual(sum(p.get("rightsBasis")=="owner_direct_private_research_permission"
             for p in P["items"]),26)
-        self.assertTrue(all(p["sourceUrl"].startswith("https://www.inaturalist.org/photos/")
+        self.assertTrue(all(p["photoPageUrl"].startswith("https://www.inaturalist.org/photos/")
             for p in P["items"]))
 
     def test_photo_comparison_preserves_rights_and_avoids_fake_regions(self):

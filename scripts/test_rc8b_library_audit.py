@@ -41,9 +41,7 @@ class Rc8bScientificAudit(unittest.TestCase):
             matches=[c for c in CLAIMS[row["scientificName"]]["traits"]
                 if c["value"]==row["evidenceText"] and c["url"]==row["sourceUrl"]]
             self.assertGreaterEqual(len(matches),1,row["id"])
-        self.assertIn("not absent",H["disclaimer"].lower()+
-                      " not absent" if "not absent" not in H["disclaimer"].lower()
-                      else H["disclaimer"].lower())
+        self.assertIn("not yet reviewed",H["disclaimer"].lower())
 
     def test_49_photo_files_cover_only_33_taxa(self):
         self.assertEqual(len(P["items"]),49)

@@ -47,6 +47,10 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                 assertTrue(containsText(views,"Identification"));
                 assertTrue(containsText(views,"Habitat"));
                 assertTrue(containsText(views,"Sources & details"));
+                assertTrue(containsText(views,"Photo reference"));
+                assertTrue(containsText(views,"View photo & credits"));
+                assertFalse("Long legacy photo caption must stay hidden by default",
+                    containsText(views,"iNaturalist photographic reference; identification"));
                 assertFalse("Legacy RC7 cards must not stack",
                     containsText(views,"RC7 priority research card"));
                 assertFalse("No front-facing review boilerplate",

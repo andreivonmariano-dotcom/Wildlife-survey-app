@@ -31,6 +31,9 @@ The owner asked to pursue a new Philippine rainforest scene, smooth local-time-a
 ### 2026-10-28 | Rainforest parallax refined and test APK compiled | Preview built, release pending
 The project owner requested a closer native match to the detailed forest concept and a real downloadable Android test APK. A protected preview branch and draft PR #37 now contain independent parallax motion and richer procedural forest detailing. GitHub Actions run `40630133535` compiled the app, passed automated tests, and produced versionCode 18; its APK was directly delivered and checked against the prior v0.15 signing certificate. **60 FPS, handset upgrade, record retention, and final visual approval remain unverified.** Main remains v0.15. See `docs/LIKAS_PROJECT_STATE.md` and draft PR #37.
 
+### 2026-10-28 | Baseline correction: v0.27.3 RC4 current, v0.16 preview obsolete | Accepted correction
+The owner identified the current working version as LIKAS v0.27.3 RC4, verified in `feature/v0.27.3-startup-living-forest` (`versionCode 49`, SQLite v27, PR #35), with a 5 FPS staged sprite player in `feature/v0.27.4-layered-sprite-player-stage` (draft PR #36). The separately developed `feature/rainforest-parallax-v2` was wrongly based on outdated `main` v0.15 and built as v0.16.0 (versionCode 18). **Do not merge or install that lower-version APK over RC4.** PR #37 is closed, unmerged. The owner-approved high-fidelity sprite composition and latest live branch take priority over any earlier generic 60 FPS Canvas prototype. Refer to the correction at the start of `docs/LIKAS_PROJECT_STATE.md`.
+
 ## How to append
 
 Create a dated heading: `YYYY-MM-DD | Decision | Accepted / Replaced / Deferred`. State what changed, why it affects future work, source/reference, and any prior decision superseded. Do not erase historical entries.

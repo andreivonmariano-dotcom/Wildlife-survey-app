@@ -45,7 +45,7 @@ adb shell pm clear "$PKG"
 adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 adb shell am instrument -w -r \
   "$PKG.test/androidx.test.runner.AndroidJUnitRunner" | tee emulator-qa/instrumentation.txt
-grep -Eq 'OK \(2 tests?\)' emulator-qa/instrumentation.txt
+grep -Eq 'OK \(3 tests?\)' emulator-qa/instrumentation.txt
 adb exec-out run-as "$PKG" cat files/rc7_library_screen.png > emulator-qa/library-320dp.png
 test -s emulator-qa/library-320dp.png
 echo 'DEVICE BACKUP TEST PASSED'

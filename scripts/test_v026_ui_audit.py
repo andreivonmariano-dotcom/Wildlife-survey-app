@@ -32,7 +32,7 @@ class CleanFieldUi(unittest.TestCase):
                     '"Study and archive management"'):
             self.assertIn(key,home)
         self.assertNotIn('"History & tools  ▾"',home)
-        self.assertIn('toolRow(tools,"Import previous backup"',home)
+        self.assertIn('toolRow(tools,"Import older v0.7 export"',home)
     def test_study_template_is_never_silently_hidden_after_selection(self):
         home=src("WelcomeActivity.java")
         for key in ('refreshStudyTitle()', 'selectedStudyId()',
@@ -81,7 +81,7 @@ class CleanFieldUi(unittest.TestCase):
 
     def test_species_library_summaries_are_source_driven(self):
         catalog=src("CatalogActivity.java")
-        self.assertIn('UiKit.title(this,"Species Library")',catalog)
+        self.assertIn('UiKit.navigationHeader(this,"Species Library","Home"',catalog)
         self.assertIn('append(attributedTotal)',catalog)
         self.assertNotIn('1503 catalog entries',catalog)
         self.assertNotIn('result.toString().replace(',catalog)

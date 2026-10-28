@@ -61,7 +61,7 @@ public final class Rc8TraitComparisonActivity extends Activity {
             if(!"rc8-evidence-comparison-v1".equals(result.optString("schemaVersion")))
                 throw new IllegalStateException("Incompatible trait comparison evidence");
             if(result.getJSONArray("species").length()!=96||
-                    result.getJSONArray("habitats").length()!=9)
+                    result.getJSONArray("habitats").length()!=15)
                 throw new IllegalStateException("Incomplete comparison library");
             return result;
         }
@@ -88,7 +88,7 @@ public final class Rc8TraitComparisonActivity extends Activity {
         LinearLayout modes=new LinearLayout(this);
         modes.setOrientation(LinearLayout.HORIZONTAL);
         speciesMode=UiKit.button(this,"Species (96)","secondary");
-        habitatModeButton=UiKit.button(this,"Habitats (9)","secondary");
+        habitatModeButton=UiKit.button(this,"Habitats (15)","secondary");
         modes.addView(speciesMode,new LinearLayout.LayoutParams(0,dp(50),1));
         LinearLayout.LayoutParams mr=new LinearLayout.LayoutParams(0,dp(50),1);
         mr.leftMargin=dp(7);modes.addView(habitatModeButton,mr);
@@ -129,7 +129,7 @@ public final class Rc8TraitComparisonActivity extends Activity {
     private void resetMode(){
         if(speciesMode==null||group==null)return;
         speciesMode.setText(habitatMode?"Species (96)":"Species (96)  ●");
-        habitatModeButton.setText(habitatMode?"Habitats (9)  ●":"Habitats (9)");
+        habitatModeButton.setText(habitatMode?"Habitats (15)  ●":"Habitats (15)");
         String[] groups=habitatMode?new String[]{
             "All habitats","Terrestrial","Edaphic","Coastal","Aquatic","Human-modified"}:GROUPS;
         String[] categories=habitatMode?HABITAT_CATEGORIES:SPECIES_CATEGORIES;

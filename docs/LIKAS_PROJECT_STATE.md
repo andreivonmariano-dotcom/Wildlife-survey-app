@@ -1,5 +1,20 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Scientific core Q1 Q2 Q3 audit and protected fixes
+
+- **User chose all three:** audit live survey tools, develop scientifically reliable species information and identification, and review whole-app architecture/performance/non-startup user experience. Startup animation remains entirely owned by the separate chat.
+- **Branch & PR:** `feature/likas-core-fieldwork-post-rc4`, draft PR **#38** targeting `feature/v0.27.3-startup-living-forest`; inherits RC4 versionName `0.27.3-rc4`, versionCode 49, package `org.phwildlife.survey.beta08` and SQLite schema 27. No schema, survey record, field method, launcher icon, startup background or animation source was changed.
+- **Detailed audit:** `docs/QA_LIKAS_RC4_SCIENTIFIC_CORE_AUDIT.md`, source-verified three-part review and P0/P1/P2/P3 risk register. Field survey lifecycle, GPS provenance and scientific export filters largely present; physical upgrade, GPS endurance, acoustic/photo evidence and power remain unverified.
+- **Critical source fix (scientific P0):** `SpeciesPickerActivity` now requires `review_status='source_listed'` for province/island evidence rank and local-only results; `RegionalChecklistActivity` also excludes `unreviewed` rows from its source-listed list. Unreviewed data remain retained, not silently erased or treated as absence.
+- **Scientific identification:** `TaxonDetailActivity` and regional list lookup can resolve former scientific names via `taxon_synonyms` without rewriting historical field observations. Regional Davao Region includes all five PSA provinces (added Davao Occidental), with a note about separately unassessed Davao City. Picker local-source mode without a selected geographic scope now gives an explicit no-area message rather than a misleading no-species result.
+- **Field UX:** Regional search has 180 ms input debounce, a truthful 1,000-row cap notice and visible catalog error state. `AuditActivity` now executes read-only scientific DB review on a background executor and renders results on UI with error reporting and lifecycle shutdown. Screen and data semantics remain unchanged.
+- **Tests:** New `scripts/test_core_species_evidence.py` reconstructs the actual Java species-detail SQL and evaluates synthetic SQLite synonym and reviewed/unreviewed regional cases; `scripts/test_core_audit_worker.py` asserts worker, nonwriting contracts. New `.github/workflows/core-science-qa.yml` runs Python, Java unit tests and Android compilation with RC4 lineage/signing certificate verification, without publishing an APK. An earlier CI run **40645911312 passed** after the code fixes; newest run for the current commit must be verified before claiming completion.
+- **Outstanding high-impact work:** MainActivity remains 2,413 lines with several responsibilities and main-thread SQL calls. DataAudit and Dashboard/History performance need handset measurements. GNSS write queue reliability, genuine database upgrades from old installs, private attached-media persistence, 320/360 dp + 200% text and TalkBack testing remain open. Automated camera/audio species identification and Research Watch are not implemented in this audit.
+- **Next:** Review audit, verify latest CI, run handset QA, then decide safe incremental extraction of survey repositories, improved taxon evidence model and scientific export workflow. Do not relabel the RC4 app or issue an untested APK.
+
+---
+
+
 ## 28 October 2026 | Scientific feature workstream separated from startup animation
 
 - **Owner direction:** The startup animation and its image assets are being developed in a different conversation. This core-development conversation must not modify or assess the startup background, sprites, startup typography or app icon unless later explicitly requested.

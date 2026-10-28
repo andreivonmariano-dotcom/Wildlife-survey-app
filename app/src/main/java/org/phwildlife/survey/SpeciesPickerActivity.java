@@ -49,6 +49,7 @@ public final class SpeciesPickerActivity extends Activity {
     private final Runnable delayed=this::refresh;
     private AutoCompleteTextView search;
     private SpeciesReferenceSuggestionAdapter nameSuggestions;
+    private FieldDb suggestionDb;
     private Spinner groups,views;
     private Button sortButton;
     private LinearLayout cards;
@@ -185,8 +186,9 @@ public final class SpeciesPickerActivity extends Activity {
         search.setSingleLine(true);search.setTextSize(16);
         search.setThreshold(1);
         search.setHint("Search common, scientific or former name");
+        suggestionDb=new FieldDb(this);
         nameSuggestions=new SpeciesReferenceSuggestionAdapter(this,
-            new FieldDb(this),availableGroups[Math.max(0,savedGroupIndex)]);
+            suggestionDb,availableGroups[Math.max(0,savedGroupIndex)]);
         search.setAdapter(nameSuggestions);
         search.setDropDownHeight(dp(300));
         search.setOnItemClickListener((parent,view,pos,id)->{
@@ -736,6 +738,7 @@ public final class SpeciesPickerActivity extends Activity {
         generation++;
         ui.removeCallbacksAndMessages(null);
         worker.shutdownNow();
+        if(suggestionDb!=null)suggestionDb.close();
         super.onDestroy();
     }
 }

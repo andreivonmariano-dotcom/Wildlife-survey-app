@@ -157,6 +157,16 @@ public final class Rc8PhotoComparisonActivity extends Activity {
         column.addView(text(label+" · "+scientific,16));
         // Original licensed / owner-granted photo is displayed unchanged with source credits.
         OfflinePhotoEvidence.add(this,column,selected.optString("id"));
+        Rc9ApprovedPhotoMarkers.add(this,column,selected);
+        if("dreidrei".equalsIgnoreCase(selected.optString("observer"))&&
+            "owner_direct_private_research_permission".equals(selected.optString("rightsBasis"))){
+            Button editor=UiKit.button(this,"Draft anatomical photo annotation","quiet");
+            column.addView(editor,new LinearLayout.LayoutParams(-1,dp(47)));
+            editor.setOnClickListener(v->startActivity(
+                new android.content.Intent(this,Rc9PhotoAnnotationReviewActivity.class)
+                    .putExtra("scientific_name",scientific)
+                    .putExtra("photo_id",selected.optInt("photoId"))));
+        }
         column.addView(text("Published characters to inspect (not marked on image)",13));
         JSONObject species=claimsByTaxon.get(scientific);
         JSONArray traits=species==null?null:species.optJSONArray("traits");

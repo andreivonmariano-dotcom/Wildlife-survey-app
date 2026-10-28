@@ -23,9 +23,9 @@ A deliberately limited pixel-art identity inspired by a tropical Philippine fore
 - Cream / logo: `#FFF0C1`
 - Mist / supporting labels: `#B6D8D1`
 
-## Startup-screen handoff
+## Startup scenery reset, 28 October 2026
 
-The previously committed `ForestBackdropView.java` and day/night WebP forest plates remain at `app/src/main/assets/likas_forest/`. In the startup view, place the ambient forest behind all controls. Give the LIKAS title large cream lettering; below it place the small caption **WILDLIFE SURVEY**. Use forest-green buttons with ivory text, and retain ample spacing. Refer to `docs/LIKAS_FOREST_BACKGROUND.md` for timing and animation guidance.
+The earlier forest day/night artwork, dedicated `ForestBackdropView` class, and startup-scene instructions have been removed at the owner's direction. The existing static welcome UI remains in place. No new background or animation is selected yet. The adaptive launcher icon and named LIKAS colors are separate brand resources and remain installed.
 
 The main menu is still its existing Android layout. Its hero typography and action colors now use the LIKAS identity. The animated forest itself is **not yet attached** to the activity. The other LIKAS development chat can connect it without changing the recording workflow.
 

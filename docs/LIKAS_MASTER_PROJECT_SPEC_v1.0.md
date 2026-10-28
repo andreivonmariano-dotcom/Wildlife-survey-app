@@ -1,7 +1,7 @@
 # LIKAS
 ## Master Project Charter, Product Requirements, and Scientific Standards
 
-**Version:** 1.0 (foundational specification)  
+**Version:** 1.0.1 (28 October 2026 startup-scenery amendment; canonical filename retained)  
 **Date:** 27 October 2026  
 **Product:** LIKAS, a Philippines-first biodiversity field and knowledge platform  
 **Status:** Proposed authoritative project specification, pending adoption into Project instructions and the development repository  
@@ -81,17 +81,17 @@ The connected repository documents an offline Android application at **v0.15.0**
 - A read-only scientific integrity check and ZIP export of data-quality flags.
 - A mammal importer for the official MDD v2.5 CSV, subject to source-file selection and version validation.
 - A small embedded starter taxon list. This is **not** a comprehensive national checklist.
-- Existing forest day/night image plates, an animation class, and adaptive launcher branding. The repository itself says the forest animation was not yet connected to the startup activity at the examined commit.
+- At the 27 October baseline, the repository contained forest day/night plates and an animation class that was not attached to the startup activity. Those startup-specific resources were retired on 28 October 2026. Adaptive launcher branding remains.
 
 **Decisions established during this project's conversations but not to be assumed complete in the released APK:**
 - A visible **End Survey** action throughout an active session, with **Complete**, **Incomplete**, and **Cancel / Not Counted** meanings.
 - Automatic elevation updates from a sufficiently fresh, valid GPS location fix, with traceable source and uncertainty. No silent replacement of previously saved records.
 - Use of the provided Philippine amphibian checklist (Sy 2025-1), reptile checklist (Sy 2026-1), and WBCP 2025 bird checklist, subject to verification, exact source mapping, and redistribution permission.
-- A high-quality tropical forest startup design with gentle motion and phone-time-aware day/night transitions.
+- A high-quality tropical forest startup design with gentle motion and phone-time-aware day/night transitions was previously requested, then superseded by the 28 October 2026 decision to remove all old startup scenery before a new design.
 - A minimalist pixel-style frog emerging halfway from pond water as the preferred icon direction, with no lily pad; this later design decision supersedes the busier installed icon concept and requires asset review before replacement.
 - A thorough reduction of duplicate controls, stale labels, text artifacts, and explanatory clutter.
 
-**Do not label as shipped without an APK and device test:** the full provided checklists, live research feed, complete species profiles, GIS habitat atlas, full animation integration, and new minimalist frog icon.
+**Do not label as shipped without an APK and device test:** the full provided checklists, live research feed, complete species profiles, GIS habitat atlas, any future startup-scene redesign, and new minimalist frog icon.
 
 # 5. Product structure and navigation
 
@@ -242,7 +242,7 @@ The target information architecture has five top-level destinations: **Survey**,
 
 **U-02 | Preferred icon direction.** A small pixel-art frog with only the upper portion of its face above pond water. No lily pad, no crowded landscape, no tiny lettering. Review the actual final approved image before replacing the installed launcher.
 
-**U-03 | Forest startup background.** Use a polished, higher-resolution Philippine tropical forest illustration, gentle leaf/cloud/water/glow motion, and gradual day/night rendering based on local device time. Avoid harsh jumps, rough loops, overly coarse visible pixels, and camera movement that obscures controls. Current repository day/night plates are low-resolution previews and require a higher-quality replacement prior to treating the work as approved.
+**U-03 | Startup background reset (revised 28 October 2026).** Retire the previously generated day/night forest plates, animation code, and scenery-specific instructions. Keep the existing readable static welcome screen and working navigation during this reset. No replacement startup scenery, animation, or time-based transition is approved yet. Any future scenery must be separately reviewed for composition, resolution, smoothness, accessibility, and battery use before implementation.
 
 **U-04 | Performance and accessibility.** Limit animation to ambient/startup surfaces and suspend it when hidden. Respect reduced-motion preferences and battery constraints. Provide a static fallback. All labels, buttons, timers, and warnings must be actual accessible UI controls, not embedded words in artwork.
 
@@ -280,7 +280,7 @@ The target information architecture has five top-level destinations: **Survey**,
 
 # 17. Phased roadmap and priority
 
-**Phase 0 | Protect and polish the current field core (P0).** Verify end-of-survey state handling; reliable resume; accurate timers and effort; GPS fixes and altitude metadata; method-specific completion; no duplicated controls; backup/restore; correct species list import states; improved icon/background without performance loss; release QA.
+**Phase 0 | Protect and polish the current field core (P0).** Verify end-of-survey state handling; reliable resume; accurate timers and effort; GPS fixes and altitude metadata; method-specific completion; no duplicated controls; backup/restore; correct species list import states; review the preferred icon separately, keep old startup scenery removed pending a new design, and complete release QA.
 
 **Phase 1 | Philippine species reference (P0/P1).** Curate bird, herpetofauna, and mammal catalogs; verify supplied checklist inputs; license review; provenance/version displays; distribution confidence; endemicity/conservation distinctions; searchable offline species profiles; identification evidence and unresolved taxa.
 
@@ -308,7 +308,7 @@ A feature is **Done** only if its requirement ID and intended state are document
 7. Upgrade from the previous signed APK with an export backup. Verify sites, surveys, photos, tracks, routes, audit history, and counts.
 8. Operate in airplane mode, verify core survey functions, and label research feed content as cached or unavailable.
 9. Review exact vs masked sensitive coordinates in private and shareable exports.
-10. Check new icon and startup animation on a physical small Android screen, including reduced motion and low battery conditions.
+10. Check the launcher icon and startup-screen readability on a small Android phone. For any future animation, test reduced motion and low battery conditions.
 
 A failed P0 regression blocks release. A feature without field validation must be labeled unvalidated in the changelog.
 
@@ -330,7 +330,7 @@ A failed P0 regression blocks release. A feature without field validation must b
 
 **Reviewed development sources:**
 - Repository: `https://github.com/andreivonmariano-dotcom/Wildlife-survey-app` (private connected repo); README and code inspected 27 October 2026 at commit `44825d70956151839bd8d90b14ef799c5ce8ea76`.
-- `docs/FIELD_DATA_DICTIONARY_v0_7.md`, `docs/BIRD_DISTANCE_SAMPLING_PROTOCOL_v0_7.md`, `docs/QA_v0_15.md`, `docs/LIKAS_BRAND_SYSTEM.md`, `docs/LIKAS_FOREST_BACKGROUND.md`.
+- `docs/FIELD_DATA_DICTIONARY_v0_7.md`, `docs/BIRD_DISTANCE_SAMPLING_PROTOCOL_v0_7.md`, `docs/QA_v0_15.md`, `docs/LIKAS_BRAND_SYSTEM.md` (the former startup-forest document was removed on 28 October 2026).
 - Earlier LIKAS project discussions on survey completion states, elevation, Philippine checklists, startup artwork, and preferred frog icon. Items from discussions are requirements, not verification of a shipped feature.
 
 **External reference sites (checked 27 October 2026):**
@@ -354,7 +354,9 @@ A failed P0 regression blocks release. A feature without field validation must b
 - [ ] Place the authoritative Markdown copy in the GitHub repository, preferably `docs/LIKAS_MASTER_PROJECT_SPEC.md`.
 - [ ] Add the short companion `AGENTS.md` / Project-instructions text pointing to the canonical document.
 - [ ] Update README and QA issue tracker to link requirement IDs and distinguish shipped, planned, and blocked items.
-- [ ] Record explicit approval of the final frog icon and high-resolution forest asset before replacing Android resources.
+- [ ] Record explicit approval of the final frog icon and any future replacement startup-scene artwork before changing Android resources.
 - [ ] Conduct a license review for the three project-provided Philippine checklists before shipping full lists within the APK.
 
 **Revision history:** v1.0, 27 October 2026: Initial unified charter, evidence and source rules, field-survey state model, platform pillars, technical governance, and phased roadmap.
+
+**v1.0.1, 28 October 2026:** U-03 amended by the product owner's explicit startup-scene reset. Retired the unused forest image plates, `ForestBackdropView`, and dedicated forest-background instructions. Kept launcher icon and shared brand colors. New scenery remains undecided; no APK/device validation is claimed.

@@ -22,6 +22,9 @@ Every presented APK, ZIP, image, and other deliverable must have a verified dire
 ### 2026-10-27 | Cross-chat continuity | Mandatory (CC-01)
 Persist the latest project state and accepted decisions in GitHub during each work session. Every new LIKAS development chat reads them first and continues from that state. Project memory supplements the written record. See `docs/LIKAS_CROSS_CHAT_CONTINUITY_POLICY.md`.
 
+### 2026-10-28 | Remove old startup-scene assets | Accepted; previous scenery direction superseded
+Remove the previous forest day/night WebP plates, unused `ForestBackdropView.java`, and the old startup-background guidance. Retain the static welcome screen, Android launcher icon, and shared LIKAS palette. This supersedes the 27 October request to refine or connect the old forest animation. A replacement scene has not been selected. Related requirements: G-07, U-03, U-04, U-06, E-01.
+
 ## How to append
 
 Create a dated heading: `YYYY-MM-DD | Decision | Accepted / Replaced / Deferred`. State what changed, why it affects future work, source/reference, and any prior decision superseded. Do not erase historical entries.

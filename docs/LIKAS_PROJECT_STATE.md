@@ -1,6 +1,19 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 28 October 2026 | Latest continuation: Q1 runner diagnostic, Q2 amphibian/mammal batch, Q3 Recorder
+
+- **Owner:** Accepted Q1+Q2+Q3 following the RC10 build blocker. Work on `feature/likas-core-fieldwork-post-rc4`, PR #38 draft. Source still `0.27.3-rc10-science-recovery-ux-preview` versionCode **59**, app ID `org.phwildlife.survey.beta08`, existing signing configuration, SQLite **27**. Do not touch isolated startup animation.
+- **Q1 verified evidence:** Successful historical run `40705571457` used a hosted runner and finished 24 steps. New failures across Scientific Core QA (`40713245960`), Android emulator (`40713236299`), and RC4 lineage gate (`40713241925`) all show runner ID 0 and zero steps. Controlled experiment with `ubuntu-22.04` failed identically at run `40713772573`; workflow reverted to `ubuntu-latest`. Runner allocation failure is confirmed. GitHub account policy/billing cause is still unknown. Current local container lacks Android SDK and Gradle, so full app cannot be built here. No RC10 versionCode 59 signed artifact exists for direct attachment.
+- **Q2 implemented, source only:** New `app/src/main/assets/rc10_research_batch2_v1.json` adds 24 cited preliminary claims to four **existing 96-priority taxa**: `Barbourula busuangensis`, `Platymantis insulatus`, `Manis culionensis`, `Bubalus mindorensis`. References checked via primary PeerJ 2025, AMNH taxonomy, specialist group, dated IUCN assessments, Oryx and published book chapter, with source URL, exact source type, retrieved date, explicit unknown publication year where needed and all limitations. `Rc10ResearchBatch.java` now reads both research batch files. Combined RC10 research: 8 priority taxa, 46 references-backed statements. **No expert-approved identification keys, no certification-status changes, no inferred site occurrences or new legal listings.** Original 96 checklist-backed profiles remain 0 fully complete.
+- **Q3 Recorder source:** Mark now label becomes **Mark detection**, describing its time/optional fresh observer fix without claiming it saves a species occurrence. The optional observation details disclosure updates screen-reader content descriptions on open, close and draft restore. Fixed survey **Save Observation**, **Review Records**, **End Survey** remain unmodified.
+- **QA:** Added `scripts/test_rc10_priority_batch2_recorder.py`. Manual connected-GitHub source-level consistency checks across two research packs, species renderer, profile integration, recorder, Home, Habitat and Gradle configuration passed for 4+4 taxa/22+24 claims, versionCode 59 and zero certified-complete profiles. **The CI and JVM/Android suites have NOT passed for this HEAD, and on-device upgrade/field QA remain pending.**
+- **Next concrete step:** Restore GitHub-hosted CI runner eligibility (allocation/billing/repository Actions status in owner account), then run the complete QA workflow and inspect/sign/download the exact new APK. Direct download policy DL-01 requires a verified file, not an artifact page or the prior RC9 binary. Continue science batches only with independent source/rights review and never overwrite field records.
+
+---
+
+
+
 ## 28 October 2026 | RC10 owner-requested APK and scientific batch 1 (runner blocked)
 
 - **Latest verified code work:** RC10 source (versionName `0.27.3-rc10-science-recovery-ux-preview`, versionCode 59, SQLite 27, package `org.phwildlife.survey.beta08`) on branch `feature/likas-core-fieldwork-post-rc4`, draft PR #38. Source work includes RC9 research draft atomic-file protection, an explicit JSON backup export, cited evidence access, and priority diagnosis/habitat gap filters.

@@ -13,9 +13,12 @@ class DiagnosticProfileReferences(unittest.TestCase):
     def test_profiles_are_offline_and_source_checked_not_editor_approved(self):
         self.assertEqual(1,pack["schemaVersion"])
         self.assertIn("pending",pack["reviewLevel"].lower())
-        self.assertEqual(2,len(pack["profiles"]))
-        self.assertEqual({"Pithecophaga jefferyi","Spilornis holospilus"},
-                         {p["scientificName"] for p in pack["profiles"]})
+        self.assertEqual(8,len(pack["profiles"]))
+        self.assertTrue({"Pithecophaga jefferyi","Spilornis holospilus",
+                         "Polypedates leucomystax","Kaloula pulchra",
+                         "Hydrosaurus pustulatus","Varanus cumingi",
+                         "Carlito syrichta","Cynocephalus volans"}.issubset(
+                             {p["scientificName"] for p in pack["profiles"]}))
     def test_every_morphology_trait_has_resolvable_primary_reference(self):
         references={s["id"]:s for s in pack["sourceList"]}
         self.assertGreaterEqual(len(references),3)
@@ -26,7 +29,7 @@ class DiagnosticProfileReferences(unittest.TestCase):
             self.assertEqual("2026-10-28",source["accessed"])
             self.assertTrue(source["publisher"])
         for profile in pack["profiles"]:
-            self.assertEqual("Birds",profile["group"])
+            self.assertIn(profile["group"],("Birds","Amphibians","Reptiles","Mammals"))
             self.assertGreaterEqual(len(profile["traits"]),5)
             for trait in profile["traits"]:
                 self.assertTrue(trait["field"] and trait["value"])
@@ -36,7 +39,7 @@ class DiagnosticProfileReferences(unittest.TestCase):
     def test_no_unsourced_automated_identification_or_occurrence_claim(self):
         text=ASSET.read_text(encoding="utf-8")
         self.assertIn("not an automated identification",text)
-        self.assertIn("Independent Philippine taxonomic review pending",text)
+        self.assertIn("Philippine taxonomic reviewer approval pending",text)
     def test_comparison_is_read_only_and_navigable(self):
         s=(JAVA/"DiagnosticGuideActivity.java").read_text(encoding="utf-8")
         assert "showComparison()" in s

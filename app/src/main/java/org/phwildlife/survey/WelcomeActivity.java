@@ -161,7 +161,7 @@ public class WelcomeActivity extends Activity {
         LinearLayout brand=vertical();brand.setPadding(dp(12),0,0,0);
         TextView wordmark=text("LIKAS",25,true);
         wordmark.setPadding(0,0,0,0);brand.addView(wordmark);
-        TextView sub=text("Philippine Wildlife Survey",12,false);
+        TextView sub=text("Philippine Biodiversity Toolkit",12,false);
         sub.setPadding(0,dp(2),0,0);
         sub.setTextColor(MUTED);brand.addView(sub);
         header.addView(brand,new LinearLayout.LayoutParams(0,dp(56),1));
@@ -264,7 +264,7 @@ public class WelcomeActivity extends Activity {
 
         main.addView(FieldVisuals.section(this,"Habitat & Ecology",
             "Site habitats and environmental measurements"));
-        Button habitat=UiKit.button(this,"Explore habitat records","secondary");
+        Button habitat=UiKit.button(this,"Explore habitats & site records","secondary");
         main.addView(habitat,new LinearLayout.LayoutParams(-1,dp(52)));
         habitat.setOnClickListener(v->startActivity(
             new Intent(this,HabitatRecordsActivity.class)));

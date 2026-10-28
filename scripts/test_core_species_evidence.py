@@ -21,7 +21,7 @@ def java_strings(source):
 
 def actual_detail_lookup_sql():
     start = DETAIL.index('try(Cursor c=db.getReadableDatabase().rawQuery(',DETAIL.index("private void lookup("))
-    finish = DETAIL.index("new String[]{query,query,query,pattern,pattern,pattern,query}",start)
+    finish = DETAIL.index("new String[]{query,query,query,pattern,pattern,pattern,searchGroup,searchGroup,query}",start)
     return java_strings(DETAIL[start:finish])
 
 def conn():
@@ -52,9 +52,16 @@ class CoreEvidenceTests(unittest.TestCase):
         pattern="%oldus one%"
         with conn() as db:
             rows=db.execute(sql,("Oldus one","Oldus one","Oldus one",
-                                  pattern,pattern,pattern,"Oldus one")).fetchall()
+                                  pattern,pattern,pattern,"","", "Oldus one")).fetchall()
         self.assertEqual(["SRC:1"],[row[0] for row in rows])
         self.assertIn("taxon_synonyms",sql)
+        # The explicit library group filter must be applied to Find and aliases.
+        self.assertIn("taxon_group=?",sql)
+        with conn() as db:
+            not_birds=db.execute(sql,("Oldus one","Oldus one","Oldus one",
+                pattern,pattern,pattern,"Mammals","Mammals","Oldus one")).fetchall()
+        self.assertEqual([],not_birds)
+
 
     def test_unreviewed_source_does_not_rank_as_documented_local(self):
         self.assertIn("e.review_status='source_listed' AND e.area_type='province'",PICKER)

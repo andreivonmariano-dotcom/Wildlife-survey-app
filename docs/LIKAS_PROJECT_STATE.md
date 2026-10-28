@@ -1,5 +1,13 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Three scientific-core UI follow-ups implemented in draft #38
+
+- Active non-startup branch `feature/likas-core-fieldwork-post-rc4` adds shared minimalist headings, one method-aware call/photo/trap/evidence shortcut and a source-cited diagnostic comparison screen. `LikasLaunchActivity`, forest assets and frog icon remain owned by the parallel startup chat.
+- Source-checked, offline comparison examples: Philippine Eagle `Pithecophaga jefferyi` and Philippine Serpent-Eagle `Spilornis holospilus`. Each character records DENR, Animal Diversity Web or ITIS source metadata. This is not an expert-approved identification key, local occurrence or automatic species classifier.
+- The additions use existing evidence capture modules, preserve End Survey and original data flows, remain SQLite 27/versionCode 49, and are contained in draft PR #38. Source Python/JUnit/Android CI passed run `40654448251` at application/docs revision `5ae80122fc7113010f2e1af3c43eacda806d761f`. Later changes only update project documents. No APK release or physical handset review.
+- Detailed brief on core branch: `docs/LIKAS_BIODIVERSITY_WORKSPACE_V1.md`. Formal field-test planning remains deferred at the owner's direction.
+
+
 **State revision:** 1.10  
 **Recorded:** 28 October 2026, Asia/Manila  
 **Repository:** `andreivonmariano-dotcom/Wildlife-survey-app` (private)  

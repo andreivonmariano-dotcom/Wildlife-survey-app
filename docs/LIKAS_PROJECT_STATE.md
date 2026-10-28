@@ -1,5 +1,19 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | RC10 audit, research evidence access and draft recovery (CI pending)
+
+- **Owner request:** Execute Q1+Q2+Q3 together: audit RC9 for scientific/data defects, deepen the 96 priority profiles, and refine non-startup research usability. Work stays on RC4-derived scientific-core branch `feature/likas-core-fieldwork-post-rc4`, PR #38 draft.
+- **Source updated:** Android versionName `0.27.3-rc10-science-recovery-ux-preview`, versionCode **59**, package `org.phwildlife.survey.beta08`, SQLite **27** unchanged. No startup/forest/icon, taxonomic source data, survey method, observation schema or original photo rights changed.
+- **Verified code risk from RC9:** `Rc9PhotoAnnotationReviewActivity.draftPack()` returned a new empty JSONObject on invalid or oversized existing JSON, letting future Save overwrite prior review drafts. RC10 rejects corrupt data, uses `AtomicFile` with recovery for interrupted writes, and exposes a real Storage Access Framework JSON backup export. Annotation drafts still are NOT included in the existing survey ZIP, and an import/recovery test is pending.
+- **Species research depth:** RC10 reuses the existing 467 source-linked matrix statements to expose detailed scientific citations and review status in the 96-priority 12-field completion view, including explicitly described sex, age, and measurement notes when already present. It adds direct curated differential research navigation and filters for missing diagnostic/habitat source evidence. **No new biological claims or independently approved keys were created.** All 96 priority taxonomic source identities remain, with zero fully certified accounts.
+- **Non-startup UX:** Secondary regional, trait, photo and differential comparisons are grouped in a compact expandable Research tools control on Species Library, leaving search and filters accessible on smaller screens.
+- **QA:** New source test `scripts/test_rc10_ux_recovery.py` and dedicated documentation `docs/LIKAS_RC10_EVIDENCE_RECOVERY_UX_QA.md`. CI source/Android run and exact RC10 artifact status require verification against the latest branch HEAD. **No RC10 APK is claimed built, passed or downloaded at the time this entry was created.** An emulator, interrupted-write recovery and physical Android test remain mandatory before promotion.
+- **Next:** Check latest scientific-core CI, resolve failures, inspect newly built APK version/signature/media and provide the real direct in-chat file if accessible. Then validate JSON export/import and cover annotation drafts in a versioned backup plan. Continue per-taxon peer review, independent source expansion and app-wide Home/field/habitat visual consistency without changing startup work.
+- **Open concerns:** Source coverage is partial (RC9: diagnosis 49/96, habitat 25/96, behavior 3/96, specialist signoff 0/96), current photo marks remain unapproved, baseline PR startup policy conflict persists, and no real phone acceptance has occurred for RC10.
+
+---
+
+
 ## 28 October 2026 | RC9 scientific library completion and annotated-photo workflow (testing in progress)
 
 - **Owner direction:** Execute Q1+Q2+Q3 from RC8B: explicit completeness criteria for all 96 priority species; controlled, cited differential comparisons; and a reviewable owner-photo anatomical marker workflow.

@@ -54,9 +54,10 @@ public final class TaxonDetailActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(18),dp(15),dp(18),dp(15));
-        TextView header=UiKit.title(this,"Species reference");
+        TextView header=UiKit.title(this,"Species Library");
         root.addView(header);
-        TextView caption=text("Offline source records, not confirmed field sightings",12,false);
+        TextView caption=text("Offline references for identification and ecology. "+
+            "These are not confirmed observations at your site.",12,false);
         caption.setTextColor(UiKit.MUTED);
         root.addView(caption);
         LinearLayout input=new LinearLayout(this);
@@ -186,15 +187,20 @@ public final class TaxonDetailActivity extends Activity {
             latin.setTypeface(null,Typeface.BOLD_ITALIC);
             latin.setPadding(0,dp(3),0,dp(3));
             content.addView(latin);
+            content.addView(UiKit.sectionTitle(this,"Identification and taxonomy"));
             paragraph("Classification",col(c,"taxon_group")+" · "+
                 col(c,"order_name")+" · "+col(c,"family"));
             paragraph("Taxonomic authority",col(c,"authority"));
             paragraph("Endemism / origin",col(c,"distribution_status"));
             paragraph("Philippine distribution in source",col(c,"distribution_text"));
+            content.addView(UiKit.sectionTitle(this,"Conservation references"));
             paragraph("IUCN category (source snapshot)",col(c,"iucn_red_list"));
             paragraph("Philippine Red List category (source snapshot)",col(c,"ph_red_list"));
             paragraph("CITES (source snapshot)",col(c,"cites"));
             paragraph("Taxonomic note",col(c,"taxonomic_note"));
+            paragraph("Diagnostic identification traits",
+                "A reviewed diagnostic key is not provided in this catalog entry. "+
+                "Confirm with the cited taxonomic literature and record uncertainty.");
             paragraph("Original source",col(c,"source")+" · "+col(c,"source_version"));
             paragraph("Source publication",originalReference(col(c,"source")));
             sourceLink("WBCP checklist source",col(c,"source_url"),
@@ -204,6 +210,7 @@ public final class TaxonDetailActivity extends Activity {
             sourceLink("Bird vocalizations on xeno-canto",
                 col(c,"sound_url"),"https://www.xeno-canto.org/species/");
             paragraph("Source record ID",col(c,"taxon_key"));
+            content.addView(UiKit.sectionTitle(this,"Habitat and elevation"));
             try(Cursor ecology=database.rawQuery(
                 "SELECT habitat_codes,elevation_min_m,elevation_max_m,"+
                     "source,source_version,review_status,source_url,evidence_note "+
@@ -244,6 +251,7 @@ public final class TaxonDetailActivity extends Activity {
                 }
             }
             if(names.length()>0)paragraph("Previous scientific names",names.toString());
+            content.addView(UiKit.sectionTitle(this,"Regional source evidence"));
             StringBuilder regional=new StringBuilder();
             try(Cursor evidence=database.rawQuery(
                 "SELECT area_type,area_label,evidence_basis,evidence_text,"+
@@ -265,10 +273,10 @@ public final class TaxonDetailActivity extends Activity {
             if(regional.length()>0)
                 paragraph("Regional occurrence evidence",regional.toString());
             else paragraph("Regional occurrence evidence","Not assessed in the installed evidence catalog");
-            TextView foot=text("WBCP birds follow IOC v15.1 (2025). The source links "+
-                "require internet. External photos and recordings remain on their "+
-                "publishers' sites. No reference confirms presence at this station. "+
-                "Conservation categories reflect the source date.",12,false);
+            TextView foot=text("The source and edition for each reference appear above. "+
+                "Source links require internet. External photographs and recordings "+
+                "remain with their publishers. No reference confirms a sighting "+
+                "at this station.",12,false);
             foot.setTextColor(UiKit.MUTED);
             foot.setPadding(0,dp(15),0,0);
             content.addView(foot);

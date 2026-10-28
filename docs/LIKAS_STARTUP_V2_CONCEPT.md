@@ -1,7 +1,7 @@
 # LIKAS | Rainforest Welcome v2: Design Review Brief
 
 **Date:** 28 October 2026 (Asia/Manila)  
-**Status:** New visual and interaction prototype produced for owner review. Not approved final art, not integrated in native LIKAS, and not a shipped APK.  
+**Status:** Browser visual prototype remains under review. A separate experimental Java Canvas renderer is now implemented on `feature/rainforest-parallax-v2` but has not been built or visually verified in a device APK. No final artwork or shipped APK.  
 **Baseline:** `9e4059192afdf0d9478481f816fe5e4bcd8a2087` before this design documentation.  
 **Applies to:** G-07, U-01, U-03, U-04, U-05, U-06, E-01.
 

@@ -171,8 +171,8 @@ public final class TaxonDetailActivity extends Activity {
             .setNegativeButton("Cancel",null).show();
     }
     /**
-     * Official reference links lead to the publisher's site. No remote
-     * photographs, audio or third-party copyrighted media are stored locally.
+     * Publisher references open externally. Offline photographs use attributed
+     * CC preview files shipped separately by the licensed reference pack.
      */
     private void sourceLink(String title,String candidate,String prefix){
         if(candidate==null||!candidate.startsWith(prefix))return;
@@ -206,6 +206,11 @@ public final class TaxonDetailActivity extends Activity {
             latin.setTypeface(null,Typeface.BOLD_ITALIC);
             latin.setPadding(0,dp(3),0,dp(3));
             content.addView(latin);
+            if(!OfflineFieldLibrary.addSpecies(this,content,scientific)){
+                content.addView(FieldVisuals.context(this,
+                    "A detailed account is not yet source-checked for this species. "+
+                    "The installed taxonomy and original checklist source remain available below."));
+            }
             content.addView(FieldVisuals.section(this,"Identification and taxonomy",""));
             paragraph("Classification",col(c,"taxon_group")+" · "+
                 col(c,"order_name")+" · "+col(c,"family"));

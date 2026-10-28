@@ -249,7 +249,7 @@ public class WelcomeActivity extends Activity {
         Button catalog=UiKit.button(this,"Search Species Library","primary");
         main.addView(catalog,new LinearLayout.LayoutParams(-1,dp(54)));
         catalog.setOnClickListener(v->startActivity(
-            new Intent(this,TaxonDetailActivity.class)));
+            new Intent(this,Rc7SpeciesLibraryActivity.class)));
         Button librarySources=UiKit.button(this,"Source catalogs & regional records","quiet");
         LinearLayout.LayoutParams sourcesLp=new LinearLayout.LayoutParams(-1,dp(50));
         sourcesLp.topMargin=dp(6);

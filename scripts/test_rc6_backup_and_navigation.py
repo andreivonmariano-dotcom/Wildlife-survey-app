@@ -11,8 +11,8 @@ APP = (ROOT / "app/build.gradle").read_text()
 class Rc6RestoreAndNavigationContracts(unittest.TestCase):
     def test_schema_lineage_and_version(self):
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'", APP)
-        self.assertIn("versionCode 53", APP)
-        self.assertIn("0.27.3-rc7b-literature-inat-preview", APP)
+        self.assertIn("versionCode 54", APP)
+        self.assertIn("0.27.3-rc7c-owner-photos-preview", APP)
         self.assertIn("super(context,NAME,null,27)",(JAVA / "FieldDb.java").read_text())
 
     def test_backup_is_complete_and_recovery_does_not_merge(self):

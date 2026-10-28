@@ -21,6 +21,7 @@ import java.util.Locale;
 public final class Rc7LiteratureNotes {
     private Rc7LiteratureNotes(){}
     private static JSONArray entries;
+    private static java.util.HashSet<String> names;
     private static final String[] FILES={
         "rc7_literature_birds_amphibians_v1.json",
         "rc7_literature_reptiles_mammals_v1.json",
@@ -50,7 +51,14 @@ public final class Rc7LiteratureNotes {
                 }
             }catch(Exception ignored){}
         }
-        entries=all;return entries;
+        entries=all;
+        names=new java.util.HashSet<>();
+        for(int i=0;i<all.length();i++){
+            JSONObject p=all.optJSONObject(i);
+            if(p!=null)names.add(p.optString("scientificName")
+                .toLowerCase(Locale.ROOT));
+        }
+        return entries;
     }
     private static JSONObject find(Activity a,String scientific){
         if(scientific==null)return null;
@@ -63,7 +71,9 @@ public final class Rc7LiteratureNotes {
         return null;
     }
     public static boolean available(Activity a,String scientific){
-        return find(a,scientific)!=null;
+        entries(a);
+        return scientific!=null&&names!=null&&names.contains(
+            scientific.toLowerCase(Locale.ROOT));
     }
     public static int count(Activity a){return entries(a).length();}
     private static TextView label(Activity a,String value,int sp,boolean bold){

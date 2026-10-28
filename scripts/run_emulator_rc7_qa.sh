@@ -42,10 +42,12 @@ adb shell am force-stop "$PKG"
 echo '=== Run actual SQLite backup and restore round trip ==='
 # Upgrade protection was already verified. Use a clean disposable workspace for the round trip.
 adb shell pm clear "$PKG"
+adb shell pm grant "$PKG" android.permission.ACCESS_FINE_LOCATION || true
+adb shell pm grant "$PKG" android.permission.ACCESS_COARSE_LOCATION || true
 adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 adb shell am instrument -w -r \
   "$PKG.test/androidx.test.runner.AndroidJUnitRunner" | tee emulator-qa/instrumentation.txt
-grep -Eq 'OK \(6 tests?\)' emulator-qa/instrumentation.txt
+grep -Eq 'OK \(7 tests?\)' emulator-qa/instrumentation.txt
 adb exec-out run-as "$PKG" cat files/rc7_library_screen.png > emulator-qa/library-320dp.png
 test -s emulator-qa/library-320dp.png
 echo 'DEVICE BACKUP TEST PASSED'
@@ -57,19 +59,8 @@ adb exec-out screencap -p > emulator-qa/post-test.png
 adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
 adb exec-out cat /sdcard/window.xml > emulator-qa/ui-hierarchy.xml || true
 adb logcat -d -t 1500 > emulator-qa/logcat-tail.txt || true
-echo '=== Recorder live layout after isolated backup verification ==='
-adb shell pm grant "$PKG" android.permission.ACCESS_FINE_LOCATION || true
-adb shell pm grant "$PKG" android.permission.ACCESS_COARSE_LOCATION || true
-adb shell am force-stop "$PKG"
-adb shell am start -W -n "$PKG/org.phwildlife.survey.MainActivity" \
-  --ez create_new true --es survey_profile Birds --es survey_method opportunistic \
-  --es observer_name "LIKAS-RC10-EMULATOR-QA" > emulator-qa/recorder-launch.txt
-sleep 3
-adb exec-out screencap -p > emulator-qa/recorder-320dp.png
-adb shell uiautomator dump /sdcard/rc10-recorder.xml >/dev/null 2>&1
-adb exec-out cat /sdcard/rc10-recorder.xml > emulator-qa/recorder-hierarchy.xml
-grep -F 'End Survey' emulator-qa/recorder-hierarchy.xml
+echo '=== Export protected Recorder screenshot captured by app-side instrumentation ==='
+adb exec-out run-as "$PKG" cat files/rc10_recorder_screen.png > emulator-qa/recorder-320dp.png
 test -s emulator-qa/recorder-320dp.png
-adb shell am force-stop "$PKG"
-echo 'RECORDER-DOCK-EMULATOR-SMOKE-PASS' | tee emulator-qa/recorder-status.txt
+echo 'RECORDER-DOCK-INSTRUMENTED-PASS' | tee emulator-qa/recorder-status.txt
 echo 'EMULATOR-SMOKE-PASS' | tee emulator-qa/status.txt

@@ -29,6 +29,9 @@ public final class TaxonDetailActivity extends Activity {
     private FieldDb db;
     private LinearLayout content;
     private AutoCompleteTextView search;
+    private LinearLayout searchRow;
+    private Button groupFilter;
+    private TextView screenCaption;
     private String searchGroup="";
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size,boolean bold){
@@ -57,11 +60,11 @@ public final class TaxonDetailActivity extends Activity {
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(18),dp(15),dp(18),dp(15));
         root.addView(UiKit.navigationHeader(this,"Species Library","Back",this::finish));
-        TextView caption=text("Identification, habitat and research sources",12,false);
-        caption.setTextColor(UiKit.MUTED);
-        root.addView(caption);
-        LinearLayout input=new LinearLayout(this);
-        input.setOrientation(LinearLayout.HORIZONTAL);
+        screenCaption=text("Identification, habitat and research sources",12,false);
+        screenCaption.setTextColor(UiKit.MUTED);
+        root.addView(screenCaption);
+        searchRow=new LinearLayout(this);
+        searchRow.setOrientation(LinearLayout.HORIZONTAL);
         search=new AutoCompleteTextView(this){
             @Override public boolean enoughToFilter(){return true;}
         };
@@ -77,7 +80,7 @@ public final class TaxonDetailActivity extends Activity {
             search.dismissDropDown();
             lookup(parent.getItemAtPosition(position).toString());
         });
-        input.addView(search,new LinearLayout.LayoutParams(0,dp(52),1f));
+        searchRow.addView(search,new LinearLayout.LayoutParams(0,dp(52),1f));
         Button dropdown=UiKit.button(this,"▾","quiet");
         dropdown.setContentDescription("Show species suggestions");
         dropdown.setOnClickListener(v->{
@@ -92,24 +95,24 @@ public final class TaxonDetailActivity extends Activity {
             autocomplete.getFilter().filter(search.getText().toString(),
                 count->{if(count>0)search.showDropDown();});
         });
-        input.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(52)));
+        searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(52)));
         Button find=UiKit.button(this,"Find","secondary");
         find.setOnClickListener(v->lookup(search.getText().toString()));
-        input.addView(find,new LinearLayout.LayoutParams(dp(80),dp(52)));
-        root.addView(input);
+        searchRow.addView(find,new LinearLayout.LayoutParams(dp(80),dp(52)));
+        root.addView(searchRow);
         final String[] groupNames={"All groups","Birds","Amphibians","Reptiles","Mammals"};
-        Button chooseGroup=UiKit.button(this,"All wildlife groups  ▾","quiet");
-        chooseGroup.setContentDescription("Filter species by wildlife group");
+        groupFilter=UiKit.button(this,"All wildlife groups  ▾","quiet");
+        groupFilter.setContentDescription("Filter species by wildlife group");
         LinearLayout.LayoutParams groupLp=new LinearLayout.LayoutParams(-1,dp(48));
         groupLp.topMargin=dp(6);
-        root.addView(chooseGroup,groupLp);
-        chooseGroup.setOnClickListener(v->new AlertDialog.Builder(this)
+        root.addView(groupFilter,groupLp);
+        groupFilter.setOnClickListener(v->new AlertDialog.Builder(this)
             .setTitle("Browse wildlife group")
             .setItems(groupNames,(dialog,which)->{
                 String group=which==0?null:groupNames[which];
                 searchGroup=group==null?"":group;
                 autocomplete.setGroup(group);
-                chooseGroup.setText(groupNames[which]+"  ▾");
+                groupFilter.setText(groupNames[which]+"  ▾");
                 search.setText("");
                 showMessage("Search "+(group==null?
                     "all Philippine wildlife groups":group.toLowerCase(Locale.ROOT))+
@@ -219,7 +222,13 @@ public final class TaxonDetailActivity extends Activity {
             }
         });
     }
+    private void showSearchControls(){
+        if(searchRow!=null)searchRow.setVisibility(View.VISIBLE);
+        if(groupFilter!=null)groupFilter.setVisibility(View.VISIBLE);
+        if(screenCaption!=null)screenCaption.setVisibility(View.VISIBLE);
+    }
     private void showMessage(String message){
+        showSearchControls();
         content.removeAllViews();
         content.addView(text(message,15,false));
     }
@@ -230,6 +239,21 @@ public final class TaxonDetailActivity extends Activity {
             if(!c.moveToFirst()){showMessage("Species record unavailable.");return;}
             String scientific=col(c,"scientific_name");
             content.removeAllViews();
+            searchRow.setVisibility(View.GONE);
+            groupFilter.setVisibility(View.GONE);
+            screenCaption.setVisibility(View.GONE);
+            Button searchAnother=UiKit.button(this,"⌕  Search another species","quiet");
+            searchAnother.setContentDescription("Search another wildlife species");
+            LinearLayout.LayoutParams searchLp=new LinearLayout.LayoutParams(-1,dp(45));
+            searchLp.bottomMargin=dp(9);
+            content.addView(searchAnother,searchLp);
+            searchAnother.setOnClickListener(v->{
+                showSearchControls();
+                search.requestFocus();
+                search.selectAll();
+                InputMethodManager keyboard=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                if(keyboard!=null)keyboard.showSoftInput(search,InputMethodManager.SHOW_IMPLICIT);
+            });
             TextView common=text(col(c,"common_name"),21,true);
             if(!common.getText().toString().isEmpty())content.addView(common);
             TextView latin=text(scientific,19,true);

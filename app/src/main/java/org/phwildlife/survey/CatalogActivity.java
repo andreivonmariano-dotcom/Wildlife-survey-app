@@ -90,6 +90,10 @@ public final class CatalogActivity extends Activity {
         }
         result.insert(0,allGroupsInstalled?
             "Installed offline references":"Incomplete offline references");
+        int[] libraryCounts=OfflineFieldLibrary.availableCounts(this);
+        result.append("\nDetailed wildlife accounts: ").append(libraryCounts[0])
+            .append(" (source-checked; specialist review pending)");
+        result.append("\nPhilippine habitat field guides: ").append(libraryCounts[1]);
         result.append("\nReviewed habitat profiles: ").append(reviewedProfiles)
             .append(" / ").append(attributedTotal).append(" attributed names");
         result.append("\nUnassessed habitat and elevation data remain unknown.");

@@ -49,8 +49,22 @@ def audit(sha):
             errors.append("SQLite schema 27 missing")
         if "if(oldVersion<27)upgradeTwentySeven(d)" not in field:
             errors.append("SQLite v27 migration missing")
-        if "Explore. Record. Conserve." not in launch or "Resume survey" not in launch:
-            errors.append("RC4 launch identity or resume action missing")
+        # Two owner-approved RC4 startup paths exist. The original has an
+        # on-splash Resume action. The newer minimal splash forwards to Home,
+        # where Resume Survey remains available for an active field event.
+        old_startup = "Explore. Record. Conserve." in launch and "Resume survey" in launch
+        if not old_startup:
+            home = text_at(sha,"app/src/main/java/org/phwildlife/survey/WelcomeActivity.java")
+            minimal_startup = (
+                'brand.setText("LIKAS")' in launch
+                and "WelcomeActivity.class" in launch
+                and 'putExtra("show_menu",true)' in launch
+                and "root.setOnClickListener" in launch
+                and 'UiKit.button(this,"Resume Survey","primary")' in home
+                and re.search(r'new\s+Intent\(this,\s*MainActivity\.class\)\.putExtra\(\s*"resume"\s*,\s*true\s*\)', home)
+            )
+            if not minimal_startup:
+                errors.append("No verified RC4 launch-to-Home Resume Survey path")
         player_active = bool(re.search(r"new\s+LikasSpriteForestView\s*\(", launch))
         if player_active or code >= 50:
             sprite = text_at(sha,"app/src/main/java/org/phwildlife/survey/LikasSpriteForestView.java")

@@ -91,7 +91,8 @@ public final class Rc10ResearchBatch {
             card.addView(label(a,"Field limitation: "+item.optString("limitation"),12,false));
             String extra=item.has("sourceType")?
                 "\nSource type: "+item.optString("sourceType")+
-                " · "+item.optInt("publicationYear")+
+                " · "+(item.isNull("publicationYear")?
+                    "publication date not stated":String.valueOf(item.optInt("publicationYear")))+
                 "\nAccessed: "+item.optString("retrievedDate"):"";
             card.addView(label(a,"Source: "+item.optString("source")+extra+
                 "\nReview: "+item.optString("reviewState"),12,false));

@@ -668,32 +668,21 @@ public final class SpeciesPickerActivity extends Activity {
             TextView meta=text(identifiers.toString(),12,false);
             meta.setTextColor(UiKit.MUTED);card.addView(meta);
         }
-        String label=item.screening.scorePercent==null?
-            "Insufficient Data · not scored":
-            item.screening.scorePercent+"% screening index · "+item.screening.label;
-        int indicator="Unlikely".equals(item.screening.label)?
-            Color.rgb(167,64,56):"Likely".equals(item.screening.label)?
-            Color.rgb(36,112,74):Color.rgb(123,94,31);
-        if(item.screening.scorePercent==null)indicator=UiKit.MUTED;
-        TextView likelihood=text(label,14,true);
-        likelihood.setTextColor(indicator);
-        likelihood.setPadding(0,dp(5),0,dp(2));
-        card.addView(likelihood);
-        // Text preserves the score without suggesting a measured probability.
-        likelihood.setContentDescription(label+
-            ". Tap for the documented basis of this screening assessment.");
-        likelihood.setOnClickListener(v->new AlertDialog.Builder(this)
-            .setTitle("Preliminary field-screening score")
-            .setMessage(item.screening.explanation+
-                "\n\nThis percentage is a weighted screening index, not the "+
-                "statistical chance the species occurs here.")
-            .setPositiveButton("Close",null).show());
-        TextView range=text(OccurrenceEvidencePolicy.title(item.evidence),13,true);
-        range.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
-        range.setPadding(0,dp(2),0,dp(3));card.addView(range);
+        // Evidence is presented as separate source statements, never a probability.
+        TextView geographic=text("Geographic source: "+
+            OccurrenceEvidencePolicy.title(item.evidence),13,true);
+        geographic.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
+        geographic.setPadding(0,dp(6),0,dp(3));
+        card.addView(geographic);
+        TextView habitat=text(item.screening.habitatStatus,13,false);
+        habitat.setTextColor(UiKit.MUTED);
+        card.addView(habitat);
+        TextView elevation=text(item.screening.elevationStatus,13,false);
+        elevation.setTextColor(UiKit.MUTED);
+        card.addView(elevation);
         // Source, ecological references and profile detail are available under Details.
         LinearLayout buttons=new LinearLayout(this);
-        Button details=UiKit.button(this,"Details","secondary");
+        Button details=UiKit.button(this,"View sources","secondary");
         buttons.addView(details,new LinearLayout.LayoutParams(0,dp(48),1f));
         Button select=UiKit.button(this,"Use species","primary");
         LinearLayout.LayoutParams selectLp=new LinearLayout.LayoutParams(0,dp(48),1.5f);

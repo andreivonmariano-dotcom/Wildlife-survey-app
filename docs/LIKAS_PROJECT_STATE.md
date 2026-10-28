@@ -1,6 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 28 October 2026 | RC11C final emulator pass and direct signed APK
+
+- **Exact RC11C emulator success:** run **40723773212**, evidence artifact **12832840490**, all **9 / 9 Android instrumentation tests passed** on API 34 at 320dp. Instrumentation file has `OK (9 tests)`, no failures. Evidence includes final species screenshot `species-account-320dp.png`, `RECORDER-DOCK-INSTRUMENTED-PASS`, `EMULATOR-SMOKE-PASS`, installed versionCode **62** and versionName `0.27.3-rc11c-compact-species-preview`.
+- **Upgrade QA:** in-place signed upgrade preserved existing SQLite v27 database **byte-for-byte** (1,613,824 bytes) and existing media fixture. An isolated backup/restore test passed. Physical phone acceptance remains open, and no scientific identification key is certified.
+- **Visual QA:** actual RC11C screenshot reviewed. Visible compact wildlife reference photo retains photographer credit, first Identification icon card and two cited traits appear on first 320dp page. Repetitive photo copyright prefix, long front-page legal paragraph and redundant “Field reference” label removed. Original full image/license remains in a disclosure.
+- **Latest direct files verified in this chat:** `/mnt/data/LIKAS-v0.27.3-RC11C-compact-species-debug.apk` (9,417,101 bytes, SHA-256 `19cfd177992190599084798e3389be60b47cc247c5ed876f21c1fb589d405eb0`), `/mnt/data/LIKAS_RC11C_species_account_320dp.png`, and `/mnt/data/LIKAS-RC11C-emulator-9-tests-passed.zip`. Verify fresh sandbox paths in future sessions.
+- **Handoff:** RC11C is a signed **development preview**, not a scientifically expert-reviewed field release. Source completeness remains 0/96 certified. Next work: curation of the 96 priority taxa's identification, distribution, habitat, and conservation sources, with formal review and source provenance.
+
+---
+
+
+
 ## 28 October 2026 | RC11C signed species-card visual finalization
 
 - **Owner request:** Focus on priority scientific accounts, strip developer artifacts, repetitive defensive sentences and visible placeholders, use icons and polished layouts, with an initial mention of 92 species. Repo priority source registry contains **96 unique priority keys** in four groups of 24. No subset identifying an intended 92 has been provided. All 96 receive the unified template; no taxon record dropped.

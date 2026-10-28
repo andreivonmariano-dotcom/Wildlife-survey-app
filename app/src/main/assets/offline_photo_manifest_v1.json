@@ -93,6 +93,45 @@
       "caption": "Forest on limestone islands of Bacuit Bay, Palawan; photographic context, not a site-classification key",
       "offlineAsset": "offline_photos/habitat_karst.jpg",
       "edited": "Resized preview only; no content alteration"
+    },
+    {
+      "id": "species_pangolin",
+      "category": "species",
+      "taxon": "Manis culionensis",
+      "fileName": "Philippine Pangolin Curled-up by Gregg Yan.jpg",
+      "author": "Shukran888",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Philippine_Pangolin_Curled-up_by_Gregg_Yan.jpg",
+      "caption": "Philippine pangolin adult and pup in Palawan; license and subject credited by photographer",
+      "offlineAsset": "offline_photos/species_pangolin.jpg",
+      "edited": "Resized thumbnail only"
+    },
+    {
+      "id": "species_warty_pig",
+      "category": "species",
+      "taxon": "Sus cebifrons",
+      "fileName": "Visayan Warty Pig.jpg",
+      "author": "Mhlayson",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Visayan_Warty_Pig.jpg",
+      "caption": "Visayan warty pig reference, photographed in 2026; precise place unverified",
+      "offlineAsset": "offline_photos/species_warty_pig.jpg",
+      "edited": "Resized thumbnail only"
+    },
+    {
+      "id": "species_mindoro_heart",
+      "category": "species",
+      "taxon": "Gallicolumba platenae",
+      "fileName": "Mindoro bleeding-heart Smithsonian specimen.jpg",
+      "author": "Anand Krishnan / Smithsonian specimen photo",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mindoro_bleeding-heart_Smithsonian_specimen.jpg",
+      "caption": "Mounted museum specimen; not a photograph of a living wild bird",
+      "offlineAsset": "offline_photos/species_mindoro_heart.jpg",
+      "edited": "Resized thumbnail only"
     }
   ]
 }

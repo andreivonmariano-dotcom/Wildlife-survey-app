@@ -25,7 +25,9 @@ import java.util.ArrayList;
 /** Home and survey setup. Never starts the camera or a survey without a user choice. */
 public class WelcomeActivity extends Activity {
     private final int BG=UiKit.BG,INK=UiKit.INK,GREEN=UiKit.FOREST,MUTED=UiKit.MUTED;
-    private LinearLayout main,root; private String profile="Birds";
+    private LinearLayout main,root,setupFooter;
+    private Button setupStartButton;
+    private String profile="Birds";
     private boolean custom=false;
     private String currentScreen="home";
     private static final int GPS_PERMISSION_REQUEST=71;
@@ -99,7 +101,16 @@ public class WelcomeActivity extends Activity {
         root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(16),dp(12),dp(16),dp(12));
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
         main=vertical();main.setPadding(0,0,0,dp(24));scroll.addView(main);
-        root.addView(scroll,new LinearLayout.LayoutParams(-1,-1));
+        root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1f));
+        // One persistent GPS continuation action; never duplicate it in the form.
+        setupFooter=vertical();
+        setupFooter.setBackgroundColor(BG);
+        setupFooter.setPadding(0,dp(5),0,dp(3));
+        setupStartButton=UiKit.button(this,"Continue to GPS","primary");
+        setupFooter.addView(setupStartButton,new LinearLayout.LayoutParams(-1,dp(56)));
+        setupStartButton.setOnClickListener(v->startSelected());
+        setupFooter.setVisibility(View.GONE);
+        root.addView(setupFooter);
         setContentView(root);
     }
     private void heading(String title,String subtitle) {
@@ -140,6 +151,7 @@ public class WelcomeActivity extends Activity {
     }
     private void home(){
         homeVisible=true;currentScreen="home";main.removeAllViews();
+        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         LinearLayout header=new LinearLayout(this);
         header.setGravity(Gravity.CENTER_VERTICAL);
         header.setOrientation(LinearLayout.HORIZONTAL);
@@ -327,6 +339,7 @@ public class WelcomeActivity extends Activity {
     }
     private void customPicker(){
         homeVisible=false;currentScreen="custom";main.removeAllViews();
+        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         Button back=UiKit.button(this,"← Back","secondary");main.addView(back);back.setOnClickListener(v->home());
         heading("Custom survey","Select a wildlife group.");
         card("Birds","Custom bird survey",()->setup("Birds",true));
@@ -336,6 +349,8 @@ public class WelcomeActivity extends Activity {
     private void setup(String selected,boolean isCustom){
         homeVisible=false;currentScreen="setup";profile=selected;custom=isCustom;
         main.removeAllViews();
+        setupStartButton.setText("Continue to GPS · "+profile);
+        setupFooter.setVisibility(View.VISIBLE);
         Button back=button("‹ Back");
         LinearLayout.LayoutParams backLp=new LinearLayout.LayoutParams(dp(112),dp(48));
         main.addView(back,backLp);
@@ -416,11 +431,10 @@ public class WelcomeActivity extends Activity {
         boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
         gpsLookupButton.setOnClickListener(v->suggestBoundary());
         // Sampling stations are assigned within field visits, never in survey setup.
-        main.addView(step("03","Observer and effort"));
+        main.addView(step("03","Sampling effort"));
         observerEntry=new EditText(this);
         observerEntry.setTextSize(16);observerEntry.setSingleLine(true);
         observerEntry.setHint("Observer (optional)");
-        main.addView(observerEntry);
         durationEntry=new EditText(this);
         durationEntry.setTextSize(16);durationEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         durationEntry.setHint("Point count duration (minutes)");
@@ -523,6 +537,7 @@ public class WelcomeActivity extends Activity {
         regionEntry=new EditText(this);regionEntry.setSingleLine(true);
         regionEntry.setHint("Stratum / region label (optional)");
         LinearLayout extraDetails=vertical();
+        extraDetails.addView(observerEntry);
         extraDetails.addView(regionEntry);
         areaEntry=new EditText(this);areaEntry.setSingleLine(true);
         areaEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -567,10 +582,7 @@ public class WelcomeActivity extends Activity {
             }
         });
         refreshStudyChoices();
-        Button start=UiKit.button(this,"Continue to GPS · "+profile,"primary");
-        LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,dp(58));
-        startLp.topMargin=dp(16);main.addView(start,startLp);
-        start.setOnClickListener(v->startSelected());
+        // The only Continue to GPS action is pinned beneath the scroll area.
     }
     private void refreshStudyTitle(){
         if(studyToggle==null||studyChoice==null||studyOptions==null)return;

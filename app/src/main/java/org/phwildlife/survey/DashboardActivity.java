@@ -30,9 +30,8 @@ public class DashboardActivity extends Activity {
     }
     private void render(){
         LinearLayout root=vertical();root.setPadding(dp(14),dp(14),dp(14),dp(12));root.setBackgroundColor(UiKit.BG);
-        LinearLayout bar=new LinearLayout(this);bar.setOrientation(LinearLayout.HORIZONTAL);bar.setGravity(Gravity.CENTER_VERTICAL);
-        Button back=UiKit.button(this,"← Home","secondary");bar.addView(back);back.setOnClickListener(v->finish());
-        root.addView(bar);root.addView(UiKit.title(this,"Fieldwork dashboard"));
+        root.addView(UiKit.navigationHeader(this,"Fieldwork dashboard","Home",
+            this::finish));
         TextView note=label("Recorded survey counts · not density estimates",13);
         note.setTextColor(UiKit.MUTED);root.addView(note);
         ScrollView scroll=new ScrollView(this);page=vertical();scroll.addView(page);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));

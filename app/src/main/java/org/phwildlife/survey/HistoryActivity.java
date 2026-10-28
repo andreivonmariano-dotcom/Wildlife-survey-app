@@ -51,22 +51,15 @@ public class HistoryActivity extends Activity {
     }
     private void draw(){
         root=column();root.setBackgroundColor(UiKit.BG);root.setPadding(dp(14),dp(10),dp(14),dp(10));
-        LinearLayout header=new LinearLayout(this);
-        header.setGravity(Gravity.CENTER_VERTICAL);
-        Button back=btn(eventFilter==null?"‹ Home":"‹ All surveys");
-        header.addView(back,new LinearLayout.LayoutParams(dp(112),dp(48)));
-        back.setOnClickListener(v->{
-            if(eventFilter==null)finish();
-            else{
-                if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
-                eventFilter=null;surveyOffset=0;observationOffset=0;draw();
-            }
-        });
-        TextView heading=text(eventFilter==null?"Survey history":"Observations",20);
-        heading.setTypeface(null,Typeface.BOLD);
-        heading.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
-        header.addView(heading,new LinearLayout.LayoutParams(0,dp(52),1));
-        root.addView(header);
+        root.addView(UiKit.navigationHeader(this,
+            eventFilter==null?"Survey history":"Observations",
+            eventFilter==null?"Home":"All surveys",()->{
+                if(eventFilter==null)finish();
+                else{
+                    if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
+                    eventFilter=null;surveyOffset=0;observationOffset=0;draw();
+                }
+            }));
         if(eventFilter==null){
             Spinner outcomes=new Spinner(this);
             outcomes.setAdapter(new ArrayAdapter<String>(this,

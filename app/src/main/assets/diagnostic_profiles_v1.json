@@ -110,6 +110,41 @@
       "publisher": "Philippine Department of Environment and Natural Resources (DENR)",
       "url": "https://faspselib.denr.gov.ph/uploads/materials/35733d95-8157-413b-9928-d7def4588461/ccd701d2-21ef-45b6-b2f8-702a8abc6208.pdf",
       "accessed": "2026-10-28"
+    },
+    {
+      "id": "iucn-psg-pangolin",
+      "title": "Philippine pangolin: distribution, morphology and IUCN status",
+      "publisher": "IUCN SSC Pangolin Specialist Group",
+      "url": "https://pangolinsg.org/portfolio/philippine-pangolin/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "iucn-redlist-pangolin-2019",
+      "title": "Manis culionensis IUCN assessment (2018 assessment, published 2019)",
+      "publisher": "IUCN Red List / Schoppe, Katsis and Lagrada",
+      "url": "https://doi.org/10.2305/IUCN.UK.2019-3.RLTS.T136497A123586862.en",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "iucn-ssc-warty-pig",
+      "title": "Visayan warty pig (Sus cebifrons) detailed species profile",
+      "publisher": "IUCN SSC Wild Pig Specialist Group",
+      "url": "https://www.iucn-wpsg.org/visayan-warty-pig-detailed",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "lostbirds-mindoro-2026",
+      "title": "Mindoro Bleeding-heart rediscovery documented 1 August 2026",
+      "publisher": "Search for Lost Birds / American Bird Conservancy partners",
+      "url": "https://searchforlostbirds.org/birds/mindoro-bleeding-heart",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "birdlife-mindoro-account",
+      "title": "Mindoro bleeding-heart historical distribution, field habitat and threats (Threatened Birds of Asia)",
+      "publisher": "BirdLife International",
+      "url": "https://birdlifedata.blob.core.windows.net/red-data-books/gallplat.pdf",
+      "accessed": "2026-10-28"
     }
   ],
   "profiles": [
@@ -689,6 +724,170 @@
           "denr-wildalert-cockatoo",
           "philcockatoo-report-2017"
         ]
+      }
+    },
+    {
+      "scientificName": "Manis culionensis",
+      "commonName": "Philippine Pangolin / Palawan Pangolin",
+      "group": "Mammals",
+      "assessment": "Introductory specialist-group synthesis; global IUCN category is not DENR national legal status. Independent field-key review pending.",
+      "traits": [
+        {
+          "field": "Body covering",
+          "value": "Overlapping keratin scales cover the body and tail; the long narrow snout differs from the head shape of most mammals.",
+          "sourceIds": [
+            "iucn-psg-pangolin"
+          ]
+        },
+        {
+          "field": "Asian pangolin comparison",
+          "value": "The specialist group describes more dorsal scale rows and smaller scales than the Sunda pangolin.",
+          "sourceIds": [
+            "iucn-psg-pangolin"
+          ]
+        },
+        {
+          "field": "Geographic evidence",
+          "value": "Endemic to the Palawan faunal region, with the specialist account naming Palawan and Culion among recorded islands; this is not a site occurrence claim.",
+          "sourceIds": [
+            "iucn-psg-pangolin"
+          ]
+        },
+        {
+          "field": "Global assessment",
+          "value": "IUCN lists Critically Endangered in its 2018 assessment, published in 2019; reassess for current official changes.",
+          "sourceIds": [
+            "iucn-redlist-pangolin-2019"
+          ]
+        },
+        {
+          "field": "Evidence caution",
+          "value": "Tracks, feeding signs and unverified camera-trap silhouettes alone need careful independent review.",
+          "sourceIds": [
+            "iucn-psg-pangolin"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Philippine pangolin is a scaled mammal endemic to the Palawan island group. Its overlapping scales, pointed muzzle, strong forefeet and long tail distinguish its body plan. Specialist descriptions distinguish it from the Sunda pangolin by scale features, not by locality alone.",
+        "habitat": "The specialist account reports Philippine distribution and limited published natural history. Record actual forest cover, substrate, feeding signs and microhabitat independently rather than inferring a particular habitat at a survey station.",
+        "behavior": "Pangolins curl into a protective ball when threatened. Avoid broad claims about activity, diet or reproductive rates beyond the cited specialist sources.",
+        "fieldNotes": "Record nonintrusive camera-trap photos, body-scale arrangement and observer effort. Restrict public export of precise locations for sensitive detections.",
+        "cautions": "Its worldwide IUCN Red List category is Critically Endangered in the cited 2018 assessment. This is not a DENR national legal category or proof of population presence at a specific site. Avoid handling or disturbing individuals.",
+        "sourceIds": [
+          "iucn-psg-pangolin",
+          "iucn-redlist-pangolin-2019"
+        ],
+        "photoId": "species_pangolin"
+      }
+    },
+    {
+      "scientificName": "Sus cebifrons",
+      "commonName": "Visayan Warty Pig",
+      "group": "Mammals",
+      "assessment": "Source-based field overview from IUCN SSC Wild Pig Specialist Group; wild-versus-hybrid confirmation requires specialist review.",
+      "traits": [
+        {
+          "field": "Adult coat",
+          "value": "Adult males can develop a long dark mane that extends over the forehead and back.",
+          "sourceIds": [
+            "iucn-ssc-warty-pig"
+          ]
+        },
+        {
+          "field": "Snout and facial marks",
+          "value": "The specialist account notes a distinctive snout band and relatively small facial warts.",
+          "sourceIds": [
+            "iucn-ssc-warty-pig"
+          ]
+        },
+        {
+          "field": "Young animals",
+          "value": "Juveniles can have dark and orange-brown longitudinal stripes that fade with age.",
+          "sourceIds": [
+            "iucn-ssc-warty-pig"
+          ]
+        },
+        {
+          "field": "Range evidence",
+          "value": "Surviving wild populations are documented on Negros and Panay; older island mentions do not confirm modern presence.",
+          "sourceIds": [
+            "iucn-ssc-warty-pig"
+          ]
+        },
+        {
+          "field": "Conservation interpretation",
+          "value": "IUCN SSC specialist source calls this species Critically Endangered and identifies habitat loss, hunting and hybridization as threats.",
+          "sourceIds": [
+            "iucn-ssc-warty-pig"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "An endemic Philippine wild pig of the western Visayas. The specialist description notes a long mane in mature males, a diagnostic snout band and small facial warts. Juveniles differ markedly from adults.",
+        "habitat": "Historical primary and secondary forest records include lower elevations, but remaining documented populations mainly occupy forest refuges in Negros and Panay. Some dense secondary cover is used. Do not infer occupancy from elevation or island alone.",
+        "behavior": "The specialist account describes small social groups, diet evidence from feeding signs and increased nocturnal activity in disturbed or hunted areas. Record behavior directly instead of assuming every pig sign belongs to this species.",
+        "fieldNotes": "For camera traps, document snout, mane, ears, body shape, stripe pattern and scale reference. Record camera effort and retain unresolved Sus sp. records where identification or hybrid status is uncertain.",
+        "cautions": "Feral domestic pigs and hybrids can resemble wild pigs. Evidence of damage, rooting or tracks is not sufficient for a confident identification. The IUCN threat category is separate from DENR national regulation.",
+        "sourceIds": [
+          "iucn-ssc-warty-pig"
+        ],
+        "photoId": "species_warty_pig"
+      }
+    },
+    {
+      "scientificName": "Gallicolumba platenae",
+      "commonName": "Mindoro Bleeding-heart",
+      "group": "Birds",
+      "assessment": "Historical BirdLife account plus documented 2026 rediscovery; not a current distribution map or definitive plumage key.",
+      "traits": [
+        {
+          "field": "Family and form",
+          "value": "A ground-dwelling pigeon in Columbidae, often difficult to detect in forest understory.",
+          "sourceIds": [
+            "birdlife-mindoro-account"
+          ]
+        },
+        {
+          "field": "Breast mark",
+          "value": "A distinct reddish breast patch is the named bleeding-heart character; obtain clear images rather than identifying from a brief flush.",
+          "sourceIds": [
+            "lostbirds-mindoro-2026"
+          ]
+        },
+        {
+          "field": "Island evidence",
+          "value": "Endemic to Mindoro. Records from other islands do not establish this species.",
+          "sourceIds": [
+            "birdlife-mindoro-account"
+          ]
+        },
+        {
+          "field": "2026 confirmed evidence",
+          "value": "A camera trap photographed one individual on Mindoro on 1 August 2026 after approximately 20 years without a confirmed photograph.",
+          "sourceIds": [
+            "lostbirds-mindoro-2026"
+          ]
+        },
+        {
+          "field": "Altitude interpretation",
+          "value": "The 2026 camera-trap location was reported above 900 m, so older low-elevation summaries cannot be used as hard altitude limits.",
+          "sourceIds": [
+            "lostbirds-mindoro-2026"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Mindoro bleeding-heart is a secretive forest ground-dove with a red breast mark. Historical sources describe difficult field detection. A conservation-led camera-trap project documented the species again in August 2026.",
+        "habitat": "BirdLife's historical account records forest-floor observations in lowland and closed-canopy settings. A confirmed 2026 camera-trap record at higher elevation shows that historical elevation descriptions must not become automatic absence rules.",
+        "behavior": "The historical account describes birds walking through forest-floor cover and remaining difficult to observe. Camera trapping is valuable, but the recent photograph alone does not estimate population size.",
+        "fieldNotes": "Document breast patch, whole body, camera-trap effort, date and uncertainty. Do not publish precise rediscovery or nest coordinates. Record uncertain ground-dove detections without forcing a species assignment.",
+        "cautions": "One 2026 detection confirms survival, not island-wide occupancy or recovery. The cited conservation status is a global designation, separate from national legal classifications. The attached reference photograph depicts a museum specimen, not a living wild individual.",
+        "sourceIds": [
+          "lostbirds-mindoro-2026",
+          "birdlife-mindoro-account"
+        ],
+        "photoId": "species_mindoro_heart"
       }
     }
   ]

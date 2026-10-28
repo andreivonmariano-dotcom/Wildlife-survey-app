@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.view.Gravity;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /** Small shared visual system for the offline survey application. */
@@ -25,6 +26,27 @@ public final class UiKit {
   public static TextView title(Activity a,String title) {
     TextView t=new TextView(a);t.setText(title);t.setTextSize(23);t.setTypeface(null,Typeface.BOLD);
     t.setTextColor(INK);t.setPadding(dp(a,3),dp(a,9),dp(a,3),dp(a,7));return t;
+  }
+  /** Shared compact Back + page-title header for non-startup destinations. */
+  public static LinearLayout navigationHeader(Activity a,String title,String backLabel,
+          Runnable onBack) {
+    LinearLayout row=new LinearLayout(a);
+    row.setOrientation(LinearLayout.HORIZONTAL);
+    row.setGravity(Gravity.CENTER_VERTICAL);
+    Button back=button(a,"‹ "+backLabel,"secondary");
+    back.setContentDescription("Back to "+backLabel);
+    row.addView(back,new LinearLayout.LayoutParams(dp(a,120),dp(a,48)));
+    back.setOnClickListener(v->onBack.run());
+    TextView heading=new TextView(a);
+    heading.setText(title);
+    heading.setTextSize(20);
+    heading.setTextColor(INK);
+    heading.setTypeface(null,Typeface.BOLD);
+    heading.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
+    heading.setPadding(dp(a,8),0,dp(a,3),0);
+    row.addView(heading,new LinearLayout.LayoutParams(0,-2,1f));
+    row.setMinimumHeight(dp(a,52));
+    return row;
   }
   public static Button button(Activity a,String title,String type) {
     int fill=FOREST,stroke=FOREST,foreground=Color.WHITE;

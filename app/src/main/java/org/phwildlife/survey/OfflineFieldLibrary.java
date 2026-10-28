@@ -90,7 +90,7 @@ public final class OfflineFieldLibrary {
         JSONArray species=read(a,"diagnostic_profiles_v1.json").optJSONArray("profiles");
         if(species==null||species.length()==0)return;
         target.addView(FieldVisuals.section(a,"Browse detailed field guides",
-            "Ten introductory, source-checked species accounts"));
+            species.length()+" introductory, source-checked species accounts"));
         LinearLayout all=new LinearLayout(a);
         all.setOrientation(LinearLayout.VERTICAL);
         all.setVisibility(View.GONE);

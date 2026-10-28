@@ -278,6 +278,10 @@ public final class FieldDataDeletion {
         }finally{db.endTransaction();}
         int[] count=removeFiles(context,photos,calls);
         clearAllSurveyPreferences(context);
+        context.getSharedPreferences("likas_method_quick_actions",Context.MODE_PRIVATE)
+            .edit().clear().apply();
+        context.getSharedPreferences("WelcomeActivity",Context.MODE_PRIVATE)
+            .edit().clear().apply();
         return new Report(surveys,count[0],count[1]);
     }
 }

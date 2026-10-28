@@ -26,6 +26,8 @@
         <activity android:name=".DiagnosticGuideActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".Rc8TraitComparisonActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".Rc8PhotoComparisonActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Rc9DifferentialActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Rc9PhotoAnnotationReviewActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".HabitatSpeciesEvidenceActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".TaxonDetailActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".Rc7SpeciesLibraryActivity" android:exported="false" android:screenOrientation="portrait" />

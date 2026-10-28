@@ -13,11 +13,12 @@ class DiagnosticProfileReferences(unittest.TestCase):
     def test_profiles_are_offline_and_source_checked_not_editor_approved(self):
         self.assertEqual(1,pack["schemaVersion"])
         self.assertIn("pending",pack["reviewLevel"].lower())
-        self.assertEqual(8,len(pack["profiles"]))
+        self.assertEqual(10,len(pack["profiles"]))
         self.assertTrue({"Pithecophaga jefferyi","Spilornis holospilus",
                          "Polypedates leucomystax","Kaloula pulchra",
                          "Hydrosaurus pustulatus","Varanus cumingi",
-                         "Carlito syrichta","Cynocephalus volans"}.issubset(
+                         "Carlito syrichta","Cynocephalus volans",
+                         "Crocodylus mindorensis","Cacatua haematuropygia"}.issubset(
                              {p["scientificName"] for p in pack["profiles"]}))
     def test_every_morphology_trait_has_resolvable_primary_reference(self):
         references={s["id"]:s for s in pack["sourceList"]}

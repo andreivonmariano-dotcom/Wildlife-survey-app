@@ -135,9 +135,15 @@ public final class OfflinePhotoEvidence {
         title.setTypeface(null,android.graphics.Typeface.BOLD);
         title.setTextSize(15);
         labels.addView(title);
-        String author=photo.optString("author");
+        String author=photo.optString("author").trim();
+        String plain=author.toLowerCase(java.util.Locale.ROOT);
+        if(plain.startsWith("(c)"))author=author.substring(3).trim();
+        if(plain.startsWith("©"))author=author.substring(1).trim();
+        int rights=author.toLowerCase(java.util.Locale.ROOT)
+            .indexOf(", all rights reserved");
+        if(rights>=0)author=author.substring(0,rights).trim();
         TextView credit=new TextView(a);
-        credit.setText("© "+(author.trim().isEmpty()?"Source photographer":author));
+        credit.setText("© "+(author.isEmpty()?"Source photographer":author));
         credit.setTextColor(UiKit.MUTED);
         credit.setTextSize(12);
         credit.setMaxLines(3);

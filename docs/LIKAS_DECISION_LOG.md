@@ -25,6 +25,9 @@ Persist the latest project state and accepted decisions in GitHub during each wo
 ### 2026-10-28 | Remove old startup-scene assets | Accepted; previous scenery direction superseded
 Remove the previous forest day/night WebP plates, unused `ForestBackdropView.java`, and the old startup-background guidance. Retain the static welcome screen, Android launcher icon, and shared LIKAS palette. This supersedes the 27 October request to refine or connect the old forest animation. A replacement scene has not been selected. Related requirements: G-07, U-03, U-04, U-06, E-01.
 
+### 2026-10-28 | New LIKAS rainforest welcome design | Direction accepted; exact visual pending review
+The owner asked to pursue a new Philippine rainforest scene, smooth local-time-adaptive ambient animation, and a cleaner startup layout together. A fresh visual and browser interaction prototype was produced in the chat. The previous retired art must not be reused. The new concept is **not** an approved final Android asset, merged implementation, completed APK, or measured 60 FPS native animation. Continue under U-03 review requirements and `docs/LIKAS_STARTUP_V2_CONCEPT.md`.
+
 ## How to append
 
 Create a dated heading: `YYYY-MM-DD | Decision | Accepted / Replaced / Deferred`. State what changed, why it affects future work, source/reference, and any prior decision superseded. Do not erase historical entries.

@@ -25,7 +25,7 @@ class OfflineBiodiversityReference(unittest.TestCase):
     def test_species_accounts_add_ecology_and_use_existing_source_list(self):
         pack=json.loads((ASSETS/"diagnostic_profiles_v1.json").read_text())
         ids={x["id"] for x in pack["sourceList"]}
-        self.assertEqual(8,len(pack["profiles"]))
+        self.assertEqual(10,len(pack["profiles"]))
         for profile in pack["profiles"]:
             account=profile["account"]
             for field in ["overview","habitat","behavior","fieldNotes","cautions"]:

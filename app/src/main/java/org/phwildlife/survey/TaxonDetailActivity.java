@@ -198,9 +198,20 @@ public final class TaxonDetailActivity extends Activity {
             paragraph("Philippine Red List category (source snapshot)",col(c,"ph_red_list"));
             paragraph("CITES (source snapshot)",col(c,"cites"));
             paragraph("Taxonomic note",col(c,"taxonomic_note"));
-            paragraph("Diagnostic identification traits",
-                "A reviewed diagnostic key is not provided in this catalog entry. "+
-                "Confirm with the cited taxonomic literature and record uncertainty.");
+            if(DiagnosticGuideActivity.hasProfile(this,scientific)){
+                Button guide=UiKit.button(this,"Compare source-checked ID characters","secondary");
+                content.addView(guide);
+                guide.setOnClickListener(v->startActivity(
+                    new Intent(this,DiagnosticGuideActivity.class)
+                        .putExtra("scientific_name",scientific)));
+                paragraph("Diagnostic reference status",
+                    "Introductory characters checked against cited sources. "+
+                    "Independent specialist key review remains pending.");
+            }else{
+                paragraph("Diagnostic identification traits",
+                    "A checked diagnostic comparison is not yet available for this species. "+
+                    "Keep uncertain determinations unresolved.");
+            }
             paragraph("Original source",col(c,"source")+" · "+col(c,"source_version"));
             paragraph("Source publication",originalReference(col(c,"source")));
             sourceLink("WBCP checklist source",col(c,"source_url"),

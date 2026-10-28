@@ -241,6 +241,7 @@ public final class TaxonDetailActivity extends Activity {
             boolean detailed=OfflineFieldLibrary.addSpecies(this,content,scientific);
             boolean literature=Rc7LiteratureNotes.add(this,content,scientific);
             boolean rc7=Rc7FieldAccounts.add(this,content,scientific);
+            Rc9ProfileCompleteness.add(this,content,scientific);
             if(!detailed&&!rc7){
                 content.addView(FieldVisuals.context(this,
                     "A detailed account is not yet source-checked for this species. "+
@@ -270,6 +271,12 @@ public final class TaxonDetailActivity extends Activity {
                 paragraph("Diagnostic identification traits",
                     "A checked diagnostic comparison is not yet available for this species. "+
                     "Keep uncertain determinations unresolved.");
+            }
+            if(Rc7FieldAccounts.priority(this,scientific)){
+                Button differences=UiKit.button(this,"Compare documented lookalike characters","quiet");
+                differences.setOnClickListener(v->startActivity(
+                    new Intent(this,Rc9DifferentialActivity.class).putExtra("scientific_name",scientific)));
+                content.addView(differences);
             }
             if(OfflinePhotoEvidence.hasOfflineTaxon(this,scientific)){
                 Button pictures=UiKit.button(this,"Compare offline wildlife photographs","secondary");

@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC12 ten-test Android emulator acceptance passed
+
+- RC12 **versionCode 63**, `0.27.3-rc12-scientific-review-preview` has completed emulator QA. GitHub Actions run **40727663391**, artifact **12834301015**; all **10 / 10** Android instrumentation tests passed on API34 at 320dp. Evidence file `LIKAS-RC12-emulator-QA-10-tests.zip` was directly downloaded and verified in the current conversation. It contains original-treatment/checklist UI checks, previously passing species, Habitat and Recorder UI tests, recorder screenshot, species screenshot and status markers.
+- The signed in-place upgrade preserved the existing SQLite v27 database **byte-for-byte**, **1,613,824 bytes** (SHA-256 `d81db35483f36b64f10bcb239ea332546007fe03aa6f9ff1f7c4a79864ade434`). Existing media fixture survived; clean-workspace backup/restore and permanent Recorder dock test passed. Emulator version file confirms app versionCode **63**. Physical-device QA is still outstanding.
+- Direct user artifacts reverified in this session: `/mnt/data/LIKAS-v0.27.3-RC12-scientific-review-debug.apk` (9,429,652 bytes; SHA-256 `8a3f288728a56b92e65449652ab3cbb8e5e64fd5a277b3793350a29771819a97`), `/mnt/data/LIKAS-RC12-emulator-QA-10-tests.zip`, `/mnt/data/LIKAS_RC12_96_species_review_matrix.md`, `/mnt/data/LIKAS_RC12_96_species_scientific_review_register.json` and `/mnt/data/LIKAS_RC12_species_account_320dp.png`. Sandbox paths must be reverified in future chat sessions.
+- Scientific scope unchanged: all 96 priority species have uniform review records, 16 original-treatment/published-transcription pilot claims were added for three species, 64 earlier research claims remain, and **0 / 96** expert-reviewed complete. This is an RC12 **development preview**, not a scientifically certified wildlife identification release. PR #38 remains draft.
+
+---
+
+
 ## 29 October 2026 | RC12 scientific account review and signed pilot APK
 
 - **Latest owner direction:** execute Q1, Q2 and Q3 together: original literature diagnostics for 96 priority species, uniform habitat/range/ecology/conservation evidence, and a formal per-account scientific review checklist. Existing source has **96**, not 92, priority keys, with 24 birds, 24 amphibians, 24 reptiles and 24 mammals. Preserve all 96. PR #38 stays draft on `feature/likas-core-fieldwork-post-rc4`.

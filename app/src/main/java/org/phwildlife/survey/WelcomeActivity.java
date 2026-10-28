@@ -228,6 +228,13 @@ public class WelcomeActivity extends Activity {
         scope.setPadding(dp(6),dp(7),dp(6),dp(4));
         main.addView(scope);
 
+        main.addView(FieldVisuals.section(this,"Habitat & Ecology",
+            "Site habitats and environmental measurements"));
+        Button habitat=UiKit.button(this,"Explore habitat records","secondary");
+        main.addView(habitat,new LinearLayout.LayoutParams(-1,dp(52)));
+        habitat.setOnClickListener(v->startActivity(
+            new Intent(this,HabitatRecordsActivity.class)));
+
         Button toolsToggle=UiKit.button(this,"Field tools & settings  ▾","quiet");
         LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(54));
         toolMargin.topMargin=dp(12);main.addView(toolsToggle,toolMargin);

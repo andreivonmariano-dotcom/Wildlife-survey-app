@@ -59,7 +59,8 @@ public final class OfflinePhotoEvidence {
             if(bitmap!=null){
                 ImageView image=new ImageView(a);
                 image.setImageBitmap(bitmap);
-                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                image.setBackgroundColor(UiKit.BG);
                 image.setContentDescription(found.optString("caption",
                     "Photographic wildlife reference"));
                 LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,210));
@@ -68,18 +69,36 @@ public final class OfflinePhotoEvidence {
                 loaded=true;
             }
         }catch(Exception ignored){}
+        TextView credit=new TextView(a);
+        credit.setText(found.optString("caption")+"\n"+
+            "Photo: "+found.optString("author")+" · "+found.optString("license"));
+        credit.setTextSize(13);
+        credit.setTextColor(UiKit.MUTED);
+        credit.setPadding(dp(a,5),0,dp(a,5),dp(a,5));
+        parent.addView(credit);
+        android.widget.Button details=UiKit.button(a,
+            "Photo source & license  ▾","quiet");
+        LinearLayout.LayoutParams detailsLp=
+            new LinearLayout.LayoutParams(-1,dp(a,44));
+        parent.addView(details,detailsLp);
         TextView attribution=new TextView(a);
-        attribution.setText((loaded?"Reference photo: ":"Reference photo not yet bundled. Credit: ")+
-            found.optString("author")+" · "+found.optString("license")+
-            "\n"+found.optString("caption")+
-            "\nPhoto source and license: "+found.optString("sourceUrl")+
-            " · "+found.optString("licenseUrl"));
-        attribution.setTextSize(11);
+        attribution.setText("Photographer: "+found.optString("author")+
+            "\nLicense: "+found.optString("license")+
+            "\nFile source: "+found.optString("sourceUrl")+
+            "\nLicense terms: "+found.optString("licenseUrl"));
+        attribution.setTextSize(12);
         attribution.setTextColor(UiKit.MUTED);
         attribution.setTextIsSelectable(true);
         attribution.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
         attribution.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
-        attribution.setPadding(dp(a,5),0,dp(a,5),dp(a,7));
+        attribution.setPadding(dp(a,5),dp(a,7),dp(a,5),dp(a,8));
+        attribution.setVisibility(View.GONE);
         parent.addView(attribution);
+        details.setOnClickListener(v->{
+            boolean open=attribution.getVisibility()!=View.VISIBLE;
+            attribution.setVisibility(open?View.VISIBLE:View.GONE);
+            details.setText(open?"Photo source & license  ▴":
+                "Photo source & license  ▾");
+        });
     }
 }

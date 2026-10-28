@@ -68,7 +68,6 @@ public final class Rc7FieldAccounts {
         parent.addView(FieldVisuals.section(a,"RC7A priority research card",
             detailed?"Existing source-linked field account plus priority checklist record":
                 "Taxonomy verified against checklist · species biology review pending"));
-        OfflinePhotoEvidence.addForTaxon(a,parent,scientific);
         line(a,parent,"Identity and source family",
             p.optString("commonName")+" · "+scientific+" · "+p.optString("family"));
         if(!detailed)
@@ -93,14 +92,6 @@ public final class Rc7FieldAccounts {
         line(a,parent,"Source citation",p.optString("sourceCitation")+
             "\n"+p.optString("sourceUrl"));
         line(a,parent,"Scientific review limits",p.optString("scientificLimits"));
-        Button observe=UiKit.button(a,"Search dreidrei iNaturalist observations","quiet");
-        observe.setContentDescription("Search iNaturalist records from dreidrei for this taxon; external site");
-        parent.addView(observe);
-        observe.setOnClickListener(v->{
-            String url="https://www.inaturalist.org/observations?user_id=dreidrei&taxon_name="+
-                Uri.encode(scientific)+"&photos=true";
-            a.startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));
-        });
         return true;
     }
 }

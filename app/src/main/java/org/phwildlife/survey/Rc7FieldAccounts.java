@@ -19,20 +19,32 @@ public final class Rc7FieldAccounts {
     private static int dp(Activity a,int p){
         return Math.round(p*a.getResources().getDisplayMetrics().density);
     }
-    public static JSONArray read(Activity a){
+    /** Both private source batches are stable and read-only, with unique keys. */
+    public static synchronized JSONArray read(Activity a){
         if(accounts!=null)return accounts;
-        try(InputStream in=a.getAssets().open("rc7a_field_cards_v1.json");
-            ByteArrayOutputStream out=new ByteArrayOutputStream()){
-            byte[] buffer=new byte[8192];int n;
-            while((n=in.read(buffer))!=-1){
-                if(out.size()+n>240000)throw new IllegalArgumentException("RC7 pack too large");
-                out.write(buffer,0,n);
-            }
-            JSONObject pack=new JSONObject(out.toString("UTF-8"));
-            if(!"rc7a-priority-cards-1".equals(pack.optString("schemaVersion")))
-                throw new IllegalArgumentException("Unsupported priority pack");
-            accounts=pack.getJSONArray("accounts");
-        }catch(Exception e){accounts=new JSONArray();}
+        JSONArray combined=new JSONArray();
+        java.util.HashSet<String> seen=new java.util.HashSet<>();
+        for(String name:new String[]{"rc7a_field_cards_v1.json","rc7b_field_cards_v1.json"}){
+            try(InputStream in=a.getAssets().open(name);
+                ByteArrayOutputStream out=new ByteArrayOutputStream()){
+                byte[] buffer=new byte[8192];int n;
+                while((n=in.read(buffer))!=-1){
+                    if(out.size()+n>240000)throw new IllegalArgumentException("RC7 pack too large");
+                    out.write(buffer,0,n);
+                }
+                JSONObject pack=new JSONObject(out.toString("UTF-8"));
+                if(!"rc7a-priority-cards-1".equals(pack.optString("schemaVersion")))
+                    continue;
+                JSONArray listed=pack.getJSONArray("accounts");
+                for(int i=0;i<listed.length();i++){
+                    JSONObject item=listed.optJSONObject(i);
+                    if(item==null)continue;
+                    String key=item.optString("sourceTaxonKey");
+                    if(!key.isEmpty()&&seen.add(key))combined.put(item);
+                }
+            }catch(Exception ignored){}
+        }
+        accounts=combined;
         return accounts;
     }
     public static JSONObject find(Activity a,String scientific){
@@ -65,7 +77,7 @@ public final class Rc7FieldAccounts {
         JSONObject p=find(a,scientific);
         if(p==null)return false;
         boolean detailed="existing_source_linked_account".equals(p.optString("accountTier"));
-        parent.addView(FieldVisuals.section(a,"RC7A priority research card",
+        parent.addView(FieldVisuals.section(a,"RC7 priority research card",
             detailed?"Existing source-linked field account plus priority checklist record":
                 "Taxonomy verified against checklist · species biology review pending"));
         line(a,parent,"Identity and source family",

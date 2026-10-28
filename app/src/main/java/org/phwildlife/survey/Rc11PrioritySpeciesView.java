@@ -323,13 +323,6 @@ public final class Rc11PrioritySpeciesView {
         ArrayList<Fact> displayed=new ArrayList<>();
         for(int i=0;i<AREAS.length;i++)
             section(a,parent,AREAS[i],ICONS[i],facts,displayed);
-        if(facts.isEmpty()){
-            TextView scope=text(a,"Taxonomy record",15,true,UiKit.FOREST);
-            parent.addView(scope);
-            TextView hint=text(a,"Identification and ecology notes are not yet included in this reference.",13,false,UiKit.MUTED);
-            LinearLayout.LayoutParams h=new LinearLayout.LayoutParams(-1,-2);
-            h.topMargin=dp(a,5);h.bottomMargin=dp(a,12);parent.addView(hint,h);
-        }
         sourceDrawer(a,parent,scientific,
             column(taxon,"source")+" · "+column(taxon,"source_version"),
             column(taxon,"source_url"),column(taxon,"taxon_key"),facts);

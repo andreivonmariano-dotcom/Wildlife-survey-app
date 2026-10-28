@@ -21,7 +21,7 @@ public final class CatalogActivity extends Activity {
         super.onCreate(b);db=new FieldDb(this);
         LinearLayout layout=new LinearLayout(this);layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(22,22,22,22);layout.setBackgroundColor(UiKit.BG);
-        layout.addView(UiKit.title(this,"Species Library"));
+        layout.addView(UiKit.navigationHeader(this,"Species Library","Home",this::finish));
         TextView introduction=new TextView(this);
         introduction.setText("Offline species accounts with accepted names, former names, "+
             "regional source listings and available ecology references.");
@@ -52,9 +52,7 @@ public final class CatalogActivity extends Activity {
         Button sources=UiKit.button(this,"Catalog sources and versions","secondary");
         layout.addView(sources);
         sources.setOnClickListener(v->showCatalogSources());
-        Button back=UiKit.button(this,"‹ Home","quiet");
-        layout.addView(back);
-        back.setOnClickListener(v->finish());
+
         ScrollView scroll=new ScrollView(this);
         scroll.addView(layout);
         setContentView(scroll);refresh();

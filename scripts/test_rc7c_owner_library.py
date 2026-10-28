@@ -30,10 +30,14 @@ class Rc7cOwnerLibraryTests(unittest.TestCase):
         self.assertEqual(len(pack["records"]),48)
         self.assertTrue(all(r["sourceUrl"].startswith("https://") for r in pack["records"]))
         for r in pack["records"]:
-            self.assertEqual("source_taxonomy_reviewed_biology_pending",r["reviewStatus"])
+            self.assertIn(r["reviewStatus"],{
+                "source_taxonomy_reviewed_biology_pending",
+                "literature_synthesis_pending_specialist_review"})
             self.assertTrue(r["caution"])
             self.assertGreaterEqual(len(r["facts"]),3)
             self.assertTrue(all(f["sourceUrl"]==r["sourceUrl"] for f in r["facts"]))
+        self.assertGreaterEqual(sum(r["reviewStatus"]=="literature_synthesis_pending_specialist_review"
+            for r in pack["records"]),17)
         source=(CODE/"Rc7LiteratureNotes.java").read_text()
         self.assertIn("rc7_literature_batch_b_v1.json",source)
         self.assertIn("species ecology still unreviewed",source)

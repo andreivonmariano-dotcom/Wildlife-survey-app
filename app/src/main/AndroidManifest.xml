@@ -20,6 +20,7 @@
         <activity android:name=".DashboardActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".StationProgressActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".CatalogActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".DiagnosticGuideActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".TaxonDetailActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".SpeciesPickerActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".RegionalChecklistActivity" android:exported="false" android:screenOrientation="portrait" />

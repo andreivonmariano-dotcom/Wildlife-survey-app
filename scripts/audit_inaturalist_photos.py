@@ -96,7 +96,7 @@ def query_observer(observer,names,limit_pages):
 
 def valid_approved(item,targets):
     required=("photoId","observationId","taxon","observer","photoAttribution",
-        "photoLicense","photoLicenseUrl","mediumUrl","observationUrl","sha256",
+        "photoLicense","photoLicenseUrl","mediumUrl","observationUrl","photoPageUrl","sha256",
         "reviewedBy","reviewedOn","approvalState")
     if any(not item.get(k) for k in required):return False
     if item["taxon"] not in targets:return False
@@ -112,6 +112,8 @@ def valid_approved(item,targets):
     if not re.fullmatch(r"/photos/\d+/medium\.(jpg|jpeg)",url.path,re.I):return False
     if not url.path.startswith("/photos/"+str(item["photoId"])+"/"):return False
     if item["observationUrl"]!="https://www.inaturalist.org/observations/"+str(item["observationId"]):
+        return False
+    if item["photoPageUrl"]!="https://www.inaturalist.org/photos/"+str(item["photoId"]):
         return False
     return True
 

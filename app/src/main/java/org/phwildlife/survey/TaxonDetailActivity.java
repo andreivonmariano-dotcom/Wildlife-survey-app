@@ -271,6 +271,13 @@ public final class TaxonDetailActivity extends Activity {
                     "A checked diagnostic comparison is not yet available for this species. "+
                     "Keep uncertain determinations unresolved.");
             }
+            if(OfflinePhotoEvidence.hasOfflineTaxon(this,scientific)){
+                Button pictures=UiKit.button(this,"Compare offline wildlife photographs","secondary");
+                content.addView(pictures);
+                pictures.setOnClickListener(v->startActivity(
+                    new Intent(this,Rc8PhotoComparisonActivity.class)
+                        .putExtra("scientific_name",scientific)));
+            }
             if(DiagnosticGuideActivity.hasProfile(this,scientific)){
                 Button legacy=UiKit.button(this,"Compare source-checked ID characters","quiet");
                 content.addView(legacy);

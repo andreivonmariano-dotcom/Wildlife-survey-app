@@ -24,6 +24,7 @@
         <activity android:name=".StationProgressActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".CatalogActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".DiagnosticGuideActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Rc8TraitComparisonActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".TaxonDetailActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".Rc7SpeciesLibraryActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".SpeciesPickerActivity" android:exported="false" android:screenOrientation="portrait" />

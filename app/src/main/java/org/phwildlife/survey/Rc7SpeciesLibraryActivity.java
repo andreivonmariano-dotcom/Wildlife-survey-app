@@ -159,7 +159,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             }
             @Override public void afterTextChanged(Editable e){}
         });
-        scope.setSelection(1);
+        scope.setSelection(0);
         refresh();
     }
     private void refresh(){
@@ -199,7 +199,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             return;
         }
         rendered=0;results.removeAllViews();
-        status.setText(selected.size()+" matching source records · list is not site occurrence. "+
+        status.setText(selected.size()+" source records · checklist names are not complete species profiles. "+
             (filter==1?"Priority identities are checklist-backed; detailed field biology is still under review.":""));
         appendPage();
     }
@@ -234,10 +234,11 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
                 labels.addView(scientific);
             }
             String description=item.group+" · "+item.family;
-            if(Rc7FieldAccounts.priority(this,item.name))
-                description+=" · Priority";
-            if(Rc7LiteratureNotes.available(this,item.name))
-                description+=" · Literature";
+            if(guides.contains(item.name.toLowerCase(Locale.ROOT)))
+                description+=" · Introductory morphology";
+            else if(Rc7LiteratureNotes.available(this,item.name))
+                description+=" · Research summary";
+            else description+=" · Checklist only";
             if(photo!=null)description+=" · Photo";
             TextView meta=label(description,12,false);
             labels.addView(meta);

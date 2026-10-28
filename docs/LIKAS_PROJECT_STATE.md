@@ -1,5 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Follow-up usability corrections and current state
+
+- Owner-requested Q1/Q2/Q3 core usability implementation remains under draft PR #38. **Last application source commit:** `80e8240ac811e96682de3aa66069ded8c5559714`, directly on RC4-based `feature/likas-core-fieldwork-post-rc4`.
+- Individual unused project, station, route and study-template deletions are available from the Data Management category chooser, with explicit dependency checks and typed confirmation. All-survey, full-reset and project-reset controls are disabled when protected active/dependent data prevent them.
+- Permanent data deletion is now performed on an independent SQLite connection in a dedicated background executor, with a non-cancelable progress dialog during each authorized transaction. The UI shows completion or failure afterward. Default project and stable references survive. Stored field drafts/resume and method quick-action preferences are removed at the appropriate reset scope. **No actual user records were deleted during development.**
+- **Navigation:** Data management has one visible Workspace shortcut on Home, rather than a duplicate link under Field Tools. Species finder and Species Library arrow controls explicitly populate the bounded offline suggestion list before opening it.
+- **Scientific roadmap:** `docs/LIKAS_CORE_USABILITY_SPECIES_HABITAT_DATA_ROADMAP.md` documents the verified/current limitations and next milestones for a comprehensive Species Library, Habitat Atlas and current-version backup/restore. The new Habitat & Ecology screen is read-only, not a finished spatial atlas.
+- **QA:** Earlier application build/Python/JUnit CI `40659764742` succeeded on source commit `a988fd6906ae7686fb4db5c9ca8b32b653afc1ff`; more recent code (background deletion and Home link) requires final full CI status verification. No new APK was delivered here. Do **not** merge/release destructive controls before a real current-version backup/recovery route, in-place upgrade/record preservation, media testing and owner visual review.
+- App ID `org.phwildlife.survey.beta08`, SQLite 27, versionCode 49 and signing identity unchanged. Separate startup work remains untouched.
+
+---
+
+
 ## 28 October 2026 | Q1/Q2/Q3, usability and safe local data controls
 
 - **Owner direction:** Develop a more comprehensive Philippine Species Library, design Habitat and Ecology Atlas, review project/backup/scientific data organization, and make LIKAS easier to operate. Explicit requests include deleting all categories of saved data and adding a dropdown for species name search. Formal field test plans remain deferred, startup animation belongs to another chat.

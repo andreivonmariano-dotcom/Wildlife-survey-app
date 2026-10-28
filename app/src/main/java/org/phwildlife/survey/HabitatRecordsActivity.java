@@ -53,6 +53,7 @@ public final class HabitatRecordsActivity extends Activity {
         if(items==null)return;
         items.removeAllViews();
         SQLiteDatabase db=helper.getReadableDatabase();
+        OfflineFieldLibrary.addHabitats(this,items);
         items.addView(FieldVisuals.section(this,"Site habitat register",
             "Human-entered descriptions, not inferred vegetation types"));
         try(Cursor c=db.rawQuery("SELECT id,name,COALESCE(habitat,''),"+

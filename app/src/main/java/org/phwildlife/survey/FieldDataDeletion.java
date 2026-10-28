@@ -172,6 +172,71 @@ public final class FieldDataDeletion {
     public static void clearFavorites(SQLiteDatabase db){
         db.delete("taxa_favorites",null,null);
     }
+    private static boolean exists(SQLiteDatabase db,String sql,String id){
+        try(Cursor c=db.rawQuery(sql,new String[]{id})){
+            return c.moveToFirst();
+        }
+    }
+    /** Deletes an unused station, never a station with recorded or planned visits. */
+    public static void deleteSite(SQLiteDatabase db,String id){
+        if(id==null||id.isEmpty())throw new IllegalArgumentException("Station required");
+        db.beginTransaction();
+        try{
+            if(exists(db,"SELECT 1 FROM surveys WHERE station_id=? LIMIT 1",id)||
+               exists(db,"SELECT 1 FROM survey_stations WHERE station_id=? LIMIT 1",id)||
+               exists(db,"SELECT 1 FROM point_counts WHERE station_id=? LIMIT 1",id)||
+               exists(db,"SELECT 1 FROM sampling_units WHERE station_id=? LIMIT 1",id)||
+               exists(db,"SELECT 1 FROM station_environment WHERE station_id=? LIMIT 1",id)||
+               exists(db,"SELECT 1 FROM route_template_stations WHERE station_id=? LIMIT 1",id)||
+               exists(db,"SELECT 1 FROM trap_deployments WHERE station_id=? LIMIT 1",id)||
+               exists(db,"SELECT 1 FROM coverboard_units WHERE station_id=? LIMIT 1",id))
+                throw new IllegalStateException(
+                    "Station has survey, visit, device or route references");
+            int removed=db.delete("sites","id=?",new String[]{id});
+            if(removed!=1)throw new IllegalArgumentException("Station not found");
+            db.setTransactionSuccessful();
+        }finally{db.endTransaction();}
+    }
+    public static void deleteProject(SQLiteDatabase db,String id){
+        if(id==null||id.isEmpty()||"default".equals(id))
+            throw new IllegalArgumentException("The default project must remain available");
+        db.beginTransaction();
+        try{
+            if(exists(db,"SELECT 1 FROM surveys WHERE project_id=? LIMIT 1",id)||
+               exists(db,"SELECT 1 FROM sites WHERE project_id=? LIMIT 1",id)||
+               exists(db,"SELECT 1 FROM route_templates WHERE project_id=? LIMIT 1",id)||
+               exists(db,"SELECT 1 FROM study_protocol_templates WHERE project_id=? LIMIT 1",id))
+                throw new IllegalStateException(
+                    "Project still owns surveys, stations, routes or study templates");
+            int removed=db.delete("projects","id=?",new String[]{id});
+            if(removed!=1)throw new IllegalArgumentException("Project not found");
+            db.setTransactionSuccessful();
+        }finally{db.endTransaction();}
+    }
+    public static void deleteRoute(SQLiteDatabase db,String id){
+        if(id==null||id.isEmpty())throw new IllegalArgumentException("Route required");
+        db.beginTransaction();
+        try{
+            if(exists(db,"SELECT 1 FROM surveys WHERE route_template_id=? LIMIT 1",id))
+                throw new IllegalStateException("Route belongs to saved survey history");
+            db.delete("route_template_stations","template_id=?",new String[]{id});
+            int removed=db.delete("route_templates","id=?",new String[]{id});
+            if(removed!=1)throw new IllegalArgumentException("Route not found");
+            db.setTransactionSuccessful();
+        }finally{db.endTransaction();}
+    }
+    public static void deleteStudyTemplate(SQLiteDatabase db,String id){
+        if(id==null||id.isEmpty())throw new IllegalArgumentException("Study template required");
+        db.beginTransaction();
+        try{
+            if(exists(db,
+                "SELECT 1 FROM survey_study_protocols WHERE template_id=? LIMIT 1",id))
+                throw new IllegalStateException("Study template is referenced by survey history");
+            int removed=db.delete("study_protocol_templates","id=?",new String[]{id});
+            if(removed!=1)throw new IllegalArgumentException("Study template not found");
+            db.setTransactionSuccessful();
+        }finally{db.endTransaction();}
+    }
     /** All user-created data. Reference catalog rows never erased by this option. */
     public static Report clearAll(Context context,SQLiteDatabase db){
         ArrayList<String> photos=new ArrayList<>(),calls=new ArrayList<>();

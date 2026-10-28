@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 54
-        versionName '0.27.3-rc7c-owner-photos-preview'
+        versionCode 55
+        versionName '0.27.3-rc7d-field-guide-device-preview'
     }
     signingConfigs {
         debug {

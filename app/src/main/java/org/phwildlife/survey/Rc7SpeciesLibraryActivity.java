@@ -135,6 +135,10 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         comparePhotos.setOnClickListener(v->startActivity(
             new Intent(this,Rc8PhotoComparisonActivity.class)));
         root.addView(comparePhotos,new LinearLayout.LayoutParams(-1,dp(48)));
+        Button differences=UiKit.button(this,"Cited differential characters","quiet");
+        differences.setOnClickListener(v->startActivity(
+            new Intent(this,Rc9DifferentialActivity.class)));
+        root.addView(differences,new LinearLayout.LayoutParams(-1,dp(45)));
         status=label("",13,false);root.addView(status);
         ScrollView scroll=new ScrollView(this);
         results=new LinearLayout(this);results.setOrientation(LinearLayout.VERTICAL);

@@ -78,8 +78,12 @@ public final class Rc7LiteratureNotes {
     public static boolean add(Activity a,LinearLayout parent,String scientific){
         JSONObject entry=find(a,scientific);
         if(entry==null)return false;
-        parent.addView(FieldVisuals.section(a,"Published species information",
-            "Literature checked · identity key still needs specialist validation"));
+        boolean identityOnly="source_taxonomy_reviewed_biology_pending".equals(
+            entry.optString("reviewStatus"));
+        parent.addView(FieldVisuals.section(a,
+            identityOnly?"Taxonomic source and research notes":"Published species information",
+            identityOnly?"Checklist-backed identity · species ecology still unreviewed":
+                "Literature cited · identification still needs specialist validation"));
         JSONArray facts=entry.optJSONArray("facts");
         if(facts!=null){
             for(int i=0;i<facts.length();i++){

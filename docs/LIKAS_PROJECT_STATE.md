@@ -66,6 +66,14 @@
 - **Merge boundary:** Keep PR #38 draft until owner reviews real screens and confirms compatibility with the separate startup branch. Preserve existing field observations, signing identity and unfinished surveys.
 
 
+## 28 October 2026 | Owner-requested scientific core usability features on draft branch
+
+- **Core source:** `feature/likas-core-fieldwork-post-rc4`, draft PR #38, RC4 versionCode 49, SQLite 27, unchanged app ID and signing. This is separate from startup animation work. Last app-code commit `80e8240ac811e96682de3aa66069ded8c5559714`; later state/decision doc changes only.
+- **Implemented but not yet field approved:** Species-reference and survey-picker autocomplete dropdown by common/scientific/former name, bounded SQLite suggestions and group filtering. Data Management on Home supports selected archived-survey deletion, bulk survey/evidence cleanup, unused station/project/route/study-template deletion, favorites reset, and all-user-created-data reset with typed confirmation, referential checks, protected active surveys and nonblocking worker. Source catalog remains installed. A read-only Habitat & Ecology records view is linked from Home, with missing-data and measurement-provenance labels.
+- **Roadmap:** `docs/LIKAS_CORE_USABILITY_SPECIES_HABITAT_DATA_ROADMAP.md` on the core branch documents the richer species reference, habitat atlas, environmental measurements, offline maps, privacy, project backup/restore and scientific exports to develop next.
+- **Safety/release gate:** No deletion executed against owner records. Existing ZIP export does not prove full application restore, and `ImportActivity` still supports only legacy v0.7 records. No new versioned release APK. Physical in-place upgrade, full backup/restore, media deletion, actual phone UI and owner acceptance required before exposing destructive operations to field users. Code CI results and review remain tracked on draft PR #38.
+- **Keep startup scope separate** and do not use historical `main` v0.15 app code to build a new core release.
+
 ## Mission
 
 Build **LIKAS** as a Philippines-first, all-in-one biodiversity tool for wildlife biologists and ecologists. Five product pillars: (1) Field Survey Studio, (2) Philippine Species Library, (3) Habitat and Ecology Atlas, (4) Research and Conservation Watch, and (5) Analysis and Research Export. Scientific integrity, offline field use, data preservation, and clear interaction outrank decoration.

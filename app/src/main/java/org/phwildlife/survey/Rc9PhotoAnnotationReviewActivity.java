@@ -162,9 +162,11 @@ public final class Rc9PhotoAnnotationReviewActivity extends Activity {
     /** Treat invalid or oversized existing drafts as an error, never as an empty file. */
     private JSONObject draftPack() throws IOException {
         File file=new File(getFilesDir(),FILE);
-        if(!file.exists())return new JSONObject();
-        if(!file.isFile())throw new IOException("Draft storage is not a file");
-        try(FileInputStream in=new FileInputStream(file);
+        AtomicFile atomic=new AtomicFile(file);
+        if(!file.exists()&&!new File(file.getPath()+".bak").exists())
+            return new JSONObject();
+        if(file.exists()&&!file.isFile())throw new IOException("Draft storage is not a file");
+        try(FileInputStream in=atomic.openRead();
             ByteArrayOutputStream out=new ByteArrayOutputStream()){
             byte[] b=new byte[4096];int n;
             while((n=in.read(b))!=-1){

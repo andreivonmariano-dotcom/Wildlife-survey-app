@@ -103,6 +103,11 @@ class CoreEvidenceTests(unittest.TestCase):
                 ("%oldus one%",)*3).fetchall()
         self.assertEqual([("SRC:1",)], records)
 
+    def test_unknown_locality_is_never_reported_as_absence(self):
+        self.assertIn("onlyLocal&&province.trim().isEmpty()&&island(geographicRegion).isEmpty()",PICKER)
+        self.assertIn("This does not mean species are absent.",PICKER)
+        self.assertIn("Use All species or set the geographic survey area.",PICKER)
+
     def test_regional_empty_and_large_results_are_honest(self):
         self.assertIn("LIMIT 1001", REGIONAL)
         self.assertIn("if(ids.size()==1000){capped=true;break;}", REGIONAL)

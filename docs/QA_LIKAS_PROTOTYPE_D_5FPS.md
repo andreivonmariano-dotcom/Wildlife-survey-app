@@ -12,7 +12,7 @@ Recorded 28 October 2026, Asia/Manila.
 - All four waterfalls in each lighting state received separate downstream-moving pixel water strands, secondary foam and splash keyframes inside the original alpha masks. Original water silhouette and textured water source are retained, avoiding the previous flat blue repaint.
 - Small sky bird markings on the static plates cleaned via localized pixel repair. Distant mountain mist and some source canopy shape remain static. This is **partial background cleanup**, not a full clean-room reconstruction of every moving shape.
 - An independently assembled 1,488,772-byte WebP atlas archive includes four fixed day/night images, 28 atlas files and a JSON component manifest.
-- Full editable asset archive: LIKAS_Layered_Sprites_5FPS_Prototype_D.zip (9,349,505 bytes; SHA-256 36ce19761297e07a206c9efc8112199d90c3e2846f63130e54a0ed90c3ef2f5d).
+- Full editable asset archive: LIKAS_Layered_Sprites_5FPS_Prototype_D.zip (9,350,495 bytes; SHA-256 4e955a2cc5adaa736a4e8acd77c88bd2a545843827c4587e67156a3d31ebdead).
 - Android asset archive SHA-256 def85e227587fdadee75956b6f105b57feb38f2bff27c6889c1f1edbfc042498. Contents are downloadable in this chat; **binary assets have not been committed into GitHub**.
 - Standalone reproducibility scripts: rebuild_assets.py and validate_assets.py. Validated 28 groups, 760 frame files and transparent alpha. No source image is moved/warped as a whole.
 
@@ -34,3 +34,7 @@ Recorded 28 October 2026, Asia/Manila.
 7. No Android APK containing Prototype D has been compiled or installed. Compilation of the unconnected class does not prove media playback works.
 
 Do not advertise the current RC4 APK as including this layered scene.
+
+## CI correction
+- First source-only PR test showed Java compiler conflict with Android View.animate(). This was corrected by renaming the private check to shouldAnimateSprites().
+- Source change commit: afa2fbcc823183905fa7b51259e070b76d020374. Final Android CI outcome is tracked in the PR run list; this documentation does not claim physical phone validation.

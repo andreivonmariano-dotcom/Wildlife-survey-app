@@ -1,6 +1,6 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
-**State revision:** 1.2  
+**State revision:** 1.5  
 **Recorded:** 28 October 2026, Asia/Manila  
 **Repository:** `andreivonmariano-dotcom/Wildlife-survey-app` (private)  
 **Branch checked:** `main`  
@@ -54,6 +54,16 @@ Build **LIKAS** as a Philippines-first, all-in-one biodiversity tool for wildlif
 - **Scope:** The generated artwork and ZIP exist as direct attachments in the originating chat, **not** in GitHub or the Android APK. The plate dimensions are 1224 x 1668 but come from an upscaled 612 x 834 crop. Native-detail art, compiled Android integration, device battery/performance tests, and a downloadable rebuilt APK are pending.
 - **Durable brief:** `docs/LIKAS_STARTUP_V2_CONCEPT.md` records the candidate art direction, UI hierarchy, proposed local-time crossfades, performance requirements, and acceptance gate.
 - **Next action:** Review the visual prototype with the owner, then implement a separate Android test branch with approved higher-native-resolution scenery. Preserve the live survey navigation and historical records. Test before release.
+
+## 28 October 2026 | Native rainforest preview build and direct APK delivery
+
+- **Latest explicit request:** Refine the native rainforest artwork toward the approved concept and complete a safe, downloadable Android test build (owner's Q1 and Q3).
+- **Source branch:** `feature/rainforest-parallax-v2`, draft PR #37: https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/pull/37 . **Main app code remains v0.15.0-beta.** The parallax source was not merged and the new preview is not a production release.
+- **Code implemented:** `RainforestBackdropView.java`, `RainforestMotion.java`, JUnit tests, welcome-screen hero integration, richer fixed canopy texture, ravine cliff detailing, waterfall spray, and ferns. Canvas has independently moving planes and a local-time morning/day/dusk/night palette.
+- **Android CI verification:** Feature-branch code commit `23e1c8f5bb48fe790caabebec0931493531a8d25` passed GitHub Actions run `40630133535` for Java tests and debug APK build. The branch-only CI safely reuses the existing signing key and skips publication to the stable GitHub release.
+- **Downloaded APK delivered in originating chat:** `LIKAS-v0.16.0-parallax-preview-debug.apk`, 280,733 bytes, SHA256 `9de10ad747a2b2b0454ecc295b7bf6d9d9bc3faee69921a0cd0f01e474b32653`. Parsed APK manifest confirms package `org.phwildlife.survey.beta08`, versionCode 18, versionName `0.16.0-parallax-preview`. APK v2 signing certificate SHA256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` **matches** v0.15 APK from main CI run `40627444544`. Download links from an earlier chat are not reusable without verifying the file in that session.
+- **Not yet field verified:** On-device upgrade/data retention, actual Android frame-rate, battery and temperature, phone screenshot/visual parity, TalkBack, survey navigation and long-term endurance. The achieved 60 FPS value must not be claimed without handset measurement.
+- **Next:** Use preview APK for real-device install/regression and FPS checks, obtain explicit final visual approval, and merge PR #37 only after acceptance. See branch file `docs/LIKAS_PARALLAX_ANDROID_QA.md`.
 
 ## Current blockers and nonclaims
 

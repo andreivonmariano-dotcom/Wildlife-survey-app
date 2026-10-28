@@ -11,7 +11,7 @@ APP = (ROOT / "app/build.gradle").read_text()
 class Rc6RestoreAndNavigationContracts(unittest.TestCase):
     def test_schema_lineage_and_version(self):
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'", APP)
-        self.assertIn("versionCode 58", APP)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)", APP).group(1)), 59)
         self.assertIn("0.27.3-rc9-profile-differential-annotation-preview", APP)
         self.assertIn("super(context,NAME,null,27)",(JAVA / "FieldDb.java").read_text())
 

@@ -1,0 +1,94 @@
+package org.phwildlife.survey;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import static org.junit.Assert.*;
+
+/** Disposable-emulator UI assertions for the 96-taxon shared species card. */
+@RunWith(AndroidJUnit4.class)
+public final class Rc11SpeciesAccountInstrumentedTest {
+    private static ArrayList<View> descendants(View root){
+        ArrayList<View> all=new ArrayList<>();
+        all.add(root);
+        if(root instanceof ViewGroup){
+            ViewGroup parent=(ViewGroup)root;
+            for(int i=0;i<parent.getChildCount();i++)
+                all.addAll(descendants(parent.getChildAt(i)));
+        }
+        return all;
+    }
+    private static boolean containsText(ArrayList<View> all,String text){
+        for(View v:all)if(v instanceof TextView&&
+            ((TextView)v).getText().toString().contains(text))return true;
+        return false;
+    }
+    @Test public void testIconSectionsAndCitationDrawer()throws Exception{
+        Intent intent=new Intent(InstrumentationRegistry.getInstrumentation()
+            .getTargetContext(),TaxonDetailActivity.class);
+        intent.putExtra("taxon_query","Pithecophaga jefferyi");
+        try(ActivityScenario<TaxonDetailActivity> scenario=ActivityScenario.launch(intent)){
+            scenario.onActivity(activity->{
+                View root=activity.getWindow().getDecorView();
+                ArrayList<View> views=descendants(root);
+                assertTrue(containsText(views,"Pithecophaga jefferyi"));
+                assertTrue(containsText(views,"Identification"));
+                assertTrue(containsText(views,"Habitat"));
+                assertTrue(containsText(views,"Sources & details"));
+                assertFalse("Legacy RC7 cards must not stack",
+                    containsText(views,"RC7 priority research card"));
+                assertFalse("No front-facing review boilerplate",
+                    containsText(views,"specialist key review remains pending"));
+                int icons=0;
+                for(View v:views)
+                    if(v.getClass().getName().contains("Rc11PrioritySpeciesView$Glyph"))
+                        icons++;
+                assertTrue("Vector field icons required",icons>=2);
+                for(View v:views)
+                    if(v instanceof Button&&((Button)v).getText().toString()
+                        .startsWith("Sources & details")){
+                        v.performClick();break;
+                    }
+                assertTrue(containsText(descendants(root),"Evidence notes"));
+                if(root.getWidth()>0&&root.getHeight()>0){
+                    Bitmap bitmap=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
+                        Bitmap.Config.ARGB_8888);
+                    root.draw(new Canvas(bitmap));
+                    File output=new File(activity.getFilesDir(),
+                        "rc11_species_account_320dp.png");
+                    try(FileOutputStream stream=new FileOutputStream(output)){
+                        assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG,90,stream));
+                    }catch(Exception e){throw new IllegalStateException(e);}
+                    bitmap.recycle();
+                }
+            });
+        }
+    }
+    @Test public void testSparsePriorityHasNoPlaceholderStack()throws Exception{
+        Intent intent=new Intent(InstrumentationRegistry.getInstrumentation()
+            .getTargetContext(),TaxonDetailActivity.class);
+        intent.putExtra("taxon_query","Buceros hydrocorax");
+        try(ActivityScenario<TaxonDetailActivity> scenario=ActivityScenario.launch(intent)){
+            scenario.onActivity(activity->{
+                ArrayList<View> views=descendants(activity.getWindow().getDecorView());
+                assertTrue(containsText(views,"Buceros hydrocorax"));
+                assertTrue(containsText(views,"Sources & details"));
+                assertFalse(containsText(views,"Unassessed. No reviewed ecological profile installed."));
+                assertFalse(containsText(views,"A detailed account is not yet source-checked"));
+                assertFalse(containsText(views,"Review status: Not independently reviewed"));
+            });
+        }
+    }
+}

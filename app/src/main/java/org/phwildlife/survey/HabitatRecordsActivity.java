@@ -49,6 +49,11 @@ public final class HabitatRecordsActivity extends Activity {
         other.leftMargin=dp(8);
         tabs.addView(recordsTab,other);
         root.addView(tabs);
+        Button compareHabitat=UiKit.button(this,"Compare habitat traits","secondary");
+        compareHabitat.setContentDescription("Compare fifteen cited habitat formations and their field indicators");
+        root.addView(compareHabitat,new LinearLayout.LayoutParams(-1,dp(49)));
+        compareHabitat.setOnClickListener(v->startActivity(new Intent(this,Rc8TraitComparisonActivity.class)
+            .putExtra("comparison_mode","habitat")));
         guideTab.setOnClickListener(v->{selectedTab=0;render();});
         recordsTab.setOnClickListener(v->{selectedTab=1;render();});
         ScrollView scroll=new ScrollView(this);

@@ -45,6 +45,8 @@ class CompactPrioritySpeciesContracts(unittest.TestCase):
         media=(CODE/'OfflinePhotoEvidence.java').read_text()
         self.assertIn('public static void addCompactForTaxon',media)
         self.assertIn('View photo & credits',media)
+        self.assertIn('indexOf(", all rights reserved")',media)
+        self.assertNotIn('Field reference",13',view)
         self.assertIn("setVisibility(View.GONE)",view)
         self.assertNotIn("not yet included in this reference",view)
         self.assertNotIn("research notes are shown below",view)

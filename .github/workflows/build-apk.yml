@@ -3,7 +3,7 @@ on:
   push:
     branches: [main, 'release/v0.27-integrated-ux-performance-qa']
   pull_request:
-    branches: [main, 'release/v0.27-integrated-ux-performance-qa', 'ui/v0.27.1-field-polish-quality-labels', 'ui/likas-startup-screen-r1-20261027']
+    branches: [main, 'release/v0.27-integrated-ux-performance-qa', 'ui/v0.27.1-field-polish-quality-labels', 'ui/likas-startup-screen-r1-20261027', 'feature/v0.27.3-startup-living-forest']
   workflow_dispatch:
 jobs:
   build:

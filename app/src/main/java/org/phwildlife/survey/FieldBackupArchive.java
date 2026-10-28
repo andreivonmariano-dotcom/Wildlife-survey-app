@@ -109,8 +109,17 @@ public final class FieldBackupArchive {
         }
         try(FieldDb f=new FieldDb(ctx)){
             SQLiteDatabase db=f.getReadableDatabase();
-            for(String t:new String[]{"surveys","field_records","sightings",
-                    "sites","route_templates","study_protocol_templates","taxa_favorites"}){
+            for(String t:new String[]{
+                    "surveys","field_records","sightings","point_counts",
+                    "sampling_units","survey_stations","survey_outcome_audit",
+                    "survey_effort_pauses","station_environment","track_points",
+                    "area_search_passes","spotlight_passes","survey_study_protocols",
+                    "acoustic_labels","acoustic_clips","trap_captures","trap_checks",
+                    "coverboard_checks","coverboard_units","trap_deployments",
+                    "track_sign_encounters","track_sign_efforts","observation_media",
+                    "protocol_media","record_edits",
+                    "sites","route_templates","route_template_stations",
+                    "study_protocol_templates","taxa_favorites"}){
                 try(Cursor c=db.rawQuery("SELECT COUNT(*) FROM \""+t+"\"",null)){
                     if(!c.moveToFirst()||c.getLong(0)!=0)return false;
                 }

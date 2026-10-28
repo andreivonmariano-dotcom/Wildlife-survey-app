@@ -39,7 +39,7 @@ class LikasActiveLineageTest(unittest.TestCase):
 
     def test_app_identity_rejected_if_changed(self):
         self.assertTrue(any("applicationId" in e for e in
-                            self.check(gradle(50, app="other.app.id")))
+                            self.check(gradle(50, app="other.app.id"))))
 
 if __name__ == "__main__":
     unittest.main()

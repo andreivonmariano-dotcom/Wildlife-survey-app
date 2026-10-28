@@ -187,13 +187,13 @@ public final class TaxonDetailActivity extends Activity {
             latin.setTypeface(null,Typeface.BOLD_ITALIC);
             latin.setPadding(0,dp(3),0,dp(3));
             content.addView(latin);
-            content.addView(UiKit.sectionTitle(this,"Identification and taxonomy"));
+            content.addView(FieldVisuals.section(this,"Identification and taxonomy",""));
             paragraph("Classification",col(c,"taxon_group")+" · "+
                 col(c,"order_name")+" · "+col(c,"family"));
             paragraph("Taxonomic authority",col(c,"authority"));
             paragraph("Endemism / origin",col(c,"distribution_status"));
             paragraph("Philippine distribution in source",col(c,"distribution_text"));
-            content.addView(UiKit.sectionTitle(this,"Conservation references"));
+            content.addView(FieldVisuals.section(this,"Conservation references",""));
             paragraph("IUCN category (source snapshot)",col(c,"iucn_red_list"));
             paragraph("Philippine Red List category (source snapshot)",col(c,"ph_red_list"));
             paragraph("CITES (source snapshot)",col(c,"cites"));
@@ -221,7 +221,7 @@ public final class TaxonDetailActivity extends Activity {
             sourceLink("Bird vocalizations on xeno-canto",
                 col(c,"sound_url"),"https://www.xeno-canto.org/species/");
             paragraph("Source record ID",col(c,"taxon_key"));
-            content.addView(UiKit.sectionTitle(this,"Habitat and elevation"));
+            content.addView(FieldVisuals.section(this,"Habitat and elevation",""));
             try(Cursor ecology=database.rawQuery(
                 "SELECT habitat_codes,elevation_min_m,elevation_max_m,"+
                     "source,source_version,review_status,source_url,evidence_note "+
@@ -262,7 +262,7 @@ public final class TaxonDetailActivity extends Activity {
                 }
             }
             if(names.length()>0)paragraph("Previous scientific names",names.toString());
-            content.addView(UiKit.sectionTitle(this,"Regional source evidence"));
+            content.addView(FieldVisuals.section(this,"Regional source evidence",""));
             StringBuilder regional=new StringBuilder();
             try(Cursor evidence=database.rawQuery(
                 "SELECT area_type,area_label,evidence_basis,evidence_text,"+

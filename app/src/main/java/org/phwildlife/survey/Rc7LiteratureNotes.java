@@ -23,7 +23,8 @@ public final class Rc7LiteratureNotes {
     private static JSONArray entries;
     private static final String[] FILES={
         "rc7_literature_birds_amphibians_v1.json",
-        "rc7_literature_reptiles_mammals_v1.json"
+        "rc7_literature_reptiles_mammals_v1.json",
+        "rc7_literature_batch_b_v1.json"
     };
     private static int dp(Activity a,int v){
         return Math.round(v*a.getResources().getDisplayMetrics().density);

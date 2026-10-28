@@ -24,7 +24,7 @@ class NewUsabilityContracts(unittest.TestCase):
         adapter=source("SpeciesReferenceSuggestionAdapter.java")
         self.assertIn("taxon_synonyms",adapter)
         self.assertIn("LIMIT 90",adapter)
-        self.assertIn("list.size()<24",adapter)
+        self.assertIn("list.size()<8",adapter)
         self.assertIn("groupFilter",adapter)
         for activity in ["TaxonDetailActivity.java","SpeciesPickerActivity.java"]:
             s=source(activity)

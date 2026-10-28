@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -33,6 +35,8 @@ public final class RegionalChecklistActivity extends Activity {
     private final ArrayList<String> ids=new ArrayList<>();
     private final ArrayList<String> titles=new ArrayList<>();
     private ArrayAdapter<String> adapter;
+    private final Handler searchHandler=new Handler(Looper.getMainLooper());
+    private final Runnable searchRefresh=this::refresh;
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
@@ -57,7 +61,7 @@ public final class RegionalChecklistActivity extends Activity {
         root.addView(groupFilter);
         search=new EditText(this);
         search.setSingleLine(true);
-        search.setHint("Filter scientific or common name");
+        search.setHint("Filter common, scientific, or former name");
         search.setTextSize(15);
         root.addView(search);
         status=new TextView(this);
@@ -91,7 +95,8 @@ public final class RegionalChecklistActivity extends Activity {
         search.addTextChangedListener(new TextWatcher(){
             @Override public void beforeTextChanged(CharSequence s,int a,int c,int f){}
             @Override public void onTextChanged(CharSequence s,int start,int before,int count){
-                refresh();
+                searchHandler.removeCallbacks(searchRefresh);
+                searchHandler.postDelayed(searchRefresh,180L);
             }
             @Override public void afterTextChanged(Editable e){}
         });
@@ -122,31 +127,42 @@ public final class RegionalChecklistActivity extends Activity {
         String term=TaxonSearchPolicy.trim(search.getText().toString());
         if(!term.isEmpty()){
             where+=" AND (LOWER(c.common_name) LIKE ? ESCAPE '!' OR "+
-                "LOWER(c.scientific_name) LIKE ? ESCAPE '!')";
+                "LOWER(c.scientific_name) LIKE ? ESCAPE '!' OR EXISTS ("+
+                "SELECT 1 FROM taxon_synonyms a WHERE a.taxon_key=c.taxon_key "+
+                "AND LOWER(a.alias_name) LIKE ? ESCAPE '!'))";
             String pattern=TaxonSearchPolicy.contains(term);
-            args.add(pattern);args.add(pattern);
+            args.add(pattern);args.add(pattern);args.add(pattern);
         }
         ids.clear();titles.clear();
+        boolean capped=false;
+        String queryError=null;
         try(Cursor c=db.getReadableDatabase().rawQuery(
             "SELECT DISTINCT e.taxon_key,c.common_name,c.scientific_name "+
                 "FROM taxon_occurrence_evidence e JOIN taxon_catalog c "+
                 "ON e.taxon_key=c.taxon_key WHERE "+where+
-                " ORDER BY c.taxon_group,c.scientific_name COLLATE NOCASE LIMIT 1000",
+                " ORDER BY c.taxon_group,c.scientific_name COLLATE NOCASE LIMIT 1001",
             args.toArray(new String[0]))){
             while(c.moveToNext()){
+                if(ids.size()==1000){capped=true;break;}
                 ids.add(c.getString(0));
                 String common=c.isNull(1)?"":c.getString(1);
                 String scientific=c.getString(2);
                 titles.add((common.isEmpty()?"":common+" · ")+scientific);
             }
-        }catch(Exception ignored){
+        }catch(Exception failure){
             ids.clear();titles.clear();
+            queryError="Regional catalog unavailable: "+failure.getClass().getSimpleName();
         }
         adapter.notifyDataSetChanged();
+        if(queryError!=null){status.setText(queryError);return;}
         status.setText(selected+" · "+ids.size()+" source-listed taxa"+
             ("Davao Region".equals(selected)?
                 "\nProvince records only. Davao City evidence is not separately assessed here.":"")+
+            (capped?"\nShowing first 1,000 results. Narrow the name or group filter.":"")+
             (ids.isEmpty()?"\nNo matching reviewed source listings in the installed catalog.":""));
     }
-    @Override protected void onDestroy(){db.close();super.onDestroy();}
+    @Override protected void onDestroy(){
+        searchHandler.removeCallbacks(searchRefresh);
+        db.close();super.onDestroy();
+    }
 }

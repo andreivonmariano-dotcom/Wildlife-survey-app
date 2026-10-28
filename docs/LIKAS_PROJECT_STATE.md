@@ -1,12 +1,24 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
-**State revision:** 1.5  
+**State revision:** 1.6  
 **Recorded:** 28 October 2026, Asia/Manila  
 **Repository:** `andreivonmariano-dotcom/Wildlife-survey-app` (private)  
 **Branch checked:** `main`  
 **Observed repository HEAD prior to startup-scenery cleanup:** `f1ef6583647d05ae3cbbb915b2f54370150be33c` on `main`. The cleanup commit follows this SHA. Read current `main` HEAD before further edits.  
 **Latest app-feature code milestone observed:** `dc0362d23d0f74b6bca57c66da6e20c34adfd52d` (v0.15); later `c7c5742` and `44825d7` commits added LIKAS forest and brand files.  
 **Evidence:** GitHub `README.md`, directory tree, selected source files, previous LIKAS project-chat decisions. No direct Android handset test was performed for this snapshot.
+
+## Critical baseline correction | 28 October 2026, Asia/Manila
+
+**Current app baseline is NOT the default branch's 0.15 beta.** The owner confirmed current LIKAS installation **v0.27.3 RC4**. GitHub branch `feature/v0.27.3-startup-living-forest` has `app/build.gradle` versionName `0.27.3-rc4`, versionCode **49**, app ID `org.phwildlife.survey.beta08`, and **SQLite schema 27**. Its `docs/QA_v0_27_3_LIVING_FOREST_STARTUP.md` records the built RC4 APK, verified signature continuity, and outstanding physical-device tests. PR #35 tracks this branch.
+
+**Newest sprite-player continuation:** `feature/v0.27.4-layered-sprite-player-stage` (draft PR #36), derived from RC4. It contains `LikasSpriteForestView.java` and a 5 FPS separately animated sprite prototype direction. The actual binary sprite assets are not present in that branch's APK, and `app/build.gradle` is still RC4 versionCode 49. Do not claim a new v0.27.4 APK exists.
+
+**Wrong-branch development incident:** An assistant used `main` v0.15.0-beta (versionCode 17, older database) instead of the newer release-candidate branch. It incorrectly built and delivered `0.16.0-parallax-preview` (versionCode 18) from `feature/rainforest-parallax-v2`, recorded in PR #37. That old-baseline preview **is NOT an update** to RC4. It omits changes and migrations present in v0.27.x. **Do not install its APK over RC4, do not uninstall RC4 to permit downgrading, and do not merge PR #37.** PR #37 was closed as obsolete, unmerged, on 28 October 2026. Previous v0.16 claims below are historical and superseded, not a current recommendation.
+
+**Future work must follow the RC4 → 0.27.4 staged sprite-player lineage**, preserve accepted original artwork, screen semantics and 5 FPS individual sprite direction, and check real current branch code and artifacts before release claims. Do not select a build baseline solely from GitHub's default branch.
+
+---
 
 ## Mission
 

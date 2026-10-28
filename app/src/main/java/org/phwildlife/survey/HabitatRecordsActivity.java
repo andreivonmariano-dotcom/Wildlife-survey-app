@@ -36,7 +36,7 @@ public final class HabitatRecordsActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(16),dp(12),dp(16),dp(12));
-        root.addView(UiKit.title(this,"Habitat & Ecology"));
+        root.addView(UiKit.navigationHeader(this,"Habitat & Ecology","Home",this::finish));
         TextView note=label("Offline reference guide and separately recorded field evidence.",13);
         note.setTextColor(UiKit.MUTED);
         root.addView(note);
@@ -58,9 +58,7 @@ public final class HabitatRecordsActivity extends Activity {
         items.setPadding(0,dp(8),0,dp(20));
         scroll.addView(items);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        Button back=UiKit.button(this,"Back to workspace","quiet");
-        back.setOnClickListener(v->finish());
-        root.addView(back,new LinearLayout.LayoutParams(-1,dp(52)));
+
         setContentView(root);
         render();
     }

@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -46,7 +47,8 @@ public final class SpeciesPickerActivity extends Activity {
     private final Handler ui=new Handler(Looper.getMainLooper());
     private final ExecutorService worker=Executors.newSingleThreadExecutor();
     private final Runnable delayed=this::refresh;
-    private EditText search;
+    private AutoCompleteTextView search;
+    private SpeciesReferenceSuggestionAdapter nameSuggestions;
     private Spinner groups,views;
     private Button sortButton;
     private LinearLayout cards;
@@ -177,13 +179,30 @@ public final class SpeciesPickerActivity extends Activity {
         back.setOnClickListener(v->finish());
         root.addView(header);
 
-        search=new EditText(this);
+        search=new AutoCompleteTextView(this){
+            @Override public boolean enoughToFilter(){return true;}
+        };
         search.setSingleLine(true);search.setTextSize(16);
-        search.setHint("Common or scientific name");
+        search.setThreshold(1);
+        search.setHint("Search common, scientific or former name");
+        nameSuggestions=new SpeciesReferenceSuggestionAdapter(this,
+            new FieldDb(this),availableGroups[Math.max(0,savedGroupIndex)]);
+        search.setAdapter(nameSuggestions);
+        search.setDropDownHeight(dp(300));
+        search.setOnItemClickListener((parent,view,pos,id)->{
+            String label=parent.getItemAtPosition(pos).toString();
+            int separator=label.lastIndexOf(" · ");
+            search.setText(separator<0?label:label.substring(separator+3));
+            search.setSelection(search.length());
+        });
         LinearLayout searchRow=new LinearLayout(this);
         searchRow.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams searchParams=new LinearLayout.LayoutParams(0,dp(54),1f);
         searchRow.addView(search,searchParams);
+        Button dropdown=UiKit.button(this,"▾","quiet");
+        dropdown.setContentDescription("Show species name suggestions");
+        dropdown.setOnClickListener(v->{search.requestFocus();search.showDropDown();});
+        searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(45),dp(54)));
         Button unknown=UiKit.button(this,"Unidentified","secondary");
         unknown.setTextSize(12);
         unknown.setContentDescription("Record an unidentified species");
@@ -280,7 +299,13 @@ public final class SpeciesPickerActivity extends Activity {
             }
             @Override public void onNothingSelected(AdapterView<?> parent){}
         };
-        groups.setOnItemSelectedListener(chosen);
+        groups.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override public void onItemSelected(AdapterView<?> parent,View view,int pos,long id){
+                if(nameSuggestions!=null)nameSuggestions.setGroup(currentGroup());
+                refresh();
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent){}
+        });
         views.setOnItemSelectedListener(chosen);
         refresh();
     }

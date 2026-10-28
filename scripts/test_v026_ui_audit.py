@@ -28,7 +28,7 @@ class CleanFieldUi(unittest.TestCase):
         home=src("WelcomeActivity.java")
         for key in ('"Survey history"','"Search Species Library"',
                     '"Field tools & settings  ▾"','"Field evidence"',
-                    '"WORKSPACE"','"BIODIVERSITY LIBRARY"',
+                    '"Workspace"','"Species Library"',
                     '"Study and archive management"'):
             self.assertIn(key,home)
         self.assertNotIn('"History & tools  ▾"',home)
@@ -75,7 +75,7 @@ class CleanFieldUi(unittest.TestCase):
         self.assertIn('evidenceTools.addView(sound,soundLp)',recorder)
         self.assertIn('evidenceTools.addView(devices,deviceLp)',recorder)
         self.assertIn('evidenceTools.addView(methodRecords,methodLp)',recorder)
-        self.assertIn('content.addView(section("Record observation"))',recorder)
+        self.assertIn('content.addView(FieldVisuals.section(this,"Record observation"',recorder)
         self.assertIn('UiKit.button(this,"Save Observation","primary")',recorder)
         self.assertIn('UiKit.button(this,"End Survey","outline-danger")',recorder)
 
@@ -87,8 +87,12 @@ class CleanFieldUi(unittest.TestCase):
         self.assertNotIn('result.toString().replace(',catalog)
         detail=src("TaxonDetailActivity.java")
         self.assertIn('Diagnostic identification traits',detail)
-        self.assertIn('A reviewed diagnostic key is not provided',detail)
+        self.assertIn('A checked diagnostic comparison is not yet available',detail)
         self.assertIn('Regional source evidence',detail)
+        self.assertIn('Compare source-checked ID characters',detail)
+        self.assertIn('DiagnosticGuideActivity.hasProfile',detail)
+        self.assertIn('FieldQuickActions.forSurvey(profile,method)',src("MainActivity.java"))
+        self.assertIn('FieldVisuals.section(this,"Fieldwork"',src("WelcomeActivity.java"))
 
 if __name__=="__main__":
     unittest.main()

@@ -154,12 +154,18 @@ public final class FieldDataDeletion {
         int[] count=removeFiles(context,photos,calls);
         return new Report(surveys,count[0],count[1]);
     }
+    private static void seedDefaultProject(SQLiteDatabase db){
+        // Survey setup expects an always-available local project after clearing data.
+        db.execSQL("INSERT OR IGNORE INTO projects(id,name,description,created_at) "+
+            "VALUES('default','General field project','Default offline project',datetime('now'))");
+    }
     public static void clearWorkspace(SQLiteDatabase db){
         db.beginTransaction();
         try{
             if(count(db,"surveys")!=0)throw new IllegalStateException(
                 "Delete dependent surveys before removing the project register");
             for(String table:WORKSPACE_TABLES)db.delete(table,null,null);
+            seedDefaultProject(db);
             db.setTransactionSuccessful();
         }finally{db.endTransaction();}
     }

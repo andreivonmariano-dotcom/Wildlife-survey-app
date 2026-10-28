@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 
-/** Reads only already-bundled CC thumbnails; never fetches wildlife images during fieldwork. */
+/** Displays locally approved CC or directly owner-authorized photographs; no field-time fetches. */
 public final class OfflinePhotoEvidence {
     private OfflinePhotoEvidence(){}
     private static JSONObject manifest;
@@ -49,8 +49,8 @@ public final class OfflinePhotoEvidence {
     }
     private static JSONObject findForTaxon(Activity a,String scientific){
         if(scientific==null||scientific.isEmpty())return null;
-        for(JSONArray list:new JSONArray[]{manifest(a).optJSONArray("items"),
-                inatManifest(a).optJSONArray("items")}){
+        for(JSONArray list:new JSONArray[]{inatManifest(a).optJSONArray("items"),
+                manifest(a).optJSONArray("items")}){
             if(list==null)continue;
             for(int i=0;i<list.length();i++){
                 JSONObject item=list.optJSONObject(i);
@@ -81,7 +81,7 @@ public final class OfflinePhotoEvidence {
             ImageView thumb=new ImageView(a);
             thumb.setImageBitmap(bitmap);
             thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            thumb.setContentDescription("Licensed offline photograph of "+scientific+
+            thumb.setContentDescription("Offline photographic identification reference of "+scientific+
                 ", photographer "+photo.optString("author"));
             return thumb;
         }catch(Exception ignored){return null;}
@@ -150,10 +150,13 @@ public final class OfflinePhotoEvidence {
             new LinearLayout.LayoutParams(-1,dp(a,44));
         parent.addView(details,detailsLp);
         TextView attribution=new TextView(a);
+        boolean ownerGrant="owner_direct_private_research_permission".equals(
+            found.optString("rightsBasis"));
         attribution.setText("Photographer: "+found.optString("author")+
-            "\nLicense: "+found.optString("license")+
-            "\nFile source: "+found.optString("sourceUrl")+
-            "\nLicense terms: "+found.optString("licenseUrl"));
+            "\nRights status: "+found.optString("license")+
+            (ownerGrant?"\nDirect copyright-holder grant for LIKAS private, noncommercial research.":"")+
+            "\nOriginal image: "+found.optString("sourceUrl")+
+            "\nRights information: "+found.optString("licenseUrl"));
         attribution.setTextSize(12);
         attribution.setTextColor(UiKit.MUTED);
         attribution.setTextIsSelectable(true);

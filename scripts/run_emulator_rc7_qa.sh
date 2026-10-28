@@ -43,9 +43,10 @@ echo '=== Run actual SQLite backup and restore round trip ==='
 adb shell pm clear "$PKG"
 adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 adb shell am instrument -w -r \
-  -e class org.phwildlife.survey.BackupRoundTripInstrumentedTest \
   "$PKG.test/androidx.test.runner.AndroidJUnitRunner" | tee emulator-qa/instrumentation.txt
-grep -Eq 'OK \([12] tests?\)' emulator-qa/instrumentation.txt
+grep -Eq 'OK \(2 tests?\)' emulator-qa/instrumentation.txt
+adb exec-out run-as "$PKG" cat files/rc7_library_screen.png > emulator-qa/library-320dp.png
+test -s emulator-qa/library-320dp.png
 echo 'DEVICE BACKUP TEST PASSED'
 
 echo '=== Screenshot and UI hierarchy at 320dp ==='

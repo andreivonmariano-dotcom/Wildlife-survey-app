@@ -90,6 +90,15 @@
 - Full record: `docs/LIKAS_MINIMAL_STARTUP_OFFLINE_REFERENCE_V1.md` in core branch. Existing user-requested direct APK delivery policy remains mandatory for every app code update.
 
 
+## 28 October 2026 | Screenshot-driven field guide UX APK on RC4 scientific core
+
+- Owner shared installed-phone screenshots and accepted all three improvements: more cited Philippine endemic/threatened accounts, illustrated and navigable Habitat & Ecology, and a polished minimal startup/Home transition.
+- **Current implementation:** `feature/likas-core-fieldwork-post-rc4` code SHA `97a05898a0f1922eadd7dc05d93dbb43192b463e` (draft PR #38). Species search requires two characters, max eight suggestions and wildlife-group scoping; empty search offers detailed offline account browse. Species accounts use readable body text, photo fit and source disclosure. Habitat guide vs My Site Records tabs, category filter, lazy single-card expansion. Startup remains title-only with one-time 230ms Home header motion and reduced-motion fallback.
+- Ten introductory source-checked wildlife profiles now include Philippine Crocodile and Red-vented Cockatoo, sourced to dated DENR, museum and conservation publications. Nine ecological habitat guides and seven bundled CC photographs exist. This is not national species-specific narrative/photo coverage or a specialist-approved identification key.
+- **Verified downloadable development preview** `LIKAS-v0.27.3-RC4-field-guide-UX-preview-2026-10-28.apk`, **1,902,816 bytes**, SHA-256 `4efa428e41ce1b6a1e62fa2e3b40959e1ca734085e982171ca2a63eac7d17765`, signing v2 certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, source CI push `40669068454` and PR QA `40669076969` passed. Package ID, `0.27.3-rc4`, versionCode 49 and SQLite 27 unchanged. Delivered as a direct sandbox APK in this chat. Sandbox paths are session-scoped.
+- **Do not merge or claim stable release**: trusted PR gate `40669071545` fails its obsolete forest startup assertion and must be revised under owner-approved minimal startup policy. No installed-handset acceptance for this new revision; full backup and sensitive-data deletion tests outstanding. Future tasks include one-handed setup, dashboard navigation unification, larger scientifically checked biodiversity content. See `docs/LIKAS_DEVICE_SCREENSHOT_UX_REFINEMENT_2026_10_28.md` on core branch.
+
+
 ## Mission
 
 Build **LIKAS** as a Philippines-first, all-in-one biodiversity tool for wildlife biologists and ecologists. Five product pillars: (1) Field Survey Studio, (2) Philippine Species Library, (3) Habitat and Ecology Atlas, (4) Research and Conservation Watch, and (5) Analysis and Research Export. Scientific integrity, offline field use, data preservation, and clear interaction outrank decoration.

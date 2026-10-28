@@ -93,6 +93,7 @@ public class WelcomeActivity extends Activity {
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);home();}
     private boolean isSurveyActive(){return activeSurvey()!=null;}
     private boolean homeVisible=true;
+    private boolean playedStartupHomeTransition=false;
     private String lastHomeActiveSurvey=null;
     private void buildShell(){
         root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(16),dp(12),dp(16),dp(12));
@@ -154,6 +155,17 @@ public class WelcomeActivity extends Activity {
         header.addView(brand,new LinearLayout.LayoutParams(0,dp(56),1));
         LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
         headerLp.bottomMargin=dp(18);main.addView(header,headerLp);
+        // Transition the wordmark gently after the minimal title screen.
+        // Do not animate the survey form or restart this on normal navigation.
+        if(!playedStartupHomeTransition &&
+           getIntent().getBooleanExtra("show_menu",false) &&
+           android.animation.ValueAnimator.areAnimatorsEnabled()){
+            playedStartupHomeTransition=true;
+            header.setAlpha(0f);
+            header.setTranslationY(dp(10));
+            header.animate().alpha(1f).translationY(0f)
+                .setStartDelay(70).setDuration(230).start();
+        }
         main.addView(FieldVisuals.section(this,"Fieldwork","Choose or resume a survey"));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;

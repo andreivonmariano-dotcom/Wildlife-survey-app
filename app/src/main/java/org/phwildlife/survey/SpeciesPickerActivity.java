@@ -203,7 +203,11 @@ public final class SpeciesPickerActivity extends Activity {
         searchRow.addView(search,searchParams);
         Button dropdown=UiKit.button(this,"▾","quiet");
         dropdown.setContentDescription("Show species name suggestions");
-        dropdown.setOnClickListener(v->{search.requestFocus();search.showDropDown();});
+        dropdown.setOnClickListener(v->{
+            search.requestFocus();
+            nameSuggestions.getFilter().filter(search.getText().toString(),
+                count->{if(count>0)search.showDropDown();});
+        });
         searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(45),dp(54)));
         Button unknown=UiKit.button(this,"Unidentified","secondary");
         unknown.setTextSize(12);

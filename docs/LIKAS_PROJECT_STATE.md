@@ -1,6 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 28 October 2026 | Latest RC11B signed compact-photo refinement (device QA pending)
+
+- After a **successful 9/9** RC11 emulator run `40721366230`, actual 320dp screenshot showed the old licensed wildlife photo module occupied most of the page with a long defensive/legal caption. This contradicted the owner's compact design direction, even though tests passed.
+- **Latest UI source:** `OfflinePhotoEvidence.addCompactForTaxon` now shows a **126 × 122dp uncropped thumbnail**, visible author credit, and collapsed View photo & credits control. Expanding invokes the original license-preserving reference renderer. `Rc11PrioritySpeciesView` calls this compact function for all 96 prioritized records. Existing files, photo permissions, raw data and source references remain unmodified. New emulator test checks the old caption is hidden initially.
+- **Latest signed APK:** `0.27.3-rc11b-compact-species-photo-preview`, versionCode **61**, original application ID `org.phwildlife.survey.beta08`, SQLite **27**, pinned signing certificate `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Scientific Core run **40722666968** passed, artifact **12831311855**. Direct download verified in current turn at `/mnt/data/LIKAS-v0.27.3-RC11B-compact-species-photo-debug.apk`, 9,417,157 bytes, SHA-256 `0a9ec40f19f5c7e45e6a4179ec38ab655e7bc5e610f63c5eb78a5ae3eeb63416`. Archive validation and 96 priority source keys, 64 cited notes, 58 reference JPEGs passed. Recheck path next chat.
+- **QA:** RC11B emulator run **40722666750** launched and was still in progress when this record was entered. Do not claim final 9/9 for RC11B until it completes; compare its 320dp screenshot to the earlier RC11. Physical device trials and formal biological account certifications remain pending.
+- Draft PR #38 stays open, source branch `feature/likas-core-fieldwork-post-rc4`. Exact last app-code/test commit `0ecd60b8ea4281eb9ff84470f4b3fc7f70b9485b`. The 92-vs-96 discussion is resolved operationally by preserving the real **96-key** source registry; no 92-key exclusion set has been defined.
+
+---
+
+
+
 ## 28 October 2026 | RC11 unified priority species accounts, UI and evidence control
 
 - **Owner direction:** Focus species account editing and visual clarity, citing a 92-species target. Verified installed registry has **96** distinct priority source taxon keys (24 birds, 24 amphibians, 24 reptiles, 24 mammals), not 92. No explicit 92-item exclusion list exists. Apply one unified card design to all 96 to avoid silently dropping records.

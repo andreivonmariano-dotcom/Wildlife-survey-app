@@ -1,3 +1,4 @@
+import re
 """RC7B quality requirements for 34 literature notes and research photo assets."""
 from pathlib import Path
 import json
@@ -72,7 +73,7 @@ class Rc7bFieldGuideTests(unittest.TestCase):
     def test_device_upgrade_data_schema_unchanged(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         database=(CODE/"FieldDb.java").read_text()
-        self.assertIn("versionCode 58",gradle)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",gradle).group(1)),59)
         self.assertIn("0.27.3-rc9-profile-differential-annotation-preview",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",database)

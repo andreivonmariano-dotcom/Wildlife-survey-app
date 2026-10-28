@@ -304,30 +304,49 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(detectRow);
         markTime.setOnClickListener(v->markDetection());
         markButton.setOnClickListener(v->openCamera());
+        // One field-method shortcut is always visible; the rest stay optional.
+        FieldQuickActions.Kind quickAction=FieldQuickActions.forSurvey(profile,method);
+        if(quickAction!=FieldQuickActions.Kind.NONE){
+            Button quickCapture=UiKit.button(this,FieldQuickActions.label(quickAction),"pond");
+            LinearLayout.LayoutParams captureParams=new LinearLayout.LayoutParams(-1,dp(50));
+            captureParams.topMargin=dp(7);
+            content.addView(quickCapture,captureParams);
+            quickCapture.setOnClickListener(v->{
+                switch(quickAction){
+                    case CALLS:openCallLibrary();break;
+                    case PHOTO:pickPhoto();break;
+                    case DEVICES:openTrapProtocol();break;
+                    case METHOD_EVIDENCE:openFieldProtocol();break;
+                    default:break;
+                }
+            });
+        }
         // Only method-specific tools are folded away. Time/bearing marking stays visible.
         LinearLayout evidenceTools=vertical();
         evidenceTools.setVisibility(View.GONE);
-        if(FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile)){
+        if((FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile))&&
+                quickAction!=FieldQuickActions.Kind.CALLS){
             Button sound=UiKit.button(this,"♪ Record / Review Calls","secondary");
             sound.setContentDescription("Record, view spectrogram and label bird or amphibian calls");
             LinearLayout.LayoutParams soundLp=new LinearLayout.LayoutParams(-1,dp(52));
             soundLp.topMargin=dp(7);evidenceTools.addView(sound,soundLp);
             sound.setOnClickListener(v->openCallLibrary());
         }
-        if(TrapProtocolPolicy.supported(method)){
+        if(TrapProtocolPolicy.supported(method)&&
+                quickAction!=FieldQuickActions.Kind.DEVICES){
             Button devices=UiKit.button(this,"▣ Devices, Checks & Captures","secondary");
             LinearLayout.LayoutParams deviceLp=new LinearLayout.LayoutParams(-1,dp(52));
             deviceLp.topMargin=dp(7);evidenceTools.addView(devices,deviceLp);
             devices.setOnClickListener(v->openTrapProtocol());
         }
-        if(FieldProtocolPolicy.supported(method)){
+        if(FieldProtocolPolicy.supported(method)&&
+                quickAction!=FieldQuickActions.Kind.METHOD_EVIDENCE){
             Button methodRecords=UiKit.button(this,"▣ Method Effort & Evidence","secondary");
             LinearLayout.LayoutParams methodLp=new LinearLayout.LayoutParams(-1,dp(52));
             methodLp.topMargin=dp(7);evidenceTools.addView(methodRecords,methodLp);
             methodRecords.setOnClickListener(v->openFieldProtocol());
         }
-        if(FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile)||
-                TrapProtocolPolicy.supported(method)||FieldProtocolPolicy.supported(method)){
+        if(evidenceTools.getChildCount()>0){
             Button evidenceToggle=UiKit.button(this,"Audio, devices & evidence  ▾","quiet");
             LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,dp(48));
             evidenceLp.topMargin=dp(7);

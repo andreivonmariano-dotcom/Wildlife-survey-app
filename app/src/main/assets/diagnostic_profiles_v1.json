@@ -194,6 +194,35 @@
       "publisher": "CITES identification guide",
       "url": "https://cites.unia.es/file.php/1/files/ID_Guide_Lizards_BFN.pdf",
       "accessed": "2026-10-28"
+    },
+    {
+      "id": "awcs-tamaraw",
+      "title": "Tamaraw species profile and global status",
+      "publisher": "IUCN SSC Asian Wild Cattle Specialist Group",
+      "url": "https://www.asianwildcattle.org/tamaraw.html",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "denr-tamaraw-plan-2025",
+      "title": "Tamaraw conservation action plan, scientific status and monitoring methods",
+      "publisher": "DENR Biodiversity Management Bureau",
+      "url": "https://bmb.gov.ph/wp-content/uploads/2025/08/dao2025-01.pdf",
+      "accessed": "2026-10-28",
+      "sourceYear": "2025"
+    },
+    {
+      "id": "zsl-tamaraw",
+      "title": "Tamaraw natural-history and appearance account",
+      "publisher": "Zoological Society of London",
+      "url": "https://www.zsl.org/what-we-do/species/tamaraw",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "mdd-tamaraw",
+      "title": "Bubalus mindorensis accepted mammal taxonomy and Mindoro range",
+      "publisher": "ASM Mammal Diversity Database",
+      "url": "https://www.mammaldiversity.org/taxon/1006271/",
+      "accessed": "2026-10-28"
     }
   ],
   "profiles": [
@@ -1100,6 +1129,63 @@
         "sourceIds": [
           "iucn-monitor-gray",
           "cites-gray-key"
+        ]
+      }
+    },
+    {
+      "scientificName": "Bubalus mindorensis",
+      "commonName": "Tamaraw / Mindoro Dwarf Buffalo",
+      "group": "Mammals",
+      "assessment": "DENR 2025 conservation planning, IUCN SSC and zoological source synthesis. Not a current island-wide population census or validated key.",
+      "traits": [
+        {
+          "field": "Body form",
+          "value": "A compact, dark brown to greyish wild buffalo with sturdy legs and a relatively short body compared with domestic water buffalo.",
+          "sourceIds": [
+            "zsl-tamaraw"
+          ]
+        },
+        {
+          "field": "Horns",
+          "value": "Adults have backward-pointing horns. Combine horn shape with body, markings and locality evidence before field identification.",
+          "sourceIds": [
+            "zsl-tamaraw"
+          ]
+        },
+        {
+          "field": "Calves",
+          "value": "Calves are described as reddish-brown, with coats becoming darker as they mature.",
+          "sourceIds": [
+            "zsl-tamaraw"
+          ]
+        },
+        {
+          "field": "Endemicity",
+          "value": "The accepted species is endemic to Mindoro, according to the American Society of Mammalogists taxonomy.",
+          "sourceIds": [
+            "mdd-tamaraw"
+          ]
+        },
+        {
+          "field": "Conservation categories",
+          "value": "DENR's 2025 action-plan summary and IUCN SSC sources identify the tamaraw as Critically Endangered. National rules and global assessments remain separate.",
+          "sourceIds": [
+            "denr-tamaraw-plan-2025",
+            "awcs-tamaraw"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The tamaraw is a compact endemic wild buffalo of Mindoro and one of the Philippines' best-known endangered large mammals. It differs from domestic water buffalo in body size and horn form. Photographs from several views aid identification.",
+        "habitat": "Published descriptions include forest, grassland, glades and secondary forest. The DENR conservation plan describes geographically distinct monitored populations. Island-level occurrence does not confirm habitat occupancy at a particular station.",
+        "behavior": "Accounts describe grazing, browsing and activity patterns affected by human disturbance. Record direct movement, feeding, group size and disturbance evidence rather than assuming all individuals follow a single schedule.",
+        "fieldNotes": "Record horn orientation, body form, calf age stage, number of individuals, sighting direction and sampling effort from a safe distance. Keep exact coordinates of sensitive herds or calves controlled in field exports.",
+        "cautions": "DENR and IUCN source descriptions support separate Philippine conservation planning and global threatened-status interpretation. Do not extrapolate a park-specific population count to all Mindoro. A dark bovine seen at distance needs documented exclusion of domestic buffalo.",
+        "sourceIds": [
+          "awcs-tamaraw",
+          "denr-tamaraw-plan-2025",
+          "zsl-tamaraw",
+          "mdd-tamaraw"
         ]
       }
     }

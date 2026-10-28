@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "compiledDate": "2026-10-28",
   "reviewLevel": "Source-checked from scientific museum references and a peer-reviewed Philippine field inventory; Philippine taxonomic reviewer approval pending.",
-  "scope": "Ten cited offline introductory identification and ecology accounts for Philippine wildlife, with installed attributed taxonomic checklists for other species. No automated identification, locality prediction or independently reviewed diagnostic key.",
+  "scope": "Ten source-checked Philippine wildlife identification and ecology accounts, with installed source-attributed taxonomic checklists for other species. Not a verified key, automated species identification, site occurrence model or current conservation status registry.",
   "sourceList": [
     {
       "id": "wildalert-eagle",

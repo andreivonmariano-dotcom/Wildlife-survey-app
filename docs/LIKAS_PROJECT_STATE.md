@@ -1,5 +1,20 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+
+## 28 October 2026 | RC10 owner-requested APK and scientific batch 1 (runner blocked)
+
+- **Latest verified code work:** RC10 source (versionName `0.27.3-rc10-science-recovery-ux-preview`, versionCode 59, SQLite 27, package `org.phwildlife.survey.beta08`) on branch `feature/likas-core-fieldwork-post-rc4`, draft PR #38. Source work includes RC9 research draft atomic-file protection, an explicit JSON backup export, cited evidence access, and priority diagnosis/habitat gap filters.
+- **Latest owner direction:** Complete Q1, Q2 and Q3, with **immediate direct downloadable updated APK**. The only current chat-verifiable APK is the original **RC9 versionCode 58**, downloaded from GitHub Actions historical artifact 12824336082, checked ZIP and hash `f4e8d9e6d111ed2c84858a4bccb53c626b2237043ccaf1e5e2125ba7bc04750e`. Its verified current session direct file is `/mnt/data/LIKAS-v0.27.3-RC9-profile-differential-annotation-debug.apk`. Do NOT describe RC9 as RC10. The current session path must be reverified in future chats.
+- **Species Q2 implemented as research batch, not full 96-profile completion:** `app/src/main/assets/rc10_research_batch1_v1.json` contains 22 individually cited field notes for four existing priority taxa: `Penelopides mindorensis`, `P. affinis`, `Varanus mabitang` and `V. olivaceus`. Sources are IUCN SSC Hornbill Specialist Group and The Reptile Database. `Rc10ResearchBatch.java` displays them within the species profile via a compact evidence section with source links and limitations. No new expert certifications or unauthorized conservation/locality claims.
+- **Q3 source changes:** `HabitatRecordsActivity` groups source comparison tools into a disclosure matching Species Library; `WelcomeActivity` labels LIKAS a Philippine Biodiversity Toolkit and clarifies Habitat & Ecology navigation. Existing live recorder Save, Mark and End Survey remain untouched and accessible.
+- **Q1 source-level verification:** Connected GitHub inspected 4 source identities, 22 statements with HTTPS citations/review caveats, all four matched the 96-priority registry, renderer hooked to species profiles, Home and Habitat UI source integration, zero certified taxon profiles. Python test added at `scripts/test_rc10_priority_batch1.py`. This does not establish Android compilation or emulator/handset behavior.
+- **Build blocker:** GitHub Actions run `40711477984` concluded failure with **no assigned runner** (`runner_id=0`) and **zero executed steps**. Earlier RC10 workflow attempts showed the same runner allocation pattern after exact-version test assertions were corrected. Do not claim tests or compilation passed, and do not deliver a nonexistent versionCode 59 APK.
+- **Next action:** Resolve GitHub Actions runner allocation, then build and inspect the exact RC10 signed APK, check signing identity and media pack, and attach a newly verified direct download link. Next, conduct on-device JSON draft recovery and upgrade QA, continue independently sourced taxonomic batches, and refine Recorder navigation without losing the fixed End Survey affordance.
+- **No stable release:** PR #38 stays draft; status is source implemented, APK blocked, real-device QA pending. See `docs/LIKAS_RC10_EVIDENCE_RECOVERY_UX_QA.md`.
+
+---
+
+
 ## 28 October 2026 | RC10 exact CI failures and release blocker
 
 - **Current source HEAD before this documentation update:** `a5d99302da16f253cda58b4c6b775645c2b3e416` on `feature/likas-core-fieldwork-post-rc4`, versionCode 59.

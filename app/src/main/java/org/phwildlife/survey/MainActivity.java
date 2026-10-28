@@ -296,7 +296,8 @@ public class MainActivity extends Activity implements LocationListener {
         trackingView.setVisibility(method.equals("line_transect")||method.equals("ves_transect")?View.VISIBLE:View.GONE);
 
         LinearLayout detectRow=horizontal();
-        Button markTime=UiKit.button(this,"Mark now","secondary");
+        Button markTime=UiKit.button(this,"Mark detection","secondary");
+        markTime.setContentDescription("Mark sighting time and available fresh observer GPS without saving an observation");
         detectRow.addView(markTime,weighted(0.9f));
         markButton=UiKit.button(this,"Measure bearing","secondary");
         markButton.setContentDescription("Open sighting camera to capture detection bearing and pitch");
@@ -635,7 +636,9 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
         detailToggle=label("＋ More observation details",14,true);
-        detailToggle.setTextColor(GREEN);disclosureTarget(detailToggle);content.addView(detailToggle);
+        detailToggle.setTextColor(GREEN);disclosureTarget(detailToggle);
+        detailToggle.setContentDescription("Show optional identification confidence, habitat, behavior and observation notes");
+        content.addView(detailToggle);
         advancedPanel=vertical();
         habitatEntry=edit("Habitat / microhabitat",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         behaviorEntry=edit("Behavior / reproductive evidence",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -647,8 +650,15 @@ public class MainActivity extends Activity implements LocationListener {
         advancedPanel.addView(identificationNote);
         advancedPanel.addView(habitatEntry);advancedPanel.addView(behaviorEntry);advancedPanel.addView(notesEntry);
         advancedPanel.setVisibility(View.GONE);content.addView(advancedPanel);
-        detailToggle.setOnClickListener(v->{detailShown=!detailShown;advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);queueDraft();
-            detailToggle.setText(detailShown?"− Hide observation details":"＋ More observation details");});
+        detailToggle.setOnClickListener(v->{
+            detailShown=!detailShown;
+            advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);
+            detailToggle.setText(detailShown?"− Hide observation details":"＋ More observation details");
+            detailToggle.setContentDescription(detailShown?
+                "Hide optional identification, habitat, behavior and observation notes":
+                "Show optional identification confidence, habitat, behavior and observation notes");
+            queueDraft();
+        });
         content.addView(sessionToggle);
         content.addView(sessionSettings);
         // The field form stays focused on observations. Method tips live in Help.
@@ -2386,6 +2396,9 @@ public class MainActivity extends Activity implements LocationListener {
             detailShown=d.optBoolean("details",false);
             advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);
             detailToggle.setText(detailShown?"− Hide observation details":"＋ More observation details");
+            detailToggle.setContentDescription(detailShown?
+                "Hide optional identification, habitat, behavior and observation notes":
+                "Show optional identification confidence, habitat, behavior and observation notes");
             markedAt=d.optLong("markedTime",0);
             markedObserverFix=null;
             if(markedAt>0&&d.has("markedGpsLat")&&d.has("markedGpsLon")&&

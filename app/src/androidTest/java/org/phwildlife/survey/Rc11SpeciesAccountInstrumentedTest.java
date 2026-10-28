@@ -95,4 +95,38 @@ public final class Rc11SpeciesAccountInstrumentedTest {
             });
         }
     }
+    @Test public void testOriginalDiagnosisAndChecklistRemainAccessible()throws Exception{
+        Intent intent=new Intent(InstrumentationRegistry.getInstrumentation()
+            .getTargetContext(),TaxonDetailActivity.class);
+        intent.putExtra("taxon_query","Baletemys kampalili");
+        try(ActivityScenario<TaxonDetailActivity> scenario=ActivityScenario.launch(intent)){
+            scenario.onActivity(activity->{
+                View root=activity.getWindow().getDecorView();
+                ArrayList<View> initial=descendants(root);
+                assertTrue("Original description character rendered",
+                    containsText(initial,"Head and ears"));
+                assertTrue("Original series measurements rendered",
+                    containsText(initial,"Published body measures"));
+                boolean opened=false;
+                for(View v:initial)if(v instanceof Button&&
+                    ((Button)v).getText().toString().startsWith("Sources & details")){
+                    assertTrue(v.performClick());
+                    opened=true;break;
+                }
+                assertTrue("Source drawer reachable",opened);
+                ArrayList<View> expanded=descendants(root);
+                assertTrue(containsText(expanded,"Scientific checklist"));
+                boolean checklist=false;
+                for(View v:expanded)if(v instanceof Button&&
+                    ((Button)v).getText().toString().startsWith("Scientific checklist")){
+                    assertTrue(v.performClick());
+                    checklist=true;break;
+                }
+                assertTrue("Review checklist opens",checklist);
+                assertTrue("No fake expert certification",
+                    containsText(descendants(root),"Specialist sign-off: pending"));
+            });
+        }
+    }
+
 }

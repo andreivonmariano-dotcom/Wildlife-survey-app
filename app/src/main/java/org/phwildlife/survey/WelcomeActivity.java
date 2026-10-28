@@ -239,6 +239,11 @@ public class WelcomeActivity extends Activity {
         dataLp.topMargin=dp(5);main.addView(dataManager,dataLp);
         dataManager.setOnClickListener(v->startActivity(
             new Intent(this,DataManagementActivity.class)));
+        Button recover=UiKit.button(this,"Full fieldwork backup & restore","secondary");
+        LinearLayout.LayoutParams backupLp=new LinearLayout.LayoutParams(-1,dp(50));
+        backupLp.topMargin=dp(6);main.addView(recover,backupLp);
+        recover.setOnClickListener(v->startActivity(
+            new Intent(this,FieldBackupActivity.class)));
 
         main.addView(FieldVisuals.section(this,"Species Library","Source-linked offline references"));
         Button catalog=UiKit.button(this,"Search Species Library","primary");
@@ -288,7 +293,7 @@ public class WelcomeActivity extends Activity {
             startActivity(new Intent(this,StudyProtocolsActivity.class)));
         toolRow(tools,"Scientific data review",()->
             startActivity(new Intent(this,AuditActivity.class)));
-        toolRow(tools,"Import previous backup",()->
+        toolRow(tools,"Import older v0.7 export",()->
             startActivity(new Intent(this,ImportActivity.class)));
         main.addView(tools);
     }

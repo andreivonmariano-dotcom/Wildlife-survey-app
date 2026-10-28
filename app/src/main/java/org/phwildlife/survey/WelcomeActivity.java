@@ -212,9 +212,16 @@ public class WelcomeActivity extends Activity {
         shortcutsLp.topMargin=dp(9);main.addView(shortcutRow,shortcutsLp);
 
         main.addView(step("BIODIVERSITY LIBRARY","Source-linked offline references"));
-        Button catalog=UiKit.button(this,"Explore Species Library","primary");
+        Button catalog=UiKit.button(this,"Search Species Library","primary");
         main.addView(catalog,new LinearLayout.LayoutParams(-1,dp(54)));
-        catalog.setOnClickListener(v->startActivity(new Intent(this,CatalogActivity.class)));
+        catalog.setOnClickListener(v->startActivity(
+            new Intent(this,TaxonDetailActivity.class)));
+        Button librarySources=UiKit.button(this,"Source catalogs & regional records","quiet");
+        LinearLayout.LayoutParams sourcesLp=new LinearLayout.LayoutParams(-1,dp(50));
+        sourcesLp.topMargin=dp(6);
+        main.addView(librarySources,sourcesLp);
+        librarySources.setOnClickListener(v->startActivity(
+            new Intent(this,CatalogActivity.class)));
         TextView scope=text("Species accounts include taxonomic and available habitat evidence. "+
             "A checklist listing does not establish presence at your survey station.",12,false);
         scope.setTextColor(MUTED);

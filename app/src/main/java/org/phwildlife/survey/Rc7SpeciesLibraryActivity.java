@@ -125,7 +125,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             new LinearLayout.LayoutParams(-1,dp(46)):
             new LinearLayout.LayoutParams(0,dp(48),1));
         Button compare=UiKit.button(this,"Compare traits","quiet");
-        compare.setOnClickListener(v->startActivity(new Intent(this,DiagnosticGuideActivity.class)));
+        compare.setOnClickListener(v->startActivity(new Intent(this,Rc8TraitComparisonActivity.class)));
         tools.addView(compare,screenDp<385f?
             new LinearLayout.LayoutParams(-1,dp(46)):
             new LinearLayout.LayoutParams(0,dp(48),1));

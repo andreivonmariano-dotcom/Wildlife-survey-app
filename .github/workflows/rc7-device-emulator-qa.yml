@@ -5,6 +5,9 @@ on:
     paths:
       - scripts/run_emulator_rc7_qa.sh
       - app/src/androidTest/**
+      - app/src/main/java/org/phwildlife/survey/**
+      - scripts/prepare_offline_photos.py
+      - scripts/audit_inaturalist_photos.py
       - app/build.gradle
       - .github/workflows/rc7-device-emulator-qa.yml
   workflow_dispatch:

@@ -257,7 +257,7 @@ public final class TaxonDetailActivity extends Activity {
             paragraph("Philippine Red List category (source snapshot)",col(c,"ph_red_list"));
             paragraph("CITES (source snapshot)",col(c,"cites"));
             paragraph("Taxonomic note",col(c,"taxonomic_note"));
-            if(Rc7FieldAccounts.priority(this,scientific)){"
+            if(Rc7FieldAccounts.priority(this,scientific)){
                 Button guide=UiKit.button(this,"Compare field traits and habitat evidence","secondary");
                 content.addView(guide);
                 guide.setOnClickListener(v->startActivity(
@@ -270,6 +270,13 @@ public final class TaxonDetailActivity extends Activity {
                 paragraph("Diagnostic identification traits",
                     "A checked diagnostic comparison is not yet available for this species. "+
                     "Keep uncertain determinations unresolved.");
+            }
+            if(DiagnosticGuideActivity.hasProfile(this,scientific)){
+                Button legacy=UiKit.button(this,"View introductory morphology guide","quiet");
+                content.addView(legacy);
+                legacy.setOnClickListener(v->startActivity(
+                    new Intent(this,DiagnosticGuideActivity.class)
+                        .putExtra("scientific_name",scientific)));
             }
             paragraph("Original source",col(c,"source")+" · "+col(c,"source_version"));
             paragraph("Source publication",originalReference(col(c,"source")));

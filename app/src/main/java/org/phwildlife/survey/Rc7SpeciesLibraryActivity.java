@@ -33,7 +33,7 @@ import java.util.Locale;
  */
 public final class Rc7SpeciesLibraryActivity extends Activity {
     private static final String[] GROUPS={"All groups","Birds","Amphibians","Reptiles","Mammals"};
-    private static final String[] FILTERS={"All source records","RC7A priority (48)",
+    private static final String[] FILTERS={"All source records","Priority species (96)",
         "Published literature notes","Offline photograph"};
     private FieldDb db;
     private EditText search;
@@ -46,7 +46,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
     private final ArrayList<Summary> selected=new ArrayList<>();
     private final HashSet<String> guides=new HashSet<>();
     private int rendered=0;
-    private static final int PAGE=30;
+    private static final int PAGE=24;
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private static final class Summary {
         final String key,name,common,family,group,source;
@@ -117,13 +117,18 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             right.leftMargin=dp(8);filters.addView(scope,right);
         }
         root.addView(filters);
-        LinearLayout tools=new LinearLayout(this);tools.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout tools=new LinearLayout(this);
+        tools.setOrientation(screenDp<385f?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         Button region=UiKit.button(this,"Regional evidence","quiet");
         region.setOnClickListener(v->startActivity(new Intent(this,RegionalChecklistActivity.class)));
-        tools.addView(region,new LinearLayout.LayoutParams(0,dp(48),1));
+        tools.addView(region,screenDp<385f?
+            new LinearLayout.LayoutParams(-1,dp(46)):
+            new LinearLayout.LayoutParams(0,dp(48),1));
         Button compare=UiKit.button(this,"Compare traits","quiet");
         compare.setOnClickListener(v->startActivity(new Intent(this,DiagnosticGuideActivity.class)));
-        tools.addView(compare,new LinearLayout.LayoutParams(0,dp(48),1));
+        tools.addView(compare,screenDp<385f?
+            new LinearLayout.LayoutParams(-1,dp(46)):
+            new LinearLayout.LayoutParams(0,dp(48),1));
         root.addView(tools);
         status=label("",13,false);root.addView(status);
         ScrollView scroll=new ScrollView(this);
@@ -190,7 +195,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         }
         rendered=0;results.removeAllViews();
         status.setText(selected.size()+" matching source records · list is not site occurrence. "+
-            (filter==1?"RC7A includes source-verified identities and draft biology.":""));
+            (filter==1?"Priority identities are checklist-backed; detailed field biology is still under review.":""));
         appendPage();
     }
     private void appendPage(){

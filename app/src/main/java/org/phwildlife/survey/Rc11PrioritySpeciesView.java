@@ -317,12 +317,6 @@ public final class Rc11PrioritySpeciesView {
         metaLp.bottomMargin=dp(a,11);parent.addView(meta,metaLp);
         OfflinePhotoEvidence.addCompactForTaxon(a,parent,scientific);
         ArrayList<Fact> facts=facts(a,scientific);
-        if(!facts.isEmpty()){
-            TextView heading=text(a,"Field reference",13,true,UiKit.FOREST);
-            LinearLayout.LayoutParams t=new LinearLayout.LayoutParams(-1,-2);
-            t.topMargin=dp(a,15);t.bottomMargin=dp(a,11);
-            parent.addView(heading,t);
-        }
         ArrayList<Fact> displayed=new ArrayList<>();
         for(int i=0;i<AREAS.length;i++)
             section(a,parent,AREAS[i],ICONS[i],facts,displayed);

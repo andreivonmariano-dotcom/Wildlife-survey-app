@@ -188,7 +188,7 @@ public final class LikasSpriteForestView extends View {
             c.save();
             c.translate((getWidth()-scale*W)*.5f,(getHeight()-scale*H)*.5f);
             c.scale(scale,scale);
-            if(nightBlend<.999f)drawMode(c,"day",1f-nightBlend);
+            if(nightBlend<.999f)drawMode(c,"day",1f);
             if(nightBlend>.001f)drawMode(c,"night",nightBlend);
             c.restore();
         }

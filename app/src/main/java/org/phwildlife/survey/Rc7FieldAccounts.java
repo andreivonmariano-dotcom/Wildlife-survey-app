@@ -16,6 +16,7 @@ import java.io.InputStream;
 public final class Rc7FieldAccounts {
     private Rc7FieldAccounts(){}
     private static JSONArray accounts;
+    private static java.util.HashSet<String> names;
     private static int dp(Activity a,int p){
         return Math.round(p*a.getResources().getDisplayMetrics().density);
     }
@@ -45,6 +46,12 @@ public final class Rc7FieldAccounts {
             }catch(Exception ignored){}
         }
         accounts=combined;
+        names=new java.util.HashSet<>();
+        for(int i=0;i<accounts.length();i++){
+            JSONObject p=accounts.optJSONObject(i);
+            if(p!=null)names.add(p.optString("scientificName")
+                .toLowerCase(java.util.Locale.ROOT));
+        }
         return accounts;
     }
     public static JSONObject find(Activity a,String scientific){
@@ -58,7 +65,9 @@ public final class Rc7FieldAccounts {
         return null;
     }
     public static boolean priority(Activity a,String scientific){
-        return find(a,scientific)!=null;
+        read(a);
+        return scientific!=null&&names!=null&&names.contains(
+            scientific.toLowerCase(java.util.Locale.ROOT));
     }
     private static void line(Activity a,LinearLayout parent,String label,String value){
         if(value==null||value.trim().isEmpty())return;

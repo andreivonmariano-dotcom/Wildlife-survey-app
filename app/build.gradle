@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 61
-        versionName '0.27.3-rc11b-compact-species-photo-preview'
+        versionCode 62
+        versionName '0.27.3-rc11c-compact-species-preview'
     }
     signingConfigs {
         debug {

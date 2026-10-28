@@ -26,6 +26,7 @@ import java.util.ArrayList;
 public class WelcomeActivity extends Activity {
     private final int BG=Color.rgb(245,249,245),INK=Color.rgb(23,58,39),GREEN=Color.rgb(34,102,72),MUTED=Color.rgb(99,116,104);
     private LinearLayout main,root; private String profile="Birds";
+    private RainforestBackdropView ambientView;
     private boolean custom=false;
     private String currentScreen="home";
     private static final int GPS_PERMISSION_REQUEST=71;
@@ -73,6 +74,7 @@ public class WelcomeActivity extends Activity {
             refreshProjectOptions();
     }
     @Override protected void onPause(){
+        if(ambientView!=null) ambientView.setAmbientEnabled(false);
         cancelGpsLookup();persistSetup();super.onPause();
     }
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);home();}
@@ -92,14 +94,28 @@ public class WelcomeActivity extends Activity {
     }
     private void home(){
         homeVisible=true;currentScreen="home";main.removeAllViews();
-                LinearLayout banner=vertical();banner.setPadding(dp(16),dp(15),dp(16),dp(15));
-        android.graphics.drawable.GradientDrawable hero=new android.graphics.drawable.GradientDrawable();
-        hero.setColor(UiKit.INK);hero.setCornerRadius(dp(17));banner.setBackground(hero);
-        TextView tag=text("LIKAS",32,true);tag.setTextColor(Color.rgb(255,240,193));
+        FrameLayout forestHero=new FrameLayout(this);
+        android.graphics.drawable.GradientDrawable heroShape=new android.graphics.drawable.GradientDrawable();
+        heroShape.setColor(UiKit.INK);heroShape.setCornerRadius(dp(17));
+        forestHero.setBackground(heroShape);
+        forestHero.setClipToOutline(true);
+        ambientView=new RainforestBackdropView(this);
+        forestHero.addView(ambientView,new FrameLayout.LayoutParams(-1,-1));
+        View readingScrim=new View(this);
+        readingScrim.setBackground(new android.graphics.drawable.GradientDrawable(
+            android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,
+            new int[]{0x1D0B2923,0x420A3025,0xDB09241D}));
+        forestHero.addView(readingScrim,new FrameLayout.LayoutParams(-1,-1));
+        LinearLayout banner=vertical();
+        banner.setPadding(dp(19),dp(14),dp(19),dp(18));
+        TextView tag=text("LIKAS",34,true);tag.setTextColor(Color.rgb(255,240,193));
         TextView welcome=text("WILDLIFE SURVEY",14,true);welcome.setTextColor(Color.rgb(194,225,183));
-        TextView desc=text("Philippine biodiversity field records",13,false);desc.setTextColor(Color.rgb(217,234,222));
+        TextView desc=text("Philippine biodiversity field records",13,false);desc.setTextColor(Color.rgb(238,247,231));
         banner.addView(tag);banner.addView(welcome);banner.addView(desc);
-        LinearLayout.LayoutParams heroLp=new LinearLayout.LayoutParams(-1,-2);heroLp.bottomMargin=dp(15);main.addView(banner,heroLp);
+        forestHero.addView(banner,new FrameLayout.LayoutParams(-1,-2,Gravity.BOTTOM));
+        LinearLayout.LayoutParams heroLp=new LinearLayout.LayoutParams(-1,dp(242));
+        heroLp.bottomMargin=dp(15);
+        main.addView(forestHero,heroLp);
         if(activeSurvey()!=null){
             main.addView(text("An unfinished survey is available. Resume it to continue recording.",14,true));
             Button resume=UiKit.button(this,"Resume active survey","primary");

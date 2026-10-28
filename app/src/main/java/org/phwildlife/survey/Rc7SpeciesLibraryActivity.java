@@ -34,7 +34,7 @@ import java.util.Locale;
 public final class Rc7SpeciesLibraryActivity extends Activity {
     private static final String[] GROUPS={"All groups","Birds","Amphibians","Reptiles","Mammals"};
     private static final String[] FILTERS={"All source records","RC7A priority (48)",
-        "Existing cited guides","Offline photograph"};
+        "Published literature notes","Offline photograph"};
     private FieldDb db;
     private EditText search;
     private Spinner group,scope;
@@ -171,7 +171,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
                     field(c,3),field(c,4),field(c,5));
                 if(!seen.add(item.name.toLowerCase(Locale.ROOT)))continue;
                 if(filter==1&&!Rc7FieldAccounts.priority(this,item.name))continue;
-                if(filter==2&&!guides.contains(item.name.toLowerCase(Locale.ROOT)))continue;
+                if(filter==2&&!Rc7LiteratureNotes.available(this,item.name))continue;
                 if(filter==3&&!OfflinePhotoEvidence.hasOfflineTaxon(this,item.name))continue;
                 selected.add(item);
             }

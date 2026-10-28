@@ -64,7 +64,7 @@ public final class TaxonDetailActivity extends Activity {
         search=new EditText(this);
         search.setSingleLine(true);
         search.setTextSize(15);
-        search.setHint("Common or scientific name");
+        search.setHint("Common, scientific, or former name");
         input.addView(search,new LinearLayout.LayoutParams(0,dp(52),1f));
         Button find=UiKit.button(this,"Find","secondary");
         find.setOnClickListener(v->lookup(search.getText().toString()));
@@ -122,11 +122,13 @@ public final class TaxonDetailActivity extends Activity {
                 "taxon_key=? OR LOWER(scientific_name)=LOWER(?) OR "+
                 "LOWER(common_name)=LOWER(?) OR "+
                 "LOWER(scientific_name) LIKE ? ESCAPE '!' OR "+
-                "LOWER(common_name) LIKE ? ESCAPE '!' "+
+                "LOWER(common_name) LIKE ? ESCAPE '!' OR EXISTS ("+
+                "SELECT 1 FROM taxon_synonyms a WHERE a.taxon_key=taxon_catalog.taxon_key "+
+                "AND LOWER(a.alias_name) LIKE ? ESCAPE '!') "+
                 "ORDER BY CASE WHEN LOWER(scientific_name)=LOWER(?) THEN 0 ELSE 1 END,"+
                 "CASE WHEN taxon_key LIKE 'STARTER:%' THEN 1 ELSE 0 END,"+
                 "scientific_name COLLATE NOCASE LIMIT 64",
-            new String[]{query,query,query,pattern,pattern,query})){
+            new String[]{query,query,query,pattern,pattern,pattern,query})){
             while(c.moveToNext()){
                 String common=c.isNull(1)?"":c.getString(1);
                 String scientific=c.getString(2);
@@ -138,7 +140,7 @@ public final class TaxonDetailActivity extends Activity {
             }
         }catch(Exception ex){showMessage("Catalog search unavailable.");return;}
         if(keys.isEmpty()){
-            showMessage("This name is not in the installed catalog. "+
+            showMessage("This name or synonym is not in the installed catalog. "+
                 "Verbatim or unidentified field observations remain available.");
             return;
         }

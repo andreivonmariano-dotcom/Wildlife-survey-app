@@ -48,3 +48,13 @@ The later RC10 batches add 64 preliminary, individually cited research notes acr
 ## Next science editing program
 
 Maintain a source-keyed, cited claim ledger and an independent review gate per taxon. Prioritize missing diagnostic, age/sex, range, habitat, behavior, conservation date and DENR data. Improve concise wording from published primary sources only. Use one template for all 96 and add supported notes in taxonomic batches. Do not overwrite source strings, historic observations, original photo rights or taxonomic synonym records. Preserve real uncertainty and conflicts inside the citation drawer.
+
+## RC11B photo-card correction after inspecting actual 320dp screenshot
+
+The first RC11 emulator run `40721366230` passed all **9/9** Android instrumentation tests. Source artifact `12829719407` contained the real `species-account-320dp.png` and recorder screenshot. Visual inspection found the priority-screen header and scientific name readable, but the existing image renderer still showed a large 210dp photograph followed by a long photo caption and license boilerplate. The scientific field cards were forced below the first screen. This was a genuine UI problem not exposed by passing automated tests.
+
+RC11B adds `OfflinePhotoEvidence.addCompactForTaxon`. The new card shows a 126 × 122dp uncropped thumbnail with the photographer's visible credit and a **View photo & credits** disclosure. The audited full-resolution image, original caption, attribution, usage permission and license/source URLs remain available on expansion. The photo's original bytes and permission records were not changed. The unified priority renderer uses this compact photo component only, leaving legacy nonpriority screens untouched. Android UI source test now checks that the long introductory caption is hidden until a user opens the photo details.
+
+**New build:** `0.27.3-rc11b-compact-species-photo-preview`, versionCode **61**, same package, signing identity and SQLite schema 27. Scientific Core workflow `40722666968` succeeded, artifact `12831311855`. Verified direct signed APK `/mnt/data/LIKAS-v0.27.3-RC11B-compact-species-photo-debug.apk`, size **9,417,157 bytes**, SHA-256 `0a9ec40f19f5c7e45e6a4179ec38ab655e7bc5e610f63c5eb78a5ae3eeb63416`. ZIP validity, 96 source keys, 64 research notes and all 58 licensed JPEGs confirmed. APK v2 certificate SHA-256 remains `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`.
+
+**Device QA:** The RC11B emulator run is `40722666750`. Check its final result and real 320dp screenshot before claiming RC11B on-device acceptance. Earlier RC11 versionCode 60 has already passed nine instrumentation tests, but that screenshot preceded the compact photo correction. Physical-phone acceptance remains open.

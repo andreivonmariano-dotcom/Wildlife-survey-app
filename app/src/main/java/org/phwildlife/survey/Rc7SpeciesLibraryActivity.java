@@ -34,7 +34,8 @@ import java.util.Locale;
 public final class Rc7SpeciesLibraryActivity extends Activity {
     private static final String[] GROUPS={"All groups","Birds","Amphibians","Reptiles","Mammals"};
     private static final String[] FILTERS={"All source records","Priority species (96)",
-        "Published literature notes","Offline photograph"};
+        "Published literature notes","Offline photograph",
+        "Priority: diagnosis unassessed","Priority: habitat unassessed"};
     private FieldDb db;
     private EditText search;
     private Spinner group,scope;
@@ -208,6 +209,14 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
                 if(filter==1&&!Rc7FieldAccounts.priority(this,item.name))continue;
                 if(filter==2&&!Rc7LiteratureNotes.available(this,item.name))continue;
                 if(filter==3&&!OfflinePhotoEvidence.hasOfflineTaxon(this,item.name))continue;
+                if(filter==4||filter==5){
+                    JSONObject completion=Rc9ProfileCompleteness.find(this,item.name);
+                    if(completion==null)continue;
+                    JSONObject requirements=completion.optJSONObject("requirements");
+                    JSONObject target=requirements==null?null:
+                        requirements.optJSONObject(filter==4?"diagnosis":"habitat");
+                    if(target!=null&&!"not_assessed".equals(target.optString("status")))continue;
+                }
                 selected.add(item);
             }
         }catch(Exception e){
@@ -217,7 +226,8 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         }
         rendered=0;results.removeAllViews();
         status.setText(selected.size()+" source records · checklist names are not complete species profiles. "+
-            (filter==1?"Priority identities are checklist-backed; detailed field biology is still under review.":""));
+            (filter==1?"Priority identities are checklist-backed; detailed field biology is still under review. ":
+            filter>=4?"These priority research gaps mean unassessed evidence, not species absence. ":""));
         appendPage();
     }
     private void appendPage(){

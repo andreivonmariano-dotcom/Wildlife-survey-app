@@ -257,14 +257,14 @@ public final class TaxonDetailActivity extends Activity {
             paragraph("Philippine Red List category (source snapshot)",col(c,"ph_red_list"));
             paragraph("CITES (source snapshot)",col(c,"cites"));
             paragraph("Taxonomic note",col(c,"taxonomic_note"));
-            if(DiagnosticGuideActivity.hasProfile(this,scientific)){
-                Button guide=UiKit.button(this,"Compare source-checked ID characters","secondary");
+            if(Rc7FieldAccounts.priority(this,scientific)){"
+                Button guide=UiKit.button(this,"Compare field traits and habitat evidence","secondary");
                 content.addView(guide);
                 guide.setOnClickListener(v->startActivity(
-                    new Intent(this,DiagnosticGuideActivity.class)
+                    new Intent(this,Rc8TraitComparisonActivity.class)
                         .putExtra("scientific_name",scientific)));
                 paragraph("Diagnostic reference status",
-                    "Introductory characters checked against cited sources. "+
+                    "Source coverage varies by species. Many characters remain unassessed. "+
                     "Independent specialist key review remains pending.");
             }else{
                 paragraph("Diagnostic identification traits",

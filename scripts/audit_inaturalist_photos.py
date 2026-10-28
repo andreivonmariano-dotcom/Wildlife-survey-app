@@ -22,6 +22,8 @@ ROOT=Path(__file__).resolve().parents[1]
 PRIORITY=ROOT/"app/src/main/assets/rc7a_field_cards_v1.json"
 LOCK=ROOT/"docs/RC7_INAT_APPROVED_LOCK_V1.json"
 LOCK_ENCODED=ROOT/"docs/RC7_INAT_APPROVED_LOCK_V1.json.zlib.b64"
+OWNER_LOCK=ROOT/"docs/RC7_DREIDREI_OWNER_APPROVED_LOCK_V1.json"
+OWNER_GRANT="owner_direct_private_research_permission"
 LOCK_PAYLOAD_SHA256="4289862570ceb449135108a8d8dcf70256852d040a54adad8f25c3552f61554d"
 MANIFEST=ROOT/"app/src/main/assets/offline_inaturalist_manifest_v1.json"
 PHOTO_DIR=ROOT/"app/src/main/assets/offline_photos"
@@ -38,7 +40,7 @@ LICENSE_URL={
 }
 MAX_BYTES=900000
 MAX_ITEMS=60
-IMAGE_HOSTS={"inaturalist-open-data.s3.amazonaws.com"}
+IMAGE_HOSTS={"inaturalist-open-data.s3.amazonaws.com","static.inaturalist.org"}
 NAME_RE=re.compile(r"^[A-Z][A-Za-z-]+ [a-z][a-z-]+(?: [a-z-]+)?$")
 
 def jsonfile(path):
@@ -51,8 +53,14 @@ def load_approval_lock():
         raw=zlib.decompress(packed)
         if hashlib.sha256(raw).hexdigest()!=LOCK_PAYLOAD_SHA256:
             raise ValueError("Photo approval ledger checksum mismatch")
-        return json.loads(raw)
-    return jsonfile(LOCK)
+        public_licensed=json.loads(raw)
+    else:
+        public_licensed=jsonfile(LOCK)
+    owner_approved=jsonfile(OWNER_LOCK) if OWNER_LOCK.exists() else {"items":[]}
+    if owner_approved.get("permission",OWNER_GRANT)!=OWNER_GRANT:
+        raise ValueError("Unrecognized photo ownership permission")
+    # Preferred owner photographs precede licensed third-party references.
+    return {"items":owner_approved.get("items",[])+public_licensed.get("items",[])}
 
 def candidates_from_results(results,names,observer="dreidrei"):
     """Photo license governs reproduction, independent of observation license."""
@@ -129,8 +137,17 @@ def valid_approved(item,targets):
         "reviewedBy","reviewedOn","approvalState")
     if any(not item.get(k) for k in required):return False
     if item["taxon"] not in targets:return False
-    if item["photoLicense"] not in LICENSES:return False
-    if item["photoLicenseUrl"]!=LICENSE_URL[item["photoLicense"]]:return False
+    own=item.get("rightsBasis")==OWNER_GRANT
+    if own:
+        if item["photoLicense"]!="all_rights_reserved":return False
+        if item["photoLicenseUrl"]!="https://help.inaturalist.org/en/support/solutions/articles/151000175695":return False
+        if item.get("observer")!="dreidrei":return False
+        if "andrei von tirona" not in str(item.get("photoAttribution","")).casefold():return False
+        if item.get("permissionSource")!="docs/LIKAS_DREIDREI_PRIVATE_PHOTO_PERMISSION_2026_10_28.md":return False
+        if not (ROOT/item["permissionSource"]).is_file():return False
+    else:
+        if item["photoLicense"] not in LICENSES:return False
+        if item["photoLicenseUrl"]!=LICENSE_URL[item["photoLicense"]]:return False
     if item["approvalState"]!="approved_private_research":return False
     if not isinstance(item["photoId"],int) or item["photoId"]<=0:return False
     if not isinstance(item["observationId"],int) or item["observationId"]<=0:return False
@@ -182,12 +199,16 @@ def package_approved(items,targets,photo_dir=PHOTO_DIR,manifest_path=MANIFEST,
             "taxon":item["taxon"],"fileName":path,
             "observer":item["observer"],"photoId":item["photoId"],
             "observationId":item["observationId"],
-            "author":item["photoAttribution"],"license":item["photoLicense"].upper(),
+            "author":item["photoAttribution"],"license":(
+                "All rights reserved · LIKAS private research authorization" if
+                item.get("rightsBasis")==OWNER_GRANT else item["photoLicense"].upper()),
+            "rightsBasis":item.get("rightsBasis","public_creative_commons"),
+            "permissionSource":item.get("permissionSource",""),
             "licenseUrl":item["photoLicenseUrl"],"sourceUrl":item["photoPageUrl"],
             "observationUrl":item["observationUrl"],
             "offlineAsset":"offline_photos/"+path,
             "sha256":item["sha256"],
-            "caption":"iNaturalist photographic identification reference. Not a LIKAS field sighting.",
+            "caption":"iNaturalist photographic reference; identification pending specialist confirmation. Not a LIKAS detection.",
             "edited":"Source medium JPEG; no content alteration",
         })
     manifest_path.parent.mkdir(parents=True,exist_ok=True)

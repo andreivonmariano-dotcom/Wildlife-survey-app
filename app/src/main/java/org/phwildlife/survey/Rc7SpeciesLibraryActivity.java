@@ -105,9 +105,17 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             android.R.layout.simple_spinner_dropdown_item,GROUPS));
         scope.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,FILTERS));
-        filters.addView(group,new LinearLayout.LayoutParams(0,dp(50),1));
-        LinearLayout.LayoutParams right=new LinearLayout.LayoutParams(0,dp(50),1);
-        right.leftMargin=dp(8);filters.addView(scope,right);
+        float screenDp=getResources().getDisplayMetrics().widthPixels/
+            getResources().getDisplayMetrics().density;
+        if(screenDp<385f){
+            filters.setOrientation(LinearLayout.VERTICAL);
+            filters.addView(group,new LinearLayout.LayoutParams(-1,dp(48)));
+            filters.addView(scope,new LinearLayout.LayoutParams(-1,dp(48)));
+        }else{
+            filters.addView(group,new LinearLayout.LayoutParams(0,dp(50),1));
+            LinearLayout.LayoutParams right=new LinearLayout.LayoutParams(0,dp(50),1);
+            right.leftMargin=dp(8);filters.addView(scope,right);
+        }
         root.addView(filters);
         LinearLayout tools=new LinearLayout(this);tools.setOrientation(LinearLayout.HORIZONTAL);
         Button region=UiKit.button(this,"Regional evidence","quiet");
@@ -189,19 +197,47 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         int end=Math.min(rendered+PAGE,selected.size());
         for(int n=rendered;n<end;n++){
             Summary item=selected.get(n);
-            String title=(item.common.isEmpty()?item.name:item.common)+"\n"+item.name;
-            Button b=UiKit.button(this,title,"secondary");
-            b.setTextSize(14);
-            b.setAllCaps(false);
-            b.setOnClickListener(v->startActivity(new Intent(this,TaxonDetailActivity.class)
-                .putExtra("taxon_key",item.key)));
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(67));
-            lp.bottomMargin=dp(4);
-            results.addView(b,lp);
-            String tag=item.group+" · "+item.family+
-                (Rc7FieldAccounts.priority(this,item.name)?" · RC7A priority":"");
-            TextView meta=label(tag,12,false);
-            results.addView(meta);
+            LinearLayout card=new LinearLayout(this);
+            card.setOrientation(LinearLayout.HORIZONTAL);
+            card.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            card.setPadding(dp(10),dp(8),dp(10),dp(8));
+            card.setBackground(UiKit.surface(this));
+            card.setContentDescription("Open species reference: "+
+                (item.common.isEmpty()?item.name:item.common)+", "+item.name);
+            card.setClickable(true);
+            card.setFocusable(true);
+            android.widget.ImageView photo=OfflinePhotoEvidence.thumbnailForTaxon(
+                this,item.name);
+            if(photo!=null){
+                LinearLayout.LayoutParams imageLp=
+                    new LinearLayout.LayoutParams(dp(74),dp(74));
+                imageLp.rightMargin=dp(12);
+                card.addView(photo,imageLp);
+            }
+            LinearLayout labels=new LinearLayout(this);
+            labels.setOrientation(LinearLayout.VERTICAL);
+            TextView title=label(item.common.isEmpty()?item.name:item.common,15,true);
+            title.setTextColor(UiKit.INK);labels.addView(title);
+            if(!item.common.isEmpty()){
+                TextView scientific=label(item.name,14,false);
+                scientific.setTypeface(null,Typeface.ITALIC);
+                labels.addView(scientific);
+            }
+            String description=item.group+" · "+item.family;
+            if(Rc7FieldAccounts.priority(this,item.name))
+                description+=" · Priority";
+            if(Rc7LiteratureNotes.available(this,item.name))
+                description+=" · Literature";
+            if(photo!=null)description+=" · Photo";
+            TextView meta=label(description,12,false);
+            labels.addView(meta);
+            card.addView(labels,new LinearLayout.LayoutParams(0,-2,1f));
+            card.setOnClickListener(v->startActivity(
+                new Intent(this,TaxonDetailActivity.class)
+                    .putExtra("taxon_key",item.key)));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+            lp.bottomMargin=dp(8);
+            results.addView(card,lp);
         }
         rendered=end;
         more.setVisibility(rendered<selected.size()?View.VISIBLE:View.GONE);

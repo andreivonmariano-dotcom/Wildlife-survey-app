@@ -64,9 +64,29 @@ public final class OfflinePhotoEvidence {
         }
         return null;
     }
-    /** Only returns true for a genuinely installed, attribution-linked JPEG. */
-    public static boolean hasOfflineTaxon(Activity a,String scientific){
-        return findForTaxon(a,scientific)!=null;
+    private static java.util.HashSet<String> availablePhotoTaxa;
+    /** Cache actual APK media presence to keep offline 1,500-taxon filtering fast. */
+    public static synchronized boolean hasOfflineTaxon(Activity a,String scientific){
+        if(scientific==null)return false;
+        if(availablePhotoTaxa==null){
+            java.util.HashSet<String> names=new java.util.HashSet<>();
+            for(JSONArray list:new JSONArray[]{inatManifest(a).optJSONArray("items"),
+                    manifest(a).optJSONArray("items")}){
+                if(list==null)continue;
+                for(int i=0;i<list.length();i++){
+                    JSONObject image=list.optJSONObject(i);
+                    if(image==null||!image.has("taxon"))continue;
+                    String file=image.optString("offlineAsset");
+                    if(!file.matches("offline_photos/(species|habitat|inat)_[a-z0-9_]+\\.jpg"))continue;
+                    try(InputStream in=a.getAssets().open(file)){
+                        if(in.read()!=-1)names.add(image.optString("taxon")
+                            .toLowerCase(java.util.Locale.ROOT));
+                    }catch(Exception ignored){}
+                }
+            }
+            availablePhotoTaxa=names;
+        }
+        return availablePhotoTaxa.contains(scientific.toLowerCase(java.util.Locale.ROOT));
     }
     /** iNaturalist references are rendered only if a verified JPEG was bundled. */
     /** Small, downsampled thumbnail for offline catalog rows. Attribution is in species detail. */

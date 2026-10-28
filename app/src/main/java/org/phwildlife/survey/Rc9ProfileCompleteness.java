@@ -55,9 +55,13 @@ public final class Rc9ProfileCompleteness {
     }
     private static JSONArray sourceStatements(Activity a,String scientific,String area){
         String category;
+        String keyword="";
         switch(area){
             case "taxonomy": category="Taxonomy"; break;
             case "diagnosis": category="Identification"; break;
+            case "sex": category="Identification"; keyword="sex"; break;
+            case "life_stage": category="Identification"; keyword="age"; break;
+            case "measurements": category="Identification"; keyword="measurement"; break;
             case "habitat": category="Habitat & ecology"; break;
             case "range": category="Range"; break;
             case "behavior": category="Behavior & sound"; break;
@@ -74,9 +78,20 @@ public final class Rc9ProfileCompleteness {
             if(traits==null)break;
             for(int j=0;j<traits.length();j++){
                 JSONObject t=traits.optJSONObject(j);
-                if(t!=null&&category.equals(t.optString("category")) &&
-                    t.optString("url").startsWith("https://"))
-                    found.put(t);
+                if(t==null||!category.equals(t.optString("category")) ||
+                    !t.optString("url").startsWith("https://"))continue;
+                String words=(t.optString("label")+" "+t.optString("value"))
+                    .toLowerCase(java.util.Locale.ROOT);
+                if("sex".equals(keyword)&&!(words.contains("male")||
+                    words.contains("female")||words.contains("sex")))continue;
+                if("age".equals(keyword)&&!(words.contains("juvenile")||
+                    words.contains("immature")||words.contains("young")||
+                    words.contains("life stage")))continue;
+                if("measurement".equals(keyword)&&!(words.contains("length")||
+                    words.contains("size")||words.contains("cm")||
+                    words.contains("mm")||words.contains("mass")||
+                    words.contains("weight")))continue;
+                found.put(t);
             }
             break;
         }
@@ -144,6 +159,13 @@ public final class Rc9ProfileCompleteness {
             if(statements.length()>4)
                 body.addView(line(a,"+"+(statements.length()-4)+
                     " additional cited statements in the comparison reference.",12,false));
+            if("differential".equals(area)){
+                Button compare=UiKit.button(a,"Read curated differential research","secondary");
+                body.addView(compare,new LinearLayout.LayoutParams(-1,dp(a,46)));
+                compare.setOnClickListener(v->a.startActivity(
+                    new Intent(a,Rc9DifferentialActivity.class)
+                        .putExtra("scientific_name",scientific)));
+            }
         }
         Button toggle=UiKit.button(a,"Read source evidence and gaps  ▾","quiet");
         parent.addView(toggle,new LinearLayout.LayoutParams(-1,dp(a,48)));

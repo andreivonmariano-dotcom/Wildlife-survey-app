@@ -1,0 +1,10 @@
+{
+  "edition": "2026-10-28",
+  "schemaVersion": "1",
+  "preferredObserver": "dreidrei",
+  "source": "iNaturalist observation photo media, licensed per-photo",
+  "usage": "private_noncommercial_research",
+  "status": "pending_verified_licensed_media_candidates",
+  "policy": "Only photo-license-verified, attributed, original iNaturalist media with approved SHA-256 may be bundled. An observation license alone cannot license its photos. All rights reserved and ND photos are excluded unless a distinct written grant exists. Do not infer site presence from photos.",
+  "items": []
+}

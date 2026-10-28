@@ -73,14 +73,22 @@ public final class TaxonDetailActivity extends Activity {
         SpeciesReferenceSuggestionAdapter autocomplete=
             new SpeciesReferenceSuggestionAdapter(this,db,null);
         search.setAdapter(autocomplete);
-        search.setDropDownHeight(dp(300));
+        search.setDropDownHeight(dp(220));
         search.setOnItemClickListener((parent,view,position,id)->{
+            search.dismissDropDown();
             lookup(parent.getItemAtPosition(position).toString());
         });
         input.addView(search,new LinearLayout.LayoutParams(0,dp(52),1f));
         Button dropdown=UiKit.button(this,"▾","quiet");
         dropdown.setContentDescription("Show species suggestions");
         dropdown.setOnClickListener(v->{
+            if(search.getText().toString().trim().length()<2){
+                search.requestFocus();
+                android.widget.Toast.makeText(this,
+                    "Type at least two letters to see matching species",
+                    android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
             search.requestFocus();
             autocomplete.getFilter().filter(search.getText().toString(),
                 count->{if(count>0)search.showDropDown();});
@@ -90,6 +98,23 @@ public final class TaxonDetailActivity extends Activity {
         find.setOnClickListener(v->lookup(search.getText().toString()));
         input.addView(find,new LinearLayout.LayoutParams(dp(80),dp(52)));
         root.addView(input);
+        final String[] groupNames={"All groups","Birds","Amphibians","Reptiles","Mammals"};
+        Button chooseGroup=UiKit.button(this,"All wildlife groups  ▾","quiet");
+        chooseGroup.setContentDescription("Filter species by wildlife group");
+        LinearLayout.LayoutParams groupLp=new LinearLayout.LayoutParams(-1,dp(48));
+        groupLp.topMargin=dp(6);
+        root.addView(chooseGroup,groupLp);
+        chooseGroup.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Browse wildlife group")
+            .setItems(groupNames,(dialog,which)->{
+                String group=which==0?null:groupNames[which];
+                autocomplete.setGroup(group);
+                chooseGroup.setText(groupNames[which]+"  ▾");
+                search.setText("");
+                showMessage("Search "+(group==null?
+                    "all Philippine wildlife groups":group.toLowerCase(Locale.ROOT))+
+                    " by typing at least two letters.");
+            }).setNegativeButton("Cancel",null).show());
         search.setOnEditorActionListener((v,action,event)->{
             lookup(search.getText().toString());return true;
         });
@@ -110,7 +135,8 @@ public final class TaxonDetailActivity extends Activity {
             search.setText(query);
             lookup(query);
         }else{
-            content.addView(text("Search the installed bird, mammal, amphibian and reptile catalogs.",14,false));
+            content.addView(FieldVisuals.context(this,
+                "Search names with at least two letters, or choose a wildlife group above."));
         }
     }
     private static String originalReference(String source){

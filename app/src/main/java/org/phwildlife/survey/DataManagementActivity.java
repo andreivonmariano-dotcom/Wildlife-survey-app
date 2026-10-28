@@ -113,6 +113,8 @@ public final class DataManagementActivity extends Activity {
         label("Projects, sites and reusable plans",
             projects+" projects · "+sites+" stations · "+routes+" routes · "+
                 studies+" study templates");
+        button("Delete one station, project, route or study template",()->
+            chooseWorkspaceRecord());
         button("Delete project and station register",()->
             confirm("ALL projects, stations, routes and study templates",
                 "DELETE WORKSPACE",()->{
@@ -139,6 +141,49 @@ public final class DataManagementActivity extends Activity {
         sections.addView(FieldVisuals.context(this,
             "Installed Philippine species checklists and bundled diagnostic references "+
             "are protected reference data. Deleting favorites does not remove them."));
+    }
+    private void chooseWorkspaceRecord(){
+        final String[] categories={"Stations","Projects","Route plans","Study templates"};
+        new AlertDialog.Builder(this).setTitle("Choose type of saved item")
+            .setItems(categories,(dialog,index)->chooseWorkspaceItem(index))
+            .setNegativeButton("Cancel",null).show();
+    }
+    private void chooseWorkspaceItem(int index){
+        final String[] tables={"sites","projects","route_templates",
+            "study_protocol_templates"};
+        if(index<0||index>=tables.length)return;
+        String table=tables[index];
+        ArrayList<String> ids=new ArrayList<>(),names=new ArrayList<>();
+        try(Cursor c=helper.getReadableDatabase().rawQuery(
+                "SELECT id,name FROM "+table+" ORDER BY name COLLATE NOCASE LIMIT 150",
+                null)){
+            while(c.moveToNext()){
+                String id=c.getString(0);
+                if("projects".equals(table)&&"default".equals(id))continue;
+                ids.add(id);names.add(c.getString(1)+" · "+id);
+            }
+        }catch(Exception error){
+            showMessage("Cannot read saved items: "+error.getMessage());return;
+        }
+        if(ids.isEmpty()){
+            showMessage("No deletable saved items in this category.");return;
+        }
+        new AlertDialog.Builder(this).setTitle("Choose item to delete")
+            .setItems(names.toArray(new String[0]),(dialog,selected)->{
+                String id=ids.get(selected);
+                confirm("selected "+table+" item","DELETE",()->{
+                    SQLiteDatabase db=helper.getWritableDatabase();
+                    switch(index){
+                        case 0:FieldDataDeletion.deleteSite(db,id);break;
+                        case 1:FieldDataDeletion.deleteProject(db,id);break;
+                        case 2:FieldDataDeletion.deleteRoute(db,id);break;
+                        case 3:FieldDataDeletion.deleteStudyTemplate(db,id);break;
+                        default:return;
+                    }
+                    showMessage("Selected saved item deleted.");show();
+                });
+            })
+            .setNegativeButton("Cancel",null).show();
     }
     private void confirm(String scope,String phrase,Runnable action){
         EditText input=new EditText(this);

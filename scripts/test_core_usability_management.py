@@ -58,6 +58,14 @@ class NewUsabilityContracts(unittest.TestCase):
             self.assertIn('"'+phrase+'"',ui)
         self.assertIn("Delete selected archived survey",ui)
         self.assertIn("Delete all my saved field data",ui)
+        self.assertIn("deleteAllSurveys.setEnabled(active==0)",ui)
+        self.assertIn("deleteWorkspace.setEnabled(surveys==0)",ui)
+        self.assertIn("resetAll.setEnabled(active==0)",ui)
+        for action in ["deleteSite","deleteProject","deleteRoute","deleteStudyTemplate"]:
+            self.assertIn("public static void "+action+"(",deletion)
+        self.assertIn('if(id==null||id.isEmpty()||"default".equals(id))',deletion)
+        self.assertIn("chooseWorkspaceItem(index)",ui)
+        self.assertIn("clearAllSurveyPreferences(context)",deletion)
         self.assertIn("End Survey",ui)
         self.assertIn("research ZIP is not a complete restore backup",ui)
 

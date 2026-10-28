@@ -21,9 +21,7 @@ public final class AuditActivity extends Activity{
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16),dp(14),dp(16),dp(12));
         root.setBackgroundColor(UiKit.BG);
-        Button back=UiKit.button(this,"‹ Back","secondary");root.addView(back);
-        back.setOnClickListener(v->finish());
-        root.addView(UiKit.title(this,"Scientific data review"));
+        root.addView(UiKit.navigationHeader(this,"Scientific data review","Home",this::finish));
         TextView explanation=new TextView(this);
         explanation.setText("Read-only checks for records, GPS, survey effort and evidence files.");
         explanation.setTextSize(14);explanation.setTextColor(UiKit.MUTED);

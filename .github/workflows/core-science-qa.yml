@@ -97,7 +97,7 @@ jobs:
           (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feature/likas-core-fieldwork-post-rc4')
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC11-compact-species-debug
+          name: LIKAS-RC11B-compact-species-photo-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14

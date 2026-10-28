@@ -51,3 +51,7 @@ The owner selected audit of survey lifecycle, species taxonomy/evidence quality 
 
 ### 2026-10-28 | Biodiversity workspace, observation recorder and evidence-first species UI | Source implemented, draft PR #38
 The owner selected Q1/Q2/Q3 to redesign Home, simplify the Live Recorder and reorganize the Species Library. The RC4-based scientific core branch now exposes projects/recent work on Home, keeps Save/End/Mark/Measure accessible and places secondary method tools behind a disclosure. Species cards no longer display uncalibrated “Likely” percentages; geographic source, habitat match and elevation status are separate. The library search leads directly to authored reference records, local catalog totals are runtime-derived and diagnostic traits are explicitly unassessed where no reference key exists. No new biodiversity occurrence data, media, schema, versionCode or launcher/startup artwork was introduced. Source design contract: `docs/LIKAS_BIODIVERSITY_WORKSPACE_V1.md`. Review and installed-device acceptance remain pending.
+
+
+### 2026-10-28 | Field UI and cited species-comparison starter | Accepted
+Owner selected Q1, Q2 and Q3. Core-branch screens now share minimalist section styling. Contextual evidence actions cover calls, photos and protocol checks. Two offline, source-attributed raptor character profiles support comparison. These are not expert-validated keys. Startup, survey storage and version remain unchanged. Source CI passed, physical device review pending.

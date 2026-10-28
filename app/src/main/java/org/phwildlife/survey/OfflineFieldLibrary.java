@@ -35,7 +35,8 @@ public final class OfflineFieldLibrary {
     private static TextView text(Activity a,String value,boolean heading){
         TextView label=new TextView(a);
         label.setText(value);
-        label.setTextSize(heading?15:13);
+        label.setTextSize(heading?16:15);
+        label.setLineSpacing(dp(a,3),1.05f);
         label.setTextColor(heading?UiKit.FOREST:UiKit.INK);
         label.setPadding(dp(a,4),dp(a,heading?10:3),dp(a,4),dp(a,3));
         if(heading)label.setTypeface(null,Typeface.BOLD);
@@ -95,69 +96,109 @@ public final class OfflineFieldLibrary {
         OfflinePhotoEvidence.add(a,target,account.optString("photoId"));
         paragraph(a,target,"Description",account.optString("overview"));
         paragraph(a,target,"Habitat and microhabitat",account.optString("habitat"));
-        paragraph(a,target,"Natural history and activity",account.optString("behavior"));
-        paragraph(a,target,"Useful field documentation",account.optString("fieldNotes"));
-        paragraph(a,target,"Identification cautions",account.optString("cautions"));
-        citationList(a,target,bundle.optJSONArray("sourceList"),
+        Button more=UiKit.button(a,"Field notes & source references  ▾","quiet");
+        LinearLayout.LayoutParams moreLp=new LinearLayout.LayoutParams(-1,dp(a,48));
+        moreLp.topMargin=dp(a,8);target.addView(more,moreLp);
+        LinearLayout extra=new LinearLayout(a);
+        extra.setOrientation(LinearLayout.VERTICAL);
+        extra.setVisibility(View.GONE);
+        paragraph(a,extra,"Natural history and activity",account.optString("behavior"));
+        paragraph(a,extra,"Useful field documentation",account.optString("fieldNotes"));
+        paragraph(a,extra,"Identification cautions",account.optString("cautions"));
+        citationList(a,extra,bundle.optJSONArray("sourceList"),
             account.optJSONArray("sourceIds"));
+        target.addView(extra);
+        more.setOnClickListener(v->{
+            boolean open=extra.getVisibility()!=View.VISIBLE;
+            extra.setVisibility(open?View.VISIBLE:View.GONE);
+            more.setText(open?"Field notes & source references  ▴":
+                "Field notes & source references  ▾");
+        });
         return true;
     }
-    /** Display nine evidence-linked habitat descriptions in collapsed cards. */
+    /** Filtered, compact and lazy-loaded habitat guide: one expanded card at a time. */
     public static void addHabitats(Activity a,LinearLayout target){
+        addHabitats(a,target,"All habitats");
+    }
+    public static void addHabitats(Activity a,LinearLayout target,String chosenGroup){
         JSONObject pack=read(a,"offline_habitat_profiles_v1.json");
         JSONArray profiles=pack.optJSONArray("profiles");
         if(profiles==null){
             target.addView(text(a,"Habitat reference pack unavailable offline.",false));
             return;
         }
-        target.addView(FieldVisuals.section(a,"Philippine Habitat Library",
-            profiles.length()+" source-linked profiles · tap a habitat to read"));
+        int matches=0;
+        for(int n=0;n<profiles.length();n++){
+            JSONObject profile=profiles.optJSONObject(n);
+            if(profile!=null&&("All habitats".equals(chosenGroup)||
+                chosenGroup.equals(profile.optString("group"))))matches++;
+        }
+        target.addView(FieldVisuals.section(a,"Philippine habitat profiles",
+            matches+" of "+profiles.length()+" source-backed accounts · choose a habitat"));
+        final ArrayList<LinearLayout> openDetails=new ArrayList<>();
+        final ArrayList<Button> toggles=new ArrayList<>();
+        final ArrayList<String> labels=new ArrayList<>();
         for(int i=0;i<profiles.length();i++){
             JSONObject profile=profiles.optJSONObject(i);
-            if(profile==null)continue;
+            if(profile==null||!("All habitats".equals(chosenGroup)||
+                chosenGroup.equals(profile.optString("group"))))continue;
             LinearLayout card=new LinearLayout(a);
             card.setOrientation(LinearLayout.VERTICAL);
-            card.setPadding(dp(a,9),dp(a,8),dp(a,9),dp(a,8));
+            card.setPadding(dp(a,12),dp(a,8),dp(a,12),dp(a,10));
             card.setBackground(UiKit.surface(a));
-            Button toggle=UiKit.button(a,profile.optString("name")+"  ▾","quiet");
-            toggle.setContentDescription("Show "+profile.optString("name")+" reference details");
+            String name=profile.optString("name");
+            Button toggle=UiKit.button(a,name+"  ▾","quiet");
+            toggle.setContentDescription("Read "+name+" habitat guide");
             card.addView(toggle,new LinearLayout.LayoutParams(-1,dp(a,52)));
             TextView teaser=text(a,profile.optString("overview"),false);
-            teaser.setMaxLines(3);card.addView(teaser);
+            teaser.setMaxLines(2);
+            teaser.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            card.addView(teaser);
             LinearLayout detail=new LinearLayout(a);
             detail.setOrientation(LinearLayout.VERTICAL);
             detail.setVisibility(View.GONE);
-            OfflinePhotoEvidence.add(a,detail,profile.optString("photoId"));
-            paragraph(a,detail,"Habitat description",profile.optString("overview"));
-            paragraph(a,detail,"Field recognition",profile.optString("fieldIndicators"));
-            paragraph(a,detail,"Water, geology and substrate",
-                profile.optString("waterAndSubstrate"));
-            paragraph(a,detail,"Vegetation and wildlife context",
-                profile.optString("vegetationAndWildlife"));
-            JSONArray metrics=profile.optJSONArray("measurements");
-            if(metrics!=null){
-                StringBuilder measurements=new StringBuilder();
-                for(int n=0;n<metrics.length();n++){
-                    if(n>0)measurements.append("\n");
-                    measurements.append("• ").append(metrics.optString(n));
-                }
-                paragraph(a,detail,"Recommended field measurements",measurements.toString());
-            }
-            paragraph(a,detail,"Scientific cautions",profile.optString("limitations"));
-            citationList(a,detail,pack.optJSONArray("sources"),
-                profile.optJSONArray("sourceIds"));
             card.addView(detail);
-            String name=profile.optString("name");
+            openDetails.add(detail);toggles.add(toggle);labels.add(name);
             toggle.setOnClickListener(v->{
-                boolean show=detail.getVisibility()!=View.VISIBLE;
-                detail.setVisibility(show?View.VISIBLE:View.GONE);
-                teaser.setVisibility(show?View.GONE:View.VISIBLE);
-                toggle.setText(name+(show?"  ▴":"  ▾"));
-                toggle.setContentDescription((show?"Hide ":"Show ")+name+" reference details");
+                boolean open=detail.getVisibility()!=View.VISIBLE;
+                for(int n=0;n<openDetails.size();n++){
+                    openDetails.get(n).setVisibility(View.GONE);
+                    toggles.get(n).setText(labels.get(n)+"  ▾");
+                }
+                if(open){
+                    if(detail.getChildCount()==0){
+                        OfflinePhotoEvidence.add(a,detail,profile.optString("photoId"));
+                        paragraph(a,detail,"Habitat description",profile.optString("overview"));
+                        paragraph(a,detail,"Field recognition",
+                            profile.optString("fieldIndicators"));
+                        paragraph(a,detail,"Water, geology and substrate",
+                            profile.optString("waterAndSubstrate"));
+                        paragraph(a,detail,"Vegetation and wildlife context",
+                            profile.optString("vegetationAndWildlife"));
+                        JSONArray metrics=profile.optJSONArray("measurements");
+                        if(metrics!=null){
+                            StringBuilder measurements=new StringBuilder();
+                            for(int n=0;n<metrics.length();n++){
+                                if(n>0)measurements.append("\\n");
+                                measurements.append("• ").append(metrics.optString(n));
+                            }
+                            paragraph(a,detail,"What to measure",measurements.toString());
+                        }
+                        paragraph(a,detail,"Scientific cautions",
+                            profile.optString("limitations"));
+                        citationList(a,detail,pack.optJSONArray("sources"),
+                            profile.optJSONArray("sourceIds"));
+                    }
+                    detail.setVisibility(View.VISIBLE);
+                    toggle.setText(name+"  ▴");
+                }
+                teaser.setVisibility(open?View.GONE:View.VISIBLE);
             });
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-            lp.bottomMargin=dp(a,9);
+            lp.bottomMargin=dp(a,10);
             target.addView(card,lp);
         }
+        if(matches==0)target.addView(FieldVisuals.context(a,
+            "No habitat reference matches this group."));
     }
 }

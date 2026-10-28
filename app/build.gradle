@@ -6,8 +6,8 @@ android {
         applicationId 'org.phwildlife.survey.beta08'
         minSdk 26
         targetSdk 34
-        versionCode 51
-        versionName '0.27.3-rc6-recovery-library-preview'
+        versionCode 52
+        versionName '0.27.3-rc7a-species-research-preview'
     }
     signingConfigs {
         debug {

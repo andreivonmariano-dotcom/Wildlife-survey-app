@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Source-complete Q1/Q2/Q3: minimalist UI, capture shortcuts, diagnostic comparisons
+
+- Owner chose consistent visual styling across Home, Live Recorder and Species Library, fast per-method evidence actions, and cited identification comparisons. Startup animation and formal field-test planning remain in their separate workstreams.
+- Shared `FieldVisuals` headings now cover core screens. `FieldQuickActions` routes one visible action to the existing call library, photo attachment, trap checks or method-evidence screen according to the survey method. No change to Save/Review/End Survey, scientific write paths or schema.
+- New offline `diagnostic_profiles_v1.json` and `DiagnosticGuideActivity` compare two source-checked Philippine raptor profiles: `Pithecophaga jefferyi` and `Spilornis holospilus`. Every displayed trait has a publisher citation and checked date. Comparison is available in Species Library and matching species accounts. Text remains pending expert review; images, automated identification and unsupported species keys were not added.
+- Android compilation, Python/JUnit regression checks and source QA passed GitHub Actions run `40654286500` for code commit `c9401cdb1d7b72258ff3a93824dd209017807bd0`. No installed-phone screen check or new APK release.
+- Draft PR #38, RC4 ancestry, package ID, versionCode 49 and SQLite 27 remain unchanged. The startup branch was not edited. See `docs/LIKAS_BIODIVERSITY_WORKSPACE_V1.md`.
+
+---
+
+
 ## 28 October 2026 | Owner selected Q1-Q3 Home, Recorder and Species Library redesign
 
 - **Explicit selection:** Redesign the Home biodiversity workspace, simplify Live Recorder, and prioritize source-backed identification and ecological evidence in Species Library. Formal field-test plans remain deferred; startup animation stays in a separate chat and branch.

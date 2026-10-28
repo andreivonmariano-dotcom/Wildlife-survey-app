@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 56
-        versionName '0.27.3-rc8-species-habitat-trait-preview'
+        versionCode 57
+        versionName '0.27.3-rc8b-library-review-photo-compare'
     }
     signingConfigs {
         debug {

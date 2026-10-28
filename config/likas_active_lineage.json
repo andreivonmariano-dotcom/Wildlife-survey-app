@@ -1,0 +1,13 @@
+{
+  "product": "LIKAS",
+  "source_branch": "feature/v0.27.3-startup-living-forest",
+  "required_ancestor_commit": "458e786827ba73bebabf5c373e2080015c5fd38c",
+  "minimum_version_code": 49,
+  "baseline_version_name": "0.27.3-rc4",
+  "application_id": "org.phwildlife.survey.beta08",
+  "sqlite_schema": 27,
+  "sprite_archive": "app/src/main/assets/likas_sprite_assets.zip",
+  "sprite_archive_sha256": "def85e227587fdadee75956b6f105b57feb38f2bff27c6889c1f1edbfc042498",
+  "sprite_interval_ms": 200,
+  "next_release_version_code_minimum": 50
+}

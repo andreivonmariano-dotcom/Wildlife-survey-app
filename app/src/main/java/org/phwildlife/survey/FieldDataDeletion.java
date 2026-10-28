@@ -96,6 +96,18 @@ public final class FieldDataDeletion {
             "spotlight_passes","survey_study_protocols","surveys"
         })db.delete(table,table.equals("surveys")?"id=?":"event_id=?",args);
     }
+    private static void clearSurveyPreferences(Context context,String surveyId){
+        context.getSharedPreferences("field_drafts",Context.MODE_PRIVATE)
+            .edit().remove("draft_"+surveyId).apply();
+    }
+    private static void clearAllSurveyPreferences(Context context){
+        context.getSharedPreferences("field_drafts",Context.MODE_PRIVATE)
+            .edit().clear().apply();
+        context.getSharedPreferences("field_resume",Context.MODE_PRIVATE)
+            .edit().clear().apply();
+        context.getSharedPreferences("likas_species_picker",Context.MODE_PRIVATE)
+            .edit().clear().apply();
+    }
     private static int[] removeFiles(Context ctx,List<String> photos,List<String> calls){
         int removed=0,failed=0;
         HashSet<String> photoNames=new HashSet<>(photos);
@@ -136,6 +148,7 @@ public final class FieldDataDeletion {
             db.setTransactionSuccessful();
         }finally{db.endTransaction();}
         int[] count=removeFiles(context,photos,calls);
+        clearSurveyPreferences(context,surveyId);
         return new Report(1,count[0],count[1]);
     }
     public static Report deleteAllSurveys(Context context,SQLiteDatabase db){
@@ -152,6 +165,7 @@ public final class FieldDataDeletion {
             db.setTransactionSuccessful();
         }finally{db.endTransaction();}
         int[] count=removeFiles(context,photos,calls);
+        clearAllSurveyPreferences(context);
         return new Report(surveys,count[0],count[1]);
     }
     private static void seedDefaultProject(SQLiteDatabase db){
@@ -263,6 +277,7 @@ public final class FieldDataDeletion {
             db.setTransactionSuccessful();
         }finally{db.endTransaction();}
         int[] count=removeFiles(context,photos,calls);
+        clearAllSurveyPreferences(context);
         return new Report(surveys,count[0],count[1]);
     }
 }

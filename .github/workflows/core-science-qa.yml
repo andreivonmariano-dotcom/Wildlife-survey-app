@@ -71,7 +71,7 @@ jobs:
         if: github.ref == 'refs/heads/feature/likas-core-fieldwork-post-rc4' && github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC5-field-ux-preview-debug
+          name: LIKAS-RC6-recovery-library-preview-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14

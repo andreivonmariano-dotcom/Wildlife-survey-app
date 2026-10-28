@@ -304,24 +304,43 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(detectRow);
         markTime.setOnClickListener(v->markDetection());
         markButton.setOnClickListener(v->openCamera());
+        // Only method-specific tools are folded away. Time/bearing marking stays visible.
+        LinearLayout evidenceTools=vertical();
+        evidenceTools.setVisibility(View.GONE);
         if(FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile)){
             Button sound=UiKit.button(this,"♪ Record / Review Calls","secondary");
             sound.setContentDescription("Record, view spectrogram and label bird or amphibian calls");
             LinearLayout.LayoutParams soundLp=new LinearLayout.LayoutParams(-1,dp(52));
-            soundLp.topMargin=dp(7);content.addView(sound,soundLp);
+            soundLp.topMargin=dp(7);evidenceTools.addView(sound,soundLp);
             sound.setOnClickListener(v->openCallLibrary());
         }
         if(TrapProtocolPolicy.supported(method)){
             Button devices=UiKit.button(this,"▣ Devices, Checks & Captures","secondary");
             LinearLayout.LayoutParams deviceLp=new LinearLayout.LayoutParams(-1,dp(52));
-            deviceLp.topMargin=dp(7);content.addView(devices,deviceLp);
+            deviceLp.topMargin=dp(7);evidenceTools.addView(devices,deviceLp);
             devices.setOnClickListener(v->openTrapProtocol());
         }
         if(FieldProtocolPolicy.supported(method)){
             Button methodRecords=UiKit.button(this,"▣ Method Effort & Evidence","secondary");
             LinearLayout.LayoutParams methodLp=new LinearLayout.LayoutParams(-1,dp(52));
-            methodLp.topMargin=dp(7);content.addView(methodRecords,methodLp);
+            methodLp.topMargin=dp(7);evidenceTools.addView(methodRecords,methodLp);
             methodRecords.setOnClickListener(v->openFieldProtocol());
+        }
+        if(FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile)||
+                TrapProtocolPolicy.supported(method)||FieldProtocolPolicy.supported(method)){
+            Button evidenceToggle=UiKit.button(this,"Audio, devices & evidence  ▾","quiet");
+            LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,dp(48));
+            evidenceLp.topMargin=dp(7);
+            content.addView(evidenceToggle,evidenceLp);
+            content.addView(evidenceTools);
+            evidenceToggle.setOnClickListener(v->{
+                boolean open=evidenceTools.getVisibility()!=View.VISIBLE;
+                evidenceTools.setVisibility(open?View.VISIBLE:View.GONE);
+                evidenceToggle.setText(open?"Audio, devices & evidence  ▴":
+                    "Audio, devices & evidence  ▾");
+                evidenceToggle.setContentDescription(open?
+                    "Hide method evidence tools":"Show method evidence tools");
+            });
         }
         LinearLayout markRow=horizontal();
         markRowView=markRow;
@@ -335,6 +354,7 @@ public class MainActivity extends Activity implements LocationListener {
         clear.setOnClickListener(v->clearMark());
         markRow.addView(clear);
         content.addView(markRow);
+        content.addView(section("Record observation"));
         // One row combines direct entry and the complete offline checklist.
         // Complete species selection now lives on its own page.
         // Retain direct text entry for novel/unidentified field observations.

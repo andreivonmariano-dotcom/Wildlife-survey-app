@@ -66,6 +66,12 @@ class NewUsabilityContracts(unittest.TestCase):
         self.assertIn('if(id==null||id.isEmpty()||"default".equals(id))',deletion)
         self.assertIn("chooseWorkspaceItem(index)",ui)
         self.assertIn("clearAllSurveyPreferences(context)",deletion)
+        self.assertIn("Executors.newSingleThreadExecutor()",ui)
+        self.assertIn("deletionWorker.execute(()->",ui)
+        self.assertIn("runOnUiThread(()->",ui)
+        self.assertIn('setCancelable(false)',ui)
+        self.assertIn("if(deleting)return;",ui)
+        self.assertIn("try(FieldDb local=new FieldDb(getApplicationContext()))",ui)
         self.assertIn("End Survey",ui)
         self.assertIn("research ZIP is not a complete restore backup",ui)
 

@@ -272,7 +272,7 @@ public final class TaxonDetailActivity extends Activity {
                     "Keep uncertain determinations unresolved.");
             }
             if(DiagnosticGuideActivity.hasProfile(this,scientific)){
-                Button legacy=UiKit.button(this,"View introductory morphology guide","quiet");
+                Button legacy=UiKit.button(this,"Compare source-checked ID characters","quiet");
                 content.addView(legacy);
                 legacy.setOnClickListener(v->startActivity(
                     new Intent(this,DiagnosticGuideActivity.class)

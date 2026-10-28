@@ -24,7 +24,7 @@ jobs:
       - name: Audit dreidrei photo licensing; do not auto-package images
         run: |
           python3 scripts/audit_inaturalist_photos.py --audit \
-            --observer dreidrei --pages 6 \
+            --observer dreidrei --pages 12 \
             --output rc7_inat_dreidrei_candidates.json
       - name: Publish candidate metadata for manual attribution and identification check
         if: always()

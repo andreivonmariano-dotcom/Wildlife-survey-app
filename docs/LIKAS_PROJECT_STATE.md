@@ -1,6 +1,6 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
-**State revision:** 1.8  
+**State revision:** 1.9  
 **Recorded:** 28 October 2026, Asia/Manila  
 **Repository:** `andreivonmariano-dotcom/Wildlife-survey-app` (private)  
 **Branch checked:** `main`  
@@ -36,6 +36,16 @@
 - **Core wildlife biology app features:** This conversation uses new isolated branch `feature/likas-core-fieldwork-post-rc4` based on actual `feature/v0.27.3-startup-living-forest` (RC4, code 49, SQLite 27), not historical `main`.
 - **Do not edit startup assets or screen in core branch.** Core scope is field surveys, observations, species catalogs, habitat/ecological evidence, scientific reviews/exports, research information, offline reliability and non-startup UX. See core branch `docs/LIKAS_CORE_FIELDWORK_WORKSTREAM.md`.
 - **Status:** Scope division and GitHub documentation only. No new application features or APK built; next core module awaits owner selection. Neither workstream should rebase from the older v0.15 default code.
+
+## 28 October 2026 | Scientific core audit and P0 evidence-status source fixes
+
+- **Separate core branch:** `feature/likas-core-fieldwork-post-rc4`, draft PR #38, directly derived from the v0.27.3 RC4 base. Startup animation remains in a separate chat and feature branch, untouched.
+- **Source audit:** `docs/QA_LIKAS_RC4_SCIENTIFIC_CORE_AUDIT.md` on PR #38 reviews actual survey lifecycle, GPS records, species taxa, occurrence and ecology evidence, research exports, old database migration, architecture and non-startup responsiveness. No device testing was performed.
+- **Fixed scientific issue in draft:** Species picker source-location rankings and regional checklist previously treated imported `unreviewed` occurrence rows as source-listed positive local records. Now require `review_status='source_listed'`; raw unreviewed rows remain available for review, never turned into absence.
+- **Taxonomy and local UX:** Species reference and regional name search now match `taxon_synonyms` former names. Davao Region filter adds the fifth PSA province Davao Occidental. Separate Davao City locality is disclosed as not independently assessed by the current province-only schema. Without selected island/province, the local-only picker now explains missing geographic scope instead of implying no species. Regional lists disclose 1,000 cap, read failures and debounce search 180 ms.
+- **Scientific data review:** `AuditActivity` no longer runs multi-query read-only `DataAudit.run` synchronously on the UI thread; uses dedicated executor and lifecycle-safe result rendering without write access.
+- **Testing and constraints:** New synthetic SQLite tests, source contract tests and `.github/workflows/core-science-qa.yml` compile/test code with signing and RC4 lineage checks, no published APK. CI run `40646116315` succeeded on application source commit `16ac4d01eb4dd441140ea667b93d8581ac9ae2c2`; later test/doc-only commits need freshest CI status checked. App ID, schema 27, code 49, survey records and startup assets unchanged. Real phone upgrade, survey, long-run GNSS, evidence attachment, exports and accessibility remain pending.
+- **Architecture priorities:** The 2,413-line `MainActivity`, synchronous Dashboard/History DB reads, GNSS writer queue/failure recovery, data restore and separate taxonomy sources are logged as risks, not measured defects. Priority later: isolate survey session/repositories and independently review source-dated occurrence, ecological and conservation evidence.
 
 ## Mission
 

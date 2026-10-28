@@ -1,5 +1,20 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Owner selected Q1-Q3 Home, Recorder and Species Library redesign
+
+- **Explicit selection:** Redesign the Home biodiversity workspace, simplify Live Recorder, and prioritize source-backed identification and ecological evidence in Species Library. Formal field-test plans remain deferred; startup animation stays in a separate chat and branch.
+- **Implemented on core source branch:** `WelcomeActivity.home()` surfaces Fieldwork, Projects and Stations, recent-survey summary, Survey History, Dashboard, direct Species Library search, and collapsible field tools. **`LikasLaunchActivity` and forest/icon assets not edited.**
+- **Live Recorder:** `MainActivity.draw()` groups secondary audio, device/capture and method-evidence actions behind an accessible disclosure. Mark now, Measure bearing, station navigation, fixed Save Observation, Review Records and End Survey stay accessible. Complete/Incomplete/Not Counted and all data writes unchanged.
+- **Species presentation:** `CatalogActivity` now acts as a Species Library with direct name/synonym references and sources. Catalog totals are calculated from installed attributed taxa, original escaped-newline artifacts and hard-coded 1,503 denominator corrected. `TaxonDetailActivity` groups taxonomy, conservation, habitat/elevation and regional evidence; explicitly states that no vetted diagnostic key is installed. No synthetic traits or media created.
+- **Scientific screening:** `SpeciesPickerActivity` no longer presents heuristic percentages or "Likely/Unlikely" to users. `HabitatLikelihood.Result` exposes separate text outcomes for source-derived habitat and elevation matching. Picker sort UI limits visible ordering to name/family/genus and resets legacy pseudo-probability filters. **Underlying heuristic source logic, SQL schema and historical observations remain unmodified.**
+- **Documentation:** `docs/LIKAS_BIODIVERSITY_WORKSPACE_V1.md` records implemented screen hierarchy and limitations. Updated legacy UI source regression assertions in `scripts/test_v026_ui_audit.py` after new design superseded old labels.
+- **Build status:** PR #38 is still a draft on RC4-based `feature/likas-core-fieldwork-post-rc4`. RC4 PR lineage check passed for code commit `d939960f8a7fc5e90f9ad90b1298209bbc6e1f0f`. Core QA run `40652463202` passed for that code revision; after documentation commit `edd64f93576edd105e3a3aa74cac5e9e35f259c1`, latest CI pending final confirmation. No APK/release version bump and no handset evaluation.
+- **Limitations:** Species diagnostic characters, reference photographs/audio and genuine expert identification keys are not present in catalog sources. Their future import needs documented evidence and reuse permissions. Source-level UI restructuring does not prove on-device visual correctness.
+- **Next:** Review visible Home, Recorder and Species Library flow on the actual phone, then reconcile with parallel startup changes through a deliberate RC4-based integration. Do not change schema 27 or app package identity without explicit release migration.
+
+---
+
+
 ## 28 October 2026 | Product critique requested, test planning deferred
 
 - Owner asked to **defer test plans** and critique the application itself, excluding startup animation owned by a different chat.

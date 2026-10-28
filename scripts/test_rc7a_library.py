@@ -32,8 +32,12 @@ class Rc7aLibraryTests(unittest.TestCase):
             for key in ("habitat","elevationMinM","elevationMaxM","iucnCategory",
                         "denrStatus","regionalOccurrence"):
                 self.assertIsNone(a[key],(a["scientificName"],key))
-            self.assertEqual(a["photoState"],"no_photo_verified")
-            self.assertEqual(a["photoSourcePriority"],"inaturalist:dreidrei")
+            pinned={x["taxon"] for x in photo.load_approval_lock()["items"]}
+            expected="licensed_photo_hash_pinned" if a["scientificName"] in pinned else "no_photo_verified"
+            self.assertEqual(a["photoState"],expected)
+            self.assertEqual(a["photoSourcePriority"],
+                "inaturalist:licensed_contributor" if a["scientificName"] in pinned
+                else "inaturalist:dreidrei")
             self.assertTrue(a["sourceTaxonKey"])
             self.assertTrue(a["sourceCitation"])
             self.assertTrue(a["sourceUrl"].startswith("https://"))

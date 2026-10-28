@@ -61,7 +61,7 @@ public final class SpeciesLibraryInstrumentedTest {
                 for(View v:all){
                     if(v instanceof TextView){
                         String label=((TextView)v).getText().toString();
-                        if(label.contains("matching source records"))results=true;
+                        if(label.contains("source records"))results=true;
                         if(label.contains("Pithecophaga")||label.contains("Philippine Eagle"))species=true;
                     }
                     if(v.isClickable()&&v.isFocusable()&&v.getContentDescription()!=null

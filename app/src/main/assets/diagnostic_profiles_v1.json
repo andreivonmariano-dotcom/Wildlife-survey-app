@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "compiledDate": "2026-10-28",
-  "reviewLevel": "Source-checked introductory traits. Independent Philippine taxonomic review pending.",
-  "scope": "Offline visual-reference starter, not an automated identification or station-occurrence model.",
+  "reviewLevel": "Source-checked from scientific museum references and a peer-reviewed Philippine field inventory; Philippine taxonomic reviewer approval pending.",
+  "scope": "Offline visible-morphology comparison for Birds, Amphibians, Reptiles, Mammals, not an automated identification, occurrence model, or validated key.",
   "sourceList": [
     {
       "id": "wildalert-eagle",
@@ -30,6 +30,55 @@
       "title": "ITIS taxonomic report: Spilornis holospilus",
       "publisher": "Integrated Taxonomic Information System",
       "url": "https://itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=175508",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "zookeys-agusan-2026",
+      "title": "An updated herpetological inventory of the Agusan Marsh Wildlife Sanctuary, eastern Mindanao Island, Philippines (ZooKeys 1272, DOI 10.3897/zookeys.1272.167304)",
+      "publisher": "Sanguila, Labaja, Bernstein & Brown (ZooKeys 2026)",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12993478/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "nparks-polypedates",
+      "title": "Polypedates leucomystax species description",
+      "publisher": "National Parks Board Singapore Flora & Fauna Web",
+      "url": "https://www.nparks.gov.sg/florafaunaweb/fauna/4/4/446",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "nparks-kaloula",
+      "title": "Kaloula pulchra species description",
+      "publisher": "National Parks Board Singapore Flora & Fauna Web",
+      "url": "https://www.nparks.gov.sg/florafaunaweb/fauna/4/5/455",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "asw-kaloula",
+      "title": "Kaloula pulchra Philippine introduction and taxonomy",
+      "publisher": "American Museum of Natural History, Amphibian Species of the World",
+      "url": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Microhylidae/Microhylinae/Kaloula/Kaloula-pulchra",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "mdd-tarsier",
+      "title": "Carlito syrichta current taxonomy",
+      "publisher": "American Society of Mammalogists, Mammal Diversity Database",
+      "url": "https://www.mammaldiversity.org/taxon/1000915/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "adw-tarsier",
+      "title": "Philippine tarsier physical description (historical name Tarsius syrichta)",
+      "publisher": "University of Michigan Museum of Zoology, Animal Diversity Web",
+      "url": "https://animaldiversity.org/accounts/Tarsius_syrichta/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "field-colugo",
+      "title": "Kagwang natural-history account, Cynocephalus volans",
+      "publisher": "Field Museum, Philippine Mammals",
+      "url": "https://philippines.fieldmuseum.org/natural-history/narrative/4124",
       "accessed": "2026-10-28"
     }
   ],
@@ -130,6 +179,286 @@
           "value": "Forest edges, riparian forest, foothills and wooded agricultural country",
           "sourceIds": [
             "denr-serpent"
+          ]
+        }
+      ]
+    },
+    {
+      "scientificName": "Polypedates leucomystax",
+      "commonName": "Four-lined Tree Frog",
+      "group": "Amphibians",
+      "assessment": "Source-checked morphology and ecology; Philippine specimen variation and identification-key review pending.",
+      "traits": [
+        {
+          "field": "Family and build",
+          "value": "Rhacophoridae; relatively slender, long-legged tree frog",
+          "sourceIds": [
+            "nparks-polypedates"
+          ]
+        },
+        {
+          "field": "Dorsal pattern",
+          "value": "Brown, grey or yellowish back; four thin dark lengthwise stripes may be present",
+          "sourceIds": [
+            "nparks-polypedates"
+          ]
+        },
+        {
+          "field": "Fingers and toes",
+          "value": "Expanded, flattened toe and finger tips aid climbing",
+          "sourceIds": [
+            "nparks-polypedates"
+          ]
+        },
+        {
+          "field": "Habit and habitat",
+          "value": "Nocturnal; vegetation, shrubs and trees; occurs in disturbed forests and settlements",
+          "sourceIds": [
+            "nparks-polypedates"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Dorsal stripes vary; do not assign an uncertain Philippine tree frog from color alone",
+          "sourceIds": [
+            "nparks-polypedates"
+          ]
+        }
+      ]
+    },
+    {
+      "scientificName": "Kaloula pulchra",
+      "commonName": "Banded Bullfrog / Asian Painted Frog",
+      "group": "Amphibians",
+      "assessment": "Source-checked morphology. Introduced alien species in Philippines, not evidence of any survey-site occurrence.",
+      "traits": [
+        {
+          "field": "Family and build",
+          "value": "Microhylidae; stout, rounded body, relatively small head and short hind limbs",
+          "sourceIds": [
+            "nparks-kaloula"
+          ]
+        },
+        {
+          "field": "Dorsal pattern",
+          "value": "Grey to brown back, flanked by broad pale yellow or orange, dark-edged bands",
+          "sourceIds": [
+            "nparks-kaloula",
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Fingers and toes",
+          "value": "Blunt, expanded digit tips",
+          "sourceIds": [
+            "nparks-kaloula"
+          ]
+        },
+        {
+          "field": "Habit and habitat",
+          "value": "Often near built-up or disturbed areas; calls commonly heard after heavy rain",
+          "sourceIds": [
+            "nparks-kaloula"
+          ]
+        },
+        {
+          "field": "Philippine origin",
+          "value": "Introduced species according to AMNH's taxonomic account; not endemic",
+          "sourceIds": [
+            "asw-kaloula"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Separate morphology and documented locality from uncertain call-only records",
+          "sourceIds": [
+            "nparks-kaloula"
+          ]
+        }
+      ]
+    },
+    {
+      "scientificName": "Hydrosaurus pustulatus",
+      "commonName": "Philippine Sailfin Lizard",
+      "group": "Reptiles",
+      "assessment": "Morphology checked against 2026 peer-reviewed Philippine herpetofauna inventory; individual stage differences require review.",
+      "traits": [
+        {
+          "field": "Family and build",
+          "value": "Agamidae; large lizard, hind limbs longer than forelimbs",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Dorsal silhouette",
+          "value": "Distinctive laterally flattened, serrated dorsal sail extending from hip region into proximal tail",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Feet and digits",
+          "value": "Greatly expanded scales under the toes documented in identification account",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Ecological context",
+          "value": "Riparian and mangrove corridors; may use overhanging vegetation by rivers",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Sail development and body size differ by age; use characters together",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        }
+      ]
+    },
+    {
+      "scientificName": "Varanus cumingi",
+      "commonName": "Cuming's Water Monitor",
+      "group": "Reptiles",
+      "assessment": "Source-checked identification from 2026 Philippine herpetofauna inventory and monitor-lizard taxonomy. Related Varanus taxa need comparative expert review.",
+      "traits": [
+        {
+          "field": "Family and build",
+          "value": "Varanidae; heavy-built monitor lizard with powerful limbs, claws and muscular neck",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Head pattern",
+          "value": "Conspicuous bright yellow head coloration, with dark contrasting pattern",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Body coloration",
+          "value": "Bright yellow and dark contrast is distinctive in the Varanus salvator complex",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Ecological context",
+          "value": "Reported in Agusan Marsh, Mindanao; a published record is not proof of local station presence",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Related Philippine monitor taxa require scalation and taxonomic comparison; do not rely on yellow alone",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        }
+      ]
+    },
+    {
+      "scientificName": "Carlito syrichta",
+      "commonName": "Philippine Tarsier",
+      "group": "Mammals",
+      "assessment": "Current name checked against Mammal Diversity Database; morphology referenced under older combination Tarsius syrichta.",
+      "traits": [
+        {
+          "field": "Taxonomic identification",
+          "value": "Accepted name Carlito syrichta; older references often use Tarsius syrichta",
+          "sourceIds": [
+            "mdd-tarsier"
+          ]
+        },
+        {
+          "field": "Head and eyes",
+          "value": "Very large forward-facing eyes, round face and prominent ears",
+          "sourceIds": [
+            "adw-tarsier"
+          ]
+        },
+        {
+          "field": "Limb and digit structure",
+          "value": "Long hind limbs and slender digits with gripping pads",
+          "sourceIds": [
+            "adw-tarsier"
+          ]
+        },
+        {
+          "field": "Tail",
+          "value": "Long slender tail, tufted near tip",
+          "sourceIds": [
+            "adw-tarsier"
+          ]
+        },
+        {
+          "field": "Ecological context",
+          "value": "Small arboreal nocturnal primate in Philippine forest and secondary growth",
+          "sourceIds": [
+            "adw-tarsier"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Do not infer an exact island record or age/sex from general genus-level appearance",
+          "sourceIds": [
+            "mdd-tarsier"
+          ]
+        }
+      ]
+    },
+    {
+      "scientificName": "Cynocephalus volans",
+      "commonName": "Philippine Colugo / Kagwang",
+      "group": "Mammals",
+      "assessment": "Morphology checked against the Field Museum Philippine mammals account; limited independent diagnosis.",
+      "traits": [
+        {
+          "field": "Taxonomic identification",
+          "value": "Order Dermoptera; the common term flying lemur does not indicate a true lemur",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        },
+        {
+          "field": "Head and eyes",
+          "value": "Broad muzzle, dark eyes and woolly, white-speckled fur",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        },
+        {
+          "field": "Limb and skin structure",
+          "value": "Large furred gliding membrane spanning fore- and hind limbs",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        },
+        {
+          "field": "Tail and locomotion",
+          "value": "Glides between trees using a membrane, not powered flight",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        },
+        {
+          "field": "Ecological context",
+          "value": "Arboreal mammal recorded from southern Philippine island groups",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Visible membrane separates it from tarsiers, but distant/night records can remain unresolved",
+          "sourceIds": [
+            "field-colugo"
           ]
         }
       ]

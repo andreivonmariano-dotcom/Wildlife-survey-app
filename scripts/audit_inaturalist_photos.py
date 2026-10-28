@@ -21,6 +21,8 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 PRIORITY=ROOT/"app/src/main/assets/rc7a_field_cards_v1.json"
 LOCK=ROOT/"docs/RC7_INAT_APPROVED_LOCK_V1.json"
+LOCK_ENCODED=ROOT/"docs/RC7_INAT_APPROVED_LOCK_V1.json.zlib.b64"
+LOCK_PAYLOAD_SHA256="4289862570ceb449135108a8d8dcf70256852d040a54adad8f25c3552f61554d"
 MANIFEST=ROOT/"app/src/main/assets/offline_inaturalist_manifest_v1.json"
 PHOTO_DIR=ROOT/"app/src/main/assets/offline_photos"
 PRIVATE_BUNDLE=ROOT/"app/src/main/assets/likas_ph_checklists_v2026_private.b64"
@@ -41,6 +43,16 @@ NAME_RE=re.compile(r"^[A-Z][A-Za-z-]+ [a-z][a-z-]+(?: [a-z-]+)?$")
 
 def jsonfile(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
+
+def load_approval_lock():
+    """Reproducible immutable review ledger. Tampering causes a hard build failure."""
+    if LOCK_ENCODED.exists():
+        packed=base64.b64decode(LOCK_ENCODED.read_text().strip(),validate=True)
+        raw=zlib.decompress(packed)
+        if hashlib.sha256(raw).hexdigest()!=LOCK_PAYLOAD_SHA256:
+            raise ValueError("Photo approval ledger checksum mismatch")
+        return json.loads(raw)
+    return jsonfile(LOCK)
 
 def candidates_from_results(results,names,observer="dreidrei"):
     """Photo license governs reproduction, independent of observation license."""
@@ -208,10 +220,10 @@ def main():
         },indent=2)+"\n",encoding="utf-8")
         print("Review candidates:",len(candidates),"; NO files approved")
     elif args.install_approved:
-        lock=jsonfile(LOCK)
+        lock=load_approval_lock()
         print("Verified and installed photos:",package_approved(lock["items"],targets))
     else:
-        lock=jsonfile(LOCK)
+        lock=load_approval_lock()
         print("Pinned photo approvals:",len(lock["items"]))
         print("Use --audit for proposal only; --install-approved only after review.")
 

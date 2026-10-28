@@ -37,6 +37,10 @@ public final class CatalogActivity extends Activity {
         layout.addView(regions);
         regions.setOnClickListener(v->startActivity(
             new Intent(this,RegionalChecklistActivity.class)));
+        Button compare=UiKit.button(this,"Compare reference characters","secondary");
+        layout.addView(compare);
+        compare.setOnClickListener(v->startActivity(
+            new Intent(this,DiagnosticGuideActivity.class)));
         TextView sourceHeading=UiKit.sectionTitle(this,"Installed scientific references");
         layout.addView(sourceHeading);
         info=new TextView(this);

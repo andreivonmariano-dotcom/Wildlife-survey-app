@@ -39,7 +39,6 @@ def audit(sha):
         gradle = text_at(sha,"app/build.gradle")
         field = text_at(sha,"app/src/main/java/org/phwildlife/survey/FieldDb.java")
         launch = text_at(sha,"app/src/main/java/org/phwildlife/survey/LikasLaunchActivity.java")
-        sprite = text_at(sha,"app/src/main/java/org/phwildlife/survey/LikasSpriteForestView.java")
         code = int(version(gradle,"versionCode"))
         name = version(gradle,"versionName")
         if version(gradle,"applicationId") != PKG:
@@ -52,9 +51,11 @@ def audit(sha):
             errors.append("SQLite v27 migration missing")
         if "Explore. Record. Conserve." not in launch or "Resume survey" not in launch:
             errors.append("RC4 launch identity or resume action missing")
-        if "FRAME_MS=200L" not in sprite and code >= 50:
-            errors.append("5 FPS independent sprite renderer missing")
         player_active = bool(re.search(r"new\s+LikasSpriteForestView\s*\(", launch))
+        if player_active or code >= 50:
+            sprite = text_at(sha,"app/src/main/java/org/phwildlife/survey/LikasSpriteForestView.java")
+            if "FRAME_MS=200L" not in sprite:
+                errors.append("5 FPS independent sprite renderer missing")
         archive = git("show", f"{sha}:{ASSET}")
         if player_active or code >= 50:
             if code < 50 or name == "0.27.3-rc4":

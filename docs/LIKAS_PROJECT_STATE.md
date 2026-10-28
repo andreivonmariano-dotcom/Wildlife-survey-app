@@ -1,6 +1,20 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 28 October 2026 | RC11C signed species-card visual finalization
+
+- **Owner request:** Focus on priority scientific accounts, strip developer artifacts, repetitive defensive sentences and visible placeholders, use icons and polished layouts, with an initial mention of 92 species. Repo priority source registry contains **96 unique priority keys** in four groups of 24. No subset identifying an intended 92 has been provided. All 96 receive the unified template; no taxon record dropped.
+- **Confirmed source changes:** `Rc11PrioritySpeciesView.java` shows sourced identification, habitat, range, natural-history and dated-conservation notes in five compact icon cards, two leading facts each, extra evidence on disclosure. It reads original RC8 evidence and all 3 RC10 reference packs without changing them, hides broad science-limit placeholders, and keeps citation links/limits in a collapsed drawer. `TaxonDetailActivity.java` hides the large search form on open species pages, offers Search another species, and stops stacking old RC7/RC9 research cards for these 96 records. `OfflinePhotoEvidence.java` now uses a 126 × 122dp FIT_CENTER photo preview, compact visible photographer credit, and a disclosure to the original full image and licensing. Final RC11C update removes redundant "(c)" prefix and unnecessary “Field reference” heading. Original media and permissions remain intact.
+- **Source audit:** 94/96 priorities have at least one substantive RC8 source statement beyond taxonomy and evidence limits, yet coverage is uneven by topic. RC10 batches add 64 individually cited notes across 12 priority taxa. **None of the 96 is specialist-certified complete**. UI completion is not full biology review.
+- **Latest build:** `0.27.3-rc11c-compact-species-preview`, versionCode **62**, original `org.phwildlife.survey.beta08`, original signing certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, SQLite schema 27 unchanged. Successful scientific-core QA run `40723795196` produced artifact **12831302845**. Signed APK verified at `/mnt/data/LIKAS-v0.27.3-RC11C-compact-species-debug.apk`, 9,417,101 bytes, SHA-256 `19cfd177992190599084798e3389be60b47cc247c5ed876f21c1fb589d405eb0`, ZIP integrity, all 96 priority profiles, 64 cited notes, 58 licensed offline JPGs, pinned certificate. This exact sandbox path must be reverified in a future session.
+- **Emulator evidence:** RC11 first card redesign, run `40721366230`, passed 9/9. RC11B compact-photo redesign, run `40722666750`, passed 9/9. New RC11C emulator run **40723773212** was still in progress at this documentation update. Both earlier screenshots were examined, and the second shows identification content on the initial 320dp screen. Full Android QA must be confirmed on the precise RC11C binary before release claims. Physical handset and biological source reviewer acceptance still pending.
+- **Branch:** `feature/likas-core-fieldwork-post-rc4`, draft PR #38, separate from startup sprite PR. Test and source design: `docs/LIKAS_RC11_SPECIES_ACCOUNT_DESIGN_QA.md`. No observations, data schema, survey methods, field status states, original photos or copyright strings changed.
+- **Next:** Get exact RC11C emulator result and 320dp photo card screenshot; complete handoff. Then independently verify underpopulated diagnosis, habitat, sex/age and conservation evidence by 24-taxon batch instead of fabricating detailed descriptions.
+
+---
+
+
+
 ## 28 October 2026 | Latest RC11B signed compact-photo refinement (device QA pending)
 
 - After a **successful 9/9** RC11 emulator run `40721366230`, actual 320dp screenshot showed the old licensed wildlife photo module occupied most of the page with a long defensive/legal caption. This contradicted the owner's compact design direction, even though tests passed.

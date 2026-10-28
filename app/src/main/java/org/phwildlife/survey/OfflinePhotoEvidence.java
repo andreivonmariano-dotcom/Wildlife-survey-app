@@ -107,6 +107,70 @@ public final class OfflinePhotoEvidence {
             return thumb;
         }catch(Exception ignored){return null;}
     }
+    /**
+     * Compact licensed-photo preview for the priority field cards.
+     * The original file, caption and full rights detail stay accessible on expansion.
+     */
+    public static void addCompactForTaxon(Activity a,LinearLayout parent,String scientific){
+        JSONObject photo=findForTaxon(a,scientific);
+        if(photo==null)return;
+        ImageView thumbnail=thumbnailForTaxon(a,scientific);
+        if(thumbnail==null)return;
+        LinearLayout wrapper=new LinearLayout(a);
+        wrapper.setOrientation(LinearLayout.VERTICAL);
+        wrapper.setBackground(UiKit.surface(a));
+        wrapper.setPadding(dp(a,10),dp(a,10),dp(a,10),dp(a,10));
+        LinearLayout row=new LinearLayout(a);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        thumbnail.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        thumbnail.setBackgroundColor(UiKit.BG);
+        row.addView(thumbnail,new LinearLayout.LayoutParams(dp(a,126),dp(a,122)));
+        LinearLayout labels=new LinearLayout(a);
+        labels.setOrientation(LinearLayout.VERTICAL);
+        labels.setPadding(dp(a,12),dp(a,3),0,0);
+        TextView title=new TextView(a);
+        title.setText("Photo reference");
+        title.setTextColor(UiKit.INK);
+        title.setTypeface(null,android.graphics.Typeface.BOLD);
+        title.setTextSize(15);
+        labels.addView(title);
+        String author=photo.optString("author");
+        TextView credit=new TextView(a);
+        credit.setText("© "+(author.trim().isEmpty()?"Source photographer":author));
+        credit.setTextColor(UiKit.MUTED);
+        credit.setTextSize(12);
+        credit.setMaxLines(3);
+        credit.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        LinearLayout.LayoutParams cr=new LinearLayout.LayoutParams(-1,-2);
+        cr.topMargin=dp(a,8);
+        labels.addView(credit,cr);
+        row.addView(labels,new LinearLayout.LayoutParams(0,-2,1));
+        wrapper.addView(row);
+        Button expand=UiKit.button(a,"View photo & credits  ▾","quiet");
+        LinearLayout.LayoutParams ep=new LinearLayout.LayoutParams(-1,dp(a,44));
+        ep.topMargin=dp(a,8);
+        wrapper.addView(expand,ep);
+        LinearLayout full=new LinearLayout(a);
+        full.setOrientation(LinearLayout.VERTICAL);
+        full.setVisibility(View.GONE);
+        wrapper.addView(full);
+        final boolean[] rendered={false};
+        expand.setOnClickListener(v->{
+            boolean open=full.getVisibility()!=View.VISIBLE;
+            if(open&&!rendered[0]){
+                // Use the original audited renderer for full photo, attribution and rights.
+                add(a,full,photo.optString("id"));
+                rendered[0]=true;
+            }
+            full.setVisibility(open?View.VISIBLE:View.GONE);
+            expand.setText(open?"Hide photo & credits  ▴":"View photo & credits  ▾");
+        });
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.topMargin=dp(a,8);
+        lp.bottomMargin=dp(a,7);
+        parent.addView(wrapper,lp);
+    }
     public static void addForTaxon(Activity a,LinearLayout parent,String scientific){
         JSONArray items=inatManifest(a).optJSONArray("items");
         if(items==null||scientific==null)return;

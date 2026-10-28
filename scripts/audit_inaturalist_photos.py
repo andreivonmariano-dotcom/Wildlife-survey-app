@@ -6,9 +6,12 @@ propose photos from a named observer; it never approves or packages proposals.
 --install-approved verifies each pre-reviewed JPEG SHA256 before bundling.
 """
 import argparse
+import base64
 import hashlib
 import json
 import re
+import time
+import zlib
 import tempfile
 import urllib.error
 import urllib.parse
@@ -20,6 +23,8 @@ PRIORITY=ROOT/"app/src/main/assets/rc7a_field_cards_v1.json"
 LOCK=ROOT/"docs/RC7_INAT_APPROVED_LOCK_V1.json"
 MANIFEST=ROOT/"app/src/main/assets/offline_inaturalist_manifest_v1.json"
 PHOTO_DIR=ROOT/"app/src/main/assets/offline_photos"
+PRIVATE_BUNDLE=ROOT/"app/src/main/assets/likas_ph_checklists_v2026_private.b64"
+PRIVATE_SHA256="7845ceadc4b6d6226781478c72281364c876a4c1ad47b80d21b7d176ab7dc4c6"
 API="https://api.inaturalist.org/v1/observations"
 LICENSES={"cc0","cc-by","cc-by-sa","cc-by-nc","cc-by-nc-sa"}
 LICENSE_URL={
@@ -75,21 +80,33 @@ def candidates_from_results(results,names,observer="dreidrei"):
             })
     return found
 
+def all_philippine_names():
+    """Keep source-list membership separate from observed site presence."""
+    raw=base64.b64decode(PRIVATE_BUNDLE.read_text().strip(),validate=True)
+    if hashlib.sha256(raw).hexdigest()!=PRIVATE_SHA256:
+        raise ValueError("Private WBCP/Sy checklist fingerprint mismatch")
+    rows,_=json.loads(zlib.decompress(raw))
+    all_names={str(row[3]) for row in rows if len(row)>3}
+    for batch in jsonfile(ROOT/"app/src/main/assets/rc7_priority_batches_v1.json")["batches"]:
+        all_names.update(r["scientificName"] for r in batch["entries"])
+    return all_names
+
 def query_observer(observer,names,limit_pages):
     out=[]
     for page in range(1,limit_pages+1):
-        params={"user_id":observer,"photos":"true","per_page":100,"page":page,
+        if page>1:time.sleep(1.0)
+        params={"user_id":observer,"photos":"true","per_page":30,"page":page,
                 "quality_grade":"research","order_by":"created_at","order":"desc"}
         url=API+"?"+urllib.parse.urlencode(params)
         req=urllib.request.Request(url,headers={
             "User-Agent":"LIKAS-private-research-photo-review/1.0 (contact via repository)",
             "Accept":"application/json"})
         with urllib.request.urlopen(req,timeout=20) as response:
-            payload=response.read(8000000)
+            payload=response.read(9000000)
         result=json.loads(payload)
         group=result.get("results") or []
         out.extend(candidates_from_results(group,names,observer))
-        if len(group)<100:break
+        if len(group)<30:break
     unique={}
     for candidate in out: unique.setdefault(candidate["photoId"],candidate)
     return list(unique.values())
@@ -176,12 +193,12 @@ def main():
     parser.add_argument("--install-approved",action="store_true",
         help="Package only reviewed, exact SHA-256-pinned photographs")
     parser.add_argument("--observer",default="dreidrei")
-    parser.add_argument("--pages",type=int,default=3)
+    parser.add_argument("--pages",type=int,default=6)
     parser.add_argument("--output",type=Path,default=Path("rc7_inat_photo_review_candidates.json"))
     args=parser.parse_args()
-    if args.pages<1 or args.pages>6:parser.error("pages must be 1–6")
+    if args.pages<1 or args.pages>20:parser.error("pages must be 1–20")
     groups=jsonfile(PRIORITY)
-    targets={r["scientificName"] for r in groups["accounts"]}
+    targets=all_philippine_names()
     if args.audit:
         candidates=query_observer(args.observer,targets,args.pages)
         args.output.write_text(json.dumps({

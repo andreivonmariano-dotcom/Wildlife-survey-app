@@ -48,19 +48,27 @@ def prepare():
         path=DEST/filename
         if path.exists() and path.stat().st_size>1000:
             print("Already cached",filename,flush=True);completed+=1;continue
-        try:
-            url=thumbnail(title)
-            image=fetch(url)
-            if not image.startswith(bytes([255,216,255])):
-                raise ValueError("Expected JPEG thumbnail, got "+repr(image[:20]))
-            if len(image)<1000:raise ValueError("JPEG thumbnail too small")
-            path.write_bytes(image)
-            completed+=1
-            print("Bundled",filename,len(image),flush=True)
-        except Exception as ex:
-            failures.append(filename+": "+str(ex))
-            print("Not bundled",filename,str(ex),flush=True)
-        time.sleep(.35)
+        success=False
+        for attempt in range(4):
+            try:
+                url=thumbnail(title)
+                image=fetch(url)
+                if not image.startswith(bytes([255,216,255])):
+                    raise ValueError("Expected JPEG thumbnail, got "+repr(image[:20]))
+                if len(image)<1000:raise ValueError("JPEG thumbnail too small")
+                path.write_bytes(image)
+                completed+=1
+                success=True
+                print("Bundled",filename,len(image),flush=True)
+                break
+            except Exception as ex:
+                if attempt>=3:
+                    failures.append(filename+": "+str(ex))
+                    print("Not bundled",filename,str(ex),flush=True)
+                else:
+                    print("Retry source file",filename,"attempt",attempt+2,str(ex)[:100],flush=True)
+                    time.sleep(3*(attempt+1))
+        time.sleep(.65)
     print("Offline photo thumbnails:",completed,"/",len(MANIFEST["items"]),flush=True)
     if failures:print("\\n".join(failures),flush=True)
     if completed<3:raise SystemExit("Fewer than three licensed reference photos available")

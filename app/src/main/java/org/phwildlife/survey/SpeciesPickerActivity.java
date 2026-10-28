@@ -496,7 +496,8 @@ public final class SpeciesPickerActivity extends Activity {
             "WHERE e.taxon_key=c.taxon_key AND e.review_status='source_listed' AND e.area_type='island' "+
             "AND LOWER(e.area_label)=LOWER(?))";
         // Only reviewed source listings confer geographic evidence rank.
-        // Imported unreviewed records remain visible on source detail pages.\n        String evidence="CASE WHEN "+provinceMatch+" THEN 2 WHEN "+islandMatch+
+        // Imported unreviewed records remain visible on source detail pages.
+        String evidence="CASE WHEN "+provinceMatch+" THEN 2 WHEN "+islandMatch+
             " THEN 1 ELSE 0 END";
         StringBuilder sql=new StringBuilder(
             "SELECT c.taxon_key,c.taxon_group,c.common_name,c.scientific_name,"+

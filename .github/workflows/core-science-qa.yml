@@ -64,6 +64,28 @@ jobs:
           PY
       - name: Install only SHA-pinned, reviewed iNaturalist images for private use
         run: python3 scripts/audit_inaturalist_photos.py --install-approved
+      - name: Require all 23 checksum-reviewed iNaturalist JPEGs in the APK assets
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,"scripts")
+          from audit_inaturalist_photos import load_approval_lock
+          lock=load_approval_lock()["items"]
+          manifest=json.loads(Path("app/src/main/assets/offline_inaturalist_manifest_v1.json").read_text())["items"]
+          assert len(lock)==23 and len(manifest)==23,(len(lock),len(manifest))
+          index={x["photoId"]:x for x in manifest}
+          for row in lock:
+            item=index[row["photoId"]]
+            img=Path("app/src/main/assets")/item["offlineAsset"]
+            assert img.is_file()
+            assert hashlib.sha256(img.read_bytes()).hexdigest()==row["sha256"]
+            assert item["author"]==row["photoAttribution"]
+            assert item["license"].lower()==row["photoLicense"]
+          print("Verified 23 licensed, attributed iNaturalist photographs for RC7B")
+          PY
       - name: Run JVM unit tests and compile Android preview
         run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
       - name: Verify assembly artifact exists (not published)
@@ -73,7 +95,7 @@ jobs:
         if: github.ref == 'refs/heads/feature/likas-core-fieldwork-post-rc4' && github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC7A-species-research-preview-debug
+          name: LIKAS-RC7B-literature-inat-preview-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14

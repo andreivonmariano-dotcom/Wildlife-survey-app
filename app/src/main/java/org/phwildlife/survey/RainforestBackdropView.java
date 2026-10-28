@@ -254,6 +254,17 @@ public final class RainforestBackdropView extends View {
             if (i % 3 == 0) oval(c, alpha(colors[SPARKLE], 30),
                 x-size*.6f, y-size*.7f, x+3, y-size*.15f);
         }
+        // Fine, fixed-geometry leaf clusters add texture like the concept artwork.
+        // Only near-foreground and mist layers move, so no foliage scintillation.
+        for (int i = 0; i < 94; i++) {
+            int seed = (i * 1973 + 7199) & 0x7fffffff;
+            float x = -8 + seed % 378;
+            float crownY = 134 + (float)Math.sin(x * .109f) * 11f;
+            float y = crownY + 4 + (seed / 47 % 29);
+            float size = 1.4f + (seed / 19 % 3);
+            int hue = (i % 6 == 0) ? colors[SPARKLE] : colors[LEAVES];
+            rect(c, alpha(hue, i % 6 == 0 ? 74 : 95), x, y, x+size*1.7f, y+size);
+        }
         // Tree silhouettes on separate mid plane.
         for (int i = 0; i < 10; i++) {
             float x = i * 43f - 14f;
@@ -269,8 +280,37 @@ public final class RainforestBackdropView extends View {
         oval(c, alpha(colors[CLOUD], 28), 95 - dx * .4f, 157, 460 - dx * .4f, 168);
     }
 
+    /** Rocky waterfall basin and vegetated ravine, fixed under the water plane. */
+    private void waterfallCliffs(Canvas c) {
+        // Offset ravine walls keep the waterfall grounded in a real valley.
+        path.reset();
+        path.moveTo(177, 150);path.lineTo(202, 149);
+        path.lineTo(203, 192);path.lineTo(184, 200);path.lineTo(169, 194);path.close();
+        color(colors[LEAVES]); c.drawPath(path,p);
+        path.reset();
+        path.moveTo(240, 149);path.lineTo(269, 143);path.lineTo(278, 189);
+        path.lineTo(259, 198);path.lineTo(239, 194);path.close();
+        color(colors[LEAVES]); c.drawPath(path,p);
+        for (int i = 0; i < 17; i++) {
+            float x = (i % 2 == 0 ? 170 : 247) + (i*7 % 20);
+            float y = 153 + (i * 29 % 43);
+            float w = 3f + i%4;
+            rect(c, alpha(colors[FAR], 120), x, y, x+w, y+2.5f);
+            if (i%3==0) rect(c, alpha(colors[SPARKLE],38),x,y,x+1.5f,y+1f);
+        }
+        // Small cascades of foliage spilling over both canyon walls.
+        for (int i=0;i<11;i++) {
+            float x=165+i*9f;
+            float y=146f+(i%4)*3;
+            if (x>200 && x<245) continue;
+            oval(c,colors[CANOPY],x-8,y-7,x+8,y+6);
+            oval(c,alpha(colors[SPARKLE],38),x-5,y-7,x+2,y-3);
+        }
+    }
+
     private void riverAndWaterfall(Canvas c, float t) {
         rect(c, colors[WATER], 0, 184, W, H);
+        waterfallCliffs(c);
         // Distant waterfall has a slower independent vertical current.
         float foam = RainforestMotion.wave(t, 2.7f, 0f);
         rect(c, alpha(colors[SPARKLE], 180), 207, 149, 239, 200);
@@ -296,6 +336,22 @@ public final class RainforestBackdropView extends View {
         oval(c, colors[CANOPY], 265, 202, 420, 277);
         oval(c, alpha(colors[FAR], 230), 39, 212, 72, 227);
         oval(c, alpha(colors[FAR], 230), 287, 196, 322, 213);
+        // Foreground river stones have layered highlight and shadow, not flat ovals.
+        for(int i=0;i<16;i++) {
+            float x = i<8 ? (4+i*11) : (268+(i-8)*14);
+            float y = 205 + (i*31%26);
+            float radius = 4f+(i%4)*2.2f;
+            oval(c, alpha(colors[FAR], 215), x-radius, y-radius*.6f,
+                x+radius, y+radius*.5f);
+            rect(c, alpha(colors[SPARKLE], 56), x-radius*.6f,
+                y-radius*.45f, x+radius*.25f, y-radius*.28f);
+        }
+        // Local spray is tied to the fall but independent from river glints.
+        for (int i=0;i<18;i++) {
+            float x=193f+(i*17%55);
+            float y=191f+(i*9%12)+1.8f*RainforestMotion.wave(t,1.2f+i%4,i);
+            circle(c,alpha(colors[CLOUD],45+i%3*35),x,y,i%3==0?1.2f:.65f);
+        }
     }
 
     // Foreground fronds translate and sway independently, never as a flattened plate.
@@ -314,6 +370,14 @@ public final class RainforestBackdropView extends View {
         c.drawLine(331, 0, 335 + rightSway, 38, p);
         oval(c, deep, 16 + leftSway, 18, 39 + leftSway, 38);
         oval(c, deep, 322 + rightSway, 24, 349 + rightSway, 46);
+        // Three clusters of low ferns silhouette the foreground canopy.
+        for (int i=0;i<15;i++) {
+            float x = (i<5 ? -3+i*10 : i<10 ? 320+(i-5)*10 : 7+(i-10)*8);
+            float y = i<10 ? 225+(i%4)*3 : 238;
+            float lean = 2.0f*RainforestMotion.wave(t, 6.2f+i%3, i*.33f);
+            oval(c, colors[CANOPY], x-4+lean, y-13, x+8+lean, y+2);
+            rect(c, alpha(colors[SPARKLE], 30),x+lean,y-11,x+2+lean,y-6);
+        }
     }
 
     private void drawFrond(Canvas c, float ox, float oy, float tx, float ty,

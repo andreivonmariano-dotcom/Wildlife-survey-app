@@ -28,6 +28,9 @@ Remove the previous forest day/night WebP plates, unused `ForestBackdropView.jav
 ### 2026-10-28 | New LIKAS rainforest welcome design | Direction accepted; exact visual pending review
 The owner asked to pursue a new Philippine rainforest scene, smooth local-time-adaptive ambient animation, and a cleaner startup layout together. A fresh visual and browser interaction prototype was produced in the chat. The previous retired art must not be reused. The new concept is **not** an approved final Android asset, merged implementation, completed APK, or measured 60 FPS native animation. Continue under U-03 review requirements and `docs/LIKAS_STARTUP_V2_CONCEPT.md`.
 
+### 2026-10-28 | Rainforest parallax refined and test APK compiled | Preview built, release pending
+The project owner requested a closer native match to the detailed forest concept and a real downloadable Android test APK. A protected preview branch and draft PR #37 now contain independent parallax motion and richer procedural forest detailing. GitHub Actions run `40630133535` compiled the app, passed automated tests, and produced versionCode 18; its APK was directly delivered and checked against the prior v0.15 signing certificate. **60 FPS, handset upgrade, record retention, and final visual approval remain unverified.** Main remains v0.15. See `docs/LIKAS_PROJECT_STATE.md` and draft PR #37.
+
 ## How to append
 
 Create a dated heading: `YYYY-MM-DD | Decision | Accepted / Replaced / Deferred`. State what changed, why it affects future work, source/reference, and any prior decision superseded. Do not erase historical entries.

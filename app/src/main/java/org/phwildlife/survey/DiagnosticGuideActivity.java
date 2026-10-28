@@ -82,7 +82,7 @@ public final class DiagnosticGuideActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16),dp(12),dp(16),dp(12));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.title(this,"Field identification"));
+        root.addView(UiKit.navigationHeader(this,"Field identification","Species",this::finish));
         TextView note=text("Offline, citation-linked field characters. Peer-reviewed "+
             "literature and museum references were checked; individual diagnostic "+
             "keys still need specialist review.",13,false);

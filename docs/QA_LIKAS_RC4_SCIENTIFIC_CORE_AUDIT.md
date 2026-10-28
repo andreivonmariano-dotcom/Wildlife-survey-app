@@ -41,6 +41,7 @@ Priority labels: **P0** means scientifically misleading or data-threatening; **P
 | **P2** | `TaxonDetailActivity.lookup` searched current names but not `taxon_synonyms`, despite existing former-name support in the survey suggestion adapter. | Species-reference search now resolves former scientific names to the accepted catalog record. The regional checklist name filter does the same. Original records are untouched. |
 | **P2** | Davao Region picker listed only four provinces and omitted Davao Occidental. | Added all five provinces, plus individual Davao Occidental selection. A visible note states separate Davao City evidence is not assessed by this province-only view. Refer to the Philippine Statistics Authority's PSGC Region XI list: `https://psa.gov.ph/classification/psgc/provinces/1100000000`. |
 | **P2** | Regional list refreshed SQL on every keystroke, silently capped results at 1,000 and swallowed read errors. | Added 180 ms debounce, 1,001-result truncation detection, visible cap warning and named error state. All matches still originate from installed sources. |
+| **P2** | A user could select `Local source records` without choosing an island or province and receive an empty list that resembled species absence. | The picker now explicitly requests area selection and states that an empty locality scope does **not** imply species are absent. |
 
 ### Scientific library development, staged recommendations
 

@@ -17,12 +17,12 @@ import java.io.InputStream;
 public final class Rc10ResearchBatch {
     private Rc10ResearchBatch(){}
     private static JSONObject source;
+    private static JSONObject secondSource;
     private static int dp(Activity a,int v){
         return Math.round(a.getResources().getDisplayMetrics().density*v);
     }
-    private static synchronized JSONObject load(Activity a){
-        if(source!=null)return source;
-        try(InputStream in=a.getAssets().open("rc10_research_batch1_v1.json");
+    private static JSONObject readBatch(Activity a,String file){
+        try(InputStream in=a.getAssets().open(file);
             ByteArrayOutputStream out=new ByteArrayOutputStream()){
             byte[] bytes=new byte[4096];int n;
             while((n=in.read(bytes))!=-1){
@@ -32,18 +32,24 @@ public final class Rc10ResearchBatch {
             JSONObject pack=new JSONObject(out.toString("UTF-8"));
             if(!"rc10-research-batch-v1".equals(pack.optString("schemaVersion")))
                 throw new IllegalArgumentException("Unknown source edition");
-            source=pack;
-        }catch(Exception ignored){source=new JSONObject();}
-        return source;
+            return pack;
+        }catch(Exception ignored){return new JSONObject();}
+    }
+    private static synchronized void load(Activity a){
+        if(source==null)source=readBatch(a,"rc10_research_batch1_v1.json");
+        if(secondSource==null)secondSource=readBatch(a,"rc10_research_batch2_v1.json");
     }
     private static JSONObject forTaxon(Activity a,String scientific){
         if(scientific==null)return null;
-        JSONArray list=load(a).optJSONArray("records");
-        if(list==null)return null;
-        for(int i=0;i<list.length();i++){
-            JSONObject row=list.optJSONObject(i);
-            if(row!=null&&scientific.equalsIgnoreCase(row.optString("scientificName")))
-                return row;
+        load(a);
+        for(JSONObject batch:new JSONObject[]{source,secondSource}){
+            JSONArray list=batch.optJSONArray("records");
+            if(list==null)continue;
+            for(int i=0;i<list.length();i++){
+                JSONObject row=list.optJSONObject(i);
+                if(row!=null&&scientific.equalsIgnoreCase(row.optString("scientificName")))
+                    return row;
+            }
         }
         return null;
     }
@@ -83,7 +89,11 @@ public final class Rc10ResearchBatch {
             card.addView(label(a,item.optString("category")+" · "+item.optString("label"),14,true));
             card.addView(label(a,item.optString("statement"),14,false));
             card.addView(label(a,"Field limitation: "+item.optString("limitation"),12,false));
-            card.addView(label(a,"Source: "+item.optString("source")+
+            String extra=item.has("sourceType")?
+                "\nSource type: "+item.optString("sourceType")+
+                " · "+item.optInt("publicationYear")+
+                "\nAccessed: "+item.optString("retrievedDate"):"";
+            card.addView(label(a,"Source: "+item.optString("source")+extra+
                 "\nReview: "+item.optString("reviewState"),12,false));
             Button reference=UiKit.button(a,"Read original reference","quiet");
             card.addView(reference,new LinearLayout.LayoutParams(-1,dp(a,44)));

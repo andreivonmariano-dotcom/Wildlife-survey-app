@@ -3,7 +3,7 @@ on:
   push:
     branches: [main, 'release/v0.27-integrated-ux-performance-qa']
   pull_request:
-    branches: [main, 'release/v0.27-integrated-ux-performance-qa', 'ui/v0.27.1-field-polish-quality-labels', 'ui/likas-startup-screen-r1-20261027']
+    branches: [main, 'release/v0.27-integrated-ux-performance-qa', 'ui/v0.27.1-field-polish-quality-labels', 'ui/likas-startup-screen-r1-20261027', 'feature/v0.27.3-startup-living-forest']
   workflow_dispatch:
 jobs:
   build:
@@ -12,6 +12,10 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reject obsolete LIKAS branches and unverified sprite packages
+        run: python3 scripts/check_likas_active_lineage.py --stage
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -27,12 +31,19 @@ jobs:
         with:
           path: .signing/wildlife-beta08.keystore
           key: wildlife-v08-beta-debug-signing-v1
-      - name: Create signing key when new
+      - name: Create signing key when new (legacy main only)
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           mkdir -p .signing
           if [ ! -f .signing/wildlife-beta08.keystore ]; then
             keytool -genkeypair -keystore .signing/wildlife-beta08.keystore -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Wildlife Survey Beta Debug, O=Field Research, C=PH" -noprompt
           fi
+      - name: Verify RC4 signing identity for PR builds
+        if: github.event_name == 'pull_request'
+        run: |
+          test -s .signing/wildlife-beta08.keystore
+          keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/likas-signing-certificate.der
+          echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/likas-signing-certificate.der' | sha256sum -c -
       - name: Validate taxonomy source and import rules
         run: python3 -m unittest discover -s scripts -p 'test_*.py'
       - name: Cache checksum-pinned mammal taxonomy source
@@ -58,7 +69,7 @@ jobs:
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
       - name: Publish APK directly to GitHub Releases
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

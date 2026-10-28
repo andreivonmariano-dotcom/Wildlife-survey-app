@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 57
-        versionName '0.27.3-rc8b-library-review-photo-compare'
+        versionCode 58
+        versionName '0.27.3-rc9-profile-differential-annotation-preview'
     }
     signingConfigs {
         debug {

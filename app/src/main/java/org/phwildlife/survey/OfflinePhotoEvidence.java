@@ -32,21 +32,72 @@ public final class OfflinePhotoEvidence {
         }
         return manifest;
     }
+    private static JSONObject inatManifest;
+    private static JSONObject inatManifest(Activity a){
+        if(inatManifest==null){
+            try(InputStream in=a.getAssets().open("offline_inaturalist_manifest_v1.json");
+                ByteArrayOutputStream out=new ByteArrayOutputStream()){
+                byte[] buf=new byte[4096];int n;
+                while((n=in.read(buf))!=-1){
+                    if(out.size()+n>180000)throw new IllegalArgumentException("Photo manifest too large");
+                    out.write(buf,0,n);
+                }
+                inatManifest=new JSONObject(out.toString("UTF-8"));
+            }catch(Exception ignored){inatManifest=new JSONObject();}
+        }
+        return inatManifest;
+    }
+    private static JSONObject findForTaxon(Activity a,String scientific){
+        if(scientific==null||scientific.isEmpty())return null;
+        for(JSONArray list:new JSONArray[]{manifest(a).optJSONArray("items"),
+                inatManifest(a).optJSONArray("items")}){
+            if(list==null)continue;
+            for(int i=0;i<list.length();i++){
+                JSONObject item=list.optJSONObject(i);
+                if(item==null||!scientific.equalsIgnoreCase(item.optString("taxon")))continue;
+                String file=item.optString("offlineAsset");
+                if(!file.matches("offline_photos/(species|habitat|inat)_[a-z0-9_]+\\.jpg"))continue;
+                try(InputStream stream=a.getAssets().open(file)){
+                    if(stream.read()!=-1)return item;
+                }catch(Exception ignored){}
+            }
+        }
+        return null;
+    }
+    /** Only returns true for a genuinely installed, attribution-linked JPEG. */
+    public static boolean hasOfflineTaxon(Activity a,String scientific){
+        return findForTaxon(a,scientific)!=null;
+    }
+    /** iNaturalist references are rendered only if a verified JPEG was bundled. */
+    public static void addForTaxon(Activity a,LinearLayout parent,String scientific){
+        JSONArray items=inatManifest(a).optJSONArray("items");
+        if(items==null)return;
+        for(int i=0;i<items.length();i++){
+            JSONObject photo=items.optJSONObject(i);
+            if(photo!=null&&scientific.equalsIgnoreCase(photo.optString("taxon"))){
+                add(a,parent,photo.optString("id"));
+                return;
+            }
+        }
+    }
     private static int dp(Activity a,int x){
         return Math.round(x*a.getResources().getDisplayMetrics().density);
     }
     public static void add(Activity a,LinearLayout parent,String id){
         if(id==null||id.trim().isEmpty())return;
-        JSONArray items=manifest(a).optJSONArray("items");
-        if(items==null)return;
         JSONObject found=null;
-        for(int i=0;i<items.length();i++){
-            JSONObject item=items.optJSONObject(i);
-            if(item!=null&&id.equals(item.optString("id"))){found=item;break;}
+        for(JSONArray items:new JSONArray[]{manifest(a).optJSONArray("items"),
+                inatManifest(a).optJSONArray("items")}){
+            if(items==null)continue;
+            for(int i=0;i<items.length();i++){
+                JSONObject item=items.optJSONObject(i);
+                if(item!=null&&id.equals(item.optString("id"))){found=item;break;}
+            }
+            if(found!=null)break;
         }
         if(found==null)return;
         String file=found.optString("offlineAsset");
-        if(!file.matches("offline_photos/(species|habitat)_[a-z0-9_]+\\.jpg"))return;
+        if(!file.matches("offline_photos/(species|habitat|inat)_[a-z0-9_]+\\.jpg"))return;
         boolean loaded=false;
         try(InputStream stream=a.getAssets().open(file)){
             ByteArrayOutputStream out=new ByteArrayOutputStream();

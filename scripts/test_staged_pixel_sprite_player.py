@@ -27,7 +27,11 @@ class SpritePlayerStageTest(unittest.TestCase):
         self.assertIn('ValueAnimator.areAnimatorsEnabled()',PLAYER)
         self.assertIn('powerManager.isPowerSaveMode()',PLAYER)
         self.assertIn('onDetachedFromWindow',PLAYER)
-        self.assertIn('postDelayed(this::tick,motion?FRAME_MS:15000L)',PLAYER)
+        self.assertIn('scheduleTick(activeWorker,motion?FRAME_MS:15000L)',PLAYER)
+        self.assertIn('AtomicBoolean tickQueued',PLAYER)
+        self.assertIn('worker.removeCallbacks(spriteTick)',PLAYER)
+        self.assertIn('loadFailed=true;',PLAYER)
+        self.assertIn('if(!alive)',PLAYER)
 
     def test_not_silently_enabled_without_matching_media(self):
         self.assertIn('new LikasForestView(this)',STARTUP)

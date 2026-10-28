@@ -108,7 +108,7 @@ public final class Rc7FieldAccounts {
         Button compare=UiKit.button(a,"Compare cited identification characters","secondary");
         parent.addView(compare);
         compare.setOnClickListener(v->a.startActivity(
-            new Intent(a,DiagnosticGuideActivity.class)
+            new Intent(a,Rc8TraitComparisonActivity.class)
                 .putExtra("scientific_name",scientific)));
         line(a,parent,"Source citation",p.optString("sourceCitation")+
             "\n"+p.optString("sourceUrl"));

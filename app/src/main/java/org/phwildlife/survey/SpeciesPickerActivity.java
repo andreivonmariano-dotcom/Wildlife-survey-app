@@ -574,6 +574,12 @@ public final class SpeciesPickerActivity extends Activity {
         final Double altitude=effectiveElevation(),uncertainty=effectiveUncertainty();
         offset=0;loaded=new ArrayList<>();truncated=false;
         cards.removeAllViews();
+        if(onlyLocal&&province.trim().isEmpty()&&island(geographicRegion).isEmpty()){
+            status.setText("Select an island or province in survey setup to filter local source records.");
+            cards.addView(text("No local area is selected. This does not mean species are absent. "+
+                "Use All species or set the geographic survey area.",14,false));
+            return;
+        }
         status.setText("Finding "+group+"…");
         worker.execute(()->{
             try{

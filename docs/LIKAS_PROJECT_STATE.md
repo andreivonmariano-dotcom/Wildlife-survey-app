@@ -81,6 +81,15 @@
 - **Safety/release gate:** No deletion executed against owner records. Existing ZIP export does not prove full application restore, and `ImportActivity` still supports only legacy v0.7 records. No new versioned release APK. Physical in-place upgrade, full backup/restore, media deletion, actual phone UI and owner acceptance required before exposing destructive operations to field users. Code CI results and review remain tracked on draft PR #38.
 - **Keep startup scope separate** and do not use historical `main` v0.15 app code to build a new core release.
 
+## 28 October 2026 | Superseded forest startup, verified offline library preview
+
+- Owner explicitly selected minimalist wordmark startup over the old animated rainforest. **Master U-03 v1.0.2** now requires LIKAS-only forest-green splash with brief accessible fade/scale into Home. Active survey Resume stays in Home. Old forest scene no longer used by launcher; original launcher icon remains.
+- Actual implementation on RC4-derived `feature/likas-core-fieldwork-post-rc4`, draft PR #38. Eight source-checked Philippine wildlife accounts and nine cited Philippine habitat profiles are visible offline. Wikimedia Commons media license metadata covers six candidates; the tested APK packs five real JPEGs (Philippine eagle, two frogs, mangrove, mossy forest). The tarsier thumbnail request was throttled and is marked unavailable in-app. This is not full reference/photo coverage for the national checklists.
+- Direct APK delivered in the conversation: `LIKAS-minimal-startup-offline-library-preview-2026-10-28.apk`, size 1,779,812, SHA-256 `6ffd7092e2ac411ff9f482486a471e7ff744d48fb7dfd84d59d500ef1518929b`. Source CI run `40664803299` passed all Python/JVM/Android and media verification, signer v2 SHA-256 matched prior RC4 certificate `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. App ID, versionCode 49, versionName 0.27.3-rc4, SQLite schema 27 retained. No phone upgrade QA or stable release.
+- **Merge-blocking conflict:** trusted RC4 PR lineage checker still demands the forest startup and is failing. Do not claim its gate passed. Trusted base policy needs deliberate update for new U-03 without disrupting parallel startup work. The branch remains draft; direct APK link must be verified afresh per chat.
+- Full record: `docs/LIKAS_MINIMAL_STARTUP_OFFLINE_REFERENCE_V1.md` in core branch. Existing user-requested direct APK delivery policy remains mandatory for every app code update.
+
+
 ## Mission
 
 Build **LIKAS** as a Philippines-first, all-in-one biodiversity tool for wildlife biologists and ecologists. Five product pillars: (1) Field Survey Studio, (2) Philippine Species Library, (3) Habitat and Ecology Atlas, (4) Research and Conservation Watch, and (5) Analysis and Research Export. Scientific integrity, offline field use, data preservation, and clear interaction outrank decoration.

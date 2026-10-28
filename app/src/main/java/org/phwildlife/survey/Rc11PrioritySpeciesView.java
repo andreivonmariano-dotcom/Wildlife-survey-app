@@ -69,7 +69,8 @@ public final class Rc11PrioritySpeciesView {
         return v;
     }
     private static String area(String category){
-        if("Identification".equals(category))return "Identification";
+        if("Identification".equals(category)||"Measurements".equals(category)||
+            "Differential".equals(category))return "Identification";
         if("Habitat & ecology".equals(category))return "Habitat";
         if("Range".equals(category))return "Range";
         if("Behavior & sound".equals(category)||"Ecology".equals(category)||
@@ -258,6 +259,8 @@ public final class Rc11PrioritySpeciesView {
         references.setOrientation(LinearLayout.VERTICAL);
         references.setVisibility(View.GONE);
         references.setPadding(dp(a,9),dp(a,6),dp(a,9),dp(a,12));
+        references.addView(text(a,"References · specialist review in progress",
+            12,false,UiKit.MUTED));
         HashSet<String> unique=new HashSet<>();
         if(!citation.isEmpty()){
             references.addView(text(a,"Taxonomy · "+citation,12,false,UiKit.MUTED));
@@ -283,7 +286,7 @@ public final class Rc11PrioritySpeciesView {
                 if(fact.limitation.isEmpty()&&fact.review.isEmpty())continue;
                 String text=fact.label+" · "+fact.publication;
                 if(!fact.limitation.isEmpty())text+="\n"+fact.limitation;
-                if(!fact.review.isEmpty())text+="\nReview: "+fact.review.replace('_',' ');
+
                 TextView detail=text(a,text,12,false,UiKit.MUTED);
                 LinearLayout.LayoutParams d=new LinearLayout.LayoutParams(-1,-2);
                 d.topMargin=dp(a,10);references.addView(detail,d);

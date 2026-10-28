@@ -12,7 +12,7 @@ Recorded 28 October 2026, Asia/Manila.
 - All four waterfalls in each lighting state received separate downstream-moving pixel water strands, secondary foam and splash keyframes inside the original alpha masks. Original water silhouette and textured water source are retained, avoiding the previous flat blue repaint.
 - Small sky bird markings on the static plates cleaned via localized pixel repair. Distant mountain mist and some source canopy shape remain static. This is **partial background cleanup**, not a full clean-room reconstruction of every moving shape.
 - An independently assembled 1,488,772-byte WebP atlas archive includes four fixed day/night images, 28 atlas files and a JSON component manifest.
-- Full editable asset archive: LIKAS_Layered_Sprites_5FPS_Prototype_D.zip (9,350,495 bytes; SHA-256 4e955a2cc5adaa736a4e8acd77c88bd2a545843827c4587e67156a3d31ebdead).
+- Full editable asset archive: LIKAS_Layered_Sprites_5FPS_Prototype_D.zip (9,350,494 bytes; SHA-256 3eaf56a026a070eccf498857b1510171c5e892dee22f3932f663667b36a93aab).
 - Android asset archive SHA-256 def85e227587fdadee75956b6f105b57feb38f2bff27c6889c1f1edbfc042498. Contents are downloadable in this chat; **binary assets have not been committed into GitHub**.
 - Standalone reproducibility scripts: rebuild_assets.py and validate_assets.py. Validated 28 groups, 760 frame files and transparent alpha. No source image is moved/warped as a whole.
 
@@ -38,3 +38,7 @@ Do not advertise the current RC4 APK as including this layered scene.
 ## CI correction
 - First source-only PR test showed Java compiler conflict with Android View.animate(). This was corrected by renaming the private check to shouldAnimateSprites().
 - Source change commit: afa2fbcc823183905fa7b51259e070b76d020374. Final Android CI outcome is tracked in the PR run list; this documentation does not claim physical phone validation.
+
+## Build evidence and twilight rendering fix
+- GitHub Actions run 40622163888 completed **successfully** after renaming the private animate() method, which initially conflicted with Android View.animate(). Build validates Java compilation and the existing Android tests, not runtime sprite playback.
+- Follow-up source commit ad2402d5e76e92478b4b0a5ba71e88389cc239d4 fixes twilight opacity to draw the day scene fully below the dissolving night scene. Physical-device crossfade remains unverified.

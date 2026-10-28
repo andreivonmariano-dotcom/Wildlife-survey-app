@@ -40,15 +40,18 @@ class LikasLivingForestTest(unittest.TestCase):
         self.assertIn("loadPreferred(context,DAY_HD,DAY_FALLBACK)",RENDER)
         self.assertIn("loadPreferred(context,NIGHT_HD,NIGHT_FALLBACK)",RENDER)
 
-    def test_startup_is_wordmark_only_and_version_is_not_hardcoded(self):
-        self.assertNotIn("ImageView",START)
-        self.assertNotIn("icon.setImageResource",START)
-        self.assertIn('label("LIKAS",brandSize,CREAM,true)',START)
-        self.assertIn('label("Explore. Record. Conserve.",16,SAGE,false)',START)
-        self.assertIn('getPackageInfo(getPackageName(),0).versionName',START)
-        self.assertIn("Gravity.TOP|Gravity.END",START)
-        self.assertIn("action(\"Resume survey\",true)",START)
-        self.assertIn("action(\"Open LIKAS\",false)",START)
+    def test_minimal_startup_auto_enters_home_and_respects_motion_accessibility(self):
+        self.assertIn('brand.setText("LIKAS")',START)
+        self.assertIn('ValueAnimator.areAnimatorsEnabled()',START)
+        self.assertIn('setDuration(460)',START)
+        self.assertIn('setDuration(210)',START)
+        self.assertIn('overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out)',START)
+        self.assertIn('root.setOnClickListener(v->leaveSplash())',START)
+        self.assertIn('new Intent(this,WelcomeActivity.class)',START)
+        self.assertNotIn('new LikasForestView(this)',START)
+        self.assertNotIn('action("Resume survey"',START)
+        self.assertNotIn('action("Open LIKAS"',START)
+        self.assertIn('finish();',START)
 
     def test_application_identity_and_version(self):
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",APP)

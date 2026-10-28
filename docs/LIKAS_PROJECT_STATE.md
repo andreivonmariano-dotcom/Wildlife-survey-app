@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Trusted RC4 PR check reconciled with minimal startup
+
+- **Baseline inspected:** PR #38 head `42f493be7105fa937e1199c676536784f52894dc` on `feature/likas-core-fieldwork-post-rc4`, Android `0.27.3-rc4`, versionCode 49, SQLite 27. Last Android app-code commit remains `97a05898a0f1922eadd7dc05d93dbb43192b463e`.
+- **Verified blocker:** Trusted default-branch `scripts/check_pr_against_rc4.py` failed the RC4 check at workflow run `40669557423` attempt 1 because it mandated an old splash tagline and a Resume control on `LikasLaunchActivity`. The owner's approved title-only splash now forwards to `WelcomeActivity`, where an active survey offers **Resume Survey**.
+- **Remediation:** Trusted `main` gate updated at commit `5b99cc56f7ba6a357ecddbce4e6cd1c62d3f698e`. Its legacy check remains supported, and the minimal-startup path must verify LIKAS branding, navigation to Home, and Home's resume action.
+- **Verification:** Run `40669557423` rerun attempt 2 **completed successfully** using the updated trusted gate. This resolves that identified PR compatibility failure, not all release conditions. No Android source, SQLite tables, signing setup, or APK changed in this correction.
+- **Unverified and next:** PR #38 remains **draft**. Physical installed-device review of Field Guide UX, real current-version backup/restore and destructive-data recovery tests, migration/upgrade preservation, and cross-screen survey setup/dashboard consistency remain. Preserve separate startup/sprite branch boundaries. No new APK exists in this chat, and an originating-chat download link is not reusable.
+
+---
+
 ## 28 October 2026 | Phone screenshots, field-guide UX and directly delivered APK
 
 - **Owner request:** Q1 systematic source-checked endemic/threatened Philippine wildlife, Q2 illustrated habitat guides and field measurements, Q3 smoother minimal startup/Home transition. Owner supplied actual Android screenshots from installed preview showing oversized empty-query species dropdown, blank species discovery state, long habitat+site mixed scroll, excessive citation/photo text and inconsistent navigation across remaining screens.

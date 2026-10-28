@@ -14,6 +14,7 @@ import android.os.HandlerThread;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
@@ -41,7 +42,7 @@ public final class LikasSpriteForestView extends View {
     private final PowerManager powerManager;
     private HandlerThread thread;
     private Handler worker;
-    private boolean ready=false,started=false;
+    private boolean ready=false,started=false,loadFailed=false;
     private volatile boolean alive=false;
     private volatile float nightBlend=0f;
     private long lastClockRead=0L;
@@ -120,6 +121,11 @@ public final class LikasSpriteForestView extends View {
             loaded.add(s);
         }
         synchronized(lock){
+            if(!alive){
+                for(Sheet sheet:loaded)sheet.clear();
+                for(Bitmap image:scenes.values())image.recycle();
+                return;
+            }
             fixed.putAll(scenes);
             sheets.addAll(loaded);
             ready=true;
@@ -142,17 +148,23 @@ public final class LikasSpriteForestView extends View {
             !(powerManager!=null&&powerManager.isPowerSaveMode());
     }
     private void tick(){
-        if(!alive||worker==null)return;
+        // Capture the handler before detachment clears the worker field.
+        Handler activeWorker=worker;
+        if(!alive||activeWorker==null)return;
         if(getWindowVisibility()!=VISIBLE||!isShown()){
-            worker.postDelayed(this::tick,1500L);
+            if(alive)activeWorker.postDelayed(this::tick,1500L);
             return;
         }
         long now=SystemClock.uptimeMillis();
         if(now-lastClockRead>15000L){sampleClock();lastClockRead=now;}
         boolean motion=shouldAnimateSprites();
         long frame=motion?now/FRAME_MS:0L;
-        if(!ready){
-            try{load();}catch(Exception ignored){}
+        if(!ready&&!loadFailed){
+            try{load();}
+            catch(Exception err){
+                loadFailed=true;
+                Log.e("LIKAS_SPRITES","Unable to initialize reviewed sprite archive",err);
+            }
         }
         if(ready){
             for(Sheet s:sheets){
@@ -176,8 +188,10 @@ public final class LikasSpriteForestView extends View {
                 }
             }
         }
-        postInvalidate();
-        worker.postDelayed(this::tick,motion?FRAME_MS:15000L);
+        if(alive){
+            postInvalidate();
+            activeWorker.postDelayed(this::tick,motion?FRAME_MS:15000L);
+        }
     }
     @Override protected void onDraw(Canvas c){
         super.onDraw(c);
@@ -233,6 +247,7 @@ public final class LikasSpriteForestView extends View {
             ready=false;
         }
         worker=null;thread=null;started=false;
+        loadFailed=false;
         super.onDetachedFromWindow();
     }
 }

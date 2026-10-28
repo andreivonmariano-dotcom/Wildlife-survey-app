@@ -26,8 +26,10 @@ class CleanFieldUi(unittest.TestCase):
         self.assertIn('progressView.setVisibility(',screen)
     def test_home_puts_shortcuts_first_and_groups_other_tools(self):
         home=src("WelcomeActivity.java")
-        for key in ('"Survey history"','"Species checklist"',
-                    '"More tools  ▾"','"Field evidence"','"Projects and reporting"'):
+        for key in ('"Survey history"','"Search Species Library"',
+                    '"Field tools & settings  ▾"','"Field evidence"',
+                    '"WORKSPACE"','"BIODIVERSITY LIBRARY"',
+                    '"Study and archive management"'):
             self.assertIn(key,home)
         self.assertNotIn('"History & tools  ▾"',home)
         self.assertIn('toolRow(tools,"Import previous backup"',home)
@@ -62,7 +64,31 @@ class CleanFieldUi(unittest.TestCase):
         picker=src("SpeciesPickerActivity.java")
         self.assertIn('updateSiteSummary();',picker)
         self.assertNotIn('root.addView(siteSummary);',picker)
-        self.assertIn('String label=item.screening.scorePercent==null?',picker)
+        self.assertIn('TextView geographic=text("Geographic source: "+',picker)
+        self.assertIn('item.screening.habitatStatus',picker)
+        self.assertIn('item.screening.elevationStatus',picker)
+        self.assertNotIn('item.screening.scorePercent+"% screening index',picker)
+
+    def test_method_capture_tools_are_disclosed_without_hiding_recording_actions(self):
+        recorder=src("MainActivity.java")
+        self.assertIn('evidenceTools.setVisibility(View.GONE)',recorder)
+        self.assertIn('evidenceTools.addView(sound,soundLp)',recorder)
+        self.assertIn('evidenceTools.addView(devices,deviceLp)',recorder)
+        self.assertIn('evidenceTools.addView(methodRecords,methodLp)',recorder)
+        self.assertIn('content.addView(section("Record observation"))',recorder)
+        self.assertIn('UiKit.button(this,"Save Observation","primary")',recorder)
+        self.assertIn('UiKit.button(this,"End Survey","outline-danger")',recorder)
+
+    def test_species_library_summaries_are_source_driven(self):
+        catalog=src("CatalogActivity.java")
+        self.assertIn('UiKit.title(this,"Species Library")',catalog)
+        self.assertIn('append(attributedTotal)',catalog)
+        self.assertNotIn('1503 catalog entries',catalog)
+        self.assertNotIn('result.toString().replace(',catalog)
+        detail=src("TaxonDetailActivity.java")
+        self.assertIn('Diagnostic identification traits',detail)
+        self.assertIn('A reviewed diagnostic key is not provided',detail)
+        self.assertIn('Regional source evidence',detail)
 
 if __name__=="__main__":
     unittest.main()

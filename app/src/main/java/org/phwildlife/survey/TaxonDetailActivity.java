@@ -136,7 +136,12 @@ public final class TaxonDetailActivity extends Activity {
             lookup(query);
         }else{
             content.addView(FieldVisuals.context(this,
-                "Search names with at least two letters, or choose a wildlife group above."));
+                "Search names with at least two letters, or browse the reference accounts below."));
+            OfflineFieldLibrary.addSpeciesDirectory(this,content,scientific->{
+                search.setText(scientific);
+                search.dismissDropDown();
+                lookup(scientific);
+            });
         }
     }
     private static String originalReference(String source){

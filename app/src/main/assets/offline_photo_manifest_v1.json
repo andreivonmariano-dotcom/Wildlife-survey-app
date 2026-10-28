@@ -80,6 +80,19 @@
       "caption": "Mossy forest on Mount Dulang-dulang",
       "offlineAsset": "offline_photos/habitat_mossy.jpg",
       "edited": "Resized preview only; no content alteration"
+    },
+    {
+      "id": "habitat_karst",
+      "category": "habitat",
+      "habitat": "limestone-karst",
+      "fileName": "Forest on limestone karsts, Bacuit Bay, Palawan, Philippines.jpg",
+      "author": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Forest_on_limestone_karsts,_Bacuit_Bay,_Palawan,_Philippines.jpg",
+      "caption": "Forest on limestone islands of Bacuit Bay, Palawan; photographic context, not a site-classification key",
+      "offlineAsset": "offline_photos/habitat_karst.jpg",
+      "edited": "Resized preview only; no content alteration"
     }
   ]
 }

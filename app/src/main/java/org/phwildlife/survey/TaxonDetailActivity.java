@@ -57,8 +57,7 @@ public final class TaxonDetailActivity extends Activity {
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(18),dp(15),dp(18),dp(15));
         root.addView(UiKit.navigationHeader(this,"Species Library","Back",this::finish));
-        TextView caption=text("Offline references for identification and ecology. "+
-            "These are not confirmed observations at your site.",12,false);
+        TextView caption=text("Identification, habitat and research sources",12,false);
         caption.setTextColor(UiKit.MUTED);
         root.addView(caption);
         LinearLayout input=new LinearLayout(this);
@@ -237,6 +236,12 @@ public final class TaxonDetailActivity extends Activity {
             latin.setTypeface(null,Typeface.BOLD_ITALIC);
             latin.setPadding(0,dp(3),0,dp(3));
             content.addView(latin);
+            // All 96 prioritized taxa share one concise, citation-backed account.
+            // Preserve the complete legacy catalog for the remaining source names.
+            if(Rc7FieldAccounts.priority(this,scientific)){
+                Rc11PrioritySpeciesView.add(this,content,c,scientific);
+                return;
+            }
             OfflinePhotoEvidence.addForTaxon(this,content,scientific);
             boolean detailed=OfflineFieldLibrary.addSpecies(this,content,scientific);
             boolean literature=Rc7LiteratureNotes.add(this,content,scientific);

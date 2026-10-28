@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | RC7 Species Library Master Specification and owner-approved private research checklist use
+
+- **Owner decision:** Use the owner-supplied WBCP 2025 bird checklist and Emerson Y. Sy amphibian 2025-1 / reptile 2026-1 checklists in LIKAS for private, noncommercial scientific reference, with source-title/author/version/date citations. WBCP expressly permits personal/scientific reference use with attribution. Public/commercial distribution remains a separate permission and release decision; this does not authorize a public mirror of third-party source workbooks.
+- **New governing document in repository:** `docs/LIKAS_RC7_SPECIES_LIBRARY_MASTER_SPEC.md` (RC7-SL-001, master specification). This extends existing charter G/T/D/U/E requirements, introduces versioned identity/source/review/media contracts, enforces taxonomy/rank and split/lump reconciliation, and preserves unknowns and historical survey names.
+- **Baseline checked from RC6 APK:** WBCP Birds **761**, Sy Amphibians **116**, Sy Reptiles **380** (including one unresolved Ophiophagus genus record), pinned ASM MDD v2.5 Philippine mammal candidates **246**. Combined **1,503 source records**; pre-existing detailed accounts **17**; private WBCP/Sy compressed bundle SHA-256 `7845ceadc4b6d6226781478c72281364c876a4c1ad47b80d21b7d176ab7dc4c6`. No unreviewed genus entry is counted as a verified species.
+- **RC7 priorities and validation:** Eight batches of 12 named candidate taxa, 96 total (48 RC7A, 48 RC7B), sourceTaxonKey and name matched against the actual private RC6 APK. Machine-readable JSON Schema Draft 2020-12, example, semantic validator and 11 negative/contract tests prepared in the current chat's directly downloadable RC7 ZIP. These technical artifacts are not yet an Android implementation; GitHub master document contains the eight batch lists and usage requirements.
+- **Current artifact scope:** Documentation and test-data deliverable only. No new APK, no additions to the shipped 17 reviewed/unreviewed introductory profiles, no extra wildlife photos, no changes to SQLite, recording, GPS, or original field records. Branch PR #38 stays draft. The current download link to the RC7 pack is chat-session-specific, not recoverable from a filename in a later chat.
+- **Next development:** Implement read-only RC7 adapter from existing private taxonomy and cited diagnostic account asset, then build content in two batches and resolve deterministic media packaging. Gate each by source/rights, record-level review, all scientific CI and an actual handset upgrade/data-preservation review.
+
+---
+
 ## 28 October 2026 | RC6 Q1/Q2/Q3 navigation, experimental recovery, Philippine species
 
 - **Owner request:** Q1 unify standard navigation across LIKAS, Q2 verify RC4/RC5-to-current upgrade preservation and build restorable offline backup, Q3 expand endangered/endemic species across birds, amphibians, reptiles and mammals.

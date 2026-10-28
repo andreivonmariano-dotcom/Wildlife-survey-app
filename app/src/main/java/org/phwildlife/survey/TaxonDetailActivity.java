@@ -56,8 +56,7 @@ public final class TaxonDetailActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(18),dp(15),dp(18),dp(15));
-        TextView header=UiKit.title(this,"Species Library");
-        root.addView(header);
+        root.addView(UiKit.navigationHeader(this,"Species Library","Back",this::finish));
         TextView caption=text("Offline references for identification and ecology. "+
             "These are not confirmed observations at your site.",12,false);
         caption.setTextColor(UiKit.MUTED);
@@ -126,9 +125,7 @@ public final class TaxonDetailActivity extends Activity {
         content.setPadding(0,dp(8),0,dp(30));
         scroll.addView(content);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        Button back=UiKit.button(this,"Back","quiet");
-        back.setOnClickListener(v->finish());
-        root.addView(back);
+
         setContentView(root);
         String query=getIntent().getStringExtra("taxon_query");
         String key=getIntent().getStringExtra("taxon_key");

@@ -188,8 +188,10 @@ public final class Rc9PhotoAnnotationReviewActivity extends Activity {
             String note=notes.getText().toString().trim();
             item.put("notes",note.substring(0,Math.min(800,note.length())));
             item.put("reviewStatus","pending_expert_review");
-            item.put("createdUtc",new java.text.SimpleDateFormat(
-                "yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US).format(new java.util.Date()));
+            java.text.SimpleDateFormat utc=new java.text.SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US);
+            utc.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+            item.put("createdUtc",utc.format(new java.util.Date()));
             JSONObject pack=draftPack();
             JSONArray items=pack.optJSONArray("items");
             if(items==null)items=new JSONArray();

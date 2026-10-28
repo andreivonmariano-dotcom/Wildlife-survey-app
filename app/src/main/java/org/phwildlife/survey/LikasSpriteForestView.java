@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -42,6 +43,8 @@ public final class LikasSpriteForestView extends View {
     private final PowerManager powerManager;
     private HandlerThread thread;
     private Handler worker;
+    private final AtomicBoolean tickQueued=new AtomicBoolean(false);
+    private final Runnable spriteTick=()->{tickQueued.set(false);tick();};
     private boolean ready=false,started=false,loadFailed=false;
     private volatile boolean alive=false;
     private volatile float nightBlend=0f;
@@ -147,12 +150,19 @@ public final class LikasSpriteForestView extends View {
         return ValueAnimator.areAnimatorsEnabled()&&
             !(powerManager!=null&&powerManager.isPowerSaveMode());
     }
+    private void scheduleTick(Handler activeWorker,long delayMs){
+        if(!alive||activeWorker==null)return;
+        if(tickQueued.compareAndSet(false,true)){
+            if(!activeWorker.postDelayed(spriteTick,delayMs))tickQueued.set(false);
+        }
+    }
+
     private void tick(){
         // Capture the handler before detachment clears the worker field.
         Handler activeWorker=worker;
         if(!alive||activeWorker==null)return;
         if(getWindowVisibility()!=VISIBLE||!isShown()){
-            if(alive)activeWorker.postDelayed(this::tick,1500L);
+            scheduleTick(activeWorker,1500L);
             return;
         }
         long now=SystemClock.uptimeMillis();
@@ -190,7 +200,7 @@ public final class LikasSpriteForestView extends View {
         }
         if(alive){
             postInvalidate();
-            activeWorker.postDelayed(this::tick,motion?FRAME_MS:15000L);
+            scheduleTick(activeWorker,motion?FRAME_MS:15000L);
         }
     }
     @Override protected void onDraw(Canvas c){
@@ -228,16 +238,21 @@ public final class LikasSpriteForestView extends View {
             thread=new HandlerThread("LikasSpriteClock");
             thread.start();
             worker=new Handler(thread.getLooper());
-            worker.post(this::tick);
+            scheduleTick(worker,0L);
         }
     }
     @Override protected void onWindowVisibilityChanged(int visibility){
         super.onWindowVisibilityChanged(visibility);
-        if(visibility==VISIBLE&&worker!=null)worker.post(this::tick);
+        if(visibility==VISIBLE&&worker!=null){
+            worker.removeCallbacks(spriteTick);
+            tickQueued.set(false);
+            scheduleTick(worker,0L);
+        }
     }
     @Override protected void onDetachedFromWindow(){
         alive=false;
         if(worker!=null)worker.removeCallbacksAndMessages(null);
+        tickQueued.set(false);
         if(thread!=null)thread.quitSafely();
         synchronized(lock){
             for(Sheet s:sheets)s.clear();

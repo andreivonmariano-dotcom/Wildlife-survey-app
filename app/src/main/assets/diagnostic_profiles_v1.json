@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "compiledDate": "2026-10-28",
+  "reviewLevel": "Source-checked introductory traits. Independent Philippine taxonomic review pending.",
+  "scope": "Offline visual-reference starter, not an automated identification or station-occurrence model.",
+  "sourceList": [
+    {
+      "id": "wildalert-eagle",
+      "title": "Philippine eagle species account",
+      "publisher": "DENR WildALERT",
+      "url": "https://www.wildalert.ph/s/15",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "adw-eagle",
+      "title": "Pithecophaga jefferyi species account",
+      "publisher": "University of Michigan Museum of Zoology, Animal Diversity Web",
+      "url": "https://animaldiversity.org/accounts/Pithecophaga_jefferyi/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "denr-serpent",
+      "title": "DENR NCR: Philippine Serpent Eagle",
+      "publisher": "Department of Environment and Natural Resources, Philippines",
+      "url": "https://ncr.denr.gov.ph/news-events/denr-national-capital-region-retrieves-a-philippine-serpent-eagle-in-quezon-city/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "itis-serpent",
+      "title": "ITIS taxonomic report: Spilornis holospilus",
+      "publisher": "Integrated Taxonomic Information System",
+      "url": "https://itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=175508",
+      "accessed": "2026-10-28"
+    }
+  ],
+  "profiles": [
+    {
+      "scientificName": "Pithecophaga jefferyi",
+      "commonName": "Philippine Eagle",
+      "group": "Birds",
+      "assessment": "External morphology text checked against cited species accounts. No original diagnostic-key review.",
+      "traits": [
+        {
+          "field": "Approximate length",
+          "value": "90–100 cm total length",
+          "sourceIds": [
+            "wildalert-eagle"
+          ]
+        },
+        {
+          "field": "Head and crest",
+          "value": "Long shaggy crest with white and brown feathers",
+          "sourceIds": [
+            "wildalert-eagle"
+          ]
+        },
+        {
+          "field": "Face and bill",
+          "value": "White face, very large bluish-grey hooked bill",
+          "sourceIds": [
+            "wildalert-eagle"
+          ]
+        },
+        {
+          "field": "Body",
+          "value": "Dark brown upperparts with pale edges; white throat and underparts",
+          "sourceIds": [
+            "wildalert-eagle"
+          ]
+        },
+        {
+          "field": "In flight",
+          "value": "Long tail and rounded wings",
+          "sourceIds": [
+            "adw-eagle"
+          ]
+        },
+        {
+          "field": "Habitat context",
+          "value": "Forest-associated raptor; habitat is context, not diagnostic proof",
+          "sourceIds": [
+            "adw-eagle"
+          ]
+        }
+      ]
+    },
+    {
+      "scientificName": "Spilornis holospilus",
+      "commonName": "Philippine Serpent-Eagle",
+      "group": "Birds",
+      "assessment": "External morphology text checked against DENR and ITIS. Do not infer an individual detection from range.",
+      "traits": [
+        {
+          "field": "Approximate length",
+          "value": "Medium-sized raptor; avoid estimating length without a scale",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        },
+        {
+          "field": "Head and crest",
+          "value": "Dark brown head with white speckling",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        },
+        {
+          "field": "Face and bill",
+          "value": "Yellow bare skin between bill and eye",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        },
+        {
+          "field": "Body",
+          "value": "Brown plumage with conspicuous white spots",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        },
+        {
+          "field": "In flight",
+          "value": "Dark terminal band on wings and tail",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        },
+        {
+          "field": "Habitat context",
+          "value": "Forest edges, riparian forest, foothills and wooded agricultural country",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        }
+      ]
+    }
+  ]
+}

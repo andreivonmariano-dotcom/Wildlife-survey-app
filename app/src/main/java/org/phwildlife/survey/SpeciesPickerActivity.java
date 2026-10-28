@@ -114,10 +114,9 @@ public final class SpeciesPickerActivity extends Activity {
     private String pref(String suffix){return preferencePrefix+suffix;}
     private String visitPref(String suffix){return preferencePrefix+"visit_"+visitId+"_"+suffix;}
     private void restorePickerSettings(){
-        sortMode=checked(surveyOptions.getInt(pref("sort"),0),
-            SpeciesSortPolicy.SORT_LABELS.length);
-        statusFilter=checked(surveyOptions.getInt(pref("filter"),0),
-            SpeciesSortPolicy.FILTER_LABELS.length);
+        // Legacy probability-like score sorts/filters are no longer shown.
+        sortMode=checked(surveyOptions.getInt(pref("sort"),0),3);
+        statusFilter=0;
         savedGroupIndex=checked(surveyOptions.getInt(pref("group"),0),availableGroups.length);
         savedViewIndex=checked(surveyOptions.getInt(pref("view"),0),VIEWS.length);
         habitatCode=surveyOptions.getString(pref("habitat"),habitatCode);
@@ -307,30 +306,25 @@ public final class SpeciesPickerActivity extends Activity {
         LinearLayout panel=new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(18),dp(8),dp(18),dp(8));
-        panel.addView(text("Order by",14,true));
+        panel.addView(text("Order species references by",14,true));
         Spinner order=new Spinner(this);
+        final String[] alphabeticSorts={
+            "Name · A to Z","Family · A to Z","Genus · A to Z"};
         order.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,SpeciesSortPolicy.SORT_LABELS));
-        order.setSelection(sortMode);
+            android.R.layout.simple_spinner_dropdown_item,alphabeticSorts));
+        order.setSelection(Math.max(0,Math.min(2,sortMode)));
         panel.addView(order);
-        TextView filterLabel=text("Show likelihood status",14,true);
-        filterLabel.setPadding(0,dp(15),0,0);
-        panel.addView(filterLabel);
-        Spinner byStatus=new Spinner(this);
-        byStatus.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,SpeciesSortPolicy.FILTER_LABELS));
-        byStatus.setSelection(statusFilter);
-        panel.addView(byStatus);
-        TextView note=text("Percentage sorts use a source-based habitat match index. "+
-            "Scores with missing evidence appear last.",12,false);
+        TextView note=text("Regional source records, habitat and elevation references "+
+            "appear separately on each card. They are not probabilities "+
+            "and do not filter out unassessed species.",12,false);
         note.setTextColor(UiKit.MUTED);note.setPadding(0,dp(14),0,0);
         panel.addView(note);
-        new AlertDialog.Builder(this).setTitle("Sort & Filter")
+        new AlertDialog.Builder(this).setTitle("Sort species references")
             .setView(panel)
             .setPositiveButton("Apply",(dialog,which)->{
                 sortMode=order.getSelectedItemPosition();
-                statusFilter=byStatus.getSelectedItemPosition();
-                sortButton.setText("Sort · "+SpeciesSortPolicy.SORT_LABELS[sortMode]);
+                statusFilter=0;
+                sortButton.setText("Sort · "+alphabeticSorts[sortMode]);
                 savePickerSettings();
                 refresh();
             })

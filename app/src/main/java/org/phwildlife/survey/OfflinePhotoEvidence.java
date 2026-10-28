@@ -69,6 +69,23 @@ public final class OfflinePhotoEvidence {
         return findForTaxon(a,scientific)!=null;
     }
     /** iNaturalist references are rendered only if a verified JPEG was bundled. */
+    /** Small, downsampled thumbnail for offline catalog rows. Attribution is in species detail. */
+    public static ImageView thumbnailForTaxon(Activity a,String scientific){
+        JSONObject photo=findForTaxon(a,scientific);
+        if(photo==null)return null;
+        try(InputStream in=a.getAssets().open(photo.optString("offlineAsset"))){
+            BitmapFactory.Options options=new BitmapFactory.Options();
+            options.inSampleSize=4;
+            Bitmap bitmap=BitmapFactory.decodeStream(in,null,options);
+            if(bitmap==null)return null;
+            ImageView thumb=new ImageView(a);
+            thumb.setImageBitmap(bitmap);
+            thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            thumb.setContentDescription("Licensed offline photograph of "+scientific+
+                ", photographer "+photo.optString("author"));
+            return thumb;
+        }catch(Exception ignored){return null;}
+    }
     public static void addForTaxon(Activity a,LinearLayout parent,String scientific){
         JSONArray items=inatManifest(a).optJSONArray("items");
         if(items==null)return;

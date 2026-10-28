@@ -373,7 +373,8 @@ public class MainActivity extends Activity implements LocationListener {
         clear.setOnClickListener(v->clearMark());
         markRow.addView(clear);
         content.addView(markRow);
-        content.addView(section("Record observation"));
+        content.addView(FieldVisuals.section(this,"Record observation",
+            "Species, number of individuals and encounter details"));
         // One row combines direct entry and the complete offline checklist.
         // Complete species selection now lives on its own page.
         // Retain direct text entry for novel/unidentified field observations.

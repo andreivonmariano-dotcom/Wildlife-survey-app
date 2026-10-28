@@ -19,6 +19,10 @@ class CompactPrioritySpeciesContracts(unittest.TestCase):
         body=(CODE/"TaxonDetailActivity.java").read_text()
         self.assertIn("Rc7FieldAccounts.priority(this,scientific)",body)
         self.assertIn("Rc11PrioritySpeciesView.add(this,content,c,scientific)",body)
+        self.assertIn("searchRow.setVisibility(View.GONE)",body)
+        self.assertIn("groupFilter.setVisibility(View.GONE)",body)
+        self.assertIn("Search another species",body)
+        self.assertIn("showSearchControls()",body)
         self.assertIn("if(Rc7FieldAccounts.priority(this,scientific)){",body)
         self.assertLess(body.index("Rc11PrioritySpeciesView.add(this,content,c,scientific)"),
                         body.index("OfflinePhotoEvidence.addForTaxon(this,content,scientific)"))

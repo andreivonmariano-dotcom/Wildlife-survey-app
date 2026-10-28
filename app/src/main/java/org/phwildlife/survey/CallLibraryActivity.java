@@ -115,19 +115,11 @@ public final class CallLibraryActivity extends Activity {
     private void layout(String title){
         LinearLayout root=column();root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(14),dp(8),dp(14),dp(12));
-        LinearLayout header=new LinearLayout(this);
-        header.setGravity(Gravity.CENTER_VERTICAL);
-        Button back=UiKit.button(this,selectedClip!=null?"‹ Library":"‹ Back","secondary");
-        header.addView(back,new LinearLayout.LayoutParams(dp(105),dp(48)));
-        back.setOnClickListener(v->{
+        root.addView(UiKit.navigationHeader(this,title,selectedClip!=null?"Library":"Back",()->{
             if(recorder!=null){notice("Stop recording and finish saving before leaving");return;}
             if(selectedClip!=null){releasePlayer();selectedClip=null;draw();}
             else finish();
-        });
-        TextView heading=label(title,21,true);
-        heading.setGravity(Gravity.CENTER_VERTICAL|Gravity.RIGHT);
-        header.addView(heading,new LinearLayout.LayoutParams(0,dp(52),1));
-        root.addView(header);
+        }));
         ScrollView scroll=new ScrollView(this);
         body=column();body.setPadding(0,dp(8),0,dp(24));
         scroll.addView(body);

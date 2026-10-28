@@ -154,7 +154,7 @@ public class WelcomeActivity extends Activity {
         header.addView(brand,new LinearLayout.LayoutParams(0,dp(56),1));
         LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
         headerLp.bottomMargin=dp(18);main.addView(header,headerLp);
-        main.addView(step("FIELDWORK","Survey session"));
+        main.addView(FieldVisuals.section(this,"Fieldwork","Choose or resume a survey"));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
@@ -195,7 +195,7 @@ public class WelcomeActivity extends Activity {
             secondLp.topMargin=dp(9);main.addView(second,secondLp);
         }
 
-        main.addView(step("WORKSPACE","Projects and recent fieldwork"));
+        main.addView(FieldVisuals.section(this,"Workspace","Projects and recent fieldwork"));
         toolRow(main,"Projects & stations",()->
             startActivity(new Intent(this,SitesActivity.class)));
         addHomeRecentSurvey();
@@ -211,7 +211,7 @@ public class WelcomeActivity extends Activity {
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
         shortcutsLp.topMargin=dp(9);main.addView(shortcutRow,shortcutsLp);
 
-        main.addView(step("BIODIVERSITY LIBRARY","Source-linked offline references"));
+        main.addView(FieldVisuals.section(this,"Species Library","Source-linked offline references"));
         Button catalog=UiKit.button(this,"Search Species Library","primary");
         main.addView(catalog,new LinearLayout.LayoutParams(-1,dp(54)));
         catalog.setOnClickListener(v->startActivity(

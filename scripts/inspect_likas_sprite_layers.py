@@ -114,8 +114,8 @@ def audit_archive(archive, expected_sha=EXPECTED_SHA, check_pixels=True, output=
                         if any(hi == 0 for lo, hi in alpha):
                             issues.append("Sprite frame is completely empty")
                         # A sprite must truly move/change between source frames.
-                        varied = sum(ImageChops.difference(frames[j], frames[(j+1)%count]).getbbox()
-                                     is not None for j in range(count))
+                        varied = sum(frames[j].tobytes() != frames[(j+1)%count].tobytes()
+                                     for j in range(count))
                         layer["varying_transitions"] = varied
                         if varied < 2:
                             issues.append("Frames do not vary independently")

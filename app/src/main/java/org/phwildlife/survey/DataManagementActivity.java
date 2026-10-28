@@ -35,7 +35,7 @@ public final class DataManagementActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(16),dp(12),dp(16),dp(12));
-        root.addView(UiKit.title(this,"Manage saved data"));
+        root.addView(UiKit.navigationHeader(this,"Manage saved data","Workspace",this::finish));
         TextView notice=UiKit.sectionTitle(this,
             "Deletion is permanent. The research ZIP is not a complete restore backup.");
         notice.setTextSize(13);notice.setTextColor(UiKit.MUTED);root.addView(notice);
@@ -44,9 +44,7 @@ public final class DataManagementActivity extends Activity {
         sections.setOrientation(LinearLayout.VERTICAL);
         scroll.addView(sections);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        Button back=UiKit.button(this,"Back to workspace","quiet");
-        back.setOnClickListener(v->finish());
-        root.addView(back,new LinearLayout.LayoutParams(-1,dp(52)));
+
         setContentView(root);
         show();
     }

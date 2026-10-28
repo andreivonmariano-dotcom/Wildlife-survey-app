@@ -38,7 +38,7 @@ class DiagnosticProfileReferences(unittest.TestCase):
                     self.assertIn(ref,references)
     def test_no_unsourced_automated_identification_or_occurrence_claim(self):
         text=ASSET.read_text(encoding="utf-8")
-        self.assertIn("not an automated identification",text)
+        self.assertIn("not a verified key",text.lower())
         self.assertIn("Philippine taxonomic reviewer approval pending",text)
     def test_comparison_is_read_only_and_navigable(self):
         s=(JAVA/"DiagnosticGuideActivity.java").read_text(encoding="utf-8")

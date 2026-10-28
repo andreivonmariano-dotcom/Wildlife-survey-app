@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | RC10 exact CI failures and release blocker
+
+- **Current source HEAD before this documentation update:** `a5d99302da16f253cda58b4c6b775645c2b3e416` on `feature/likas-core-fieldwork-post-rc4`, versionCode 59.
+- **Source proof:** Connected GitHub file inspection confirms all 96 readiness profiles, exactly 467 source statements, two curated differential pairs/eight research characters, atomic review-draft reads and writes, export document intent, and compact research controls. This is source inspection only.
+- **CI:** RC10 PR run `40708409279` failed at Python QA for four exact version assumptions. They were revised. Run `40708755655` revealed three remaining RC9 version-name assertions; they were revised. Latest run `40708936629` and one retry returned job failure with no steps and no retrievable job log (connector returned 404 BlobNotFound). The cause is **unverified**, and the full suite and Android compilation remain **not passed** for this HEAD.
+- **Delivery:** No signed, validated RC10 APK obtained from this revision. Do not link an earlier RC9 APK as RC10. Continue checking CI source errors and runner availability; once successful, check binary package, signature, media and provide direct file link. Keep PR #38 draft.
+
+---
+
+
 ## 28 October 2026 | RC10 audit, research evidence access and draft recovery (CI pending)
 
 - **Owner request:** Execute Q1+Q2+Q3 together: audit RC9 for scientific/data defects, deepen the 96 priority profiles, and refine non-startup research usability. Work stays on RC4-derived scientific-core branch `feature/likas-core-fieldwork-post-rc4`, PR #38 draft.

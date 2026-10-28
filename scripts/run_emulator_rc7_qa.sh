@@ -21,6 +21,7 @@ test -s emulator-qa/previous-db.sqlite
 sha256sum emulator-qa/previous-db.sqlite | tee emulator-qa/previous-db-sha256.txt
 
 echo '=== Put media preservation fixture into old installation ==='
+adb shell run-as "$PKG" mkdir -p files
 echo 'LIKAS-UPGRADE-MEDIA-2026-10-28' | adb shell "run-as $PKG sh -c 'cat > files/likas_upgrade_preservation.txt'"
 adb shell run-as "$PKG" cat files/likas_upgrade_preservation.txt
 

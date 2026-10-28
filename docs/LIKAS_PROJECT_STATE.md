@@ -1,5 +1,13 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Direct RC4 scientific-core preview APK
+
+- The owner requested a direct APK download after the method quick-action preferences and herpetofauna/mammal identification library work. A debug APK from CI run `40656109914`, source commit `09f1dbc4ef82de1dcce650d101155ed0689e71d8`, was downloaded and extracted into the current conversation as `LIKAS-v0.27.3-RC4-scientific-core-preview-debug.apk`.
+- Verified actual AndroidManifest: app package `org.phwildlife.survey.beta08`, versionName `0.27.3-rc4`, versionCode 49. APK Signing Scheme v2 signer SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches the historic RC4 certificate. APK SHA-256 `24f91f1688a069b0d32c77a0fdc747b046199d68bbf9442c2612c102356c5883`, size 1,409,967 bytes. Artifact ZIP ID `12801697848`.
+- The downloadable file is a source-tested **development preview retaining RC4's app version and code**, not a released 0.27.4, not the separate startup animation build, and not a physical-phone-tested in-place upgrade. It uses the same signing identity and SQLite schema 27, but local field-data backup is advisable before replacing an installed RC4 build.
+- Full Python/JUnit/Android workflow `40656109914` succeeded. The previous Python-test failures from newly expanded source profiles were corrected before this CI run. No startup source changes in the core branch.
+
+
 ## 28 October 2026 | Source-complete Q1/Q2/Q3: minimalist UI, capture shortcuts, diagnostic comparisons
 
 - Owner chose consistent visual styling across Home, Live Recorder and Species Library, fast per-method evidence actions, and cited identification comparisons. Startup animation and formal field-test planning remain in their separate workstreams.

@@ -51,8 +51,8 @@ def prepare():
         try:
             url=thumbnail(title)
             image=fetch(url)
-            if not image.startswith(b"\\xff\\xd8\\xff"):
-                raise ValueError("Expected JPEG thumbnail")
+            if not image.startswith(bytes([255,216,255])):
+                raise ValueError("Expected JPEG thumbnail, got "+repr(image[:20]))
             if len(image)<1000:raise ValueError("JPEG thumbnail too small")
             path.write_bytes(image)
             completed+=1

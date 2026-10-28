@@ -33,6 +33,8 @@ public final class Rc10RecorderInstrumentedTest {
         intent.putExtra("create_new",true);
         intent.putExtra("survey_profile","Birds");
         intent.putExtra("survey_method","opportunistic");
+        // Explicitly record unavailable location on this disposable emulator, never invent GPS.
+        intent.putExtra("start_without_gps",true);
         intent.putExtra("observer_name","LIKAS-RC10-EMULATOR-QA");
         try(ActivityScenario<MainActivity> test=ActivityScenario.launch(intent)){
             test.onActivity(activity->{

@@ -1,6 +1,6 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
-**State revision:** 1.2  
+**State revision:** 1.3  
 **Recorded:** 28 October 2026, Asia/Manila  
 **Repository:** `andreivonmariano-dotcom/Wildlife-survey-app` (private)  
 **Branch checked:** `main`  
@@ -54,6 +54,17 @@ Build **LIKAS** as a Philippines-first, all-in-one biodiversity tool for wildlif
 - **Scope:** The generated artwork and ZIP exist as direct attachments in the originating chat, **not** in GitHub or the Android APK. The plate dimensions are 1224 x 1668 but come from an upscaled 612 x 834 crop. Native-detail art, compiled Android integration, device battery/performance tests, and a downloadable rebuilt APK are pending.
 - **Durable brief:** `docs/LIKAS_STARTUP_V2_CONCEPT.md` records the candidate art direction, UI hierarchy, proposed local-time crossfades, performance requirements, and acceptance gate.
 - **Next action:** Review the visual prototype with the owner, then implement a separate Android test branch with approved higher-native-resolution scenery. Preserve the live survey navigation and historical records. Test before release.
+
+## 28 October 2026 | Parallax renderer development branch
+
+- **Owner requested:** Implement independent foliage, cloud, mist, water, and depth motion, then test 60 FPS on Android and prepare a new downloadable APK.
+- **Branch created:** `feature/rainforest-parallax-v2`. The original `main` release and survey data schema are untouched.
+- **Native code:** Added `RainforestBackdropView.java` (separate Canvas layers with night fireflies, power-saver/reduced-motion static fallback and vsync-aware redraw), `RainforestMotion.java` (pure local-clock blend math), and JUnit `RainforestMotionTest.java`. `WelcomeActivity` now embeds the new renderer behind a readable home hero; other navigation paths are unchanged.
+- **Preview version:** `app/build.gradle` on this branch uses `versionCode 18` and `versionName 0.16.0-parallax-preview`, retaining applicationId `org.phwildlife.survey.beta08` and the existing signing configuration.
+- **Source checks:** An isolated Java validation harness using the same time-blend algorithm passed for all 1,440 minutes, state boundaries, and independent finite waves. This is **not** an Android build or proof of 60 FPS.
+- **Build blocker:** No Android SDK/Gradle/ADB are installed in the current execution environment. A proposed branch-only GitHub Actions workflow creation was blocked by tool safety checks. No CI run, signed APK, device measurement, or direct APK download exists yet. Do not call the preview released.
+- **QA plan:** `docs/LIKAS_PARALLAX_ANDROID_QA.md` lists build, signing, device FPS, energy, accessibility and survey regression checks.
+- **Next:** Obtain a signed preview build through an authorized existing CI/developer workflow, retrieve the real APK directly into chat and verify its package/version/certificate. Run physical-phone frame timing before a 60 FPS claim. Review the procedural visual against approved image concept before merging to `main`.
 
 ## Current blockers and nonclaims
 

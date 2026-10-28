@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 28 October 2026 | Product critique requested, test planning deferred
+
+- Owner asked to **defer test plans** and critique the application itself, excluding startup animation owned by a different chat.
+- Source-level product critique is recorded at `docs/LIKAS_PRODUCT_UX_CRITIQUE_RC4.md` on `feature/likas-core-fieldwork-post-rc4`. This review covers Home, survey setup, live recorder, Species Library, regional/catalog evidence, history/dashboard, non-startup UI, architecture and the all-in-one biodiversity scope.
+- High-priority review finding: `HabitatLikelihood` displays an uncalibrated numerical screening index and “Likely” (e.g. 60/100 from a province source listing alone), which can be confused with a measured occurrence probability. Recommend source-first textual evidence, not an apparent probability score.
+- UX findings: Home hides project and reporting tools under More tools, setup is long and method-heavy, recorder has many adjunct actions and a fixed two-row footer, reference lookup requires multiple screens, and scientific findings are spread across navigation destinations. Existing dedicated End Survey and Resume Survey actions are strengths to retain.
+- Confirmed source issues awaiting owner-approved implementation: `CatalogActivity.refresh()` constructs visible-looking literal escaped newline separators and has a hard-coded denominator of 1,503 catalog entries. No application code was modified in this review action.
+- Document is an **unaccepted design review**, not an owner decision, source patch or field-device observation. Do not begin test plans, new feature work or UI restructuring solely from this critique without the owner's next direction. Draft PR #38 retains earlier scientific source fixes and remains separate from startup development.
+
+---
+
 ## 28 October 2026 | Scientific core Q1 Q2 Q3 audit and protected fixes
 
 - **User chose all three:** audit live survey tools, develop scientifically reliable species information and identification, and review whole-app architecture/performance/non-startup user experience. Startup animation remains entirely owned by the separate chat.

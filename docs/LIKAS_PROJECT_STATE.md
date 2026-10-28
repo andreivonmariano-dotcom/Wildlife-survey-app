@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## Latest development stage | 28 October 2026, Asia/Manila | Prototype D waterfall refine + Android sprite source
+- Owner requested Q1/Q2/Q3 together: refine each waterfall sheet, clean duplicated static detail, and build an Android sprite player from separate 5 FPS parts with phone-local day/night selection and battery-aware playback.
+- **Local Prototype D created:** `LIKAS_Layered_Sprites_5FPS_Prototype_D.zip`, 9,349,505 bytes, SHA-256 `36ce19761297e07a206c9efc8112199d90c3e2846f63130e54a0ed90c3ef2f5d`. Its `android/likas_sprite_assets.zip` is 1,488,772 bytes, SHA-256 `def85e227587fdadee75956b6f105b57feb38f2bff27c6889c1f1edbfc042498`. Complete with individual transparent PNG frames, 28 component sprite sheets, day/night stills, frame editor/repack scripts, Android Java player, offline layer viewer and 5 FPS day/night MP4 previews.
+- **Q1:** four waterfalls each retain original water contours and textured bodies with distinct 5 FPS rising/splash keyframe edits and independently traveling pixel strands. The script-generated editing is not equivalent to manual frame-by-frame professional animation.
+- **Q2:** localized static sky-bird cleanup completed. Remaining distant background mist and embedded deep-canopy detail are intentionally untouched because erasing entire parts would deform the source composition. This is a **partial** cleanup.
+- **Q3 staged in GitHub:** new `app/src/main/java/org/phwildlife/survey/LikasSpriteForestView.java` on branch `feature/v0.27.4-layered-sprite-player-stage`, derived from `feature/v0.27.3-startup-living-forest`. The class uses compressed WebP sprite atlases, background worker decoding, 5 FPS frame intervals, native nearest-neighbor alpha compositing, device-local 05:30–06:30 dawn and 17:30–18:30 dusk crossfades, plus reduced-motion, battery-saver and hidden-screen pause.
+- Regression source check: `scripts/test_staged_pixel_sprite_player.py`; QA: `docs/QA_LIKAS_PROTOTYPE_D_5FPS.md`. CI to be verified. Source class remains deliberately **unconnected**, since GitHub does not yet contain the 1.5 MB binary pack. No new Android APK includes it. Existing `v0.27.3-rc4` APK still has the rejected old scene and must not be relabeled.
+- **Next release gate:** import Android sprite binary archive, connect the new view, advance versionCode, run CI and test actual Android decoder/animation, signing identity, database continuity and research exports. Then provide a new direct APK only after binary verification.
+- The startup frog stays the installed icon, not a backdrop overlay; native LIKAS title, tagline, version and Resume/Home buttons stay unchanged.
+
+---
+
 ## Latest sprite-art milestone | 28 October 2026, Asia/Manila | 5 FPS independent pixel elements
 - Owner explicitly requested Q1 Q2 Q3: refine waterfall flow, give river its own continuously looping current sprites, and isolate more cloud/foreground foliage motion. The **accepted target frame timing is 5 FPS per animated portion (200ms)**, not 16/24 FPS whole-scene warping.
 - Current conversation generated **Prototype C**: `LIKAS_Individual_Rainforest_Sprites_5FPS_Prototype_C.zip`, size **14,972,272 bytes**, SHA-256 `43a024066310dcf96c000062a0d13d762c653379598a7a98cd1f8846297f7c48`. This is a separate editable asset pack, not a built APK or approved final artwork.

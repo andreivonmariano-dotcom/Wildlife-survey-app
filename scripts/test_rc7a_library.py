@@ -108,7 +108,7 @@ class Rc7aLibraryTests(unittest.TestCase):
         for token in ("taxon_catalog","taxon_synonyms",
                       "Rc7FieldAccounts.priority","Published literature notes",
                       "Offline photograph","RegionalChecklistActivity",
-                      "DiagnosticGuideActivity","taxon_key","LIMIT 2200"):
+                      "Rc8TraitComparisonActivity","taxon_key","LIMIT 2200"):
             self.assertIn(token,screen)
         detail=(CODE/"TaxonDetailActivity.java").read_text()
         self.assertIn("Rc7FieldAccounts.add(this,content,scientific)",detail)
@@ -123,7 +123,7 @@ class Rc7aLibraryTests(unittest.TestCase):
                           (CODE/(n+".java")).read_text())
         manifest=(ROOT/"app/src/main/AndroidManifest.xml").read_text()
         self.assertIn('android:name=".Rc7SpeciesLibraryActivity"',manifest)
-        self.assertIn("new Intent(a,DiagnosticGuideActivity.class)",
+        self.assertIn("new Intent(a,Rc8TraitComparisonActivity.class)",
                       (CODE/"Rc7FieldAccounts.java").read_text())
 
     def test_never_mutate_historic_observations_for_priority_cards(self):

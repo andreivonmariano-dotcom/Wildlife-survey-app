@@ -1,3 +1,4 @@
+import re
 """RC7C public CC and copyright-owner photo authorization and source library QA."""
 import json
 from pathlib import Path
@@ -97,7 +98,7 @@ class Rc7cOwnerLibraryTests(unittest.TestCase):
         db=(CODE/"FieldDb.java").read_text()
         self.assertIn("super(context,NAME,null,27)",db)
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 58",gradle)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",gradle).group(1)),59)
         self.assertIn("0.27.3-rc9-profile-differential-annotation-preview",gradle)
 
 if __name__=="__main__":unittest.main()

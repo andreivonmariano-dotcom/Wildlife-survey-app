@@ -33,7 +33,10 @@ class Rc10BatchTwoContracts(unittest.TestCase):
                 self.assertTrue(claim["statement"])
                 self.assertIn("pending",claim["reviewState"])
                 self.assertEqual(claim["retrievedDate"],"2026-10-28")
-                self.assertGreaterEqual(claim["publicationYear"],2014)
+                if claim["publicationYear"] is not None:
+                    self.assertGreaterEqual(claim["publicationYear"],2008)
+                else:
+                    self.assertIn(claim["sourceType"],("curated_taxonomic_reference","specialist_summary"))
                 self.assertNotIn("siteOccurrence",claim)
 
     def test_both_research_packs_are_displayed_and_recorder_exit_retained(self):

@@ -154,6 +154,7 @@ public class WelcomeActivity extends Activity {
         header.addView(brand,new LinearLayout.LayoutParams(0,dp(56),1));
         LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
         headerLp.bottomMargin=dp(18);main.addView(header,headerLp);
+        main.addView(step("FIELDWORK","Survey session"));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
@@ -193,26 +194,44 @@ public class WelcomeActivity extends Activity {
             LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(-1,-2);
             secondLp.topMargin=dp(9);main.addView(second,secondLp);
         }
+
+        main.addView(step("WORKSPACE","Projects and recent fieldwork"));
+        toolRow(main,"Projects & stations",()->
+            startActivity(new Intent(this,SitesActivity.class)));
+        addHomeRecentSurvey();
         LinearLayout shortcutRow=new LinearLayout(this);
         shortcutRow.setOrientation(LinearLayout.HORIZONTAL);
         Button history=UiKit.button(this,"Survey history","secondary");
         shortcutRow.addView(history,new LinearLayout.LayoutParams(0,dp(52),1));
         history.setOnClickListener(v->startActivity(new Intent(this,HistoryActivity.class)));
-        Button catalog=UiKit.button(this,"Species checklist","secondary");
-        LinearLayout.LayoutParams catalogLp=new LinearLayout.LayoutParams(0,dp(52),1);
-        catalogLp.leftMargin=dp(8);shortcutRow.addView(catalog,catalogLp);
-        catalog.setOnClickListener(v->startActivity(new Intent(this,CatalogActivity.class)));
+        Button dashboard=UiKit.button(this,"Dashboard","secondary");
+        LinearLayout.LayoutParams dashLp=new LinearLayout.LayoutParams(0,dp(52),1);
+        dashLp.leftMargin=dp(8);shortcutRow.addView(dashboard,dashLp);
+        dashboard.setOnClickListener(v->startActivity(new Intent(this,DashboardActivity.class)));
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
-        shortcutsLp.topMargin=dp(14);main.addView(shortcutRow,shortcutsLp);
-        Button toolsToggle=UiKit.button(this,"More tools  ▾","quiet");
+        shortcutsLp.topMargin=dp(9);main.addView(shortcutRow,shortcutsLp);
+
+        main.addView(step("BIODIVERSITY LIBRARY","Source-linked offline references"));
+        Button catalog=UiKit.button(this,"Explore Species Library","primary");
+        main.addView(catalog,new LinearLayout.LayoutParams(-1,dp(54)));
+        catalog.setOnClickListener(v->startActivity(new Intent(this,CatalogActivity.class)));
+        TextView scope=text("Species accounts include taxonomic and available habitat evidence. "+
+            "A checklist listing does not establish presence at your survey station.",12,false);
+        scope.setTextColor(MUTED);
+        scope.setPadding(dp(6),dp(7),dp(6),dp(4));
+        main.addView(scope);
+
+        Button toolsToggle=UiKit.button(this,"Field tools & settings  ▾","quiet");
         LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(54));
-        toolMargin.topMargin=dp(10);main.addView(toolsToggle,toolMargin);
+        toolMargin.topMargin=dp(12);main.addView(toolsToggle,toolMargin);
         LinearLayout tools=vertical();
         tools.setVisibility(View.GONE);
         toolsToggle.setOnClickListener(v->{
             boolean expanded=tools.getVisibility()!=View.VISIBLE;
             tools.setVisibility(expanded?View.VISIBLE:View.GONE);
-            toolsToggle.setText(expanded?"Less tools  ▴":"More tools  ▾");
+            toolsToggle.setText(expanded?"Field tools & settings  ▴":"Field tools & settings  ▾");
+            toolsToggle.setContentDescription(expanded?
+                "Hide field tools and settings":"Show field tools and settings");
         });
         tools.addView(text("Field evidence",13,true));
         toolRow(tools,"Sound recordings",()->
@@ -221,15 +240,36 @@ public class WelcomeActivity extends Activity {
             startActivity(new Intent(this,TrapProtocolActivity.class)));
         toolRow(tools,"Other method evidence",()->
             startActivity(new Intent(this,FieldProtocolsActivity.class)));
-        tools.addView(text("Projects and reporting",13,true));
-        toolRow(tools,"Projects & stations",()->startActivity(new Intent(this,SitesActivity.class)));
+        tools.addView(text("Study and archive management",13,true));
         toolRow(tools,"Study protocols",()->
             startActivity(new Intent(this,StudyProtocolsActivity.class)));
-        toolRow(tools,"Fieldwork dashboard",()->startActivity(new Intent(this,DashboardActivity.class)));
-        toolRow(tools,"Scientific data review",()->startActivity(new Intent(this,AuditActivity.class)));
-        toolRow(tools,"Import previous backup",()->startActivity(new Intent(this,ImportActivity.class)));
+        toolRow(tools,"Scientific data review",()->
+            startActivity(new Intent(this,AuditActivity.class)));
+        toolRow(tools,"Import previous backup",()->
+            startActivity(new Intent(this,ImportActivity.class)));
         main.addView(tools);
     }
+    /** A brief, read-only link to the latest archived or active survey. */
+    private void addHomeRecentSurvey(){
+        String summary="No survey recorded yet";
+        try(FieldDb d=new FieldDb(this);
+            Cursor c=d.getReadableDatabase().rawQuery(
+                "SELECT COALESCE(survey_profile,taxon_group,'Birds'),"+
+                "COALESCE(station_id,''),COALESCE(outcome,'active'),started "+
+                "FROM surveys ORDER BY started DESC LIMIT 1",null)){
+            if(c.moveToFirst()){
+                String station=c.getString(1);
+                String status=c.getString(2).replace('_',' ');
+                summary=c.getString(0)+" · "+status+
+                    (station.isEmpty()?"":" · Station "+station);
+            }
+        }catch(Exception ignored){summary="Open history to review saved surveys";}
+        TextView recent=text("Recent survey: "+summary,13,false);
+        recent.setTextColor(MUTED);
+        recent.setPadding(dp(6),dp(9),dp(6),dp(3));
+        main.addView(recent);
+    }
+
     private void toolRow(LinearLayout parent,String name,Runnable action){
         TextView item=text(name+"   ›",16,true);
         item.setPadding(dp(16),dp(14),dp(12),dp(14));

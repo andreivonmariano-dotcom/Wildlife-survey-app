@@ -2,6 +2,9 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.AtomicFile;
+import java.io.IOException;
+import java.io.OutputStream;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,6 +27,7 @@ import java.util.Locale;
 /** Produces drafts only. A scientific reviewer must approve source and marker location. */
 public final class Rc9PhotoAnnotationReviewActivity extends Activity {
     private static final String FILE="rc9_anatomical_annotation_drafts.json";
+    private static final int EXPORT_DRAFTS=81;
     private final ArrayList<JSONObject> photos=new ArrayList<>();
     private final ArrayList<JSONObject> claims=new ArrayList<>();
     private final java.util.HashMap<String,JSONObject> sourceProfiles=new java.util.HashMap<>();
@@ -109,6 +113,11 @@ public final class Rc9PhotoAnnotationReviewActivity extends Activity {
         Button share=UiKit.button(this,"Share drafts for specialist review","secondary");
         body.addView(share,new LinearLayout.LayoutParams(-1,dp(48)));
         share.setOnClickListener(v->shareDrafts());
+        Button export=UiKit.button(this,"Export JSON backup of review drafts","secondary");
+        export.setContentDescription("Save a separate backup of anatomical annotation drafts");
+        body.addView(export,new LinearLayout.LayoutParams(-1,dp(48)));
+        export.setOnClickListener(v->exportDrafts());
+        body.addView(text("Review drafts are not included in the survey ZIP backup. Export a JSON copy before clearing app data or changing phones.",12));
         setContentView(root);
         choosePhoto.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
             @Override public void onItemSelected(android.widget.AdapterView<?> p,android.view.View v,int i,long id){photoChanged();}
@@ -150,18 +159,26 @@ public final class Rc9PhotoAnnotationReviewActivity extends Activity {
             "Not assessed: source-linked anatomical characters needed before drafting.":
             "Tap the location of the listed trait. This will be an unreviewed draft.");
     }
-    private JSONObject draftPack(){
+    /** Treat invalid or oversized existing drafts as an error, never as an empty file. */
+    private JSONObject draftPack() throws IOException {
         File file=new File(getFilesDir(),FILE);
-        if(!file.isFile())return new JSONObject();
+        if(!file.exists())return new JSONObject();
+        if(!file.isFile())throw new IOException("Draft storage is not a file");
         try(FileInputStream in=new FileInputStream(file);
             ByteArrayOutputStream out=new ByteArrayOutputStream()){
             byte[] b=new byte[4096];int n;
             while((n=in.read(b))!=-1){
-                if(out.size()+n>180000)return new JSONObject();
+                if(out.size()+n>180000)throw new IOException("Draft file exceeds size limit");
                 out.write(b,0,n);
             }
-            return new JSONObject(out.toString("UTF-8"));
-        }catch(Exception e){return new JSONObject();}
+            JSONObject pack=new JSONObject(out.toString("UTF-8"));
+            if(!"rc9-annotation-draft-v1".equals(pack.optString("schemaVersion")) ||
+                pack.optJSONArray("items")==null)
+                throw new IOException("Draft file format is not recognized");
+            return pack;
+        }catch(org.json.JSONException e){
+            throw new IOException("Draft file could not be parsed",e);
+        }
     }
     private void saveDraft(){
         JSONObject p=photo();int index=chooseTrait.getSelectedItemPosition();
@@ -199,21 +216,68 @@ public final class Rc9PhotoAnnotationReviewActivity extends Activity {
             items.put(item);
             pack.put("schemaVersion","rc9-annotation-draft-v1");
             pack.put("items",items);
-            try(FileOutputStream out=openFileOutput(FILE,MODE_PRIVATE)){
-                out.write(pack.toString(2).getBytes("UTF-8"));
+            byte[] serialized=pack.toString(2).getBytes("UTF-8");
+            if(serialized.length>180000)throw new IOException("Draft capacity reached");
+            AtomicFile atomic=new AtomicFile(new File(getFilesDir(),FILE));
+            FileOutputStream out=null;
+            try{
+                out=atomic.startWrite();
+                out.write(serialized);
+                atomic.finishWrite(out);
+            }catch(Exception error){
+                if(out!=null)atomic.failWrite(out);
+                throw error;
             }
             status.setText("Draft saved locally ("+items.length()+"). NOT expert-approved. Share for review.");
-        }catch(Exception ex){status.setText("Draft could not be saved. No survey records were modified.");}
+        }catch(Exception ex){status.setText("Draft NOT saved. Earlier drafts remain protected. Export or inspect existing review data.");}
+    }
+    private void exportDrafts(){
+        try{
+            JSONObject data=draftPack();
+            JSONArray items=data.optJSONArray("items");
+            if(items==null||items.length()==0){
+                status.setText("No review drafts to export.");return;
+            }
+            Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/json");
+            intent.putExtra(Intent.EXTRA_TITLE,"LIKAS-annotation-review-drafts.json");
+            startActivityForResult(intent,EXPORT_DRAFTS);
+        }catch(Exception ex){
+            status.setText("Cannot read existing drafts. No backup was created and originals were not overwritten.");
+        }
+    }
+    @Override protected void onActivityResult(int request,int result,Intent data){
+        super.onActivityResult(request,result,data);
+        if(request!=EXPORT_DRAFTS||result!=RESULT_OK||data==null||data.getData()==null)return;
+        try{
+            JSONObject pack=draftPack();
+            JSONArray items=pack.optJSONArray("items");
+            if(items==null||items.length()==0)throw new IOException("No annotation drafts");
+            try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"w")){
+                if(out==null)throw new IOException("Could not open export document");
+                out.write(pack.toString(2).getBytes("UTF-8"));
+                out.flush();
+            }
+            status.setText("JSON backup exported ("+items.length()+" review drafts). Keep it with your fieldwork backups.");
+        }catch(Exception ex){
+            status.setText("JSON backup failed. The original review drafts remain in app storage.");
+        }
     }
     private void shareDrafts(){
-        JSONObject data=draftPack();
-        if(data.optJSONArray("items")==null||data.optJSONArray("items").length()==0){
-            status.setText("No drafts to share.");return;
+        try{
+            JSONObject data=draftPack();
+            JSONArray items=data.optJSONArray("items");
+            if(items==null||items.length()==0){
+                status.setText("No drafts to share.");return;
+            }
+            Intent send=new Intent(Intent.ACTION_SEND);
+            send.setType("text/plain");
+            send.putExtra(Intent.EXTRA_SUBJECT,"LIKAS anatomical annotations requiring expert review");
+            send.putExtra(Intent.EXTRA_TEXT,data.toString(2));
+            startActivity(Intent.createChooser(send,"Send source-linked review drafts"));
+        }catch(Exception ex){
+            status.setText("Cannot read existing drafts. Nothing was shared or overwritten.");
         }
-        Intent send=new Intent(Intent.ACTION_SEND);
-        send.setType("application/json");
-        send.putExtra(Intent.EXTRA_SUBJECT,"LIKAS anatomical annotations requiring expert review");
-        send.putExtra(Intent.EXTRA_TEXT,data.toString());
-        startActivity(Intent.createChooser(send,"Send source-linked review drafts"));
     }
 }

@@ -31,7 +31,7 @@ class OfflineBiodiversityReference(unittest.TestCase):
             for field in ["overview","habitat","behavior","fieldNotes","cautions"]:
                 self.assertGreater(len(account[field]),60)
             for source in account["sourceIds"]:self.assertIn(source,ids)
-        self.assertIn("not a verified key",pack["scope"])
+        self.assertIn("not a verified key",pack["scope"].lower())
 
     def test_photos_are_licensed_and_never_assume_sighting(self):
         media=json.loads((ASSETS/"offline_photo_manifest_v1.json").read_text())

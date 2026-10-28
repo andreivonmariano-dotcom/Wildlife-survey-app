@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "title": "Philippine Habitat and Ecology Reference",
+  "compiledDate": "2026-10-28",
+  "reviewLevel": "Source-based field descriptions, not a formally validated Philippine habitat classification key",
+  "scope": "General descriptions to help document actual sites; absence of habitat observations does not imply species absence.",
+  "sources": [
+    {
+      "id": "field-museum",
+      "publisher": "Field Museum / Philippine Mammals project",
+      "title": "Habitats in the Philippines",
+      "url": "https://philippines.fieldmuseum.org/natural-history/narrative/4081",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "psa-forest",
+      "publisher": "Philippine Statistics Authority",
+      "title": "Forest cover and forest formations",
+      "url": "https://psa.gov.ph/content/forest-cover-1",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "psa-mangrove",
+      "publisher": "Philippine Statistics Authority",
+      "title": "Mangrove ecosystem definition",
+      "url": "https://psa.gov.ph/content/mangrove",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "denr-mangrove",
+      "publisher": "DENR FASPS",
+      "title": "Mangrove Management Handbook (2000)",
+      "url": "https://faspselib.denr.gov.ph/Materials/Detail/c1ac095f-a600-42d0-b8c5-c112d7fecf08",
+      "accessed": "2026-10-28"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "lowland-forest",
+      "name": "Lowland tropical forest",
+      "group": "Terrestrial",
+      "overview": "Warm, humid forest on lower slopes and plains. Canopy composition, disturbance history and terrain vary widely across Philippine islands. Old-growth and regenerating stands should be recorded separately.",
+      "fieldIndicators": "Record connected canopy, vertical tree layers, mature stems, lianas, saplings and understory density. Measure canopy openness rather than calling all closed cover old-growth.",
+      "waterAndSubstrate": "Assess slope position, drainage, nearby streams, erosion signs and soil surface. Elevation alone does not define the habitat boundary.",
+      "vegetationAndWildlife": "Tree community and understory structure reflect geology, rainfall and land use. Record birds, mammals, herpetofauna and plant observations independently.",
+      "measurements": [
+        "Canopy cover and closure",
+        "Dominant trees if positively identified",
+        "DBH or basal-area sample",
+        "Understory density",
+        "Disturbance evidence",
+        "GPS elevation with datum"
+      ],
+      "limitations": "Forest boundaries are gradual and locally variable. Avoid automatic elevations as a definition of lowland forest.",
+      "sourceIds": [
+        "field-museum",
+        "psa-forest"
+      ],
+      "photoId": ""
+    },
+    {
+      "id": "montane-forest",
+      "name": "Montane forest",
+      "group": "Terrestrial",
+      "overview": "Upland forest along mountain gradients, often cooler and wetter than nearby lowlands. Changes in tree community and canopy structure can occur gradually rather than at one fixed contour.",
+      "fieldIndicators": "Note canopy height, tree-stature shifts, epiphyte abundance and understory layering. Record sampling locality and exposure.",
+      "waterAndSubstrate": "Observe ridge versus ravine, mist/cloud exposure, water seepage and surface soil. Do not infer climatic values from altitude.",
+      "vegetationAndWildlife": "Plant community differs between mountain ranges and parent materials. Document actual trees and epiphytes where identifiable.",
+      "measurements": [
+        "Elevation and vertical accuracy",
+        "Canopy and vegetation height",
+        "Fog/cloud presence",
+        "Air temperature",
+        "Humidity",
+        "Slope and aspect"
+      ],
+      "limitations": "Submontane, montane and mossy forest should not be separated by arbitrary universal altitude limits.",
+      "sourceIds": [
+        "field-museum",
+        "psa-forest"
+      ],
+      "photoId": ""
+    },
+    {
+      "id": "mossy-forest",
+      "name": "Mossy / upper montane forest",
+      "group": "Terrestrial",
+      "overview": "Cool, frequently wet upland forest often characterized by short or contorted trees and abundant mosses, lichens and epiphytes. It occurs across varied elevations depending on mountain climate.",
+      "fieldIndicators": "Record moss and bryophyte cover on branches and stems, stature of the canopy, epiphyte abundance and exposure. Avoid labeling every high-elevation grassland as mossy forest.",
+      "waterAndSubstrate": "Document mist frequency, ridgeline position, organic-rich litter, saturated substrates and water movement when actually observed.",
+      "vegetationAndWildlife": "Often supports specialized upland flora and fauna. The profile describes habitat structure, not automatic endemic-species presence.",
+      "measurements": [
+        "Percent epiphyte cover",
+        "Canopy height",
+        "Litter depth",
+        "Temperature/humidity",
+        "GPS altitude and datum",
+        "Cloud exposure"
+      ],
+      "limitations": "Disturbance and local climate alter structure. Confirm mossy features on the ground.",
+      "sourceIds": [
+        "field-museum",
+        "psa-forest"
+      ],
+      "photoId": "habitat_mossy"
+    },
+    {
+      "id": "limestone-karst",
+      "name": "Limestone and karst forest",
+      "group": "Edaphic",
+      "overview": "Forests on limestone-derived terrain with outcrops, cliffs, pinnacles, fissures or caves. Vegetation structure varies strongly over short distances with rock exposure and soil pockets.",
+      "fieldIndicators": "Document exposed limestone, sinkholes, crevices, thin soils, abrupt microtopography and cliff habitat. Note forest cover separately.",
+      "waterAndSubstrate": "Record surface runoff paths, cave moisture and dry rock crevices without entering unsafe voids. Substrate-specific microhabitats matter.",
+      "vegetationAndWildlife": "Karst flora may show substrate specialization. Cave and cliff observations require separate search effort and disturbance notes.",
+      "measurements": [
+        "Limestone cover estimate",
+        "Rock and soil depth class",
+        "Canopy openness",
+        "Cliff/cave proximity",
+        "Microhabitat search time"
+      ],
+      "limitations": "A species occurring in karst forest is not necessarily a limestone specialist. Confirm rock type rather than assuming it from vegetation.",
+      "sourceIds": [
+        "field-museum"
+      ],
+      "photoId": ""
+    },
+    {
+      "id": "ultramafic-forest",
+      "name": "Ultramafic / ultrabasic forest",
+      "group": "Edaphic",
+      "overview": "Vegetation established on rock and soils formed from ultramafic materials. Plant communities may differ markedly from neighboring non-ultramafic forests.",
+      "fieldIndicators": "Describe substrate exposure, vegetation stature, leaf characteristics, patchiness and transitions into other soil types.",
+      "waterAndSubstrate": "Record drainage, bare-rock patches and soil color. Chemical soil identity requires an actual geologic or laboratory source.",
+      "vegetationAndWildlife": "Possible local plant community specialization. Wildlife use must be documented directly, not inferred from underlying rock.",
+      "measurements": [
+        "Geological/soil identification source",
+        "Canopy height",
+        "Vegetation cover",
+        "Rock exposure",
+        "Disturbance evidence"
+      ],
+      "limitations": "Do not assign ultramafic habitat from small-tree stature alone. Separate field impression from verified geology.",
+      "sourceIds": [
+        "field-museum"
+      ],
+      "photoId": ""
+    },
+    {
+      "id": "mangrove",
+      "name": "Mangrove forest and tidal woodland",
+      "group": "Coastal",
+      "overview": "Tree and shrub communities in tidal intertidal and brackish coastal settings. They can follow sheltered mudflats, estuaries and tidal river channels.",
+      "fieldIndicators": "Look for tidal influence, prop roots or pneumatophores, salt-tolerant woody vegetation, muddy or sandy intertidal zones. Record the precise microzone.",
+      "waterAndSubstrate": "Note inundation state, approximate tidal position, salinity reading if measured, standing water and sediment type.",
+      "vegetationAndWildlife": "Common mangrove genera include Rhizophora, Avicennia and Bruguiera. Root networks support many invertebrates, fish and coastal birds.",
+      "measurements": [
+        "Tidal stage and time",
+        "Salinity with instrument/method",
+        "Porewater/surface water status",
+        "Substrate type",
+        "Canopy cover",
+        "Disturbance/replanting status"
+      ],
+      "limitations": "Planted stands and natural forest differ. One photograph does not confirm exact salinity or plant identity.",
+      "sourceIds": [
+        "psa-mangrove",
+        "denr-mangrove"
+      ],
+      "photoId": "habitat_mangrove"
+    },
+    {
+      "id": "freshwater-wetland",
+      "name": "Freshwater marsh and wetland",
+      "group": "Aquatic",
+      "overview": "Inland or coastal freshwater-influenced wetlands with seasonally or permanently saturated soils and standing or slow-moving water. Vegetation ranges from emergent plants to sedge and grass communities.",
+      "fieldIndicators": "Record the dominant growth form, permanent or seasonal flooding, open-water patches and water-edge transitions.",
+      "waterAndSubstrate": "Measure water depth and field conductivity or salinity when feasible. Document water clarity, flow, mud or organic substrate and seasonality.",
+      "vegetationAndWildlife": "Anuran calls, waterbirds and aquatic species should be associated with actual observation records and sampling effort.",
+      "measurements": [
+        "Standing water depth",
+        "Conductivity/salinity if measured",
+        "Flow and turbidity",
+        "Vegetation cover",
+        "Survey date and wet/dry phase"
+      ],
+      "limitations": "A one-day observation cannot determine permanent hydroperiod. Do not equate absence of water with habitat absence.",
+      "sourceIds": [
+        "field-museum",
+        "psa-mangrove"
+      ],
+      "photoId": ""
+    },
+    {
+      "id": "riparian",
+      "name": "Riparian forest and stream margin",
+      "group": "Aquatic",
+      "overview": "Vegetation along streams and river corridors where flood, streamflow and local moisture influence the edge environment. Can occur within lowland, montane or disturbed landscapes.",
+      "fieldIndicators": "Identify channel, banks, riparian canopy, flood marks, erosion and vegetation transition. Record whether the survey is in-channel, bank-edge or adjacent forest.",
+      "waterAndSubstrate": "Measure stream width, wetted width, water depth, flow class, channel substrate and sampling-bank distance.",
+      "vegetationAndWildlife": "Stream-associated amphibians, reptiles, birds and mammals may use different microhabitats. Record detections by observed substrate.",
+      "measurements": [
+        "Channel width",
+        "Depth and flow state",
+        "Stream bed material",
+        "Bank canopy",
+        "Water temperature",
+        "GPS accuracy"
+      ],
+      "limitations": "Riparian is a landscape position and can coexist with another forest category. No assumed water chemistry.",
+      "sourceIds": [
+        "field-museum"
+      ],
+      "photoId": ""
+    },
+    {
+      "id": "disturbed-secondary",
+      "name": "Secondary forest and disturbed mosaic",
+      "group": "Human-modified",
+      "overview": "Vegetation recovering from logging, burning, cultivation, storms or other disturbance. This category includes diverse successional stages and should not be treated as one uniform forest type.",
+      "fieldIndicators": "Record canopy regeneration, planted versus native vegetation, stumps, trail/road edges, gaps, invasive plants and nearby land use.",
+      "waterAndSubstrate": "Document drainage modifications, exposed soil, erosion, water channels and fire evidence.",
+      "vegetationAndWildlife": "Mixed natural regeneration and planted trees can coexist. Describe actual vegetation rather than an unverified 'pristine' status.",
+      "measurements": [
+        "Time or evidence of disturbance",
+        "Canopy cover",
+        "Regeneration density",
+        "Dominant land use",
+        "Edge distance",
+        "Human activity"
+      ],
+      "limitations": "Forest cover alone does not quantify ecological integrity. Classify disturbance and forest structure independently.",
+      "sourceIds": [
+        "field-museum",
+        "psa-forest"
+      ],
+      "photoId": ""
+    }
+  ]
+}

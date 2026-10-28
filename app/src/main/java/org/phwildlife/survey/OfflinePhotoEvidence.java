@@ -108,14 +108,38 @@ public final class OfflinePhotoEvidence {
     }
     public static void addForTaxon(Activity a,LinearLayout parent,String scientific){
         JSONArray items=inatManifest(a).optJSONArray("items");
-        if(items==null)return;
+        if(items==null||scientific==null)return;
+        java.util.ArrayList<String> ids=new java.util.ArrayList<>();
         for(int i=0;i<items.length();i++){
             JSONObject photo=items.optJSONObject(i);
-            if(photo!=null&&scientific.equalsIgnoreCase(photo.optString("taxon"))){
-                add(a,parent,photo.optString("id"));
-                return;
-            }
+            if(photo==null||!scientific.equalsIgnoreCase(photo.optString("taxon")))continue;
+            String path=photo.optString("offlineAsset");
+            if(!path.matches("offline_photos/inat_[a-z0-9_]+\\.jpg"))continue;
+            try(InputStream in=a.getAssets().open(path)){
+                if(in.read()!=-1)ids.add(photo.optString("id"));
+            }catch(Exception ignored){}
+            if(ids.size()==3)break;
         }
+        if(ids.isEmpty())return;
+        add(a,parent,ids.get(0));
+        if(ids.size()==1)return;
+        Button expand=UiKit.button(a,"View "+(ids.size()-1)+" additional research photos  ▾","quiet");
+        parent.addView(expand,new LinearLayout.LayoutParams(-1,dp(a,48)));
+        LinearLayout more=new LinearLayout(a);
+        more.setOrientation(LinearLayout.VERTICAL);
+        more.setVisibility(View.GONE);
+        parent.addView(more);
+        final boolean[] rendered={false};
+        expand.setOnClickListener(v->{
+            boolean visible=more.getVisibility()!=View.VISIBLE;
+            if(visible&&!rendered[0]){
+                for(int n=1;n<ids.size();n++)add(a,more,ids.get(n));
+                rendered[0]=true;
+            }
+            more.setVisibility(visible?View.VISIBLE:View.GONE);
+            expand.setText(visible?"Hide extra research photos  ▴":
+                "View "+(ids.size()-1)+" additional research photos  ▾");
+        });
     }
     private static int dp(Activity a,int x){
         return Math.round(x*a.getResources().getDisplayMetrics().density);

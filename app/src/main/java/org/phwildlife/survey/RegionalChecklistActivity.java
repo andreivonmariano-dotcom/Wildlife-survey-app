@@ -45,7 +45,7 @@ public final class RegionalChecklistActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16),dp(13),dp(16),dp(13));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.title(this,"Regional species evidence"));
+        root.addView(UiKit.navigationHeader(this,"Regional species evidence","Library",this::finish));
         TextView warning=new TextView(this);
         warning.setText("Published location references. They do not confirm presence at this station.");
         warning.setTextColor(UiKit.MUTED);
@@ -78,9 +78,7 @@ public final class RegionalChecklistActivity extends Activity {
                 .putExtra("taxon_key",ids.get(pos)));
         });
         root.addView(list,new LinearLayout.LayoutParams(-1,0,1f));
-        Button close=UiKit.button(this,"Back","quiet");
-        close.setOnClickListener(v->finish());
-        root.addView(close);
+
         setContentView(root);
         scope.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override public void onItemSelected(AdapterView<?> parent,View view,

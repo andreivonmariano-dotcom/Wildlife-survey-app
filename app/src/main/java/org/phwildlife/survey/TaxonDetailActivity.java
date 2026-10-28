@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.content.Context;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -27,7 +28,7 @@ import java.util.Locale;
 public final class TaxonDetailActivity extends Activity {
     private FieldDb db;
     private LinearLayout content;
-    private EditText search;
+    private AutoCompleteTextView search;
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size,boolean bold){
         TextView v=new TextView(this);
@@ -62,11 +63,23 @@ public final class TaxonDetailActivity extends Activity {
         root.addView(caption);
         LinearLayout input=new LinearLayout(this);
         input.setOrientation(LinearLayout.HORIZONTAL);
-        search=new EditText(this);
+        search=new AutoCompleteTextView(this){
+            @Override public boolean enoughToFilter(){return true;}
+        };
         search.setSingleLine(true);
         search.setTextSize(15);
+        search.setThreshold(1);
         search.setHint("Common, scientific, or former name");
+        search.setAdapter(new SpeciesReferenceSuggestionAdapter(this,db,null));
+        search.setDropDownHeight(dp(300));
+        search.setOnItemClickListener((parent,view,position,id)->{
+            lookup(parent.getItemAtPosition(position).toString());
+        });
         input.addView(search,new LinearLayout.LayoutParams(0,dp(52),1f));
+        Button dropdown=UiKit.button(this,"▾","quiet");
+        dropdown.setContentDescription("Show species suggestions");
+        dropdown.setOnClickListener(v->{search.requestFocus();search.showDropDown();});
+        input.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(52)));
         Button find=UiKit.button(this,"Find","secondary");
         find.setOnClickListener(v->lookup(search.getText().toString()));
         input.addView(find,new LinearLayout.LayoutParams(dp(80),dp(52)));

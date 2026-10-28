@@ -64,7 +64,7 @@ jobs:
           PY
       - name: Install only SHA-pinned, reviewed iNaturalist images for private use
         run: python3 scripts/audit_inaturalist_photos.py --install-approved
-      - name: Require all 37 checksum-reviewed CC and owner-authorized photographs
+      - name: Require all 49 checksum-reviewed CC and owner-authorized photographs
         run: |
           python3 - <<'PY'
           import hashlib
@@ -75,7 +75,7 @@ jobs:
           from audit_inaturalist_photos import load_approval_lock
           lock=load_approval_lock()["items"]
           manifest=json.loads(Path("app/src/main/assets/offline_inaturalist_manifest_v1.json").read_text())["items"]
-          assert len(lock)==37 and len(manifest)==37,(len(lock),len(manifest))
+          assert len(lock)==49 and len(manifest)==49,(len(lock),len(manifest))
           index={x["photoId"]:x for x in manifest}
           for row in lock:
             item=index[row["photoId"]]
@@ -84,7 +84,7 @@ jobs:
             assert hashlib.sha256(img.read_bytes()).hexdigest()==row["sha256"]
             assert item["author"]==row["photoAttribution"]
             assert item["license"].lower()==row["photoLicense"] if row["photoLicense"]!="all_rights_reserved" else "all rights reserved" in item["license"].lower()
-          print("Verified 37 attributed CC-licensed or owner-authorized photos for RC7C")
+          print("Verified 49 attributed CC-licensed or owner-authorized photos for RC7D")
           PY
       - name: Run JVM unit tests and compile Android preview
         run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
@@ -95,7 +95,7 @@ jobs:
         if: github.ref == 'refs/heads/feature/likas-core-fieldwork-post-rc4' && github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC7C-owner-photos-preview-debug
+          name: LIKAS-RC7D-field-guide-device-preview-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14

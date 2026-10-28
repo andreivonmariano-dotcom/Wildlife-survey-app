@@ -33,10 +33,15 @@ class Rc7aLibraryTests(unittest.TestCase):
                         "denrStatus","regionalOccurrence"):
                 self.assertIsNone(a[key],(a["scientificName"],key))
             pinned={x["taxon"] for x in photo.load_approval_lock()["items"]}
-            expected="licensed_photo_hash_pinned" if a["scientificName"] in pinned else "no_photo_verified"
+            owner={x["taxon"] for x in photo.load_approval_lock()["items"]
+                   if x.get("rightsBasis")=="owner_direct_private_research_permission"}
+            expected=("owner_photo_hash_pinned" if a["scientificName"] in owner
+                     else "licensed_photo_hash_pinned" if a["scientificName"] in pinned
+                     else "no_photo_verified")
             self.assertEqual(a["photoState"],expected)
             self.assertEqual(a["photoSourcePriority"],
-                "inaturalist:licensed_contributor" if a["scientificName"] in pinned
+                "inaturalist:dreidrei" if a["scientificName"] in owner
+                else "inaturalist:licensed_contributor" if a["scientificName"] in pinned
                 else "inaturalist:dreidrei")
             self.assertTrue(a["sourceTaxonKey"])
             self.assertTrue(a["sourceCitation"])
@@ -46,13 +51,17 @@ class Rc7aLibraryTests(unittest.TestCase):
         m=json.loads((ASSETS/"offline_inaturalist_manifest_v1.json").read_text())
         lock=photo.load_approval_lock()
         self.assertEqual(m["items"],[]) # Generated only from the reviewed lock at build time.
-        self.assertEqual(len(lock["items"]),23)
-        self.assertEqual(len({x["photoId"] for x in lock["items"]}),23)
+        self.assertEqual(len(lock["items"]),37)
+        self.assertEqual(len({x["photoId"] for x in lock["items"]}),37)
         targets=photo.all_philippine_names()
         for item in lock["items"]:
             self.assertTrue(photo.valid_approved(item,targets))
-            self.assertNotEqual(item["observer"].casefold(),"dreidrei")
-            self.assertIn(item["photoLicense"],{"cc-by","cc-by-nc"})
+            if item.get("rightsBasis")=="owner_direct_private_research_permission":
+                self.assertEqual(item["observer"].casefold(),"dreidrei")
+                self.assertEqual(item["photoLicense"],"all_rights_reserved")
+            else:
+                self.assertNotEqual(item["observer"].casefold(),"dreidrei")
+                self.assertIn(item["photoLicense"],{"cc-by","cc-by-nc"})
 
     def test_api_proposals_reject_all_rights_reserved(self):
         obs={"id":123,"quality_grade":"research",

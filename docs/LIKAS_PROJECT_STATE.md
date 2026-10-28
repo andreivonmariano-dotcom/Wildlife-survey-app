@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## Latest visual implementation | 28 October 2026, Asia/Manila | Prototype B: waterfall, river, cloud and canopy pass
+- The owner selected Q1/Q2/Q3: distinct waterfall flow frames, independent river currents and foam, and independently movable canopy/cloud parts. The previous Prototype A failed visual standards because too much water remained static and clouds/birds overlapped baked background.
+- Created `LIKAS_Rainforest_Layered_Prototype_B.zip` in the current chat, SHA-256 `0aa9a6e76550391fc27936b31a28dae7c6e69d79d31176dcd917e75d408d8982`, 6,005,881 bytes. The archive includes editable and cropped transparent waterfall/river PNG frames, separate cloud and canopy PNGs, static scenery/rocks, source stills, an offline time-aware browser preview and Python build scripts.
+- New frame details: 4 separate waterfalls with 16 distinct procedural pixel-painting frames each per day/night state, river with 32 distinct moving-current/foam frame images per lighting state, 3 independent cloud sprites and 3 independent foreground canopy cutouts per state. Two 432x756 16fps four-second review videos were rendered and validated, including waterfall and river detail clips and a comparison contact sheet.
+- Important provenance: the waterfall contours are grounded in source-image masks; each waterfall's changing color bands and strands were generated with pixel-art drawing code, **not manually hand-painted by a specialist**. The river retains the approved original dark-water base with separate moving current/reflection sprites, not a fully physically simulated water surface. Some far clouds and leaves remain baked into the source. Four-second loop resets and low-end device motion remain unverified.
+- Validation: ZIP integrity check passed, both MP4s playable with four-second duration, source frames differ over time. **No Android APK was produced, no binary art committed to GitHub and no phone QA occurred.** Do not claim shipped animation or finished fully separated forest.
+- Next action: review Prototype B waterfall and river closeups, improve loop boundary and preserve masked edge quality, extract/move remaining canopy/cloud groups. Once approved, migrate asset and playback source into a new Android branch, use time-of-day crossfade with a static reduced-motion fallback, run CI/device QA and deliver a newly verified signed APK.
+- Source branch where project decisions live: `feature/v0.27.3-startup-living-forest`. Default `main` was observed at `f1ef6583647d05ae3cbbb915b2f54370150be33c` this session.
+
+---
+
+
 ## Current direction | 2026-10-28, Asia/Manila | Separate static and moving sprite layers
 - Owner rejected the prior pixel displacement/warping animations as visually unacceptable. **Do not reuse** image-warp, canvas-only simulated ripple or generalized overlay techniques as the final rainforest animation.
 - New design is a **true layered pixel scene**: immutable terrain, mountains, trunks and foreground rocks, plus transparent independent sprite-frame images for river, waterfalls, clouds and wildlife, with separate swaying leaf-cluster sprites. Match the approved day/night Philippine rainforest composition and retain the no-logo-in-background rule.

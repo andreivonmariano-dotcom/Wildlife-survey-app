@@ -32,7 +32,7 @@ public final class CatalogActivity extends Activity {
         Button species=UiKit.button(this,"Search species & former names","primary");
         layout.addView(species);
         species.setOnClickListener(v->startActivity(
-            new Intent(this,TaxonDetailActivity.class)));
+            new Intent(this,Rc7SpeciesLibraryActivity.class)));
         Button regions=UiKit.button(this,"Browse regional source records","secondary");
         layout.addView(regions);
         regions.setOnClickListener(v->startActivity(

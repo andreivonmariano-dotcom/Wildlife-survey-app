@@ -137,7 +137,7 @@ public final class LikasSpriteForestView extends View {
         Calendar t=Calendar.getInstance();
         nightBlend=nightFraction(t.get(Calendar.HOUR_OF_DAY)*60+t.get(Calendar.MINUTE));
     }
-    private boolean animate(){
+    private boolean shouldAnimateSprites(){
         return ValueAnimator.areAnimatorsEnabled()&&
             !(powerManager!=null&&powerManager.isPowerSaveMode());
     }
@@ -149,7 +149,7 @@ public final class LikasSpriteForestView extends View {
         }
         long now=SystemClock.uptimeMillis();
         if(now-lastClockRead>15000L){sampleClock();lastClockRead=now;}
-        boolean motion=animate();
+        boolean motion=shouldAnimateSprites();
         long frame=motion?now/FRAME_MS:0L;
         if(!ready){
             try{load();}catch(Exception ignored){}

@@ -171,14 +171,7 @@ public final class SpeciesPickerActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(16),dp(8),dp(16),dp(12));
-        LinearLayout header=new LinearLayout(this);
-        header.setGravity(Gravity.CENTER_VERTICAL);
-        TextView title=UiKit.title(this,"Identify species");
-        header.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-        Button back=UiKit.button(this,"Back","quiet");
-        header.addView(back,new LinearLayout.LayoutParams(dp(82),dp(48)));
-        back.setOnClickListener(v->finish());
-        root.addView(header);
+        root.addView(UiKit.navigationHeader(this,"Identify species","Survey",this::finish));
 
         search=new AutoCompleteTextView(this){
             @Override public boolean enoughToFilter(){return true;}

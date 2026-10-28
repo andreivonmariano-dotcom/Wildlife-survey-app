@@ -6,8 +6,8 @@ android {
         applicationId 'org.phwildlife.survey.beta08'
         minSdk 26
         targetSdk 34
-        versionCode 53
-        versionName '0.27.3-rc7b-literature-inat-preview'
+        versionCode 54
+        versionName '0.27.3-rc7c-owner-photos-preview'
     }
     signingConfigs {
         debug {

@@ -29,6 +29,7 @@ public final class TaxonDetailActivity extends Activity {
     private FieldDb db;
     private LinearLayout content;
     private AutoCompleteTextView search;
+    private String searchGroup="";
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size,boolean bold){
         TextView v=new TextView(this);
@@ -108,6 +109,7 @@ public final class TaxonDetailActivity extends Activity {
             .setTitle("Browse wildlife group")
             .setItems(groupNames,(dialog,which)->{
                 String group=which==0?null:groupNames[which];
+                searchGroup=group==null?"":group;
                 autocomplete.setGroup(group);
                 chooseGroup.setText(groupNames[which]+"  ▾");
                 search.setText("");
@@ -169,17 +171,18 @@ public final class TaxonDetailActivity extends Activity {
         ArrayList<String> names=new ArrayList<>(),keys=new ArrayList<>();
         java.util.HashSet<String> acceptedNames=new java.util.HashSet<>();
         try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT taxon_key,common_name,scientific_name FROM taxon_catalog WHERE "+
+            "SELECT taxon_key,common_name,scientific_name FROM taxon_catalog WHERE ("+
                 "taxon_key=? OR LOWER(scientific_name)=LOWER(?) OR "+
                 "LOWER(common_name)=LOWER(?) OR "+
                 "LOWER(scientific_name) LIKE ? ESCAPE '!' OR "+
                 "LOWER(common_name) LIKE ? ESCAPE '!' OR EXISTS ("+
                 "SELECT 1 FROM taxon_synonyms a WHERE a.taxon_key=taxon_catalog.taxon_key "+
-                "AND LOWER(a.alias_name) LIKE ? ESCAPE '!') "+
+                "AND LOWER(a.alias_name) LIKE ? ESCAPE '!')) "+
+                "AND (?='' OR taxon_group=?) "+
                 "ORDER BY CASE WHEN LOWER(scientific_name)=LOWER(?) THEN 0 ELSE 1 END,"+
                 "CASE WHEN taxon_key LIKE 'STARTER:%' THEN 1 ELSE 0 END,"+
                 "scientific_name COLLATE NOCASE LIMIT 64",
-            new String[]{query,query,query,pattern,pattern,pattern,query})){
+            new String[]{query,query,query,pattern,pattern,pattern,searchGroup,searchGroup,query})){
             while(c.moveToNext()){
                 String common=c.isNull(1)?"":c.getString(1);
                 String scientific=c.getString(2);

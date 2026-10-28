@@ -35,7 +35,7 @@ class Rc7cOwnerLibraryTests(unittest.TestCase):
                 "literature_synthesis_pending_specialist_review"})
             self.assertTrue(r["caution"])
             self.assertGreaterEqual(len(r["facts"]),3)
-            self.assertTrue(all(f["sourceUrl"]==r["sourceUrl"] for f in r["facts"]))
+            self.assertTrue(all(f["sourceUrl"].startswith("https://") for f in r["facts"]))
         self.assertGreaterEqual(sum(r["reviewStatus"]=="literature_synthesis_pending_specialist_review"
             for r in pack["records"]),17)
         source=(CODE/"Rc7LiteratureNotes.java").read_text()

@@ -1,6 +1,6 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
-**State revision:** 1.1  
+**State revision:** 1.2  
 **Recorded:** 28 October 2026, Asia/Manila  
 **Repository:** `andreivonmariano-dotcom/Wildlife-survey-app` (private)  
 **Branch checked:** `main`  
@@ -25,7 +25,7 @@ Build **LIKAS** as a Philippines-first, all-in-one biodiversity tool for wildlif
 - **Survey ending:** An End Survey action must remain accessible. Completed means protocol conditions were met. Incomplete retains real partial work. Cancel / Not Counted archives the event outside standard survey analysis.
 - **Location:** Elevation should follow an acceptable recent GPS fix, with source, age, uncertainty, and reference tracked rather than filling in unknown values. Implementation status must be checked in code and on device.
 - **Reference lists:** The owner previously supplied an amphibian checklist (Emerson Sy 2025-1), reptile checklist (Emerson Sy 2026-1), and WBCP bird checklist (2025). These must be verified as available in a current chat/Project source before claiming they are imported or bundled. The Mammal Diversity Database import uses a separate versioned source.
-- **Visual direction:** Simplify busy screens, remove duplicate controls and text artifacts, and keep a minimalist field interface. Preferred launcher icon remains a pixel frog with its upper face emerging from water and no lily pad. The previous animated tropical forest direction is superseded by the 28 October decision to clear the old startup imagery and start fresh. No replacement scene has been selected.
+- **Visual direction:** Simplify busy screens, remove duplicate controls and text artifacts, and keep a minimalist field interface. Preferred launcher icon remains a pixel frog with its upper face emerging from water and no lily pad. The previous animated tropical forest direction is superseded by the 28 October decision to clear the old startup imagery and start fresh. A new four-lighting-state rainforest prototype exists for review, but no native replacement scene has been approved.
 - **File handoff:** Every APK, ZIP, image, document, and other deliverable requires a verified direct in-chat file link; never replace that link with a GitHub page. See DL-01.
 - **Persistent continuity:** The owner wants to start a new LIKAS chat without restating prior decisions when an earlier chat reaches its limit. See CC-01.
 
@@ -46,6 +46,14 @@ Build **LIKAS** as a Philippines-first, all-in-one biodiversity tool for wildlif
 - **Repository edit:** Delete `app/src/main/assets/likas_forest/forest_day.webp`, `forest_night.webp`, `app/src/main/java/org/phwildlife/survey/ForestBackdropView.java`, and `docs/LIKAS_FOREST_BACKGROUND.md`. Amend brand guidance and master U-03. Keep the launcher icon (`likas_launcher_art.webp`, both adaptive-icon XMLs), shared brand colors, and static welcome screen.
 - **Verification:** Inspected `WelcomeActivity`, `MainActivity`, `UiKit`, AndroidManifest, and Gradle configuration for references. No startup forest class or plate references were found in those app entry points. This documentation records a source change, not an APK release or physical-device test.
 - **Next action:** Design a new startup scene from a blank slate. Do not reuse the retired artwork without a new explicit decision.
+
+## 28 October 2026 | New rainforest and welcome-screen review prototype
+
+- **Owner direction:** Explore all three together: a freshly designed Philippine rainforest scene, layered ambient motion using the phone's local time, and a cleaner LIKAS welcome experience. This does not approve the precise final artwork or authorize replacing the current release before review.
+- **Created in the current conversation:** A downloadable browser-based interactive prototype, new morning/day/dusk/night concept plates derived from a common scene, daytime/night screenshots, and a 30 FPS accelerated movement study. The browser prototype was checked at 390 and 320 pixel widths, survey chooser shows Birds/Herpetofauna/Mammals/Custom, nighttime plate opacity reaches 1, reduced-motion mode was exercised, and no JavaScript page exceptions were seen.
+- **Scope:** The generated artwork and ZIP exist as direct attachments in the originating chat, **not** in GitHub or the Android APK. The plate dimensions are 1224 x 1668 but come from an upscaled 612 x 834 crop. Native-detail art, compiled Android integration, device battery/performance tests, and a downloadable rebuilt APK are pending.
+- **Durable brief:** `docs/LIKAS_STARTUP_V2_CONCEPT.md` records the candidate art direction, UI hierarchy, proposed local-time crossfades, performance requirements, and acceptance gate.
+- **Next action:** Review the visual prototype with the owner, then implement a separate Android test branch with approved higher-native-resolution scenery. Preserve the live survey navigation and historical records. Test before release.
 
 ## Current blockers and nonclaims
 

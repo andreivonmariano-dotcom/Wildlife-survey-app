@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "rc24-original-hazelae-isarog-v1",
+  "asOf": "2026-10-29",
+  "recordCount": 6,
+  "policy": "The original Platymantis reticulatus Brown et al. 1997 was replaced by P. isarog in 1997; do not confuse it with unrelated historical reticulatus. Comparisons are based on preserved series, not automatic identification.",
+  "records": [
+    {
+      "scientificName": "Platymantis hazelae",
+      "section": "Identification",
+      "label": "Original hazelae-group differential",
+      "text": "The 1997 revision describes a pointed, sometimes knob-tipped snout and a distinct tympanum measuring about 25–42% of eye diameter in its examined series; unlike most other hazelae-group species, it lacks yellow-and-brown areolations in the groin and thighs.",
+      "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+      "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+      "sourceType": "original_taxonomic_revision",
+      "sourceYear": 1997,
+      "sourceLocation": "Original hazelae Group key, p. 407; P. hazelae Description and Comparisons, pp. 409–410",
+      "studyScope": "Examined Negros/Masbate series, distinct from P. polilloensis by comparative proportions; historic P. rivularis synonymy was treated with reservations. Not a single-character or locality-only identification."
+    },
+    {
+      "scientificName": "Platymantis hazelae",
+      "section": "Habitat",
+      "label": "Observed arboreal fern and Pandanus sites",
+      "text": "The 1997 revision reports P. hazelae chiefly from arboreal ferns and Pandanus leaf axils in submontane and montane Negros forests, with a smaller set of observations from shrubs, stream rocks and lower-elevation dipterocarp forest.",
+      "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+      "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+      "sourceType": "original_taxonomic_revision",
+      "sourceYear": 1997,
+      "sourceLocation": "P. hazelae Ecological Note, p. 410",
+      "studyScope": "Published Negros and Masbate specimens; documented local microhabitats, not a fixed nationwide elevational cutoff."
+    },
+    {
+      "scientificName": "Platymantis hazelae",
+      "section": "Natural history",
+      "label": "Observed direct-developing eggs",
+      "text": "The revision records clutches of five to nine large unpigmented eggs in arboreal ferns or Pandanus leaf axils, with direct development in observed P. hazelae populations.",
+      "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+      "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+      "sourceType": "original_taxonomic_revision",
+      "sourceYear": 1997,
+      "sourceLocation": "P. hazelae Reproduction, p. 409, citing Alcala 1962",
+      "studyScope": "Study summary citing earlier original observations; no claim of all-season breeding or universally fixed clutch size."
+    },
+    {
+      "scientificName": "Platymantis isarog",
+      "section": "Identification",
+      "label": "Original reticulatus (= isarog) diagnosis",
+      "text": "Described as P. reticulatus Brown et al. (1997), now P. isarog, this Mount Isarog frog has extensive pale brown-bordered areolations onto the lower hind legs, often a brown reticulate ventral pattern, and dark dorsal spots in the examined specimens.",
+      "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+      "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+      "sourceType": "original_taxonomic_revision",
+      "sourceYear": 1997,
+      "sourceLocation": "P. reticulatus original diagnosis, p. 416, and Comparisons, p. 418; replacement name in Herpetological Review 28:131",
+      "studyScope": "Published 1997 type series, renamed P. isarog after discovery of primary homonymy. Areolations and ventral reticulation vary; no universal field-photo diagnosis. Historical Mount Isarog records are not current site sightings."
+    },
+    {
+      "scientificName": "Platymantis isarog",
+      "section": "Habitat",
+      "label": "Original Mount Isarog forest microhabitats",
+      "text": "The original Mount Isarog series was collected in submontane and montane forest near 1,100–1,500 m; specimens were observed on birdnest ferns, tree branches and trunks, and the forest floor.",
+      "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+      "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+      "sourceType": "original_taxonomic_revision",
+      "sourceYear": 1997,
+      "sourceLocation": "P. reticulatus Ecological Note, pp. 418–419",
+      "studyScope": "Field records from the 1990s Mount Isarog type series, under the original name P. reticulatus, not an island-wide habitat suitability model."
+    },
+    {
+      "scientificName": "Platymantis isarog",
+      "section": "Natural history",
+      "label": "Large unpigmented ovarian eggs",
+      "text": "The original description reports large unpigmented eggs in a gravid female P. reticulatus (= P. isarog); the authors recorded no confirmed deposition site or developmental chronology.",
+      "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+      "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+      "sourceType": "original_taxonomic_revision",
+      "sourceYear": 1997,
+      "sourceLocation": "P. reticulatus Reproduction, p. 418",
+      "studyScope": "A single gravid female in the original species description. Egg deposition and development were explicitly unknown."
+    }
+  ],
+  "replacementNameReference": {
+    "source": "Brown, Brown, Alcala & Frost (1997), Herpetological Review 28:131, nomenclatural replacement",
+    "url": "https://multimedia20stg.blob.core.windows.net/publicaciones/Savage%20and%20Heyer%201997%20%28Digital%20webbing%20formulae%20for%20anurans%20-%20a%20refinement%29.pdf",
+    "sourceType": "original_nomenclatural_replacement",
+    "publicationYear": 1997,
+    "latestConfirmed": false,
+    "sourceLocation": "Herpetological Review 28(3):131, replacement name isarog for reticulatus Brown et al. 1997",
+    "topics": [
+      "Taxonomy"
+    ]
+  }
+}

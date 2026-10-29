@@ -55,6 +55,23 @@ public final class Rc10RecorderInstrumentedTest {
         assertTrue(name+" first filter not clipped at 200 percent",
             area.height()>=first.getHeight()-2);
     }
+    private static void assertFullSingleLineHeader(View root,String expected){
+        ArrayList<View> all=new ArrayList<>();
+        find(root,all);
+        TextView heading=null;
+        for(View v:all)if(v instanceof TextView &&
+                expected.equals(((TextView)v).getText().toString())){
+            heading=(TextView)v;break;
+        }
+        assertNotNull(expected+" heading exists",heading);
+        assertNotNull(expected+" heading was laid out",heading.getLayout());
+        assertEquals(expected+" heading uses one line",1,heading.getLineCount());
+        assertEquals(expected+" heading is not ellipsized",0,
+            heading.getLayout().getEllipsisCount(0));
+        assertEquals(expected+" full spoken heading",expected,
+            heading.getContentDescription().toString());
+    }
+
     private static void capture(android.app.Activity a,String file){
         View root=a.getWindow().getDecorView();
         Bitmap bitmap=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
@@ -194,6 +211,7 @@ public final class Rc10RecorderInstrumentedTest {
                     assertTrue("Open species from side-by-side comparison",
                         hasText(root,"Open current species account"));
                     assertFirstFilterVisible(root,"Comparison");
+                    assertFullSingleLineHeader(root,"Compare");
                     capture(a,"rc24_compare_200percent.png");
                 });
             }
@@ -206,6 +224,7 @@ public final class Rc10RecorderInstrumentedTest {
                     assertTrue("Conservation study denominator rendered",
                         hasText(root,"of 96 species"));
                     assertFirstFilterVisible(root,"Conservation");
+                    assertFullSingleLineHeader(root,"Conservation");
                     capture(a,"rc24_conservation_200percent.png");
                 });
             }

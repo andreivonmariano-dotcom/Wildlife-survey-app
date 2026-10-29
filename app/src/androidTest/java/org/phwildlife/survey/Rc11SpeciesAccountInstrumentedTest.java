@@ -196,13 +196,12 @@ public final class Rc11SpeciesAccountInstrumentedTest {
             throws Exception{
         android.content.Context target=InstrumentationRegistry.getInstrumentation()
             .getTargetContext();
-        StringBuilder raw=new StringBuilder();
+        java.io.ByteArrayOutputStream json=new java.io.ByteArrayOutputStream();
         try(InputStream in=target.getAssets().open("rc18_unified_96_priority_accounts_v1.json")){
             byte[] buffer=new byte[8192];int length;
-            while((length=in.read(buffer))!=-1)
-                raw.append(new String(buffer,0,length,StandardCharsets.UTF_8));
+            while((length=in.read(buffer))!=-1)json.write(buffer,0,length);
         }
-        JSONArray accounts=new JSONObject(raw.toString()).getJSONArray("accounts");
+        JSONArray accounts=new JSONObject(json.toString("UTF-8")).getJSONArray("accounts");
         assertEquals(96,accounts.length());
         File dir=new File(target.getFilesDir(),"rc19-all-96-screen-audit");
         assertTrue(dir.isDirectory()||dir.mkdirs());
@@ -224,6 +223,11 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                     for(String heading:new String[]{"Identification","Habitat",
                         "Range","Natural history","Conservation"})
                         if(containsText(all,heading))count++;
+                    int glyphs=0;
+                    for(View view:all)
+                        if(view.getClass().getName().contains("Rc11PrioritySpeciesView$Glyph"))
+                            glyphs++;
+                    assertTrue("No rendered priority research card "+name,glyphs>0);
                     assertTrue("No biological card for "+name,count>0);
                     for(String forbidden:new String[]{
                         "specialist key review remains pending",

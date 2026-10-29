@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | Independent RC41 release check on isolated branch
+
+- **Source:** `qa/rc41-release-check` branched from `feature/likas-core-fieldwork-post-rc4` at `0841d5f9441734accfee1a8b3a1131dfd19741af`. No merge into the source branch or `main`.
+- **Confirmed CI failure:** Scientific Core QA run `40888849314` completed with failure at its Python test step and produced no artifact. Locally, two historical source-contract assertions still expected the old checklist title and synchronous gallery call. They now assert the RC41 checklist navigation and asynchronous photo path. No biological assertion, scientific fixture, app code, user survey record, package identity, or schema was changed.
+- **Local checks:** Python `unittest` discovery **280 passed**; Gradle `:app:testDebugUnitTest` **95 passed**; Android app Java and Android instrumentation test Java **compiled**. Instrumentation tests were not executed because no emulator/phone is attached. Source review confirmed the three Home destinations, fixed Save Observation/End Survey controls and all three survey ending choices, full checklist link, and explicit Back destinations. Real display and interaction QA remains open.
+- **Build identity:** Normal `:app:assembleDebug` reaches `validateSigningDebug` and fails solely because `.signing/wildlife-beta08.keystore` is absent. A temporary, uncommitted Gradle init script disabled signing for a local proof build; `assembleDebug` succeeded. Its unsigned APK manifest reports `org.phwildlife.survey.beta08`, versionCode **101**, versionName `0.27.3-rc41-field-readiness-preview`. No replacement signing key was generated. The local proof APK has none of the CI-prepared approved photo files or generated MDD catalog, and is **not** a release candidate or downloadable signed preview.
+- **Release gates:** rerun source/scientific CI from the corrected revision with the original cached signing identity and SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`; verify all pinned science/media assets and exact signed APK metadata. Execute Android instrumentation, small-screen/large-type navigation, and in-place backed-up survey upgrade on a device. The previously logged partial backup-restore failure risk still needs a staged rollback fixture before a safe fix. No RC41 signed APK is available from this check.
+
+---
+
 ## 29 October 2026 | Repository CI backlog and safe housekeeping | RC41 remains queued
 
 - **Diagnosed from GitHub:** RC41 Scientific Core QA run **40888849314** was still **queued with no runner assigned**, as were several later runs. Active branch `feature/likas-core-fieldwork-post-rc4` had around **1,782 commits ahead of divergent `main`**, scientific QA run sequence past **2200**, and three workflows that could spawn two expensive (40/50-minute) emulator jobs plus one full APK/science job for a single app push. Public GitHub Actions status showed operational; exact account billing/runners restriction is **not visible** and cannot be asserted. GitHub-reported repository size was **4,134 KiB**.

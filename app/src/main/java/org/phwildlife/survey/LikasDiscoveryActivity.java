@@ -144,15 +144,11 @@ public final class LikasDiscoveryActivity extends Activity {
         mediaTint.setCornerRadius(dp(15));
         media.setBackground(mediaTint);
         media.setClipToOutline(true);
-        ImageView photo=OfflinePhotoEvidence.thumbnailForTaxon(this,scientific);
-        if(photo!=null){
-            media.addView(photo,new FrameLayout.LayoutParams(-1,-1));
-        }else{
-            FrameLayout icon=new FrameLayout(this);
-            icon.addView(new LikasPortalUi.Glyph(this,wildlifeGlyph(entry.optString("group")),UiKit.FOREST),
-                new FrameLayout.LayoutParams(dp(70),dp(70),Gravity.CENTER));
-            media.addView(icon,new FrameLayout.LayoutParams(-1,-1));
-        }
+        media.addView(new LikasPortalUi.Glyph(this,
+            wildlifeGlyph(entry.optString("group")),UiKit.FOREST),
+            new FrameLayout.LayoutParams(dp(70),dp(70),Gravity.CENTER));
+        ImageView photo=OfflinePhotoEvidence.galleryPhotoForTaxon(this,scientific);
+        media.addView(photo,new FrameLayout.LayoutParams(-1,-1));
         card.addView(media,new LinearLayout.LayoutParams(-1,dp(152)));
         TextView title=note(label,16,UiKit.INK,true);
         title.setMaxLines(2);
@@ -222,13 +218,11 @@ public final class LikasDiscoveryActivity extends Activity {
         FrameLayout art=new FrameLayout(this);
         art.setBackground(surface(this,fill,fill,16));
         art.setClipToOutline(true);
-        ImageView habitatPhoto=OfflinePhotoEvidence.thumbnailForHabitat(
+        art.addView(new LikasPortalUi.Glyph(this,habitatIcon(group),UiKit.FOREST),
+            new FrameLayout.LayoutParams(dp(66),dp(66),Gravity.CENTER));
+        ImageView habitatPhoto=OfflinePhotoEvidence.galleryPhotoForHabitat(
             this,profile.optString("photoId"));
-        if(habitatPhoto!=null)
-            art.addView(habitatPhoto,new FrameLayout.LayoutParams(-1,-1));
-        else
-            art.addView(new LikasPortalUi.Glyph(this,habitatIcon(group),UiKit.FOREST),
-                new FrameLayout.LayoutParams(dp(66),dp(66),Gravity.CENTER));
+        art.addView(habitatPhoto,new FrameLayout.LayoutParams(-1,-1));
         card.addView(art,new LinearLayout.LayoutParams(-1,dp(150)));
         TextView name=note(profile.optString("name"),16,UiKit.INK,true);name.setMaxLines(2);
         LinearLayout.LayoutParams n=new LinearLayout.LayoutParams(-1,-2);

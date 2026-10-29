@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC26C code84 signed source accepted; emulator acceptance open
+
+- RC26B emulator **40825425678** returned **15/16** (one failure): Habitat My records button intrinsic 144px, only 121px visible at 200% Android text. All other tests, including the new Home→Setup post-layout measurement, passed. RC26B code83 was signed but not emulator accepted.
+- RC26C corrects the remaining parent/child sizing mismatch. Habitat Guide/My records tabs and their shared row now each use the same measured 96dp high-text minimum, rather than different wrap-content measurements. Android versionCode **84** / `0.27.3-rc26c-fieldwork-readability-preview`. Biological evidence unchanged: 96 accounts, 452 facts, 303 citation links. No survey, database schema, media or startup changes.
+- Scientific Core QA run **40826322808** completed **success** with Python science, JVM tests, build. Independently downloaded artifact **12875964471** and verified actual `/mnt/data/LIKAS-v0.27.3-RC26C-fieldwork-readability-debug.apk` **9,600,290 bytes**, SHA256 **e22f9fbaa0433c41fa6f342590fa1c9c79b854452b54f03a205b86ace200594a**. APK ZIP/manifest package `org.phwildlife.survey.beta08`, code84 versionName, 452 facts, 4 new primary notes; Android v2 signer SHA256 **f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937** equals pinned signer. Direct current-chat APK linked.
+- Emulator workflow **40826262462** at production source commit e21fdec1... must complete independent **16/16**, 96 account screenshots, 200% Home/Setup/History/Habitat/Library/Recorder/Compare/Conservation and old/new disposable SQLite equivalence before QA acceptance. The last code84 Python-only commits do not alter Android classes. Do not claim this passed ahead of its artifact.
+- No real physical phone is connected or tested. Real historical-user archive, GNSS, WAV, photograph, TalkBack, battery and in-place recovery remain release gates.
+
+---
+
+
 ## 29 October 2026 | RC26B code83 addresses emulator 14/16 large-text failures
 
 - RC26 emulator workflow **40824440899** on code82 completed **failure**, actual 16 tests with two failures: Habitat My records tab partly clipped at 200% and Setup Continue to GPS geometry inspected immediately after an in-callback navigation click, before Android layout. Do not report all UI tests passed. First issue is a UI layout defect, second a test timing defect, not automatically a field-screen failure.

@@ -216,3 +216,7 @@ Owner selected continued primary Philippine natural-history sourcing, Home/Surve
 ### 2026-10-29 | RC26B fix actual Habitat clipping and prevent premature Setup measurement | Implemented source, QA pending
 
 The RC26 API34 emulator returned 14/16. The measured Habitat My records tab clipping is treated as a real defect and fixed through wrap-content controls and scroll-managed non-core explanation; after an in-screen Home-to-Setup click, tests now wait for Android's next layout pass before asserting screen-space geometry. Retain the 16-test target and 200% screenshot captures. Code83 is the next signed test candidate, preserving all biological sources, records, database, package and launch assets. Full real-handset acceptance is separately pending.
+
+### 2026-10-29 | RC26C exact-height Habitat tab row | Source committed, signed preview verified, emulator pending
+
+The RC26B emulator passed 15 of 16 instrumentation tests but retained 23px clipping of the Habitat My records button. The RC26C patch assigns the same exact large-text height to both navigation buttons and their horizontal row. The new code84 signed debug APK preserves package, signer, schema, existing research facts, and field data. Physical phone and full emulator validation remain separate gates. See docs/LIKAS_PROJECT_STATE.md.

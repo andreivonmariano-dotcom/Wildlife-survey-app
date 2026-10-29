@@ -1,7 +1,7 @@
 # LIKAS
 ## Master Project Charter, Product Requirements, and Scientific Standards
 
-**Version:** 1.0.5 (29 October 2026 academic field-guide and reference amendment; canonical filename retained)  
+**Version:** 1.0.6 (29 October 2026 academic field-guide and reference amendment; canonical filename retained)  
 **Date:** 27 October 2026  
 **Product:** LIKAS, a Philippines-first biodiversity field and knowledge platform  
 **Status:** Proposed authoritative project specification, pending adoption into Project instructions and the development repository  
@@ -382,3 +382,16 @@ The short LIKAS splash opens a top-level portal containing **Fieldwork**, **Libr
 The default visual language uses warm pale surfaces, deep forest-green and pond-teal accents, soft corners, generous text spacing and a few hand-drawn vector glyphs. Avoid dense spreadsheet-like stacks on hub screens. Maintain readable 200%-font layouts, large touch targets, system Back behavior, and reduced-motion support. Approved original forest startup imagery and the retro pixel-art pond-frog icon are maintained by an explicit owner-approved asset review, with exact source file and copyright provenance. The front-facing frog emerging half-submerged in water may be visually informed by *Staurois natator*. The mascot **must not** be shown or cited as a research photograph or verified taxonomic evidence. The change must preserve Android identity, signing certificate, source science and all user survey records and complete/incomplete/not-counted outcomes.
 
 **Implementation boundary:** RC33 creates the navigation/hub redesign, theme and icon. It does not declare every deeper form, species account or habitat list visually complete. Record device screenshots and accessibility acceptance separately from source-level tests and APK assembly.
+
+
+### U-11 | Conservation-first discovery cards, no "priority species" visual tier (owner accepted 29 October 2026)
+
+The Species Library uses horizontal swipe shelves, short text, original minimalist symbols and approved offline wildlife photos. A card's unusual border or treatment must derive from an individually checked, dated **IUCN global** or independently checked **DENR Philippine national** category, with the authority, code, edition/year and source URL kept distinct. Do not transfer risk category between global and Philippine national assessments. An unreviewed category is presented as **unknown in LIKAS**, without LC, DD, NE, or an implied low-risk classification. CR/EN/VU receive subtle differentiated frames with readable text labels. DD, NT and LC receive neutral design. A dated category is not claimed as live or as future-proof against revisions.
+
+Do not show a public "Priority species" tier, "Priority species (96)" filter, or "priority" badge in identification summaries. Preserve all historical 96 source accounts and their filenames/IDs in the scientific data layer, without deleting scientific observations, overwriting research sources, or changing existing survey schemas. Status coverage and data completeness are not indications of local rarity.
+
+**Rarity must have independent, source-specific proof.** Local encounter frequency needs locality, season/period, number of encounters and effort or detectability information. Endemic range, conservation category, study volume, number of photos and personal observation counts are not automatic rarity. No independent rarity evidence means no rarity badge or tier.
+
+The Habitat Library uses horizontal cards organized by documented formations (e.g. Terrestrial, Edaphic, Aquatic, Coastal and Human-modified). It uses neutral group palettes and opens source-linked habitat details with field characters, measurements, ecological limitations and citations. Never assign an IUCN species category to a habitat. The IUCN Red List of Ecosystems is a distinct assessment system, requiring separate evidence before it appears.
+
+All card transitions respect the user's reduced-motion preference. Favor a one-time soft fade and native swipe over continuous shimmer, glow, pulsing or animated "rarity" effects. Keep large-touch surfaces, 200% type and offline accessibility. Keep source citations and photograph rights available from expanded details. **RC34 first implementation** is not full device, upgrade or scientific-completeness acceptance.

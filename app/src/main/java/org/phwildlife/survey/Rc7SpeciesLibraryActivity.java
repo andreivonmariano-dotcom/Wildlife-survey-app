@@ -29,7 +29,7 @@ import java.util.Locale;
 
 /**
  * Offline RC7 Species Library: searchable private WBCP, Sy and MDD source records,
- * with evidence-specific priority and published-guide filters. Read only.
+ * with published-guide and approved offline-photo filters. Read only.
  */
 public final class Rc7SpeciesLibraryActivity extends Activity {
     private static final String[] GROUPS={"All groups","Birds","Amphibians","Reptiles","Mammals"};

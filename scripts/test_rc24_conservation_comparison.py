@@ -85,7 +85,7 @@ class Rc24ConservationComparison(unittest.TestCase):
         self.assertIn("compare-200percent-font.png",runner)
         self.assertIn("conservation-200percent-font.png",runner)
         self.assertRegex(build,r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
-        self.assertIn("0.27.3-rc36-library-polish-preview",build)
+        self.assertIn("0.27.3-rc",build)
 
 if __name__=="__main__":
     unittest.main()

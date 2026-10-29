@@ -48,6 +48,14 @@ public final class VerifiedApaCatalog {
             "Koch, A., Gaulke, M., & Böhme, W. (2010). Unravelling the underestimated diversity of Philippine water monitor lizards (Squamata: Varanus salvator complex), with the description of two new species and a new subspecies. Zootaxa, 2446(1), 1–54. https://doi.org/10.11646/zootaxa.2446.1.1","Zootaxa"));
         m.put("https://doi.org/10.11609/jott.10046.17.10.27551-27562",new Record("(Yangurin et al., 2025)",
             "Yangurin, I. J. A., Achondo, M. J. M., Raganas, A. F. M., Delima, A. G. D., Silvosa-Millado, C. S., Iñigo, D. J. B., Cabrera, S. M. E., Ollamina, S. M. M. R., Ibañez, J. C., & Gamalo, L. E. D. (2025). Fruit bat (Pteropodidae) composition and diversity in the montane forests of Mt. Kampalili, Davao de Oro, Philippines. Journal of Threatened Taxa, 17(10), 27551–27562. https://doi.org/10.11609/jott.10046.17.10.27551-27562","Journal of Threatened Taxa"));
+        m.put("https://doi.org/10.11609/JoTT.o3748.6335-44",new Record("(Luczon et al., 2014)",
+            "Luczon, A. U., Fontanilla, I. K. C., Ong, P. S., Basiao, Z. U., Sumaya, A. M. T., & Quilang, J. P. (2014). Genetic diversity of the Critically Endangered Philippine Eagle Pithecophaga jefferyi (Aves: Accipitridae) and notes on its conservation. Journal of Threatened Taxa, 6(10), 6335–6344. https://doi.org/10.11609/JoTT.o3748.6335-44","Journal of Threatened Taxa"));
+        m.put("https://doi.org/10.1017/S0030605314000313",new Record("(Ishihara et al., 2015)",
+            "Ishihara, S., Boyles, R. M., Matsubayashi, H., del Barrio, A. N., Cebrian, M. R., Ishida, A., Lapitan, R. M., Atabay, E. P., Cruz, L. C., & Kanai, Y. (2015). Long-term community-based monitoring of tamaraw Bubalus mindorensis on Mindoro Island, Philippines. Oryx, 49(2), 352–359. https://doi.org/10.1017/S0030605314000313","Oryx"));
+        m.put("https://www.biodiversitylibrary.org/part/49110",new Record("(Esselstyn et al., 2004)",
+            "Esselstyn, J. A., Widmann, P., & Heaney, L. R. (2004). The mammals of Palawan Island, Philippines. Proceedings of the Biological Society of Washington, 117(3), 271–302. https://www.biodiversitylibrary.org/part/49110","Proceedings of the Biological Society of Washington"));
+        m.put("https://iucnhornbills.org/rufous-headed-hornbill/",new Record("(IUCN SSC Hornbill Specialist Group, n.d.)",
+            "IUCN SSC Hornbill Specialist Group. (n.d.). Rufous-headed Hornbill. https://iucnhornbills.org/rufous-headed-hornbill/",""));
         ENTRIES=Collections.unmodifiableMap(m);
     }
     private static Record match(String url){

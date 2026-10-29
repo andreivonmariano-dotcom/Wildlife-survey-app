@@ -107,6 +107,13 @@ public final class TaxonDetailActivity extends Activity {
         LinearLayout.LayoutParams groupLp=new LinearLayout.LayoutParams(-1,dp(48));
         groupLp.topMargin=dp(6);
         root.addView(groupFilter,groupLp);
+        Button conservation=UiKit.button(this,"Conservation research · 96 species","secondary");
+        conservation.setContentDescription("Explore dated global assessments, national conservation records and research threats");
+        LinearLayout.LayoutParams conservationLp=new LinearLayout.LayoutParams(-1,dp(52));
+        conservationLp.topMargin=dp(5);
+        root.addView(conservation,conservationLp);
+        conservation.setOnClickListener(v->startActivity(
+            new Intent(this,Rc24ConservationDashboardActivity.class)));
         groupFilter.setOnClickListener(v->new AlertDialog.Builder(this)
             .setTitle("Browse wildlife group")
             .setItems(groupNames,(dialog,which)->{

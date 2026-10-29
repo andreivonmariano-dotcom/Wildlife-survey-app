@@ -16,7 +16,7 @@ class LiteratureIndex(unittest.TestCase):
         self.assertEqual(len(index["profiles"]),96)
         self.assertEqual(len(p),96)
         self.assertEqual(sum(x["latestConfirmed"] for r in index["profiles"] for x in r["publications"])>0,True)
-        self.assertEqual(index["recentVerifiedTaxa"],10)
+        self.assertEqual(index["recentVerifiedTaxa"],12)
         for row in index["profiles"]:
             self.assertEqual(row["sourceTaxonKey"],p[row["scientificName"]]["sourceTaxonKey"])
             self.assertEqual(row["group"],p[row["scientificName"]]["group"])

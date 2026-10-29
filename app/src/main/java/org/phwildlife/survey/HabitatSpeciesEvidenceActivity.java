@@ -46,10 +46,8 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(14),dp(12),dp(14),dp(12));
-        root.addView(UiKit.navigationHeader(this,"Published habitat associations","Habitat",this::finish));
-        root.addView(text("Published species–habitat context is not an occurrence prediction. "+
-            "No links means unreviewed, not absent. Habitat classification and literature links "+
-            "still require ecological specialist review.",13));
+        root.addView(UiKit.navigationHeader(this,"Species–habitat references","Habitat",this::finish));
+        root.addView(text("Cited habitat associations",13));
         try{
             JSONObject pack=read(this,"rc8_species_habitat_links_v1.json");
             if(!"rc8-species-habitat-links-v1".equals(pack.optString("schemaVersion")))
@@ -92,8 +90,7 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         if(index<0||index>=habitats.size())return;
         String id=habitats.get(index).optString("id");
         results.removeAllViews();
-        results.addView(FieldVisuals.section(this,"Cited wildlife associations",
-            "Reference context only · unrelated to the user's sampling sites"));
+        results.addView(FieldVisuals.section(this,"Species links",null));
         int count=0;
         for(int i=0;i<links.length();i++){
             JSONObject edge=links.optJSONObject(i);
@@ -105,9 +102,8 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
             card.setPadding(dp(12),dp(9),dp(12),dp(10));
             card.addView(text(edge.optString("scientificName"),16));
             card.addView(text(edge.optString("evidenceText"),14));
-            card.addView(text("Published source: "+edge.optString("sourceTitle")+
-                "\nReview: provisional habitat crosswalk; site presence not established",12));
-            Button open=UiKit.button(this,"Open species source record","secondary");
+            card.addView(text("Source: "+edge.optString("sourceTitle"),12));
+            Button open=UiKit.button(this,"Open species","secondary");
             card.addView(open);
             String taxonKey=edge.optString("sourceTaxonKey");
             open.setOnClickListener(v->startActivity(new Intent(this,TaxonDetailActivity.class)
@@ -115,9 +111,7 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
             LinearLayout.LayoutParams box=new LinearLayout.LayoutParams(-1,-2);
             box.bottomMargin=dp(8);results.addView(card,box);
         }
-        if(count==0)results.addView(text("No taxon-specific habitat association has been reviewed "+
-            "for this reference type. This is not evidence that any species is absent.",14));
-        results.addView(text(count+" published association entries for this habitat. "+
-            "These are literature links, not local survey records or suitability scores.",12));
+        if(count==0)results.addView(text("No reviewed species links for this habitat.",14));
+        if(count>0)results.addView(text(count+" links · Sources shown above",12));
     }
 }

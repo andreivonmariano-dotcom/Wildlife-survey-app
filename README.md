@@ -1,3 +1,11 @@
+# LIKAS RC41 | Field readiness preview
+
+**Unverified source candidate:** `0.27.3-rc41-field-readiness-preview`, versionCode **101**. Same app package and SQLite 27; new signed APK needs CI and binary verification.
+
+RC41 retains the RC40 fix for the oversized Home tile. The offline gallery builds only nearby cards and loads licensed JPG previews in background workers. Full Philippine checklist navigation is explicit. Category chips/tabs expose selected state and Back labels match the real parent. This preserves the 96 curated field-guide accounts, original source evidence, individual conservation reviews, existing survey records and approved startup art. See `docs/LIKAS_RC41_FIELD_READINESS_QA.md` for gates and remaining risk.
+
+---
+
 # LIKAS RC40 | Home and field-language fixes
 
 **Source candidate:** `0.27.3-rc40-home-layout-copy-preview` (versionCode **100**). **Signed APK and device acceptance not yet confirmed.** The verified RC39 debug binary remains the last downloaded preview until RC40 CI and signer checks pass.

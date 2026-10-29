@@ -15,13 +15,18 @@ class LikasBrandingSmokeTest(unittest.TestCase):
         self.assertEqual(icon.tag, "adaptive-icon")
         self.assertEqual(
             icon.find("foreground").attrib[ANDROID + "drawable"],
-            "@drawable/likas_frog_icon",
+            "@drawable/likas_natator_frog",
         )
         self.assertTrue((RES / "drawable-nodpi/likas_frog_icon.webp").is_file())
+        import hashlib
+        frog=RES / "drawable-nodpi/likas_natator_frog.png"
+        self.assertTrue(frog.is_file())
+        self.assertEqual(hashlib.sha256(frog.read_bytes()).hexdigest(),
+            "06fe6f4a517d3ec382f7b66974ca3906ddadcfad9a04a6232063deb66b98bd37")
         round_icon = ET.parse(RES / "mipmap-anydpi-v26/ic_launcher_round.xml").getroot()
         self.assertEqual(
             round_icon.find("foreground").attrib[ANDROID + "drawable"],
-            "@drawable/likas_frog_icon",
+            "@drawable/likas_natator_frog",
         )
         palette = ET.parse(RES / "values/likas_colors.xml").getroot()
         entries = {item.attrib["name"]: item.text for item in palette.findall("color")}

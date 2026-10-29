@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC22 code76 Android emulator QA verified: 14 tests, 96 species and old database preserved
+
+- **Android 14 emulator run:** GitHub Actions workflow 40813385969 completed **success** on code76 commit a6b5be7dde6fbf28fa4e8c569f2b871c12e124c4. Retrieved evidence artifact **12871930730**, copied as verified direct current-chat /mnt/data/LIKAS-RC22-Android14-emulator-QA.zip (4,548,595 bytes; SHA256 c79d090d06823156c00197e2797bb3f7fe1282a936a1f7e80e18373848cdffd1). ZIP integrity passed with 117 members.
+- **Instrumented tests:** Actual instrumentation.txt ends with **OK (14 tests)** and version.txt reports **versionCode=76**, versionName **0.27.3-rc22-original-studies-preview**. Status markers include ALL-96-RENDERED-SPECIES-AUDIT-PASS, EMULATOR-SMOKE-PASS, RECORDER-DOCK-INSTRUMENTED-PASS.
+- **96 actual screens:** 96 distinct JPEGs in audit archive, 24 Birds, 24 Amphibians, 24 Reptiles and 24 Mammals. Audit CSV has 96 rows and each listed screenshot byte count matches its actual JPEG. Four 24-species contact sheets manually inspected; no obvious primary-title/card or button overlap was found in these first viewports. This is not full below-fold, all-font, TalkBack or real-device review.
+- **200% font recorder:** Inspected artifact screenshot recorder-200percent-font.png at 480x960. Save Observation, Review Records and End Survey dock fully visible with readable labels and bottom boundaries; the conditional scrolling status HUD remains correct.
+- **Upgrade:** previous-db.sqlite and after-upgrade-db.sqlite are byte-for-byte identical (1,613,824 bytes each; SHA256 0c43257f28782b6a45794bb9a6e91b55c655066bd7cf3734c6fb878af839b2a8). This is a pre-existing signed-app emulator fixture, not real user's production records.
+- **Signed downloadable APK remains validated:** /mnt/data/LIKAS-v0.27.3-RC22-original-studies-debug.apk is 9,573,299 bytes (SHA256 63afa9629c53f4bbd4abd88d49a130301261f61c305166849635f206e6d78430). Original pinned signing certificate verified and package org.phwildlife.survey.beta08 preserved. Full scientific ledger: 96 species, 426 cited facts, 290 taxon-source links. Seven unsupported Identification sections remain.
+- **Outstanding:** Physical phone installation, representative owner-record migration, outdoor GNSS reliability, audio/photo session endurance, below-fold/200% font accessibility outside tested recorder and missing seven original diagnoses. Startup branch unchanged and PR #38 stays draft. Exact APK and QA zip are downloadable in this conversation; reverify paths in later chats.
+
+---
+
 ## 29 October 2026 | RC22 source, signed APK and new research QA verified; emulator QA pending
 
 - Scientific Core QA completed success in runs 40813434462 (source commit c15e2d1 including new tests) and 40813547425 (later documentation branch). Historical tests for all 96 taxon source mappings and new scripts/test_rc22_original_studies.py passed; Android app/debug assembled.

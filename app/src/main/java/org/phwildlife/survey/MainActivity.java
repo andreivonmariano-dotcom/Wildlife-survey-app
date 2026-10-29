@@ -2061,7 +2061,11 @@ public class MainActivity extends Activity implements LocationListener {
         boolean overdue=left!=Long.MAX_VALUE&&left<=0;
         eventView.setTextColor(surveyPaused?UiKit.AMBER:
             near||overdue?Color.rgb(185,39,39):MUTED);
-        eventView.setAlpha(!surveyPaused&&near?(now/650%2==0?1f:0.45f):1f);
+        boolean reducedMotion=getSharedPreferences("likas_ui",MODE_PRIVATE)
+            .getBoolean("reduced_motion",false)||
+            !android.animation.ValueAnimator.areAnimatorsEnabled();
+        eventView.setAlpha(!reducedMotion&&!surveyPaused&&near?
+            (now/650%2==0?1f:0.45f):1f);
         if(!surveyPaused&&near&&!nearEndNotified){
             nearEndNotified=true;toast("30 seconds remaining");vibrateIfEnabled(160);
         }

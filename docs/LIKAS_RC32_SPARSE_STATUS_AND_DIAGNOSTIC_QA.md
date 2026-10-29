@@ -36,7 +36,7 @@ These are historical and scientific source records, not user survey sightings. T
 
 ## Q2 | Ninety-six-species conservation audit
 
-The companion JSON ledger `docs/LIKAS_RC32_96_STATUS_REVIEW_LEDGER.json` contains one row for every priority species. It preserves independently rechecked international and Philippine status separately. **Only four species have independently rechecked IUCN entries and three have independently checked DENR entries in the current targeted reviewed ledger.** Earlier imported citations still appear in source accounts but are not silently promoted to currently verified status. The specialist synthesis for *V. bangonorum* and government summary for *C. australis* are explicitly marked secondary until compared to dated original assessments.
+The companion JSON ledger `docs/LIKAS_RC32_96_STATUS_REVIEW_LEDGER.json` contains one row for every priority species. It preserves independently rechecked international and Philippine status separately. **Three species have direct dated IUCN evidence, one has a dated IUCN status relayed by the Hornbill Specialist Group, and three have individually checked DENR entries in the current targeted reviewed ledger.** Earlier imported citations still appear in source accounts but are not silently promoted to currently verified status. The specialist synthesis for *V. bangonorum* and government summary for *C. australis* are explicitly marked secondary until compared to dated original assessments.
 
 Absence of a status record means **not yet verified**, not LC, not Data Deficient, not an absence, and not a zero count. Synonyms and changing taxonomic concepts require checking before importing legal or Red List categories.
 

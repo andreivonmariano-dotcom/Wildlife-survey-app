@@ -107,8 +107,6 @@ public final class LikasHabitatProfileActivity extends Activity {
                 }
             }
         }
-        TextView caveat=text("Habitat references are not site measurements or species detections.",12,false);
-        caveat.setPadding(0,dp(12),0,dp(12));content.addView(caveat);
         setContentView(root);UiMotion.enter(this,content);
     }
 }

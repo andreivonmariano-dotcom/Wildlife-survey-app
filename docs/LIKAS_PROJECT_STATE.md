@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC15 Android emulator pass, verified QA attachments
+
+- **Confirmed exact RC15 emulator success:** workflow run **40799816763**, artifact **12865412490**, completed success. Instrumentation reports **OK (10 tests)** on Android 14/API34 at 320dp, installed `0.27.3-rc15-literature-cards-preview`, versionCode **67**. Recorder dock status `RECORDER-DOCK-INSTRUMENTED-PASS` and `EMULATOR-SMOKE-PASS` present. Existing SQLite v27 database preserved **byte-for-byte** through the old-signed-app upgrade. Emulator fixture DB SHA256 **325d5573daa8689dc529981946e152c6847d2395acdd2746f3ffbca686923d2b**.
+- **Direct verified artifacts in this conversation:** `/mnt/data/LIKAS-v0.27.3-RC15-literature-cards-debug.apk` (9,462,831 bytes, SHA256 `d9855a9db166b64cf95cacd1338684f6e2764325bd856ba7c75afdf199464167`), `/mnt/data/LIKAS-RC15-emulator-evidence.zip`, `/mnt/data/LIKAS_RC15_species_account_320dp.png`, `/mnt/data/LIKAS_RC15_96_species_bibliography.json`, `/mnt/data/LIKAS_RC15_new_publication_findings.json`. Exact paths require revalidation in subsequent sessions.
+- **Scope and open science:** 96 priority species, 241 linked source entries, 12 species with targeted 2025–26 current paper checks. 13 source-bounded claims added in RC15 for six species. Continue the remaining 84 taxa. Keep original descriptions and official taxonomic or conservation references distinguishable from peer-reviewed publications. No specialist approval process, no copy-padding, no invented site occurrences. Physical Android handset testing remains open.
+- **Source pointers:** `docs/LIKAS_RC15_LITERATURE_CARD_UPDATE.md`, `app/src/main/assets/rc15_publication_batch_v1.json`, `app/src/main/assets/rc14_96_species_literature_index_v1.json`. PR #38 is a draft on `feature/likas-core-fieldwork-post-rc4`. No merge of the startup branch or change to survey schema.
+
+---
+
+
 
 ## 29 October 2026 | RC15 recent literature expansion, DOI bibliography, signed APK
 

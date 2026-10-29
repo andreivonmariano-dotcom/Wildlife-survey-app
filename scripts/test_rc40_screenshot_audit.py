@@ -118,8 +118,8 @@ class Rc40ScreenAudit(unittest.TestCase):
 
     def test_upgrade_keeps_signed_app_and_database_identity(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 100",build)
-        self.assertIn("0.27.3-rc40-home-layout-copy-preview",build)
+        self.assertIn("versionCode 101",build)
+        self.assertIn("0.27.3-rc41-field-readiness-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
 

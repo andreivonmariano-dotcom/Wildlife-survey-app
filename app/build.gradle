@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 96
-        versionName '0.27.3-rc36-library-polish-preview'
+        versionCode 97
+        versionName '0.27.3-rc37-library-navigation-preview'
     }
     signingConfigs {
         debug {

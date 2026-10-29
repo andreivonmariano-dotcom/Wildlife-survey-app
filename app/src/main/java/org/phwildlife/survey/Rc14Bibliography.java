@@ -81,14 +81,15 @@ public final class Rc14Bibliography {
             show(a,i<3?parent:more,entry);
         }
         if(refs.length()>3){
-            Button toggle=UiKit.button(a,"Show "+(refs.length()-3)+" more sources  ▾","quiet");
+            final int remaining=refs.length()-3;
+            Button toggle=UiKit.button(a,"Show "+remaining+" more sources  ▾","quiet");
             parent.addView(toggle,new LinearLayout.LayoutParams(-1,dp(a,46)));
             parent.addView(more);
             toggle.setOnClickListener(v->{
                 boolean open=more.getVisibility()!=View.VISIBLE;
                 more.setVisibility(open?View.VISIBLE:View.GONE);
                 toggle.setText(open?"Show fewer sources  ▴":
-                    "Show "+(refs.length()-3)+" more sources  ▾");
+                    "Show "+remaining+" more sources  ▾");
             });
         }
     }

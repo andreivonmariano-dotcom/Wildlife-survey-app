@@ -1,5 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC26 Q1/Q2/Q3: science, field screen and real-phone acceptance scope
+
+- Owner selected Q1/Q2/Q3: continue missing primary habitat/natural history, refine Home/Survey Setup/History at large type, and test field workflows on Android.
+- **RC25 Android run FAILED:** workflow 40822822057 completed with 15 instrumentation attempts, 14 successes and one failure: at 200% font on the 320dp API34 emulator, the Habitat My records button was clipped. It is a real visual regression, not a failed taxonomy/database claim.
+- **RC26 source fix:** Habitat Guide and My records tabs now allocate `FieldLayoutPolicy.actionHeightDp(fontScale)` (96dp at 200%), rather than 58dp. Home shortcut actions and setup GPS continuation use measured action heights; History search and outcome fields have larger touch regions and spoken labels. No changes to actual survey closing, field data, old GPS, photo or WAV storage.
+- **Four scoped primary-source facts:** two Limnonectes magnus trophic ecology (Plaza et al. 2021), one Baletemys kampalili mossy fallen log microhabitat and one earthworm-bait capture observation (Rowsey et al. 2022). Earthworm bait is **not** proof of a species diet. Counts: 96 species, **452 biological facts**, **303 citation links**. Missing Identification 1, Habitat 40, Distribution 23, Natural history 65, Conservation 69. Dicaeum kampalili original diagnosis remains unverified.
+- **Planned code82** `0.27.3-rc26-fieldwork-readability-preview` preserves Android package `org.phwildlife.survey.beta08`, SQLite schema27 and original signing configuration. Android suite increases 15 to **16**, adding 200% Home, Survey Setup and History screenshots and controls; RC25 screens and existing tests retained. Do not claim an APK or emulator acceptance before inspecting CI artifacts.
+- **Q3 boundary:** NO physical phone is connected or tested. New `docs/LIKAS_RC26_PHONE_FIELD_QA.md` defines exact handset verification: 3 End Survey outcomes, effort-only zero detections, GNSS and vertical datum, WAV/photo preservation, export/restore, real owner database, power, 200% UI and TalkBack. Distinguish emulator pass from handset validation.
+- See `docs/LIKAS_RC26_SCIENCE_FIELD_UI_AUDIT.md` for source detail and release gates. Keep PR #38 draft and startup art isolated.
+
+---
+
+
 ## 29 October 2026 | RC25 code81 science-core CI and signed APK accepted; emulator evidence outstanding
 
 - On latest scientific-core branch, PR #38 remains draft. After RC25 evidence additions, an initial CI failure was traced to stale per-species coverage counts and an invalid bibliography section-topic label, not to new unreviewed science. Fixed in commit `8e86163dc0431e24fac13a15b11d32cafa6cf3cf`: all three account coverage sections agree with their seven additions and references use the supported Ecology topic.

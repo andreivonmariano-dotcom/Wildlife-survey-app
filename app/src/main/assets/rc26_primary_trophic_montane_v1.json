@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "rc26-primary-trophic-montane-v1",
+  "asOf": "2026-10-29",
+  "sourceScope": "Peer-reviewed 2021 stream trophic study and 2022 original Kampalili mammal account.",
+  "recordCount": 4,
+  "policy": "No bait-as-diet claim, no generalized locality inference or precise rare-species coordinates.",
+  "records": [
+    {
+      "scientificName": "Limnonectes magnus",
+      "section": "Natural history",
+      "label": "Northeast Mindanao stream-food study",
+      "text": "Stomach contents and stable-isotope analyses from a northeast Mindanao stream study supported generalist feeding on locally available invertebrate prey in the sampled Limnonectes magnus.",
+      "source": "Plaza, Metillo & Sanguila (2021), Journal of Tropical Ecology 37",
+      "url": "https://doi.org/10.1017/S0266467421000158",
+      "sourceType": "peer_reviewed_trophic_ecology_study",
+      "sourceYear": 2021,
+      "sourceLocation": "Abstract; trophic comparisons among seven stream-associated frogs",
+      "studyScope": "Seven sympatric frog species from low- and mid-elevation streams of one northeast Mindanao watershed; the inferred trophic niche is not a nationwide diet or prey-availability estimate."
+    },
+    {
+      "scientificName": "Limnonectes magnus",
+      "section": "Natural history",
+      "label": "Opportunistic insect consumption",
+      "text": "The local stable-isotope estimates characterized Limnonectes magnus as an opportunistic generalist consuming locally abundant insect prey in the sampled stream community.",
+      "source": "Plaza, Metillo & Sanguila (2021), Journal of Tropical Ecology 37",
+      "url": "https://doi.org/10.1017/S0266467421000158",
+      "sourceType": "peer_reviewed_trophic_ecology_study",
+      "sourceYear": 2021,
+      "sourceLocation": "Abstract; stable-isotope analysis of locally sampled stream frogs",
+      "studyScope": "Study-specific diet interpretation for a sampled northeast Mindanao riparian community, not direct verification of every prey species or a permanent species-wide feeding preference."
+    },
+    {
+      "scientificName": "Baletemys kampalili",
+      "section": "Habitat",
+      "label": "Original moss-covered log microhabitats",
+      "text": "Two originally collected animals were captured under or beside moss-covered fallen logs on a steep upper-montane forest slope with deep humus and abundant shrubs and epiphytes.",
+      "source": "Rowsey et al. (2022), Journal of Mammalogy 103:1259–1277",
+      "url": "https://doi.org/10.1093/jmammal/gyac057",
+      "sourceType": "original_taxonomic_habitat_observation",
+      "sourceYear": 2022,
+      "sourceLocation": "Original species description, Ecology; Mt. Kampalili paratypes",
+      "studyScope": "Two paratype capture sites in the Mt. Kampalili upper montane forest, not a confirmed required microhabitat for all animals; specific rare-species locality coordinates withheld."
+    },
+    {
+      "scientificName": "Baletemys kampalili",
+      "section": "Natural history",
+      "label": "Historical earthworm-bait trap records",
+      "text": "Two of the three original specimens were taken in traps baited with live earthworms; the authors suggested earthworms as possible prey but did not report stomach-content proof.",
+      "source": "Rowsey et al. (2022), Journal of Mammalogy 103:1259–1277",
+      "url": "https://doi.org/10.1093/jmammal/gyac057",
+      "sourceType": "original_taxonomic_sampling_observation",
+      "sourceYear": 2022,
+      "sourceLocation": "Original species description, Ecology; three collected voucher specimens",
+      "studyScope": "Three historical voucher specimens, two caught with earthworm bait. Bait attraction does not confirm ingested diet, foraging frequency, population size or current occupancy."
+    }
+  ]
+}

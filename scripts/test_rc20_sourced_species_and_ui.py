@@ -19,11 +19,11 @@ class Rc20SourcedSpecies(unittest.TestCase):
         self.assertEqual(len(self.batch["facts"]),16)
         self.assertEqual(len(set(self.batch["targetedTaxa"])),9)
         self.assertEqual(len(self.accounts["accounts"]),96)
-        self.assertEqual(self.accounts["sourceFactCount"],448)
-        self.assertEqual(sum(p["referenceCount"] for p in self.book["profiles"]),302)
+        self.assertEqual(self.accounts["sourceFactCount"],452)
+        self.assertEqual(sum(p["referenceCount"] for p in self.book["profiles"]),303)
         self.assertEqual(self.accounts["sectionMissingCounts"],{
             "Identification":1,"Habitat":40,"Distribution":23,
-            "Natural history":67,"Conservation":69})
+            "Natural history":65,"Conservation":69})
         for account in self.accounts["accounts"]:
             fact_count=sum(len(v) for v in account["sections"].values())
             self.assertEqual(account["coverage"]["citedBiologicalFacts"],fact_count)
@@ -64,8 +64,8 @@ class Rc20SourcedSpecies(unittest.TestCase):
         self.assertIn('of 5 research topics documented',view)
         self.assertIn('Close cited sources and study details',view)
         self.assertIn('Collapse ',view)
-        self.assertIn("versionCode 81",gradle)
-        self.assertIn("0.27.3-rc25-primary-ecology-accessibility-preview",gradle)
+        self.assertIn("versionCode 82",gradle)
+        self.assertIn("0.27.3-rc26-fieldwork-readability-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

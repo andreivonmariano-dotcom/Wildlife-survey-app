@@ -4,7 +4,7 @@
   "purpose": "Unify previously attributed and published biological facts for all 96 species; source coverage does not imply absent traits or a complete diagnostic key.",
   "policy": "Show source-linked biological claims only. Do not fabricate missing ecological sections or site occurrence. Curated database evidence remains distinguishable from peer-reviewed research.",
   "prioritySpeciesCount": 96,
-  "sourceFactCount": 448,
+  "sourceFactCount": 452,
   "topics": [
     "Identification",
     "Habitat",
@@ -16,7 +16,7 @@
     "Identification": 1,
     "Habitat": 40,
     "Distribution": 23,
-    "Natural history": 67,
+    "Natural history": 65,
     "Conservation": 69
   },
   "accounts": [
@@ -2275,20 +2275,47 @@
             "studyScope": null
           }
         ],
-        "Natural history": [],
+        "Natural history": [
+          {
+            "scientificName": "Limnonectes magnus",
+            "section": "Natural history",
+            "label": "Northeast Mindanao stream-food study",
+            "text": "Stomach contents and stable-isotope analyses from a northeast Mindanao stream study supported generalist feeding on locally available invertebrate prey in the sampled Limnonectes magnus.",
+            "source": "Plaza, Metillo & Sanguila (2021), Journal of Tropical Ecology 37",
+            "url": "https://doi.org/10.1017/S0266467421000158",
+            "sourceType": "peer_reviewed_trophic_ecology_study",
+            "sourceYear": 2021,
+            "sourceLocation": "Abstract; trophic comparisons among seven stream-associated frogs",
+            "studyScope": "Seven sympatric frog species from low- and mid-elevation streams of one northeast Mindanao watershed; the inferred trophic niche is not a nationwide diet or prey-availability estimate.",
+            "origin": "rc26_primary_trophic_montane_v1.json"
+          },
+          {
+            "scientificName": "Limnonectes magnus",
+            "section": "Natural history",
+            "label": "Opportunistic insect consumption",
+            "text": "The local stable-isotope estimates characterized Limnonectes magnus as an opportunistic generalist consuming locally abundant insect prey in the sampled stream community.",
+            "source": "Plaza, Metillo & Sanguila (2021), Journal of Tropical Ecology 37",
+            "url": "https://doi.org/10.1017/S0266467421000158",
+            "sourceType": "peer_reviewed_trophic_ecology_study",
+            "sourceYear": 2021,
+            "sourceLocation": "Abstract; stable-isotope analysis of locally sampled stream frogs",
+            "studyScope": "Study-specific diet interpretation for a sampled northeast Mindanao riparian community, not direct verification of every prey species or a permanent species-wide feeding preference.",
+            "origin": "rc26_primary_trophic_montane_v1.json"
+          }
+        ],
         "Conservation": []
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
           "Identification",
           "Habitat",
-          "Distribution"
+          "Distribution",
+          "Natural history"
         ],
         "sectionsWithoutCitedData": [
-          "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 6
+        "citedBiologicalFacts": 8
       },
       "sourceReferences": 5
     },
@@ -8598,6 +8625,19 @@
             "sourceYear": 2022,
             "sourceLocation": "Natural history and study localities",
             "studyScope": "Capture heights are observations, not a complete altitudinal range."
+          },
+          {
+            "scientificName": "Baletemys kampalili",
+            "section": "Habitat",
+            "label": "Original moss-covered log microhabitats",
+            "text": "Two originally collected animals were captured under or beside moss-covered fallen logs on a steep upper-montane forest slope with deep humus and abundant shrubs and epiphytes.",
+            "source": "Rowsey et al. (2022), Journal of Mammalogy 103:1259–1277",
+            "url": "https://doi.org/10.1093/jmammal/gyac057",
+            "sourceType": "original_taxonomic_habitat_observation",
+            "sourceYear": 2022,
+            "sourceLocation": "Original species description, Ecology; Mt. Kampalili paratypes",
+            "studyScope": "Two paratype capture sites in the Mt. Kampalili upper montane forest, not a confirmed required microhabitat for all animals; specific rare-species locality coordinates withheld.",
+            "origin": "rc26_primary_trophic_montane_v1.json"
           }
         ],
         "Distribution": [
@@ -8626,20 +8666,34 @@
             "studyScope": null
           }
         ],
-        "Natural history": [],
+        "Natural history": [
+          {
+            "scientificName": "Baletemys kampalili",
+            "section": "Natural history",
+            "label": "Historical earthworm-bait trap records",
+            "text": "Two of the three original specimens were taken in traps baited with live earthworms; the authors suggested earthworms as possible prey but did not report stomach-content proof.",
+            "source": "Rowsey et al. (2022), Journal of Mammalogy 103:1259–1277",
+            "url": "https://doi.org/10.1093/jmammal/gyac057",
+            "sourceType": "original_taxonomic_sampling_observation",
+            "sourceYear": 2022,
+            "sourceLocation": "Original species description, Ecology; three collected voucher specimens",
+            "studyScope": "Three historical voucher specimens, two caught with earthworm bait. Bait attraction does not confirm ingested diet, foraging frequency, population size or current occupancy.",
+            "origin": "rc26_primary_trophic_montane_v1.json"
+          }
+        ],
         "Conservation": []
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
           "Identification",
           "Habitat",
-          "Distribution"
+          "Distribution",
+          "Natural history"
         ],
         "sectionsWithoutCitedData": [
-          "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 8
+        "citedBiologicalFacts": 10
       },
       "sourceReferences": 3
     }

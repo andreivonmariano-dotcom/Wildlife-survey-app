@@ -1100,10 +1100,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Plaza, Metillo & Sanguila (2021), Journal of Tropical Ecology 37",
+          "url": "https://doi.org/10.1017/S0266467421000158",
+          "sourceType": "peer_reviewed_trophic_ecology_study",
+          "publicationYear": 2021,
+          "latestConfirmed": false,
+          "sourceLocation": "Abstract; trophic comparisons among seven stream-associated frogs",
+          "topics": [
+            "Ecology"
+          ]
         }
       ],
       "recencyStatus": "recent_2025_2026_publication_verified",
-      "referenceCount": 5
+      "referenceCount": 6
     },
     {
       "scientificName": "Ansonia mcgregori",
@@ -4300,7 +4311,8 @@
           "topics": [
             "Identification",
             "Habitat",
-            "Distribution"
+            "Distribution",
+            "Ecology"
           ]
         },
         {

@@ -19,13 +19,13 @@ class Rc25PrimaryEcologyAccessibility(unittest.TestCase):
 
     def test_corpus_and_source_counts(self):
         self.assertEqual(self.corpus["prioritySpeciesCount"],96)
-        self.assertEqual(self.corpus["sourceFactCount"],448)
+        self.assertEqual(self.corpus["sourceFactCount"],452)
         self.assertEqual(self.batch["recordCount"],7)
         self.assertEqual(len(self.batch["records"]),7)
-        self.assertEqual(sum(p["referenceCount"] for p in self.book["profiles"]),302)
+        self.assertEqual(sum(p["referenceCount"] for p in self.book["profiles"]),303)
         self.assertEqual(self.corpus["sectionMissingCounts"],{
             "Identification":1,"Habitat":40,"Distribution":23,
-            "Natural history":67,"Conservation":69})
+            "Natural history":65,"Conservation":69})
         self.assertEqual(self.corpus["sourceFactCount"],sum(len(facts)
             for account in self.corpus["accounts"]
             for facts in account["sections"].values()))
@@ -39,7 +39,7 @@ class Rc25PrimaryEcologyAccessibility(unittest.TestCase):
         expected={
             "Pithecophaga jefferyi":(2,"https://doi.org/10.1676/01-054"),
             "Leptobrachium lumadorum":(2,"https://doi.org/10.3897/zookeys.624.9814"),
-            "Cynocephalus volans":(3,"https://doi.org/10.2307/1383020"),
+            "Cynocephalus volans":(3,"https://doi.org/10.2307/1383030"),
         }
         for row in self.batch["records"]:
             name=row["scientificName"]
@@ -79,9 +79,9 @@ class Rc25PrimaryEcologyAccessibility(unittest.TestCase):
         self.assertIn("rc25_habitats_200percent.png",instrument)
         self.assertIn("species-library-200percent-font.png",runner)
         self.assertIn("habitats-200percent-font.png",runner)
-        self.assertIn("15 tests?",runner)
-        self.assertIn("versionCode 81",gradle)
-        self.assertIn("0.27.3-rc25-primary-ecology-accessibility-preview",gradle)
+        self.assertIn("16 tests?",runner)
+        self.assertIn("versionCode 82",gradle)
+        self.assertIn("0.27.3-rc26-fieldwork-readability-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

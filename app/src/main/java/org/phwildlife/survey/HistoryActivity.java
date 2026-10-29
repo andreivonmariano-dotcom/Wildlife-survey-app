@@ -42,6 +42,9 @@ public class HistoryActivity extends Activity {
     private LinearLayout column(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;}
     private TextView text(String val,int size){TextView t=new TextView(this);t.setText(val);t.setTextSize(size);t.setTextColor(INK);t.setPadding(dp(5),dp(7),dp(5),dp(7));return t;}
     private Button btn(String val){return UiKit.button(this,val,"secondary");}
+    private boolean largeText(){return getResources().getConfiguration().fontScale>=1.60f;}
+    private int actionDp(){return FieldLayoutPolicy.actionHeightDp(
+        getResources().getConfiguration().fontScale);}
     private EditText field(String hint,String init){EditText v=new EditText(this);v.setHint(hint);v.setText(init==null?"":init);v.setSingleLine(true);return v;}
     @Override public void onCreate(Bundle b){super.onCreate(b);db=new FieldDb(this);eventFilter=getIntent().getStringExtra("event_id");draw();}
     @Override protected void onDestroy(){
@@ -52,7 +55,7 @@ public class HistoryActivity extends Activity {
     private void draw(){
         root=column();root.setBackgroundColor(UiKit.BG);root.setPadding(dp(14),dp(10),dp(14),dp(10));
         root.addView(UiKit.navigationHeader(this,
-            eventFilter==null?"Survey history":"Observations",
+            eventFilter==null?(largeText()?"History":"Survey history"):"Observations",
             eventFilter==null?"Home":"All surveys",()->{
                 if(eventFilter==null)finish();
                 else{
@@ -76,11 +79,14 @@ public class HistoryActivity extends Activity {
                 }
                 @Override public void onNothingSelected(android.widget.AdapterView<?> parent){}
             });
-            root.addView(outcomes);
+            outcomes.setContentDescription("Filter saved surveys by outcome");
+            root.addView(outcomes,new LinearLayout.LayoutParams(-1,dp(largeText()?72:52)));
             EditText search=new EditText(this);search.setSingleLine(true);
-            search.setTextSize(15);search.setHint("Search group, method, station, date");
+            search.setTextSize(15);
+            search.setHint(largeText()?"Search surveys":"Search group, method, station, date");
+            search.setContentDescription("Search survey group, method, station or date");
             search.setText(surveySearch);
-            root.addView(search,new LinearLayout.LayoutParams(-1,dp(52)));
+            root.addView(search,new LinearLayout.LayoutParams(-1,dp(largeText()?72:52)));
             search.addTextChangedListener(new TextWatcher(){
                 public void beforeTextChanged(CharSequence s,int st,int n,int after){}
                 public void onTextChanged(CharSequence s,int st,int before,int count){
@@ -187,7 +193,7 @@ public class HistoryActivity extends Activity {
                     String changed=changes.isNull(1)?"":changes.getString(1);
                     int records=changes.getInt(2);
                     Button audit=UiKit.button(this,"Closure details","quiet");
-                    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(46));
+                    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():46));
                     rows.addView(audit,lp);
                     audit.setOnClickListener(v->new AlertDialog.Builder(this)
                         .setTitle("Survey closure audit")
@@ -206,14 +212,14 @@ public class HistoryActivity extends Activity {
         boolean field=FieldProtocolPolicy.supported(surveyMethod);
         if(birdOrHerp){
             Button sounds=UiKit.button(this,"Sound recordings","secondary");
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(48));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
             lp.topMargin=dp(5);rows.addView(sounds,lp);
             sounds.setOnClickListener(v->startActivity(new Intent(this,CallLibraryActivity.class)
                 .putExtra("event_id",event)));
         }
         if(trap||field){
             Button evidence=UiKit.button(this,trap?"Device checks & captures":"Method effort & evidence","secondary");
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(48));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
             lp.topMargin=dp(5);rows.addView(evidence,lp);
             final Class<?> destination=trap?TrapProtocolActivity.class:FieldProtocolsActivity.class;
             evidence.setOnClickListener(v->startActivity(new Intent(this,destination)
@@ -221,7 +227,7 @@ public class HistoryActivity extends Activity {
         }
         if("point_count".equals(surveyMethod)||SurveyMethods.timedInterval(surveyMethod)){
             Button progress=UiKit.button(this,"Station & effort progress","quiet");
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(48));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
             lp.topMargin=dp(5);rows.addView(progress,lp);
             progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
                 .putExtra("event_id",event)));

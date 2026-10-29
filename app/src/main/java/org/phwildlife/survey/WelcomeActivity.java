@@ -62,6 +62,9 @@ public class WelcomeActivity extends Activity {
         v.setPadding(dp(3),dp(8),dp(3),dp(8));return v;
     }
     private Button button(String label){return UiKit.button(this,label,"secondary");}
+    private boolean largeText(){return getResources().getConfiguration().fontScale>=1.60f;}
+    private int actionDp(){return FieldLayoutPolicy.actionHeightDp(
+        getResources().getConfiguration().fontScale);}
     private LinearLayout vertical(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
     @Override public void onCreate(Bundle state){super.onCreate(state);
         getWindow().setStatusBarColor(BG);
@@ -107,7 +110,7 @@ public class WelcomeActivity extends Activity {
         setupFooter.setBackgroundColor(BG);
         setupFooter.setPadding(0,dp(5),0,dp(3));
         setupStartButton=UiKit.button(this,"Continue to GPS","primary");
-        setupFooter.addView(setupStartButton,new LinearLayout.LayoutParams(-1,dp(56)));
+        setupFooter.addView(setupStartButton,new LinearLayout.LayoutParams(-1,dp(actionDp())));
         setupStartButton.setOnClickListener(v->startSelected());
         setupFooter.setVisibility(View.GONE);
         root.addView(setupFooter);
@@ -164,7 +167,7 @@ public class WelcomeActivity extends Activity {
         TextView sub=text("Philippine Biodiversity Toolkit",12,false);
         sub.setPadding(0,dp(2),0,0);
         sub.setTextColor(MUTED);brand.addView(sub);
-        header.addView(brand,new LinearLayout.LayoutParams(0,dp(56),1));
+        header.addView(brand,new LinearLayout.LayoutParams(0,-2,1));
         LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
         headerLp.bottomMargin=dp(18);main.addView(header,headerLp);
         // Transition the wordmark gently after the minimal title screen.
@@ -199,7 +202,7 @@ public class WelcomeActivity extends Activity {
             Button resume=UiKit.button(this,"Resume Survey","primary");
             resume.setOnClickListener(v->startActivity(
                 new Intent(this,MainActivity.class).putExtra("resume",true)));
-            activeCard.addView(resume,new LinearLayout.LayoutParams(-1,dp(56)));
+            activeCard.addView(resume,new LinearLayout.LayoutParams(-1,dp(actionDp())));
             main.addView(activeCard);
         }else{
             main.addView(step("NEW","Choose wildlife group"));
@@ -224,34 +227,37 @@ public class WelcomeActivity extends Activity {
             startActivity(new Intent(this,SitesActivity.class)));
         addHomeRecentSurvey();
         LinearLayout shortcutRow=new LinearLayout(this);
-        shortcutRow.setOrientation(LinearLayout.HORIZONTAL);
+        shortcutRow.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         Button history=UiKit.button(this,"Survey history","secondary");
-        shortcutRow.addView(history,new LinearLayout.LayoutParams(0,dp(52),1));
+        shortcutRow.addView(history,new LinearLayout.LayoutParams(
+            largeText()?-1:0,dp(actionDp()),1));
         history.setOnClickListener(v->startActivity(new Intent(this,HistoryActivity.class)));
         Button dashboard=UiKit.button(this,"Dashboard","secondary");
-        LinearLayout.LayoutParams dashLp=new LinearLayout.LayoutParams(0,dp(52),1);
-        dashLp.leftMargin=dp(8);shortcutRow.addView(dashboard,dashLp);
+        LinearLayout.LayoutParams dashLp=new LinearLayout.LayoutParams(
+            largeText()?-1:0,dp(actionDp()),1);
+        if(largeText())dashLp.topMargin=dp(8);
+        else dashLp.leftMargin=dp(8);shortcutRow.addView(dashboard,dashLp);
         dashboard.setOnClickListener(v->startActivity(new Intent(this,DashboardActivity.class)));
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
         shortcutsLp.topMargin=dp(9);main.addView(shortcutRow,shortcutsLp);
         Button dataManager=UiKit.button(this,"Manage saved data","quiet");
-        LinearLayout.LayoutParams dataLp=new LinearLayout.LayoutParams(-1,dp(50));
+        LinearLayout.LayoutParams dataLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
         dataLp.topMargin=dp(5);main.addView(dataManager,dataLp);
         dataManager.setOnClickListener(v->startActivity(
             new Intent(this,DataManagementActivity.class)));
         Button recover=UiKit.button(this,"Full fieldwork backup & restore","secondary");
-        LinearLayout.LayoutParams backupLp=new LinearLayout.LayoutParams(-1,dp(50));
+        LinearLayout.LayoutParams backupLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
         backupLp.topMargin=dp(6);main.addView(recover,backupLp);
         recover.setOnClickListener(v->startActivity(
             new Intent(this,FieldBackupActivity.class)));
 
         main.addView(FieldVisuals.section(this,"Species Library","Source-linked offline references"));
         Button catalog=UiKit.button(this,"Search Species Library","primary");
-        main.addView(catalog,new LinearLayout.LayoutParams(-1,dp(54)));
+        main.addView(catalog,new LinearLayout.LayoutParams(-1,dp(actionDp())));
         catalog.setOnClickListener(v->startActivity(
             new Intent(this,Rc7SpeciesLibraryActivity.class)));
         Button librarySources=UiKit.button(this,"Source catalogs & regional records","quiet");
-        LinearLayout.LayoutParams sourcesLp=new LinearLayout.LayoutParams(-1,dp(50));
+        LinearLayout.LayoutParams sourcesLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
         sourcesLp.topMargin=dp(6);
         main.addView(librarySources,sourcesLp);
         librarySources.setOnClickListener(v->startActivity(
@@ -265,12 +271,12 @@ public class WelcomeActivity extends Activity {
         main.addView(FieldVisuals.section(this,"Habitat & Ecology",
             "Site habitats and environmental measurements"));
         Button habitat=UiKit.button(this,"Explore habitats & site records","secondary");
-        main.addView(habitat,new LinearLayout.LayoutParams(-1,dp(52)));
+        main.addView(habitat,new LinearLayout.LayoutParams(-1,dp(actionDp())));
         habitat.setOnClickListener(v->startActivity(
             new Intent(this,HabitatRecordsActivity.class)));
 
         Button toolsToggle=UiKit.button(this,"Field tools & settings  ▾","quiet");
-        LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(54));
+        LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(actionDp()));
         toolMargin.topMargin=dp(12);main.addView(toolsToggle,toolMargin);
         LinearLayout tools=vertical();
         tools.setVisibility(View.GONE);
@@ -354,10 +360,12 @@ public class WelcomeActivity extends Activity {
     private void setup(String selected,boolean isCustom){
         homeVisible=false;currentScreen="setup";profile=selected;custom=isCustom;
         main.removeAllViews();
-        setupStartButton.setText("Continue to GPS · "+profile);
+        setupStartButton.setText(largeText()?"Continue to GPS":"Continue to GPS · "+profile);
+        setupStartButton.setContentDescription("Continue "+profile+" survey setup to GPS preflight");
         setupFooter.setVisibility(View.VISIBLE);
         Button back=button("‹ Back");
-        LinearLayout.LayoutParams backLp=new LinearLayout.LayoutParams(dp(112),dp(48));
+        LinearLayout.LayoutParams backLp=new LinearLayout.LayoutParams(
+            dp(largeText()?96:112),dp(largeText()?actionDp():48));
         main.addView(back,backLp);
         back.setOnClickListener(v->{if(custom)customPicker();else home();});
         heading((custom?"Custom · ":"")+profile+" survey",
@@ -402,12 +410,16 @@ public class WelcomeActivity extends Activity {
             }
         });
         LinearLayout projectRow=new LinearLayout(this);
-        projectRow.setOrientation(LinearLayout.HORIZONTAL);
+        projectRow.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         projectRow.setGravity(Gravity.CENTER_VERTICAL);
-        projectRow.addView(projectChoice,new LinearLayout.LayoutParams(0,dp(52),1f));
+        projectChoice.setContentDescription("Choose survey project");
+        projectRow.addView(projectChoice,new LinearLayout.LayoutParams(
+            largeText()?-1:0,dp(largeText()?72:52),1f));
         Button projectManage=UiKit.button(this,"Manage","secondary");
-        LinearLayout.LayoutParams manageWidth=new LinearLayout.LayoutParams(dp(110),dp(52));
-        manageWidth.leftMargin=dp(8);
+        LinearLayout.LayoutParams manageWidth=new LinearLayout.LayoutParams(
+            largeText()?-1:dp(110),dp(largeText()?actionDp():52));
+        if(largeText())manageWidth.topMargin=dp(6);
+        else manageWidth.leftMargin=dp(8);
         projectRow.addView(projectManage,manageWidth);
         main.addView(projectRow);
         projectManage.setContentDescription("Manage projects and sampling stations");
@@ -568,7 +580,7 @@ public class WelcomeActivity extends Activity {
         studyChoice=new Spinner(this);
         studyOptions.addView(studyChoice,new LinearLayout.LayoutParams(-1,dp(52)));
         Button manageStudies=UiKit.button(this,"Manage study templates","quiet");
-        studyOptions.addView(manageStudies,new LinearLayout.LayoutParams(-1,dp(46)));
+        studyOptions.addView(manageStudies,new LinearLayout.LayoutParams(-1,dp(actionDp())));
         manageStudies.setOnClickListener(v->
             startActivity(new Intent(this,StudyProtocolsActivity.class)));
         studyToggle=text("＋ Study rules (optional)",14,true);

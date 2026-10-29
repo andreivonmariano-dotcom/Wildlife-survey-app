@@ -132,6 +132,77 @@ public final class Rc10LibraryScreensInstrumentedTest {
         }
     }
 
+    @Test public void largeTextHomeSetupAndHistoryHaveAccessibleActions()throws Exception{
+        androidx.test.platform.app.InstrumentationRegistry.getInstrumentation()
+            .getUiAutomation().executeShellCommand(
+                "settings put system font_scale 2.0").close();
+        android.os.SystemClock.sleep(800);
+        try{
+            android.content.Intent launch=new android.content.Intent(
+                androidx.test.core.app.ApplicationProvider.getApplicationContext(),
+                WelcomeActivity.class);
+            launch.putExtra("show_menu",true);
+            try(ActivityScenario<WelcomeActivity> test=ActivityScenario.launch(launch)){
+                test.onActivity(activity->{
+                    View root=activity.getWindow().getDecorView();
+                    assertTrue(activity.getResources().getConfiguration().fontScale>=1.60f);
+                    ArrayList<View> all=new ArrayList<>();walk(root,all);
+                    View birds=null;
+                    for(View v:all)if(v.getContentDescription()!=null&&
+                            v.getContentDescription().toString().startsWith(
+                                "Birds, Counts and transects")){
+                        birds=v;break;
+                    }
+                    requireVisibleUnclipped(birds,"Home Birds tile");
+                    capture(activity,"rc26_home_200percent.png");
+                    assertTrue("Home opens Birds setup",birds.performClick());
+                    View setup=activity.getWindow().getDecorView();
+                    Button start=named(setup,"Continue to GPS");
+                    requireVisibleUnclipped(start,"Survey setup GPS continuation");
+                    assertTrue(start.getContentDescription().toString()
+                        .contains("GPS preflight"));
+                    ArrayList<View> form=new ArrayList<>();walk(setup,form);
+                    boolean methodFound=false,projectFound=false;
+                    for(View v:form){
+                        if(v instanceof TextView&&
+                                ((TextView)v).getText().toString().contains("Survey method"))
+                            methodFound=true;
+                        if(v instanceof android.widget.Spinner&&
+                                "Choose survey project".equals(
+                                    String.valueOf(v.getContentDescription())))
+                            projectFound=true;
+                    }
+                    assertTrue("Method selection remains available",methodFound);
+                    assertTrue("Project choice accessible",projectFound);
+                    capture(activity,"rc26_survey_setup_200percent.png");
+                });
+            }
+            try(ActivityScenario<HistoryActivity> history=
+                    ActivityScenario.launch(HistoryActivity.class)){
+                history.onActivity(activity->{
+                    assertTrue(activity.getResources().getConfiguration().fontScale>=1.60f);
+                    View root=activity.getWindow().getDecorView();
+                    ArrayList<View> all=new ArrayList<>();walk(root,all);
+                    View outcome=null,search=null;
+                    for(View v:all){
+                        if("Filter saved surveys by outcome".equals(
+                                String.valueOf(v.getContentDescription())))outcome=v;
+                        if("Search survey group, method, station or date".equals(
+                                String.valueOf(v.getContentDescription())))search=v;
+                    }
+                    requireVisibleUnclipped(outcome,"Survey history outcome filter");
+                    requireVisibleUnclipped(search,"Survey history search field");
+                    capture(activity,"rc26_history_200percent.png");
+                });
+            }
+        }finally{
+            androidx.test.platform.app.InstrumentationRegistry.getInstrumentation()
+                .getUiAutomation().executeShellCommand(
+                    "settings put system font_scale 1.0").close();
+            android.os.SystemClock.sleep(800);
+        }
+    }
+
     @Test public void offlineResearchCardsContainCitedEvidence()throws Exception{
         try(ActivityScenario<Rc7SpeciesLibraryActivity> test=
                 ActivityScenario.launch(Rc7SpeciesLibraryActivity.class)){

@@ -18,11 +18,11 @@ class Rc23SpeciesResearch(unittest.TestCase):
         self.assertEqual(self.batch["recordCount"],9)
         self.assertEqual(len(self.batch["records"]),9)
         self.assertEqual(len(self.corpus["accounts"]),96)
-        self.assertEqual(self.corpus["sourceFactCount"],448)
-        self.assertEqual(sum(p["referenceCount"] for p in self.bib["profiles"]),302)
+        self.assertEqual(self.corpus["sourceFactCount"],452)
+        self.assertEqual(sum(p["referenceCount"] for p in self.bib["profiles"]),303)
         self.assertEqual(self.corpus["sectionMissingCounts"],{
             "Identification":1,"Habitat":40,"Distribution":23,
-            "Natural history":67,"Conservation":69})
+            "Natural history":65,"Conservation":69})
         for account in self.corpus["accounts"]:
             self.assertEqual(account["coverage"]["citedBiologicalFacts"],
                              sum(len(v) for v in account["sections"].values()))
@@ -79,8 +79,8 @@ class Rc23SpeciesResearch(unittest.TestCase):
         self.assertIn("latest cited 96-species accounts",compare)
         self.assertIn("Search offline species by common, scientific or former name",picker)
         self.assertIn("Search species by scientific, common or former name",detail)
-        self.assertIn("versionCode 81",gradle)
-        self.assertIn("0.27.3-rc25-primary-ecology-accessibility-preview",gradle)
+        self.assertIn("versionCode 82",gradle)
+        self.assertIn("0.27.3-rc26-fieldwork-readability-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

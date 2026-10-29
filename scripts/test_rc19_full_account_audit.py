@@ -14,10 +14,10 @@ class Rc19AllAccounts(unittest.TestCase):
         book=json.loads((ASSETS/"rc14_96_species_literature_index_v1.json").read_text())
         self.assertEqual(pack["taxonCount"],7)
         self.assertEqual(pack["claimCount"],21)
-        self.assertEqual(accounts["sourceFactCount"],448)
+        self.assertEqual(accounts["sourceFactCount"],452)
         self.assertEqual(accounts["prioritySpeciesCount"],96)
         self.assertEqual(len(accounts["accounts"]),96)
-        self.assertEqual(sum(x["referenceCount"] for x in book["profiles"]),302)
+        self.assertEqual(sum(x["referenceCount"] for x in book["profiles"]),303)
         names={x["scientificName"] for x in registry["profiles"]}
         self.assertEqual(names,{x["scientificName"] for x in accounts["accounts"]})
         refs={x["scientificName"]:{p["url"] for p in x["publications"]} for x in book["profiles"]}
@@ -32,7 +32,7 @@ class Rc19AllAccounts(unittest.TestCase):
                 self.assertLess(len(item["statement"]),215)
         self.assertEqual(accounts["sectionMissingCounts"],{
             "Identification":1,"Habitat":40,"Distribution":23,
-            "Natural history":67,"Conservation":69})
+            "Natural history":65,"Conservation":69})
     def test_preserves_dated_global_status_separate_from_national_law(self):
         pack=json.loads((ASSETS/"rc19_priority_literature_batch_v1.json").read_text())
         claims=[f for species in pack["records"] for f in species["items"]]
@@ -50,6 +50,6 @@ class Rc19AllAccounts(unittest.TestCase):
         self.assertIn("Rc11PrioritySpeciesView$Glyph",code)
         self.assertIn("rc19-all-96-screen-audit.csv",sh)
         self.assertIn("ALL-96-RENDERED-SPECIES-AUDIT-PASS",sh)
-        self.assertIn("15 tests?",sh)
+        self.assertIn("16 tests?",sh)
 if __name__=="__main__":
     unittest.main()

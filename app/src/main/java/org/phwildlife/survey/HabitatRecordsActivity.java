@@ -51,15 +51,16 @@ public final class HabitatRecordsActivity extends Activity {
         recordsTab=UiKit.button(this,"My site records","secondary");
         guideTab.setContentDescription("Habitat reference guide tab");
         recordsTab.setContentDescription("My recorded site habitats tab");
-        tabs.addView(guideTab,new LinearLayout.LayoutParams(0,dp(largeText?58:50),1));
-        LinearLayout.LayoutParams other=new LinearLayout.LayoutParams(0,dp(largeText?58:50),1);
+        int tabHeight=FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale);
+        tabs.addView(guideTab,new LinearLayout.LayoutParams(0,dp(tabHeight),1));
+        LinearLayout.LayoutParams other=new LinearLayout.LayoutParams(0,dp(tabHeight),1);
         other.leftMargin=dp(8);
         tabs.addView(recordsTab,other);
         root.addView(tabs);
         Button researchToggle=UiKit.button(this,largeText?
             "Research tools  ▾":"Habitat research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand source-linked habitat comparisons and species associations");
-        root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(largeText?58:48)));
+        root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(largeText?tabHeight:48)));
         LinearLayout researchTools=new LinearLayout(this);
         researchTools.setOrientation(LinearLayout.VERTICAL);
         researchTools.setVisibility(android.view.View.GONE);

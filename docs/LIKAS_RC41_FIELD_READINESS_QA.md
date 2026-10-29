@@ -37,3 +37,17 @@
 - No real wildlife research/news feed has been shipped. Keep the all-in-one research module in the roadmap, not a promotional claim.
 
 **Release status at authoring:** compiled signed RC41 APK remains unverified until the exact GitHub QA run has succeeded and binary is inspected.
+
+## Independent release check | 29 October 2026
+
+Checked source commit `0841d5f9441734accfee1a8b3a1131dfd19741af` on isolated `qa/rc41-release-check`. GitHub Scientific Core QA `40888849314` failed at Python tests, before media preparation or signing, with no artifact. Two obsolete UI source assertions expected the prior checklist title and synchronous gallery thumbnail. Updated them to check the RC41 checklist/Library navigation and asynchronous gallery call; the scientific corpus, facts, source licenses and scientific test assertions were retained.
+
+| Check | Result |
+| --- | --- |
+| `python3 -m unittest discover -s scripts -p 'test_*.py'` | 280 pass, 0 fail |
+| Gradle `:app:testDebugUnitTest` | 95 pass, 0 fail |
+| Gradle `:app:compileDebugAndroidTestJavaWithJavac` | Pass; Android instrumentation tests compiled but not executed |
+| Normal `:app:assembleDebug` | Fails at `validateSigningDebug`: original `.signing/wildlife-beta08.keystore` absent |
+| Temporary unsigned `:app:assembleDebug` | Pass; manifest retains package `org.phwildlife.survey.beta08`, versionCode 101 and RC41 versionName |
+
+The unsigned proof APK is not installable as an update to the original signed app. It lacks the CI-prepared approved JPEGs and generated MDD catalog, and was not delivered as a release artifact. No replacement key was created. Source inspection supports the Home/recorder/library/navigation contracts; 320dp/200%-font rendering, gallery timing, device instrumentation, GPS/media, record-preserving upgrade and recovery fault injection still require device or dedicated fixture QA. The existing partial-restore risk remains a release concern; no destructive recovery changes were made without rollback coverage.

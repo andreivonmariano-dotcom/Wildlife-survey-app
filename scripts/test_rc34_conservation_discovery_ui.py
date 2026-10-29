@@ -59,7 +59,7 @@ class ConservationCardQA(unittest.TestCase):
         self.assertIn('statusIndex.containsKey(s.optString("scientificName"))',src)
         self.assertIn('new HorizontalScrollView(this)',src)
         self.assertIn('setSmoothScrollingEnabled(true)',src)
-        self.assertIn('OfflinePhotoEvidence.thumbnailForTaxon(this,scientific)',src)
+        self.assertIn('OfflinePhotoEvidence.galleryPhotoForTaxon(this,scientific)',src)
         self.assertIn('UiMotion.enter(this,content)',src)
         self.assertIn('putExtra("taxon_key",entry.optString("sourceTaxonKey"))',src)
         self.assertIn("Status unverified",src)

@@ -16,7 +16,7 @@ class UnifiedPriorityCorpus(unittest.TestCase):
         catalog={x["scientificName"]:x for x in refs["profiles"]}
         self.assertEqual(corpus["schemaVersion"],"rc18-unified-96-priority-account-corpus-v1")
         self.assertEqual(corpus["prioritySpeciesCount"],96)
-        self.assertEqual(corpus["sourceFactCount"],426)
+        self.assertEqual(corpus["sourceFactCount"],435)
         self.assertEqual(len(corpus["accounts"]),96)
         self.assertEqual(set(orig),{x["scientificName"] for x in corpus["accounts"]})
         self.assertEqual(set(catalog),set(orig))
@@ -45,9 +45,9 @@ class UnifiedPriorityCorpus(unittest.TestCase):
                     self.assertFalse(fact["text"].startswith(("Check the ","Record the ","Avoid assigning")))
             no_data={section for section,items in item["sections"].items() if not items}
             self.assertEqual(no_data,set(item["coverage"]["sectionsWithoutCitedData"]))
-        self.assertEqual(count,426)
+        self.assertEqual(count,435)
         self.assertEqual(refs["recentVerifiedTaxa"],13)
-        self.assertEqual(sum(p["referenceCount"] for p in refs["profiles"]),290)
+        self.assertEqual(sum(p["referenceCount"] for p in refs["profiles"]),296)
 
     def test_previous_fact_empty_taxa_have_original_references(self):
         corpus=json.loads((ASSET/"rc18_unified_96_priority_accounts_v1.json").read_text())
@@ -62,8 +62,8 @@ class UnifiedPriorityCorpus(unittest.TestCase):
     def test_missing_science_remains_unfilled(self):
         c=json.loads((ASSET/"rc18_unified_96_priority_accounts_v1.json").read_text())
         self.assertEqual(c["sectionMissingCounts"],{
-            "Identification":7,"Habitat":46,"Distribution":23,
-            "Natural history":71,"Conservation":70})
+            "Identification":3,"Habitat":44,"Distribution":23,
+            "Natural history":71,"Conservation":69})
         self.assertFalse(any("approved" in x["coverage"] for x in c["accounts"]))
 
     def test_actual_android_uses_unified_corpus(self):

@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC20 sourced species batch and accessibility controls, preview QA pending
+
+- **Owner accepted Q1/Q2/Q3:** Extend missing identifications using cited primary or labeled secondary sources, add sourced habitat/natural-history/conservation facts, refine 96 species screens and build a new signed preview. Startup branch remains isolated. No user study/field archive, SQLite 27, package ID or signing identity changes.
+- **Implemented on scientific-core branch PR #38:** `rc20_verified_gap_batch_v1.json` adds 16 individually attributed facts for 9 taxa, with exact source URL, source type/year/location and scope limitations. `rc18_unified_96_priority_accounts_v1.json` now totals 393 facts across 96 unchanged species; `rc14_96_species_literature_index_v1.json` totals 269 taxon/source links. Missing sections: Identification 18 (from 27), Habitat 51, Distribution 24, Natural history 75, Conservation 76. See `docs/LIKAS_RC20_SOURCE_GAPS_AND_SCREEN_REFINEMENT.md`.
+- **Non-startup UI:** `Rc11PrioritySpeciesView` adds an understated documented-topic count for each species and refreshes accessible expand/collapse labels for card details and source drawer. Android 96-screen test asserts that count. New `scripts/test_rc20_sourced_species_and_ui.py` and updated prior regression counts cover evidence mapping. The prior RC19 screenshot QA artifact does not prove RC20 render quality.
+- **Version target:** `0.27.3-rc20-documented-species-preview`, versionCode **73**, original `org.phwildlife.survey.beta08`, SQLite **27**, unchanged debug signing configuration. Scientific Core QA artifact renamed `LIKAS-RC20-documented-species-debug`. **This is source implementation, not a verified newly built binary yet.** Early CI runs failed on stale test constant (393 vs 377), corrected in code. Verify a successful latest-head core QA run and APK bytes/signature before delivery.
+- **Gates:** Source test pass, Java/Android assembly, pinned certificate continuity, a full 13-test emulator and 96 real screen captures, byte-identical old SQLite install-upgrade, direct APK attachment. Field phone, battery, accessibility fonts and real-owner-data upgrades are still unverified.
+- **Next action:** Check CI for latest RC20 commit, fix code/tests as needed, extract exact signed artifact and deliver direct chat APK link. Run Android emulator on latest source; inspect screenshot contact sheets and record exceptions. Continue the 18 unsupported Identification sections with original-source research, not generic filler.
+
+---
+
+
 ## 29 October 2026 | RC19 Android emulator acceptance confirmed and 96 screenshots reviewed
 
 - **Verified QA run:** GitHub Android emulator run `40805609892` completed successfully on RC19 source `f6bc1653ca37a5e2e03a8aa0d4186240af869552`. Retrieved real evidence artifact `12868850112` (`LIKAS-RC7-device-emulator-evidence`) and inspected the extracted `instrumentation.txt`: **OK (13 tests)**, `EMULATOR-SMOKE-PASS`, `RECORDER-DOCK-INSTRUMENTED-PASS`, and `ALL-96-RENDERED-SPECIES-AUDIT-PASS`.

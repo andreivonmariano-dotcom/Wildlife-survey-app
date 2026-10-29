@@ -46,7 +46,8 @@ public final class LikasLaunchActivity extends Activity {
         setContentView(root);
 
         // Android accessibility and device settings determine whether motion runs.
-        if(!ValueAnimator.areAnimatorsEnabled()){
+        if(!ValueAnimator.areAnimatorsEnabled()||
+            getSharedPreferences("likas_ui",MODE_PRIVATE).getBoolean("reduced_motion",false)){
             enterHome();
             return;
         }
@@ -59,7 +60,8 @@ public final class LikasLaunchActivity extends Activity {
     }
     private void leaveSplash(){
         if(entered||isFinishing()||isDestroyed())return;
-        if(!ValueAnimator.areAnimatorsEnabled()){enterHome();return;}
+        if(!ValueAnimator.areAnimatorsEnabled()||
+            getSharedPreferences("likas_ui",MODE_PRIVATE).getBoolean("reduced_motion",false)){enterHome();return;}
         brand.animate().cancel();
         brand.animate().alpha(0f).translationY(-dp(16))
             .setDuration(210).withEndAction(this::enterHome).start();

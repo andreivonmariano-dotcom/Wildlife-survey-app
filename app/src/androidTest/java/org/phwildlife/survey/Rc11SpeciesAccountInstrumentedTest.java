@@ -140,4 +140,30 @@ public final class Rc11SpeciesAccountInstrumentedTest {
         }
     }
 
+    @Test public void testPublishedFrogDifferentialOpens()throws Exception{
+        Intent intent=new Intent(InstrumentationRegistry.getInstrumentation()
+            .getTargetContext(),TaxonDetailActivity.class);
+        intent.putExtra("taxon_query","Platymantis pygmaeus");
+        try(ActivityScenario<TaxonDetailActivity> scenario=ActivityScenario.launch(intent)){
+            scenario.onActivity(activity->{
+                View root=activity.getWindow().getDecorView();
+                ArrayList<View> views=descendants(root);
+                assertTrue(containsText(views,"Compare similar species"));
+                assertTrue(containsText(views,"Adult body length"));
+            });
+        }
+        Intent compare=new Intent(InstrumentationRegistry.getInstrumentation()
+            .getTargetContext(),Rc9DifferentialActivity.class);
+        compare.putExtra("scientific_name","Platymantis pygmaeus");
+        try(ActivityScenario<Rc9DifferentialActivity> scenario=ActivityScenario.launch(compare)){
+            scenario.onActivity(activity->{
+                ArrayList<View> views=descendants(activity.getWindow().getDecorView());
+                assertTrue(containsText(views,"Platymantis naomii"));
+                assertTrue(containsText(views,"14.1"));
+                assertTrue(containsText(views,"Read published source"));
+                assertFalse(containsText(views,"specialist-certified"));
+            });
+        }
+    }
+
 }

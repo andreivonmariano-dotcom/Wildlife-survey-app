@@ -1,5 +1,14 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC24B emulator gate completed and independently retrieved
+
+- User reselected Q1/Q2/Q3. Latest branch already contains RC24B code79, 441 facts, 299 citation links, one unverified Dicaeum kampalili identification and source-driven 96-species comparison and conservation UI. Avoid duplicate build or replacing the newer branch with old RC23.
+- RC24B emulator GitHub Actions run 40818496143 **completed success**, HEAD f1b235f7a59ad290ea2deec3ce0a96fa688b38f4. Evidence artifact 12873941495 fetched anew into /mnt/data/LIKAS-RC24B-Android14-emulator-QA.zip, ZIP 119 entries and valid; SHA256 7e65a6d5bac7c48f631449accb6878bbc457b45683fbe6e11dee381dd2d93690. Instrumentation.txt explicitly reports OK (14 tests), version.txt versionCode79 and versionName 0.27.3-rc24b-readable-research-preview. 96 screenshots, each unique. Previous and upgraded SQLite fixture byte-identical 1,613,824 bytes with SHA256 604f7a33c6e7a645f900b17f848a0cf3205a7e93ef7b5607d6dee096d0fb32b0.
+- RC24B build artifact 12873700952 retrieved anew; APK extracted at /mnt/data/LIKAS-v0.27.3-RC24B-readable-research-debug.apk, 9,591,832 bytes, SHA256 4d9d755269143930b6ea6e56b2898a60c437975a9a47d9b714887ad34230cc21, equal to previously independently validated original v2 signed package and signer.
+- Manually inspected 200%-font emulator comparison and conservation screenshots. Comparison has visible Reference A/B controls in first viewport. Conservation search, group and scope filters are visible, but top title Conservation wraps mid-word into two lines on a 320dp frame. This is a minor visual refinement, not a blocking instrumentation error. Avoid declaring all large-text layouts polished. Real-device user records, GNSS and extended TalkBack remain untested.
+
+---
+
 ## 29 October 2026 | RC24B compact large-text conservation and comparison UI, code79 candidate
 
 - RC24 code78 science core passed and Android 14 emulator workflow **40817617391** completed **SUCCESS** with actual **14/14** instrumentation and **96** distinct species screenshots, 24 per wildlife group. Verified ZIP artifact **12872544193** downloaded into this chat as `/mnt/data/LIKAS-RC24-Android14-emulator-QA.zip` (4,724,210 bytes, SHA256 `1dc4dcf017f540912907b145581efdbb0d7605e346bca2fec8a4fb9b0a6c3588`). Original and upgraded emulator SQLite fixtures were **byte identical**, each 1,613,824 bytes, SHA256 `21de1278e032a1b3d481ded3abc40ff441f69a6dcdc0e12d2da046c0481b721c`. Actual emulator versionCode78, RC24 name. Compare, conservation and recorder 200% PNGs present and manually inspected.

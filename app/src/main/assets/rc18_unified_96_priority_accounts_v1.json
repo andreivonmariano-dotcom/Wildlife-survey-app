@@ -174,7 +174,7 @@
           {
             "section": "Conservation",
             "label": "Population genetic structure",
-            "text": "The study found higher genomic inbreeding among wild-captive than captive-bred birds in its sample.",
+            "text": "Genomic inbreeding was higher among the 20 wild-captive than the 15 captive-bred Philippine Eagles sampled.",
             "source": "Pascual et al. (2026), Scientific Reports, 17 October 2026",
             "url": "https://doi.org/10.1038/s41598-026-76205-5",
             "origin": "rc16_publication_batch_v1.json",
@@ -186,7 +186,7 @@
           {
             "section": "Conservation",
             "label": "2025 mitochondrial diversity",
-            "text": "A Greater Mindanao study found low mitochondrial nucleotide diversity among 32 Philippine Eagles.",
+            "text": "Mitochondrial nucleotide diversity was low among 32 Philippine Eagles sampled in the Greater Mindanao faunal region.",
             "source": "Bacus et al. (2025), Ecology and Evolution 15:e72572",
             "url": "https://doi.org/10.1002/ece3.72572",
             "origin": "rc14_recent_peer_reviewed_2025_2026_v1.json",
@@ -1365,7 +1365,7 @@
           {
             "section": "Distribution",
             "label": "Distribution",
-            "text": "Known from Palawan, Busuanga, Culion and Balabac according to the museum taxonomy account; no Philippine-wide range should be assumed.",
+            "text": "The museum taxonomy account lists Palawan, Busuanga, Culion and Balabac.",
             "source": "AMNH, Amphibian Species of the World, Barbourula busuangensis",
             "url": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bombinatoridae/Barbourula/Barbourula-busuangensis",
             "origin": "rc8_evidence_comparisons_v1.json",
@@ -1403,7 +1403,7 @@
           {
             "section": "Natural history",
             "label": "Recapture and return behavior",
-            "text": "A capture–mark–recapture and displacement study found evidence of site fidelity and return to original capture sites after movements of 10–50 m.",
+            "text": "Capture–mark–recapture and displacement records show site fidelity and returns to capture sites after movements of 10–50 m.",
             "source": "Miñarro et al. 2025, PeerJ e18694",
             "url": "https://doi.org/10.7717/peerj.18694",
             "origin": "rc10_research_batch2_v1.json",
@@ -3928,7 +3928,7 @@
           {
             "section": "Distribution",
             "label": "Endemicity",
-            "text": "The accepted species is endemic to Mindoro, according to the American Society of Mammalogists taxonomy.",
+            "text": "The American Society of Mammalogists taxonomy lists this species as endemic to Mindoro.",
             "source": "ASM Mammal Diversity Database · Bubalus mindorensis accepted mammal taxonomy and Mindoro range",
             "url": "https://www.mammaldiversity.org/taxon/1006271/",
             "origin": "rc8_evidence_comparisons_v1.json",

@@ -94,10 +94,12 @@ public final class LikasDiscoveryActivity extends Activity {
         card.setPadding(dp(12),dp(12),dp(12),dp(12));
         card.setBackground(surface(this,Color.WHITE,accent,22));
         card.setElevation(dp(1));
+        card.setMinimumHeight(dp(largeText()?336:280));
         // No unsupported status displays as LC, DD or NE. Missing verification is unknown.
         FrameLayout media=new FrameLayout(this);
         media.setBackground(surface(this,Color.rgb(231,239,225),
             Color.rgb(231,239,225),15));
+        media.setClipToOutline(true);
         ImageView photo=OfflinePhotoEvidence.thumbnailForTaxon(this,scientific);
         if(photo!=null){
             media.addView(photo,new FrameLayout.LayoutParams(-1,-1));
@@ -128,6 +130,11 @@ public final class LikasDiscoveryActivity extends Activity {
                     severity>0?Color.rgb(252,246,238):Color.rgb(241,245,237));
             }
         }
+        if(status==null){
+            TextView missing=note("Status unverified",11,UiKit.MUTED,false);
+            LinearLayout.LayoutParams missingLp=new LinearLayout.LayoutParams(-1,-2);
+            missingLp.topMargin=dp(5);card.addView(missing,missingLp);
+        }
         TextView group=note(entry.optString("group"),11,UiKit.MUTED,false);
         LinearLayout.LayoutParams groupLp=new LinearLayout.LayoutParams(-1,-2);
         groupLp.topMargin=dp(8);card.addView(group,groupLp);
@@ -154,10 +161,17 @@ public final class LikasDiscoveryActivity extends Activity {
         LinearLayout card=new LinearLayout(this);card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(14),dp(14),dp(14),dp(14));
         card.setBackground(surface(this,Color.WHITE,UiKit.BORDER,22));
+        card.setMinimumHeight(dp(largeText()?355:296));
         FrameLayout art=new FrameLayout(this);
         art.setBackground(surface(this,fill,fill,16));
-        art.addView(new LikasPortalUi.Glyph(this,habitatIcon(group),UiKit.FOREST),
-            new FrameLayout.LayoutParams(dp(66),dp(66),Gravity.CENTER));
+        art.setClipToOutline(true);
+        ImageView habitatPhoto=OfflinePhotoEvidence.thumbnailForHabitat(
+            this,profile.optString("photoId"));
+        if(habitatPhoto!=null)
+            art.addView(habitatPhoto,new FrameLayout.LayoutParams(-1,-1));
+        else
+            art.addView(new LikasPortalUi.Glyph(this,habitatIcon(group),UiKit.FOREST),
+                new FrameLayout.LayoutParams(dp(66),dp(66),Gravity.CENTER));
         card.addView(art,new LinearLayout.LayoutParams(-1,dp(108)));
         TextView name=note(profile.optString("name"),16,UiKit.INK,true);name.setMaxLines(2);
         LinearLayout.LayoutParams n=new LinearLayout.LayoutParams(-1,-2);
@@ -176,29 +190,72 @@ public final class LikasDiscoveryActivity extends Activity {
             .putExtra("habitat_id",profile.optString("id"))));
         return card;
     }
+    /** Swipe rail with explicit progress, large tap targets and one-card step controls. */
     private void shelf(String title,ArrayList<JSONObject> data,boolean isHabitat){
         if(data.isEmpty())return;
-        TextView h=note(title,19,UiKit.FOREST,true);
+        LinearLayout header=new LinearLayout(this);
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        header.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
-        headerLp.topMargin=dp(17);headerLp.bottomMargin=dp(11);content.addView(h,headerLp);
+        headerLp.topMargin=dp(20);headerLp.bottomMargin=dp(9);
+        content.addView(header,headerLp);
+        TextView heading=note(title,19,UiKit.FOREST,true);
+        header.addView(heading,new LinearLayout.LayoutParams(0,-2,1));
+        TextView position=note("1 / "+data.size(),12,UiKit.MUTED,false);
+        position.setGravity(Gravity.CENTER);
+        header.addView(position,new LinearLayout.LayoutParams(dp(51),dp(48)));
+        Button previous=UiKit.button(this,"‹","quiet");
+        Button next=UiKit.button(this,"›","quiet");
+        previous.setContentDescription("Previous "+title+" card");
+        next.setContentDescription("Next "+title+" card");
+        header.addView(previous,new LinearLayout.LayoutParams(dp(46),dp(48)));
+        header.addView(next,new LinearLayout.LayoutParams(dp(46),dp(48)));
         HorizontalScrollView scroll=new HorizontalScrollView(this);
         scroll.setHorizontalScrollBarEnabled(false);
-        scroll.setFillViewport(false);scroll.setSmoothScrollingEnabled(true);
+        scroll.setFillViewport(false);
+        scroll.setSmoothScrollingEnabled(true);
         LinearLayout row=new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setPadding(dp(2),dp(2),dp(16),dp(10));
         for(JSONObject item:data){
             JSONObject status=statusIndex.get(item.optString("scientificName"));
             View card=isHabitat?habitatCard(item):speciesCard(item,status);
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(largeText()?226:212),-2);
-            lp.rightMargin=dp(11);row.addView(card,lp);
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(cardWidth()),-2);
+            lp.rightMargin=dp(11);
+            row.addView(card,lp);
         }
         scroll.addView(row,new HorizontalScrollView.LayoutParams(-2,-2));
-        scroll.setContentDescription("Swipe horizontally through "+title+" cards");
+        int stride=dp(cardWidth()+11);
+        Runnable update=()->{
+            int index=Math.max(0,Math.min(data.size()-1,
+                (scroll.getScrollX()+stride/2)/stride));
+            position.setText((index+1)+" / "+data.size());
+            previous.setEnabled(index>0);
+            next.setEnabled(index<data.size()-1);
+        };
+        previous.setOnClickListener(v->{
+            int index=Math.max(0,(scroll.getScrollX()+stride/2)/stride);
+            scroll.smoothScrollTo(Math.max(0,(index-1)*stride),0);
+        });
+        next.setOnClickListener(v->{
+            int index=Math.max(0,(scroll.getScrollX()+stride/2)/stride);
+            int endX=Math.max(0,row.getWidth()-scroll.getWidth());
+            scroll.smoothScrollTo(Math.min(endX,(index+1)*stride),0);
+        });
+        scroll.setOnScrollChangeListener((View v,int x,int y,int oldX,int oldY)->
+            update.run());
+        scroll.post(update);
+        scroll.setContentDescription("Swipe "+title+" cards horizontally, "+
+            data.size()+" references");
         content.addView(scroll);
     }
     private boolean largeText(){
         return getResources().getConfiguration().fontScale>=1.60f;
+    }
+    private int cardWidth(){
+        int screen=getResources().getConfiguration().screenWidthDp;
+        return largeText()?Math.max(230,Math.min(310,screen-56)):
+            Math.max(184,Math.min(242,screen-90));
     }
     private void action(String name,Runnable click){
         Button b=UiKit.button(this,name,"secondary");
@@ -268,7 +325,9 @@ public final class LikasDiscoveryActivity extends Activity {
                 .setPositiveButton("Close",(d,w)->finish()).show();
             return;
         }
-        showingHabitat="habitats".equals(getIntent().getStringExtra("view"));
+        showingHabitat=saved!=null?
+            saved.getBoolean("habitats","habitats".equals(getIntent().getStringExtra("view"))):
+            "habitats".equals(getIntent().getStringExtra("view"));
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(15),dp(10),dp(15),dp(7));
         root.setBackgroundColor(UiKit.BG);
@@ -288,5 +347,9 @@ public final class LikasDiscoveryActivity extends Activity {
         scroll.addView(content);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         setContentView(root);render();
+    }
+    @Override protected void onSaveInstanceState(Bundle out){
+        out.putBoolean("habitats",showingHabitat);
+        super.onSaveInstanceState(out);
     }
 }

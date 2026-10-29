@@ -98,6 +98,13 @@ public final class LikasDiscoveryActivity extends Activity {
         lp.topMargin=dp(5);lp.rightMargin=dp(6);
         body.addView(badge,lp);
     }
+    private String wildlifeGlyph(String group){
+        if("Birds".equals(group))return "bird";
+        if("Amphibians".equals(group))return "frog";
+        if("Reptiles".equals(group))return "snake";
+        if("Mammals".equals(group))return "mammal";
+        return "species";
+    }
     private View speciesCard(JSONObject entry,JSONObject status) {
         String scientific=entry.optString("scientificName");
         String common=entry.optString("commonName");
@@ -136,11 +143,11 @@ public final class LikasDiscoveryActivity extends Activity {
             media.addView(photo,new FrameLayout.LayoutParams(-1,-1));
         }else{
             FrameLayout icon=new FrameLayout(this);
-            icon.addView(new LikasPortalUi.Glyph(this,"species",UiKit.FOREST),
+            icon.addView(new LikasPortalUi.Glyph(this,wildlifeGlyph(entry.optString("group")),UiKit.FOREST),
                 new FrameLayout.LayoutParams(dp(70),dp(70),Gravity.CENTER));
             media.addView(icon,new FrameLayout.LayoutParams(-1,-1));
         }
-        card.addView(media,new LinearLayout.LayoutParams(-1,dp(132)));
+        card.addView(media,new LinearLayout.LayoutParams(-1,dp(152)));
         TextView title=note(label,16,UiKit.INK,true);
         title.setMaxLines(2);
         LinearLayout.LayoutParams titleLp=new LinearLayout.LayoutParams(-1,-2);
@@ -173,14 +180,21 @@ public final class LikasDiscoveryActivity extends Activity {
             (status!=null?", dated conservation classification available":
                 ", conservation classification not independently reviewed in LIKAS")+
             ". Open species account.");
+        TextView open=note("OPEN FIELD GUIDE   ›",11,UiKit.POND,true);
+        open.setLetterSpacing(.07f);
+        LinearLayout.LayoutParams openLp=new LinearLayout.LayoutParams(-1,-2);
+        openLp.topMargin=dp(10);card.addView(open,openLp);
         card.setFocusable(true);card.setClickable(true);
         card.setOnClickListener(v->startActivity(new Intent(this,TaxonDetailActivity.class)
             .putExtra("taxon_key",entry.optString("sourceTaxonKey"))));
         return card;
     }
     private String habitatIcon(String group){
-        if("Aquatic".equals(group))return "habitat";
-        if("Coastal".equals(group))return "map";
+        if("Terrestrial".equals(group))return "forest";
+        if("Edaphic".equals(group))return "karst";
+        if("Aquatic".equals(group))return "wetland";
+        if("Coastal".equals(group))return "coast";
+        if("Human-modified".equals(group))return "fields";
         return "habitat";
     }
     private View habitatCard(JSONObject profile){
@@ -209,7 +223,7 @@ public final class LikasDiscoveryActivity extends Activity {
         else
             art.addView(new LikasPortalUi.Glyph(this,habitatIcon(group),UiKit.FOREST),
                 new FrameLayout.LayoutParams(dp(66),dp(66),Gravity.CENTER));
-        card.addView(art,new LinearLayout.LayoutParams(-1,dp(126)));
+        card.addView(art,new LinearLayout.LayoutParams(-1,dp(150)));
         TextView name=note(profile.optString("name"),16,UiKit.INK,true);name.setMaxLines(2);
         LinearLayout.LayoutParams n=new LinearLayout.LayoutParams(-1,-2);
         n.topMargin=dp(11);card.addView(name,n);
@@ -221,6 +235,10 @@ public final class LikasDiscoveryActivity extends Activity {
         description.setEllipsize(android.text.TextUtils.TruncateAt.END);
         LinearLayout.LayoutParams o=new LinearLayout.LayoutParams(-1,-2);
         o.topMargin=dp(7);card.addView(description,o);
+        TextView open=note("OPEN HABITAT GUIDE   ›",11,UiKit.POND,true);
+        open.setLetterSpacing(.07f);
+        LinearLayout.LayoutParams openLp=new LinearLayout.LayoutParams(-1,-2);
+        openLp.topMargin=dp(11);card.addView(open,openLp);
         card.setFocusable(true);card.setClickable(true);
         card.setContentDescription("Open habitat reference: "+profile.optString("name"));
         card.setOnClickListener(v->startActivity(new Intent(this,LikasHabitatProfileActivity.class)
@@ -370,7 +388,7 @@ public final class LikasDiscoveryActivity extends Activity {
     private int cardWidth(){
         int screen=getResources().getConfiguration().screenWidthDp;
         return largeText()?Math.max(230,Math.min(310,screen-56)):
-            Math.max(184,Math.min(242,screen-90));
+            Math.max(208,Math.min(286,screen-72));
     }
     private void action(String name,Runnable click){
         Button b=UiKit.button(this,name,"secondary");

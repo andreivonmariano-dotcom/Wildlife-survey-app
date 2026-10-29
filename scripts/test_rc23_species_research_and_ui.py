@@ -79,8 +79,8 @@ class Rc23SpeciesResearch(unittest.TestCase):
         self.assertIn("latest cited 96-species accounts",compare)
         self.assertIn("Search offline species by common, scientific or former name",picker)
         self.assertIn("Search species by scientific, common or former name",detail)
-        self.assertIn("versionCode 91",gradle)
-        self.assertIn("0.27.3-rc31-priority-diagnostics-preview",gradle)
+        self.assertIn("versionCode 92",gradle)
+        self.assertIn("0.27.3-rc32-sparse-evidence-keys-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

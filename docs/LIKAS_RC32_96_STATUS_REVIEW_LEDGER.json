@@ -2,10 +2,10 @@
   "schemaVersion": "rc32-priority-96-status-evidence-ledger-v1",
   "date": "2026-10-29",
   "speciesCount": 96,
-  "globalIucnDirectReviewCount": 4,
+  "globalIucnDirectReviewCount": 3,
   "denrDatedOrderReviewCount": 3,
   "rc32SpeciesWithNewResearch": 6,
-  "description": "No current status is invented. Old RC18/RC31 IUCN citations are not silently promoted to current. National and global authorities remain separate. A status in a secondary specialist webpage is kept unverified at the primary-source level. Dated 2019 national order is not proof of future revisions.",
+  "description": "No current status is invented. Old RC18/RC31 IUCN citations are not silently promoted to current. National and global authorities remain separate. A status in a secondary specialist webpage is kept unverified at the primary-source level. Dated 2019 national order is not proof of future revisions. RC31's northern Rufous Hornbill IUCN 2020 status is a dated specialist summary, not direct primary IUCN retrieval.",
   "records": [
     {
       "scientificName": "Pithecophaga jefferyi",
@@ -1450,5 +1450,6 @@
       "hasRc32ScienceRecord": false,
       "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
     }
-  ]
+  ],
+  "globalIucnSecondaryDatedSummaryCount": 1
 }

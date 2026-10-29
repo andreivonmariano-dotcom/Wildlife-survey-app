@@ -37,7 +37,7 @@ public final class Rc14Bibliography {
             ByteArrayOutputStream out=new ByteArrayOutputStream()){
             byte[] buffer=new byte[8192];int n;
             while((n=in.read(buffer))!=-1){
-                if(out.size()+n>160000)throw new IllegalArgumentException("Bibliography too large");
+                if(out.size()+n>300000)throw new IllegalArgumentException("Bibliography too large");
                 out.write(buffer,0,n);
             }
             JSONObject obj=new JSONObject(out.toString("UTF-8"));
@@ -74,6 +74,13 @@ public final class Rc14Bibliography {
             item.addView(text(a,imprint,false));
         }else{
             item.addView(text(a,citation,true));
+        }
+        String sourceType=paper.optString("sourceType").trim();
+        if(!sourceType.isEmpty()){
+            // Expose the actual source class, including secondary or curated sources.
+            String readableType=sourceType.replace('_',' ');
+            String yearLabel=year>1800?" · "+year:" · year not recorded";
+            item.addView(text(a,"Evidence type: "+readableType+yearLabel,false));
         }
         Button open=UiKit.button(a,
             url.startsWith("https://doi.org/")?"Open study ↗":"Open source ↗","quiet");

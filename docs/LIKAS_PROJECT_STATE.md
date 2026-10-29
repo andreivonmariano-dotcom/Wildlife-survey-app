@@ -1,5 +1,14 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC27 code85 signed APK inspected; emulator in progress
+
+- Scientific Core QA run **40828420231** on source commit `ab97da2c0153403feb6c1fab98239665bb417f07` completed **success** (Python tests, JVM, Android build). Extracted GitHub artifact **12877182985** into current chat and independently validated exact `/mnt/data/LIKAS-v0.27.3-RC27-herpetofauna-field-debug.apk`, **9,603,216 bytes**, SHA256 **1fc1eb2f2d87651b5e4c80a26d617cb9caaa9dd257e866c64b88c4f1a5305709**. Embedded package `org.phwildlife.survey.beta08`, versionName `0.27.3-rc27-herpetofauna-field-preview`, source Gradle code85; 96 species, 456 facts, 4 RC27 primary notes; APK ZIP intact. Actual v2 signing X.509 DER SHA256 **f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937**, equals pinned signer. Verified direct APK link delivered in chat.
+- Android 14 API34 320dp emulator run **40828420351** remains **in progress** as of this entry. It must prove 16/16, 200% Habitat tabs and Home/Setup/History/Library, 96 screens, media fixture and byte-identical previous/current SQLite. Do not mark emulator accepted before independent evidence retrieval.
+- A verified direct `LIKAS-RC27-Phone-Field-QA-Kit.zip` was generated in this chat, with fourteen `NOT TESTED` physical phone cases, CSV, README and read-only adb metadata script. No actual phone or owner's historical records were accessed.
+
+---
+
+
 ## 29 October 2026 | RC27 research expansion, emulator clipping correction and device QA kit (source candidate)
 
 - Owner reselected Q1/Q2/Q3. Current RC26C candidate code84 is signed and passed scientific-core tests, but its actual Android 14 emulator workflow **40826262462 FAILED 15/16**. Downloaded artifact 12876987641 and independently read instrumentation. One real failure: `HabitatRecordsActivity` My records tab at fontScale 2.0 had 121px visible out of measured 144px. Since the runner stopped at instrumentation failure, its saved ZIP held 9 files, not all 96 screenshots; do **not** mark RC26C emulator-accepted. Old/new disposable SQLite files exist but are not owner phone data.

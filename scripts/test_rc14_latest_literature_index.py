@@ -55,7 +55,7 @@ class LiteratureIndex(unittest.TestCase):
         self.assertNotIn('link(a,references,"View publication",fact.url)',view)
         self.assertIn('rc14_96_species_literature_index_v1.json',bibliography)
         self.assertIn('Uri.parse(url)',bibliography)
-        self.assertIn('final int remaining=refs.length()-3',bibliography)
+        self.assertIn('final int remaining=matches.size()-first',bibliography)
         self.assertIn('Show "+remaining+" more sources',bibliography)
         self.assertIn('Open study',bibliography)
         self.assertNotIn('specialist sign-off',bibliography.lower())

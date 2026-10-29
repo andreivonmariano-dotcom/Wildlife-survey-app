@@ -1,3 +1,15 @@
+# LIKAS v0.27.3 RC33 | Portal, icon and visual refresh
+
+**Android development preview:** `0.27.3-rc33-portal-ui-preview` (versionCode **93**), unchanged package `org.phwildlife.survey.beta08` and pinned signing identity, SQLite **27**.
+
+The app now opens a quick LIKAS splash, then a **three-card portal** with short labels and original glyph art: **Fieldwork** for survey setup, active survey, archive, data and analysis; **Library** for Philippine species, habitats, original research, citations, comparisons and offline licensed photos; and **Settings** for backup, storage, import, app information and a Less motion control. A source-preserved, retro pixel-art *Staurois natator*-inspired frog emerges front-on from the pond in the launcher and home hero. This illustration is brand artwork, not a wildlife diagnostic photo. The old approved frog and forest images remain intact.
+
+**Verified:** Scientific Core QA run **40848568986** completed successfully on source commit `33e1ef461739355185ad308f6803989b54188fa6`; exact signed APK package/version, 2,324-byte icon fingerprint, ZIP integrity and original signing certificate independently verified. **Not verified:** all RC33 Android emulator 200%-font screenshots, real-device upgrade over owner survey data, and remaining individual screen restyling.
+
+See `docs/LIKAS_RC33_PORTAL_ICON_AESTHETIC_QA.md` for design system changes, tests, user-data protections, APK fingerprint and next work.
+
+---
+
 # LIKAS v0.27.3 RC32 | Source-scoped sparse priority accounts and diagnostic keys
 
 **Build candidate:** `0.27.3-rc32-sparse-evidence-keys-preview` (versionCode **92**), Android package `org.phwildlife.survey.beta08`, same SQLite **27** and pinned signing setup. Core source checks, signed build and real-device verification are distinct QA gates.

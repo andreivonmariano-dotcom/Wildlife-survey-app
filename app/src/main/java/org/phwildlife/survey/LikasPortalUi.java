@@ -104,35 +104,101 @@ public final class LikasPortalUi {
         return cover;
     }
 
+    /** Illustrated entry panel. The artwork is drawn locally and never fetched online. */
     public static View tile(Activity a,String title,String detail,String icon,
             int tint,int background,Runnable open){
-        LinearLayout row=new LinearLayout(a);row.setOrientation(LinearLayout.HORIZONTAL);
+        final boolean field="Fieldwork".equals(title);
+        final int fill=field?CANOPY:("Settings".equals(title)?
+            Color.rgb(230,239,236):Color.rgb(231,242,222));
+        final int ink=field?CREAM:CANOPY;
+        FrameLayout panel=new FrameLayout(a);
+        panel.setBackground(tapBackground(a,fill,Color.TRANSPARENT,24));
+        panel.setClipToOutline(true);
+        panel.setMinimumHeight(dp(a,136));
+        panel.setElevation(dp(a,2));
+        // A few original contours suggest canopy, water or chart grid.
+        View backdrop=new View(a){
+            final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
+            @Override protected void onDraw(Canvas c){
+                float w=getWidth(),h=getHeight();
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setColor(field?Color.argb(45,225,242,203):
+                    Color.argb(48,38,92,75));
+                paint.setStrokeWidth(dp(a,1));
+                for(int j=0;j<4;j++){
+                    Path line=new Path();
+                    float x=w*(.58f+j*.12f);
+                    line.moveTo(x,-dp(a,20));
+                    line.cubicTo(x-dp(a,86),h*.28f,
+                        x+dp(a,67),h*.64f,x-dp(a,55),h+dp(a,20));
+                    c.drawPath(line,paint);
+                }
+                paint.setStyle(Paint.Style.FILL);
+                paint.setColor(field?Color.argb(25,211,235,182):
+                    Color.argb(28,49,116,124));
+                c.drawCircle(w*.98f,h*.21f,dp(a,65),paint);
+            }
+        };
+        panel.addView(backdrop,new FrameLayout.LayoutParams(-1,-1));
+        LinearLayout row=new LinearLayout(a);
+        row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(dp(a,17),dp(a,14),dp(a,16),dp(a,14));
-        row.setBackground(tapBackground(a,background,Color.rgb(225,230,221),22));
-        row.setMinimumHeight(dp(a,104));row.setElevation(dp(a,1));
-        FrameLayout art=new FrameLayout(a);
-        art.setBackground(rounded(a,tint,Color.TRANSPARENT,17));
-        Glyph glyph=new Glyph(a,icon,title.equals("Fieldwork")?CREAM:CANOPY);
-        FrameLayout.LayoutParams gp=new FrameLayout.LayoutParams(dp(a,43),dp(a,43),Gravity.CENTER);
-        art.addView(glyph,gp);
-        row.addView(art,new LinearLayout.LayoutParams(dp(a,64),dp(a,64)));
-        LinearLayout copy=new LinearLayout(a);copy.setOrientation(LinearLayout.VERTICAL);
-        TextView name=text(a,title,21,CANOPY,true);
+        row.setPadding(dp(a,20),dp(a,17),dp(a,15),dp(a,17));
+        LinearLayout copy=new LinearLayout(a);
+        copy.setOrientation(LinearLayout.VERTICAL);
+        TextView name=text(a,title,23,ink,true);
         copy.addView(name);
-        TextView caption=text(a,detail,12,UiKit.MUTED,false);
-        LinearLayout.LayoutParams cc=new LinearLayout.LayoutParams(-1,-2);
-        cc.topMargin=dp(a,5);copy.addView(caption,cc);
-        LinearLayout.LayoutParams contentLp=new LinearLayout.LayoutParams(0,-2,1);
-        contentLp.leftMargin=dp(a,16);
-        row.addView(copy,contentLp);
-        TextView next=text(a,"›",29,WATER,false);
-        next.setGravity(Gravity.CENTER);
-        row.addView(next,new LinearLayout.LayoutParams(dp(a,23),dp(a,50)));
-        row.setFocusable(true);row.setClickable(true);
-        row.setContentDescription(title+". "+detail);
-        row.setOnClickListener(v->open.run());
-        return row;
+        TextView caption=text(a,detail,12,field?Color.rgb(225,237,215):MOSS,false);
+        caption.setMaxLines(2);
+        LinearLayout.LayoutParams captionLp=new LinearLayout.LayoutParams(-1,-2);
+        captionLp.topMargin=dp(a,8);
+        copy.addView(caption,captionLp);
+        row.addView(copy,new LinearLayout.LayoutParams(0,-2,1f));
+        FrameLayout art=new FrameLayout(a);
+        art.setBackground(rounded(a,field?Color.argb(42,236,247,218):
+            Color.argb(65,255,255,255),Color.TRANSPARENT,23));
+        art.addView(new Glyph(a,icon,field?CREAM:CANOPY),
+            new FrameLayout.LayoutParams(dp(a,54),dp(a,54),Gravity.CENTER));
+        LinearLayout.LayoutParams artLp=new LinearLayout.LayoutParams(dp(a,88),dp(a,88));
+        artLp.leftMargin=dp(a,10);
+        row.addView(art,artLp);
+        panel.addView(row,new FrameLayout.LayoutParams(-1,-2,Gravity.CENTER_VERTICAL));
+        panel.setContentDescription("Open "+title+". "+detail);
+        panel.setFocusable(true);
+        panel.setClickable(true);
+        panel.setOnClickListener(v->open.run());
+        return panel;
+    }
+
+    /** Compact illustrated tile for field methods, library tools and analysis. */
+    public static View mini(Activity a,String title,String detail,String symbol,Runnable open){
+        LinearLayout panel=new LinearLayout(a);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setPadding(dp(a,15),dp(a,13),dp(a,12),dp(a,13));
+        panel.setBackground(tapBackground(a,Color.WHITE,Color.rgb(219,230,215),18));
+        panel.setMinimumHeight(dp(a,126));
+        FrameLayout art=new FrameLayout(a);
+        art.setBackground(rounded(a,Color.rgb(230,240,227),Color.TRANSPARENT,13));
+        art.addView(new Glyph(a,symbol,CANOPY),
+            new FrameLayout.LayoutParams(dp(a,30),dp(a,30),Gravity.CENTER));
+        panel.addView(art,new LinearLayout.LayoutParams(dp(a,49),dp(a,49)));
+        TextView name=text(a,title,16,CANOPY,true);
+        LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(-1,-2);
+        nameLp.topMargin=dp(a,9);
+        panel.addView(name,nameLp);
+        if(detail!=null&&!detail.isEmpty()){
+            TextView sub=text(a,detail,11,UiKit.MUTED,false);
+            sub.setMaxLines(2);
+            LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
+            subLp.topMargin=dp(a,3);
+            panel.addView(sub,subLp);
+        }
+        panel.setContentDescription("Open "+title+
+            (detail==null||detail.isEmpty()?"":". "+detail));
+        panel.setFocusable(true);
+        panel.setClickable(true);
+        panel.setOnClickListener(v->open.run());
+        return panel;
     }
 
     public static View action(Activity a,String title,String subtitle,String symbol,
@@ -181,6 +247,25 @@ public final class LikasPortalUi {
             p.setStrokeCap(Paint.Cap.ROUND);p.setStrokeJoin(Paint.Join.ROUND);
             Path path=new Path();
             switch(kind){
+                case "bird":
+                    path.moveTo(15,64);path.cubicTo(30,43,55,43,75,62);
+                    path.cubicTo(58,72,38,78,15,64);canvas.drawPath(path,p);
+                    path.reset();path.moveTo(32,56);
+                    path.quadTo(48,28,76,26);
+                    path.quadTo(66,50,43,66);canvas.drawPath(path,p);
+                    circle(canvas,71,52,3);line(canvas,79,56,90,61);break;
+                case "frog":
+                    canvas.drawArc(18,31,82,87,185,170,false,p);
+                    circle(canvas,32,34,12);circle(canvas,68,34,12);
+                    circle(canvas,32,34,3);circle(canvas,68,34,3);
+                    canvas.drawArc(31,49,69,66,5,170,false,p);
+                    line(canvas,8,82,34,82);line(canvas,66,82,92,82);break;
+                case "mammal":
+                    canvas.drawArc(20,19,45,51,180,215,false,p);
+                    canvas.drawArc(55,19,80,51,150,215,false,p);
+                    canvas.drawOval(23,34,77,84,p);
+                    circle(canvas,38,56,3);circle(canvas,62,56,3);
+                    canvas.drawOval(46,65,54,73,p);break;
                 case "field":
                     circle(canvas,50,50,36);
                     path.moveTo(68,29);path.lineTo(57,57);path.lineTo(31,69);

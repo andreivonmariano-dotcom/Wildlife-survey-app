@@ -193,8 +193,7 @@ public final class TaxonDetailActivity extends Activity {
             }
         }catch(Exception ex){showMessage("Catalog search unavailable.");return;}
         if(keys.isEmpty()){
-            showMessage("This name or synonym is not in the installed catalog. "+
-                "Verbatim or unidentified field observations remain available.");
+            showMessage("No matching species in the offline catalog.");
             return;
         }
         if(keys.size()==1){loadKey(keys.get(0));return;}
@@ -271,11 +270,6 @@ public final class TaxonDetailActivity extends Activity {
             boolean literature=Rc7LiteratureNotes.add(this,content,scientific);
             boolean rc7=Rc7FieldAccounts.add(this,content,scientific);
             Rc9ProfileCompleteness.add(this,content,scientific);
-            if(!detailed&&!rc7){
-                content.addView(FieldVisuals.context(this,
-                    "A detailed account is not yet source-checked for this species. "+
-                    "The installed taxonomy and original checklist source remain available below."));
-            }
             content.addView(FieldVisuals.section(this,"Identification and taxonomy",""));
             paragraph("Classification",col(c,"taxon_group")+" · "+
                 col(c,"order_name")+" · "+col(c,"family"));
@@ -293,13 +287,6 @@ public final class TaxonDetailActivity extends Activity {
                 guide.setOnClickListener(v->startActivity(
                     new Intent(this,Rc8TraitComparisonActivity.class)
                         .putExtra("scientific_name",scientific)));
-                paragraph("Diagnostic reference status",
-                    "Source coverage varies by species. Many characters remain unassessed. "+
-                    "Independent specialist key review remains pending.");
-            }else{
-                paragraph("Diagnostic identification traits",
-                    "A checked diagnostic comparison is not yet available for this species. "+
-                    "Keep uncertain determinations unresolved.");
             }
             if(Rc7FieldAccounts.priority(this,scientific)){
                 Button differences=UiKit.button(this,"Compare documented lookalike characters","quiet");
@@ -335,10 +322,6 @@ public final class TaxonDetailActivity extends Activity {
                 Uri.parse("https://www.inaturalist.org/observations?user_id=dreidrei"+
                     "&taxon_name="+Uri.encode(scientific)+"&photos=true"))));
             content.addView(iNat);
-            paragraph("iNaturalist media scope",
-                "Photographs are external community observations. They do not confirm "+
-                "presence at this survey site. The app bundles only individually reviewed "+
-                "and licensed offline media.");
             content.addView(FieldVisuals.section(this,"Habitat and elevation",""));
             try(Cursor ecology=database.rawQuery(
                 "SELECT habitat_codes,elevation_min_m,elevation_max_m,"+
@@ -361,11 +344,8 @@ public final class TaxonDetailActivity extends Activity {
                         String cited=ecology.getString(6);
                         sourceLink("Open habitat study",cited,"https://");
                     }
-                }else paragraph("Habitat / elevation profile",
-                    "Unassessed. No reviewed ecological profile installed.");
+                }
             }
-            if(col(c,"review_status").equals("unreviewed"))
-                paragraph("Review status","Not independently reviewed for regional occurrence");
             StringBuilder names=new StringBuilder();
             try(Cursor aliases=database.rawQuery(
                 "SELECT alias_name,source,source_version FROM taxon_synonyms "+

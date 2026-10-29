@@ -65,7 +65,7 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                         .startsWith("Sources & details")){
                         v.performClick();break;
                     }
-                assertTrue(containsText(descendants(root),"Evidence notes"));
+                assertTrue(containsText(descendants(root),"Study details"));
                 if(root.getWidth()>0&&root.getHeight()>0){
                     Bitmap bitmap=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
                         Bitmap.Config.ARGB_8888);
@@ -115,16 +115,16 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                 }
                 assertTrue("Source drawer reachable",opened);
                 ArrayList<View> expanded=descendants(root);
-                assertTrue(containsText(expanded,"Scientific checklist"));
+                assertTrue(containsText(expanded,"Literature coverage"));
                 boolean checklist=false;
                 for(View v:expanded)if(v instanceof Button&&
-                    ((Button)v).getText().toString().startsWith("Scientific checklist")){
+                    ((Button)v).getText().toString().startsWith("Literature coverage")){
                     assertTrue(v.performClick());
                     checklist=true;break;
                 }
-                assertTrue("Review checklist opens",checklist);
-                assertTrue("No fake expert certification",
-                    containsText(descendants(root),"Specialist sign-off: pending"));
+                assertTrue("Literature drawer opens",checklist);
+                assertTrue("Publication evidence is visible",
+                    containsText(descendants(root),"6 individually cited study notes"));
             });
         }
     }

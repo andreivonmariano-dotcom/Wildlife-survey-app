@@ -48,11 +48,7 @@ public final class LikasSettingsActivity extends Activity {
         LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);
         body.setPadding(0,dp(8),0,dp(24));scroll.addView(body);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        body.addView(LikasPortalUi.kicker(this,"YOUR APP"));
-        TextView headline=LikasPortalUi.text(this,"App settings",29,
-            LikasPortalUi.CANOPY,true);body.addView(headline);
-        TextView sub=LikasPortalUi.text(this,"Backups and preferences",13,
-            UiKit.MUTED,false);sub.setPadding(0,dp(5),0,dp(20));body.addView(sub);
+        body.addView(LikasPortalUi.kicker(this,"PREFERENCES"));
         Switch reduce=new Switch(this);
         reduce.setText("Less motion");
         reduce.setTextSize(16);

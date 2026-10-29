@@ -137,6 +137,7 @@ public final class TaxonDetailActivity extends Activity {
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
 
         setContentView(root);
+        UiMotion.enter(this,root);
         String query=getIntent().getStringExtra("taxon_query");
         String key=getIntent().getStringExtra("taxon_key");
         if(key!=null&&!key.isEmpty())loadKey(key);

@@ -1,6 +1,19 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | RC18B all 96 priority species reference corpus and sources
+
+- **Latest owner instruction:** Focus entirely on completing all priority species accounts now. Implement in the real Android app, not merely docs, and provide a current direct signed APK. This decision does not waive scientific integrity or permit invented facts. See `docs/LIKAS_RC18_ALL_96_ACCOUNTS_EVIDENCE_AUDIT.md`.
+- **Source completed:** Unified `app/src/main/assets/rc18_unified_96_priority_accounts_v1.json` contains **96/96 existing source-keyed species**, **359 distinct citation-linked biological facts** and coverage per five sections, backed by the existing RC8–17 evidence packs and two RC18 source batches. Every species has at least one specific biological fact. Formerly fact-empty `Dicaeum anthonyi` now has Luzon taxonomic/habitat records; `Desmalopex microleucoptera` has the 2008 original study, type-series comparisons and a dated 2018 IUCN assessment. 10 additional cited facts add cobra, hornbill, bleeding-heart and dugong diagnoses/status.
+- **App code:** `Rc11PrioritySpeciesView.java` now loads the 96-account corpus as the primary user-facing source, retaining the previous source-pack logic only as fallback. It maps the internal `Distribution` topic to existing visible **Range** UI and avoids nullable metadata showing `null`. The five compact source-backed cards show no blank placeholder sections, retain photos and source drawer. `rc14_96_species_literature_index_v1.json` now has **256** distinct species-source links across all 96.
+- **Explicit remaining gaps:** **31** species lack sourced Identification evidence; **54** lack Habitat; **25** Distribution; **79** Natural history; **79** Conservation. Topic evidence does **not** mean every claim comes from peer-reviewed original research, and existence of a species card does not imply all fields are scientifically finished. No unsupported field was filled. Existing bibliography has 13 of 96 taxa with targeted verified 2025–26 paper checks.
+- **Tests and build:** New `scripts/test_rc18_all_priority_accounts.py` validates all 96 keys, all 359 facts with matching bibliography URLs, preservation of coverage gaps and actual Android corpus load. Android instrumentation now checks the two formerly empty priority accounts; `scripts/run_emulator_rc7_qa.sh` expects **12 tests**. Android versionName `0.27.3-rc18b-priority-accounts-preview`, versionCode **71**, package `org.phwildlife.survey.beta08`, pinned certificate and SQLite **27** unchanged. **At this entry, exact RC18B signed binary and emulator acceptance are not yet confirmed.** Do not substitute an RC17 APK.
+- **Next:** Confirm Scientific Core QA from code71 (including media/cert), download and independently inspect the exact RC18B APK, validate 12-test emulator with byte-identical in-place SQLite upgrade. Deliver direct APK sandbox link only if exact path is verified. The remaining publications program requires original diagnostic/range/habitat studies, not auto-generated filler. Keep draft PR #38 and startup branch isolated.
+
+---
+
+
+
 ## 29 October 2026 | RC17 signed APK exists and was verified in current conversation
 
 - **Actual build completed:** GitHub Scientific Core QA run **40802695497** succeeded on code commit **920c55dfaf5bedffa34ca16a2420414a4cbe6ccf**, artifact **12867041613** (`LIKAS-RC17-original-comparisons-debug`). Subsequent docs-only commits do not alter the compiled source.

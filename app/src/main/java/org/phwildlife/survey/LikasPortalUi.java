@@ -92,6 +92,14 @@ public final class LikasPortalUi {
         LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
         subLp.topMargin=dp(a,4);words.addView(sub,subLp);
         cover.addView(words,new FrameLayout.LayoutParams(-1,-1));
+        ImageView frog=new ImageView(a);
+        frog.setImageResource(R.drawable.likas_natator_frog);
+        frog.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        frog.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        FrameLayout.LayoutParams iconLp=new FrameLayout.LayoutParams(
+            dp(a,54),dp(a,54),Gravity.TOP|Gravity.RIGHT);
+        iconLp.topMargin=dp(a,14);iconLp.rightMargin=dp(a,14);
+        cover.addView(frog,iconLp);
         cover.setContentDescription("LIKAS. Nature, closer. Field notes and wild places.");
         return cover;
     }

@@ -18,11 +18,11 @@ class Rc24ConservationComparison(unittest.TestCase):
 
     def test_species_identity_and_source_claim_counts(self):
         self.assertEqual(self.corpus["prioritySpeciesCount"],96)
-        self.assertEqual(self.corpus["sourceFactCount"],441)
-        self.assertEqual(sum(p["referenceCount"] for p in self.references["profiles"]),299)
+        self.assertEqual(self.corpus["sourceFactCount"],448)
+        self.assertEqual(sum(p["referenceCount"] for p in self.references["profiles"]),302)
         self.assertEqual(self.corpus["sectionMissingCounts"],{
-            "Identification":1,"Habitat":42,"Distribution":23,
-            "Natural history":69,"Conservation":69})
+            "Identification":1,"Habitat":40,"Distribution":23,
+            "Natural history":67,"Conservation":69})
         missing={a["scientificName"] for a in self.corpus["accounts"]
                  if not a["sections"]["Identification"]}
         self.assertEqual(missing,{"Dicaeum kampalili"})
@@ -84,8 +84,8 @@ class Rc24ConservationComparison(unittest.TestCase):
         self.assertIn("rc24_conservation_200percent.png",instrumentation)
         self.assertIn("compare-200percent-font.png",runner)
         self.assertIn("conservation-200percent-font.png",runner)
-        self.assertIn("versionCode 80",build)
-        self.assertIn("0.27.3-rc24c-large-text-header-preview",build)
+        self.assertIn("versionCode 81",build)
+        self.assertIn("0.27.3-rc25-primary-ecology-accessibility-preview",build)
 
 if __name__=="__main__":
     unittest.main()

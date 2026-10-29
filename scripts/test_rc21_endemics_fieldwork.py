@@ -17,12 +17,12 @@ class Rc21EndemicsFieldwork(unittest.TestCase):
     def test_six_identity_gaps_resolved_and_twelve_still_open(self):
         self.assertEqual(self.batch["newFactCount"],20)
         self.assertEqual(len(self.batch["facts"]),20)
-        self.assertEqual(self.corpus["sourceFactCount"],441)
-        self.assertEqual(sum(x["referenceCount"] for x in self.bibliography["profiles"]),299)
+        self.assertEqual(self.corpus["sourceFactCount"],448)
+        self.assertEqual(sum(x["referenceCount"] for x in self.bibliography["profiles"]),302)
         self.assertEqual(len(self.corpus["accounts"]),96)
         self.assertEqual(self.corpus["sectionMissingCounts"],{
-            "Identification":1,"Habitat":42,"Distribution":23,
-            "Natural history":69,"Conservation":69})
+            "Identification":1,"Habitat":40,"Distribution":23,
+            "Natural history":67,"Conservation":69})
         names={a["scientificName"] for a in self.corpus["accounts"]}
         self.assertEqual(names,{p["scientificName"] for p in self.bibliography["profiles"]})
         for account in self.corpus["accounts"]:
@@ -79,8 +79,8 @@ class Rc21EndemicsFieldwork(unittest.TestCase):
         self.assertIn('font_scale 2.0',recorder)
         self.assertIn('recorder-200percent-font.png',runner)
         self.assertIn('14 tests?',runner)
-        self.assertIn("versionCode 80",gradle)
-        self.assertIn("0.27.3-rc24c-large-text-header-preview",gradle)
+        self.assertIn("versionCode 81",gradle)
+        self.assertIn("0.27.3-rc25-primary-ecology-accessibility-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

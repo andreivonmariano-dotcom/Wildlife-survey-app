@@ -47,6 +47,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
     private final ArrayList<Summary> selected=new ArrayList<>();
     private final HashSet<String> guides=new HashSet<>();
     private int rendered=0;
+    private boolean largeText;
     private static final int PAGE=24;
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private static final class Summary {
@@ -84,14 +85,19 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         db=new FieldDb(this);
+        largeText=getResources().getConfiguration().fontScale>=1.60f;
         loadGuides();
         LinearLayout root=new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(15),dp(11),dp(15),dp(12));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Philippine Species Library","Home",this::finish));
-        root.addView(label("Source-linked offline taxonomy · WBCP 2025 · Sy 2025/2026 · MDD 2.5",
-            13,false));
+        root.addView(UiKit.navigationHeader(this,
+            largeText?"Species":"Philippine Species Library","Home",this::finish));
+        String fullSourceLine="Source-linked offline taxonomy · WBCP 2025 · Sy 2025/2026 · MDD 2.5";
+        TextView sourceBanner=label(largeText?"Offline WBCP, Sy and MDD checklists":fullSourceLine,
+            13,false);
+        sourceBanner.setContentDescription(fullSourceLine);
+        root.addView(sourceBanner);
         search=new EditText(this);
         search.setSingleLine(true);
         search.setTextSize(16);
@@ -108,28 +114,31 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             android.R.layout.simple_spinner_dropdown_item,FILTERS));
         float screenDp=getResources().getDisplayMetrics().widthPixels/
             getResources().getDisplayMetrics().density;
-        if(screenDp<385f){
+        if(screenDp<385f||largeText){
             filters.setOrientation(LinearLayout.VERTICAL);
-            filters.addView(group,new LinearLayout.LayoutParams(-1,dp(48)));
-            filters.addView(scope,new LinearLayout.LayoutParams(-1,dp(48)));
+            filters.addView(group,new LinearLayout.LayoutParams(-1,dp(largeText?72:48)));
+            filters.addView(scope,new LinearLayout.LayoutParams(-1,dp(largeText?72:48)));
         }else{
             filters.addView(group,new LinearLayout.LayoutParams(0,dp(50),1));
             LinearLayout.LayoutParams right=new LinearLayout.LayoutParams(0,dp(50),1);
             right.leftMargin=dp(8);filters.addView(scope,right);
         }
         root.addView(filters);
-        Button researchToggle=UiKit.button(this,"Research and comparison tools  ▾","secondary");
+        Button researchToggle=UiKit.button(this,largeText?
+            "Research tools  ▾":"Research and comparison tools  ▾","secondary");
         researchToggle.setContentDescription("Expand research comparisons, photographic evidence and regional sources");
-        root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(48)));
+        root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(largeText?58:48)));
         LinearLayout researchPanel=new LinearLayout(this);
         researchPanel.setOrientation(LinearLayout.VERTICAL);
         researchPanel.setVisibility(View.GONE);
-        root.addView(researchPanel);
+        // Expandable tools live inside the scrolling results region, not above it.
         researchPanel.addView(label("Identification, habitat and photo references",12,false));
         researchToggle.setOnClickListener(v->{
             boolean open=researchPanel.getVisibility()!=View.VISIBLE;
             researchPanel.setVisibility(open?View.VISIBLE:View.GONE);
-            researchToggle.setText(open?"Hide research tools  ▴":"Research and comparison tools  ▾");
+            researchToggle.setText(open?
+                (largeText?"Hide tools  ▴":"Hide research tools  ▴"):
+                (largeText?"Research tools  ▾":"Research and comparison tools  ▾"));
         });
         LinearLayout tools=new LinearLayout(this);
         tools.setOrientation(screenDp<385f?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
@@ -154,12 +163,22 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             new Intent(this,Rc9DifferentialActivity.class)));
         researchPanel.addView(differences,new LinearLayout.LayoutParams(-1,dp(45)));
         status=label("",13,false);root.addView(status);
+        status.setFocusable(true);
+        status.setOnClickListener(v->new android.app.AlertDialog.Builder(this)
+            .setTitle("Species evidence limits")
+            .setMessage(status.getContentDescription())
+            .setPositiveButton("Close",null).show());
         ScrollView scroll=new ScrollView(this);
+        LinearLayout scrollBody=new LinearLayout(this);
+        scrollBody.setOrientation(LinearLayout.VERTICAL);
+        scrollBody.addView(researchPanel);
         results=new LinearLayout(this);results.setOrientation(LinearLayout.VERTICAL);
-        scroll.addView(results);
+        scrollBody.addView(results);
+        scroll.addView(scrollBody);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1f));
-        more=UiKit.button(this,"Show more species","secondary");
-        root.addView(more,new LinearLayout.LayoutParams(-1,dp(51)));
+        more=UiKit.button(this,largeText?"More species":"Show more species","secondary");
+        more.setContentDescription("Show next 24 Philippine species source records");
+        root.addView(more,new LinearLayout.LayoutParams(-1,dp(largeText?58:51)));
         more.setOnClickListener(v->appendPage());
         setContentView(root);
         AdapterView.OnItemSelectedListener listener=new AdapterView.OnItemSelectedListener(){
@@ -225,9 +244,11 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             return;
         }
         rendered=0;results.removeAllViews();
-        status.setText(selected.size()+" source records · checklist names are not complete species profiles. "+
+        String evidenceStatus=selected.size()+" source records · checklist names are not complete species profiles. "+
             (filter==1?"Priority identities are checklist-backed; detailed field biology is still under review. ":
-            filter>=4?"These priority research gaps mean unassessed evidence, not species absence. ":""));
+            filter>=4?"These priority research gaps mean unassessed evidence, not species absence. ":"");
+        status.setText(largeText?selected.size()+" source records · tap for limits":evidenceStatus);
+        status.setContentDescription(evidenceStatus+" Tap for evidence limits.");
         appendPage();
     }
     private void appendPage(){

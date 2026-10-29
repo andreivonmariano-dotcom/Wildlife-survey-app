@@ -16,11 +16,11 @@ class Rc22OriginalStudies(unittest.TestCase):
         self.assertEqual(self.batch["recordCount"],13)
         self.assertEqual(len(self.batch["records"]),13)
         self.assertEqual(self.corpus["prioritySpeciesCount"],96)
-        self.assertEqual(self.corpus["sourceFactCount"],441)
-        self.assertEqual(sum(p["referenceCount"] for p in self.library["profiles"]),299)
+        self.assertEqual(self.corpus["sourceFactCount"],448)
+        self.assertEqual(sum(p["referenceCount"] for p in self.library["profiles"]),302)
         self.assertEqual(self.corpus["sectionMissingCounts"],{
-            "Identification":1,"Habitat":42,"Distribution":23,
-            "Natural history":69,"Conservation":69})
+            "Identification":1,"Habitat":40,"Distribution":23,
+            "Natural history":67,"Conservation":69})
         for account in self.corpus["accounts"]:
             self.assertEqual(account["coverage"]["citedBiologicalFacts"],
                              sum(len(x) for x in account["sections"].values()))
@@ -74,8 +74,8 @@ class Rc22OriginalStudies(unittest.TestCase):
         build=(ROOT/"app/build.gradle").read_text()
         db=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
-        self.assertIn("versionCode 80",build)
-        self.assertIn("0.27.3-rc24c-large-text-header-preview",build)
+        self.assertIn("versionCode 81",build)
+        self.assertIn("0.27.3-rc25-primary-ecology-accessibility-preview",build)
         self.assertIn("super(context,NAME,null,27)",db)
 
 if __name__=="__main__":

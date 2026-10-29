@@ -59,6 +59,79 @@ public final class Rc10LibraryScreensInstrumentedTest {
             });
         }
     }
+    private static void requireVisibleUnclipped(View v,String label){
+        assertNotNull(label+" control exists",v);
+        android.graphics.Rect visible=new android.graphics.Rect();
+        assertTrue(label+" visible in screen",v.getGlobalVisibleRect(visible));
+        assertTrue(label+" height not clipped",visible.height()>=v.getHeight()-2);
+    }
+    private static void capture(android.app.Activity activity,String name){
+        View root=activity.getWindow().getDecorView();
+        android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(root.getWidth(),
+            root.getHeight(),android.graphics.Bitmap.Config.ARGB_8888);
+        root.draw(new android.graphics.Canvas(image));
+        try(java.io.FileOutputStream stream=new java.io.FileOutputStream(
+                new java.io.File(activity.getFilesDir(),name))){
+            assertTrue(image.compress(android.graphics.Bitmap.CompressFormat.PNG,90,stream));
+        }catch(Exception error){throw new IllegalStateException(error);}
+        image.recycle();
+    }
+    @Test public void largeTextSpeciesAndHabitatsPreserveFieldControls()throws Exception{
+        androidx.test.platform.app.InstrumentationRegistry.getInstrumentation()
+            .getUiAutomation().executeShellCommand(
+                "settings put system font_scale 2.0").close();
+        android.os.SystemClock.sleep(800);
+        try{
+            try(ActivityScenario<Rc7SpeciesLibraryActivity> test=
+                    ActivityScenario.launch(Rc7SpeciesLibraryActivity.class)){
+                test.onActivity(activity->{
+                    assertTrue("Actual large-text configuration",
+                        activity.getResources().getConfiguration().fontScale>=1.60f);
+                    View root=activity.getWindow().getDecorView();
+                    ArrayList<View> all=new ArrayList<>();
+                    walk(root,all);
+                    android.widget.EditText search=null;
+                    android.widget.Spinner group=null;
+                    for(View v:all){
+                        if(search==null&&v instanceof android.widget.EditText)
+                            search=(android.widget.EditText)v;
+                        if(group==null&&v instanceof android.widget.Spinner)
+                            group=(android.widget.Spinner)v;
+                    }
+                    requireVisibleUnclipped(search,"Species search");
+                    requireVisibleUnclipped(group,"Species wildlife group");
+                    requireVisibleUnclipped(named(root,"Research tools"),"Species tools");
+                    assertNotNull("Research panel present for disclosure",
+                        named(root,"Compare traits"));
+                    capture(activity,"rc25_species_library_200percent.png");
+                });
+            }
+            try(ActivityScenario<HabitatRecordsActivity> test=
+                    ActivityScenario.launch(HabitatRecordsActivity.class)){
+                test.onActivity(activity->{
+                    assertTrue("Actual large-text configuration",
+                        activity.getResources().getConfiguration().fontScale>=1.60f);
+                    View root=activity.getWindow().getDecorView();
+                    requireVisibleUnclipped(named(root,"Guide"),"Habitat guide tab");
+                    requireVisibleUnclipped(named(root,"My records"),"Site records tab");
+                    requireVisibleUnclipped(named(root,"Research tools"),"Habitat tools");
+                    Button toggle=named(root,"Research tools");
+                    assertTrue(toggle.performClick());
+                    assertNotNull("Research comparison reachable within scroll",
+                        named(root,"Compare habitat traits"));
+                    assertNotNull("Site reference link retained",
+                        named(root,"Published species"));
+                    capture(activity,"rc25_habitats_200percent.png");
+                });
+            }
+        }finally{
+            androidx.test.platform.app.InstrumentationRegistry.getInstrumentation()
+                .getUiAutomation().executeShellCommand(
+                    "settings put system font_scale 1.0").close();
+            android.os.SystemClock.sleep(800);
+        }
+    }
+
     @Test public void offlineResearchCardsContainCitedEvidence()throws Exception{
         try(ActivityScenario<Rc7SpeciesLibraryActivity> test=
                 ActivityScenario.launch(Rc7SpeciesLibraryActivity.class)){

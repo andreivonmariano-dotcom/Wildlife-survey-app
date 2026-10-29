@@ -106,10 +106,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Ibañez et al. (2003), Wilson Bulletin 115:333–336",
+          "url": "https://doi.org/10.1676/01-054",
+          "sourceType": "peer_reviewed_breeding_field_study",
+          "publicationYear": 2003,
+          "latestConfirmed": false,
+          "sourceLocation": "Abstract; Mount Sinaka pair observed July 1999–January 2000",
+          "topics": [
+            "Natural history"
+          ]
         }
       ],
       "recencyStatus": "recent_2025_2026_publication_verified",
-      "referenceCount": 6
+      "referenceCount": 7
     },
     {
       "scientificName": "Cacatua haematuropygia",
@@ -970,10 +981,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Sanguila et al. (2016), ZooKeys 624:1–132",
+          "url": "https://doi.org/10.3897/zookeys.624.9814",
+          "sourceType": "peer_reviewed_herpetofauna_field_survey",
+          "publicationYear": 2016,
+          "latestConfirmed": false,
+          "sourceLocation": "Species account: Leptobrachium lumadorum, habitat observations",
+          "topics": [
+            "Habitat"
+          ]
         }
       ],
       "recencyStatus": "recent_2025_2026_publication_verified",
-      "referenceCount": 3
+      "referenceCount": 4
     },
     {
       "scientificName": "Leptobrachium mangyanorum",
@@ -2183,10 +2205,22 @@
             "Identification",
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Wischusen & Richmond (1998), Journal of Mammalogy 79:1288–1295",
+          "url": "https://doi.org/10.2307/1383020",
+          "sourceType": "peer_reviewed_foraging_field_study",
+          "publicationYear": 1998,
+          "latestConfirmed": false,
+          "sourceLocation": "Abstract; observed trees and study vegetation sampling",
+          "topics": [
+            "Habitat",
+            "Natural history"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Crateromys australis",

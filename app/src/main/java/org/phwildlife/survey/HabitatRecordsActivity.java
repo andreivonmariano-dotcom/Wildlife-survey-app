@@ -18,6 +18,7 @@ public final class HabitatRecordsActivity extends Activity {
     private LinearLayout items;
     private Button guideTab,recordsTab;
     private int selectedTab=0;
+    private boolean largeText;
     private String habitatGroup="All habitats";
     private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
     private TextView label(String content,int size){
@@ -32,53 +33,68 @@ public final class HabitatRecordsActivity extends Activity {
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         helper=new FieldDb(this);
+        largeText=getResources().getConfiguration().fontScale>=1.60f;
         LinearLayout root=new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(16),dp(12),dp(16),dp(12));
-        root.addView(UiKit.navigationHeader(this,"Habitat & Ecology","Home",this::finish));
-        TextView note=label("Offline reference guide and separately recorded field evidence.",13);
+        root.addView(UiKit.navigationHeader(this,
+            largeText?"Habitats":"Habitat & Ecology","Home",this::finish));
+        String fullHabitatNote="Offline reference guide and separately recorded field evidence.";
+        TextView note=label(largeText?"Reference guide · measured field records":fullHabitatNote,13);
+        note.setContentDescription(fullHabitatNote);
         note.setTextColor(UiKit.MUTED);
         root.addView(note);
         LinearLayout tabs=new LinearLayout(this);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
         guideTab=UiKit.button(this,"Habitat guide","primary");
         recordsTab=UiKit.button(this,"My site records","secondary");
-        tabs.addView(guideTab,new LinearLayout.LayoutParams(0,dp(50),1));
-        LinearLayout.LayoutParams other=new LinearLayout.LayoutParams(0,dp(50),1);
+        guideTab.setContentDescription("Habitat reference guide tab");
+        recordsTab.setContentDescription("My recorded site habitats tab");
+        tabs.addView(guideTab,new LinearLayout.LayoutParams(0,dp(largeText?58:50),1));
+        LinearLayout.LayoutParams other=new LinearLayout.LayoutParams(0,dp(largeText?58:50),1);
         other.leftMargin=dp(8);
         tabs.addView(recordsTab,other);
         root.addView(tabs);
-        Button researchToggle=UiKit.button(this,"Habitat research tools  ▾","secondary");
+        Button researchToggle=UiKit.button(this,largeText?
+            "Research tools  ▾":"Habitat research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand source-linked habitat comparisons and species associations");
-        root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(48)));
+        root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(largeText?58:48)));
         LinearLayout researchTools=new LinearLayout(this);
         researchTools.setOrientation(LinearLayout.VERTICAL);
         researchTools.setVisibility(android.view.View.GONE);
-        root.addView(researchTools);
+        // Research controls scroll with the habitat cards, not as a fixed tall header.
         researchToggle.setOnClickListener(v->{
             boolean open=researchTools.getVisibility()!=android.view.View.VISIBLE;
             researchTools.setVisibility(open?android.view.View.VISIBLE:android.view.View.GONE);
-            researchToggle.setText(open?"Hide habitat research tools  ▴":"Habitat research tools  ▾");
+            researchToggle.setText(open?
+                (largeText?"Hide tools  ▴":"Hide habitat research tools  ▴"):
+                (largeText?"Research tools  ▾":"Habitat research tools  ▾"));
         });
         Button compareHabitat=UiKit.button(this,"Compare habitat traits","secondary");
         compareHabitat.setContentDescription("Compare fifteen cited habitat formations and their field indicators");
-        researchTools.addView(compareHabitat,new LinearLayout.LayoutParams(-1,dp(49)));
+        researchTools.addView(compareHabitat,new LinearLayout.LayoutParams(-1,
+            dp(largeText?96:49)));
         Button references=UiKit.button(this,"Published species–habitat links","quiet");
         references.setContentDescription("Open source-linked species and habitat ecology references");
         references.setOnClickListener(v->startActivity(
             new Intent(this,HabitatSpeciesEvidenceActivity.class)));
-        researchTools.addView(references,new LinearLayout.LayoutParams(-1,dp(49)));
+        researchTools.addView(references,new LinearLayout.LayoutParams(-1,
+            dp(largeText?96:49)));
         compareHabitat.setOnClickListener(v->startActivity(new Intent(this,Rc8TraitComparisonActivity.class)
             .putExtra("comparison_mode","habitat")));
         guideTab.setOnClickListener(v->{selectedTab=0;render();});
         recordsTab.setOnClickListener(v->{selectedTab=1;render();});
         ScrollView scroll=new ScrollView(this);
         scroll.setFillViewport(true);
+        LinearLayout scrollBody=new LinearLayout(this);
+        scrollBody.setOrientation(LinearLayout.VERTICAL);
+        scrollBody.addView(researchTools);
         items=new LinearLayout(this);
         items.setOrientation(LinearLayout.VERTICAL);
         items.setPadding(0,dp(8),0,dp(20));
-        scroll.addView(items);
+        scrollBody.addView(items);
+        scroll.addView(scrollBody);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
 
         setContentView(root);
@@ -92,8 +108,12 @@ public final class HabitatRecordsActivity extends Activity {
     private void render(){
         if(items==null)return;
         items.removeAllViews();
-        guideTab.setText(selectedTab==0?"Habitat guide  ●":"Habitat guide");
-        recordsTab.setText(selectedTab==1?"My site records  ●":"My site records");
+        guideTab.setText(largeText?
+            (selectedTab==0?"Guide  ●":"Guide"):
+            (selectedTab==0?"Habitat guide  ●":"Habitat guide"));
+        recordsTab.setText(largeText?
+            (selectedTab==1?"My records  ●":"My records"):
+            (selectedTab==1?"My site records  ●":"My site records"));
         if(selectedTab==0){
             Button filter=UiKit.button(this,"Filter: "+habitatGroup+"  ▾","quiet");
             LinearLayout.LayoutParams fp=new LinearLayout.LayoutParams(-1,dp(48));

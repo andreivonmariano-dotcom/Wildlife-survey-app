@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC25 Q2/Q3 primary ecological records and two-screen large-text review
+
+- Owner selected Q2/Q3: expand source-verified Philippine habitat/ecology profiles and audit remaining non-startup screens for readability/accessibility. Work remains on `feature/likas-core-fieldwork-post-rc4` (PR #38); startup track untouched.
+- **Seven new primary-study facts** for three existing priority taxa: Philippine Eagle `Pithecophaga jefferyi` (2003 Mount Sinaka incubation and observed diet, two Natural history); `Leptobrachium lumadorum` (2016 northeast Mindanao surveyed edge, riparian and upland sites, two Habitat); `Cynocephalus volans` (1998 six-colugo tree-use study, one Habitat and two Natural history). Study boundaries and source URLs are recorded per claim. No uncited taxonomy, inferred ranges, conservation reclassification or new user sightings. Unified roster remains 96 accounts, now **448 facts**, **302 citation links**. Missing: ID 1, Habitat 40, Distribution 23, Natural history 67, Conservation 69.
+- **Non-startup UI source changes:** Species Library uses compact large-font title/provenance, vertical taller filters and a scroll-contained research panel, plus a tap-to-read full evidence-limit note. Habitats uses short but spoken full 200%-font tab labels and a scroll-contained research panel. Both preserve the raw catalog and environmental records; Archive, Home, backup, GPS and data deletion are source-reviewed only, with no operations rewritten.
+- Added Android emulator instrumentation for full visible Species/Habitat primary controls at 200% and two PNG captures, raising expected test count 14→15. Existing End Survey and research 200% checks preserved. Added primary-source consistency tests. **New candidate** `0.27.3-rc25-primary-ecology-accessibility-preview`, versionCode **81**, package `org.phwildlife.survey.beta08`, SQLite27 and pinned signing configuration unchanged.
+- **Status:** source edits staged for integration, build, real Android emulator evidence and downloadable APK still to be validated. This note is a development handoff, not proof of a shipped RC25 APK. Scientific originals are not redistributed. `Dicaeum kampalili` original 1952 diagnostic remains unverified and empty.
+- **Next:** evaluate CI source/JVM tests, Android 15-test run, 96 reference screenshots, 200% species/habitat views and identical upgrade fixture, then inspect a newly signed code81 APK and deliver a verified direct in-chat file. Actual user archive migration, GNSS, camera/audio endurance and TalkBack remain release gates. Detailed scope: `docs/LIKAS_RC25_PRIMARY_ECOLOGY_AND_FIELD_SCREEN_AUDIT.md`.
+
+---
+
+
 ## 29 October 2026 | RC24C code80 Android 14 emulator gate passed and visually inspected
 
 - Android emulator workflow **40820651226**, source commit `c1d56af06e20dc5ba838775d8c43a660816041d9` (includes all RC24C UI, instrumentation and code80 production edits) **completed success**. Later changes were only Python version-assertion updates, documentation and core CI artifact label, not Android production source.

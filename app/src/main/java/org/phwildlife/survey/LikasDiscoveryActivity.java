@@ -93,13 +93,30 @@ public final class LikasDiscoveryActivity extends Activity {
         LinearLayout card=new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(12),dp(12),dp(12),dp(12));
-        card.setBackground(surface(this,Color.WHITE,accent,22));
-        card.setElevation(dp(1));
+        // Quiet, category-specific frames use only a reviewed dated assessment.
+        int bottom=severity==3?Color.rgb(253,244,241):
+            severity==2?Color.rgb(252,246,238):
+            severity==1?Color.rgb(250,247,237):Color.rgb(246,250,245);
+        GradientDrawable frame=new GradientDrawable(
+            GradientDrawable.Orientation.TL_BR,new int[]{Color.WHITE,bottom});
+        frame.setCornerRadius(dp(22));
+        frame.setStroke(dp(severity>0?2:1),accent);
+        card.setBackground(frame);
+        card.setElevation(dp(2));
         card.setMinimumHeight(dp(largeText()?336:280));
+        if(severity>0){
+            View accentLine=new View(this);
+            accentLine.setBackground(surface(this,accent,accent,4));
+            LinearLayout.LayoutParams accentLp=new LinearLayout.LayoutParams(-1,dp(4));
+            accentLp.bottomMargin=dp(8);card.addView(accentLine,accentLp);
+        }
         // No unsupported status displays as LC, DD or NE. Missing verification is unknown.
         FrameLayout media=new FrameLayout(this);
-        media.setBackground(surface(this,Color.rgb(231,239,225),
-            Color.rgb(231,239,225),15));
+        GradientDrawable mediaTint=new GradientDrawable(
+            GradientDrawable.Orientation.TL_BR,new int[]{
+                Color.rgb(223,237,219),Color.rgb(240,246,236)});
+        mediaTint.setCornerRadius(dp(15));
+        media.setBackground(mediaTint);
         media.setClipToOutline(true);
         ImageView photo=OfflinePhotoEvidence.thumbnailForTaxon(this,scientific);
         if(photo!=null){
@@ -110,7 +127,7 @@ public final class LikasDiscoveryActivity extends Activity {
                 new FrameLayout.LayoutParams(dp(70),dp(70),Gravity.CENTER));
             media.addView(icon,new FrameLayout.LayoutParams(-1,-1));
         }
-        card.addView(media,new LinearLayout.LayoutParams(-1,dp(116)));
+        card.addView(media,new LinearLayout.LayoutParams(-1,dp(132)));
         TextView title=note(label,16,UiKit.INK,true);
         title.setMaxLines(2);
         LinearLayout.LayoutParams titleLp=new LinearLayout.LayoutParams(-1,-2);
@@ -161,7 +178,13 @@ public final class LikasDiscoveryActivity extends Activity {
             Color.rgb(230,239,226);
         LinearLayout card=new LinearLayout(this);card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(14),dp(14),dp(14),dp(14));
-        card.setBackground(surface(this,Color.WHITE,UiKit.BORDER,22));
+        GradientDrawable habitatFrame=new GradientDrawable(
+            GradientDrawable.Orientation.TL_BR,
+            new int[]{Color.WHITE,Color.rgb(244,249,242)});
+        habitatFrame.setCornerRadius(dp(22));
+        habitatFrame.setStroke(dp(1),UiKit.BORDER);
+        card.setBackground(habitatFrame);
+        card.setElevation(dp(2));
         card.setMinimumHeight(dp(largeText()?355:296));
         FrameLayout art=new FrameLayout(this);
         art.setBackground(surface(this,fill,fill,16));
@@ -173,7 +196,7 @@ public final class LikasDiscoveryActivity extends Activity {
         else
             art.addView(new LikasPortalUi.Glyph(this,habitatIcon(group),UiKit.FOREST),
                 new FrameLayout.LayoutParams(dp(66),dp(66),Gravity.CENTER));
-        card.addView(art,new LinearLayout.LayoutParams(-1,dp(108)));
+        card.addView(art,new LinearLayout.LayoutParams(-1,dp(126)));
         TextView name=note(profile.optString("name"),16,UiKit.INK,true);name.setMaxLines(2);
         LinearLayout.LayoutParams n=new LinearLayout.LayoutParams(-1,-2);
         n.topMargin=dp(11);card.addView(name,n);

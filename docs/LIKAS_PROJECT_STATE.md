@@ -1,6 +1,19 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | RC17 actual Android implementation of Q1/Q2/Q3 (QA candidate)
+
+- **Owner challenge addressed:** Yes, work must be implemented in the actual source APK, not merely research notes. Current app code from `feature/likas-core-fieldwork-post-rc4`, PR #38 draft; prior verified RC16 had versionCode 68. New RC17 **source** versionCode **69** `0.27.3-rc17-original-comparisons-preview`, package `org.phwildlife.survey.beta08`, original debug signing and SQLite 27 unchanged. No APK release may be claimed until GitHub build artifact extraction and verification.
+- **Actual in-app code:** `Rc11PrioritySpeciesView.java` now loads `rc17_verified_research_v1.json` and exposes **Compare similar species** where `Rc9DifferentialActivity.hasPair()` finds original published character comparisons. The comparative Activity no longer includes obsolete specialist approval boilerplate and opens the original paper directly.
+- **Q1 source additions:** Original morphological diagnosis of *Platymantis pygmaeus* and *P. naomii* (Alcala, Brown & Diesmos 1998, California Academy of Sciences, PDF), plus *Varanus bitatawa* (Welton et al. 2010, *Biology Letters*, DOI 10.1098/rsbl.2010.0119). Original comparative character rows added for *P. pygmaeus/P. naomii* (adult SVL, skin relief and call) and *V. bitatawa/V. olivaceus* (coloration, study-island range and genetic distinction). Previous two pair rows retained; now **four pairs / 14 source-linked contrasts**. No fabricated evidence for uncovered species.
+- **Q2 peer reviewed additions:** *Carlito syrichta* sleeping sites, roost vegetation and male movement in six tracked Siargao tarsiers (Bejar et al. 2026, DOI 10.1163/14219980-bja10081); *Penelopides panini* NW Panay study-specific forest density and peninsula population estimate (Mynott et al. 2021, DOI 10.1186/s40657-021-00303-3). **16 cited statements total across five taxa** in RC17. Literature index has **250 taxon-source URLs / 96 priority taxa**, **13** taxa with a targeted 2025–26 paper search, **83** still open.
+- **Testing:** `scripts/test_rc17_original_comparisons.py` covers source preservation, 16 claims and pair integration. Emulator source test added for *Platymantis pygmaeus* button and comparison Activity, and Android 14 runner now requires **11 tests**. An old regression expected two pairs/eight traits and was corrected to four/14 without changing old observations. **Core build and signed APK release still require successful final run; emulator 11 tests and in-place database upgrade are unconfirmed.**
+- **Relevant files:** `docs/LIKAS_RC17_APP_IMPLEMENTATION_AND_ORIGINAL_DIAGNOSES.md`, `app/src/main/assets/rc17_verified_research_v1.json`, `app/src/main/assets/rc9_differential_traits_v1.json`, `app/src/main/java/org/phwildlife/survey/Rc9DifferentialActivity.java`, `Rc11PrioritySpeciesView.java`. Physical handset QA remains open. No specialist approval process.
+
+---
+
+
+
 ## 29 October 2026 | RC16 direct signed APK verified, literature exports available
 
 - **RC16 Scientific Core QA passed:** GitHub run `40801323727`, APK artifact `12866705208`. Source code contains year and topic selectors inside the single bibliography drawer. Earlier source tests required a correction to the exact Filter references disclosure label, and a null-DOI Android presentation fix; subsequent core run is green.

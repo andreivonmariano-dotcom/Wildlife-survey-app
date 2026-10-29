@@ -170,6 +170,42 @@ public final class LikasPortalUi {
         return panel;
     }
 
+    /** Persistent field-session shortcut shown before the general app destinations. */
+    public static View session(Activity a,Runnable resume){
+        FrameLayout panel=new FrameLayout(a);
+        GradientDrawable bg=new GradientDrawable(
+            GradientDrawable.Orientation.LEFT_RIGHT,
+            new int[]{Color.rgb(25,73,65),WATER});
+        bg.setCornerRadius(dp(a,20));
+        panel.setBackground(bg);
+        panel.setClipToOutline(true);
+        panel.setMinimumHeight(dp(a,92));
+        LinearLayout row=new LinearLayout(a);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setPadding(dp(a,17),dp(a,12),dp(a,14),dp(a,12));
+        View dot=new View(a);
+        dot.setBackground(rounded(a,LIME,Color.TRANSPARENT,20));
+        LinearLayout.LayoutParams dotLp=new LinearLayout.LayoutParams(dp(a,10),dp(a,10));
+        dotLp.rightMargin=dp(a,12);
+        row.addView(dot,dotLp);
+        LinearLayout text=new LinearLayout(a);
+        text.setOrientation(LinearLayout.VERTICAL);
+        TextView title=text(a,"Survey in progress",17,CREAM,true);
+        text.addView(title);
+        TextView caption=text(a,"Resume field recording",12,Color.rgb(226,243,225),false);
+        text.addView(caption);
+        row.addView(text,new LinearLayout.LayoutParams(0,-2,1f));
+        TextView arrow=text(a,"›",26,LIME,true);
+        row.addView(arrow,new LinearLayout.LayoutParams(dp(a,28),-2));
+        panel.addView(row,new FrameLayout.LayoutParams(-1,-2,Gravity.CENTER_VERTICAL));
+        panel.setFocusable(true);
+        panel.setClickable(true);
+        panel.setContentDescription("Resume survey in progress. Return to field recording");
+        panel.setOnClickListener(v->resume.run());
+        return panel;
+    }
+
     /** Compact illustrated tile for field methods, library tools and analysis. */
     public static View mini(Activity a,String title,String detail,String symbol,Runnable open){
         LinearLayout panel=new LinearLayout(a);

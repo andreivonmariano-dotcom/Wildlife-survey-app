@@ -29,6 +29,7 @@ public final class LikasDiscoveryActivity extends Activity {
     private final Map<String,JSONObject> statusIndex=new HashMap<>();
     private final ArrayList<JSONObject> species=new ArrayList<>();
     private final ArrayList<JSONObject> habitats=new ArrayList<>();
+    private final Map<String,Integer> railOffsets=new HashMap<>();
     private LinearLayout content;
     private Button speciesTab,habitatTab;
     private boolean showingHabitat;
@@ -190,6 +191,13 @@ public final class LikasDiscoveryActivity extends Activity {
             .putExtra("habitat_id",profile.optString("id"))));
         return card;
     }
+    private void moveCard(HorizontalScrollView scroll,int x){
+        boolean lessMotion=getSharedPreferences("likas_ui",MODE_PRIVATE)
+            .getBoolean("reduced_motion",false) ||
+            !android.animation.ValueAnimator.areAnimatorsEnabled() || largeText();
+        if(lessMotion)scroll.scrollTo(x,0);
+        else scroll.smoothScrollTo(x,0);
+    }
     /** Swipe rail with explicit progress, large tap targets and one-card step controls. */
     private void shelf(String title,ArrayList<JSONObject> data,boolean isHabitat){
         if(data.isEmpty())return;
@@ -210,6 +218,8 @@ public final class LikasDiscoveryActivity extends Activity {
         next.setContentDescription("Next "+title+" card");
         header.addView(previous,new LinearLayout.LayoutParams(dp(46),dp(48)));
         header.addView(next,new LinearLayout.LayoutParams(dp(46),dp(48)));
+        String railKey=(isHabitat?"habitats:":"species:")+title;
+        int restoreOffset=railOffsets.getOrDefault(railKey,0);
         HorizontalScrollView scroll=new HorizontalScrollView(this);
         scroll.setHorizontalScrollBarEnabled(false);
         scroll.setFillViewport(false);
@@ -235,16 +245,22 @@ public final class LikasDiscoveryActivity extends Activity {
         };
         previous.setOnClickListener(v->{
             int index=Math.max(0,(scroll.getScrollX()+stride/2)/stride);
-            scroll.smoothScrollTo(Math.max(0,(index-1)*stride),0);
+            moveCard(scroll,Math.max(0,(index-1)*stride));
         });
         next.setOnClickListener(v->{
             int index=Math.max(0,(scroll.getScrollX()+stride/2)/stride);
             int endX=Math.max(0,row.getWidth()-scroll.getWidth());
-            scroll.smoothScrollTo(Math.min(endX,(index+1)*stride),0);
+            moveCard(scroll,Math.min(endX,(index+1)*stride));
         });
-        scroll.setOnScrollChangeListener((View v,int x,int y,int oldX,int oldY)->
-            update.run());
-        scroll.post(update);
+        scroll.setOnScrollChangeListener((View v,int x,int y,int oldX,int oldY)->{
+            railOffsets.put(railKey,x);
+            update.run();
+        });
+        // Capture before the new view's first scroll callback changes the map.
+        scroll.post(()->{
+            scroll.scrollTo(restoreOffset,0);
+            update.run();
+        });
         scroll.setContentDescription("Swipe "+title+" cards horizontally, "+
             data.size()+" references");
         content.addView(scroll);
@@ -328,6 +344,11 @@ public final class LikasDiscoveryActivity extends Activity {
         showingHabitat=saved!=null?
             saved.getBoolean("habitats","habitats".equals(getIntent().getStringExtra("view"))):
             "habitats".equals(getIntent().getStringExtra("view"));
+        if(saved!=null){
+            Bundle previous=saved.getBundle("railOffsets");
+            if(previous!=null)
+                for(String key:previous.keySet())railOffsets.put(key,previous.getInt(key));
+        }
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(15),dp(10),dp(15),dp(7));
         root.setBackgroundColor(UiKit.BG);
@@ -350,6 +371,10 @@ public final class LikasDiscoveryActivity extends Activity {
     }
     @Override protected void onSaveInstanceState(Bundle out){
         out.putBoolean("habitats",showingHabitat);
+        Bundle positions=new Bundle();
+        for(Map.Entry<String,Integer> entry:railOffsets.entrySet())
+            positions.putInt(entry.getKey(),entry.getValue());
+        out.putBundle("railOffsets",positions);
         super.onSaveInstanceState(out);
     }
 }

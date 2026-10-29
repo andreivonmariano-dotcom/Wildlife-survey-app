@@ -51,7 +51,7 @@ class CurrentPublicationBatch(unittest.TestCase):
         self.assertIn("rc15_publication_batch_v1.json",ui)
         self.assertIn("Rc14Bibliography.add(a,references,scientific)",ui)
         for field in ('paper.optString("authors")','paper.optString("journal")',
-                      'paper.optString("doi")','paper.optInt("publicationYear")',
+                      'paper.isNull("doi")?"":paper.optString("doi")','paper.optInt("publicationYear")',
                       'imprint+=" · DOI: "+doi','"Open study ↗"'):
             self.assertIn(field,source)
         self.assertIn("final int remaining=matches.size()-first",source)

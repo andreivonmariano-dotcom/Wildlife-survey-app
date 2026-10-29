@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC27B code86 source QA and signed APK verified; emulator acceptance pending
+
+- Scientific Core QA GitHub Actions run **40829509468** on production code commit `08c63f87faf734c81694a7ca32bf742ce061aaff` completed **success**: Python science/source suite, JVM and signed Android assembly.
+- Downloaded verified GitHub artifact **12878430792** into this conversation, extracted `/mnt/data/LIKAS-v0.27.3-RC27B-keyboard-screen-qa-debug.apk`, **9,603,300 bytes**, SHA256 **469360d6d39ec7d2aa6abfacb831fbbf406734ddd668049474335eb503acf6ad**. Embedded package `org.phwildlife.survey.beta08`, version `0.27.3-rc27b-keyboard-screen-qa-preview`, Gradle code86, all 96 priority accounts/456 facts/4 RC27 facts, APK ZIP valid. Actual APK Signing Block v2 DER signer SHA256 **f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937** matches the established certificate.
+- RC27B emulator workflow **40829509376** must finish and have its actual instrumentation and before-assert Habitat screenshot reviewed. **Do not claim 16/16 acceptance yet.** The prior RC27 code85 failed 15/16 with Habitat records tab 121px/144px.
+- Updated direct phone QA kit `LIKAS-RC27B-Phone-Field-QA-Kit.zip` verified in the conversation, 14 cases still NOT TESTED, read-only ADB metadata. Actual handset and user records not accessed. All biological facts, SQLite27, End Survey logic, microphone/photo storage and startup assets unchanged by RC27B.
+
+---
+
+
 ## 29 October 2026 | RC27B code86 repair candidate after RC27 emulator 15/16
 
 - Actual Android14 run **40828420351** on code85 completed **failure 15/16**. Instrumentation from downloaded artifact **12877966162** showed Habitat My records tab remained 121px visible of 144px, exactly matching RC26C, so compact navigation Back minimum alone was insufficient. This is a **real failed release gate**.

@@ -361,6 +361,13 @@ public final class Rc11PrioritySpeciesView {
         description.setLineSpacing(dp(a,2),1.02f);
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
         lp.topMargin=dp(a,3);block.addView(description,lp);
+        TextView sourceLine=text(a,"Source: "+item.source,11,false,UiKit.MUTED);
+        sourceLine.setMaxLines(2);
+        sourceLine.setEllipsize(TextUtils.TruncateAt.END);
+        sourceLine.setContentDescription("Cited research source: "+item.source);
+        LinearLayout.LayoutParams sourceLp=new LinearLayout.LayoutParams(-1,-2);
+        sourceLp.topMargin=dp(a,3);
+        block.addView(sourceLine,sourceLp);
         list.addView(block);
         referenced.add(item);
     }
@@ -484,7 +491,8 @@ public final class Rc11PrioritySpeciesView {
                 new Intent(a,Rc9DifferentialActivity.class)
                     .putExtra("scientific_name",scientific)));
         }
-        Button compare=UiKit.button(a,"Compare species traits","quiet");
+        Button compare=UiKit.button(a,"Compare evidence snapshots","quiet");
+        compare.setContentDescription("Compare earlier curated reference evidence, not an automatic identification");
         utilities.addView(compare,new LinearLayout.LayoutParams(-1,dp(a,48)));
         compare.setOnClickListener(v->a.startActivity(
             new Intent(a,Rc8TraitComparisonActivity.class)

@@ -109,10 +109,21 @@ public final class Rc24ConservationDashboardActivity extends Activity {
         page.setOrientation(LinearLayout.VERTICAL);
         page.setBackgroundColor(UiKit.BG);
         page.setPadding(dp(15),dp(10),dp(15),dp(24));
-        page.addView(UiKit.navigationHeader(this,"Conservation evidence","Library",this::finish));
-        page.addView(text("Offline research snapshot across 96 Philippine priority species. "+
+        boolean largeText=getResources().getConfiguration().fontScale>=1.60f;
+        page.addView(UiKit.navigationHeader(this,
+            largeText?"Conservation":"Conservation evidence","Library",this::finish));
+        String explanation="Offline research snapshot across 96 Philippine priority species. "+
             "Only individually cited conservation records appear. An unassessed species "+
-            "is not Least Concern, and a dated assessment is not a current census.",13,false));
+            "is not Least Concern, and a dated assessment is not a current census.";
+        TextView context=text(largeText?
+            "Cited evidence, not current population counts. Tap for limits.":explanation,
+            13,false);
+        context.setContentDescription("Read conservation evidence limits. "+explanation);
+        context.setFocusable(true);
+        context.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Conservation research limits").setMessage(explanation)
+            .setPositiveButton("Close",null).show());
+        page.addView(context);
         try{accounts=read(this).getJSONArray("accounts");}
         catch(Exception error){
             page.addView(text("Conservation research index unavailable offline. "+
@@ -123,7 +134,7 @@ public final class Rc24ConservationDashboardActivity extends Activity {
         search=new EditText(this);
         search.setSingleLine(true);
         search.setTextSize(16);
-        search.setHint("Filter scientific or common name");
+        search.setHint(largeText?"Search species":"Filter scientific or common name");
         search.setContentDescription("Filter the conservation evidence by common or scientific name");
         page.addView(search,new LinearLayout.LayoutParams(-1,dp(54)));
         group=new Spinner(this);

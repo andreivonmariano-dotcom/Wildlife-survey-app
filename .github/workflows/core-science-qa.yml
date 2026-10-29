@@ -107,12 +107,12 @@ jobs:
           import os, re
           from pathlib import Path
           gradle=Path("app/build.gradle").read_text()
-          name=re.search(r"versionName\\s+'([^']+)'",gradle)
-          code=re.search(r"versionCode\\s+(\\d+)",gradle)
+          name=re.search(r"versionName\s+'([^']+)'",gradle)
+          code=re.search(r"versionCode\s+(\d+)",gradle)
           assert name and code, "Missing Gradle version metadata"
           label=f"LIKAS-{name.group(1)}-code{code.group(1)}-debug"
           with open(os.environ["GITHUB_ENV"],"a") as env:
-              env.write(f"LIKAS_ARTIFACT={label}\\n")
+              env.write(f"LIKAS_ARTIFACT={label}\n")
           print(label)
           PY
       - name: Attach verified development APK for direct chat delivery

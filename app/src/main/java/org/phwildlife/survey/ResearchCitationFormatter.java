@@ -22,10 +22,10 @@ public final class ResearchCitationFormatter {
     private static Matcher yearMatch(String s){
         Matcher a=PAREN_YEAR.matcher(clean(s));
         if(a.find())return a;
-        Matcher b=BARE_YEAR.matcher(clean(s));
-        if(b.find())return b;
         Matcher d=LONG_DATE.matcher(clean(s));
-        return d.find()?d:null;
+        if(d.find())return d;
+        Matcher b=BARE_YEAR.matcher(clean(s));
+        return b.find()?b:null;
     }
     public static String yearLabel(int year,String source){
         if(year>=1800&&year<=2100)return String.valueOf(year);

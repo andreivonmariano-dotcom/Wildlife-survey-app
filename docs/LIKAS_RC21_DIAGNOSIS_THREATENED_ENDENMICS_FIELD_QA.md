@@ -52,3 +52,11 @@ These categories are not presumed to be current 2026 reassessments. Omitted nati
 3. Android 14 emulator 14/14 passes with 96 species screenshots, 200% recorder capture and byte-identical upgrade data.
 4. Download the exact APK and evidence ZIP into the chat. Link real files directly only after verification.
 5. Label RC21 **phone-test preview**, not stable or field-certified. Keep PR #38 draft and startup animation branch untouched until merge review.
+
+## RC21B follow-up: accessibility screenshot revealed footer clipping
+
+The 14-test RC21 Android emulator `40810458277` passed, but manual visual inspection of `recorder-200percent-font.png` found the End Survey row partially below the physical image frame at a 200% system font setting. Existing `isShown()` and 48dp minimum-height tests did not catch full-viewport clipping. This is a P1 usability defect, **not cleared by the original passing automation**.
+
+RC21B source implements a conditional large-text layout. At system fontScale >=1.60 the verbose survey-status HUD moves inside the scrollable content so the permanent Save, Review and End Survey dock retains full screen space. Top-row visual navigation abbreviates labels with explicit spoken descriptions. A new instrumentation assertion requires the global visible rectangle to include the entire End Survey button height. This intentionally reduces fixed status detail only at large text; the complete GPS and session status remains accessible at the top of the scroll.
+
+**RC21B candidate:** versionName `0.27.3-rc21b-accessible-recorder-preview`, versionCode 75. Preserve package, signing certificate, SQLite 27, survey lifecycle and source facts. Do not claim RC21B's corrected screenshot or 14/14 pass until its own Android emulator run and APK are independently retrieved.

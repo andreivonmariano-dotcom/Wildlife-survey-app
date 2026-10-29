@@ -63,8 +63,11 @@ public final class Rc10LibraryScreensInstrumentedTest {
         assertNotNull(label+" control exists",v);
         android.graphics.Rect visible=new android.graphics.Rect();
         assertTrue(label+" visible in screen",v.getGlobalVisibleRect(visible));
+        int[] position=new int[2];v.getLocationOnScreen(position);
         assertTrue(label+" height not clipped: visible="+visible.height()+
-            " of "+v.getHeight(),visible.height()>=v.getHeight()-2);
+            " of "+v.getHeight()+"; y="+position[1]+" visible="+visible+
+            " rootHeight="+v.getRootView().getHeight(),
+            visible.height()>=v.getHeight()-2);
     }
     private static void capture(android.app.Activity activity,String name){
         View root=activity.getWindow().getDecorView();
@@ -109,7 +112,10 @@ public final class Rc10LibraryScreensInstrumentedTest {
             }
             try(ActivityScenario<HabitatRecordsActivity> test=
                     ActivityScenario.launch(HabitatRecordsActivity.class)){
+                androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().waitForIdleSync();
                 test.onActivity(activity->{
+                    // Capture geometry even on failure, before first viewport assertions.
+                    capture(activity,"rc27b_habitats_before_assert.png");
                     assertTrue("Actual large-text configuration",
                         activity.getResources().getConfiguration().fontScale>=1.60f);
                     View root=activity.getWindow().getDecorView();

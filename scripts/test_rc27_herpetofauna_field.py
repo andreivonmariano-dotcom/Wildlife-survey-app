@@ -67,14 +67,15 @@ class Rc27PhilippineHerpetofauna(unittest.TestCase):
         build=(ROOT/"app/build.gradle").read_text()
         qa=(ROOT/"docs/LIKAS_RC27_PHONE_FIELD_QA.md").read_text()
         self.assertIn("if(largeText)back.setMinHeight(dp(a,48))",ui)
+        self.assertIn("SOFT_INPUT_STATE_ALWAYS_HIDDEN",habitat)
         self.assertIn("root.addView(tabs,new LinearLayout.LayoutParams(-1,dp(tabHeight)))",habitat)
         self.assertIn("largeTextHomeSetupAndHistoryHaveAccessibleActions",instrument)
         self.assertIn("largeTextSpeciesAndHabitatsPreserveFieldControls",instrument)
         self.assertIn("Continue to GPS",setup)
         self.assertIn("outcome",history)
         self.assertIn("NO PHYSICAL HANDSET TEST HAS BEEN PERFORMED",qa)
-        self.assertIn("versionCode 85",build)
-        self.assertIn("0.27.3-rc27-herpetofauna-field-preview",build)
+        self.assertIn("versionCode 86",build)
+        self.assertIn("0.27.3-rc27b-keyboard-screen-qa-preview",build)
 
 if __name__=="__main__":
     unittest.main()

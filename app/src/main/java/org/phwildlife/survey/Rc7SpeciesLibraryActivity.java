@@ -84,6 +84,8 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
+        // Do not open the search keyboard before the researcher selects Search.
+        getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         db=new FieldDb(this);
         largeText=getResources().getConfiguration().fontScale>=1.60f;
         loadGuides();

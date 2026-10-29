@@ -28,3 +28,7 @@ This is a hypothesized layout fix until a new full 16-test emulator run confirms
 ## Candidate identity and gates
 
 `0.27.3-rc27-herpetofauna-field-preview`, versionCode 85, same package `org.phwildlife.survey.beta08`, same pinned signer, SQLite27. Required before shipping even a preview: source tests, JVM and Android compilation, signed binary inspection, Android 16/16, first-viewport large-text screenshot review, 96 rendered species, old/new disposable DB equality, verified direct APK file attachment. Field certification additionally requires an owner's actual hardware and backed-up historical records.
+
+## RC27B: RC27 emulator failure and keyboard/layout diagnosis (29 October 2026)
+
+RC27 emulator workflow **40828420351** finished **failure 15/16**. The exactly repeated 200%-font Habitat tab result was **121 visible of 144 pixels**; a shared nav Back minimum-height change alone did not resolve it. The test ran immediately following Species Library, which has a search EditText and can expose a soft keyboard. RC27B hides the keyboard by default on Species and Habitat entry, waits for Android to finish layout before the Habitat check, and captures a dedicated screenshot **before** the strict assertion. The emulator runner now retrieves this diagnostic even if instrumentation fails, preserving the test failure. No acceptance claim exists until a new 16/16 run proves the geometry. Target code86, `0.27.3-rc27b-keyboard-screen-qa-preview`. Source facts 456 and links 306 remain identical.

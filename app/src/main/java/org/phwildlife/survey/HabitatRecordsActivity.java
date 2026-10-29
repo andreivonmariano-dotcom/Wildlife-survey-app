@@ -32,6 +32,8 @@ public final class HabitatRecordsActivity extends Activity {
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
+        // Opening a reference screen must not inherit an open search keyboard.
+        getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         helper=new FieldDb(this);
         largeText=getResources().getConfiguration().fontScale>=1.60f;
         LinearLayout root=new LinearLayout(this);

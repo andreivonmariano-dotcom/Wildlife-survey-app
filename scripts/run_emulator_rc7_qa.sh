@@ -45,8 +45,14 @@ adb shell pm clear "$PKG"
 adb shell pm grant "$PKG" android.permission.ACCESS_FINE_LOCATION || true
 adb shell pm grant "$PKG" android.permission.ACCESS_COARSE_LOCATION || true
 adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+set +e
 adb shell am instrument -w -r \
   "$PKG.test/androidx.test.runner.AndroidJUnitRunner" | tee emulator-qa/instrumentation.txt
+instrument_exit=${PIPESTATUS[0]}
+set -e
+# Keep the diagnostic screenshot even after a failed large-text assertion.
+adb exec-out run-as "$PKG" cat files/rc27b_habitats_before_assert.png > emulator-qa/habitat-before-assert.png || true
+if [[ $instrument_exit -ne 0 ]]; then exit "$instrument_exit"; fi
 grep -Eq 'OK \(16 tests?\)' emulator-qa/instrumentation.txt
 adb exec-out run-as "$PKG" cat files/rc7_library_screen.png > emulator-qa/library-320dp.png
 test -s emulator-qa/library-320dp.png

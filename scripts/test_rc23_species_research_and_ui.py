@@ -79,8 +79,8 @@ class Rc23SpeciesResearch(unittest.TestCase):
         self.assertIn("latest cited 96-species accounts",compare)
         self.assertIn("Search offline species by common, scientific or former name",picker)
         self.assertIn("Search species by scientific, common or former name",detail)
-        self.assertIn("versionCode 85",gradle)
-        self.assertIn("0.27.3-rc27-herpetofauna-field-preview",gradle)
+        self.assertIn("versionCode 86",gradle)
+        self.assertIn("0.27.3-rc27b-keyboard-screen-qa-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

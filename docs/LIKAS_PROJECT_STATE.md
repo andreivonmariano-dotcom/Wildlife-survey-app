@@ -1,5 +1,14 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC27B code86 repair candidate after RC27 emulator 15/16
+
+- Actual Android14 run **40828420351** on code85 completed **failure 15/16**. Instrumentation from downloaded artifact **12877966162** showed Habitat My records tab remained 121px visible of 144px, exactly matching RC26C, so compact navigation Back minimum alone was insufficient. This is a **real failed release gate**.
+- RC27B now adds `SOFT_INPUT_STATE_ALWAYS_HIDDEN` to Species Library and Habitat Activity entry to prevent an inherited search keyboard from reducing available screen. The Android test waits for UI idle before measuring Habitat, captures `rc27b_habitats_before_assert.png` before strict geometry assertion, and reports absolute view Y/root height in failures. The emulator runner retrieves this screenshot on failure instead of exiting before evidence extraction. These are testable hypotheses, not confirmed cures.
+- Android version **86**, `0.27.3-rc27b-keyboard-screen-qa-preview`; same 96 species / 456 facts / 306 sources, original APK package/signing identity, SQLite27, survey outcomes and approved startup assets. **Do not represent code85 as emulator-accepted**. New CI, signed APK and emulator evidence pending. Real owner handset and records untested.
+
+---
+
+
 ## 29 October 2026 | RC27 code85 signed APK inspected; emulator in progress
 
 - Scientific Core QA run **40828420231** on source commit `ab97da2c0153403feb6c1fab98239665bb417f07` completed **success** (Python tests, JVM, Android build). Extracted GitHub artifact **12877182985** into current chat and independently validated exact `/mnt/data/LIKAS-v0.27.3-RC27-herpetofauna-field-debug.apk`, **9,603,216 bytes**, SHA256 **1fc1eb2f2d87651b5e4c80a26d617cb9caaa9dd257e866c64b88c4f1a5305709**. Embedded package `org.phwildlife.survey.beta08`, versionName `0.27.3-rc27-herpetofauna-field-preview`, source Gradle code85; 96 species, 456 facts, 4 RC27 primary notes; APK ZIP intact. Actual v2 signing X.509 DER SHA256 **f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937**, equals pinned signer. Verified direct APK link delivered in chat.

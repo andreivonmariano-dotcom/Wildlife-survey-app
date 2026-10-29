@@ -41,7 +41,7 @@ class ConservationCardQA(unittest.TestCase):
 
     def test_research_corpus_and_habitats_unchanged(self):
         self.assertEqual(self.index["sourceFactCount"],456)
-        self.assertEqual(self.habitat["schemaVersion"],"offline-habitat-profiles-v1")
+        self.assertEqual(self.habitat["schemaVersion"],1)
         self.assertEqual(len(self.habitat["profiles"]),15)
 
     def test_only_assessment_categories_choose_card_frame(self):

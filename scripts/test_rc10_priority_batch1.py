@@ -38,7 +38,7 @@ class Rc10FirstResearchBatch(unittest.TestCase):
         recorder=(JAVA/"MainActivity.java").read_text()
         self.assertIn("rc10_research_batch1_v1.json", renderer)
         self.assertIn("Rc10ResearchBatch.add(a,parent,scientific)",readiness)
-        self.assertIn("Philippine Biodiversity Toolkit",home)
+        self.assertIn('LikasPortalUi.hero(this)',home)
         self.assertIn("Habitat research tools",habitat)
         self.assertIn("researchTools.setVisibility(android.view.View.GONE)", habitat)
         self.assertIn('"End Survey"',recorder)

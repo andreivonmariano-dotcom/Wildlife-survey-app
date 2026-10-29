@@ -69,6 +69,14 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                 assertTrue(containsText(descendants(root),"Research references"));
                 assertTrue(containsText(descendants(root),"Bacus et al."));
                 assertTrue(containsText(descendants(root),"Open study"));
+                assertTrue(containsText(descendants(root),"Filter references"));
+                for(View v:descendants(root))
+                    if(v instanceof Button&&((Button)v).getText().toString()
+                        .startsWith("Filter references")){
+                        assertTrue(v.performClick());break;
+                    }
+                assertTrue(containsText(descendants(root),"Publication year"));
+                assertTrue(containsText(descendants(root),"Research topic"));
                 if(root.getWidth()>0&&root.getHeight()>0){
                     Bitmap bitmap=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
                         Bitmap.Config.ARGB_8888);

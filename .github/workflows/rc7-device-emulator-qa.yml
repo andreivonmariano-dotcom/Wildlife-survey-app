@@ -1,17 +1,11 @@
 name: LIKAS Android emulator upgrade and backup QA
+# Manually run before a release; the pinned historical RC7C baseline may expire.
 on:
-  push:
-    branches: [feature/likas-core-fieldwork-post-rc4]
-    paths:
-      - scripts/run_emulator_rc7_qa.sh
-      - app/src/androidTest/**
-      - app/src/main/assets/**
-      - app/src/main/java/org/phwildlife/survey/**
-      - scripts/prepare_offline_photos.py
-      - scripts/audit_inaturalist_photos.py
-      - app/build.gradle
-      - .github/workflows/rc7-device-emulator-qa.yml
   workflow_dispatch:
+
+concurrency:
+  group: likas-rc7-upgrade-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
   actions: read

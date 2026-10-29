@@ -179,6 +179,7 @@ public final class SpeciesPickerActivity extends Activity {
         search.setSingleLine(true);search.setTextSize(16);
         search.setThreshold(1);
         search.setHint("Search common, scientific or former name");
+        search.setContentDescription("Search offline species by common, scientific or former name");
         suggestionDb=new FieldDb(this);
         nameSuggestions=new SpeciesReferenceSuggestionAdapter(this,
             suggestionDb,availableGroups[Math.max(0,savedGroupIndex)]);

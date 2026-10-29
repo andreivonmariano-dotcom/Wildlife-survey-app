@@ -18,11 +18,12 @@ public final class LikasLibraryActivity extends Activity {
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
         lp.bottomMargin=dp(10);p.addView(action,lp);
     }
-    private void addHabitat(LinearLayout p){
-        View action=LikasPortalUi.action(this,"Habitats","15 offline guides","habitat",
-            ()->startActivity(new Intent(this,HabitatRecordsActivity.class)));
+    private void discover(LinearLayout p,String title,String subtitle,String icon,String view){
+        View card=LikasPortalUi.action(this,title,subtitle,icon,()->
+            startActivity(new Intent(this,LikasDiscoveryActivity.class)
+                .putExtra("view",view)));
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.bottomMargin=dp(10);p.addView(action,lp);
+        lp.bottomMargin=dp(10);p.addView(card,lp);
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
@@ -41,8 +42,8 @@ public final class LikasLibraryActivity extends Activity {
         body.addView(headline);
         TextView sub=LikasPortalUi.text(this,"Offline. Source-linked.",13,UiKit.MUTED,false);
         sub.setPadding(0,dp(5),0,dp(19));body.addView(sub);
-        add(body,"Species","Search · Identify","species",Rc7SpeciesLibraryActivity.class);
-        addHabitat(body);
+        discover(body,"Species","Swipe · Explore","species","species");
+        discover(body,"Habitats","Swipe · Explore","habitat","habitats");
         add(body,"Similar species","Compare traits","species",Rc9DifferentialActivity.class);
         add(body,"Photos","Offline references","photo",Rc8PhotoComparisonActivity.class);
         add(body,"Conservation","IUCN · DENR evidence","shield",Rc24ConservationDashboardActivity.class);

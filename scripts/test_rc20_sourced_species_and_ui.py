@@ -64,8 +64,8 @@ class Rc20SourcedSpecies(unittest.TestCase):
         self.assertIn('of 5 topics',view)
         self.assertIn('Close cited sources and study details',view)
         self.assertIn('Collapse ',view)
-        self.assertIn("versionCode 92",gradle)
-        self.assertIn("0.27.3-rc32-sparse-evidence-keys-preview",gradle)
+        self.assertIn("versionCode 93",gradle)
+        self.assertIn("0.27.3-rc33-portal-ui-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

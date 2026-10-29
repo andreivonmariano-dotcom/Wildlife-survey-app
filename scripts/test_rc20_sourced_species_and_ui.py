@@ -19,11 +19,11 @@ class Rc20SourcedSpecies(unittest.TestCase):
         self.assertEqual(len(self.batch["facts"]),16)
         self.assertEqual(len(set(self.batch["targetedTaxa"])),9)
         self.assertEqual(len(self.accounts["accounts"]),96)
-        self.assertEqual(self.accounts["sourceFactCount"],393)
-        self.assertEqual(sum(p["referenceCount"] for p in self.book["profiles"]),269)
+        self.assertEqual(self.accounts["sourceFactCount"],413)
+        self.assertEqual(sum(p["referenceCount"] for p in self.book["profiles"]),281)
         self.assertEqual(self.accounts["sectionMissingCounts"],{
-            "Identification":18,"Habitat":51,"Distribution":24,
-            "Natural history":75,"Conservation":76})
+            "Identification":12,"Habitat":46,"Distribution":24,
+            "Natural history":73,"Conservation":70})
         for account in self.accounts["accounts"]:
             fact_count=sum(len(v) for v in account["sections"].values())
             self.assertEqual(account["coverage"]["citedBiologicalFacts"],fact_count)
@@ -64,8 +64,8 @@ class Rc20SourcedSpecies(unittest.TestCase):
         self.assertIn('of 5 research topics documented',view)
         self.assertIn('Close cited sources and study details',view)
         self.assertIn('Collapse ',view)
-        self.assertIn("versionCode 73",gradle)
-        self.assertIn("0.27.3-rc20-documented-species-preview",gradle)
+        self.assertIn("versionCode 74",gradle)
+        self.assertIn("0.27.3-rc21-endemic-fieldwork-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

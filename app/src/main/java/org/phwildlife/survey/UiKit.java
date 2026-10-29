@@ -33,14 +33,19 @@ public final class UiKit {
     LinearLayout row=new LinearLayout(a);
     row.setOrientation(LinearLayout.HORIZONTAL);
     row.setGravity(Gravity.CENTER_VERTICAL);
-    Button back=button(a,"‹ "+backLabel,"secondary");
+    boolean largeText=a.getResources().getConfiguration().fontScale>=1.60f;
+    // At large font sizes retain a spoken destination, but give the title room.
+    Button back=button(a,largeText?"‹":"‹ "+backLabel,"secondary");
     back.setContentDescription("Back to "+backLabel);
-    row.addView(back,new LinearLayout.LayoutParams(dp(a,120),dp(a,48)));
+    row.addView(back,new LinearLayout.LayoutParams(dp(a,largeText?60:120),dp(a,48)));
     back.setOnClickListener(v->onBack.run());
     TextView heading=new TextView(a);
     heading.setText(title);
-    heading.setTextSize(20);
+    heading.setTextSize(largeText?16:20);
     heading.setTextColor(INK);
+    heading.setSingleLine(true);
+    heading.setEllipsize(android.text.TextUtils.TruncateAt.END);
+    heading.setContentDescription(title);
     heading.setTypeface(null,Typeface.BOLD);
     heading.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
     heading.setPadding(dp(a,8),0,dp(a,3),0);

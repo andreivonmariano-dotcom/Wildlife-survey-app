@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC25 code81 science-core CI and signed APK accepted; emulator evidence outstanding
+
+- On latest scientific-core branch, PR #38 remains draft. After RC25 evidence additions, an initial CI failure was traced to stale per-species coverage counts and an invalid bibliography section-topic label, not to new unreviewed science. Fixed in commit `8e86163dc0431e24fac13a15b11d32cafa6cf3cf`: all three account coverage sections agree with their seven additions and references use the supported Ecology topic.
+- `LICAS` typo is not a product name change: official app remains LIKAS. Full Python source/science suite, JVM checks and Android build passed on core run **40822716725** (source commit `8e86163...`), and final HEAD **aad5dc28ca086581f174e1e5031fad3a1aed27e2** Core QA **40822822155** completed success. The last commit only updates the emulator workflow trigger to include biology asset changes.
+- Actual GitHub Actions artifact **12875022224** was downloaded and its APK independently extracted and verified in this conversation: `/mnt/data/LIKAS-v0.27.3-RC25-primary-ecology-accessibility-debug.apk`, **9,596,893 bytes**, SHA256 **c9e4be68a75067163921646c650ca9aa389c329d6f7e5de4be00cd892c10e625**. APK ZIP and embedded native manifest contain package `org.phwildlife.survey.beta08`, versionName `0.27.3-rc25-primary-ecology-accessibility-preview`, Gradle versionCode **81**. APK Signing Block v2 certificate SHA256 **f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937** matches pinned key. Bundled RC25 batch has 7 primary-study facts; unified source has 448 and 96 accounts. Direct APK link delivered in this chat.
+- Final 320dp Android 14 emulator workflow **40822822057** at HEAD `aad5dc28..` remained in progress on its API34 emulator step as of last check. **Do not assert 15/15, 96 screenshot acceptance, or in-place DB preservation until its output artifact is inspected**. Even a passing disposable emulator run is not physical-phone or production owner-record migration certification. Preserve startup isolation, schema27 and real user survey records.
+
+---
+
+
 ## 29 October 2026 | RC25 Q2/Q3 primary ecological records and two-screen large-text review
 
 - Owner selected Q2/Q3: expand source-verified Philippine habitat/ecology profiles and audit remaining non-startup screens for readability/accessibility. Work remains on `feature/likas-core-fieldwork-post-rc4` (PR #38); startup track untouched.

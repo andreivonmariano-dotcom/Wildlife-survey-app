@@ -85,7 +85,7 @@ public final class LikasPortalUi {
         words.setPadding(dp(a,22),dp(a,20),dp(a,18),dp(a,19));
         TextView mark=text(a,"LIKAS   /   PH",12,LIME,true);mark.setLetterSpacing(.14f);
         words.addView(mark);
-        TextView title=text(a,"Wildlife fieldwork",26,CREAM,true);
+        TextView title=text(a,"Philippine wildlife",26,CREAM,true);
         LinearLayout.LayoutParams titleLp=new LinearLayout.LayoutParams(-1,-2);
         titleLp.topMargin=dp(a,19);words.addView(title,titleLp);
         TextView sub=text(a,"Surveys · Species · Habitats",13,Color.rgb(222,235,218),false);

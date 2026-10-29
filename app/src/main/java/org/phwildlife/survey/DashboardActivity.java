@@ -58,8 +58,6 @@ public class DashboardActivity extends Activity {
         section("Archived surveys",String.valueOf(total),
             complete+" complete · "+incomplete+" incomplete · "+excluded+" not counted");
         if(active>0)section("Active surveys",String.valueOf(active),null);
-        section("Not counted",String.valueOf(excluded),
-            "Archived with reasons; excluded from research and monitoring summaries");
         int visits=count("SELECT COUNT(*) FROM point_counts p JOIN surveys s ON s.id=p.event_id "+
             "WHERE "+outcome+"='complete'",null);
         int otherVisits=count("SELECT COUNT(*) FROM sampling_units u JOIN surveys s ON s.id=u.event_id "+
@@ -72,7 +70,7 @@ public class DashboardActivity extends Activity {
             "FROM field_records r JOIN surveys s ON s.id=r.event_id "+
             "WHERE r.deleted_at IS NULL AND "+outcome+"='complete' AND trim(COALESCE(r.raw_identification,''))<>''",null);
         section("Detections in complete surveys",String.valueOf(records),
-            distinct+" distinct ID labels");
+            distinct+" distinct identification labels");
         int excludedRecords=count("SELECT COUNT(*) FROM field_records r JOIN surveys s ON s.id=r.event_id "+
             "WHERE r.deleted_at IS NULL AND "+outcome+"='not_counted'",null);
         section("Not-counted detections",String.valueOf(excludedRecords),null);

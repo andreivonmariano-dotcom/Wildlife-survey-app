@@ -33,9 +33,8 @@ import java.util.Locale;
  */
 public final class Rc7SpeciesLibraryActivity extends Activity {
     private static final String[] GROUPS={"All groups","Birds","Amphibians","Reptiles","Mammals"};
-    private static final String[] FILTERS={"All source records","Priority species (96)",
-        "Published literature notes","Offline photograph",
-        "Priority: diagnosis unassessed","Priority: habitat unassessed"};
+    private static final String[] FILTERS={"All species","Published research",
+        "Offline photos"};
     private FieldDb db;
     private EditText search;
     private Spinner group,scope;
@@ -227,17 +226,8 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
                 Summary item=new Summary(field(c,0),field(c,1),field(c,2),
                     field(c,3),field(c,4),field(c,5));
                 if(!seen.add(item.name.toLowerCase(Locale.ROOT)))continue;
-                if(filter==1&&!Rc7FieldAccounts.priority(this,item.name))continue;
-                if(filter==2&&!Rc7LiteratureNotes.available(this,item.name))continue;
-                if(filter==3&&!OfflinePhotoEvidence.hasOfflineTaxon(this,item.name))continue;
-                if(filter==4||filter==5){
-                    JSONObject completion=Rc9ProfileCompleteness.find(this,item.name);
-                    if(completion==null)continue;
-                    JSONObject requirements=completion.optJSONObject("requirements");
-                    JSONObject target=requirements==null?null:
-                        requirements.optJSONObject(filter==4?"diagnosis":"habitat");
-                    if(target!=null&&!"not_assessed".equals(target.optString("status")))continue;
-                }
+                if(filter==1&&!Rc7LiteratureNotes.available(this,item.name))continue;
+                if(filter==2&&!OfflinePhotoEvidence.hasOfflineTaxon(this,item.name))continue;
                 selected.add(item);
             }
         }catch(Exception e){
@@ -246,9 +236,8 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             return;
         }
         rendered=0;results.removeAllViews();
-        String evidenceStatus=selected.size()+" source records · checklist names are not complete species profiles. "+
-            (filter==1?"Priority identities are checklist-backed; detailed field biology is still under review. ":
-            filter>=4?"These priority research gaps mean unassessed evidence, not species absence. ":"");
+        String evidenceStatus=selected.size()+" names · source checklists are not complete species accounts. "+
+            "IUCN and DENR status must be reviewed separately. Unverified is not Least Concern.";
         status.setText(largeText?selected.size()+" source records · tap for limits":evidenceStatus);
         status.setContentDescription(evidenceStatus+" Tap for evidence limits.");
         appendPage();

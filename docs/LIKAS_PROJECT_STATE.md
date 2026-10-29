@@ -1,6 +1,21 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | RC14 current peer-reviewed paper pass and linked 96-species bibliography
+
+- **Latest owner decision:** Q1/Q2/Q3 jointly accepted, search newest scientifically published work for every one of 96 priority mammals, amphibians, reptiles and birds, and show original studies as tappable citations. Retain credible website references, concise field-guide copy and no specialist approval workflow. The search is a **per-species verification task**, not a claim that the newest available papers have already been found for all.
+- **Implemented source:** `rc14_96_species_literature_index_v1.json` contains **96 records and 235 species–source links**, deduplicated within each species, retaining original URLs, source labels and known publication years. Ten taxa have a targeted 2025–2026 recent-study check (1 bird, 4 amphibians, 2 reptiles, 3 mammals); **86 still await individual recent literature review**.
+- **Recent data:** `rc14_recent_peer_reviewed_2025_2026_v1.json` adds 13 citation-specific concise source findings across 10 taxa. Papers: Bacus et al. 2025 Philippine eagle mitochondrial study DOI 10.1002/ece3.72572; Javier et al. 2025 Visayan spotted deer reference genome DOI 10.46471/gigabyte.150; Constantino et al. 2026 flying-fox tracking DOI 10.1515/mammalia-2025-0097; Ng et al. 2026 dugong foraging in **Singapore**, DOI 10.1016/j.gecco.2026.e04287; Diesmos et al. 2026 Samar herpetofauna DOI 10.3897/zookeys.1269.173854, supporting four frogs and two reptile priority taxa. Limits/samples remain tied to source; no site presence invented. 2026 Platymantis dorsalis-complex reassessment DOI 10.11646/zootaxa.5884.2.3 is tracked as a future taxonomy watch item, not assigned to unrelated priority taxa.
+- **UI:** New `Rc14Bibliography.java` displays each priority species' unique original citation list under **Sources & details**, first three, remaining on Show more; DOI leads to published article, official website source opens exact page. `Rc11PrioritySpeciesView.java` loads new recent findings first, then original-description/older notes and preserved RC8 sources. No placeholder or specialist signature.
+- **Tests:** `scripts/test_rc14_latest_literature_index.py` asserts full 96 coverage, ten recent source-verified taxa, 13 claims with dated source URL and scope, and bibliography control. Android `Rc11SpeciesAccountInstrumentedTest.java` asserts a recent source in the Philippine Eagle drawer. Compile + signed APK and full emulator update testing **still require exact new-run confirmation**.
+- **Version under construction:** `0.27.3-rc14-recent-literature-preview` versionCode **66**, package `org.phwildlife.survey.beta08`, signing identity fixed, SQLite **27** unchanged. The last verified prior RC13B APK is code65, not a substitute for RC14. Run `40798341174` started on source commit `f451738acd8c9a3e309e85a24bf02266686cfcbb`; additional commits to docs/decision records do not change app binary. Direct RC14 APK must be downloaded, extracted and verified before linking.
+- **Science quality:** 96 bibliography entries does not imply 96 scientifically complete species accounts or 96 verified newest papers. Continue 86-species source search in source-scoped batches; preserve original descriptions, DOI dates, taxonomic disagreements, rights, all historical survey records and survey lifecycle.
+- **Detailed source plan:** `docs/LIKAS_RC14_96_SPECIES_LITERATURE_PLAN.md`. PR #38 remains draft; no merge into startup branch.
+
+---
+
+
+
 ## 29 October 2026 | RC13B signed development artifact verified for authoritative websites
 
 - **GitHub Scientific Core QA completed SUCCESS:** workflow run `40797131764`, artifact `12864366817`, attached ZIP `LIKAS-RC13B-authoritative-sources-build.zip`.

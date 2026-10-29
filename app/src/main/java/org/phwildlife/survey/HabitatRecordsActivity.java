@@ -44,7 +44,7 @@ public final class HabitatRecordsActivity extends Activity {
         TextView note=label(largeText?"Reference guide · measured field records":fullHabitatNote,13);
         note.setContentDescription(fullHabitatNote);
         note.setTextColor(UiKit.MUTED);
-        root.addView(note);
+        // Research explanation scrolls below the pinned guide/records tabs.
         LinearLayout tabs=new LinearLayout(this);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
         guideTab=UiKit.button(this,"Habitat guide","primary");
@@ -52,15 +52,15 @@ public final class HabitatRecordsActivity extends Activity {
         guideTab.setContentDescription("Habitat reference guide tab");
         recordsTab.setContentDescription("My recorded site habitats tab");
         int tabHeight=FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale);
-        tabs.addView(guideTab,new LinearLayout.LayoutParams(0,dp(tabHeight),1));
-        LinearLayout.LayoutParams other=new LinearLayout.LayoutParams(0,dp(tabHeight),1);
+        tabs.addView(guideTab,new LinearLayout.LayoutParams(0,-2,1));
+        LinearLayout.LayoutParams other=new LinearLayout.LayoutParams(0,-2,1);
         other.leftMargin=dp(8);
         tabs.addView(recordsTab,other);
         root.addView(tabs);
         Button researchToggle=UiKit.button(this,largeText?
             "Research tools  ▾":"Habitat research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand source-linked habitat comparisons and species associations");
-        root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(largeText?tabHeight:48)));
+        // The research disclosure moves into the scrolling area with its content.
         LinearLayout researchTools=new LinearLayout(this);
         researchTools.setOrientation(LinearLayout.VERTICAL);
         researchTools.setVisibility(android.view.View.GONE);
@@ -90,6 +90,8 @@ public final class HabitatRecordsActivity extends Activity {
         scroll.setFillViewport(true);
         LinearLayout scrollBody=new LinearLayout(this);
         scrollBody.setOrientation(LinearLayout.VERTICAL);
+        scrollBody.addView(note);
+        scrollBody.addView(researchToggle,new LinearLayout.LayoutParams(-1,-2));
         scrollBody.addView(researchTools);
         items=new LinearLayout(this);
         items.setOrientation(LinearLayout.VERTICAL);

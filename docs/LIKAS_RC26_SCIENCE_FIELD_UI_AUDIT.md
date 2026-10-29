@@ -27,3 +27,9 @@ Physical field handset access is not connected to this development session. The 
 ## Release boundaries
 
 Candidate code82 `0.27.3-rc26-fieldwork-readability-preview`, package `org.phwildlife.survey.beta08`, SQLite27, pinned Android v2 signing certificate. No startup forest/icon changes, taxonomy key rewrites, survey/migration, completed archive, GPS readings, or media storage edits. Build/source QA, emulator checks, signer inspection, actual APK attachment and real-phone tests must be separately reported. The draft PR remains unmerged.
+
+## RC26B correction following failed 16-test Android emulator run
+
+The first RC26 emulator run 40824440899 finished with **14/16 passed**. The Habitat My records button remained partly clipped at 200% despite a 96dp tab container. In RC26B the tab children use natural measured height, and the explanatory note and research disclosure enter the scroll area to protect the permanent tabs. A second test failure measured Continue to GPS before a layout frame following Home→Setup navigation. The instrumentation is split into separate activity callbacks with waitForIdleSync between them. This does not remove the GPS action or reduce its height.
+
+Code83 RC26B is a separate preview requiring a fresh Android run and its own signed debug APK. All 452 facts, 303 links, package identity, SQLite27 and existing survey records remain unchanged. Do not claim first-run emulator acceptance.

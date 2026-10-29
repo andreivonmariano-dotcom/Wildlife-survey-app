@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC26B code83 addresses emulator 14/16 large-text failures
+
+- RC26 emulator workflow **40824440899** on code82 completed **failure**, actual 16 tests with two failures: Habitat My records tab partly clipped at 200% and Setup Continue to GPS geometry inspected immediately after an in-callback navigation click, before Android layout. Do not report all UI tests passed. First issue is a UI layout defect, second a test timing defect, not automatically a field-screen failure.
+- RC26B source change: Habitat Guide/My records tabs use wrap-content height with the full shared button minimum; habitat note and research toggle move into the scroll content, leaving headers and core tabs unobstructed. Setup instrumentation allows a full UI layout pass between selecting Birds and asserting persistent GPS footer visibility. Diagnostic assertion reports the measured visible and intrinsic heights.
+- VersionCode **83**, versionName `0.27.3-rc26b-fieldwork-readability-preview`, current signing config and SQLite27 unchanged. Biological corpus unchanged at 96 species / 452 facts / 303 citation links. Home, Setup, History improvements remain.
+- RC26B build/QA pending fresh scientific core, signed APK inspection and 16-test emulator evidence. RC26 code82 debug APK is verified as signed but **did not pass** the RC26 emulator suite. Real phone checks remain unperformed. Do not designate RC26B released until artifact evidence and direct file download exist.
+
+---
+
+
 ## 29 October 2026 | RC26 signed debug APK code82 independently verified, emulator pending
 
 - RC26 production source committed `f4461be0de201478ae80b3706a38220f57cd5a32`; DOI test assertion corrected in `6663b22ac1726aabc6d917ff86250d432663fb2e`. First Python CI flagged an accidental test DOI mutation, not a scientific source-data difference. Corrected scientific-core CI **40824567946 completed SUCCESS** (Python science suite, JVM tests and Android assembly).

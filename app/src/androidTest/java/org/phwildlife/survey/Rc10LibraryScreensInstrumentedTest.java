@@ -63,7 +63,8 @@ public final class Rc10LibraryScreensInstrumentedTest {
         assertNotNull(label+" control exists",v);
         android.graphics.Rect visible=new android.graphics.Rect();
         assertTrue(label+" visible in screen",v.getGlobalVisibleRect(visible));
-        assertTrue(label+" height not clipped",visible.height()>=v.getHeight()-2);
+        assertTrue(label+" height not clipped: visible="+visible.height()+
+            " of "+v.getHeight(),visible.height()>=v.getHeight()-2);
     }
     private static void capture(android.app.Activity activity,String name){
         View root=activity.getWindow().getDecorView();
@@ -156,6 +157,11 @@ public final class Rc10LibraryScreensInstrumentedTest {
                     requireVisibleUnclipped(birds,"Home Birds tile");
                     capture(activity,"rc26_home_200percent.png");
                     assertTrue("Home opens Birds setup",birds.performClick());
+                });
+                // The UI must complete a layout pass after navigation before geometry checks.
+                androidx.test.platform.app.InstrumentationRegistry
+                    .getInstrumentation().waitForIdleSync();
+                test.onActivity(activity->{
                     View setup=activity.getWindow().getDecorView();
                     Button start=named(setup,"Continue to GPS");
                     requireVisibleUnclipped(start,"Survey setup GPS continuation");

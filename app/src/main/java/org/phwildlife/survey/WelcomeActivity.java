@@ -162,6 +162,13 @@ public class WelcomeActivity extends Activity {
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         lastHomeActiveSurvey=activeSurvey();
         main.addView(LikasPortalUi.hero(this),new LinearLayout.LayoutParams(-1,dp(180)));
+        if(lastHomeActiveSurvey!=null){
+            View session=LikasPortalUi.session(this,()->
+                startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
+            LinearLayout.LayoutParams resumeLp=new LinearLayout.LayoutParams(-1,-2);
+            resumeLp.topMargin=dp(12);
+            main.addView(session,resumeLp);
+        }
         TextView guidance=LikasPortalUi.kicker(this,"CHOOSE YOUR SPACE");
         main.addView(guidance);
         View field=LikasPortalUi.tile(this,"Fieldwork","Surveys · Data · History",
@@ -177,13 +184,6 @@ public class WelcomeActivity extends Activity {
             "settings",Color.rgb(231,239,238),Color.WHITE,()->
                 startActivity(new Intent(this,LikasSettingsActivity.class)));
         main.addView(settings);
-        if(lastHomeActiveSurvey!=null){
-            main.addView(LikasPortalUi.kicker(this,"IN PROGRESS"));
-            View resume=LikasPortalUi.action(this,"Resume survey",
-                "Your field session is still open","field",()->
-                startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
-            main.addView(resume);
-        }
         if(!playedStartupHomeTransition &&
            getIntent().getBooleanExtra("show_menu",false)){
             playedStartupHomeTransition=true;
@@ -255,17 +255,38 @@ public class WelcomeActivity extends Activity {
         shortcutRow.addView(dashboard,dashLp);
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
         shortcutsLp.topMargin=dp(10);main.addView(shortcutRow,shortcutsLp);
-        main.addView(LikasPortalUi.kicker(this,"FIELD TOOLS"));
-        toolRow(main,"Site habitats",()->
+        LinearLayout moreTools=vertical();
+        moreTools.addView(LikasPortalUi.kicker(this,"FIELD TOOLS"));
+        toolRow(moreTools,"Site habitats",()->
             startActivity(new Intent(this,HabitatRecordsActivity.class)));
-        toolRow(main,"Audio",()->
+        toolRow(moreTools,"Audio",()->
             startActivity(new Intent(this,CallLibraryActivity.class)));
-        toolRow(main,"Camera traps",()->
+        toolRow(moreTools,"Camera traps",()->
             startActivity(new Intent(this,TrapProtocolActivity.class)));
-        toolRow(main,"Protocols",()->
+        toolRow(moreTools,"Protocols",()->
             startActivity(new Intent(this,FieldProtocolsActivity.class)));
-        toolRow(main,"Study plans",()->
+        toolRow(moreTools,"Study plans",()->
             startActivity(new Intent(this,StudyProtocolsActivity.class)));
+        boolean expanded=getSharedPreferences("likas_ui",MODE_PRIVATE)
+            .getBoolean("field_tools_open",false);
+        moreTools.setVisibility(expanded?View.VISIBLE:View.GONE);
+        Button toolsToggle=UiKit.button(this,expanded?"Hide field tools":"More field tools","secondary");
+        toolsToggle.setContentDescription(expanded?"Hide additional field tools":
+            "Show additional field tools");
+        LinearLayout.LayoutParams toggleLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
+        toggleLp.topMargin=dp(13);
+        main.addView(toolsToggle,toggleLp);
+        main.addView(moreTools);
+        toolsToggle.setOnClickListener(v->{
+            boolean show=moreTools.getVisibility()!=View.VISIBLE;
+            moreTools.setVisibility(show?View.VISIBLE:View.GONE);
+            toolsToggle.setText(show?"Hide field tools":"More field tools");
+            toolsToggle.setContentDescription(show?"Hide additional field tools":
+                "Show additional field tools");
+            getSharedPreferences("likas_ui",MODE_PRIVATE).edit()
+                .putBoolean("field_tools_open",show).apply();
+            if(show)UiMotion.reveal(this,moreTools);
+        });
     }
     /** A brief, read-only link to the latest archived or active survey. */
     private void addHomeRecentSurvey(){
@@ -282,10 +303,11 @@ public class WelcomeActivity extends Activity {
                     (station.isEmpty()?"":" · Station "+station);
             }
         }catch(Exception ignored){summary="Open history to review saved surveys";}
-        TextView recent=text("Recent survey: "+summary,13,false);
-        recent.setTextColor(MUTED);
-        recent.setPadding(dp(6),dp(9),dp(6),dp(3));
-        main.addView(recent);
+        View recent=LikasPortalUi.action(this,"Latest record",summary,
+            "history",()->startActivity(new Intent(this,HistoryActivity.class)));
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.topMargin=dp(5);lp.bottomMargin=dp(8);
+        main.addView(recent,lp);
     }
 
     private void toolRow(LinearLayout parent,String name,Runnable action){
@@ -319,6 +341,20 @@ public class WelcomeActivity extends Activity {
         card("Herpetofauna","Custom reptile and amphibian survey",()->setup("Herpetofauna",true));
         card("Mammals","Custom mammal survey",()->setup("Mammals",true));
     }
+    /** Highlight the checked native radio control without replacing its semantics. */
+    private void updateMethodSelection(int checked){
+        if(methodChoices==null)return;
+        for(int i=0;i<methodChoices.getChildCount();i++){
+            View item=methodChoices.getChildAt(i);
+            boolean selected=item.getId()==checked;
+            android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
+            bg.setColor(selected?Color.rgb(230,243,231):Color.WHITE);
+            bg.setStroke(dp(selected?2:1),selected?UiKit.POND:UiKit.BORDER);
+            bg.setCornerRadius(dp(16));
+            item.setBackground(bg);
+            item.setSelected(selected);
+        }
+    }
     private void setup(String selected,boolean isCustom){
         homeVisible=false;currentScreen="setup";profile=selected;custom=isCustom;
         main.removeAllViews();
@@ -340,9 +376,12 @@ public class WelcomeActivity extends Activity {
             RadioButton rb=new RadioButton(this);
             rb.setId(1000+i);rb.setText(label);rb.setTextSize(15);rb.setTextColor(INK);
             rb.setButtonTintList(ColorStateList.valueOf(UiKit.POND));
-            rb.setMinHeight(dp(48));
-            rb.setPadding(dp(4),dp(10),dp(4),dp(10));
-            methodChoices.addView(rb);
+            rb.setMinHeight(dp(54));
+            rb.setPadding(dp(12),dp(10),dp(12),dp(10));
+            rb.setBackground(UiKit.surface(this));
+            LinearLayout.LayoutParams methodLp=new LinearLayout.LayoutParams(-1,-2);
+            methodLp.bottomMargin=dp(8);
+            methodChoices.addView(rb,methodLp);
 
         }
         methodChoices.check(1000);
@@ -352,7 +391,12 @@ public class WelcomeActivity extends Activity {
         methodsCard.setPadding(dp(12),dp(6),dp(10),dp(6));
         methodsCard.setBackground(UiKit.surface(this));
         methodsCard.addView(methodChoices);
+        TextView methodHint=LikasPortalUi.text(this,choices[0].description,13,
+            UiKit.MUTED,false);
+        methodHint.setPadding(dp(8),dp(4),dp(8),dp(10));
+        methodsCard.addView(methodHint);
         main.addView(methodsCard);
+        updateMethodSelection(1000);
         main.addView(step("02","Project and location"));
         projectChoice=new Spinner(this);
         projectKeys.clear();
@@ -493,7 +537,10 @@ public class WelcomeActivity extends Activity {
         lineBearingEntry.setHint("Transect magnetic bearing (0–359°)");
         main.addView(lineBearingEntry);
         methodChoices.setOnCheckedChangeListener((group,checked)->{
+            updateMethodSelection(checked);
             int choice=checked-1000;
+            if(choice>=0&&choice<choices.length)methodHint.setText(choices[choice].description);
+            refreshStudyChoices();
             if(choice>=0&&choice<choices.length){
                 durationEntry.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);
                 radiusEntry.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);

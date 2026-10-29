@@ -165,6 +165,7 @@ public class WelcomeActivity extends Activity {
         if(lastHomeActiveSurvey!=null){
             View session=LikasPortalUi.session(this,()->
                 startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
+            session.setContentDescription("Resume survey in progress. Continue field recording.");
             LinearLayout.LayoutParams resumeLp=new LinearLayout.LayoutParams(-1,-2);
             resumeLp.topMargin=dp(12);
             main.addView(session,resumeLp);

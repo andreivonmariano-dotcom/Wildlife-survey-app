@@ -83,8 +83,9 @@ public final class Rc8TraitComparisonActivity extends Activity {
             outer.addView(text("Evidence comparison library unavailable offline. Recorded surveys remain unchanged.",15,false));
             setContentView(outer);return;
         }
-        outer.addView(text("Compare cited biological statements, not automatically predicted traits. "+
-            "Missing = not assessed, never absent. Site occurrence requires your own recorded evidence.",13,false));
+        outer.addView(text("Compare cited biological statements from the earlier trait reference pack. "+
+            "Newer studies appear in each species account. Missing = not assessed, never absent. "+
+            "No comparison proves site occurrence or identifies an observation.",13,false));
         LinearLayout modes=new LinearLayout(this);
         modes.setOrientation(LinearLayout.HORIZONTAL);
         speciesMode=UiKit.button(this,"Species (96)","secondary");

@@ -75,7 +75,7 @@ class Rc23SpeciesResearch(unittest.TestCase):
         self.assertIn("out.size()+n>300000",bibliography)
         self.assertIn("Evidence type: ",bibliography)
         self.assertIn('ResearchCitationFormatter.citeClaim(',account)
-        self.assertIn("Compare current cited traits",account)
+        self.assertIn("Compare traits",account)
         self.assertIn("latest cited 96-species accounts",compare)
         self.assertIn("Search offline species by common, scientific or former name",picker)
         self.assertIn("Search species by scientific, common or former name",detail)

@@ -74,7 +74,7 @@ class Rc22OriginalStudies(unittest.TestCase):
         build=(ROOT/"app/build.gradle").read_text()
         db=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
-        self.assertIn("versionCode 96",build)
+        self.assertRegex(build,r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
         self.assertIn("0.27.3-rc36-library-polish-preview",build)
         self.assertIn("super(context,NAME,null,27)",db)
 

@@ -39,6 +39,7 @@ public final class Rc11PrioritySpeciesView {
     private static JSONObject matrix;
     private static JSONObject primary;
     private static JSONObject peerReviewed;
+    private static JSONObject recent;
     private static final JSONObject[] packs=new JSONObject[PACKS.length];
     private static int dp(Activity a,float n){
         return Math.round(a.getResources().getDisplayMetrics().density*n);
@@ -58,6 +59,7 @@ public final class Rc11PrioritySpeciesView {
         if(matrix==null)matrix=asset(a,"rc8_evidence_comparisons_v1.json",450000);
         if(primary==null)primary=asset(a,"rc12_primary_diagnoses_v1.json",55000);
         if(peerReviewed==null)peerReviewed=asset(a,"rc13_peer_reviewed_batch1_v1.json",40000);
+        if(recent==null)recent=asset(a,"rc14_recent_peer_reviewed_2025_2026_v1.json",40000);
         for(int i=0;i<PACKS.length;i++)
             if(packs[i]==null)packs[i]=asset(a,PACKS[i],65000);
     }
@@ -96,7 +98,25 @@ public final class Rc11PrioritySpeciesView {
         load(a);
         ArrayList<Fact> list=new ArrayList<>();
         HashSet<String> seen=new HashSet<>();
-        // Journal articles and original descriptions appear before older summary sources.
+        // Recent original studies first, then the archive of published diagnoses.
+        JSONArray newest=recent.optJSONArray("records");
+        if(newest!=null)for(int i=0;i<newest.length();i++){
+            JSONObject species=newest.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("scopeLimit"),
+                    item.optString("publicationYear")+" · "+item.optString("sourceLocation"),
+                    item.optString("reviewState"));
+            }
+        }
         JSONArray newStudies=peerReviewed.optJSONArray("records");
         if(newStudies!=null)for(int i=0;i<newStudies.length();i++){
             JSONObject species=newStudies.optJSONObject(i);
@@ -301,18 +321,7 @@ public final class Rc11PrioritySpeciesView {
         references.setPadding(dp(a,9),dp(a,6),dp(a,9),dp(a,12));
         references.addView(text(a,"Bibliography",12,true,UiKit.FOREST));
         Rc12ScientificReview.add(a,references,scientific);
-        HashSet<String> unique=new HashSet<>();
-        if(!citation.isEmpty()){
-            references.addView(text(a,"Taxonomy · "+citation,12,false,UiKit.MUTED));
-            if(sourceUrl.startsWith("https://"))link(a,references,"Open checklist",sourceUrl);
-        }
-        for(Fact fact:facts){
-            if(!unique.add(fact.url))continue;
-            TextView source=text(a,fact.source,13,true,UiKit.INK);
-            LinearLayout.LayoutParams sp=new LinearLayout.LayoutParams(-1,-2);
-            sp.topMargin=dp(a,12);references.addView(source,sp);
-            link(a,references,"View publication",fact.url);
-        }
+        Rc14Bibliography.add(a,references,scientific);
         if(!sourceKey.isEmpty()){
             TextView provenance=text(a,"Catalog record: "+sourceKey,11,false,UiKit.MUTED);
             LinearLayout.LayoutParams mp=new LinearLayout.LayoutParams(-1,-2);

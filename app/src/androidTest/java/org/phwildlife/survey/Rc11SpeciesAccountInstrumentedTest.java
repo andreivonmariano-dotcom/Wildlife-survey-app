@@ -50,12 +50,12 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                 assertTrue(containsText(views,"Pithecophaga jefferyi"));
                 assertTrue(containsText(views,"Identification"));
                 assertTrue(containsText(views,"Habitat"));
-                assertTrue(containsText(views,"References & study details"));
-                assertTrue("Cited topic coverage visible",containsText(views,"of 5 research topics documented"));
+                assertTrue(containsText(views,"References"));
+                assertTrue("Cited topic coverage visible",containsText(views,"of 5 topics"));
                 assertTrue("Per-note research provenance visible",containsText(views," ("));
-                assertTrue("Comparison snapshot labeled",containsText(views,"Compare current cited traits"));
-                assertTrue(containsText(views,"Photo reference"));
-                assertTrue(containsText(views,"View photo & credits"));
+                assertTrue("Comparison snapshot labeled",containsText(views,"Compare traits"));
+                assertTrue(containsText(views,"Photo:"));
+                assertTrue(containsText(views,"Photo credits & original"));
                 assertFalse("Long legacy photo caption must stay hidden by default",
                     containsText(views,"iNaturalist photographic reference; identification"));
                 assertFalse("Legacy RC7 cards must not stack",
@@ -69,7 +69,7 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                 assertTrue("Vector field icons required",icons>=2);
                 for(View v:views)
                     if(v instanceof Button&&((Button)v).getText().toString()
-                        .startsWith("References & study details")){
+                        .startsWith("References")){
                         v.performClick();break;
                     }
                 assertTrue(containsText(descendants(root),"Study details"));
@@ -107,7 +107,7 @@ public final class Rc11SpeciesAccountInstrumentedTest {
             scenario.onActivity(activity->{
                 ArrayList<View> views=descendants(activity.getWindow().getDecorView());
                 assertTrue(containsText(views,"Buceros hydrocorax"));
-                assertTrue(containsText(views,"References & study details"));
+                assertTrue(containsText(views,"References"));
                 assertFalse(containsText(views,"Unassessed. No reviewed ecological profile installed."));
                 assertFalse(containsText(views,"A detailed account is not yet source-checked"));
                 assertFalse(containsText(views,"Review status: Not independently reviewed"));
@@ -128,7 +128,7 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                     containsText(initial,"Published body measures"));
                 boolean opened=false;
                 for(View v:initial)if(v instanceof Button&&
-                    ((Button)v).getText().toString().startsWith("References & study details")){
+                    ((Button)v).getText().toString().startsWith("References")){
                     assertTrue(v.performClick());
                     opened=true;break;
                 }
@@ -156,7 +156,7 @@ public final class Rc11SpeciesAccountInstrumentedTest {
             scenario.onActivity(activity->{
                 View root=activity.getWindow().getDecorView();
                 ArrayList<View> views=descendants(root);
-                assertTrue(containsText(views,"Compare similar species"));
+                assertTrue(containsText(views,"Similar species"));
                 assertTrue(containsText(views,"Adult body length"));
             });
         }
@@ -189,7 +189,7 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                     assertTrue(containsText(views,species));
                     assertTrue("Original literature fact visible for "+species,
                         containsText(views,detail));
-                    assertTrue(containsText(views,"References & study details"));
+                    assertTrue(containsText(views,"References"));
                     assertFalse(containsText(views,"A detailed account is not yet source-checked"));
                 });
             }
@@ -222,9 +222,9 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                     View root=activity.getWindow().getDecorView();
                     ArrayList<View> all=descendants(root);
                     assertTrue("Missing species title "+name,containsText(all,name));
-                    assertTrue("Missing references "+name,containsText(all,"References & study details"));
+                    assertTrue("Missing references "+name,containsText(all,"References"));
                     assertTrue("Missing cited-topic coverage "+name,
-                        containsText(all,"of 5 research topics documented"));
+                        containsText(all,"of 5 topics"));
                     assertTrue("Missing on-card citation "+name,
                         containsText(all," ("));
                     int count=0;

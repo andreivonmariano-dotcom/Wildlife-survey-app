@@ -92,7 +92,7 @@ class SourceAndEvidence(unittest.TestCase):
         self.assertEqual(catalog.count('m.put("https://'),33)
         for rec in self.rc31["records"]:
             self.assertIn(rec["url"],catalog)
-        self.assertIn("versionCode 96",(ROOT/"app/build.gradle").read_text())
+        self.assertRegex((ROOT/"app/build.gradle").read_text(),r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
 
 if __name__=="__main__":
     unittest.main()

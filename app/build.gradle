@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 76
-        versionName '0.27.3-rc22-original-studies-preview'
+        versionCode 77
+        versionName '0.27.3-rc23-species-library-preview'
     }
     signingConfigs {
         debug {

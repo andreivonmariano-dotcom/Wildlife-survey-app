@@ -34,6 +34,13 @@ class IllustratedUiContract(unittest.TestCase):
         self.assertIn("LikasPortalUi.mini(this,first,firstDetail,firstIcon",library)
         self.assertIn("Rc24ConservationDashboardActivity.class",library)
         self.assertNotIn("MainActivity.class",library)
+        settings=src("LikasSettingsActivity.java")
+        self.assertIn("LikasPortalUi.mini(this,first,firstHint,firstArt",settings)
+        self.assertIn("FieldBackupActivity.class",settings)
+        self.assertIn("DataManagementActivity.class",settings)
+        self.assertIn("ImportActivity.class",settings)
+        self.assertIn("AuditActivity.class",settings)
+        self.assertIn('getBoolean("reduced_motion",false)',settings)
 
     def test_cards_avoid_invented_classification(self):
         cards=src("LikasDiscoveryActivity.java")

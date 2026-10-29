@@ -39,7 +39,7 @@ class Rc25PrimaryEcologyAccessibility(unittest.TestCase):
         expected={
             "Pithecophaga jefferyi":(2,"https://doi.org/10.1676/01-054"),
             "Leptobrachium lumadorum":(2,"https://doi.org/10.3897/zookeys.624.9814"),
-            "Cynocephalus volans":(3,"https://doi.org/10.2307/1383030"),
+            "Cynocephalus volans":(3,"https://doi.org/10.2307/1383020"),
         }
         for row in self.batch["records"]:
             name=row["scientificName"]

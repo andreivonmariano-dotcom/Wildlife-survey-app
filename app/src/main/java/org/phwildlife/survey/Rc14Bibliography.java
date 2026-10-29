@@ -147,6 +147,11 @@ public final class Rc14Bibliography {
         return spinner;
     }
     public static void add(Activity a,LinearLayout parent,String scientific){
+        add(a,parent,scientific,new java.util.HashSet<String>());
+    }
+    /** Display independent further reading, not duplicate claim-linked references. */
+    public static void add(Activity a,LinearLayout parent,String scientific,
+            java.util.Set<String> excludedUrls){
         JSONArray profiles=load(a).optJSONArray("profiles");
         if(profiles==null)return;
         JSONArray found=null;
@@ -157,8 +162,19 @@ public final class Rc14Bibliography {
             }
         }
         if(found==null)return;
-        final JSONArray refs=found;
-        TextView count=text(a,"Related literature · "+refs.length(),true);
+        JSONArray distinct=new JSONArray();
+        java.util.HashSet<String> used=new java.util.HashSet<>();
+        for(int i=0;i<found.length();i++){
+            JSONObject paper=found.optJSONObject(i);
+            if(paper==null)continue;
+            String url=paper.optString("url");
+            if(!url.startsWith("https://")||excludedUrls.contains(url)||
+                !used.add(url))continue;
+            distinct.put(paper);
+        }
+        if(distinct.length()==0)return;
+        final JSONArray refs=distinct;
+        TextView count=text(a,"Further reading · "+refs.length(),true);
         parent.addView(count);
         LinearLayout filterPanel=new LinearLayout(a);
         filterPanel.setOrientation(LinearLayout.VERTICAL);

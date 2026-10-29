@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC24C code80 large-text header correction, verification pending
+
+- The owner continued Q1/Q2/Q3 on the latest scientific-core workstream. RC24B code79 is the last independently inspected signed APK/emulator-accepted candidate; do not mislabel a future code80 build as tested before examining its artifacts.
+- **Confirmed visual defect:** 320dp Android 14 emulator at 200% text showed the word Conservation awkwardly divided into two lines despite visible filters. `UiKit.navigationHeader` allocated 120dp to the back control and used a 20sp heading, which becomes large at fontScale 2.0.
+- **Draft RC24C source fix:** at fontScale >=1.60, the shared heading uses 16sp, an icon-only 60dp Back control with the original full destination as the accessible label, and a one-line, end-truncated heading with full spoken title. At standard font scale, Back label and title size remain unchanged. `Rc10RecorderInstrumentedTest` asserts both Compare and Conservation labels remain one line and have zero ellipsized characters on the 320dp emulator, retaining the prior first-filter visibility assertions.
+- Android versionCode advanced from 79 to **80**, versionName `0.27.3-rc24c-large-text-header-preview`; code80 regression tests updated. No change to the cited 96-account corpus, survey data or workflow, package `org.phwildlife.survey.beta08`, pinned signing store, SQLite schema27, or separated startup assets.
+- **Scientific gap:** Dicaeum kampalili original 1952 Manuel and Gilliard publication is cataloged by AMNH/BHL, but its species-level character paragraphs could not be inspected in the current research session. Keep the Identification section unfilled. A citation alone is not a verified character description. No new biological facts claimed.
+- **Next gates:** confirm Scientific Core QA and emulator 14/14 on code80, inspect actual 200% conservation/compare screenshots for non-truncated full headings, confirm 96 images and byte-identical SQLite test fixture, inspect signed APK certificate and verify direct-download transfer before offering new APK. Real phone/old owner records/GNSS and TalkBack remain outstanding.
+
+---
+
+
 ## 29 October 2026 | RC24B emulator gate completed and independently retrieved
 
 - User reselected Q1/Q2/Q3. Latest branch already contains RC24B code79, 441 facts, 299 citation links, one unverified Dicaeum kampalili identification and source-driven 96-species comparison and conservation UI. Avoid duplicate build or replacing the newer branch with old RC23.

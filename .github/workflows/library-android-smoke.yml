@@ -1,10 +1,12 @@
 name: LIKAS Android Library Smoke
 
+# Expensive emulator acceptance is deliberate, not triggered by each source commit.
 on:
-  push:
-    branches:
-      - feature/likas-core-fieldwork-post-rc4
   workflow_dispatch:
+
+concurrency:
+  group: likas-library-device-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read

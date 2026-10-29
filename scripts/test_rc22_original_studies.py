@@ -38,7 +38,7 @@ class Rc22OriginalStudies(unittest.TestCase):
             self.assertTrue(account["sections"]["Identification"])
         still_missing={a["scientificName"] for a in self.corpus["accounts"]
                        if not a["sections"]["Identification"]}
-        self.assertEqual(len(still_missing),7)
+        self.assertEqual(len(still_missing),3)
         self.assertIn("Platymantis hazelae",still_missing)
         self.assertIn("Dicaeum kampalili",still_missing)
 

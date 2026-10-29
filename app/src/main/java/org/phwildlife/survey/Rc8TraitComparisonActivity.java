@@ -176,6 +176,7 @@ public final class Rc8TraitComparisonActivity extends Activity {
         page.setFillViewport(true);
         page.addView(outer);
         setContentView(page);
+        UiMotion.enter(this,page);
         AdapterView.OnItemSelectedListener update=new AdapterView.OnItemSelectedListener(){
             @Override public void onItemSelected(AdapterView<?> p,View v,int index,long id){render();}
             @Override public void onNothingSelected(AdapterView<?> p){}
@@ -296,9 +297,9 @@ public final class Rc8TraitComparisonActivity extends Activity {
             if(count++>=4){parent.addView(text("More cited statements appear in the full species account.",12,false));break;}
             String source=item.optString("source"),url=item.optString("url");
             int year=item.optInt("sourceYear",0);
-            String claim=item.optString("value").trim().replaceAll("[.\\\\s]+$","");
-            parent.addView(text(item.optString("label")+": "+claim+" "+
-                ResearchCitationFormatter.inText(source,year)+".",14,false));
+            String claim=Rc13FieldGuideCopy.fieldText(item.optString("value"));
+            parent.addView(text(item.optString("label")+": "+
+                ResearchCitationFormatter.citeClaim(claim,source,year),15,false));
             String scope=item.optString("studyScope");
             if(!scope.isEmpty()){
                 TextView limit=text("Study scope: "+scope,12,false);

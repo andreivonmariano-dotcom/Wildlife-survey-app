@@ -299,7 +299,7 @@ public final class Rc8TraitComparisonActivity extends Activity {
             int year=item.optInt("sourceYear",0);
             String claim=Rc13FieldGuideCopy.fieldText(item.optString("value"));
             parent.addView(text(item.optString("label")+": "+
-                ResearchCitationFormatter.citeClaim(claim,source,year),15,false));
+                ResearchCitationFormatter.citeClaim(claim,source,year,url),15,false));
             String scope=item.optString("studyScope");
             if(!scope.isEmpty()){
                 TextView limit=text("Study scope: "+scope,12,false);
@@ -339,7 +339,13 @@ public final class Rc8TraitComparisonActivity extends Activity {
             divider.setTextColor(UiKit.POND);card.addView(divider);
             addClaims(card,b,field,references);
             if(!references.isEmpty()){
-                card.addView(text("References",13,true));
+                Button toggle=UiKit.button(this,
+                    "References ("+references.size()+")  ▾","quiet");
+                card.addView(toggle,new LinearLayout.LayoutParams(-1,dp(48)));
+                LinearLayout sources=new LinearLayout(this);
+                sources.setOrientation(LinearLayout.VERTICAL);
+                sources.setVisibility(View.GONE);
+                card.addView(sources);
                 for(JSONObject source:references.values()){
                     String entry=ResearchCitationFormatter.sourceRecord(
                         source.optString("source"),source.optInt("sourceYear",0),
@@ -349,8 +355,15 @@ public final class Rc8TraitComparisonActivity extends Activity {
                     citation.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
                     citation.setMovementMethod(
                         android.text.method.LinkMovementMethod.getInstance());
-                    card.addView(citation);
+                    sources.addView(citation);
                 }
+                toggle.setOnClickListener(v->{
+                    boolean open=sources.getVisibility()!=View.VISIBLE;
+                    if(open)UiMotion.reveal(this,sources);
+                    else UiMotion.hide(sources);
+                    toggle.setText(open?"Hide references  ▴":
+                        "References ("+references.size()+")  ▾");
+                });
             }
             LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(-1,-2);
             params.bottomMargin=dp(12);results.addView(card,params);

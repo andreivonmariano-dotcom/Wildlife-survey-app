@@ -71,9 +71,16 @@ public final class Rc24ConservationDashboardActivity extends Activity {
             return data;
         }
     }
+    /** Original RC18 has four labels for named, dated global IUCN assessments. */
+    private static boolean isDatedIucn(String kind){
+        return "iucn_dated_assessment".equals(kind)||
+            "dated_global_conservation_assessment".equals(kind)||
+            "dated_global_iucn_assessment".equals(kind)||
+            "dated_iucn_assessment".equals(kind);
+    }
     private static boolean correctScope(JSONObject fact,int choice){
         String kind=fact.optString("sourceType");
-        boolean global="iucn_dated_assessment".equals(kind);
+        boolean global=isDatedIucn(kind);
         boolean national="government_national_conservation_record".equals(kind);
         switch(choice){
             case 1:return global;
@@ -84,7 +91,7 @@ public final class Rc24ConservationDashboardActivity extends Activity {
     }
     private static String scopeLabel(JSONObject fact){
         String kind=fact.optString("sourceType");
-        if("iucn_dated_assessment".equals(kind))return "Dated IUCN global assessment";
+        if(isDatedIucn(kind))return "Dated IUCN global assessment";
         if("government_national_conservation_record".equals(kind))
             return "Philippine national conservation record";
         return "Research / documented threat";

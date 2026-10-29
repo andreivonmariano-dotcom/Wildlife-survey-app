@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC28 APA/minimal research UI signed debug APK verified and delivered
+
+- **Verified application source:** `5656203f028644fcc593a54183f55952346804c0` on the RC4-derived core branch; later commits update docs and source test expectations only. Scientific Core QA workflow `40832328019` completed **success** on this source: Python source/evidence checks, Java tests, Android debug compile, signed media packaging and APK artifact. Its exact artifact ID was **12878194881**, named `LIKAS-RC28-minimal-apa-ui-debug`.
+- **Verified direct APK:** extracted the artifact's `app-debug.apk` into current conversation `/mnt/data/LIKAS-v0.27.3-RC28-minimal-APA-UI-debug.apk`, **9,609,724 bytes**, SHA-256 `af6563a2766bdb24a7abb92c469e5c4aea75c7849a9e21094563fb971befe2e1`. Archive ZIP integrity passed. Independently decoded compiled Android manifest: applicationId `org.phwildlife.survey.beta08`, versionCode **88**, versionName `0.27.3-rc28-minimal-apa-ui-preview`; validated APK Signing Block v2 X.509 DER certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matching pinned RC4 signer. The direct-download link was supplied in this chat. It is a **debug development preview**, not stable field release.
+- **UI & evidence:** minimal Home structure, 48dp spoken Back, restrained readable palette, accessible optional 160/180ms motion, 29 exact biological prose editorial display corrections, author–date citations adjacent to claims, deduplicated references and separate further reading. All raw source/corpus facts, SQLite27 records and startup artwork are unchanged.
+- **Still not independently verified:** RC28 Android14 16/16 instrumentation, 200% Habitat clipping fix (including baseline alignment), screenshots of every species page, signed in-place upgrade with actual owner records, GNSS/photo/WAV/battery/field survey QA and full source bibliography metadata completion. Do not call this field-certified.
+- **Next:** inspect latest RC28 emulator screenshot artifact/geometry, then iterate non-startup UI for any remaining overlapping or crowded surfaces. Preserve signing and app identity; keep 96 facts' research evidence and field records separate.
+
+---
+
+
 ## 29 October 2026 | RC28 minimalist academic UI and APA citations | Source committed, APK verification pending
 
 - **Owner-approved direction:** research-first minimalist native styling, compact spoken Back controls, quiet 160–180ms optional secondary motion, natural non-publisher-led biological sentences, APA 7 author–date in-text citations and consolidated source-linked references, without repeated `Source:` lines. See `docs/LIKAS_RC28_MINIMAL_RESEARCH_UI_APA_SPEC.md` and canonical master v1.0.3 U-07/U-08 on main.

@@ -145,13 +145,16 @@ public class WelcomeActivity extends Activity {
     }
     private void surveyTile(LinearLayout parent,String title,String detail,Runnable tap){
         String art="field";
-        if("Birds".equals(title))art="species";
-        if("Herpetofauna".equals(title))art="habitat";
-        if("Mammals".equals(title))art="shield";
+        if("Birds".equals(title))art="bird";
+        if("Herpetofauna".equals(title))art="frog";
+        if("Mammals".equals(title))art="mammal";
         if("Custom".equals(title))art="settings";
-        View tile=LikasPortalUi.action(this,title,detail,art,tap);
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.bottomMargin=dp(8);
+        View tile=LikasPortalUi.mini(this,title,detail,art,tap);
+        boolean stacked=parent.getOrientation()==LinearLayout.VERTICAL;
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(
+            stacked?-1:0,-2,1);
+        if(stacked)lp.bottomMargin=dp(9);
+        else if(parent.getChildCount()>0)lp.leftMargin=dp(10);
         parent.addView(tile,lp);
     }
     private void home(){
@@ -220,16 +223,17 @@ public class WelcomeActivity extends Activity {
             main.addView(activeCard);
         }else{
             main.addView(step("NEW","Choose wildlife group"));
-            LinearLayout first=vertical();
-            surveyTile(first,"Birds","Counts and transects",()->setup("Birds",false));
-            surveyTile(first,"Herpetofauna","Calls and encounters",()->setup("Herpetofauna",false));
+            LinearLayout first=new LinearLayout(this);
+            first.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+            surveyTile(first,"Birds","Counts · Transects",()->setup("Birds",false));
+            surveyTile(first,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna",false));
             main.addView(first);
             LinearLayout second=new LinearLayout(this);
-            second.setOrientation(LinearLayout.VERTICAL);
-            surveyTile(second,"Mammals","Signs and stations",()->setup("Mammals",false));
-            surveyTile(second,"Custom","Other field methods",()->customPicker());
+            second.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+            surveyTile(second,"Mammals","Signs · Stations",()->setup("Mammals",false));
+            surveyTile(second,"Custom","Other methods",()->customPicker());
             LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(-1,-2);
-            secondLp.topMargin=dp(9);main.addView(second,secondLp);
+            secondLp.topMargin=dp(10);main.addView(second,secondLp);
         }
 
         main.addView(FieldVisuals.section(this,"Workspace","Projects and records"));
@@ -238,18 +242,19 @@ public class WelcomeActivity extends Activity {
         addHomeRecentSurvey();
         LinearLayout shortcutRow=new LinearLayout(this);
         shortcutRow.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        Button history=UiKit.button(this,"Survey history","secondary");
+        View history=LikasPortalUi.mini(this,"History","Past surveys","history",
+            ()->startActivity(new Intent(this,HistoryActivity.class)));
         shortcutRow.addView(history,new LinearLayout.LayoutParams(
-            largeText()?-1:0,dp(actionDp()),1));
-        history.setOnClickListener(v->startActivity(new Intent(this,HistoryActivity.class)));
-        Button dashboard=UiKit.button(this,"Dashboard","secondary");
+            largeText()?-1:0,-2,1));
+        View dashboard=LikasPortalUi.mini(this,"Analysis","Survey data","chart",
+            ()->startActivity(new Intent(this,DashboardActivity.class)));
         LinearLayout.LayoutParams dashLp=new LinearLayout.LayoutParams(
-            largeText()?-1:0,dp(actionDp()),1);
-        if(largeText())dashLp.topMargin=dp(8);
-        else dashLp.leftMargin=dp(8);shortcutRow.addView(dashboard,dashLp);
-        dashboard.setOnClickListener(v->startActivity(new Intent(this,DashboardActivity.class)));
+            largeText()?-1:0,-2,1);
+        if(largeText())dashLp.topMargin=dp(9);
+        else dashLp.leftMargin=dp(10);
+        shortcutRow.addView(dashboard,dashLp);
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
-        shortcutsLp.topMargin=dp(9);main.addView(shortcutRow,shortcutsLp);
+        shortcutsLp.topMargin=dp(10);main.addView(shortcutRow,shortcutsLp);
         main.addView(LikasPortalUi.kicker(this,"FIELD TOOLS"));
         toolRow(main,"Site habitats",()->
             startActivity(new Intent(this,HabitatRecordsActivity.class)));

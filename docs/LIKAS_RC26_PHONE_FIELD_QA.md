@@ -3,7 +3,7 @@
 Date: 29 October 2026, Asia/Manila. Scientific-core draft PR #38.
 **NO PHYSICAL PHONE TEST PERFORMED.** This file describes acceptance work for the owner or field team, not completed test evidence.
 
-Target: v0.27.3 RC26 fieldwork readability preview, code82. Package `org.phwildlife.survey.beta08`, schema27, current debug signing certificate unchanged.
+Target current phone-test preview: v0.27.3 RC26B fieldwork readability, code83. RC26 code82 is superseded following two failed 200% emulator checks. Package `org.phwildlife.survey.beta08`, schema27, current debug signing certificate unchanged.
 
 ## Principle and protective setup
 

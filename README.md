@@ -1,3 +1,17 @@
+# LIKAS v0.27.3 RC32 | Source-scoped sparse priority accounts and diagnostic keys
+
+**Build candidate:** `0.27.3-rc32-sparse-evidence-keys-preview` (versionCode **92**), Android package `org.phwildlife.survey.beta08`, same SQLite **27** and pinned signing setup. Core source checks, signed build and real-device verification are distinct QA gates.
+
+RC32 adds 15 study-scoped research records for six sparse species: *Varanus bangonorum*, *Cyrtodactylus agusanensis*, *Cuora philippinensis*, *Ophiophagus salvatana*, *Crateromys australis*, *Dugong dugon*. The read-only research views now contain **505 citations over 96 species**, with **325/480 sections** populated and **18/96** species with at least one source in all five topics. The original 456-fact corpus and historical survey data remain unmodified. **23 taxa still have only one or two populated topics.** An account with five populated topics is not yet a complete field identification profile.
+
+The source-linked reference catalog contains **33** exact-URL checked publication/agency/specialist entries. The dedicated 96-species status ledger separates dated, independently checked IUCN categories from the national DENR order; only **four IUCN and three DENR** entries have primary-level verification from these review tranches. Historical research, group-summarized categories and unverified statuses are not silently treated as current. The two added specimen-scoped **Similar species** comparisons are *C. agusanensis* versus *C. gubaot*, and *O. salvatana* versus *O. hannah*.
+
+The current 36/96 priority-species approved photo coverage remains unchanged. New third-party image candidates are **not** bundled without species identity, license, attribution and immutable-byte checks. No new private-authorized media rights have been presumed.
+
+See `docs/LIKAS_RC32_SPARSE_STATUS_AND_DIAGNOSTIC_QA.md` and `docs/LIKAS_RC32_96_STATUS_REVIEW_LEDGER.json` for sourced claims, coverage thresholds, caveats and next QA tasks.
+
+---
+
 # LIKAS v0.27.3 RC31 | Priority diagnosis and dated conservation evidence
 
 **Internal scientific candidate:** `0.27.3-rc31-priority-diagnostics-preview` (versionCode **91**), Android package `org.phwildlife.survey.beta08`, SQLite **27**, pinned debug signing. A compiled APK is not automatically a visually accepted emulator or field release.

@@ -21,6 +21,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Locale;
 
 /**
@@ -95,11 +98,12 @@ public final class Rc11PrioritySpeciesView {
     }
     private static final class Fact {
         final String area,label,value,source,url,limitation,publication,review;
+        final int sourceYear;
         Fact(String area,String label,String value,String source,String url,
-             String limitation,String publication,String review){
+             String limitation,String publication,String review,int sourceYear){
             this.area=area;this.label=label;this.value=value;this.source=source;
             this.url=url;this.limitation=limitation;
-            this.publication=publication;this.review=review;
+            this.publication=publication;this.review=review;this.sourceYear=sourceYear;
         }
     }
     private static ArrayList<Fact> facts(Activity a,String scientific){
@@ -127,7 +131,7 @@ public final class Rc11PrioritySpeciesView {
                             item.optString("url"),
                             item.isNull("studyScope")?"":item.optString("studyScope"),
                             item.isNull("sourceLocation")?"":item.optString("sourceLocation"),
-                            "");
+                            "",item.optInt("sourceYear",0));
                     }
                 }
                 if(!list.isEmpty())return list;
@@ -285,12 +289,17 @@ public final class Rc11PrioritySpeciesView {
     private static void add(ArrayList<Fact> list,HashSet<String> seen,
             String area,String label,String value,String source,String url,
             String limitation,String publication,String review){
+        add(list,seen,area,label,value,source,url,limitation,publication,review,0);
+    }
+    private static void add(ArrayList<Fact> list,HashSet<String> seen,
+            String area,String label,String value,String source,String url,
+            String limitation,String publication,String review,int sourceYear){
         if(area==null||label.trim().isEmpty()||value.trim().isEmpty()||
             source.trim().isEmpty()||!url.startsWith("https://"))return;
         String key=area+"|"+value.trim().toLowerCase(Locale.ROOT);
         if(!seen.add(key))return;
         list.add(new Fact(area,label,Rc13FieldGuideCopy.fieldText(value),
-            source,url,limitation,publication,review));
+            source,url,limitation,publication,review,sourceYear));
     }
     private static final class Glyph extends View {
         final String type;
@@ -357,17 +366,16 @@ public final class Rc11PrioritySpeciesView {
         block.setPadding(dp(a,3),dp(a,7),dp(a,3),dp(a,8));
         TextView heading=text(a,item.label,13,true,UiKit.FOREST);
         block.addView(heading);
-        TextView description=text(a,item.value,14,false,UiKit.INK);
-        description.setLineSpacing(dp(a,2),1.02f);
+        // APA-style parenthetical citation belongs beside the actual claim.
+        // The complete source record appears only once in the reference drawer.
+        String statement=item.value.trim().replaceAll("[\\\\.\\\\s]+$","");
+        TextView description=text(a,statement+" "+
+            ResearchCitationFormatter.inText(item.source,item.sourceYear)+".",
+            14,false,UiKit.INK);
+        description.setLineSpacing(dp(a,3),1.05f);
+        description.setContentDescription(item.label+". "+description.getText());
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
         lp.topMargin=dp(a,3);block.addView(description,lp);
-        TextView sourceLine=text(a,"Source: "+item.source,11,false,UiKit.MUTED);
-        sourceLine.setMaxLines(2);
-        sourceLine.setEllipsize(TextUtils.TruncateAt.END);
-        sourceLine.setContentDescription("Cited research source: "+item.source);
-        LinearLayout.LayoutParams sourceLp=new LinearLayout.LayoutParams(-1,-2);
-        sourceLp.topMargin=dp(a,3);
-        block.addView(sourceLine,sourceLp);
         list.addView(block);
         referenced.add(item);
     }
@@ -417,9 +425,28 @@ public final class Rc11PrioritySpeciesView {
         references.setOrientation(LinearLayout.VERTICAL);
         references.setVisibility(View.GONE);
         references.setPadding(dp(a,9),dp(a,6),dp(a,9),dp(a,12));
-        references.addView(text(a,"Bibliography",12,true,UiKit.FOREST));
-        Rc12ScientificReview.add(a,references,scientific);
+        references.addView(text(a,"References",16,true,UiKit.FOREST));
+        TextView note=text(a,"APA 7 author–date citations are shown beside claims. "+
+            "Incomplete catalog metadata is identified rather than guessed.",12,false,UiKit.MUTED);
+        references.addView(note);
+        LinkedHashMap<String,Fact> unique=new LinkedHashMap<>();
+        for(Fact fact:facts)if(!unique.containsKey(fact.url))unique.put(fact.url,fact);
+        ArrayList<Fact> entries=new ArrayList<>(unique.values());
+        Collections.sort(entries,(left,right)->
+            ResearchCitationFormatter.authorLabel(left.source).compareToIgnoreCase(
+                ResearchCitationFormatter.authorLabel(right.source)));
+        for(Fact fact:entries){
+            TextView entry=text(a,ResearchCitationFormatter.sourceRecord(
+                fact.source,fact.sourceYear,fact.url),13,false,UiKit.INK);
+            entry.setPadding(dp(a,5),dp(a,9),dp(a,3),dp(a,7));
+            entry.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
+            entry.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+            references.addView(entry);
+        }
+        references.addView(text(a,"Additional literature and scientific review",
+            13,true,UiKit.FOREST));
         Rc14Bibliography.add(a,references,scientific);
+        Rc12ScientificReview.add(a,references,scientific);
         if(!sourceKey.isEmpty()){
             TextView provenance=text(a,"Catalog record: "+sourceKey,11,false,UiKit.MUTED);
             LinearLayout.LayoutParams mp=new LinearLayout.LayoutParams(-1,-2);
@@ -439,7 +466,7 @@ public final class Rc11PrioritySpeciesView {
                 d.topMargin=dp(a,10);references.addView(detail,d);
             }
         }
-        Button toggle=UiKit.button(a,"Sources & details  ▾","secondary");
+        Button toggle=UiKit.button(a,"References & study details  ▾","secondary");
         toggle.setContentDescription("Open cited sources and study details");
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,50));
         lp.topMargin=dp(a,4);parent.addView(toggle,lp);
@@ -447,7 +474,7 @@ public final class Rc11PrioritySpeciesView {
         toggle.setOnClickListener(v->{
             boolean open=references.getVisibility()!=View.VISIBLE;
             references.setVisibility(open?View.VISIBLE:View.GONE);
-            toggle.setText(open?"Hide sources & details  ▴":"Sources & details  ▾");
+            toggle.setText(open?"Hide references  ▴":"References & study details  ▾");
             toggle.setContentDescription(open?"Close cited sources and study details":
                 "Open cited sources and study details");
         });

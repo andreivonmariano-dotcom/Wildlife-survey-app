@@ -16,7 +16,7 @@ class UnifiedPriorityCorpus(unittest.TestCase):
         catalog={x["scientificName"]:x for x in refs["profiles"]}
         self.assertEqual(corpus["schemaVersion"],"rc18-unified-96-priority-account-corpus-v1")
         self.assertEqual(corpus["prioritySpeciesCount"],96)
-        self.assertEqual(corpus["sourceFactCount"],377)
+        self.assertEqual(corpus["sourceFactCount"],393)
         self.assertEqual(len(corpus["accounts"]),96)
         self.assertEqual(set(orig),{x["scientificName"] for x in corpus["accounts"]})
         self.assertEqual(set(catalog),set(orig))
@@ -47,7 +47,7 @@ class UnifiedPriorityCorpus(unittest.TestCase):
             self.assertEqual(no_data,set(item["coverage"]["sectionsWithoutCitedData"]))
         self.assertEqual(count,377)
         self.assertEqual(refs["recentVerifiedTaxa"],13)
-        self.assertEqual(sum(p["referenceCount"] for p in refs["profiles"]),261)
+        self.assertEqual(sum(p["referenceCount"] for p in refs["profiles"]),269)
 
     def test_previous_fact_empty_taxa_have_original_references(self):
         corpus=json.loads((ASSET/"rc18_unified_96_priority_accounts_v1.json").read_text())
@@ -62,8 +62,8 @@ class UnifiedPriorityCorpus(unittest.TestCase):
     def test_missing_science_remains_unfilled(self):
         c=json.loads((ASSET/"rc18_unified_96_priority_accounts_v1.json").read_text())
         self.assertEqual(c["sectionMissingCounts"],{
-            "Identification":27,"Habitat":52,"Distribution":24,
-            "Natural history":78,"Conservation":77})
+            "Identification":18,"Habitat":51,"Distribution":24,
+            "Natural history":75,"Conservation":76})
         self.assertFalse(any("approved" in x["coverage"] for x in c["accounts"]))
 
     def test_actual_android_uses_unified_corpus(self):

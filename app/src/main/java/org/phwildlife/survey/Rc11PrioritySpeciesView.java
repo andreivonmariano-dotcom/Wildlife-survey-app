@@ -43,6 +43,7 @@ public final class Rc11PrioritySpeciesView {
     private static JSONObject newStudies;
     private static JSONObject nextStudies;
     private static JSONObject originalComparisons;
+    private static JSONObject unifiedCorpus;
     private static final JSONObject[] packs=new JSONObject[PACKS.length];
     private static int dp(Activity a,float n){
         return Math.round(a.getResources().getDisplayMetrics().density*n);
@@ -66,6 +67,7 @@ public final class Rc11PrioritySpeciesView {
         if(newStudies==null)newStudies=asset(a,"rc15_publication_batch_v1.json",40000);
         if(nextStudies==null)nextStudies=asset(a,"rc16_publication_batch_v1.json",40000);
         if(originalComparisons==null)originalComparisons=asset(a,"rc17_verified_research_v1.json",40000);
+        if(unifiedCorpus==null)unifiedCorpus=asset(a,"rc18_unified_96_priority_accounts_v1.json",620000);
         for(int i=0;i<PACKS.length;i++)
             if(packs[i]==null)packs[i]=asset(a,PACKS[i],65000);
     }
@@ -103,6 +105,34 @@ public final class Rc11PrioritySpeciesView {
     private static ArrayList<Fact> facts(Activity a,String scientific){
         load(a);
         ArrayList<Fact> list=new ArrayList<>();
+        // RC18 gives all 96 accounts the same compiled, non-redundant reference model.
+        JSONArray accountRows=unifiedCorpus.optJSONArray("accounts");
+        if(accountRows!=null&&unifiedCorpus.optInt("prioritySpeciesCount")==96){
+            for(int i=0;i<accountRows.length();i++){
+                JSONObject account=accountRows.optJSONObject(i);
+                if(account==null||!scientific.equalsIgnoreCase(
+                    account.optString("scientificName")))continue;
+                JSONObject categories=account.optJSONObject("sections");
+                if(categories==null)break;
+                HashSet<String> unique=new HashSet<>();
+                for(String key:AREAS){
+                    JSONArray claims=categories.optJSONArray(key);
+                    if(claims==null)continue;
+                    for(int j=0;j<claims.length();j++){
+                        JSONObject item=claims.optJSONObject(j);
+                        if(item==null)continue;
+                        add(list,unique,key,item.optString("label"),
+                            item.optString("text"),item.optString("source"),
+                            item.optString("url"),item.optString("studyScope"),
+                            item.optString("sourceLocation"),
+                            item.optString("sourceType"));
+                    }
+                }
+                if(!list.isEmpty())return list;
+                break;
+            }
+        }
+        // Preserve the original source-pack reader as fallback for older snapshots.
         HashSet<String> seen=new HashSet<>();
         // Original diagnoses and recent measured field studies.
         JSONArray recentClaims=originalComparisons.optJSONArray("records");

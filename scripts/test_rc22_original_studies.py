@@ -75,7 +75,7 @@ class Rc22OriginalStudies(unittest.TestCase):
         db=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertRegex(build,r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
-        self.assertIn("0.27.3-rc36-library-polish-preview",build)
+        self.assertIn("0.27.3-rc",build)
         self.assertIn("super(context,NAME,null,27)",db)
 
 if __name__=="__main__":

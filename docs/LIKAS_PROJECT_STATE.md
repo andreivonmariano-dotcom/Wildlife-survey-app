@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC39 ambitious Field Guide Studio | Source implementation, APK QA pending
+
+- **Baseline:** verified RC38 signed debug 98 at app commit `890690329d784156a4c554b8dd014713df5f1558`, pinned signer SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`.
+- **Owner direction:** ambitious, cohesive evolution of current LIKAS design. This scoped release improves live usability rather than adding unsupported biological data.
+- **Source:** RC39 versionCode **99**, versionName `0.27.3-rc39-field-guide-studio-preview`. Discovery now supports offline name search, group filtering, state restoration and empty states; species/habitat cards use varied original glyphs and larger illustrations. Home puts active-survey resume near the top. Fieldwork has collapsible extra utilities and tappable latest history. Survey method setup receives clearly selected radio controls, readable descriptions and study-option refresh. `scripts/test_rc39_field_guide_studio.py` and `Rc39DiscoverySearchInstrumentedTest.java` added.
+- **Unchanged:** SQLite27, original package/signing configuration, all survey outcomes, original 505 source-typed facts, 96 curated account IDs, 15 habitats, six reviewed conservation display records, 58 authorized photos and startup art. Gallery search covers curated research accounts, not the full national checklist.
+- **Validation:** Python/JVM/Android compile and signed binary verification, emulator/physical phone 320dp and 200% text, TalkBack, offline behavior and historical survey upgrade are still **pending**. Direct RC39 APK not yet produced.
+- **Next:** scientific core QA, correct any failures, direct attached verified APK, then device layout inspections and deeper form refinements. See `docs/LIKAS_RC39_FIELD_GUIDE_STUDIO_QA.md`.
+
+---
+
+
 ## 29 October 2026 | RC38 illustrated navigation and science-safe card frames | Source implementation, build gate pending
 
 - **Owner direction:** visually overhaul LIKAS; retain a short startup, then Fieldwork, Library and Settings. Prefer original minimalist artwork, short labels, collectible-style side-scrolling wildlife/habitat cards, IUCN/DENR assessed styling and no public Priority tier.

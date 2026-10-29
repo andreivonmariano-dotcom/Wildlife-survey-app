@@ -26,13 +26,13 @@ class CleanFieldUi(unittest.TestCase):
         self.assertIn('progressView.setVisibility(',screen)
     def test_home_puts_shortcuts_first_and_groups_other_tools(self):
         home=src("WelcomeActivity.java")
-        for key in ('"Survey history"','"Open Species Library"',
-                    '"More tools  ▾"','"Field evidence"',
-                    '"Workspace"','"Species Library"',
-                    '"Study and archive management"'):
+        for key in ('"Fieldwork"','"Library"','"Settings"',
+                    'LikasPortalUi.hero(this)',
+                    'LikasLibraryActivity.class','LikasSettingsActivity.class',
+                    'HistoryActivity.class','SitesActivity.class'):
             self.assertIn(key,home)
         self.assertNotIn('"History & tools  ▾"',home)
-        self.assertIn('toolRow(tools,"Import older v0.7 export"',home)
+        self.assertIn('ImportActivity.class',src("LikasSettingsActivity.java"))
     def test_study_template_is_never_silently_hidden_after_selection(self):
         home=src("WelcomeActivity.java")
         for key in ('refreshStudyTitle()', 'selectedStudyId()',
@@ -93,7 +93,7 @@ class CleanFieldUi(unittest.TestCase):
         self.assertIn('Compare source-checked ID characters',detail)
         self.assertIn('DiagnosticGuideActivity.hasProfile',detail)
         self.assertIn('FieldQuickActions.forSurvey(profile,method)',src("MainActivity.java"))
-        self.assertIn('FieldVisuals.section(this,"Fieldwork"',src("WelcomeActivity.java"))
+        self.assertIn('private void fieldworkHub(){',src("WelcomeActivity.java"))
 
 if __name__=="__main__":
     unittest.main()

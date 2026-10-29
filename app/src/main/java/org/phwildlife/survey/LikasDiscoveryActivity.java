@@ -492,7 +492,7 @@ public final class LikasDiscoveryActivity extends Activity {
                     shelf(group,groupAccounts,false);
                 }
             }
-            action("All species",()->startActivity(new Intent(this,Rc7SpeciesLibraryActivity.class)));
+            action("Full Philippine species checklist",()->startActivity(new Intent(this,Rc7SpeciesLibraryActivity.class)));
         }
         if(animate)UiMotion.enter(this,content);
     }

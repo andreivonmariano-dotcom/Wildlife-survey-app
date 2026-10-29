@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC24C code80 source QA and signed APK independently verified
+
+- GitHub Actions Scientific Core QA run **40820731316** on source commit `ce0a67664108191c321cafdd15a0a0dd06697314` finished **success**, including Python source/science/migration checks, JVM tests and APK assembly. Companion run 40820735945 was also successful.
+- Downloaded CI artifact **12874402805** into the current conversation and extracted exact file `/mnt/data/LIKAS-v0.27.3-RC24C-large-text-header-debug.apk`. Verified APK ZIP integrity and embedded AndroidManifest package `org.phwildlife.survey.beta08` and versionName `0.27.3-rc24c-large-text-header-preview`. Confirmed Gradle versionCode **80**. Actual APK size **9,592,008 bytes**, SHA256 **e28a2901d11e1aa95bafa69d2ce04fc44139fcb74e2712c3e3c17f4b53cbb224**. Parsed APK Signing Block v2 X.509 certificate DER and verified signer SHA256 **f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937**, the established identity.
+- Provided a verified direct in-chat APK download. This prior conversation's sandbox path must be revalidated or reattached in a new chat.
+- Current Android 14 emulator QA runs **40820651226** (after the test and version patches), 40820646866, 40820641621 were initiated by source changes. Inspect the actual code80 run, 200%-font Compare and Conservation screenshots, 14 test results, 96 species screenshots, and byte-unchanged SQLite fixture before declaring new emulator acceptance. The code80 APK is a **debug phone-test preview**, not stable field certification.
+- CI artifact name initially inherited RC24B despite containing code80; workflow was renamed `LIKAS-RC24C-large-text-header-debug` in subsequent workflow-only commit 045cf07c... to avoid mislabeling future artifacts. Android production source was unchanged by that rename.
+
+---
+
+
 ## 29 October 2026 | RC24C code80 large-text header correction, verification pending
 
 - The owner continued Q1/Q2/Q3 on the latest scientific-core workstream. RC24B code79 is the last independently inspected signed APK/emulator-accepted candidate; do not mislabel a future code80 build as tested before examining its artifacts.

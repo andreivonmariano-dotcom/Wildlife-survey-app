@@ -64,8 +64,8 @@ class Rc20SourcedSpecies(unittest.TestCase):
         self.assertIn('of 5 research topics documented',view)
         self.assertIn('Close cited sources and study details',view)
         self.assertIn('Collapse ',view)
-        self.assertIn("versionCode 83",gradle)
-        self.assertIn("0.27.3-rc26b-fieldwork-readability-preview",gradle)
+        self.assertIn("versionCode 84",gradle)
+        self.assertIn("0.27.3-rc26c-fieldwork-readability-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

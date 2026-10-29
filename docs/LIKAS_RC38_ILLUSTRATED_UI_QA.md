@@ -23,3 +23,7 @@ The owner requested a less spreadsheet-like LIKAS experience, three clear destin
 - A passing CI build is a development preview only, not proof of physical field readiness.
 
 **Affected requirements:** G-01, G-02, G-03, G-05, G-07, G-10, G-11, L-02, L-04, U-07, U-09, U-10, U-11, DL-01, CC-01.
+
+## Verified development build, 29 October 2026
+
+Source fix HEAD `890690329d784156a4c554b8dd014713df5f1558`. The Scientific Core QA job **40868130998** completed successfully, producing artifact **12894089473**. CI currently retains an obsolete RC36 artifact label; the binary was decoded and verified as **RC38**, versionCode **98**, package `org.phwildlife.survey.beta08`, original v2 signer SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Extracted APK **9,663,970 bytes**, SHA-256 `151ac50869b758d9b44c3a149ac7de7ab4987651340b9de3a38025607bd7a6f7`. Direct chat download of `LIKAS-v0.27.3-RC38-illustrated-ui-debug.apk` provided after verification. The baseline Android emulator, real handset, 200% font, TalkBack, file migration and GPS/audio use are still unverified.

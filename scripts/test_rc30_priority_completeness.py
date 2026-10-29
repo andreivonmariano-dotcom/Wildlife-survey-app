@@ -64,6 +64,14 @@ class PriorityCompletion(unittest.TestCase):
             {"Identification":1,"Habitat":37,"Distribution":18,
              "Natural history":61,"Conservation":69})
 
+    def test_global_iucn_types_remain_distinct_from_dated_denr(self):
+        conservation=(JAVA/"Rc24ConservationDashboardActivity.java").read_text()
+        for label in ("iucn_dated_assessment","dated_global_conservation_assessment",
+                      "dated_global_iucn_assessment","dated_iucn_assessment"):
+            self.assertIn('"'+label+'"',conservation)
+        self.assertIn('isDatedIucn(kind)',conservation)
+        self.assertIn('"government_national_conservation_record"',conservation)
+
     def test_all_display_paths_merge_same_read_only_data(self):
         cls=(JAVA/"Rc30SpeciesEvidence.java").read_text()
         self.assertIn('new JSONObject(corpus.toString())',cls)

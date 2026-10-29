@@ -66,8 +66,8 @@ class Rc26ScienceAndFieldwork(unittest.TestCase):
                          "habitats-200percent-font.png"):
             self.assertIn(filename,runner)
         self.assertIn("16 tests?",runner)
-        self.assertIn("versionCode 87",gradle)
-        self.assertIn("0.27.3-rc27c-habitat-tab-alignment-preview",gradle)
+        self.assertIn("versionCode 88",gradle)
+        self.assertIn("0.27.3-rc28-minimal-apa-ui-preview",gradle)
         matrix=(ROOT/"docs/LIKAS_RC26_PHONE_FIELD_QA.md").read_text()
         self.assertIn("NO PHYSICAL PHONE TEST PERFORMED",matrix)
         self.assertIn("Complete",matrix)

@@ -369,6 +369,7 @@ public final class LikasDiscoveryActivity extends Activity {
             boolean active=name.equals(selected);
             Button chip=UiKit.button(this,name,active?"pond":"quiet");
             chip.setTextSize(12);
+            chip.setSelected(active);
             chip.setContentDescription("Filter "+(showingHabitat?"habitats":"species")+
                 " by "+name+(active?", selected":""));
             chip.setMinHeight(dp(48));
@@ -431,6 +432,8 @@ public final class LikasDiscoveryActivity extends Activity {
         content.removeAllViews();
         speciesTab.setEnabled(showingHabitat);
         habitatTab.setEnabled(!showingHabitat);
+        speciesTab.setSelected(!showingHabitat);
+        habitatTab.setSelected(showingHabitat);
         speciesTab.setText(showingHabitat?"Species":"Species ●");
         habitatTab.setText(showingHabitat?"Habitats ●":"Habitats");
         boolean narrowed=!searchQuery.trim().isEmpty() ||

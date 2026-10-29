@@ -369,7 +369,7 @@ public final class Rc11PrioritySpeciesView {
         // APA-style parenthetical citation belongs beside the actual claim.
         // The complete source record appears only once in the reference drawer.
         TextView description=text(a,ResearchCitationFormatter.citeClaim(
-            item.value,item.source,item.sourceYear),15,false,UiKit.INK);
+            item.value,item.source,item.sourceYear,item.url),15,false,UiKit.INK);
         description.setLineSpacing(dp(a,3),1.05f);
         description.setContentDescription(item.label+". "+description.getText());
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
@@ -395,15 +395,16 @@ public final class Rc11PrioritySpeciesView {
         card.addView(head);
         LinearLayout details=new LinearLayout(a);
         details.setOrientation(LinearLayout.VERTICAL);
-        for(int i=0;i<Math.min(2,available.size());i++)
+        int shown=Math.min("Identification".equals(area)?2:1,available.size());
+        for(int i=0;i<shown;i++)
             addFact(a,details,available.get(i),references);
         card.addView(details);
-        if(available.size()>2){
+        if(available.size()>shown){
             LinearLayout more=new LinearLayout(a);
             more.setOrientation(LinearLayout.VERTICAL);
             more.setVisibility(View.GONE);
-            for(int i=2;i<available.size();i++)addFact(a,more,available.get(i),references);
-            Button toggle=UiKit.button(a,"Show "+(available.size()-2)+" more","quiet");
+            for(int i=shown;i<available.size();i++)addFact(a,more,available.get(i),references);
+            Button toggle=UiKit.button(a,"Read "+(available.size()-shown)+" more","quiet");
             toggle.setContentDescription("Expand "+area.toLowerCase(Locale.ROOT)+" research notes");
             card.addView(toggle,new LinearLayout.LayoutParams(-1,dp(a,45)));
             card.addView(more);
@@ -411,7 +412,7 @@ public final class Rc11PrioritySpeciesView {
                 boolean open=more.getVisibility()!=View.VISIBLE;
                 if(open)UiMotion.reveal(a,more);
                 else UiMotion.hide(more);
-                toggle.setText(open?"Show fewer":"Show "+(available.size()-2)+" more");
+                toggle.setText(open?"Show less":"Read "+(available.size()-shown)+" more");
                 toggle.setContentDescription((open?"Collapse ":"Expand ")+area.toLowerCase(Locale.ROOT)+" research notes");
             });
         }
@@ -440,6 +441,18 @@ public final class Rc11PrioritySpeciesView {
             entry.setPadding(dp(a,5),dp(a,9),dp(a,3),dp(a,7));
             entry.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
             entry.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+            String journal=VerifiedApaCatalog.journal(fact.url);
+            if(journal!=null){
+                android.text.SpannableString rich=new android.text.SpannableString(
+                    entry.getText());
+                int at=rich.toString().indexOf(journal);
+                if(at>=0){
+                    rich.setSpan(new android.text.style.StyleSpan(Typeface.ITALIC),
+                        at,at+journal.length(),
+                        android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    entry.setText(rich);
+                }
+            }
             references.addView(entry);
         }
         references.addView(text(a,"Further reading and review notes",
@@ -466,7 +479,7 @@ public final class Rc11PrioritySpeciesView {
                 d.topMargin=dp(a,10);references.addView(detail,d);
             }
         }
-        Button toggle=UiKit.button(a,"References & study details  ▾","secondary");
+        Button toggle=UiKit.button(a,"References  ▾","secondary");
         toggle.setContentDescription("Open cited sources and study details");
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,50));
         lp.topMargin=dp(a,4);parent.addView(toggle,lp);
@@ -475,7 +488,7 @@ public final class Rc11PrioritySpeciesView {
             boolean open=references.getVisibility()!=View.VISIBLE;
             if(open)UiMotion.reveal(a,references);
             else UiMotion.hide(references);
-            toggle.setText(open?"Hide references  ▴":"References & study details  ▾");
+            toggle.setText(open?"Hide references  ▴":"References  ▾");
             toggle.setContentDescription(open?"Close cited sources and study details":
                 "Open cited sources and study details");
         });
@@ -496,7 +509,7 @@ public final class Rc11PrioritySpeciesView {
         ArrayList<Fact> facts=facts(a,scientific);
         HashSet<String> topics=new HashSet<>();
         for(Fact item:facts)topics.add(item.area);
-        String coverageText=topics.size()+" of 5 research topics documented";
+        String coverageText="Research coverage: "+topics.size()+" of 5 topics";
         TextView evidenceCoverage=text(a,coverageText,12,false,UiKit.MUTED);
         evidenceCoverage.setContentDescription("Evidence coverage: "+coverageText);
         LinearLayout.LayoutParams coverageLp=new LinearLayout.LayoutParams(-1,-2);
@@ -513,20 +526,20 @@ public final class Rc11PrioritySpeciesView {
         utilities.setOrientation(LinearLayout.VERTICAL);
         utilities.setPadding(0,dp(a,8),0,0);
         if(Rc9DifferentialActivity.hasPair(a,scientific)){
-            Button differential=UiKit.button(a,"Compare similar species","secondary");
+            Button differential=UiKit.button(a,"Similar species","secondary");
             utilities.addView(differential,new LinearLayout.LayoutParams(-1,dp(a,48)));
             differential.setOnClickListener(v->a.startActivity(
                 new Intent(a,Rc9DifferentialActivity.class)
                     .putExtra("scientific_name",scientific)));
         }
-        Button compare=UiKit.button(a,"Compare current cited traits","quiet");
+        Button compare=UiKit.button(a,"Compare traits","quiet");
         compare.setContentDescription("Compare current cited species traits. This is not an automatic identification");
         utilities.addView(compare,new LinearLayout.LayoutParams(-1,dp(a,48)));
         compare.setOnClickListener(v->a.startActivity(
             new Intent(a,Rc8TraitComparisonActivity.class)
                 .putExtra("scientific_name",scientific)));
         if(OfflinePhotoEvidence.hasOfflineTaxon(a,scientific)){
-            Button photos=UiKit.button(a,"Photo comparison","quiet");
+            Button photos=UiKit.button(a,"Compare photos","quiet");
             LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,dp(a,48));
             p.topMargin=dp(a,5);utilities.addView(photos,p);
             photos.setOnClickListener(v->a.startActivity(

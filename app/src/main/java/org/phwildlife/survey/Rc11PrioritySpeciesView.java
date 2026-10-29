@@ -492,7 +492,7 @@ public final class Rc11PrioritySpeciesView {
                     .putExtra("scientific_name",scientific)));
         }
         Button compare=UiKit.button(a,"Compare current cited traits","quiet");
-        compare.setContentDescription("Compare earlier curated reference evidence, not an automatic identification");
+        compare.setContentDescription("Compare current cited species traits. This is not an automatic identification");
         utilities.addView(compare,new LinearLayout.LayoutParams(-1,dp(a,48)));
         compare.setOnClickListener(v->a.startActivity(
             new Intent(a,Rc8TraitComparisonActivity.class)

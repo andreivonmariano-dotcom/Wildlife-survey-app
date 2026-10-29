@@ -48,7 +48,7 @@ class OriginalComparisonTests(unittest.TestCase):
         view=(CODE/"Rc11PrioritySpeciesView.java").read_text()
         self.assertIn("boolean hasPair(",compare)
         self.assertIn('new Intent(a,Rc9DifferentialActivity.class)',view)
-        self.assertIn('"Compare similar species"',view)
+        self.assertIn('"Similar species"',view)
         self.assertIn('"Read published source"',compare)
         self.assertNotIn("specialist-approved",compare)
         self.assertIn('rc17_verified_research_v1.json',view)

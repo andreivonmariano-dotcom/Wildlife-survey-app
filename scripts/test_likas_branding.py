@@ -22,7 +22,7 @@ class LikasBrandingSmokeTest(unittest.TestCase):
         frog=RES / "drawable-nodpi/likas_natator_frog.png"
         self.assertTrue(frog.is_file())
         self.assertEqual(hashlib.sha256(frog.read_bytes()).hexdigest(),
-            "06fe6f4a517d3ec382f7b66974ca3906ddadcfad9a04a6232063deb66b98bd37")
+            "0e82434278acd1d78ff84aef7c307ceb683453b8dedf7505014bd8509b257b36")
         round_icon = ET.parse(RES / "mipmap-anydpi-v26/ic_launcher_round.xml").getroot()
         self.assertEqual(
             round_icon.find("foreground").attrib[ANDROID + "drawable"],

@@ -1,6 +1,6 @@
 # LIKAS RC39 | Field Guide Studio
 
-**Current source preview:** `0.27.3-rc39-field-guide-studio-preview`, versionCode **99**; package `org.phwildlife.survey.beta08`; pinned signer; SQLite **27**. **Build and direct APK verification pending at the time of this entry.**
+**Current source preview:** `0.27.3-rc39-field-guide-studio-preview`, versionCode **99**; package `org.phwildlife.survey.beta08`; pinned signer; SQLite **27**. **Signed development APK verified:** Scientific Core QA run `40875251725` passed. APK package `org.phwildlife.survey.beta08`, versionCode 99, matching original v2 signer. Artifact `12898476132` was extracted as `LIKAS-v0.27.3-RC39-field-guide-studio-debug.apk` (SHA-256 `ecd6c43f617e18008b497a4c396dcc502e93e71a1a1ee023e4462ba64a94e16e`). Physical phone and upgrade checks remain pending.
 
 The existing RC38 three-space home remains, now with an active-survey shortcut ahead of general destinations. Fieldwork hides rarely used tools under a single expandable action, presents the latest survey as a tappable history card and makes selected survey methods visually clear with source-authored descriptions. The Species and Habitat discovery screens now have a live offline search bar, one-touch category filters, a real zero-result view, stronger native touch targets and restored search/group state. Cards have original bird, frog, reptile, mammal and habitat glyphs instead of a generic icon for every taxon without an approved photo.
 

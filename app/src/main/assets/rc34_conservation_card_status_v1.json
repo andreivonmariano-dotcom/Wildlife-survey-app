@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "likas-conservation-display-rc34-v1",
+  "asOf": "2026-10-29",
+  "dataPolicy": "Only individually checked dated category evidence is displayed. Missing means not yet independently verified in LIKAS, never least concern or not evaluated. IUCN and DENR are kept separate. No rarity ranking exists without species-site survey frequency and effort.",
+  "items": [
+    {
+      "scientificName": "Buceros hydrocorax",
+      "denr": {
+        "code": "EN",
+        "year": 2019,
+        "edition": "DAO 2019-09",
+        "url": "https://bmb.gov.ph/downloads/WRD/WC/WC2020/stat_and_lists_of_wildlife/fauna/dao-2019-09.pdf",
+        "provenance": "original_official_order",
+        "verifiedScope": "dated 2019 Philippine national category, not a current legal update"
+      }
+    },
+    {
+      "scientificName": "Rhabdotorrhinus leucocephalus",
+      "iucn": {
+        "code": "NT",
+        "year": 2020,
+        "edition": "2020",
+        "url": "https://doi.org/10.2305/IUCN.UK.2020-3.RLTS.T22682522A184689600.en",
+        "provenance": "dated_original_assessment_or_status_change",
+        "verifiedScope": "dated published global category, not a current live IUCN query"
+      }
+    },
+    {
+      "scientificName": "Dicaeum retrocinctum",
+      "iucn": {
+        "code": "NT",
+        "year": 2024,
+        "edition": "2024-2",
+        "url": "https://nc.iucnredlist.org/redlist/content/attachment_files/2024-2_RL_Table_7.pdf",
+        "provenance": "dated_original_assessment_or_status_change",
+        "verifiedScope": "dated published global category, not a current live IUCN query"
+      }
+    },
+    {
+      "scientificName": "Actenoides hombroni",
+      "iucn": {
+        "code": "LC",
+        "year": 2024,
+        "edition": "2024-2",
+        "url": "https://doi.org/10.2305/IUCN.UK.2024-2.RLTS.T22683542A241691549.en",
+        "provenance": "dated_original_assessment_or_status_change",
+        "verifiedScope": "dated published global category, not a current live IUCN query"
+      }
+    },
+    {
+      "scientificName": "Crateromys paulus",
+      "denr": {
+        "code": "CR",
+        "year": 2019,
+        "edition": "DAO 2019-09",
+        "url": "https://bmb.gov.ph/downloads/WRD/WC/WC2020/stat_and_lists_of_wildlife/fauna/dao-2019-09.pdf",
+        "provenance": "original_official_order",
+        "verifiedScope": "dated 2019 Philippine national category, not a current legal update"
+      }
+    },
+    {
+      "scientificName": "Dugong dugon",
+      "denr": {
+        "code": "CR",
+        "year": 2019,
+        "edition": "DAO 2019-09",
+        "url": "https://bmb.gov.ph/downloads/WRD/WC/WC2020/stat_and_lists_of_wildlife/fauna/dao-2019-09.pdf",
+        "provenance": "original_official_order",
+        "verifiedScope": "dated 2019 Philippine national category, not a current legal update"
+      }
+    }
+  ]
+}

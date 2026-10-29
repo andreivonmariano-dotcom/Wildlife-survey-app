@@ -238,7 +238,7 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView.setMinHeight(dp(44));
         gpsView.setGravity(Gravity.CENTER_VERTICAL);
         gpsView.setFocusable(true);
-        gpsView.setContentDescription("Current GPS status. Open GPS details");
+        gpsView.setContentDescription("GPS searching. Open GPS details");
         hud.addView(gpsView);
         startGpsBanner=label("Initial GPS missing · location unverified",12,true);
         startGpsBanner.setTextColor(UiKit.AMBER);
@@ -677,6 +677,7 @@ public class MainActivity extends Activity implements LocationListener {
         footerOptions.addView(reviewButton,reviewParams);
         // Ending a survey remains accessible even with the keyboard open.
         endSurveyButton=UiKit.button(this,"End Survey","outline-danger");
+        endSurveyButton.setContentDescription("End survey. Choose Complete, Incomplete, or Not Counted.");
         LinearLayout.LayoutParams endParams=new LinearLayout.LayoutParams(0,dp(
             FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale)),1);
         endParams.leftMargin=dp(8);
@@ -957,10 +958,13 @@ public class MainActivity extends Activity implements LocationListener {
             stationId="";
         active=true;
         if(endSurveyButton!=null)endSurveyButton.setEnabled(true);
-        if(gpsView!=null)gpsView.setText(withoutGps?
-            "GPS pending · no initial survey position":
-            String.format(Locale.US,"Survey-start GPS: %.6f, %.6f · ±%.1f m",
-                startLatitude,startLongitude,startAccuracy));
+        if(gpsView!=null){
+            gpsView.setText(withoutGps?
+                "GPS pending · no initial survey position":
+                String.format(Locale.US,"Survey-start GPS: %.6f, %.6f · ±%.1f m",
+                    startLatitude,startLongitude,startAccuracy));
+            gpsView.setContentDescription(gpsView.getText()+". Open GPS details");
+        }
         refreshStartGpsBanner();
         saveButton.setEnabled(!hasStationUnits());
         if(hasStationUnits()&&pointNextButton!=null){
@@ -2480,6 +2484,7 @@ public class MainActivity extends Activity implements LocationListener {
             gpsView.setText(TrackService.wasStopped(this)?"GPS stopped · restart":
                 "GPS searching · details");
             gpsView.setTextColor(UiKit.AMBER);
+            gpsView.setContentDescription(gpsView.getText()+". Open GPS details");
             return;
         }
         long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
@@ -2488,6 +2493,7 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView.setText(String.format(Locale.US,"GPS ±%.1f m · %s · details",
             fix.getAccuracy(),qualified?"ready":"low quality"));
         gpsView.setTextColor(qualified?UiKit.FOREST:UiKit.AMBER);
+        gpsView.setContentDescription(gpsView.getText()+". Open GPS details");
     }
     private void showGpsDetail(){
         Location fix=TrackService.currentFix();

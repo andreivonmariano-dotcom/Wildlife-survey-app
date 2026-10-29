@@ -60,10 +60,10 @@ public final class LikasLibraryActivity extends Activity {
         body.setPadding(0,dp(8),0,dp(20));scroll.addView(body);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         body.addView(LikasPortalUi.kicker(this,"BIODIVERSITY"));
-        TextView headline=LikasPortalUi.text(this,"Know the wild.",29,
+        TextView headline=LikasPortalUi.text(this,"Wildlife library",29,
             LikasPortalUi.CANOPY,true);
         body.addView(headline);
-        TextView sub=LikasPortalUi.text(this,"Offline. Source-linked.",13,UiKit.MUTED,false);
+        TextView sub=LikasPortalUi.text(this,"Offline field guides",13,UiKit.MUTED,false);
         sub.setPadding(0,dp(5),0,dp(19));body.addView(sub);
         discover(body,"Species","Browse wildlife","species","species");
         discover(body,"Habitats","Explore ecosystems","habitat","habitats");
@@ -74,7 +74,7 @@ public final class LikasLibraryActivity extends Activity {
         toolPair(body,"Conservation","IUCN · DENR","shield",
             Rc24ConservationDashboardActivity.class,"Sources","Checklists","protocol",
             CatalogActivity.class);
-        add(body,"Habitat links","Published ecology","habitat",
+        add(body,"Habitat links","Habitat evidence","habitat",
             HabitatSpeciesEvidenceActivity.class);
         setContentView(root);
         UiMotion.enter(this,body);

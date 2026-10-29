@@ -74,8 +74,8 @@ class Rc22OriginalStudies(unittest.TestCase):
         build=(ROOT/"app/build.gradle").read_text()
         db=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
-        self.assertIn("versionCode 91",build)
-        self.assertIn("0.27.3-rc31-priority-diagnostics-preview",build)
+        self.assertIn("versionCode 92",build)
+        self.assertIn("0.27.3-rc32-sparse-evidence-keys-preview",build)
         self.assertIn("super(context,NAME,null,27)",db)
 
 if __name__=="__main__":

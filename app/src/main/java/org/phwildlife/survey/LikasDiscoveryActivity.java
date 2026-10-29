@@ -445,7 +445,7 @@ public final class LikasDiscoveryActivity extends Activity {
         }else{
             content.addView(LikasPortalUi.kicker(this,"WILDLIFE"));
             content.addView(note("Species",27,UiKit.INK,true));
-            TextView sub=note("Illustrated research accounts · Status is not rarity",
+            TextView sub=note("Offline species guides",
                 13,UiKit.MUTED,false);
             sub.setPadding(0,dp(4),0,dp(3));content.addView(sub);
             filterRail();
@@ -476,10 +476,6 @@ public final class LikasDiscoveryActivity extends Activity {
                 }
             }
             action("All species",()->startActivity(new Intent(this,Rc7SpeciesLibraryActivity.class)));
-            TextView caveat=note("Unverified means LIKAS has not checked the status. "+
-                "Threat level is not local rarity. Open source records for dated context.",
-                12,UiKit.MUTED,false);
-            caveat.setPadding(dp(2),dp(16),dp(2),dp(7));content.addView(caveat);
         }
         if(animate)UiMotion.enter(this,content);
     }

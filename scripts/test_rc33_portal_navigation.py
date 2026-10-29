@@ -27,7 +27,7 @@ class PortalNavigation(unittest.TestCase):
 
     def test_fieldwork_is_distinct_and_preserves_methods(self):
         c=read("WelcomeActivity.java")
-        tools=c.split("private void fieldworkHub(){",1)[1].split("/** A brief, read-only",1)[0]
+        tools=c.split("private void fieldworkHub(){",1)[1].split("/** Short status caption",1)[0]
         for label in ('"Birds"','"Herpetofauna"','"Mammals"','"Custom"',
                       'HistoryActivity.class','DashboardActivity.class',
                       'SitesActivity.class','CallLibraryActivity.class',

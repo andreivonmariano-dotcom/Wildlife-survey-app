@@ -1,5 +1,19 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC41 gallery performance and navigation | Signed build pending
+
+- **Version:** `0.27.3-rc41-field-readiness-preview` versionCode **101**, same `org.phwildlife.survey.beta08` package, debug signing config, SQLite **27**.
+- **User task:** fix RC40 audit's remaining issues, identify more, and give a verified direct APK. Preserve the RC40 compact three-space Home fix and scientifically sound fieldwork.
+- **Source completed:** `LikasDiscoveryActivity.shelf()` now creates lightweight fixed-position slots and only materializes up to five nearby actual cards per shelf. Far-offscreen views are removed. `OfflinePhotoEvidence` adds a bounded two-worker gallery photo loader using the original authorized assets, 4x sampled RGB565 previews and the existing 4MiB image cache. Vector placeholders render immediately. Search, per-rail positions, original photorights and source IDs are retained.
+- **Navigation:** Full Philippine species checklist is now clearly named, distinct from the 96 curated species field guides. Species checklist, Backup and Storage Back text names the actual parent. Gallery tab and chip selected states are native. Tests for old `thumbnailForHabitat` usage were updated to check the new async code path, without removing rights checks.
+- **QA:** New `scripts/test_rc41_gallery_performance.py`, with RC36/37/38/39/40 source expectations updated for version 101. Android compiler/CI and signed APK verification **pending**. No device emulator is accessible in the current container, and no real phone has been tested.
+- **New high-risk audit observation:** `FieldBackupArchive.restoreIntoEmpty` can install the database before final media/preferences file copies. An I/O failure during media copy could leave a partially restored workspace. Preserve the complete recovery ZIP and address with a staged/rollback fixture in a future data-integrity release rather than patching recovery blindly. Existing unencrypted ZIP backup includes potentially sensitive wildlife coordinates.
+- **Next:** inspect latest scientific-core QA run, fix build/test failures, download and verify the exact APK and provide a sandbox link. Remaining real-device QA includes Home 320dp/large font, GPS, media, in-place survey upgrades and backup recovery.
+- **Details:** `docs/LIKAS_RC41_FIELD_READINESS_QA.md`.
+
+---
+
+
 ## 29 October 2026 | RC40 screenshot-driven UI repair and copy audit | Source QA pending
 
 - **User evidence:** RC39 Home screenshot shows one enormous Fieldwork tile with Library and Settings effectively inaccessible on the initial screen; Birds setup screenshot shows numeric values `10` and `2` without visible units; Fieldwork screenshot shows duplicated survey/navigation labels and a separate Latest record card leading to the same History view.

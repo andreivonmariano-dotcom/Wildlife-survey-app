@@ -62,7 +62,7 @@ class Rc16EvidenceAndFilters(unittest.TestCase):
         self.assertIn("rc16_publication_batch_v1.json",view)
         self.assertIn("Rc14Bibliography.add(a,references,scientific)",view)
         for part in ('"All years"','"2025–2026"','"2020–2024"',
-                     '"Before 2020"','"Year not listed"','"Filter references"',
+                     '"Before 2020"','"Year not listed"','"Filter references  ▾"',
                      '"Research topic"','"Identification"','"Distribution"',
                      '"Conservation"','"Taxonomy"','"Other"'):
             self.assertIn(part,code)

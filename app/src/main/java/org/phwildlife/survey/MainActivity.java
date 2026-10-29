@@ -210,13 +210,20 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void draw(){
         LinearLayout root=vertical();root.setBackgroundColor(BACK);root.setPadding(dp(12),dp(5),dp(12),dp(7));
+        // At large system font, keep the fixed survey dock fully in frame.
+        // The complete status card remains reachable at the start of the field scroll.
+        boolean largeText=getResources().getConfiguration().fontScale>=1.60f;
         LinearLayout top=horizontal();
-        Button home=UiKit.button(this,"‹ Home","secondary");
-        home.setTextSize(13);top.addView(home,new LinearLayout.LayoutParams(dp(78),dp(49)));
+        Button home=UiKit.button(this,largeText?"‹":"‹ Home","secondary");
+        home.setContentDescription("Back to Home");
+        home.setTextSize(largeText?20:13);
+        top.addView(home,new LinearLayout.LayoutParams(dp(78),dp(49)));
         home.setOnClickListener(v->navigateHome());
         TextView title=label(profile+" Survey",19,true);title.setGravity(Gravity.CENTER);
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-        Button export=UiKit.button(this,"Export","secondary");export.setTextSize(13);
+        Button export=UiKit.button(this,largeText?"ZIP":"Export","secondary");
+        export.setContentDescription("Export research ZIP");
+        export.setTextSize(largeText?14:13);
         top.addView(export,new LinearLayout.LayoutParams(dp(84),dp(49)));export.setOnClickListener(v->exportZip());
         root.addView(top);
         // Fixed status HUD: short, high-contrast survey state, always visible.
@@ -244,9 +251,10 @@ public class MainActivity extends Activity implements LocationListener {
         startGpsBanner.setTextColor(UiKit.AMBER);
         hud.addView(startGpsBanner);
         refreshStartGpsBanner();
-        root.addView(hud,hudLp);
+        if(!largeText)root.addView(hud,hudLp);
         fieldScroll=new ScrollView(this);fieldScroll.setFillViewport(false);fieldScroll.setVerticalScrollBarEnabled(false);
         LinearLayout content=vertical();content.setPadding(dp(1),0,dp(1),dp(12));
+        if(largeText)content.addView(hud,hudLp);
         groupBar=horizontal();content.addView(groupBar);showGroups();
         LinearLayout methodRow=horizontal();
         // The method was already chosen in survey setup. Do not offer a second, disabled selector.

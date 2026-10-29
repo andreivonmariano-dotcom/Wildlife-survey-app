@@ -44,7 +44,7 @@ class FieldLayoutContractTest(unittest.TestCase):
         self.assertIn('surveyTile(first,"Herpetofauna"',text)
         self.assertIn('surveyTile(second,"Mammals"',text)
         self.assertIn('surveyTile(second,"Custom"',text)
-        self.assertIn("tile.setMinimumHeight(dp(104))",text)
+        self.assertIn("tile.setMinimumHeight(dp(96))",text)
         self.assertIn('Button resume=UiKit.button(this,"Resume Survey","primary")',text)
         self.assertIn('String unfinished=activeSurvey()',text)
         self.assertIn('tools.setVisibility(View.GONE)',text)
@@ -69,7 +69,7 @@ class FieldLayoutContractTest(unittest.TestCase):
 
     def test_unified_palette_and_action_colors(self):
         text=self.styles
-        for token in ("BG=Color.rgb(245,247,240)","FOREST=Color.rgb(35,100,71)",
+        for token in ("BG=Color.rgb(247,249,246)","FOREST=Color.rgb(34,91,67)",
                       "POND=Color.rgb(51,126,115)","case \"outline-danger\""):
             self.assertIn(token,text)
 

@@ -66,6 +66,9 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                         v.performClick();break;
                     }
                 assertTrue(containsText(descendants(root),"Study details"));
+                assertTrue(containsText(descendants(root),"Research references"));
+                assertTrue(containsText(descendants(root),"Bacus et al."));
+                assertTrue(containsText(descendants(root),"Open study"));
                 if(root.getWidth()>0&&root.getHeight()>0){
                     Bitmap bitmap=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
                         Bitmap.Config.ARGB_8888);

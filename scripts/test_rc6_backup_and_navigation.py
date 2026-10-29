@@ -34,8 +34,8 @@ class Rc6RestoreAndNavigationContracts(unittest.TestCase):
         self.assertIn("ACTION_CREATE_DOCUMENT",screen)
         self.assertIn("ACTION_OPEN_DOCUMENT",screen)
         self.assertIn("FieldBackupArchive.canRestore(this)",screen)
-        self.assertIn("FieldBackupActivity.class",home)
-        self.assertIn("Import older v0.7 export",home)
+        self.assertIn("FieldBackupActivity.class",(JAVA / "LikasSettingsActivity.java").read_text())
+        self.assertIn("ImportActivity.class",(JAVA / "LikasSettingsActivity.java").read_text())
         self.assertIn('android:name=".FieldBackupActivity"',manifest)
         self.assertIn("v0.7 CSV export",(JAVA/"ImportActivity.java").read_text())
 

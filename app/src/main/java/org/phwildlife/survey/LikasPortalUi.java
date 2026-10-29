@@ -58,7 +58,7 @@ public final class LikasPortalUi {
             new int[]{DEEP,CANOPY,WATER});
         backdrop.setCornerRadius(dp(a,26));cover.setBackground(backdrop);
         cover.setClipToOutline(true);
-        cover.setMinimumHeight(dp(a,177));
+        cover.setMinimumHeight(dp(a,151));
         // Vector-only contour lines gently evoke a shaded forest canopy.
         View contours=new View(a){
             private final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -85,10 +85,10 @@ public final class LikasPortalUi {
         words.setPadding(dp(a,22),dp(a,20),dp(a,18),dp(a,19));
         TextView mark=text(a,"LIKAS   /   PH",12,LIME,true);mark.setLetterSpacing(.14f);
         words.addView(mark);
-        TextView title=text(a,"Nature, closer.",29,CREAM,true);
+        TextView title=text(a,"Wildlife fieldwork",26,CREAM,true);
         LinearLayout.LayoutParams titleLp=new LinearLayout.LayoutParams(-1,-2);
         titleLp.topMargin=dp(a,19);words.addView(title,titleLp);
-        TextView sub=text(a,"Field notes. Wild places.",14,Color.rgb(222,235,218),false);
+        TextView sub=text(a,"Surveys · Species · Habitats",13,Color.rgb(222,235,218),false);
         LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
         subLp.topMargin=dp(a,4);words.addView(sub,subLp);
         cover.addView(words,new FrameLayout.LayoutParams(-1,-1));
@@ -100,70 +100,48 @@ public final class LikasPortalUi {
             dp(a,54),dp(a,54),Gravity.TOP|Gravity.RIGHT);
         iconLp.topMargin=dp(a,14);iconLp.rightMargin=dp(a,14);
         cover.addView(frog,iconLp);
-        cover.setContentDescription("LIKAS. Nature, closer. Field notes and wild places.");
+        cover.setContentDescription("LIKAS. Philippine wildlife surveys, species, and habitats.");
         return cover;
     }
 
-    /** Illustrated entry panel. The artwork is drawn locally and never fetched online. */
+    /** Compact content-sized navigation card. Never uses match-parent children in a scrolling row. */
     public static View tile(Activity a,String title,String detail,String icon,
             int tint,int background,Runnable open){
         final boolean field="Fieldwork".equals(title);
+        final boolean large=a.getResources().getConfiguration().fontScale>=1.60f;
         final int fill=field?CANOPY:("Settings".equals(title)?
-            Color.rgb(230,239,236):Color.rgb(231,242,222));
+            Color.rgb(231,240,236):Color.rgb(236,245,231));
         final int ink=field?CREAM:CANOPY;
-        FrameLayout panel=new FrameLayout(a);
-        panel.setBackground(tapBackground(a,fill,Color.TRANSPARENT,24));
-        panel.setClipToOutline(true);
-        panel.setMinimumHeight(dp(a,136));
-        panel.setElevation(dp(a,2));
-        // A few original contours suggest canopy, water or chart grid.
-        View backdrop=new View(a){
-            final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
-            @Override protected void onDraw(Canvas c){
-                float w=getWidth(),h=getHeight();
-                paint.setStyle(Paint.Style.STROKE);
-                paint.setColor(field?Color.argb(45,225,242,203):
-                    Color.argb(48,38,92,75));
-                paint.setStrokeWidth(dp(a,1));
-                for(int j=0;j<4;j++){
-                    Path line=new Path();
-                    float x=w*(.58f+j*.12f);
-                    line.moveTo(x,-dp(a,20));
-                    line.cubicTo(x-dp(a,86),h*.28f,
-                        x+dp(a,67),h*.64f,x-dp(a,55),h+dp(a,20));
-                    c.drawPath(line,paint);
-                }
-                paint.setStyle(Paint.Style.FILL);
-                paint.setColor(field?Color.argb(25,211,235,182):
-                    Color.argb(28,49,116,124));
-                c.drawCircle(w*.98f,h*.21f,dp(a,65),paint);
-            }
-        };
-        panel.addView(backdrop,new FrameLayout.LayoutParams(-1,-1));
-        LinearLayout row=new LinearLayout(a);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(dp(a,20),dp(a,17),dp(a,15),dp(a,17));
+        LinearLayout panel=new LinearLayout(a);
+        panel.setOrientation(LinearLayout.HORIZONTAL);
+        panel.setGravity(Gravity.CENTER_VERTICAL);
+        panel.setPadding(dp(a,18),dp(a,12),dp(a,14),dp(a,12));
+        panel.setMinimumHeight(dp(a,108));
+        panel.setBackground(tapBackground(a,fill,Color.TRANSPARENT,19));
+        panel.setElevation(dp(a,1));
         LinearLayout copy=new LinearLayout(a);
         copy.setOrientation(LinearLayout.VERTICAL);
-        TextView name=text(a,title,23,ink,true);
-        copy.addView(name);
-        TextView caption=text(a,detail,12,field?Color.rgb(225,237,215):MOSS,false);
-        caption.setMaxLines(2);
-        LinearLayout.LayoutParams captionLp=new LinearLayout.LayoutParams(-1,-2);
-        captionLp.topMargin=dp(a,8);
-        copy.addView(caption,captionLp);
-        row.addView(copy,new LinearLayout.LayoutParams(0,-2,1f));
+        TextView name=text(a,title,large?20:21,ink,true);
+        copy.addView(name,new LinearLayout.LayoutParams(-1,-2));
+        if(detail!=null&&!detail.isEmpty()){
+            TextView caption=text(a,detail,large?13:12,
+                field?Color.rgb(225,237,215):MOSS,false);
+            caption.setMaxLines(large?3:2);
+            LinearLayout.LayoutParams captionLp=new LinearLayout.LayoutParams(-1,-2);
+            captionLp.topMargin=dp(a,5);
+            copy.addView(caption,captionLp);
+        }
+        panel.addView(copy,new LinearLayout.LayoutParams(0,-2,1f));
         FrameLayout art=new FrameLayout(a);
         art.setBackground(rounded(a,field?Color.argb(42,236,247,218):
-            Color.argb(65,255,255,255),Color.TRANSPARENT,23));
+            Color.argb(90,255,255,255),Color.TRANSPARENT,14));
         art.addView(new Glyph(a,icon,field?CREAM:CANOPY),
-            new FrameLayout.LayoutParams(dp(a,54),dp(a,54),Gravity.CENTER));
-        LinearLayout.LayoutParams artLp=new LinearLayout.LayoutParams(dp(a,88),dp(a,88));
+            new FrameLayout.LayoutParams(dp(a,36),dp(a,36),Gravity.CENTER));
+        LinearLayout.LayoutParams artLp=new LinearLayout.LayoutParams(dp(a,62),dp(a,62));
         artLp.leftMargin=dp(a,10);
-        row.addView(art,artLp);
-        panel.addView(row,new FrameLayout.LayoutParams(-1,-2,Gravity.CENTER_VERTICAL));
-        panel.setContentDescription("Open "+title+". "+detail);
+        panel.addView(art,artLp);
+        panel.setContentDescription("Open "+title+
+            (detail==null||detail.isEmpty()?"":". "+detail));
         panel.setFocusable(true);
         panel.setClickable(true);
         panel.setOnClickListener(v->open.run());

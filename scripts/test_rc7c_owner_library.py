@@ -24,7 +24,7 @@ class Rc7cOwnerLibraryTests(unittest.TestCase):
         for group in ("Birds","Reptiles","Amphibians","Mammals"):
             self.assertEqual(24,sum(r["group"]==group for r in a+b))
         self.assertIn("rc7b_field_cards_v1.json",(CODE/"Rc7FieldAccounts.java").read_text())
-        self.assertIn('Priority species (96)',(CODE/"Rc7SpeciesLibraryActivity.java").read_text())
+        self.assertNotIn('Priority species (96)',(CODE/"Rc7SpeciesLibraryActivity.java").read_text())
 
     def test_new_taxon_sources_are_labeled_not_fake_biology(self):
         pack=json.loads((ASSETS/"rc7_literature_batch_b_v1.json").read_text())

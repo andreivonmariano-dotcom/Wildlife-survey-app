@@ -60,7 +60,7 @@ public final class LikasLibraryActivity extends Activity {
         body.setPadding(0,dp(8),0,dp(20));scroll.addView(body);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         body.addView(LikasPortalUi.kicker(this,"BIODIVERSITY"));
-        TextView headline=LikasPortalUi.text(this,"Wildlife library",29,
+        TextView headline=LikasPortalUi.text(this,"Species & habitats",29,
             LikasPortalUi.CANOPY,true);
         body.addView(headline);
         TextView sub=LikasPortalUi.text(this,"Offline field guides",13,UiKit.MUTED,false);

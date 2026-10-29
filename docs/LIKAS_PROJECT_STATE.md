@@ -1,6 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | RC19 signed APK verified, 96 species source report exported
+
+- **Exact built and checked APK:** GitHub Scientific Core QA run `40805615786` succeeded, artifact `12867598019` (`LIKAS-RC19-all-96-screen-audit-debug`), application versionName `0.27.3-rc19-all-species-screen-audit-preview`, versionCode **72**, same Android package `org.phwildlife.survey.beta08`. Extracted real APK to `/mnt/data/LIKAS-v0.27.3-RC19-priority-species-research-debug.apk` in this session, **9,536,155 bytes**, SHA256 `69e51aa59ac089e6198c1e0500eb7794483f3e0a1d083e0e21b868426cb8758b`. APK ZIP integrity and AndroidManifest identity verified. Android APK v2 signing certificate SHA256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches previous.
+- **Verified embedded source:** 96 species, 377 cited biological facts, 261 species-source links, 21 new research notes (18 visible plus 3 taxonomic bibliography), 58 licensed offline JPEGs, complete old survey data and versioned source packs. Source coverage gaps: 27 Identification, 52 Habitat, 24 Distribution, 78 Natural history and 77 Conservation. Existing closed accounts are *not* all biologically complete or newly peer-reviewed.
+- **Direct export:** `/mnt/data/LIKAS_RC19_96_species_source_coverage.json` written from this exact APK with per-species fact counts, reference counts and missing categories. Confirm the exact path in future sessions before linking. No spreadsheet conversion implied.
+- **Android emulator:** New GitHub run `40805609892` for RC19 remains in progress at last check, running the 13-test emulator and real 96 screenshot loop. **Do not report that all 96 rendered screens were visually inspected or that 13/13 tests passed** until `instrumentation.txt`, screenshot archive and DB comparison are retrieved. Prior RC18B Android run `40804283194` succeeded, 12/12 tests and identical SQLite DB, which does NOT verify the added RC19 screen loop. Physical handset remains outstanding.
+- Draft PR #38 still unmerged. Next step: Retrieve RC19 Android emulator evidence and inspect 96 screenshots, record anomalies, then continue sourcing remaining 27 ID gaps rather than inventing traits. If the current APK cannot be rendered on a physical handset, label as preview.
+---
+
+
+
 ## 29 October 2026 | RC19 Q1/Q2/Q3 source update and full 96-screen audit (verification pending)
 
 - **Owner request:** Continue all 31 original diagnosis gaps, habitat and dated conservation facts, and inspect every rendered priority account. Code changes are on scientific-core draft PR #38, branch `feature/likas-core-fieldwork-post-rc4`. Original Android package and SQLite 27 preserved; no specialist signoff and no unnecessary AI-style caveats.

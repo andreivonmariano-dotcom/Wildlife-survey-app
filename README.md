@@ -1,3 +1,17 @@
+# LIKAS v0.27.3 RC31 | Priority diagnosis and dated conservation evidence
+
+**Internal scientific candidate:** `0.27.3-rc31-priority-diagnostics-preview` (versionCode **91**), Android package `org.phwildlife.survey.beta08`, SQLite **27**, pinned debug signing. A compiled APK is not automatically a visually accepted emulator or field release.
+
+RC31 targets the user's three priorities: source-backed additions for eight extremely sparse Philippine species, separate IUCN versus DENR status checks, and original-description/photographic diagnostic review. It adds **26 evidence notes** on top of the eight RC30 notes. The original 456-fact corpus remains unchanged, and the merged research screens now hold **490 facts, 316 of 480 topic slots and 17 species with at least one cited note in every section**. These are **content-coverage** counts only. Many taxa still lack original identification keys, life history, current legally verified status or licensed photographs.
+
+The APA exact-link register now has **28 reviewed references**, including dates and authority for four rechecked IUCN global listings and two DENR 2019 national listings. The new `docs/LIKAS_RC31_96_SPECIES_STATUS_AND_ID_REVIEW_MATRIX.json` transparently records every unreviewed taxon and the photograph limitations. The 2016 *Dicaeum retrocinctum* IUCN assessment is **not** presented as current: IUCN's 2024-2 table reports its category changed to Near Threatened. *Dicaeum kampalili* has a verified 1953 name note, **not** a complete morphological key.
+
+No new candidate photo is bundled without photographer/license verification, taxon/sex/stage review and approval. Survey setup, End Survey outcomes, active record data, SQLite schema, app ID, signing continuity and startup assets remain unchanged.
+
+For exact species facts and their source locations, see [RC31 science QA](docs/LIKAS_RC31_SPARSE_DIAGNOSTIC_AND_CONSERVATION_AUDIT.md), [RC31 96-species status matrix](docs/LIKAS_RC31_96_SPECIES_STATUS_AND_ID_REVIEW_MATRIX.json) and [durable project state](docs/LIKAS_PROJECT_STATE.md).
+
+---
+
 # LIKAS v0.27.3 RC30 | Priority species evidence completion and APA research
 
 **Science preview candidate:** `0.27.3-rc30-priority-evidence-preview` (versionCode **90**), package `org.phwildlife.survey.beta08`, SQLite **27** and existing signing identity. A successful build is not real-phone or field acceptance.

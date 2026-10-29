@@ -6,7 +6,7 @@ The Species and Habitat Library now opens horizontally swipable, touch-friendly 
 
 The habitat section offers side-scroll cards for five formation groups, and dedicated habitat profiles with field recognition, water, soil, vegetation, measurements, limits and original citations. Reduced-motion setting remains in force. `docs/LIKAS_RC34_CONSERVATION_CARD_DESIGN_SYSTEM.md` records the category and rarity rules, palette, screen geometry and outstanding full-catalog status audit.
 
-**QA status:** Source-level science/navigation/UI regression checks passed on early RC34 source; latest exact source and new signed APK require verification independently before field release. Screen screenshots, 200% font, real-device upgrade and audio/GNSS acceptance remain open.
+**Verified RC34 build:** scientific-core workflow 40852069211 passed on source commit `70a364898c83d55b724301cdc26f9a7caa3af2f4`; signed preview APK from artifact 12887816471. Exact APK package/version/signer and ZIP integrity checked. The APK contains 505 cumulative research facts, six independently dated conservation display entries and 15 habitat accounts. **Not yet verified:** emulator screenshots, 200% text, real-device upgrade, full survey field tests and all 96 conservation assessments.
 
 ---
 

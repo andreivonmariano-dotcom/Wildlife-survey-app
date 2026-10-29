@@ -28,6 +28,25 @@ public final class Rc10RecorderInstrumentedTest {
         }
     }
 
+    private static boolean hasText(View root,String text){
+        ArrayList<View> all=new ArrayList<>();
+        find(root,all);
+        for(View v:all)if(v instanceof TextView&&
+            ((TextView)v).getText().toString().contains(text))return true;
+        return false;
+    }
+    private static void capture(android.app.Activity a,String file){
+        View root=a.getWindow().getDecorView();
+        Bitmap bitmap=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
+            Bitmap.Config.ARGB_8888);
+        root.draw(new Canvas(bitmap));
+        try(FileOutputStream out=new FileOutputStream(new File(a.getFilesDir(),file))){
+            if(!bitmap.compress(Bitmap.CompressFormat.PNG,90,out))
+                throw new IllegalStateException("Could not save "+file);
+        }catch(Exception e){throw new IllegalStateException(e);}
+        bitmap.recycle();
+    }
+
     @Test public void liveSurveyRetainsEndAndMarkActionsAndReadableDock()throws Exception{
         Intent intent=new Intent(ApplicationProvider.getApplicationContext(),MainActivity.class);
         intent.putExtra("create_new",true);
@@ -141,6 +160,31 @@ public final class Rc10RecorderInstrumentedTest {
                         assertTrue(image.compress(Bitmap.CompressFormat.PNG,90,out));
                     }catch(Exception error){throw new IllegalStateException(error);}
                     image.recycle();
+                });
+            }
+            Intent compareIntent=new Intent(ApplicationProvider.getApplicationContext(),
+                Rc8TraitComparisonActivity.class);
+            compareIntent.putExtra("scientific_name","Pithecophaga jefferyi");
+            try(ActivityScenario<Rc8TraitComparisonActivity> compare=
+                    ActivityScenario.launch(compareIntent)){
+                compare.onActivity(a->{
+                    View root=a.getWindow().getDecorView();
+                    assertTrue("Current evidence comparison reachable at 200% font",
+                        hasText(root,"latest cited 96-species accounts"));
+                    assertTrue("Open species from side-by-side comparison",
+                        hasText(root,"Open current species account"));
+                    capture(a,"rc24_compare_200percent.png");
+                });
+            }
+            try(ActivityScenario<Rc24ConservationDashboardActivity> dashboard=
+                    ActivityScenario.launch(Rc24ConservationDashboardActivity.class)){
+                dashboard.onActivity(a->{
+                    View root=a.getWindow().getDecorView();
+                    assertTrue("Dated assessment boundaries explained",
+                        hasText(root,"Least Concern"));
+                    assertTrue("Conservation study denominator rendered",
+                        hasText(root,"of 96 species"));
+                    capture(a,"rc24_conservation_200percent.png");
                 });
             }
         }finally{

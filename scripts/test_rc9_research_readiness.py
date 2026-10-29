@@ -21,7 +21,7 @@ class ResearchReviewContracts(unittest.TestCase):
         self.assertFalse(any(p["readyForCertifiedIdentification"] for p in d["profiles"]))
     def test_cited_differential(self):
         data=load("rc9_differential_traits_v1.json")
-        self.assertEqual(len(data["pairs"]),2)
+        self.assertEqual(len(data["pairs"]),4)
         self.assertEqual(sum(len(p["evidence"]) for p in data["pairs"]),8)
         for p in data["pairs"]:
             for trait in p["evidence"]:

@@ -106,8 +106,8 @@ class Rc7aLibraryTests(unittest.TestCase):
     def test_ui_filters_preserve_offline_source_links(self):
         screen=(CODE/"Rc7SpeciesLibraryActivity.java").read_text()
         for token in ("taxon_catalog","taxon_synonyms",
-                      "Rc7FieldAccounts.priority","Published literature notes",
-                      "Offline photograph","RegionalChecklistActivity",
+                      "Rc7LiteratureNotes.available","Published research",
+                      "Offline photos","RegionalChecklistActivity",
                       "Rc8TraitComparisonActivity","taxon_key","LIMIT 2200"):
             self.assertIn(token,screen)
         detail=(CODE/"TaxonDetailActivity.java").read_text()
@@ -118,7 +118,7 @@ class Rc7aLibraryTests(unittest.TestCase):
         self.assertIn("taxon_occurrence_evidence",detail)
 
     def test_home_and_catalog_open_new_library(self):
-        for n in ("LikasLibraryActivity","CatalogActivity"):
+        for n in ("LikasDiscoveryActivity","CatalogActivity"):
             self.assertIn("Rc7SpeciesLibraryActivity.class",
                           (CODE/(n+".java")).read_text())
         manifest=(ROOT/"app/src/main/AndroidManifest.xml").read_text()

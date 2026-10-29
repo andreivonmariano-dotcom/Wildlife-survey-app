@@ -1,6 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | RC14 signed APK verified after Java bibliography callback fix
+
+- **Compiled successfully:** Scientific Core QA run **40798545386**, downloadable APK artifact **12864642430** on app commit **185998bbc2fbaa7f9eff876852b24a0386ebe4de**. A prior attempted build on source `f451738a` failed on a non-final Java lambda variable in `Rc14Bibliography.java`. Corrected the capture to `final int remaining` in commit **ded1ea1c** and adjusted the regression check in **185998bb**. Do not mistake the failed attempt for a built APK.
+- **Exact RC14 preview extracted and checked in this session:** `/mnt/data/LIKAS-v0.27.3-RC14-recent-literature-debug.apk`, **9,458,736 bytes**, SHA-256 **d988009e7a37ef278a9f984af80b29b2f2066225f002420da0230dad902903c4**. VersionName `0.27.3-rc14-recent-literature-preview`, Android versionCode **66**, package `org.phwildlife.survey.beta08`; Android v2 signature certificate SHA256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches prior codes. APK ZIP integrity passed. Includes 96 indexed species, **235 per-species distinct references**, 10 recently verified taxa, 13 new peer-reviewed findings, and 58 offline JPEGs. SQLite 27 unchanged.
+- **Direct optional evidence exports:** `/mnt/data/LIKAS_RC14_96_species_bibliography.json` and `/mnt/data/LIKAS_RC14_recent_2025_2026_publications.json`. Recheck all paths in new sessions before linking.
+- **Device status:** emulator run **40798527846** on source commit **ded1ea1c** (same Android code and version, before updated Python assertion) was executing Android API34 upgrade/backup/UI QA when this state entry was prepared. Physical-handset QA remains outstanding. Do not claim emulator pass until job conclusion and evidence are checked.
+- **Next science work:** the remaining **86 of 96** individual latest-study checks, plus source-specific diagnoses, age/sex, habitat and distribution findings. Website references in the index remain labeled separately from original peer-reviewed papers. Keep original publications and taxonomic caveats.
+
+---
+
+
+
 ## 29 October 2026 | RC14 current peer-reviewed paper pass and linked 96-species bibliography
 
 - **Latest owner decision:** Q1/Q2/Q3 jointly accepted, search newest scientifically published work for every one of 96 priority mammals, amphibians, reptiles and birds, and show original studies as tappable citations. Retain credible website references, concise field-guide copy and no specialist approval workflow. The search is a **per-species verification task**, not a claim that the newest available papers have already been found for all.

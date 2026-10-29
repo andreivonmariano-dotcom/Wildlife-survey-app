@@ -89,7 +89,7 @@ class Rc32Science(unittest.TestCase):
                 self.assertIn(e["sourceA"],apa_from_sources())
                 self.assertTrue(e["caution"].strip())
                 self.assertTrue(e["stage"].strip())
-        self.assertIn("not",comparisons["RC32-LUZON-COBRA"]["review"])
+        self.assertIn("no_approach",comparisons["RC32-LUZON-COBRA"]["review"])
 
 def apa_from_sources():
     return (SRC/"VerifiedApaCatalog.java").read_text()

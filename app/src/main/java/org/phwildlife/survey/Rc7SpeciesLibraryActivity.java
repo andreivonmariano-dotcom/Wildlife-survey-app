@@ -96,14 +96,13 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         root.addView(UiKit.navigationHeader(this,
             largeText?"Species":"Philippine Species Library","Home",this::finish));
         String fullSourceLine="Source-linked offline taxonomy · WBCP 2025 · Sy 2025/2026 · MDD 2.5";
-        TextView sourceBanner=label(largeText?"Offline WBCP, Sy and MDD checklists":fullSourceLine,
-            13,false);
+        TextView sourceBanner=label("Search Philippine wildlife references",13,false);
         sourceBanner.setContentDescription(fullSourceLine);
         root.addView(sourceBanner);
         search=new EditText(this);
         search.setSingleLine(true);
         search.setTextSize(16);
-        search.setHint("Name, former name, family or source");
+        search.setHint("Species, family or former name");
         search.setContentDescription("Search Philippine taxon catalog");
         root.addView(search,new LinearLayout.LayoutParams(-1,dp(54)));
         LinearLayout filters=new LinearLayout(this);filters.setOrientation(LinearLayout.HORIZONTAL);
@@ -127,7 +126,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         }
         root.addView(filters);
         Button researchToggle=UiKit.button(this,largeText?
-            "Research tools  ▾":"Research and comparison tools  ▾","secondary");
+            "Research tools  ▾":"Research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand research comparisons, photographic evidence and regional sources");
         root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(largeText?58:48)));
         LinearLayout researchPanel=new LinearLayout(this);
@@ -137,7 +136,8 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         researchPanel.addView(label("Identification, habitat and photo references",12,false));
         researchToggle.setOnClickListener(v->{
             boolean open=researchPanel.getVisibility()!=View.VISIBLE;
-            researchPanel.setVisibility(open?View.VISIBLE:View.GONE);
+            if(open)UiMotion.reveal(this,researchPanel);
+            else UiMotion.hide(researchPanel);
             researchToggle.setText(open?
                 (largeText?"Hide tools  ▴":"Hide research tools  ▴"):
                 (largeText?"Research tools  ▾":"Research and comparison tools  ▾"));

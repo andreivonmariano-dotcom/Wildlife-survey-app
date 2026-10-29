@@ -72,6 +72,7 @@ public final class TaxonDetailActivity extends Activity {
         search.setTextSize(15);
         search.setThreshold(1);
         search.setHint("Common, scientific, or former name");
+        search.setContentDescription("Search species by scientific, common or former name");
         SpeciesReferenceSuggestionAdapter autocomplete=
             new SpeciesReferenceSuggestionAdapter(this,db,null);
         search.setAdapter(autocomplete);

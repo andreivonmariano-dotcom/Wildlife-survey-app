@@ -44,9 +44,32 @@ public final class OfflineFieldLibrary {
         return label;
     }
     private static void paragraph(Activity a,LinearLayout out,String name,String body){
+        paragraph(a,out,name,body,"");
+    }
+    private static void paragraph(Activity a,LinearLayout out,String name,String body,
+            String citations){
         if(body==null||body.trim().isEmpty())return;
         out.addView(text(a,name,true));
-        out.addView(text(a,body,false));
+        String cleaned=body.trim();
+        if(!citations.isEmpty()){
+            cleaned=cleaned.replaceAll("[.\\\\s]+$","");
+            cleaned+=" "+citations+".";
+        }
+        out.addView(text(a,cleaned,false));
+    }
+    private static String habitatCitations(JSONArray sources,JSONArray ids){
+        if(ids==null||sources==null)return "";
+        java.util.TreeSet<String> labels=new java.util.TreeSet<>(
+            String.CASE_INSENSITIVE_ORDER);
+        for(int i=0;i<ids.length();i++){
+            JSONObject ref=source(sources,ids.optString(i));
+            if(ref==null)continue;
+            String group=ref.optString("publisher").trim();
+            if(!group.isEmpty())labels.add(group+", "+(
+                ref.optInt("publicationYear",0)>1800?
+                String.valueOf(ref.optInt("publicationYear")):"n.d."));
+        }
+        return labels.isEmpty()?"":"("+android.text.TextUtils.join("; ",labels)+")";
     }
     private static JSONObject source(JSONArray sources,String id){
         if(sources==null)return null;
@@ -67,9 +90,11 @@ public final class OfflineFieldLibrary {
             JSONObject src=source(sources,id);
             if(src==null)continue;
             String title=src.optString("title");
-            TextView citation=text(a,src.optString("publisher")+
-                " · "+title+"\nAccessed "+src.optString("accessed")+
-                "\n"+src.optString("url"),false);
+            TextView citation=text(a,ResearchCitationFormatter.groupReference(
+                src.optString("publisher"),title,src.optInt("publicationYear",0),
+                src.optString("url"))+
+                (src.optString("accessed").isEmpty()?"":
+                    "\nCatalog retrieval: "+src.optString("accessed")),false);
             citation.setTextColor(UiKit.MUTED);
             citation.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
             citation.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
@@ -210,13 +235,15 @@ public final class OfflineFieldLibrary {
                 if(open){
                     if(detail.getChildCount()==0){
                         OfflinePhotoEvidence.add(a,detail,profile.optString("photoId"));
-                        paragraph(a,detail,"Habitat description",profile.optString("overview"));
+                        String cites=habitatCitations(pack.optJSONArray("sources"),
+                            profile.optJSONArray("sourceIds"));
+                        paragraph(a,detail,"Habitat description",profile.optString("overview"),cites);
                         paragraph(a,detail,"Field recognition",
-                            profile.optString("fieldIndicators"));
+                            profile.optString("fieldIndicators"),cites);
                         paragraph(a,detail,"Water, geology and substrate",
-                            profile.optString("waterAndSubstrate"));
+                            profile.optString("waterAndSubstrate"),cites);
                         paragraph(a,detail,"Vegetation and wildlife context",
-                            profile.optString("vegetationAndWildlife"));
+                            profile.optString("vegetationAndWildlife"),cites);
                         JSONArray metrics=profile.optJSONArray("measurements");
                         if(metrics!=null){
                             StringBuilder measurements=new StringBuilder();
@@ -227,7 +254,7 @@ public final class OfflineFieldLibrary {
                             paragraph(a,detail,"What to measure",measurements.toString());
                         }
                         paragraph(a,detail,"Scientific cautions",
-                            profile.optString("limitations"));
+                            profile.optString("limitations"),cites);
                         citationList(a,detail,pack.optJSONArray("sources"),
                             profile.optJSONArray("sourceIds"));
                     }

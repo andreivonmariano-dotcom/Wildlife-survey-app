@@ -1,3 +1,17 @@
+# LIKAS RC36 | Smoother species and habitat cards
+
+**Signed development preview:** `0.27.3-rc36-library-polish-preview`, versionCode **96**, original package `org.phwildlife.survey.beta08`, pinned debug signer and SQLite **27**.
+
+After the RC35 species-library crash fix, RC36 refines the existing horizontal wildlife and habitat cards. Each carousel now has a visible position counter, Previous/Next controls, continued direct swipes and screen-width-aware cards. Native scrolling remains smooth and optional page fades still honor **Less motion**. The active Species/Habitats tab is retained during Android activity recreation. The three existing approved mossy-forest, karst and mangrove photos appear as habitat card imagery, retaining credits on the detail page; other habitats use original glyphs. A bounded 4 MiB cache stores small previews to reduce duplicate JPEG decoding. Species with no individually checked dated conservation category still use a neutral border and **Status unverified**, never invented rarity or IUCN/Philippine DENR status.
+
+**Verified:** Scientific Core QA run `40856184834` completed **success** on exact app/test commit `8e6cf98145beb151c466e5fc47ee3c180c4847e5`; APK artifact **12889715786** `LIKAS-RC36-library-polish-debug`. The downloaded APK ZIP and artifact CRC passed; binary AndroidManifest confirms package/version, and APK v2 signer matches RC35. Exact file in active chat: `LIKAS-v0.27.3-RC36-library-polish-debug.apk`, **9,659,454 bytes**, SHA-256 `132a0b0bbeb8bff29a38234708877225edcb699a978dcb64bd5d007d37034761`. Contains **505** existing research facts, **15** habitat profiles and **58** licensed/authorized offline JPEGs.
+
+**Open:** Android 14 emulator smoke execution has not yet been verified (a dedicated `library-android-smoke.yml` test workflow is present), 320dp and enlarged-font screenshots, TalkBack, and a real-phone update with historical records remain unverified. A compiled Android instrumented test is not the same as an executed one.
+
+See `docs/LIKAS_RC36_LIBRARY_POLISH_QA.md` for design, evidence rights and acceptance limits.
+
+---
+
 # LIKAS RC35 | Species Library crash hotfix
 
 The owner reported a launch crash from the new conservation-based species carousel. The root cause was `LikasDiscoveryActivity.level()` calling `JSONObject.optJSONObject()` on a **missing** status for 90 of 96 research accounts. The signed RC35 debug preview now shows **neutral cards without fabricated conservation categories**. Six dated IUCN/DENR entries and all 505 original+reviewed research facts remain intact.

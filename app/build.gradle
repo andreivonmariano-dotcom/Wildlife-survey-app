@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 71
-        versionName '0.27.3-rc18b-priority-accounts-preview'
+        versionCode 72
+        versionName '0.27.3-rc19-all-species-screen-audit-preview'
     }
     signingConfigs {
         debug {

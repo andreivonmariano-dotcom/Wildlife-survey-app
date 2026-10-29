@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC16 original-source and reference-filter candidate
+
+- Latest owner request: implement Q1/Q2/Q3 together, source-based diagnosis/range for amphibians and reptiles, mammal/bird habitat/population sources, and compact year/topic bibliography filters. Preserve 96 priority species and no specialist approval, no AI-style defensive text.
+- **Source implemented:** `rc16_publication_batch_v1.json` has **14 source-bounded statements across 9 priority species** (*Platymantis insulatus, P. naomii, P. spelaeus, Varanus palawanensis, Brachymeles hilong, Acerodon jubatus, Rusa alfredi, Pithecophaga jefferyi, Cacatua haematuropygia*). Sources include original taxonomic papers, peer-reviewed studies and separately labeled AMNH/Reptile Database secondary records. The skink scale diagnosis is sourced via a curated secondary transcription, not passed off as direct original journal content. Cockatoo breeding density belongs to **2000**, not 2026; *Acerodon* Luban record is an identification reassessment, not an accepted population report.
+- **Source bibliography:** `rc14_96_species_literature_index_v1.json` now has **245 unique taxon–source links**, unchanged 96 keys, exactly **12 taxa with individually checked 2025–2026 studies** and **84 remaining recent-literature searches**. Every reference has evidence-topic tags backed by linked source claims, and no inferred years. `Rc14Bibliography.java` now offers collapsed year and topic controls inside **Sources & details**, with both filters combined and the first three matches visible. `Rc11PrioritySpeciesView.java` renders new source claims in the five compact species sections. No active survey or SQLite changes.
+- **Engineering candidate:** `0.27.3-rc16-filtered-literature-preview`, **versionCode 68**, Android package `org.phwildlife.survey.beta08`, pinned existing signing certificate and SQLite 27. Added Python contract `scripts/test_rc16_evidence_filters.py`, extended existing species emulator test. **The new RC16 APK and emulator pass are not confirmed by this entry.** The prior RC15 code67 verified APK is not a substitute. Verify on current CI run, download and checksum exact APK, and check emulator before presenting RC16 as tested.
+- Sources and scope in `docs/LIKAS_RC16_FILTERED_LITERATURE_AND_DIAGNOSES.md`. PR #38 stays draft. Physical phone test remains open.
+
+---
+
+
 ## 29 October 2026 | RC15 Android emulator pass, verified QA attachments
 
 - **Confirmed exact RC15 emulator success:** workflow run **40799816763**, artifact **12865412490**, completed success. Instrumentation reports **OK (10 tests)** on Android 14/API34 at 320dp, installed `0.27.3-rc15-literature-cards-preview`, versionCode **67**. Recorder dock status `RECORDER-DOCK-INSTRUMENTED-PASS` and `EMULATOR-SMOKE-PASS` present. Existing SQLite v27 database preserved **byte-for-byte** through the old-signed-app upgrade. Emulator fixture DB SHA256 **325d5573daa8689dc529981946e152c6847d2395acdd2746f3ffbca686923d2b**.

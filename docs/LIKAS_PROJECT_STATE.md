@@ -1,6 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | Verified signed RC18B APK, 96 priority accounts
+
+- **Exact validated Android build:** Scientific Core QA workflow `40804296215` succeeded, artifact `12866474833`, name `LIKAS-RC18B-unified-accounts-debug`; source build versionCode `71` and versionName `0.27.3-rc18b-priority-accounts-preview`. Extracted directly to `/mnt/data/LIKAS-v0.27.3-RC18B-all-96-priority-accounts-debug.apk`, **9,530,212 bytes**, SHA-256 `b3cda19ba209367f6c381ff88a398672cdb28d26109d13318fa1bf6867a1af6d`. ZIP integrity passed, Android manifest package `org.phwildlife.survey.beta08`, v2 certificate fingerprint matches pinned identity `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`.
+- **Source completeness of compiled APK:** 96 priority taxon entries, 359 distinct cited biological facts, **256** per-species original/curated source URLs, 58 licensed JPG photos. `rc18_unified_96_priority_accounts_v1.json` primary Android account source and `rc18b_diagnostic_gap_evidence_v1.json` are present in the exact binary. All 96 entries have at least one species-specific fact and no fabricated blank-field filler. Exported coverage matrix in conversation at `/mnt/data/LIKAS_RC18B_96_species_evidence_coverage.csv`, 96 rows.
+- **Limits:** 31 identification, 54 habitat, 25 distribution, 79 natural history and 79 conservation accounts lack cited facts in that category. These are scientific source gaps, not missing rendered 96 cards. 13 of 96 priority species had individually verified recent 2025–2026 publications in previous literature batches. Peer-reviewed study and official curated source types remain distinct. Specialist approval gates remain prohibited by owner.
+- **Emulator status at this entry:** Android 14 320dp upgrade+backup workflow `40804283194` on code71 app commit `95be5160` remains **in progress**. Do not claim 12/12 or byte-identical upgrade without its exact log/artifact. Real phone untested. APK was delivered as a signed debug **development preview**, not a production-certified release.
+- **Next:** Check the RC18B emulator artifact and fix any defect, then focus on primary literature for the remaining 31 missing diagnoses and all other actual gaps. Preserve original checklists, old observations, and startup branch isolation.
+
+---
+
+
+
 ## 29 October 2026 | RC18B all 96 priority species reference corpus and sources
 
 - **Latest owner instruction:** Focus entirely on completing all priority species accounts now. Implement in the real Android app, not merely docs, and provide a current direct signed APK. This decision does not waive scientific integrity or permit invented facts. See `docs/LIKAS_RC18_ALL_96_ACCOUNTS_EVIDENCE_AUDIT.md`.

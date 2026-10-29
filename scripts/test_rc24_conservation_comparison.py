@@ -84,8 +84,8 @@ class Rc24ConservationComparison(unittest.TestCase):
         self.assertIn("rc24_conservation_200percent.png",instrumentation)
         self.assertIn("compare-200percent-font.png",runner)
         self.assertIn("conservation-200percent-font.png",runner)
-        self.assertIn("versionCode 90",build)
-        self.assertIn("0.27.3-rc30-priority-evidence-preview",build)
+        self.assertIn("versionCode 91",build)
+        self.assertIn("0.27.3-rc31-priority-diagnostics-preview",build)
 
 if __name__=="__main__":
     unittest.main()

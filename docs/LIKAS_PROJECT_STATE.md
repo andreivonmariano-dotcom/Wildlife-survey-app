@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC21B large-text footer correction pending new Android evidence
+
+- **New verified visual bug:** RC21 Android emulator run `40810458277` completed **success** with `OK (14 tests)`, 96 unique taxon screenshot images and byte-identical old SQLite before/after upgrade (both 1,613,824 bytes, SHA256 `49ce65345221d6d1933e94751045767ec42d98faf3a0989c491c02d97bac51b5`). The archived `recorder-200percent-font.png` was inspected. The End Survey row was partly clipped at bottom at 200% text **despite** its automated `isShown()` and minimum-height checks. This is a genuine accessibility bug and supersedes any blanket declaration that RC21 passed full visual QA.
+- **RC21B correction source:** MainActivity now puts the verbose status HUD inside the scrollable content at fontScale >=1.60, reserving a full fixed viewport for Save/Review/End. The top bar shortens Home/Export visual labels and preserves descriptive accessible actions. Android instrumented test now asserts the whole End Survey global visible rectangle fits, not just that the widget exists. The app ID, SQLite 27, all survey records, all 413 biology facts/281 source links, media, and signing key remain unchanged.
+- **New candidate:** `0.27.3-rc21b-accessible-recorder-preview`, **versionCode 75**, artifact label `LIKAS-RC21B-accessible-recorder-debug`. The earlier signed code74 RC21 APK can still install as a development preview but **should not be treated as passing 200% accessibility**. RC21B source CI and new Android emulator run `40811331237` are ongoing at this entry. Do not provide a new RC21B APK link before real CI artifact inspection and signing/manifest verification. Physical handset and owner record upgrades remain unverified. See `docs/LIKAS_RC21_PHONE_FIELD_ACCEPTANCE.md`.
+- **Next:** Collect latest RC21B signed build, actual 14/14 Android instrumentation, large-text screenshot showing the full footer, unchanged backup fixture and 96 screenshots; update state and direct chat delivery. Keep PR #38 draft and startup branch isolated.
+
+---
+
+
 ## 29 October 2026 | RC21 Android font-scale test: first failure traced, corrected rerun pending
 
 - **Observed first device QA failure:** emulator run `40809800645` finished failure with `Tests run: 14, Failures: 1`. The failed assertion in `Rc10RecorderInstrumentedTest.largeTextKeepsEndSurveyAndGpsAccessible` required the spoken GPS description to include the *entire* visible label, including the decorative `· details` suffix. At startup, visible `GPS searching · details` and spoken `GPS searching. Open GPS details` communicate the same fix state and action. The 13 other instrumentation tests passed. This failure is not evidence of a broken survey archive or field GPS measurement.

@@ -49,7 +49,7 @@ class CurrentPublicationBatch(unittest.TestCase):
         ui=(CODE/"Rc11PrioritySpeciesView.java").read_text()
         source=(CODE/"Rc14Bibliography.java").read_text()
         self.assertIn("rc15_publication_batch_v1.json",ui)
-        self.assertIn("Rc14Bibliography.add(a,references,scientific)",ui)
+        self.assertIn("Rc14Bibliography.add(a,references,scientific,",ui)
         for field in ('paper.optString("authors")','paper.optString("journal")',
                       'paper.isNull("doi")?"":paper.optString("doi")','paper.optInt("publicationYear")',
                       'ResearchCitationFormatter.publicationReference(','"Open study ↗"'):

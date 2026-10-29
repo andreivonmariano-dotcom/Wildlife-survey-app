@@ -1,5 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+
+## 29 October 2026 | Owner overrides RC12: literature-only standards and no AI-style field-guide copy
+
+- **Latest owner directive:** Execute Q1/Q2 publication and peer-reviewed curation, without ANY specialist certification, checklist signoff, credential or named reviewer workflow. Source/citation verification is still required. Remove defensive, wordy AI-style explanations and redundant qualifying endings from visible app statements. The project writing standard is `docs/LIKAS_PUBLICATION_FIRST_CONTENT_STANDARD.md`. The appendix field of RC12's expert-gate source JSON is **historical**, not current policy.
+- **Exact priority corpus:** 96 taxon keys, four groups of 24. Preserve original taxonomy/checklists, 1,503 source catalog names and field databases. The new `rc13_publication_coverage_v1.json` tracks 11 cited evidence topics, drops the obsolete 12th review/signoff topic, and records 31 new publication-based facts from the prior original-treatment pilot (16) and RC13 peer-reviewed batch (15). Published source coverage does not certify a complete identification key.
+- **Q1/Q2 new literature notes:** `rc13_peer_reviewed_batch1_v1.json` contains **15** short sourced claims for `Platymantis paengi` (2007 original species description), `Platymantis rabori` (Sanguila et al. 2016), `Sarcophanops samarensis` (Campillo et al. 2020), `Crateromys heaneyi` (Gonzales & Kennedy 1996), and `Naja samarensis` (Caasi et al. 2024). One unverified Sibuyan `P. paengi` claim was intentionally removed; a 2022 bibliographic page range was corrected from erroneous 941–984 to 941–948 where referenced. Data preserves source URL, study scope, year and original wording in provenance.
+- **UI and editorial update:** Existing `Rc12ScientificReview.java` replaced its specialist approval/signoff interface with a concise **Literature coverage** drawer, showing only subjects with published evidence. `Rc11PrioritySpeciesView.java` uses the new peer-reviewed pack first, shows **Bibliography** and **Study details** instead of repeated specialist warnings, and applies `Rc13FieldGuideCopy.java` to remove explicitly matched defensive sentence tails. `Rc7SpeciesLibraryActivity.java` simplifies research tools help text. Source assets and original historic observations are unchanged.
+- **QA status at writing:** New `scripts/test_rc13_publication_policy.py` and updated old RC12/Android UI assertions; full GitHub Scientific Core + Android emulator acceptance remains **to be executed** for final version. No new RC13 APK is confirmed by this state entry. Old RC12 signed preview versionCode63 is **not** the new literature update. Keep PR #38 draft and startup development isolated.
+- **Next:** Build verified versionCode64 APK with old certificate, run full scripts/JVM and emulator, inspect real 320dp species text, attach exact current-run binary only if verified. Continue research in source-scoped small batches with citations, no invented facts and no expert review process.
+
+---
+
+
 ## 29 October 2026 | RC12 ten-test Android emulator acceptance passed
 
 - RC12 **versionCode 63**, `0.27.3-rc12-scientific-review-preview` has completed emulator QA. GitHub Actions run **40727663391**, artifact **12834301015**; all **10 / 10** Android instrumentation tests passed on API34 at 320dp. Evidence file `LIKAS-RC12-emulator-QA-10-tests.zip` was directly downloaded and verified in the current conversation. It contains original-treatment/checklist UI checks, previously passing species, Habitat and Recorder UI tests, recorder screenshot, species screenshot and status markers.

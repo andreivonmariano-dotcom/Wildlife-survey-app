@@ -15,7 +15,7 @@ class LibraryPolishContract(unittest.TestCase):
                            'next.setContentDescription("Next "+title+" card")',
                            "scroll.setOnScrollChangeListener(",
                            'scroll.smoothScrollTo(',
-                           "scroll.post(update)",
+                           "scroll.scrollTo(restoreOffset,0)",
                            "Math.min(310,screen-56)",
                            'card.setMinimumHeight(dp(largeText()?336:280))',
                            'card.setMinimumHeight(dp(largeText()?355:296))'):

@@ -24,10 +24,11 @@ import java.util.LinkedHashSet;
 /** Evidence comparison only. Never identifies a field observation or writes to SQLite. */
 public final class Rc8TraitComparisonActivity extends Activity {
     private static final String ASSET="rc8_evidence_comparisons_v1.json";
+    private static final String CURRENT="rc18_unified_96_priority_accounts_v1.json";
     private static final String[] GROUPS={"Birds","Amphibians","Reptiles","Mammals"};
     private static final String[] SPECIES_CATEGORIES={
-        "All evidence","Identification","Habitat & ecology","Range","Behavior & sound",
-        "Conservation","Taxonomy","Evidence limits"};
+        "All evidence","Identification","Habitat","Distribution",
+        "Natural history","Conservation"};
     private static final String[] HABITAT_CATEGORIES={
         "All evidence","Field indicators","Substrate & water","Vegetation",
         "Measurements","Scientific cautions"};
@@ -66,6 +67,51 @@ public final class Rc8TraitComparisonActivity extends Activity {
             return result;
         }
     }
+    private static JSONArray readCurrentSpecies(Activity a)throws Exception{
+        try(InputStream in=a.getAssets().open(CURRENT);
+            ByteArrayOutputStream out=new ByteArrayOutputStream()){
+            byte[] block=new byte[8192];int n;
+            while((n=in.read(block))!=-1){
+                if(out.size()+n>750000)throw new IllegalStateException("Species corpus too large");
+                out.write(block,0,n);
+            }
+            JSONObject current=new JSONObject(out.toString("UTF-8"));
+            JSONArray accounts=current.getJSONArray("accounts");
+            if(current.optInt("prioritySpeciesCount")!=96||accounts.length()!=96)
+                throw new IllegalStateException("Current cited species corpus incomplete");
+            JSONArray result=new JSONArray();
+            String[] topics={"Identification","Habitat","Distribution","Natural history","Conservation"};
+            for(int i=0;i<accounts.length();i++){
+                JSONObject account=accounts.getJSONObject(i);
+                JSONObject entry=new JSONObject();
+                entry.put("scientificName",account.getString("scientificName"));
+                entry.put("commonName",account.optString("commonName"));
+                entry.put("group",account.optString("group"));
+                JSONArray traits=new JSONArray();
+                JSONObject sections=account.getJSONObject("sections");
+                for(String topic:topics){
+                    JSONArray facts=sections.optJSONArray(topic);
+                    if(facts==null)continue;
+                    for(int j=0;j<facts.length();j++){
+                        JSONObject fact=facts.getJSONObject(j),trait=new JSONObject();
+                        trait.put("category",topic);
+                        trait.put("label",fact.optString("label"));
+                        trait.put("value",fact.optString("text"));
+                        trait.put("source",fact.optString("source"));
+                        trait.put("url",fact.optString("url"));
+                        trait.put("sourceType",fact.optString("sourceType"));
+                        trait.put("studyScope",fact.optString("studyScope"));
+                        trait.put("sourceLocation",fact.optString("sourceLocation"));
+                        if(!fact.isNull("sourceYear"))trait.put("sourceYear",fact.optInt("sourceYear"));
+                        traits.put(trait);
+                    }
+                }
+                entry.put("traits",traits);
+                result.put(entry);
+            }
+            return result;
+        }
+    }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         requestedScientific=getIntent().getStringExtra("scientific_name");
@@ -77,15 +123,15 @@ public final class Rc8TraitComparisonActivity extends Activity {
         outer.addView(UiKit.navigationHeader(this,"Trait comparisons","Library",this::finish));
         try{
             pack=read(this);
-            species=pack.getJSONArray("species");
+            species=readCurrentSpecies(this);
             habitats=pack.getJSONArray("habitats");
         }catch(Exception e){
             outer.addView(text("Evidence comparison library unavailable offline. Recorded surveys remain unchanged.",15,false));
             setContentView(outer);return;
         }
-        outer.addView(text("Compare cited biological statements from the earlier trait reference pack. "+
-            "Newer studies appear in each species account. Missing = not assessed, never absent. "+
-            "No comparison proves site occurrence or identifies an observation.",13,false));
+        outer.addView(text("Species comparisons use the latest cited 96-species accounts. "+
+            "The 15 habitat reference cards remain in the original source pack. "+
+            "Not assessed never means absent. No comparison identifies a recorded animal.",13,false));
         LinearLayout modes=new LinearLayout(this);
         modes.setOrientation(LinearLayout.HORIZONTAL);
         speciesMode=UiKit.button(this,"Species (96)","secondary");
@@ -112,8 +158,13 @@ public final class Rc8TraitComparisonActivity extends Activity {
         ScrollView scroll=new ScrollView(this);
         results=new LinearLayout(this);results.setOrientation(LinearLayout.VERTICAL);
         results.setPadding(0,dp(7),0,dp(20));scroll.addView(results);
-        outer.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        setContentView(outer);
+        outer.addView(scroll,new LinearLayout.LayoutParams(-1,-2));
+        // A single page scroll keeps all four selectors and the evidence readable
+        // at 200% Android text size instead of leaving a zero-height result pane.
+        ScrollView page=new ScrollView(this);
+        page.setFillViewport(true);
+        page.addView(outer);
+        setContentView(page);
         AdapterView.OnItemSelectedListener update=new AdapterView.OnItemSelectedListener(){
             @Override public void onItemSelected(AdapterView<?> p,View v,int index,long id){render();}
             @Override public void onNothingSelected(AdapterView<?> p){}
@@ -206,6 +257,15 @@ public final class Rc8TraitComparisonActivity extends Activity {
     private void addClaims(LinearLayout parent,JSONObject profile,String category){
         parent.addView(text(label(profile,habitatMode),14,true));
         if(!habitatMode){
+            String scientific=profile.optString("scientificName");
+            Button account=UiKit.button(this,"Open current species account","quiet");
+            account.setContentDescription("Open cited species account for "+scientific);
+            parent.addView(account,new LinearLayout.LayoutParams(-1,dp(48)));
+            account.setOnClickListener(v->startActivity(
+                new Intent(this,TaxonDetailActivity.class)
+                    .putExtra("taxon_query",scientific)));
+        }
+        if(!habitatMode){
             ImageView image=OfflinePhotoEvidence.thumbnailForTaxon(
                 this,profile.optString("scientificName"));
             if(image!=null){
@@ -221,10 +281,17 @@ public final class Rc8TraitComparisonActivity extends Activity {
         }
         int count=0;
         for(JSONObject item:list){
-            if(count++>=4){parent.addView(text("More statements appear in the full library account.",12,false));break;}
+            if(count++>=4){parent.addView(text("More cited statements appear in the full species account.",12,false));break;}
             parent.addView(text(item.optString("label")+": "+item.optString("value"),14,false));
             String source=item.optString("source"),url=item.optString("url");
-            TextView citation=text("Source: "+source+"\nReview: "+item.optString("review"),11,false);
+            String year=item.isNull("sourceYear")?"Year not recorded":
+                String.valueOf(item.optInt("sourceYear"));
+            String sourceType=item.optString("sourceType").replace('_',' ');
+            String scope=item.optString("studyScope");
+            String details="Source: "+source+" · "+year+
+                (sourceType.isEmpty()?"":" · "+sourceType)+
+                (scope.isEmpty()?"":"\nStudy limit: "+scope);
+            TextView citation=text(details,11,false);
             citation.setTextColor(UiKit.MUTED);parent.addView(citation);
             if(url.startsWith("https://")){
                 Button open=UiKit.button(this,"Open cited source","quiet");

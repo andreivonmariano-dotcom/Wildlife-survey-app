@@ -1,6 +1,6 @@
 # LIKAS RC38 | Illustrated portal and biodiversity gallery
 
-**Development source preview:** `0.27.3-rc38-illustrated-ui-preview`, versionCode **98**, same package `org.phwildlife.survey.beta08`, retained signing setup and SQLite **27**. **Build and on-device acceptance not yet confirmed at the time of this note.**
+**Development source preview:** `0.27.3-rc38-illustrated-ui-preview`, versionCode **98**, same package `org.phwildlife.survey.beta08`, retained signing setup and SQLite **27**. **Source QA and signed APK confirmed:** GitHub Scientific Core QA run **40868130998** passed. Artifact **12894089473** was checked against APK binary manifest and original pinned signer; filename in this active chat is `LIKAS-v0.27.3-RC38-illustrated-ui-debug.apk`. **Physical-device and saved-data upgrade acceptance remain pending.**
 
 The short splash still opens Fieldwork, Library and Settings. The portal now has distinct illustrated surfaces and minimal local line art. Fieldwork uses a two-column wildlife-method grid for Birds, Herpetofauna, Mammals and Custom, followed by illustrated History and Analysis shortcuts. The Library places large Species and Habitats entrances above a four-tile reference grid. Settings presents Backup, Storage, Import and Data check as compact data tiles. A large-text configuration stacks the compact grids rather than squeezing controls.
 

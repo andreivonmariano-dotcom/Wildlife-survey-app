@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC21B signed preview and full Android 200% accessibility QA verified
+
+- **Verified source build:** Scientific Core QA run 40811352795 succeeded. Artifact 12870228322 (LIKAS-RC21B-accessible-recorder-debug) contains a valid 9,564,053-byte signed APK, SHA256 daa8bd74732a2f9261b29ade73c3e9aa7dcbc8b7f529e8064c784b92da570dfb. Manifest package org.phwildlife.survey.beta08 and versionName 0.27.3-rc21b-accessible-recorder-preview; Gradle/emulator versionCode 75. Independently parsed v2 signing certificate SHA256 f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937, unchanged from earlier builds.
+- **Android emulator acceptance:** Workflow 40811331237 completed success on code75, artifact 12870761560. Retrieved 4,514,332-byte QA ZIP. Instrumentation says OK (14 tests); version.txt confirms code75. Captured 96 distinct JPEGs across four wildlife groups (24 each) and validated the 96-row CSV and exact screenshot byte lengths.
+- **200% font screenshot review:** Manual inspection of 480x960 recorder-200percent-font.png confirms Save Observation, Review Records and End Survey are now fully visible with bottom boundaries and readable labels. At fontScale >= 1.60 the full survey status HUD scrolls with the recorder content, reserving fixed space for those actions. The updated instrumentation test checks the entire global visible End Survey rectangle. This corrects the RC21 footer-clipping defect but is not physical-device or TalkBack signoff.
+- **Data safety:** Before/after in-place SQLite emulator fixtures are byte-identical (1,613,824 bytes), SHA256 fdd25cdedebcfa0409b057f4540e9f8e3df9b9f0c54a7112618d2d0694cf14f8. Original signing, application identity, SQLite 27, field survey close policy, startup branch and user records unchanged.
+- **Science remains source-limited:** 96 accounts, 413 cited biology facts, 281 taxon-source links. Missing: Identification 12, Habitat 46, Distribution 24, Natural history 73, Conservation 70. Further original source leads in docs/LIKAS_RC22_DIAGNOSIS_SOURCE_LEADS.md.
+- **Direct handoff:** Signed RC21B APK and verified emulator QA ZIP copied to the current chat file space, along with LIKAS_RC21B_Phone_Acceptance_Checklist.md. Other conversations must independently verify/mount these files. RC21B is a phone-test preview, not a stable field release. Real handset, user data migration, GPS, camera, WAV, battery and broad accessibility remain outstanding. Draft PR #38 remains unmerged.
+
+---
+
 ## 29 October 2026 | RC21B large-text footer correction pending new Android evidence
 
 - **New verified visual bug:** RC21 Android emulator run `40810458277` completed **success** with `OK (14 tests)`, 96 unique taxon screenshot images and byte-identical old SQLite before/after upgrade (both 1,613,824 bytes, SHA256 `49ce65345221d6d1933e94751045767ec42d98faf3a0989c491c02d97bac51b5`). The archived `recorder-200percent-font.png` was inspected. The End Survey row was partly clipped at bottom at 200% text **despite** its automated `isShown()` and minimum-height checks. This is a genuine accessibility bug and supersedes any blanket declaration that RC21 passed full visual QA.

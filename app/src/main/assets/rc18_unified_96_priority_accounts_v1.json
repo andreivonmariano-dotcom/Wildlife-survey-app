@@ -4,7 +4,7 @@
   "purpose": "Unify previously attributed and published biological facts for all 96 species; source coverage does not imply absent traits or a complete diagnostic key.",
   "policy": "Show source-linked biological claims only. Do not fabricate missing ecological sections or site occurrence. Curated database evidence remains distinguishable from peer-reviewed research.",
   "prioritySpeciesCount": 96,
-  "sourceFactCount": 393,
+  "sourceFactCount": 413,
   "topics": [
     "Identification",
     "Habitat",
@@ -13,11 +13,11 @@
     "Conservation"
   ],
   "sectionMissingCounts": {
-    "Identification": 18,
-    "Habitat": 51,
+    "Identification": 12,
+    "Habitat": 46,
     "Distribution": 24,
-    "Natural history": 75,
-    "Conservation": 76
+    "Natural history": 73,
+    "Conservation": 70
   },
   "accounts": [
     {
@@ -717,7 +717,20 @@
             "studyScope": null
           }
         ],
-        "Habitat": [],
+        "Habitat": [
+          {
+            "section": "Habitat",
+            "label": "Tawi-Tawi lowland forest",
+            "text": "The 2021 global assessment identifies tropical moist lowland forest as suitable habitat and treats the species' current persistence as uncertain.",
+            "source": "BirdLife International (2021), IUCN Gallicolumba menagei global assessment",
+            "url": "https://doi.org/10.2305/IUCN.UK.2021-3.RLTS.T22691005A203927952.en",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "iucn_dated_assessment",
+            "sourceYear": 2021,
+            "sourceLocation": "Habitat and Ecology; range justification",
+            "studyScope": "Historical species-level habitat; no confirmed sightings since 1891 are established by this assessment."
+          }
+        ],
         "Distribution": [
           {
             "section": "Distribution",
@@ -733,19 +746,32 @@
           }
         ],
         "Natural history": [],
-        "Conservation": []
+        "Conservation": [
+          {
+            "section": "Conservation",
+            "label": "IUCN global status, 2021",
+            "text": "The June 2021 global assessment lists Sulu Bleeding-heart as Critically Endangered under criterion D, with a very small inferred remaining population.",
+            "source": "BirdLife International (2021), IUCN Gallicolumba menagei",
+            "url": "https://doi.org/10.2305/IUCN.UK.2021-3.RLTS.T22691005A203927952.en",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "iucn_dated_assessment",
+            "sourceYear": 2021,
+            "sourceLocation": "Global assessment, 29 June 2021",
+            "studyScope": "Dated global status; not proof of extant birds and not Philippine DENR legal classification."
+          }
+        ]
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
           "Identification",
-          "Distribution"
-        ],
-        "sectionsWithoutCitedData": [
           "Habitat",
-          "Natural history",
+          "Distribution",
           "Conservation"
         ],
-        "citedBiologicalFacts": 2
+        "sectionsWithoutCitedData": [
+          "Natural history"
+        ],
+        "citedBiologicalFacts": 4
       },
       "sourceReferences": 2
     },
@@ -803,19 +829,32 @@
           }
         ],
         "Natural history": [],
-        "Conservation": []
+        "Conservation": [
+          {
+            "section": "Conservation",
+            "label": "IUCN global status, 2021",
+            "text": "BirdLife's 2021 global assessment lists the Negros Bleeding-heart as Critically Endangered (C2a(i)), citing forest loss and trapping pressure.",
+            "source": "BirdLife International, Negros Bleeding-heart IUCN 2021, BirdLife DataZone",
+            "url": "https://datazone.birdlife.org/species/factsheet/Negros-Bleeding-heart-Gallicolumba-keayi",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "iucn_dated_assessment",
+            "sourceYear": 2021,
+            "sourceLocation": "2021 assessment history and justification",
+            "studyScope": "Global dated status; no independent site abundance estimate is inferred."
+          }
+        ]
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
           "Identification",
           "Habitat",
-          "Distribution"
-        ],
-        "sectionsWithoutCitedData": [
-          "Natural history",
+          "Distribution",
           "Conservation"
         ],
-        "citedBiologicalFacts": 3
+        "sectionsWithoutCitedData": [
+          "Natural history"
+        ],
+        "citedBiologicalFacts": 4
       },
       "sourceReferences": 2
     },
@@ -2380,23 +2419,61 @@
             "sourceYear": null,
             "sourceLocation": null,
             "studyScope": null
+          },
+          {
+            "section": "Habitat",
+            "label": "Freshwater habitats",
+            "text": "Philippine crocodiles inhabit freshwater rivers, ponds and marshes; contemporary conservation sites include both riverine and wetland settings.",
+            "source": "Smithsonian National Zoo, Philippine crocodile species account",
+            "url": "https://www.nationalzoo.si.edu/animals/philippine-crocodile",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "curated_zoological_species_account",
+            "sourceYear": null,
+            "sourceLocation": "Native Habitat",
+            "studyScope": "General habitat range, not a spatial distribution prediction."
           }
         ],
         "Distribution": [],
-        "Natural history": [],
-        "Conservation": []
+        "Natural history": [
+          {
+            "section": "Natural history",
+            "label": "Parental nest guarding",
+            "text": "Smithsonian's species account describes females making mound or hole nests and both sexes guarding the nest; recorded clutches comprise seven to thirty eggs.",
+            "source": "Smithsonian National Zoo, Philippine crocodile species account",
+            "url": "https://www.nationalzoo.si.edu/animals/philippine-crocodile",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "curated_zoological_species_account",
+            "sourceYear": null,
+            "sourceLocation": "Reproduction and Development",
+            "studyScope": "Summary of documented behaviour, not site-specific nest monitoring."
+          }
+        ],
+        "Conservation": [
+          {
+            "section": "Conservation",
+            "label": "DENR national status, 2019",
+            "text": "DENR-PENRO Cotabato reports the Philippine crocodile as Critically Endangered under DENR Administrative Order 2019-09 in a June 2025 national conservation notice.",
+            "source": "DENR-PENRO Cotabato (9 June 2025), Philippine crocodile rescue",
+            "url": "https://penrocotabato.com/index.php/2025/06/09/rescues-critically-endangered-freshwater-crocodile-in-president-roxas-cotabato/",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "government_national_conservation_record",
+            "sourceYear": 2025,
+            "sourceLocation": "DENR DAO 2019-09 citation in agency announcement",
+            "studyScope": "Philippine national status, not IUCN assessment; dated notice does not establish global listing."
+          }
+        ]
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
           "Identification",
-          "Habitat"
-        ],
-        "sectionsWithoutCitedData": [
-          "Distribution",
+          "Habitat",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 4
+        "sectionsWithoutCitedData": [
+          "Distribution"
+        ],
+        "citedBiologicalFacts": 7
       },
       "sourceReferences": 2
     },
@@ -4615,7 +4692,20 @@
         "url": "https://doi.org/10.5281/zenodo.21654811"
       },
       "sections": {
-        "Identification": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Comparative skull",
+            "text": "The skull has a long, downward-sloping facial region in front of the canines, distinguishing examined Mindoro specimens from Sus philippensis.",
+            "source": "IUCN SSC Wild Pig Specialist Group, Oliver's Warty Pig detailed account",
+            "url": "https://www.iucn-wpsg.org/olivers-warty-pig-detailed",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "published_specialist_monograph_summary",
+            "sourceYear": 2011,
+            "sourceLocation": "Descriptive notes, based on three male skulls",
+            "studyScope": "Skull comparison only; the source warns that external field appearance and hybrid ancestry remain uncertain."
+          }
+        ],
         "Habitat": [],
         "Distribution": [
           {
@@ -4661,15 +4751,15 @@
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
+          "Identification",
           "Distribution",
           "Conservation"
         ],
         "sectionsWithoutCitedData": [
-          "Identification",
           "Habitat",
           "Natural history"
         ],
-        "citedBiologicalFacts": 3
+        "citedBiologicalFacts": 4
       },
       "sourceReferences": 2
     },
@@ -4939,22 +5029,48 @@
             "studyScope": null
           }
         ],
-        "Habitat": [],
+        "Habitat": [
+          {
+            "section": "Habitat",
+            "label": "Forest habitats",
+            "text": "The 2021 global assessment identifies forest and some human-modified terrestrial habitats, with a listed elevational upper limit near 900 m.",
+            "source": "BirdLife International (2021), IUCN Anthracoceros marchei",
+            "url": "https://doi.org/10.2305/IUCN.UK.2021-3.RLTS.T22682444A205515479.en",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "iucn_dated_assessment",
+            "sourceYear": 2021,
+            "sourceLocation": "Habitat and Ecology; elevation limits",
+            "studyScope": "Global range account; does not establish site-level presence."
+          }
+        ],
         "Distribution": [],
         "Natural history": [],
-        "Conservation": []
+        "Conservation": [
+          {
+            "section": "Conservation",
+            "label": "IUCN global status, 2021",
+            "text": "BirdLife assessed the Palawan Hornbill as Vulnerable in July 2021 with a decreasing population trend; logging, trapping and mining feature among listed threats.",
+            "source": "BirdLife International (2021), IUCN Anthracoceros marchei",
+            "url": "https://doi.org/10.2305/IUCN.UK.2021-3.RLTS.T22682444A205515479.en",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "iucn_dated_assessment",
+            "sourceYear": 2021,
+            "sourceLocation": "Global assessment, 23 July 2021",
+            "studyScope": "Global dated category and threat list, not Philippine national assessment."
+          }
+        ]
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
-          "Identification"
-        ],
-        "sectionsWithoutCitedData": [
+          "Identification",
           "Habitat",
-          "Distribution",
-          "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "sectionsWithoutCitedData": [
+          "Distribution",
+          "Natural history"
+        ],
+        "citedBiologicalFacts": 3
       },
       "sourceReferences": 2
     },
@@ -5250,19 +5366,32 @@
             "studyScope": "Qualitative behaviour observation, not a measured feeding-rate study."
           }
         ],
-        "Conservation": []
+        "Conservation": [
+          {
+            "section": "Conservation",
+            "label": "IUCN global status, 2023",
+            "text": "BirdLife's 2023 global assessment lists Mindanao Bleeding-heart as Vulnerable, identifying ongoing forest clearance and a decreasing population trend.",
+            "source": "BirdLife International, Mindanao Bleeding-heart, BirdLife DataZone",
+            "url": "https://datazone.birdlife.org/species/factsheet/mindanao-bleeding-heart-gallicolumba-crinigera",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "iucn_dated_assessment",
+            "sourceYear": 2023,
+            "sourceLocation": "2023 assessment and justification",
+            "studyScope": "Global assessment distinct from DENR national status. Current population size remains unknown."
+          }
+        ]
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
           "Identification",
           "Habitat",
-          "Natural history"
-        ],
-        "sectionsWithoutCitedData": [
-          "Distribution",
+          "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 3
+        "sectionsWithoutCitedData": [
+          "Distribution"
+        ],
+        "citedBiologicalFacts": 4
       },
       "sourceReferences": 1
     },
@@ -6532,7 +6661,20 @@
         "url": "https://www.researchgate.net/publication/362324825_Checklist_of_reptiles_of_the_Philippines_version_2026-1"
       },
       "sections": {
-        "Identification": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Scalation in diagnosis",
+            "text": "The taxonomic diagnosis records 115–145 scales around the midbody and 158–180 ventral scale rows; juveniles can show four to six transverse rows of pale dorsal spots.",
+            "source": "The Reptile Database, Varanus marmoratus diagnosis summarizing taxonomic work",
+            "url": "https://reptile-database.reptarium.cz/Varanus/marmoratus",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "curated_taxonomic_diagnosis",
+            "sourceYear": null,
+            "sourceLocation": "Diagnosis, midbody and ventral scales",
+            "studyScope": "Microscopic scale-count characters from comparative specimens; counts are not a simple photo-based key."
+          }
+        ],
         "Habitat": [],
         "Distribution": [
           {
@@ -6553,15 +6695,15 @@
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
+          "Identification",
           "Distribution"
         ],
         "sectionsWithoutCitedData": [
-          "Identification",
           "Habitat",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "citedBiologicalFacts": 2
       },
       "sourceReferences": 2
     },
@@ -6633,7 +6775,20 @@
         "url": "https://www.researchgate.net/publication/362324825_Checklist_of_reptiles_of_the_Philippines_version_2026-1"
       },
       "sections": {
-        "Identification": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Dorsal marks in revised taxonomy",
+            "text": "Published taxonomic revision distinguishes this monitor by five to eight transverse rows of yellow ocelli on a dark back, a mostly dark head with yellow markings, and a temporal stripe.",
+            "source": "Welton et al. (2014), Varanus samarensis taxonomic diagnosis on Zenodo",
+            "url": "https://zenodo.org/records/6139293",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "published_taxonomic_revision",
+            "sourceYear": 2014,
+            "sourceLocation": "Diagnosis, drawing on Koch et al. (2010)",
+            "studyScope": "Combined traits from sampled specimens; individual markings may vary and are not site occurrence evidence."
+          }
+        ],
         "Habitat": [],
         "Distribution": [
           {
@@ -6654,15 +6809,15 @@
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
+          "Identification",
           "Distribution"
         ],
         "sectionsWithoutCitedData": [
-          "Identification",
           "Habitat",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "citedBiologicalFacts": 2
       },
       "sourceReferences": 2
     },
@@ -7155,8 +7310,34 @@
         "url": "https://doi.org/10.5281/zenodo.21654811"
       },
       "sections": {
-        "Identification": [],
-        "Habitat": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Beard and adult coat",
+            "text": "Adult Palawan bearded pigs have long whitish cheek-and-jowl hair and a pale mane contrasting with darker facial hair; young animals lack the adult beard.",
+            "source": "IUCN SSC Wild Pig Specialist Group, Palawan Bearded Pig detailed account",
+            "url": "https://www.iucn-wpsg.org/palawan-bearded-pig-detailed",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "published_specialist_monograph_summary",
+            "sourceYear": 2011,
+            "sourceLocation": "Descriptive notes",
+            "studyScope": "Adult features vary by age. Species-level identification also needs context and comparison."
+          }
+        ],
+        "Habitat": [
+          {
+            "section": "Habitat",
+            "label": "Palawan forest mosaic",
+            "text": "Documented habitats include lowland and middle-elevation rainforest, dry open woodland, limestone forest, mangrove forest and some cultivated landscapes.",
+            "source": "IUCN SSC Wild Pig Specialist Group, Palawan Bearded Pig",
+            "url": "https://www.iucn-wpsg.org/palawan-bearded-pig-detailed",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "published_specialist_monograph_summary",
+            "sourceYear": 2011,
+            "sourceLocation": "Habitat and distribution",
+            "studyScope": "Regional species habitat account, not confirmed presence at a field station."
+          }
+        ],
         "Distribution": [
           {
             "section": "Distribution",
@@ -7172,19 +7353,32 @@
           }
         ],
         "Natural history": [],
-        "Conservation": []
+        "Conservation": [
+          {
+            "section": "Conservation",
+            "label": "IUCN global status, assessed 2016",
+            "text": "The 2016 global IUCN assessment (published 2017) lists Palawan Bearded Pig as Near Threatened, with a declining population trend.",
+            "source": "Meijaard & Widmann (2017), IUCN Sus ahoenobarbus assessment",
+            "url": "https://doi.org/10.2305/IUCN.UK.2017-3.RLTS.T21177A44140029.en",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "iucn_dated_assessment",
+            "sourceYear": 2016,
+            "sourceLocation": "Global assessment, 11 June 2016; published 2017",
+            "studyScope": "Dated global category. The specialist-group page contains conflicting historical text and is not used for the assessment label."
+          }
+        ]
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
-          "Distribution"
-        ],
-        "sectionsWithoutCitedData": [
           "Identification",
           "Habitat",
-          "Natural history",
+          "Distribution",
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "sectionsWithoutCitedData": [
+          "Natural history"
+        ],
+        "citedBiologicalFacts": 4
       },
       "sourceReferences": 2
     },
@@ -7199,8 +7393,34 @@
         "url": "https://doi.org/10.5281/zenodo.21654811"
       },
       "sections": {
-        "Identification": [],
-        "Habitat": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Unspotted adult deer",
+            "text": "Adults are usually uniform dark-brown without a spotted coat; males bear relatively short, slender, three-tined antlers, with regional variation.",
+            "source": "Handbook of the Mammals of the World, Rusa marianna account, Plazi transcription",
+            "url": "https://tb.plazi.org/GgServer/xhtml/03A087C4FFCEFFCFFA74FEBDEC37F801",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "published_species_monograph",
+            "sourceYear": 2011,
+            "sourceLocation": "Descriptive notes",
+            "studyScope": "Adult deer only; juveniles and local populations vary. Do not infer sex from coat color."
+          }
+        ],
+        "Habitat": [
+          {
+            "section": "Habitat",
+            "label": "Recorded forest use",
+            "text": "The published deer monograph describes the Philippine brown deer in forest environments; a local 2025 study documents cultural and hunting context in Mindanao.",
+            "source": "Handbook of the Mammals of the World, Rusa marianna account, Plazi transcription",
+            "url": "https://tb.plazi.org/GgServer/xhtml/03A087C4FFCEFFCFFA74FEBDEC37F801",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "published_species_monograph",
+            "sourceYear": 2011,
+            "sourceLocation": "Habitat",
+            "studyScope": "Account applies to the species and not to a validated local survey site."
+          }
+        ],
         "Distribution": [
           {
             "section": "Distribution",
@@ -7220,15 +7440,15 @@
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
+          "Identification",
+          "Habitat",
           "Distribution"
         ],
         "sectionsWithoutCitedData": [
-          "Identification",
-          "Habitat",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "citedBiologicalFacts": 3
       },
       "sourceReferences": 2
     },
@@ -7439,8 +7659,34 @@
         "url": "https://doi.org/10.5281/zenodo.21654811"
       },
       "sections": {
-        "Identification": [],
-        "Habitat": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Tail and body",
+            "text": "The long, heavily furred tail and dense brown-to-black body coat with paler flanks are documented for the Luzon bushy-tailed cloud rat.",
+            "source": "University of Michigan Animal Diversity Web, Crateromys schadenbergi account",
+            "url": "https://animaldiversity.org/accounts/Crateromys_schadenbergi/",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "curated_secondary_species_account",
+            "sourceYear": null,
+            "sourceLocation": "Physical Description",
+            "studyScope": "Source is a secondary compilation; no specimen verification or molecular key."
+          }
+        ],
+        "Habitat": [
+          {
+            "section": "Habitat",
+            "label": "Montane forest habitats",
+            "text": "A secondary mammal account reports pine and mossy forests in northern Luzon, with described records around 2,000–2,500 m elevation.",
+            "source": "University of Michigan Animal Diversity Web, Crateromys schadenbergi",
+            "url": "https://animaldiversity.org/accounts/Crateromys_schadenbergi/",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "curated_secondary_species_account",
+            "sourceYear": null,
+            "sourceLocation": "Habitat",
+            "studyScope": "Reported account range, not a hard ecological elevation limit."
+          }
+        ],
         "Distribution": [
           {
             "section": "Distribution",
@@ -7455,20 +7701,33 @@
             "studyScope": null
           }
         ],
-        "Natural history": [],
+        "Natural history": [
+          {
+            "section": "Natural history",
+            "label": "Nocturnal climbing",
+            "text": "The species account describes tree use and night activity, with daytime shelter in tree hollows or spaces near roots.",
+            "source": "University of Michigan Animal Diversity Web, Crateromys schadenbergi",
+            "url": "https://animaldiversity.org/accounts/Crateromys_schadenbergi/",
+            "origin": "rc21_diagnosis_conservation_batch_v1.json",
+            "sourceType": "curated_secondary_species_account",
+            "sourceYear": null,
+            "sourceLocation": "Behavior",
+            "studyScope": "Secondary natural-history summary, not quantified telemetry."
+          }
+        ],
         "Conservation": []
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
-          "Distribution"
-        ],
-        "sectionsWithoutCitedData": [
           "Identification",
           "Habitat",
-          "Natural history",
+          "Distribution",
+          "Natural history"
+        ],
+        "sectionsWithoutCitedData": [
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "citedBiologicalFacts": 4
       },
       "sourceReferences": 2
     },

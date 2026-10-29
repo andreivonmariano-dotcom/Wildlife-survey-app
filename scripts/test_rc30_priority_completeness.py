@@ -82,7 +82,7 @@ class PriorityCompletion(unittest.TestCase):
             self.assertIn("Rc30SpeciesEvidence.merge(",
                 (JAVA/name).read_text(),name)
         apa=(JAVA/"VerifiedApaCatalog.java").read_text()
-        self.assertEqual(apa.count('m.put("https://'),18)
+        self.assertEqual(apa.count('m.put("https://'),27)
         for url in {r["url"] for r in self.added["records"]}:
             self.assertIn(url,apa)
 

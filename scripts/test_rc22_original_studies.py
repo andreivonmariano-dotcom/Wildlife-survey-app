@@ -39,7 +39,7 @@ class Rc22OriginalStudies(unittest.TestCase):
         still_missing={a["scientificName"] for a in self.corpus["accounts"]
                        if not a["sections"]["Identification"]}
         self.assertEqual(len(still_missing),1)
-        self.assertIn("Platymantis hazelae",still_missing)
+        self.assertNotIn("Platymantis hazelae",still_missing)
         self.assertIn("Dicaeum kampalili",still_missing)
 
     def test_source_provenance_matches_exact_taxon_and_study_scope(self):

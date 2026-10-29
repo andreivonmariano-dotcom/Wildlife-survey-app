@@ -57,7 +57,21 @@ public final class ResearchCitationFormatterTest {
             "Warguez et al. (2022), Journal of Threatened Taxa",2022,url);
         assertTrue(apa.startsWith("Reintar, A. R. T."));
         assertTrue(apa.contains("14(3), 20713–20720"));
-        assertEquals(14,VerifiedApaCatalog.count());
+        assertEquals(18,VerifiedApaCatalog.count());
+    }
+
+    @Test public void reviewedLiteratureDateAndSynthesisLabels(){
+        assertEquals("(Ishihara et al., 2015)",ResearchCitationFormatter.inText(
+            "Ishihara et al. (2015), Oryx 49(2):352–359",2015,
+            "https://doi.org/10.1017/S0030605314000313"));
+        assertEquals("(IUCN SSC Hornbill Specialist Group, n.d.)",
+            ResearchCitationFormatter.inText(
+                "IUCN SSC Hornbill Specialist Group",0,
+                "https://iucnhornbills.org/rufous-headed-hornbill/"));
+        assertTrue(ResearchCitationFormatter.sourceRecord(
+            "Esselstyn et al. (2004)",2004,
+            "https://www.biodiversitylibrary.org/part/49110")
+            .contains("Esselstyn, J. A., Widmann, P., & Heaney, L. R."));
     }
 
     @Test public void datedInstitutionalNotices(){

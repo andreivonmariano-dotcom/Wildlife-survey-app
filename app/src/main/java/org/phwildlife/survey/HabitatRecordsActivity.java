@@ -49,6 +49,9 @@ public final class HabitatRecordsActivity extends Activity {
         // Research explanation scrolls below the pinned guide/records tabs.
         LinearLayout tabs=new LinearLayout(this);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
+        // Two-line labels have different TextView baselines. Align button tops,
+        // not text baselines, or the second 200%-font button clips 23px.
+        tabs.setBaselineAligned(false);
         guideTab=UiKit.button(this,"Habitat guide","primary");
         recordsTab=UiKit.button(this,"My site records","secondary");
         guideTab.setContentDescription("Habitat reference guide tab");

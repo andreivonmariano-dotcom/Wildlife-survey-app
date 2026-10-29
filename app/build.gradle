@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 86
-        versionName '0.27.3-rc27b-keyboard-screen-qa-preview'
+        versionCode 87
+        versionName '0.27.3-rc27c-habitat-tab-alignment-preview'
     }
     signingConfigs {
         debug {

@@ -121,6 +121,11 @@ public final class Rc10LibraryScreensInstrumentedTest {
                     View root=activity.getWindow().getDecorView();
                     requireVisibleUnclipped(named(root,"Guide"),"Habitat guide tab");
                     requireVisibleUnclipped(named(root,"My records"),"Site records tab");
+                    int[] guidePos=new int[2],recordPos=new int[2];
+                    named(root,"Guide").getLocationOnScreen(guidePos);
+                    named(root,"My records").getLocationOnScreen(recordPos);
+                    assertTrue("Both Habitat tabs must share a top edge",
+                        Math.abs(guidePos[1]-recordPos[1])<=2);
                     requireVisibleUnclipped(named(root,"Research tools"),"Habitat tools");
                     Button toggle=named(root,"Research tools");
                     assertTrue(toggle.performClick());

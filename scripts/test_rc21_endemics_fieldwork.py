@@ -79,8 +79,8 @@ class Rc21EndemicsFieldwork(unittest.TestCase):
         self.assertIn('font_scale 2.0',recorder)
         self.assertIn('recorder-200percent-font.png',runner)
         self.assertIn('16 tests?',runner)
-        self.assertIn("versionCode 86",gradle)
-        self.assertIn("0.27.3-rc27b-keyboard-screen-qa-preview",gradle)
+        self.assertIn("versionCode 87",gradle)
+        self.assertIn("0.27.3-rc27c-habitat-tab-alignment-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

@@ -80,8 +80,8 @@ class Rc25PrimaryEcologyAccessibility(unittest.TestCase):
         self.assertIn("species-library-200percent-font.png",runner)
         self.assertIn("habitats-200percent-font.png",runner)
         self.assertIn("16 tests?",runner)
-        self.assertIn("versionCode 86",gradle)
-        self.assertIn("0.27.3-rc27b-keyboard-screen-qa-preview",gradle)
+        self.assertIn("versionCode 87",gradle)
+        self.assertIn("0.27.3-rc27c-habitat-tab-alignment-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

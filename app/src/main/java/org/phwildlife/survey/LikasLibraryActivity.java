@@ -19,11 +19,33 @@ public final class LikasLibraryActivity extends Activity {
         lp.bottomMargin=dp(10);p.addView(action,lp);
     }
     private void discover(LinearLayout p,String title,String subtitle,String icon,String view){
-        View card=LikasPortalUi.action(this,title,subtitle,icon,()->
+        View card=LikasPortalUi.tile(this,title,subtitle,icon,
+            LikasPortalUi.MOSS,Color.WHITE,()->
             startActivity(new Intent(this,LikasDiscoveryActivity.class)
                 .putExtra("view",view)));
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.bottomMargin=dp(10);p.addView(card,lp);
+        lp.bottomMargin=dp(12);p.addView(card,lp);
+    }
+    private boolean largeText(){
+        return getResources().getConfiguration().fontScale>=1.60f;
+    }
+    private void toolPair(LinearLayout parent,String first,String firstDetail,
+            String firstIcon,Class<?> firstTarget,String second,String secondDetail,
+            String secondIcon,Class<?> secondTarget){
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        View a=LikasPortalUi.mini(this,first,firstDetail,firstIcon,
+            ()->startActivity(new Intent(this,firstTarget)));
+        View b=LikasPortalUi.mini(this,second,secondDetail,secondIcon,
+            ()->startActivity(new Intent(this,secondTarget)));
+        LinearLayout.LayoutParams aLp=new LinearLayout.LayoutParams(
+            largeText()?-1:0,-2,1);
+        aLp.bottomMargin=dp(9);row.addView(a,aLp);
+        LinearLayout.LayoutParams bLp=new LinearLayout.LayoutParams(
+            largeText()?-1:0,-2,1);
+        if(!largeText())bLp.leftMargin=dp(10);
+        bLp.bottomMargin=dp(9);row.addView(b,bLp);
+        parent.addView(row);
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
@@ -42,13 +64,17 @@ public final class LikasLibraryActivity extends Activity {
         body.addView(headline);
         TextView sub=LikasPortalUi.text(this,"Offline. Source-linked.",13,UiKit.MUTED,false);
         sub.setPadding(0,dp(5),0,dp(19));body.addView(sub);
-        discover(body,"Species","Swipe · Explore","species","species");
-        discover(body,"Habitats","Swipe · Explore","habitat","habitats");
-        add(body,"Similar species","Compare traits","species",Rc9DifferentialActivity.class);
-        add(body,"Photos","Offline references","photo",Rc8PhotoComparisonActivity.class);
-        add(body,"Conservation","IUCN · DENR evidence","shield",Rc24ConservationDashboardActivity.class);
-        add(body,"Sources","Checklists · Citations","protocol",CatalogActivity.class);
-        add(body,"Habitat links","Published ecology","habitat",HabitatSpeciesEvidenceActivity.class);
+        discover(body,"Species","Browse wildlife","species","species");
+        discover(body,"Habitats","Explore ecosystems","habitat","habitats");
+        body.addView(LikasPortalUi.kicker(this,"REFERENCE TOOLS"));
+        toolPair(body,"Similar species","Field traits","species",
+            Rc9DifferentialActivity.class,"Photos","Offline images","photo",
+            Rc8PhotoComparisonActivity.class);
+        toolPair(body,"Conservation","IUCN · DENR","shield",
+            Rc24ConservationDashboardActivity.class,"Sources","Checklists","protocol",
+            CatalogActivity.class);
+        add(body,"Habitat links","Published ecology","habitat",
+            HabitatSpeciesEvidenceActivity.class);
         setContentView(root);
         UiMotion.enter(this,body);
     }

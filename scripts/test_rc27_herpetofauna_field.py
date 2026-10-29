@@ -75,8 +75,8 @@ class Rc27PhilippineHerpetofauna(unittest.TestCase):
         self.assertIn("Continue to GPS",setup)
         self.assertIn("outcome",history)
         self.assertIn("NO PHYSICAL HANDSET TEST HAS BEEN PERFORMED",qa)
-        self.assertIn("versionCode 92",build)
-        self.assertIn("0.27.3-rc32-sparse-evidence-keys-preview",build)
+        self.assertIn("versionCode 93",build)
+        self.assertIn("0.27.3-rc33-portal-ui-preview",build)
 
 if __name__=="__main__":
     unittest.main()

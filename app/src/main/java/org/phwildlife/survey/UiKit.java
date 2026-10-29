@@ -14,14 +14,14 @@ import android.widget.TextView;
 public final class UiKit {
   private UiKit(){}
   // Field palette pairs with the LIKAS pond frog icon and stays legible in sunlight.
-  public static final int BG=Color.rgb(247,249,246);
-  public static final int INK=Color.rgb(26,47,39);
-  public static final int FOREST=Color.rgb(34,91,67);
-  public static final int POND=Color.rgb(51,126,115);
-  public static final int MUTED=Color.rgb(91,108,102);
+  public static final int BG=Color.rgb(247,248,242);
+  public static final int INK=Color.rgb(23,54,44);
+  public static final int FOREST=Color.rgb(35,88,68);
+  public static final int POND=Color.rgb(53,120,113);
+  public static final int MUTED=Color.rgb(88,108,99);
   public static final int BLUE=Color.rgb(40,88,137);
   public static final int AMBER=Color.rgb(164,102,44);
-  public static final int BORDER=Color.rgb(222,230,223);
+  public static final int BORDER=Color.rgb(218,228,217);
   private static int dp(Activity a,int n){return (int)(a.getResources().getDisplayMetrics().density*n+0.5);}
   public static TextView title(Activity a,String title) {
     TextView t=new TextView(a);t.setText(title);t.setTextSize(23);t.setTypeface(null,Typeface.BOLD);
@@ -74,9 +74,9 @@ public final class UiKit {
     b.setMinHeight(dp(a,FieldLayoutPolicy.actionHeightDp(
         a.getResources().getConfiguration().fontScale)));
     b.setPadding(dp(a,10),dp(a,6),dp(a,10),dp(a,6));
-    GradientDrawable shape=new GradientDrawable();shape.setColor(fill);shape.setStroke(dp(a,1),stroke);shape.setCornerRadius(dp(a,12));
+    GradientDrawable shape=new GradientDrawable();shape.setColor(fill);shape.setStroke(dp(a,1),stroke);shape.setCornerRadius(dp(a,16));
     GradientDrawable mask=new GradientDrawable();
-    mask.setColor(Color.WHITE);mask.setCornerRadius(dp(a,12));
+    mask.setColor(Color.WHITE);mask.setCornerRadius(dp(a,16));
     int feedback=("secondary".equals(type)||"quiet".equals(type)||"outline-danger".equals(type))
         ? Color.argb(25,35,100,71) : Color.argb(52,255,255,255);
     b.setBackground(new RippleDrawable(ColorStateList.valueOf(feedback),shape,mask));
@@ -93,6 +93,6 @@ public final class UiKit {
   }
   public static GradientDrawable surface(Activity a) {
     GradientDrawable d=new GradientDrawable();d.setColor(Color.WHITE);
-    d.setStroke(dp(a,1),BORDER);d.setCornerRadius(dp(a,15));return d;
+    d.setStroke(dp(a,1),BORDER);d.setCornerRadius(dp(a,19));return d;
   }
 }

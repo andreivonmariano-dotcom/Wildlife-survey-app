@@ -23,6 +23,7 @@ public final class Rc30SpeciesEvidence {
     public static JSONObject merge(Activity activity,JSONObject corpus) {
         if(corpus==null||corpus.optInt("prioritySpeciesCount")!=96||
                 corpus.optBoolean("rc30Merged"))return corpus;
+        JSONObject updated=null;
         try(InputStream in=activity.getAssets().open(FILE);
             ByteArrayOutputStream out=new ByteArrayOutputStream()){
             byte[] block=new byte[4096];int n;
@@ -35,7 +36,10 @@ public final class Rc30SpeciesEvidence {
             if(records.length()!=addition.getInt("recordCount")||
                     records.length()!=8)
                 throw new IllegalStateException("Reviewed reference pack incomplete");
-            JSONArray accounts=corpus.getJSONArray("accounts");
+            // Apply transactionally to an isolated in-memory copy.
+            // A malformed later record cannot leave a partially patched corpus.
+            updated=new JSONObject(corpus.toString());
+            JSONArray accounts=updated.getJSONArray("accounts");
             if(accounts.length()!=96)
                 throw new IllegalStateException("Unexpected original species index");
             Map<String,JSONObject> byName=new HashMap<>();
@@ -84,15 +88,15 @@ public final class Rc30SpeciesEvidence {
                             .getJSONArray(section).length()==0)missing++;
                 gaps.put(section,missing);
             }
-            corpus.put("sectionMissingCounts",gaps);
-            corpus.put("sourceFactCount",corpus.optInt("sourceFactCount")+applied);
-            corpus.put("rc30Merged",true);
-            corpus.put("rc30ReviewedAdditions",applied);
+            updated.put("sectionMissingCounts",gaps);
+            updated.put("sourceFactCount",corpus.optInt("sourceFactCount")+applied);
+            updated.put("rc30Merged",true);
+            updated.put("rc30ReviewedAdditions",applied);
         }catch(Exception problem){
             // Always keep the core offline library usable if this optional pack fails.
             // An incomplete pack cannot introduce partially cited records.
             return corpus;
         }
-        return corpus;
+        return updated==null?corpus:updated;
     }
 }

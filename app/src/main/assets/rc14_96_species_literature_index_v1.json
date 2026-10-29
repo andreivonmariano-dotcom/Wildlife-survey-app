@@ -418,10 +418,21 @@
           "topics": [
             "Conservation"
           ]
+        },
+        {
+          "source": "Mynott, Abrahams & Kerhoas (2021), Bird Conservation International 31:640–655",
+          "url": "https://doi.org/10.1017/S0959270920000611",
+          "sourceType": "peer_reviewed_field_habitat_model",
+          "publicationYear": 2021,
+          "latestConfirmed": false,
+          "sourceLocation": "Results, Habitat preference; 93 habitat plots, 31 sightings",
+          "topics": [
+            "Habitat"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 3
+      "referenceCount": 4
     },
     {
       "scientificName": "Penelopides panini",
@@ -740,10 +751,32 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Brown et al. (2002), Silliman Journal 43(1):91–109",
+          "url": "https://www.stii.dost.gov.ph/images/jdownloads/pdf_files/psta/PSTA_2014_July-Dec.pdf",
+          "sourceType": "original_bioacoustic_study_abstract",
+          "publicationYear": 2002,
+          "latestConfirmed": false,
+          "sourceLocation": "DOST abstract of Brown et al., Advertisement calls of two endangered endemic Philippine frogs",
+          "topics": [
+            "Identification"
+          ]
+        },
+        {
+          "source": "Siler et al. (2010), Zootaxa 2482:25–42, Platymantis biak description",
+          "url": "https://tb.plazi.org/GgServer/html/03F587EFFFCAFFEC5BB593F6FDC2FD0D",
+          "sourceType": "published_comparative_field_observation",
+          "publicationYear": 2010,
+          "latestConfirmed": false,
+          "sourceLocation": "Natural history discussion, note on P. spelaeus egg deposition",
+          "topics": [
+            "Ecology"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 4
     },
     {
       "scientificName": "Platymantis paengi",
@@ -1137,10 +1170,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Brown et al. (2017), Herpetological Monographs 31:182–203",
+          "url": "https://www.researchgate.net/publication/320362775_Taxonomic_Reappraisal_of_the_Northeast_Mindanao_Stream_Frog_Sanguirana_albotuberculataInger_1954_Validation_ofRana_mearnsi_Stejneger_1905_and_Description_of_a_New_Species_from_the_Central_Philippines",
+          "sourceType": "original_taxonomic_revision",
+          "publicationYear": 2017,
+          "latestConfirmed": false,
+          "sourceLocation": "Table 3, comparison of Sanguirana acai and S. everetti",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Crocodylus mindorensis",
@@ -1190,10 +1234,21 @@
           "topics": [
             "Conservation"
           ]
+        },
+        {
+          "source": "Brown et al. (2013), ZooKeys 266:1–120",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3591760/",
+          "sourceType": "peer_reviewed_herpetofaunal_field_survey",
+          "publicationYear": 2013,
+          "latestConfirmed": false,
+          "sourceLocation": "Species account, Crocodylus mindorensis, Isabela field records",
+          "topics": [
+            "Habitat"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 4
+      "referenceCount": 5
     },
     {
       "scientificName": "Hydrosaurus pustulatus",
@@ -1868,10 +1923,21 @@
           "topics": [
             "Identification"
           ]
+        },
+        {
+          "source": "Oryx (2013), First images of the Visayan spotted deer and Visayan warty pig",
+          "url": "https://www.cambridge.org/core/journals/oryx/article/first-images-of-the-visayan-spotted-deer-and-visayan-warty-pig/CE0FE89440441E0B22B70C7769D12907",
+          "sourceType": "peer_reviewed_camera_trap_field_study",
+          "publicationYear": 2013,
+          "latestConfirmed": false,
+          "sourceLocation": "Fieldwork and results, North Negros Natural Park",
+          "topics": [
+            "Habitat"
+          ]
         }
       ],
       "recencyStatus": "recent_2025_2026_publication_verified",
-      "referenceCount": 4
+      "referenceCount": 5
     },
     {
       "scientificName": "Acerodon jubatus",
@@ -3105,10 +3171,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Sanguila et al. (2026), ZooKeys 1272:203–251",
+          "url": "https://doi.org/10.3897/zookeys.1272.167304",
+          "sourceType": "peer_reviewed_field_identification",
+          "publicationYear": 2026,
+          "latestConfirmed": false,
+          "sourceLocation": "Fejervarya vittigera treatment, Identification, Fig. 4D",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Varanus bangonorum",
@@ -3441,10 +3518,21 @@
             "Distribution",
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Leviton et al. (2019), Illustrated Key to the Snakes of the Philippines",
+          "url": "https://www.researchgate.net/publication/336170835_Illustrated_Key_to_the_Snakes_of_the_Philippines",
+          "sourceType": "peer_reviewed_taxonomic_key",
+          "publicationYear": 2019,
+          "latestConfirmed": false,
+          "sourceLocation": "Genus Trimeresurus, Philippine species key, couplet 1a",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Gekko gigante",
@@ -3472,10 +3560,21 @@
             "Distribution",
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Rösler et al. (2006), Salamandra 42:197–211",
+          "url": "https://www.researchgate.net/publication/267834640_Gekko_ernstkelleri_sp_n_-_a_new_gekkonid_lizard_from_Panay_Island_Philippines",
+          "sourceType": "peer_reviewed_taxonomic_comparison",
+          "publicationYear": 2006,
+          "latestConfirmed": false,
+          "sourceLocation": "Comparisons, Gekko gigante paragraph, page 199",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Cyrtodactylus agusanensis",

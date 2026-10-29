@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 88
-        versionName '0.27.3-rc28-minimal-apa-ui-preview'
+        versionCode 89
+        versionName '0.27.3-rc29-research-field-guide-preview'
     }
     signingConfigs {
         debug {

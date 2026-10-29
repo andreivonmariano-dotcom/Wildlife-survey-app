@@ -15,11 +15,27 @@ import android.widget.TextView;
 /** Preferences and local data safety; destructive management stays in its confirmed workflow. */
 public final class LikasSettingsActivity extends Activity {
     private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
-    private void add(LinearLayout p,String label,String sub,String symbol,Class<?> destination){
-        View view=LikasPortalUi.action(this,label,sub,symbol,
-            ()->startActivity(new Intent(this,destination)));
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.bottomMargin=dp(9);p.addView(view,lp);
+    private boolean largeText(){
+        return getResources().getConfiguration().fontScale>=1.60f;
+    }
+    private void options(LinearLayout parent,String first,String firstHint,String firstArt,
+            Class<?> firstTarget,String second,String secondHint,String secondArt,
+            Class<?> secondTarget){
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        View a=LikasPortalUi.mini(this,first,firstHint,firstArt,
+            ()->startActivity(new Intent(this,firstTarget)));
+        View b=LikasPortalUi.mini(this,second,secondHint,secondArt,
+            ()->startActivity(new Intent(this,secondTarget)));
+        LinearLayout.LayoutParams left=new LinearLayout.LayoutParams(
+            largeText()?-1:0,-2,1);
+        left.bottomMargin=dp(10);row.addView(a,left);
+        LinearLayout.LayoutParams right=new LinearLayout.LayoutParams(
+            largeText()?-1:0,-2,1);
+        right.bottomMargin=dp(10);
+        if(!largeText())right.leftMargin=dp(10);
+        row.addView(b,right);
+        parent.addView(row);
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
@@ -53,10 +69,10 @@ public final class LikasSettingsActivity extends Activity {
         LinearLayout.LayoutParams rm=new LinearLayout.LayoutParams(-1,dp(64));
         rm.bottomMargin=dp(15);body.addView(reduce,rm);
         body.addView(LikasPortalUi.kicker(this,"DATA"));
-        add(body,"Backup","Save · Restore","backup",FieldBackupActivity.class);
-        add(body,"Storage","Manage records","settings",DataManagementActivity.class);
-        add(body,"Import","Older files","protocol",ImportActivity.class);
-        add(body,"Data check","Review records","shield",AuditActivity.class);
+        options(body,"Backup","Save · Restore","backup",FieldBackupActivity.class,
+            "Storage","My records","settings",DataManagementActivity.class);
+        options(body,"Import","Source files","protocol",ImportActivity.class,
+            "Data check","Review records","shield",AuditActivity.class);
         body.addView(LikasPortalUi.kicker(this,"ABOUT"));
         View about=LikasPortalUi.action(this,"About LIKAS","Version · Privacy","library",()->{
             String version="Version unavailable";

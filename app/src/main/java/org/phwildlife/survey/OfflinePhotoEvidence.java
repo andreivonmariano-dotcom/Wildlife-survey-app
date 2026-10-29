@@ -111,70 +111,72 @@ public final class OfflinePhotoEvidence {
      * Compact licensed-photo preview for the priority field cards.
      * The original file, caption and full rights detail stay accessible on expansion.
      */
+    /** A full-width offline plate places the organism before supporting research cards. */
     public static void addCompactForTaxon(Activity a,LinearLayout parent,String scientific){
         JSONObject photo=findForTaxon(a,scientific);
         if(photo==null)return;
-        ImageView thumbnail=thumbnailForTaxon(a,scientific);
-        if(thumbnail==null)return;
+        ImageView plate=null;
+        String asset=photo.optString("offlineAsset");
+        try(InputStream in=a.getAssets().open(asset)){
+            BitmapFactory.Options options=new BitmapFactory.Options();
+            options.inSampleSize=2;
+            Bitmap bitmap=BitmapFactory.decodeStream(in,null,options);
+            if(bitmap!=null){
+                plate=new ImageView(a);
+                plate.setImageBitmap(bitmap);
+            }
+        }catch(Exception ignored){}
+        if(plate==null)return;
         LinearLayout wrapper=new LinearLayout(a);
         wrapper.setOrientation(LinearLayout.VERTICAL);
         wrapper.setBackground(UiKit.surface(a));
-        wrapper.setPadding(dp(a,10),dp(a,10),dp(a,10),dp(a,10));
-        LinearLayout row=new LinearLayout(a);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        thumbnail.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        thumbnail.setBackgroundColor(UiKit.BG);
-        row.addView(thumbnail,new LinearLayout.LayoutParams(dp(a,126),dp(a,122)));
-        LinearLayout labels=new LinearLayout(a);
-        labels.setOrientation(LinearLayout.VERTICAL);
-        labels.setPadding(dp(a,12),dp(a,3),0,0);
-        TextView title=new TextView(a);
-        title.setText("Photo reference");
-        title.setTextColor(UiKit.INK);
-        title.setTypeface(null,android.graphics.Typeface.BOLD);
-        title.setTextSize(15);
-        labels.addView(title);
-        String author=photo.optString("author").trim();
-        String plain=author.toLowerCase(java.util.Locale.ROOT);
-        if(plain.startsWith("(c)"))author=author.substring(3).trim();
-        if(plain.startsWith("©"))author=author.substring(1).trim();
-        int rights=author.toLowerCase(java.util.Locale.ROOT)
-            .indexOf(", all rights reserved");
-        if(rights>=0)author=author.substring(0,rights).trim();
+        wrapper.setPadding(dp(a,10),dp(a,10),dp(a,10),dp(a,12));
+        plate.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        plate.setBackgroundColor(UiKit.BG);
+        plate.setContentDescription(photo.optString("caption",
+            "Offline licensed photo of "+scientific));
+        wrapper.addView(plate,new LinearLayout.LayoutParams(-1,dp(a,192)));
+
+        String caption=photo.optString("caption").trim();
+        if(!caption.isEmpty()){
+            TextView captionView=new TextView(a);
+            captionView.setText(caption);
+            captionView.setTextColor(UiKit.INK);
+            captionView.setTextSize(13);
+            captionView.setPadding(dp(a,4),dp(a,7),dp(a,4),0);
+            wrapper.addView(captionView);
+        }
+        String creditName=photo.optString("author").trim();
         TextView credit=new TextView(a);
-        credit.setText("© "+(author.isEmpty()?"Source photographer":author));
+        credit.setText("Photo: "+(creditName.isEmpty()?"Photographer not recorded":creditName)+
+            " · "+photo.optString("license"));
         credit.setTextColor(UiKit.MUTED);
         credit.setTextSize(12);
-        credit.setMaxLines(3);
-        credit.setEllipsize(android.text.TextUtils.TruncateAt.END);
-        LinearLayout.LayoutParams cr=new LinearLayout.LayoutParams(-1,-2);
-        cr.topMargin=dp(a,8);
-        labels.addView(credit,cr);
-        row.addView(labels,new LinearLayout.LayoutParams(0,-2,1));
-        wrapper.addView(row);
-        Button expand=UiKit.button(a,"View photo & credits  ▾","quiet");
-        LinearLayout.LayoutParams ep=new LinearLayout.LayoutParams(-1,dp(a,44));
-        ep.topMargin=dp(a,8);
-        wrapper.addView(expand,ep);
+        credit.setPadding(dp(a,4),dp(a,5),dp(a,4),dp(a,4));
+        wrapper.addView(credit);
+
+        Button details=UiKit.button(a,"Photo credits & original  ▾","quiet");
+        LinearLayout.LayoutParams ep=new LinearLayout.LayoutParams(-1,dp(a,48));
+        ep.topMargin=dp(a,5);
+        wrapper.addView(details,ep);
         LinearLayout full=new LinearLayout(a);
         full.setOrientation(LinearLayout.VERTICAL);
         full.setVisibility(View.GONE);
         wrapper.addView(full);
         final boolean[] rendered={false};
-        expand.setOnClickListener(v->{
-            boolean open=full.getVisibility()!=View.VISIBLE;
-            if(open&&!rendered[0]){
-                // Use the original audited renderer for full photo, attribution and rights.
+        details.setOnClickListener(v->{
+            boolean show=full.getVisibility()!=View.VISIBLE;
+            if(show&&!rendered[0]){
                 add(a,full,photo.optString("id"));
                 rendered[0]=true;
             }
-            full.setVisibility(open?View.VISIBLE:View.GONE);
-            expand.setText(open?"Hide photo & credits  ▴":"View photo & credits  ▾");
+            if(show)UiMotion.reveal(a,full);
+            else UiMotion.hide(full);
+            details.setText(show?"Hide photo credits  ▴":"Photo credits & original  ▾");
         });
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.topMargin=dp(a,8);
-        lp.bottomMargin=dp(a,7);
+        lp.topMargin=dp(a,6);
+        lp.bottomMargin=dp(a,12);
         parent.addView(wrapper,lp);
     }
     public static void addForTaxon(Activity a,LinearLayout parent,String scientific){

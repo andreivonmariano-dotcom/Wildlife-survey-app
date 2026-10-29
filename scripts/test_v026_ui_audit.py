@@ -26,7 +26,7 @@ class CleanFieldUi(unittest.TestCase):
         self.assertIn('progressView.setVisibility(',screen)
     def test_home_puts_shortcuts_first_and_groups_other_tools(self):
         home=src("WelcomeActivity.java")
-        for key in ('"Survey history"','"Search Species Library"',
+        for key in ('"Survey history"','"Open Species Library"',
                     '"Field tools & settings  ▾"','"Field evidence"',
                     '"Workspace"','"Species Library"',
                     '"Study and archive management"'):

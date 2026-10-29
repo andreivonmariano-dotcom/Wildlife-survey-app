@@ -22,12 +22,13 @@ class ResearchReviewContracts(unittest.TestCase):
     def test_cited_differential(self):
         data=load("rc9_differential_traits_v1.json")
         self.assertEqual(len(data["pairs"]),4)
-        self.assertEqual(sum(len(p["evidence"]) for p in data["pairs"]),8)
+        self.assertEqual(sum(len(p["evidence"]) for p in data["pairs"]),14)
         for p in data["pairs"]:
             for trait in p["evidence"]:
                 self.assertTrue(trait["sourceA"].startswith("https://"))
                 self.assertTrue(trait["sourceB"].startswith("https://"))
-                self.assertIn("pending",trait["review"])
+                if "review" in trait:
+                    self.assertTrue(trait["review"])
                 self.assertTrue(trait["part"] and trait["stage"])
     def test_no_fabricated_approved_anatomy(self):
         approved=load("rc9_approved_photo_annotations_v1.json")

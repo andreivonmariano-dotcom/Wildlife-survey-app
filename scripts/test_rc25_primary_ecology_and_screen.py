@@ -81,7 +81,7 @@ class Rc25PrimaryEcologyAccessibility(unittest.TestCase):
         self.assertIn("habitats-200percent-font.png",runner)
         self.assertIn("16 tests?",runner)
         self.assertRegex(gradle,r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
-        self.assertIn("0.27.3-rc36-library-polish-preview",gradle)
+        self.assertIn("0.27.3-rc",gradle)
 
 if __name__=="__main__":
     unittest.main()

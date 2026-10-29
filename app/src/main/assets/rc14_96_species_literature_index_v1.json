@@ -364,10 +364,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "BirdLife International (2021), IUCN Gallicolumba menagei global assessment",
+          "url": "https://doi.org/10.2305/IUCN.UK.2021-3.RLTS.T22691005A203927952.en",
+          "sourceType": "iucn_dated_assessment",
+          "publicationYear": 2021,
+          "latestConfirmed": false,
+          "sourceLocation": "Habitat and Ecology; range justification",
+          "topics": [
+            "Habitat"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Gallicolumba keayi",
@@ -396,10 +407,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "BirdLife International, Negros Bleeding-heart IUCN 2021, BirdLife DataZone",
+          "url": "https://datazone.birdlife.org/species/factsheet/Negros-Bleeding-heart-Gallicolumba-keayi",
+          "sourceType": "iucn_dated_assessment",
+          "publicationYear": 2021,
+          "latestConfirmed": false,
+          "sourceLocation": "2021 assessment history and justification",
+          "topics": [
+            "Conservation"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Penelopides panini",
@@ -1146,10 +1168,32 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Smithsonian National Zoo, Philippine crocodile species account",
+          "url": "https://www.nationalzoo.si.edu/animals/philippine-crocodile",
+          "sourceType": "curated_zoological_species_account",
+          "publicationYear": null,
+          "latestConfirmed": false,
+          "sourceLocation": "Native Habitat",
+          "topics": [
+            "Habitat"
+          ]
+        },
+        {
+          "source": "DENR-PENRO Cotabato (9 June 2025), Philippine crocodile rescue",
+          "url": "https://penrocotabato.com/index.php/2025/06/09/rescues-critically-endangered-freshwater-crocodile-in-president-roxas-cotabato/",
+          "sourceType": "government_national_conservation_record",
+          "publicationYear": 2025,
+          "latestConfirmed": false,
+          "sourceLocation": "DENR DAO 2019-09 citation in agency announcement",
+          "topics": [
+            "Conservation"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 4
     },
     {
       "scientificName": "Hydrosaurus pustulatus",
@@ -2144,10 +2188,21 @@
             "Distribution",
             "Conservation"
           ]
+        },
+        {
+          "source": "IUCN SSC Wild Pig Specialist Group, Oliver's Warty Pig detailed account",
+          "url": "https://www.iucn-wpsg.org/olivers-warty-pig-detailed",
+          "sourceType": "published_specialist_monograph_summary",
+          "publicationYear": 2011,
+          "latestConfirmed": false,
+          "sourceLocation": "Descriptive notes, based on three male skulls",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Dobsonia chapmani",
@@ -2298,10 +2353,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "BirdLife International (2021), IUCN Anthracoceros marchei",
+          "url": "https://doi.org/10.2305/IUCN.UK.2021-3.RLTS.T22682444A205515479.en",
+          "sourceType": "iucn_dated_assessment",
+          "publicationYear": 2021,
+          "latestConfirmed": false,
+          "sourceLocation": "Habitat and Ecology; elevation limits",
+          "topics": [
+            "Habitat"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Penelopides affinis",
@@ -2398,10 +2464,21 @@
           "topics": [
             "Identification"
           ]
+        },
+        {
+          "source": "BirdLife International, Mindanao Bleeding-heart, BirdLife DataZone",
+          "url": "https://datazone.birdlife.org/species/factsheet/mindanao-bleeding-heart-gallicolumba-crinigera",
+          "sourceType": "iucn_dated_assessment",
+          "publicationYear": 2023,
+          "latestConfirmed": false,
+          "sourceLocation": "2023 assessment and justification",
+          "topics": [
+            "Conservation"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Gallicolumba luzonica",
@@ -3198,10 +3275,21 @@
             "Distribution",
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Welton et al. (2014), Varanus samarensis taxonomic diagnosis on Zenodo",
+          "url": "https://zenodo.org/records/6139293",
+          "sourceType": "published_taxonomic_revision",
+          "publicationYear": 2014,
+          "latestConfirmed": false,
+          "sourceLocation": "Diagnosis, drawing on Koch et al. (2010)",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Varanus rasmusseni",
@@ -3541,10 +3629,32 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "IUCN SSC Wild Pig Specialist Group, Palawan Bearded Pig detailed account",
+          "url": "https://www.iucn-wpsg.org/palawan-bearded-pig-detailed",
+          "sourceType": "published_specialist_monograph_summary",
+          "publicationYear": 2011,
+          "latestConfirmed": false,
+          "sourceLocation": "Descriptive notes",
+          "topics": [
+            "Identification"
+          ]
+        },
+        {
+          "source": "Meijaard & Widmann (2017), IUCN Sus ahoenobarbus assessment",
+          "url": "https://doi.org/10.2305/IUCN.UK.2017-3.RLTS.T21177A44140029.en",
+          "sourceType": "iucn_dated_assessment",
+          "publicationYear": 2016,
+          "latestConfirmed": false,
+          "sourceLocation": "Global assessment, 11 June 2016; published 2017",
+          "topics": [
+            "Conservation"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 4
     },
     {
       "scientificName": "Rusa marianna",
@@ -3572,10 +3682,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Handbook of the Mammals of the World, Rusa marianna account, Plazi transcription",
+          "url": "https://tb.plazi.org/GgServer/xhtml/03A087C4FFCEFFCFFA74FEBDEC37F801",
+          "sourceType": "published_species_monograph",
+          "publicationYear": 2011,
+          "latestConfirmed": false,
+          "sourceLocation": "Descriptive notes",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Phloeomys pallidus",
@@ -3718,10 +3839,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "University of Michigan Animal Diversity Web, Crateromys schadenbergi account",
+          "url": "https://animaldiversity.org/accounts/Crateromys_schadenbergi/",
+          "sourceType": "curated_secondary_species_account",
+          "publicationYear": null,
+          "latestConfirmed": false,
+          "sourceLocation": "Physical Description",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Acerodon leucotis",

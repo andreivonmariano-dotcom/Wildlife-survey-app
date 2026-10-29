@@ -53,7 +53,7 @@ public final class Rc39DiscoverySearchInstrumentedTest {
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
                 assertTrue(hasText(root,"No matches"));
-                assertTrue(hasText(root,"All species"));
+                assertTrue(hasText(root,"Full Philippine species checklist"));
                 View clear=byDescription(root,"Clear library search");
                 assertNotNull(clear);
                 clear.performClick();

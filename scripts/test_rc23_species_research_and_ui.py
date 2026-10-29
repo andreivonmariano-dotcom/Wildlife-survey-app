@@ -74,7 +74,7 @@ class Rc23SpeciesResearch(unittest.TestCase):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertIn("out.size()+n>300000",bibliography)
         self.assertIn("Evidence type: ",bibliography)
-        self.assertIn('ResearchCitationFormatter.inText(item.source,item.sourceYear)',account)
+        self.assertIn('ResearchCitationFormatter.citeClaim(',account)
         self.assertIn("Compare current cited traits",account)
         self.assertIn("latest cited 96-species accounts",compare)
         self.assertIn("Search offline species by common, scientific or former name",picker)

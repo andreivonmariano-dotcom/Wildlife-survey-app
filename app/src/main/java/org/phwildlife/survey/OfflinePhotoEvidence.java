@@ -121,6 +121,63 @@ public final class OfflinePhotoEvidence {
             return view;
         }catch(Exception ignored){return null;}
     }
+    // Gallery preview I/O runs off the UI thread; full-size evidence stays in detail screens.
+    private static final java.util.concurrent.ExecutorService galleryImages=
+        java.util.concurrent.Executors.newFixedThreadPool(2);
+    private static JSONObject habitatPhoto(Activity a,String photoId){
+        if(photoId==null||photoId.trim().isEmpty())return null;
+        JSONArray list=manifest(a).optJSONArray("items");
+        if(list==null)return null;
+        for(int i=0;i<list.length();i++){
+            JSONObject item=list.optJSONObject(i);
+            if(item!=null&&"habitat".equals(item.optString("category"))&&
+                photoId.equals(item.optString("id")))return item;
+        }
+        return null;
+    }
+    private static void galleryThumbnail(Activity a,ImageView target,JSONObject photo){
+        if(photo==null)return;
+        String asset=photo.optString("offlineAsset");
+        if(!asset.matches("offline_photos/(species|habitat|inat)_[a-z0-9_]+\\.jpg"))
+            return;
+        Bitmap bitmap=previewCache.get(asset);
+        if(bitmap==null||bitmap.isRecycled()){
+            try(InputStream in=a.getAssets().open(asset)){
+                BitmapFactory.Options options=new BitmapFactory.Options();
+                options.inSampleSize=4;
+                options.inPreferredConfig=Bitmap.Config.RGB_565;
+                bitmap=BitmapFactory.decodeStream(in,null,options);
+                if(bitmap!=null)previewCache.put(asset,bitmap);
+            }catch(Exception ignored){return;}
+        }
+        if(bitmap==null)return;
+        final Bitmap ready=bitmap;
+        a.runOnUiThread(()->{
+            if(a.isFinishing()||a.isDestroyed()||target.getParent()==null)return;
+            target.setImageBitmap(ready);
+            target.setContentDescription("Offline photograph by "+photo.optString("author")+
+                ". Open reference for source and license.");
+            target.setVisibility(View.VISIBLE);
+        });
+    }
+    private static ImageView enqueueGalleryPhoto(Activity a,String key,boolean habitat){
+        ImageView result=new ImageView(a);
+        result.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        result.setVisibility(View.GONE);
+        result.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        galleryImages.execute(()->{
+            JSONObject found=habitat?habitatPhoto(a,key):findForTaxon(a,key);
+            galleryThumbnail(a,result,found);
+        });
+        return result;
+    }
+    public static ImageView galleryPhotoForTaxon(Activity a,String scientific){
+        return enqueueGalleryPhoto(a,scientific,false);
+    }
+    public static ImageView galleryPhotoForHabitat(Activity a,String photoId){
+        return enqueueGalleryPhoto(a,photoId,true);
+    }
+
     /** Small offline thumbnail. Rights and original credits remain in species detail. */
     public static ImageView thumbnailForTaxon(Activity a,String scientific){
         return thumbnail(a,findForTaxon(a,scientific),

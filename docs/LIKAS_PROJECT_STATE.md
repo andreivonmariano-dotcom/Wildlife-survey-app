@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC28 minimalist academic UI and APA citations | Source committed, APK verification pending
+
+- **Owner-approved direction:** research-first minimalist native styling, compact spoken Back controls, quiet 160–180ms optional secondary motion, natural non-publisher-led biological sentences, APA 7 author–date in-text citations and consolidated source-linked references, without repeated `Source:` lines. See `docs/LIKAS_RC28_MINIMAL_RESEARCH_UI_APA_SPEC.md` and canonical master v1.0.3 U-07/U-08 on main.
+- **RC4-derived scientific-core branch** `feature/likas-core-fieldwork-post-rc4` (draft PR #38) now has `ResearchCitationFormatter`, display-only `Rc13FieldGuideCopy` revisions for 29 exact awkward sentences, revised species/habitat/comparison citations, deduplicated directly cited vs further-reading URLs, simpler Home groups and accessible `UiMotion`. The full original 96 accounts / 456 facts / 306 source links and research scope are preserved in asset JSON, with no app database schema or survey lifecycle change. Startup workstream remains separate.
+- **Candidate identity:** app ID `org.phwildlife.survey.beta08`, SQLite27, versionCode **88**, `0.27.3-rc28-minimal-apa-ui-preview`, original keystore setup. Research bibliography entries are **not all complete APA records**: some source metadata omits full author lists, titles, publication dates or publication structure. Incomplete entries are kept traceable without invented detail.
+- **CI state as recorded:** 230-test early failures came from hard-coded older Home labels, color, source display and previous-version expectations. All found legacy test contracts were updated. Scientific Core QA **40832233530** completed success and produced artifact **12879321789** at source SHA `f10ebc59a6a696766af0ed2411c89440c9f2ce0d`. A later APA full-author-label code correction SHA `5656203f028644fcc593a54183f55952346804c0` requires a fresh completed CI build/artifact verification. **Do not deliver the older f10 artifact as if it contained that correction.**
+- **Next:** verify latest code CI and APK, inspect package/version/signature, attach real direct RC28 APK, then evaluate 16/16 emulator and 200% Habitat/Screens; actual phone, owner database, backup and field science remain untested.
+
+---
+
+
 ## 29 October 2026 | RC27C emulator result: Habitat alignment PASSED; 5 citation-UI tests failed
 
 - Actual RC27C code87 emulator workflow **40830850203** completed **failure**, running 16 Android instrumentation tests with **5 failures**. Downloaded actual artifact **12878193364** into current chat, read `instrumentation.txt`. The dedicated 200% Habitat/Species Library test completed **success**, confirming `tabs.setBaselineAligned(false)` resolved the earlier 23px tab-geometry problem in that build.

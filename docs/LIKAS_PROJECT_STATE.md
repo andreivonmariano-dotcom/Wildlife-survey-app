@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | Repository CI backlog and safe housekeeping | RC41 remains queued
+
+- **Diagnosed from GitHub:** RC41 Scientific Core QA run **40888849314** was still **queued with no runner assigned**, as were several later runs. Active branch `feature/likas-core-fieldwork-post-rc4` had around **1,782 commits ahead of divergent `main`**, scientific QA run sequence past **2200**, and three workflows that could spawn two expensive (40/50-minute) emulator jobs plus one full APK/science job for a single app push. Public GitHub Actions status showed operational; exact account billing/runners restriction is **not visible** and cannot be asserted. GitHub-reported repository size was **4,134 KiB**.
+- **CI changes:** `.github/workflows/core-science-qa.yml` now cancels superseded same-ref jobs, skips docs/README/.gitignore-only pushes, permits manual dispatch and attaches dynamically version-labeled artifacts with **five-day retention** (formerly 14). `library-android-smoke.yml` and `rc7-device-emulator-qa.yml` remain **manual** acceptance workflows, not per-push. GitHub CI must still run source/scientific tests, pinned signing, licensed photo locks, JVM tests and APK compilation for any source change.
+- **Removed:** obsolete one-off RC7 photo API diagnosis, old license candidate collector and old contact-sheet workflows. Their scripts and photo approval locks are preserved; original licensed assets, biological research files and older survey software are unchanged.
+- **Organized:** `README.md` reduced from **48,364** to **3,368** bytes, removing stale v0.15/SQLite 11 installation instructions and repetitive headings; current overview, QA gates and documentation links replace them. Expanded `.gitignore` excludes generated APKs, signing keys, caches, emulator reports and photo-review outputs. New `docs/INDEX.md` points to active decisions, scientific evidence and historical QA. Original README remains recoverable from Git history.
+- **Storage caution:** deleting tracked files does not remove historical Git objects. Future artifact retention improved, but existing artifacts, workflow run logs and old Git history were **not** deleted. The GitHub connector cannot delete/cancel existing workflow runs/artifacts. No history rewrite or force push.
+- **Release:** current source candidate remains **RC41 versionCode101** (same Android ID/signer config/SQLite27). Latest APK generation and signing verification pending. Follow `docs/LIKAS_REPOSITORY_CI_HOUSEKEEPING_2026-10-29.md`, `docs/LIKAS_RC41_FIELD_READINESS_QA.md` and latest workflow on the branch.
+
+---
+
+
 ## 29 October 2026 | RC41 gallery performance and navigation | Signed build pending
 
 - **Version:** `0.27.3-rc41-field-readiness-preview` versionCode **101**, same `org.phwildlife.survey.beta08` package, debug signing config, SQLite **27**.

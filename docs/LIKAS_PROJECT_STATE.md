@@ -1,5 +1,14 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC21 Android font-scale test: first failure traced, corrected rerun pending
+
+- **Observed first device QA failure:** emulator run `40809800645` finished failure with `Tests run: 14, Failures: 1`. The failed assertion in `Rc10RecorderInstrumentedTest.largeTextKeepsEndSurveyAndGpsAccessible` required the spoken GPS description to include the *entire* visible label, including the decorative `· details` suffix. At startup, visible `GPS searching · details` and spoken `GPS searching. Open GPS details` communicate the same fix state and action. The 13 other instrumentation tests passed. This failure is not evidence of a broken survey archive or field GPS measurement.
+- **Correction:** commit `6f0aeaf3eaf313196f1cbdb38dba25a5fa0b849d` requires spoken status to start with the exact displayed *fix state*, allowing the visual `· details` affordance to be phrased as `Open GPS details`, and still tests action availability. No production Android code, species facts, database, versionCode or signing change. The new emulator run `40810458277` is in progress at this entry. **Do not claim 14/14 acceptance until actual instrumentation and 96 JPEGs have been verified.**
+- Signed RC21 phone-test APK remains the verified 9,563,889-byte code74 artifact `12869951809`, SHA-256 `e7d37de942c55231d8bcc40f9edd7158c3c0d0d0855f141011f848ff6f6b293c`. Additional physical-phone acceptance steps are in `docs/LIKAS_RC21_PHONE_FIELD_ACCEPTANCE.md`. Record the rerun outcome before closing this development session.
+
+---
+
+
 ## 29 October 2026 | RC21 signed phone-test preview: 413 facts and 200% font QA underway
 
 - **Owner Q1/Q2/Q3:** Continue 18 incomplete taxon diagnoses, prioritize threatened Philippine endemic habitat/conservation facts, audit fieldwork and accessibility, prepare RC21 phone-test preview. Startup art branch remains separate.

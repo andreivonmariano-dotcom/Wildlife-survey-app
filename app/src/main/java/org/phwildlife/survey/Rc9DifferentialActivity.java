@@ -40,19 +40,30 @@ public final class Rc9DifferentialActivity extends Activity {
             return new JSONObject(out.toString("UTF-8"));
         }
     }
+    public static boolean hasPair(Activity activity,String scientific){
+        if(scientific==null||scientific.trim().isEmpty())return false;
+        try{
+            JSONArray rows=read(activity).getJSONArray("pairs");
+            for(int i=0;i<rows.length();i++){
+                JSONObject p=rows.getJSONObject(i);
+                if(scientific.equalsIgnoreCase(p.optString("a"))||
+                    scientific.equalsIgnoreCase(p.optString("b")))return true;
+            }
+        }catch(Exception ignored){}
+        return false;
+    }
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(14),dp(10),dp(14),dp(12));root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Differential identification","Species",this::finish));
-        root.addView(label("Research-level comparison of anatomical characters, age, sex and source conflicts. "+
-            "No comparison below is a specialist-certified key. Do not force a field identification.",13));
+        root.addView(UiKit.navigationHeader(this,"Compare similar species","Species",this::finish));
+
         try{
             JSONArray data=read(this).getJSONArray("pairs");
             for(int i=0;i<data.length();i++)pairs.add(data.getJSONObject(i));
             if(pairs.isEmpty())throw new IllegalArgumentException("Missing curated pairs");
         }catch(Exception ex){
-            root.addView(label("No source-checked differential comparisons are installed.",14));
+            root.addView(label("No published comparisons loaded.",14));
             setContentView(root);return;
         }
         ArrayList<String> names=new ArrayList<>();
@@ -95,12 +106,13 @@ public final class Rc9DifferentialActivity extends Activity {
             card.addView(label(trait.optString("part")+" · "+trait.optString("stage"),15));
             card.addView(label(pair.optString("a")+"\n"+trait.optString("valueA"),14));
             card.addView(label(pair.optString("b")+"\n"+trait.optString("valueB"),14));
-            card.addView(label("Limit: "+trait.optString("caution")+
-                "\nReview: published description, not specialist-approved",12));
+            String scope=trait.optString("caution").trim();
+            if(!scope.isEmpty())card.addView(label(scope,12));
             for(String field:new String[]{"sourceA","sourceB"}){
                 String source=trait.optString(field);
                 if(!source.startsWith("https://"))continue;
-                Button open=UiKit.button(this,"Open "+(field.equals("sourceA")?"A":"B")+" scientific source","quiet");
+                if(field.equals("sourceB")&&source.equals(trait.optString("sourceA")))continue;
+                Button open=UiKit.button(this,"Read published source","quiet");
                 card.addView(open,new LinearLayout.LayoutParams(-1,dp(43)));
                 open.setOnClickListener(v->startActivity(
                     new Intent(Intent.ACTION_VIEW,Uri.parse(source))));
@@ -108,8 +120,6 @@ public final class Rc9DifferentialActivity extends Activity {
             LinearLayout.LayoutParams box=new LinearLayout.LayoutParams(-1,-2);
             box.bottomMargin=dp(9);details.addView(card,box);
         }
-        details.addView(label("Missing characters are not zero or absent. "+
-            "Published island range is supporting context, never standalone identification. "+
-            "Additional same-genus taxa require actual comparative diagnoses.",13));
+
     }
 }

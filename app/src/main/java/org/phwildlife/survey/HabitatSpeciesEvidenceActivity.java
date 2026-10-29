@@ -47,7 +47,6 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(14),dp(12),dp(14),dp(12));
         root.addView(UiKit.navigationHeader(this,"Species–habitat references","Habitat",this::finish));
-        root.addView(text("Cited habitat associations",13));
         try{
             JSONObject pack=read(this,"rc8_species_habitat_links_v1.json");
             if(!"rc8-species-habitat-links-v1".equals(pack.optString("schemaVersion")))

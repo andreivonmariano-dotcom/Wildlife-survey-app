@@ -14,14 +14,14 @@ import android.widget.TextView;
 public final class UiKit {
   private UiKit(){}
   // Field palette pairs with the LIKAS pond frog icon and stays legible in sunlight.
-  public static final int BG=Color.rgb(245,247,240);
-  public static final int INK=Color.rgb(21,54,41);
-  public static final int FOREST=Color.rgb(35,100,71);
+  public static final int BG=Color.rgb(247,249,246);
+  public static final int INK=Color.rgb(26,47,39);
+  public static final int FOREST=Color.rgb(34,91,67);
   public static final int POND=Color.rgb(51,126,115);
-  public static final int MUTED=Color.rgb(88,111,101);
+  public static final int MUTED=Color.rgb(91,108,102);
   public static final int BLUE=Color.rgb(40,88,137);
   public static final int AMBER=Color.rgb(164,102,44);
-  public static final int BORDER=Color.rgb(215,227,215);
+  public static final int BORDER=Color.rgb(222,230,223);
   private static int dp(Activity a,int n){return (int)(a.getResources().getDisplayMetrics().density*n+0.5);}
   public static TextView title(Activity a,String title) {
     TextView t=new TextView(a);t.setText(title);t.setTextSize(23);t.setTypeface(null,Typeface.BOLD);
@@ -34,24 +34,24 @@ public final class UiKit {
     row.setOrientation(LinearLayout.HORIZONTAL);
     row.setGravity(Gravity.CENTER_VERTICAL);
     boolean largeText=a.getResources().getConfiguration().fontScale>=1.60f;
-    // At large font sizes retain a spoken destination, but give the title room.
-    Button back=button(a,largeText?"‹":"‹ "+backLabel,"secondary");
+    // One small icon-only Back action, with the full destination spoken to assistive tools.
+    Button back=button(a,"‹","quiet");
     back.setContentDescription("Back to "+backLabel);
-    // Navigation uses a compact icon at large font sizes; do not reserve
-    // a 96dp tall action footprint above the pinned research tabs.
-    if(largeText)back.setMinHeight(dp(a,48));
-    row.addView(back,new LinearLayout.LayoutParams(dp(a,largeText?60:120),dp(a,48)));
+    back.setTextSize(26);
+    back.setMinWidth(dp(a,48));
+    back.setMinHeight(dp(a,48));
+    row.addView(back,new LinearLayout.LayoutParams(dp(a,48),dp(a,48)));
     back.setOnClickListener(v->onBack.run());
     TextView heading=new TextView(a);
     heading.setText(title);
-    heading.setTextSize(largeText?16:20);
+    heading.setTextSize(largeText?17:20);
     heading.setTextColor(INK);
     heading.setSingleLine(true);
     heading.setEllipsize(android.text.TextUtils.TruncateAt.END);
     heading.setContentDescription(title);
     heading.setTypeface(null,Typeface.BOLD);
-    heading.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
-    heading.setPadding(dp(a,8),0,dp(a,3),0);
+    heading.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+    heading.setPadding(dp(a,13),0,dp(a,3),0);
     row.addView(heading,new LinearLayout.LayoutParams(0,-2,1f));
     row.setMinimumHeight(dp(a,52));
     return row;
@@ -68,15 +68,15 @@ public final class UiKit {
           foreground=Color.rgb(154,51,42);break;
       case "pond":fill=POND;stroke=POND;break;
     }
-    Button b=new Button(a);b.setAllCaps(false);b.setText(title);b.setTextSize(15);b.setTypeface(null,Typeface.BOLD);
+    Button b=new Button(a);b.setAllCaps(false);b.setText(title);b.setTextSize(14);b.setTypeface(null,Typeface.BOLD);
     b.setTextColor(foreground);
     b.setGravity(Gravity.CENTER);b.setMaxLines(3);
     b.setMinHeight(dp(a,FieldLayoutPolicy.actionHeightDp(
         a.getResources().getConfiguration().fontScale)));
     b.setPadding(dp(a,10),dp(a,6),dp(a,10),dp(a,6));
-    GradientDrawable shape=new GradientDrawable();shape.setColor(fill);shape.setStroke(dp(a,1),stroke);shape.setCornerRadius(dp(a,14));
+    GradientDrawable shape=new GradientDrawable();shape.setColor(fill);shape.setStroke(dp(a,1),stroke);shape.setCornerRadius(dp(a,12));
     GradientDrawable mask=new GradientDrawable();
-    mask.setColor(Color.WHITE);mask.setCornerRadius(dp(a,14));
+    mask.setColor(Color.WHITE);mask.setCornerRadius(dp(a,12));
     int feedback=("secondary".equals(type)||"quiet".equals(type)||"outline-danger".equals(type))
         ? Color.argb(25,35,100,71) : Color.argb(52,255,255,255);
     b.setBackground(new RippleDrawable(ColorStateList.valueOf(feedback),shape,mask));
@@ -93,6 +93,6 @@ public final class UiKit {
   }
   public static GradientDrawable surface(Activity a) {
     GradientDrawable d=new GradientDrawable();d.setColor(Color.WHITE);
-    d.setStroke(dp(a,1),BORDER);d.setCornerRadius(dp(a,16));return d;
+    d.setStroke(dp(a,1),BORDER);d.setCornerRadius(dp(a,15));return d;
   }
 }

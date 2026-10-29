@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 92
-        versionName '0.27.3-rc32-sparse-evidence-keys-preview'
+        versionCode 93
+        versionName '0.27.3-rc33-portal-ui-preview'
     }
     signingConfigs {
         debug {

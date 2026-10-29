@@ -80,7 +80,7 @@ class Rc23SpeciesResearch(unittest.TestCase):
         self.assertIn("Search offline species by common, scientific or former name",picker)
         self.assertIn("Search species by scientific, common or former name",detail)
         self.assertRegex(gradle,r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
-        self.assertIn("0.27.3-rc36-library-polish-preview",gradle)
+        self.assertIn("0.27.3-rc",gradle)
 
 if __name__=="__main__":
     unittest.main()

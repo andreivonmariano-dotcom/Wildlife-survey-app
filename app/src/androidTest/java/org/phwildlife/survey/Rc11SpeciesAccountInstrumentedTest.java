@@ -53,7 +53,7 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                 assertTrue(containsText(views,"Sources & details"));
                 assertTrue("Cited topic coverage visible",containsText(views,"of 5 research topics documented"));
                 assertTrue("Per-note research provenance visible",containsText(views,"Source: "));
-                assertTrue("Comparison snapshot labeled",containsText(views,"Compare evidence snapshots"));
+                assertTrue("Comparison snapshot labeled",containsText(views,"Compare current cited traits"));
                 assertTrue(containsText(views,"Photo reference"));
                 assertTrue(containsText(views,"View photo & credits"));
                 assertFalse("Long legacy photo caption must stay hidden by default",

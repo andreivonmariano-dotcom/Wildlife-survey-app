@@ -147,6 +147,12 @@ public final class OfflinePhotoEvidence {
             wrapper.addView(captionView);
         }
         String creditName=photo.optString("author").trim();
+        if(creditName.startsWith("©"))creditName=creditName.substring(1).trim();
+        if(creditName.toLowerCase(java.util.Locale.ROOT).startsWith("(c)"))
+            creditName=creditName.substring(3).trim();
+        int inheritedRights=creditName.toLowerCase(java.util.Locale.ROOT)
+            .indexOf(", all rights reserved");
+        if(inheritedRights>=0)creditName=creditName.substring(0,inheritedRights).trim();
         TextView credit=new TextView(a);
         credit.setText("Photo: "+(creditName.isEmpty()?"Photographer not recorded":creditName)+
             " · "+photo.optString("license"));

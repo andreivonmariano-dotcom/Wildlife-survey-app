@@ -1,5 +1,14 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC19 emulator verification recovered in new project chat
+
+- **Verified:** GitHub Actions emulator run `40805609892`, job `123223716928`, finished successfully. The full job log reports `OK (13 tests)` and `DEVICE BACKUP TEST PASSED`; `testAll96ActualSpeciesScreensHaveCitedCardAndNoBoilerplate` returned status 0. Emulator evidence artifact `12868850112` (`LIKAS-RC7-device-emulator-evidence`, 4,386,328 bytes) exists and is not expired.
+- **Still open:** Download and visually inspect the actual 96 screenshot files and their audit CSV, not merely the passing test. Physical-phone test remains pending. APK and report sandbox paths recorded in prior chats are not validated in this chat and must not be reused as direct links.
+- **Next:** Examine all captured species pages for clipping, missing citation affordances, readability and visual inconsistencies. Then address 27 identification-category evidence gaps from identifiable sources without inventing biological traits. Preserve PR #38 draft and separate startup ownership.
+
+---
+
+
 
 ## 29 October 2026 | RC19 signed APK verified, 96 species source report exported
 

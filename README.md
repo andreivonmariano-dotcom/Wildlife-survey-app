@@ -1,3 +1,15 @@
+# LIKAS RC39 | Field Guide Studio
+
+**Current source preview:** `0.27.3-rc39-field-guide-studio-preview`, versionCode **99**; package `org.phwildlife.survey.beta08`; pinned signer; SQLite **27**. **Build and direct APK verification pending at the time of this entry.**
+
+The existing RC38 three-space home remains, now with an active-survey shortcut ahead of general destinations. Fieldwork hides rarely used tools under a single expandable action, presents the latest survey as a tappable history card and makes selected survey methods visually clear with source-authored descriptions. The Species and Habitat discovery screens now have a live offline search bar, one-touch category filters, a real zero-result view, stronger native touch targets and restored search/group state. Cards have original bird, frog, reptile, mammal and habitat glyphs instead of a generic icon for every taxon without an approved photo.
+
+Only the 96 curated research accounts and 15 habitat profiles are in the collectible-style search. The existing All species and All habitats links remain separate. Scientific facts, IUCN/DENR dated sources, rarity safeguards, authorized image licenses and original survey database are untouched.
+
+See `docs/LIKAS_RC39_FIELD_GUIDE_STUDIO_QA.md` and `docs/LIKAS_PROJECT_STATE.md` for tests and acceptance.
+
+---
+
 # LIKAS RC38 | Illustrated portal and biodiversity gallery
 
 **Development source preview:** `0.27.3-rc38-illustrated-ui-preview`, versionCode **98**, same package `org.phwildlife.survey.beta08`, retained signing setup and SQLite **27**. **Source QA and signed APK confirmed:** GitHub Scientific Core QA run **40868130998** passed. Artifact **12894089473** was checked against APK binary manifest and original pinned signer; filename in this active chat is `LIKAS-v0.27.3-RC38-illustrated-ui-debug.apk`. **Physical-device and saved-data upgrade acceptance remain pending.**

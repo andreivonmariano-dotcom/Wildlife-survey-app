@@ -136,7 +136,7 @@ class NewUsabilityContracts(unittest.TestCase):
         self.assertNotIn("getWritableDatabase()",habitat)
         self.assertNotIn("MapView",habitat)
         home=source("WelcomeActivity.java")
-        self.assertIn('FieldVisuals.section(this,"Habitat & Ecology"',home)
+        self.assertIn('FieldVisuals.section(this,"Habitats"',home)
         self.assertIn('DataManagementActivity.class',home)
         manifest=(ROOT/"app/src/main/AndroidManifest.xml").read_text()
         self.assertIn('android:name=".DataManagementActivity"',manifest)

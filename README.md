@@ -1,3 +1,15 @@
+# LIKAS v0.27.3 RC34 | Conservation cards and swipe habitat library
+
+**Development candidate:** `0.27.3-rc34-conservation-cards-preview` (versionCode **94**). Same Android package `org.phwildlife.survey.beta08`, preserved signer and SQLite **27**.
+
+The Species and Habitat Library now opens horizontally swipable, touch-friendly visual cards. The species collection shows an offline photograph where licensed, with an original fallback glyph otherwise. It features a **Conservation** shelf with six sourced entries, followed by the bird, amphibian, reptile and mammal shelves. Every displayed assessment retains **IUCN or DENR, category and dated year**. Three IUCN and three DENR status entries in the checked display index are supported by explicitly cited earlier research. **Other species have no unreviewed status badge**, and rarity is not automatically computed from threat, endemicity or checklist membership. The public Priority species and Priority research-gap labels have been withdrawn, retaining all original source records.
+
+The habitat section offers side-scroll cards for five formation groups, and dedicated habitat profiles with field recognition, water, soil, vegetation, measurements, limits and original citations. Reduced-motion setting remains in force. `docs/LIKAS_RC34_CONSERVATION_CARD_DESIGN_SYSTEM.md` records the category and rarity rules, palette, screen geometry and outstanding full-catalog status audit.
+
+**QA status:** Source-level science/navigation/UI regression checks passed on early RC34 source; latest exact source and new signed APK require verification independently before field release. Screen screenshots, 200% font, real-device upgrade and audio/GNSS acceptance remain open.
+
+---
+
 # LIKAS v0.27.3 RC33 | Portal, icon and visual refresh
 
 **Android development preview:** `0.27.3-rc33-portal-ui-preview` (versionCode **93**), unchanged package `org.phwildlife.survey.beta08` and pinned signing identity, SQLite **27**.

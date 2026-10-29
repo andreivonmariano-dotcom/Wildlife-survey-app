@@ -70,7 +70,8 @@ public final class Rc11PrioritySpeciesView {
         if(newStudies==null)newStudies=asset(a,"rc15_publication_batch_v1.json",40000);
         if(nextStudies==null)nextStudies=asset(a,"rc16_publication_batch_v1.json",40000);
         if(originalComparisons==null)originalComparisons=asset(a,"rc17_verified_research_v1.json",40000);
-        if(unifiedCorpus==null)unifiedCorpus=asset(a,"rc18_unified_96_priority_accounts_v1.json",620000);
+        if(unifiedCorpus==null)unifiedCorpus=Rc30SpeciesEvidence.merge(a,
+            asset(a,"rc18_unified_96_priority_accounts_v1.json",620000));
         for(int i=0;i<PACKS.length;i++)
             if(packs[i]==null)packs[i]=asset(a,PACKS[i],65000);
     }

@@ -292,7 +292,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         rendered=end;
         more.setVisibility(rendered<selected.size()?View.VISIBLE:View.GONE);
         if(selected.isEmpty())results.addView(label(
-            "No source-listed name matches these filters. Unassessed does not mean absent.",14,false));
+            "No matches. Try another name or group.",14,false));
     }
     @Override protected void onDestroy(){
         if(delayed!=null)handler.removeCallbacks(delayed);

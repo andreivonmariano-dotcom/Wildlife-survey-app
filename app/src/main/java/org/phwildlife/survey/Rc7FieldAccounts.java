@@ -86,9 +86,9 @@ public final class Rc7FieldAccounts {
         JSONObject p=find(a,scientific);
         if(p==null)return false;
         boolean detailed="existing_source_linked_account".equals(p.optString("accountTier"));
-        parent.addView(FieldVisuals.section(a,"RC7 priority research card",
-            detailed?"Existing source-linked field account plus priority checklist record":
-                "Taxonomy verified against checklist · species biology review pending"));
+        parent.addView(FieldVisuals.section(a,"Field reference",
+            detailed?"Source-linked identification and field account":
+                "Checklist identity recorded · species biology review pending"));
         line(a,parent,"Identity and source family",
             p.optString("commonName")+" · "+scientific+" · "+p.optString("family"));
         if(!detailed)

@@ -296,6 +296,46 @@ public final class LikasPortalUi {
                     circle(canvas,32,34,3);circle(canvas,68,34,3);
                     canvas.drawArc(31,49,69,66,5,170,false,p);
                     line(canvas,8,82,34,82);line(canvas,66,82,92,82);break;
+                case "snake":
+                    path.moveTo(20,60);path.cubicTo(30,22,68,19,74,39);
+                    path.cubicTo(82,66,24,61,40,77);
+                    path.cubicTo(48,84,65,75,71,72);canvas.drawPath(path,p);
+                    canvas.drawOval(60,58,85,73,p);
+                    circle(canvas,77,62,2);
+                    line(canvas,86,66,95,66);break;
+                case "forest":
+                    path.moveTo(18,73);path.lineTo(35,23);path.lineTo(52,73);
+                    path.moveTo(49,73);path.lineTo(66,16);path.lineTo(84,73);
+                    canvas.drawPath(path,p);
+                    line(canvas,35,72,35,89);line(canvas,66,72,66,89);
+                    line(canvas,13,89,88,89);break;
+                case "karst":
+                    path.moveTo(10,82);path.lineTo(34,23);path.lineTo(44,46);
+                    path.lineTo(63,17);path.lineTo(91,82);canvas.drawPath(path,p);
+                    line(canvas,34,23,28,67);line(canvas,63,17,67,57);
+                    line(canvas,14,86,86,86);break;
+                case "wetland":
+                    path.moveTo(23,15);path.lineTo(23,68);
+                    path.moveTo(38,21);path.lineTo(38,65);
+                    path.moveTo(55,30);path.lineTo(55,67);
+                    canvas.drawPath(path,p);
+                    canvas.drawArc(13,15,33,44,90,180,false,p);
+                    canvas.drawArc(29,24,48,53,90,180,false,p);
+                    line(canvas,10,77,90,77);
+                    line(canvas,23,87,65,87);break;
+                case "coast":
+                    path.moveTo(15,24);path.lineTo(15,73);path.lineTo(40,73);
+                    path.lineTo(40,47);path.lineTo(68,47);canvas.drawPath(path,p);
+                    canvas.drawArc(48,58,88,82,20,140,false,p);
+                    canvas.drawArc(20,74,64,95,20,140,false,p);break;
+                case "fields":
+                    line(canvas,11,84,90,84);
+                    path.moveTo(50,80);path.lineTo(50,36);
+                    path.moveTo(49,54);path.cubicTo(25,51,20,34,27,27);
+                    path.cubicTo(44,27,51,41,49,54);
+                    path.moveTo(51,57);path.cubicTo(74,49,79,34,73,27);
+                    path.cubicTo(59,30,50,43,51,57);
+                    canvas.drawPath(path,p);break;
                 case "mammal":
                     canvas.drawArc(20,19,45,51,180,215,false,p);
                     canvas.drawArc(55,19,80,51,150,215,false,p);

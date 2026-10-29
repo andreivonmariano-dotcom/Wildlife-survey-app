@@ -38,11 +38,17 @@ public final class LikasDiscoveryActivity extends Activity {
     private final ArrayList<JSONObject> habitats=new ArrayList<>();
     private final Map<String,Integer> railOffsets=new HashMap<>();
     private LinearLayout content;
+    private ScrollView pageScroll;
+    private int speciesFilterX=0,habitatFilterX=0;
     private Button speciesTab,habitatTab;
     private EditText searchInput;
     private Button clearSearch;
     private final Handler searchHandler=new Handler(Looper.getMainLooper());
-    private final Runnable searchRefresh=()->{railOffsets.clear();render(false);};
+    private final Runnable searchRefresh=()->{
+        railOffsets.clear();
+        if(pageScroll!=null)pageScroll.scrollTo(0,0);
+        render(false);
+    };
     private String searchQuery="";
     private String speciesGroup="All",habitatGroup="All";
     private boolean showingHabitat;
@@ -353,6 +359,7 @@ public final class LikasDiscoveryActivity extends Activity {
                 if(active)return;
                 if(showingHabitat)habitatGroup=name;else speciesGroup=name;
                 railOffsets.clear();
+                if(pageScroll!=null)pageScroll.scrollTo(0,0);
                 render(false);
             });
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,dp(48));
@@ -360,6 +367,12 @@ public final class LikasDiscoveryActivity extends Activity {
             chips.addView(chip,lp);
         }
         rail.addView(chips,new HorizontalScrollView.LayoutParams(-2,-2));
+        final boolean habitatFilter=showingHabitat;
+        final int restoreChipX=habitatFilter?habitatFilterX:speciesFilterX;
+        rail.setOnScrollChangeListener((View v,int x,int y,int oldX,int oldY)->{
+            if(habitatFilter)habitatFilterX=x;else speciesFilterX=x;
+        });
+        rail.post(()->rail.scrollTo(restoreChipX,0));
         content.addView(rail);
     }
     private void emptyState(){
@@ -501,6 +514,8 @@ public final class LikasDiscoveryActivity extends Activity {
             searchQuery=saved.getString("searchQuery","");
             speciesGroup=saved.getString("speciesGroup","All");
             habitatGroup=saved.getString("habitatGroup","All");
+            speciesFilterX=saved.getInt("speciesFilterX",0);
+            habitatFilterX=saved.getInt("habitatFilterX",0);
         }
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(15),dp(10),dp(15),dp(7));
@@ -554,6 +569,7 @@ public final class LikasDiscoveryActivity extends Activity {
             public void afterTextChanged(Editable text){}
         });
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
+        pageScroll=scroll;
         content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);
         content.setPadding(dp(1),dp(9),dp(1),dp(20));
         scroll.addView(content);
@@ -569,6 +585,8 @@ public final class LikasDiscoveryActivity extends Activity {
         out.putString("searchQuery",searchQuery);
         out.putString("speciesGroup",speciesGroup);
         out.putString("habitatGroup",habitatGroup);
+        out.putInt("speciesFilterX",speciesFilterX);
+        out.putInt("habitatFilterX",habitatFilterX);
         super.onSaveInstanceState(out);
     }
     @Override protected void onDestroy(){

@@ -31,3 +31,11 @@ The existing large-font Android instrumentation test now opens both screens at 2
 Source/QA checks: scripts/test_rc24_conservation_comparison.py, all older evidence suites, app code78, original pinned APK signing cert, Android14 14/14 instrumentation, 96 screenshots, 200% comparison/dashboard/recorder screenshots, unchanged SQLite fixture.
 
 The APK is a signed **phone-test debug preview**, not a stable field release. Physical handset, actual owner database migrations, TalkBack focus and offline/long-duration recording remain unverified. No master project scientific rule was changed.
+
+## RC24B usability correction and binary evidence, 29 October 2026
+
+The RC24 code78 emulator run **40817617391** passed 14/14 actual Android tests, all 96 screenshot captures, and byte-identical old/after SQLite (1,613,824 bytes, SHA256 `21de1278e032a1b3d481ded3abc40ff441f69a6dcdc0e12d2da046c0481b721c`). Archive artifact **12872544193** was retrieved and reviewed. Three 200%-font screenshots were present. The comparison and conservation screenshots revealed long opening paragraphs dominating the first viewport, so initially useful filters sat lower than expected. A passing unit test for visible text and scrollability did not reveal this usability weakness.
+
+**RC24B code79** shortens the titles and opening text at Android fontScale >= 1.60. Full disclosure remains accessible through the opening text's content description and a tap-to-open explanation dialog. The short dashboard search hint reads `Search species`, with its complete spoken description preserved. The improved Android test now requires the first filter on both screens to be entirely visible within the display. This changes no biology, source classification, survey record, taxon key, database schema or signer.
+
+Signed RC24B source build **40818503446** passed. Artifact **12873700952**, verified actual APK 9,591,832 bytes, SHA256 `4d9d755269143930b6ea6e56b2898a60c437975a9a47d9b714887ad34230cc21`, Android v2 certificate SHA256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, package `org.phwildlife.survey.beta08`, code79. This is a debug **phone-test preview**. New Android emulator run **40818496143** still requires independent 14/14, 96 screenshot, 200% filter and preserved SQLite checks. Real field phone data remains untested.

@@ -1,5 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC40 screenshot-driven UI repair and copy audit | Source QA pending
+
+- **User evidence:** RC39 Home screenshot shows one enormous Fieldwork tile with Library and Settings effectively inaccessible on the initial screen; Birds setup screenshot shows numeric values `10` and `2` without visible units; Fieldwork screenshot shows duplicated survey/navigation labels and a separate Latest record card leading to the same History view.
+- **Release target:** `0.27.3-rc40-home-layout-copy-preview` (versionCode **100**), original `org.phwildlife.survey.beta08` package, pinned debug signer and SQLite **27** unchanged. Latest verified installed baseline remains signed RC39 APK versionCode99.
+- **Source repairs:** `LikasPortalUi.tile()` is now content-sized horizontal LinearLayout with 108dp minimum and no match-parent child, hero set to 152dp. Home preserves exactly three destinations. Fieldwork has a single New survey heading, latest outcome integrated into History, and scroll resets on navigation. Setup has persistent unit labels tied to method visibility. Gallery previous/next controls are 48dp. Less motion suppresses final-30-second timer blinking. `HistoryActivity` and `DashboardActivity` share `SurveyOutcomeSql.RESOLVED` for current/legacy outcomes without rewriting saved rows. The archive headline excludes active surveys.
+- **Copy and sources:** Repeated promotional, vague-attribution and defensive paragraphs removed from navigation, habitat and species reference screens. Five source-pack claims rewritten to direct results retaining original species, measurement, sample size, sources, URLs and scope. 96 curated species accounts and 456 structured facts unchanged; extra sourced modules and photos intact.
+- **New QA:** `scripts/test_rc40_screenshot_audit.py`, `Rc40HomeLayoutInstrumentedTest.java`, `docs/LIKAS_RC40_SCREENSHOT_AUDIT.md`. Prior scientific test and Android compilation still required. Actual 320dp and 200% font screenshot, live hardware GPS/backup and RC39 upgrade tests **not yet completed**.
+- **Current blocker:** No verified signed versionCode100 APK attached yet; do not reuse an RC39 download link as RC40. See RC40 report for remaining concerns, including synchronous gallery rendering.
+- **Next action:** check latest GitHub Scientific Core QA run; repair failures without relaxing scientific data tests; retrieve and verify exact APK/package/signing, then deliver a fresh direct file link in chat if generated.
+
+---
+
+
 ## 29 October 2026 | RC39 independent static app audit | No application code changes
 
 - **Reviewed baseline:** `feature/likas-core-fieldwork-post-rc4`, signed development APK `0.27.3-rc39-field-guide-studio-preview` versionCode **99**, SHA-256 `ecd6c43f617e18008b497a4c396dcc502e93e71a1a1ee023e4462ba64a94e16e`, successful GitHub Scientific Core QA **40875251725**. APK ZIP integrity, 96 curated account records, 15 habitats, 6 reviewed conservation records and 58 authorized JPEGs confirmed in the available binary. No emulator or physical phone acceptance completed.

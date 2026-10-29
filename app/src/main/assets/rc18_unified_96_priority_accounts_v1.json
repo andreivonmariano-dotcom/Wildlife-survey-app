@@ -4,7 +4,7 @@
   "purpose": "Unify previously attributed and published biological facts for all 96 species; source coverage does not imply absent traits or a complete diagnostic key.",
   "policy": "Show source-linked biological claims only. Do not fabricate missing ecological sections or site occurrence. Curated database evidence remains distinguishable from peer-reviewed research.",
   "prioritySpeciesCount": 96,
-  "sourceFactCount": 435,
+  "sourceFactCount": 441,
   "topics": [
     "Identification",
     "Habitat",
@@ -13,10 +13,10 @@
     "Conservation"
   ],
   "sectionMissingCounts": {
-    "Identification": 3,
-    "Habitat": 44,
+    "Identification": 1,
+    "Habitat": 42,
     "Distribution": 23,
-    "Natural history": 71,
+    "Natural history": 69,
     "Conservation": 69
   },
   "accounts": [
@@ -1795,8 +1795,34 @@
         "url": "https://www.researchgate.net/publication/360034142_Checklist_of_amphibians_of_the_Philippines_version_2025-1"
       },
       "sections": {
-        "Identification": [],
-        "Habitat": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Original hazelae-group differential",
+            "text": "The 1997 revision describes a pointed, sometimes knob-tipped snout and a distinct tympanum measuring about 25–42% of eye diameter in its examined series; unlike most other hazelae-group species, it lacks yellow-and-brown areolations in the groin and thighs.",
+            "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+            "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+            "origin": "rc24_original_hazelae_isarog_v1.json",
+            "sourceType": "original_taxonomic_revision",
+            "sourceYear": 1997,
+            "sourceLocation": "Original hazelae Group key, p. 407; P. hazelae Description and Comparisons, pp. 409–410",
+            "studyScope": "Examined Negros/Masbate series, distinct from P. polilloensis by comparative proportions; historic P. rivularis synonymy was treated with reservations. Not a single-character or locality-only identification."
+          }
+        ],
+        "Habitat": [
+          {
+            "section": "Habitat",
+            "label": "Observed arboreal fern and Pandanus sites",
+            "text": "The 1997 revision reports P. hazelae chiefly from arboreal ferns and Pandanus leaf axils in submontane and montane Negros forests, with a smaller set of observations from shrubs, stream rocks and lower-elevation dipterocarp forest.",
+            "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+            "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+            "origin": "rc24_original_hazelae_isarog_v1.json",
+            "sourceType": "original_taxonomic_revision",
+            "sourceYear": 1997,
+            "sourceLocation": "P. hazelae Ecological Note, p. 410",
+            "studyScope": "Published Negros and Masbate specimens; documented local microhabitats, not a fixed nationwide elevational cutoff."
+          }
+        ],
         "Distribution": [
           {
             "section": "Distribution",
@@ -1823,20 +1849,33 @@
             "studyScope": null
           }
         ],
-        "Natural history": [],
+        "Natural history": [
+          {
+            "section": "Natural history",
+            "label": "Observed direct-developing eggs",
+            "text": "The revision records clutches of five to nine large unpigmented eggs in arboreal ferns or Pandanus leaf axils, with direct development in observed P. hazelae populations.",
+            "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+            "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+            "origin": "rc24_original_hazelae_isarog_v1.json",
+            "sourceType": "original_taxonomic_revision",
+            "sourceYear": 1997,
+            "sourceLocation": "P. hazelae Reproduction, p. 409, citing Alcala 1962",
+            "studyScope": "Study summary citing earlier original observations; no claim of all-season breeding or universally fixed clutch size."
+          }
+        ],
         "Conservation": []
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
-          "Distribution"
-        ],
-        "sectionsWithoutCitedData": [
           "Identification",
           "Habitat",
-          "Natural history",
+          "Distribution",
+          "Natural history"
+        ],
+        "sectionsWithoutCitedData": [
           "Conservation"
         ],
-        "citedBiologicalFacts": 2
+        "citedBiologicalFacts": 5
       },
       "sourceReferences": 2
     },
@@ -6049,8 +6088,34 @@
         "url": "https://www.researchgate.net/publication/360034142_Checklist_of_amphibians_of_the_Philippines_version_2025-1"
       },
       "sections": {
-        "Identification": [],
-        "Habitat": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Original reticulatus (= isarog) diagnosis",
+            "text": "Described as P. reticulatus Brown et al. (1997), now P. isarog, this Mount Isarog frog has extensive pale brown-bordered areolations onto the lower hind legs, often a brown reticulate ventral pattern, and dark dorsal spots in the examined specimens.",
+            "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+            "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+            "origin": "rc24_original_hazelae_isarog_v1.json",
+            "sourceType": "original_taxonomic_revision",
+            "sourceYear": 1997,
+            "sourceLocation": "P. reticulatus original diagnosis, p. 416, and Comparisons, p. 418; replacement name in Herpetological Review 28:131",
+            "studyScope": "Published 1997 type series, renamed P. isarog after discovery of primary homonymy. Areolations and ventral reticulation vary; no universal field-photo diagnosis. Historical Mount Isarog records are not current site sightings."
+          }
+        ],
+        "Habitat": [
+          {
+            "section": "Habitat",
+            "label": "Original Mount Isarog forest microhabitats",
+            "text": "The original Mount Isarog series was collected in submontane and montane forest near 1,100–1,500 m; specimens were observed on birdnest ferns, tree branches and trunks, and the forest floor.",
+            "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+            "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+            "origin": "rc24_original_hazelae_isarog_v1.json",
+            "sourceType": "original_taxonomic_revision",
+            "sourceYear": 1997,
+            "sourceLocation": "P. reticulatus Ecological Note, pp. 418–419",
+            "studyScope": "Field records from the 1990s Mount Isarog type series, under the original name P. reticulatus, not an island-wide habitat suitability model."
+          }
+        ],
         "Distribution": [
           {
             "section": "Distribution",
@@ -6065,20 +6130,33 @@
             "studyScope": null
           }
         ],
-        "Natural history": [],
+        "Natural history": [
+          {
+            "section": "Natural history",
+            "label": "Large unpigmented ovarian eggs",
+            "text": "The original description reports large unpigmented eggs in a gravid female P. reticulatus (= P. isarog); the authors recorded no confirmed deposition site or developmental chronology.",
+            "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+            "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+            "origin": "rc24_original_hazelae_isarog_v1.json",
+            "sourceType": "original_taxonomic_revision",
+            "sourceYear": 1997,
+            "sourceLocation": "P. reticulatus Reproduction, p. 418",
+            "studyScope": "A single gravid female in the original species description. Egg deposition and development were explicitly unknown."
+          }
+        ],
         "Conservation": []
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
-          "Distribution"
-        ],
-        "sectionsWithoutCitedData": [
           "Identification",
           "Habitat",
-          "Natural history",
+          "Distribution",
+          "Natural history"
+        ],
+        "sectionsWithoutCitedData": [
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "citedBiologicalFacts": 4
       },
       "sourceReferences": 2
     },

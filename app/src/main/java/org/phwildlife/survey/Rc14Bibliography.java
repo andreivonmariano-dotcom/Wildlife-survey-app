@@ -61,13 +61,15 @@ public final class Rc14Bibliography {
         if(citation.isEmpty()||!url.startsWith("https://"))return;
         String authors=paper.optString("authors").trim();
         String journal=paper.optString("journal").trim();
-        String doi=paper.optString("doi").trim();
+        String doi=paper.isNull("doi")?"":paper.optString("doi").trim();
         int year=paper.optInt("publicationYear");
         LinearLayout item=new LinearLayout(a);item.setOrientation(LinearLayout.VERTICAL);
         item.setPadding(dp(a,4),dp(a,7),dp(a,4),dp(a,8));
         if(!authors.isEmpty()&&year>1800){
             item.addView(text(a,authors+" · "+year,true));
             String imprint=journal.isEmpty()?"Published research":journal;
+            if(paper.optString("sourceType").startsWith("curated_"))
+                imprint="Curated record · "+imprint;
             if(!doi.isEmpty())imprint+=" · DOI: "+doi;
             item.addView(text(a,imprint,false));
         }else{

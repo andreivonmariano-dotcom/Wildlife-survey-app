@@ -155,10 +155,9 @@ public final class Rc8TraitComparisonActivity extends Activity {
         outer.addView(second,new LinearLayout.LayoutParams(-1,dp(48)));
         outer.addView(text("Compare evidence category",12,true));
         outer.addView(category,new LinearLayout.LayoutParams(-1,dp(46)));
-        ScrollView scroll=new ScrollView(this);
         results=new LinearLayout(this);results.setOrientation(LinearLayout.VERTICAL);
-        results.setPadding(0,dp(7),0,dp(20));scroll.addView(results);
-        outer.addView(scroll,new LinearLayout.LayoutParams(-1,-2));
+        results.setPadding(0,dp(7),0,dp(20));
+        outer.addView(results,new LinearLayout.LayoutParams(-1,-2));
         // A single page scroll keeps all four selectors and the evidence readable
         // at 200% Android text size instead of leaving a zero-height result pane.
         ScrollView page=new ScrollView(this);

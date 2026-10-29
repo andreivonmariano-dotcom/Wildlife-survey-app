@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC27B core QA and signed APK independently verified in resumed chat
+
+- **Source HEAD verified:** `08c63f87faf734c81694a7ca32bf742ce061aaff` on RC4-derived `feature/likas-core-fieldwork-post-rc4`. Scientific Core QA workflow **40829515167** completed **success** for this exact commit, including Python evidence tests, JVM tests, Android assembly and media/signing configuration. Its artifact **12877174481** is named `LIKAS-RC27B-keyboard-screen-qa-debug`.
+- **Exact APK recovered and inspected:** downloaded GitHub artifact ZIP, extracted `app-debug.apk` into the resumed conversation as `LIKAS-v0.27.3-RC27B-keyboard-screen-qa-debug.apk`, **9,603,300 bytes**, SHA-256 `469360d6d39ec7d2aa6abfacb831fbbf406734ddd668049474335eb503acf6ad`. ZIP CRC integrity passed. Binary AndroidManifest: package `org.phwildlife.survey.beta08`, versionName `0.27.3-rc27b-keyboard-screen-qa-preview`, versionCode **86**. APK Signing Block v2 certificate DER SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches pinned RC4 signer. Exact APK direct-download link delivered in the resumed chat. Previous sandbox links are not durable across sessions.
+- **What has NOT passed:** RC27B's own 16/16 Android14 emulator instrumented screenshot/layout QA, 96-screen review and disposable SQLite upgrade comparison have **not** been verified in this resumed chat. RC27 code85 had a confirmed failed 15/16 emulator gate, so RC27B's soft-keyboard fix remains a hypothesis. No actual physical handset or owner survey history was accessed. This is a signed **development preview**, not a stable field-certified release.
+- **Next gate:** Retrieve the emulator job's real result/evidence for code86 and inspect the pre-assert Habitat screenshot plus Y/root measurements. Repair the underlying 200%-font clipping only if reproduced; preserve SQLite27, survey state semantics, approved startup isolation and signed install identity. Do not claim pass from core CI alone.
+
+---
+
+
 ## 29 October 2026 | RC27B code86 source QA and signed APK verified; emulator acceptance pending
 
 - Scientific Core QA GitHub Actions run **40829509468** on production code commit `08c63f87faf734c81694a7ca32bf742ce061aaff` completed **success**: Python science/source suite, JVM and signed Android assembly.

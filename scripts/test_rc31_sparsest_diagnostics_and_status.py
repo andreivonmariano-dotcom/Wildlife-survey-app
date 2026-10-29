@@ -48,7 +48,7 @@ class SourceAndEvidence(unittest.TestCase):
         camp=[r for r in self.rc31["records"] if
              r["scientificName"]=="Dicaeum kampalili"]
         self.assertEqual(camp[0]["diagnosticReadiness"],"taxonomy_only")
-        self.assertIn("not a",camp[0]["text"])
+        self.assertIn("does not provide",camp[0]["text"])
         self.assertFalse(any("observer" in r["sourceType"] for r in self.rc31["records"]))
 
     def test_strictly_cumulative_topics_and_original_unchanged(self):
@@ -92,8 +92,7 @@ class SourceAndEvidence(unittest.TestCase):
         self.assertEqual(catalog.count('m.put("https://'),27)
         for rec in self.rc31["records"]:
             self.assertIn(rec["url"],catalog)
-        self.assertIn('"versionCode 91"',(ROOT/"app/build.gradle").read_text()
-            .replace("versionCode 91",'"versionCode 91"'))
+        self.assertIn("versionCode 91",(ROOT/"app/build.gradle").read_text())
 
 if __name__=="__main__":
     unittest.main()

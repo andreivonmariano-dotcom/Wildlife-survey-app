@@ -14,6 +14,8 @@ public final class ResearchCitationFormatter {
         "^(.+?)\\s*\\((18\\d{2}|19\\d{2}|20\\d{2})([a-z]?)\\)");
     private static final Pattern BARE_YEAR=Pattern.compile(
         "^(.+?)\\s+(18\\d{2}|19\\d{2}|20\\d{2})([a-z]?)\\b");
+    private static final Pattern LONG_DATE=Pattern.compile(
+        "^(.+?)\\s*\\(\\d{1,2}\\s+[A-Za-z]+\\s+(18\\d{2}|19\\d{2}|20\\d{2})([a-z]?)\\)");
     private static String clean(String s){
         return s==null?"":s.trim().replaceAll("\\s+"," ");
     }
@@ -21,7 +23,9 @@ public final class ResearchCitationFormatter {
         Matcher a=PAREN_YEAR.matcher(clean(s));
         if(a.find())return a;
         Matcher b=BARE_YEAR.matcher(clean(s));
-        return b.find()?b:null;
+        if(b.find())return b;
+        Matcher d=LONG_DATE.matcher(clean(s));
+        return d.find()?d:null;
     }
     public static String yearLabel(int year,String source){
         if(year>=1800&&year<=2100)return String.valueOf(year);
@@ -76,7 +80,8 @@ public final class ResearchCitationFormatter {
         if(work.isEmpty())work="[Title not verified]";
         StringBuilder out=new StringBuilder();
         out.append(author.isEmpty()?"[Author not recorded]":author);
-        out.append(". (").append(date).append("). ").append(work);
+        if(!author.endsWith("."))out.append(".");
+        out.append(" (").append(date).append("). ").append(work);
         if(!work.endsWith("."))out.append(".");
         String link=clean(url);
         if(link.startsWith("https://"))out.append("\n").append(link);

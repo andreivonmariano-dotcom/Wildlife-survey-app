@@ -120,7 +120,9 @@ public final class Rc8TraitComparisonActivity extends Activity {
         outer.setOrientation(LinearLayout.VERTICAL);
         outer.setPadding(dp(14),dp(10),dp(14),dp(12));
         outer.setBackgroundColor(UiKit.BG);
-        outer.addView(UiKit.navigationHeader(this,"Trait comparisons","Library",this::finish));
+        boolean largeText=getResources().getConfiguration().fontScale>=1.60f;
+        outer.addView(UiKit.navigationHeader(this,
+            largeText?"Compare":"Trait comparisons","Library",this::finish));
         try{
             pack=read(this);
             species=readCurrentSpecies(this);
@@ -129,9 +131,18 @@ public final class Rc8TraitComparisonActivity extends Activity {
             outer.addView(text("Evidence comparison library unavailable offline. Recorded surveys remain unchanged.",15,false));
             setContentView(outer);return;
         }
-        outer.addView(text("Species comparisons use the latest cited 96-species accounts. "+
+        String explanation="Species comparisons use the latest cited 96-species accounts. "+
             "The 15 habitat reference cards remain in the original source pack. "+
-            "Not assessed never means absent. No comparison identifies a recorded animal.",13,false));
+            "Not assessed never means absent. No comparison identifies a recorded animal.";
+        TextView context=text(largeText?
+            "Current cited evidence. Tap for study limits.":explanation,13,false);
+        context.setContentDescription("Read study limits. "+explanation);
+        context.setFocusable(true);
+        context.setOnClickListener(v->new android.app.AlertDialog.Builder(this)
+            .setTitle("Comparison evidence limits")
+            .setMessage(explanation)
+            .setPositiveButton("Close",null).show());
+        outer.addView(context);
         LinearLayout modes=new LinearLayout(this);
         modes.setOrientation(LinearLayout.HORIZONTAL);
         speciesMode=UiKit.button(this,"Species (96)","secondary");

@@ -85,7 +85,7 @@ RC39 has a coherent offline fieldwork foundation and preserves several non-negot
 ## Strengths directly established
 
 - **Survey states:** `MainActivity.finishPrompt()` exposes Finish Complete, End Incomplete and Cancel Survey / Not Counted; `SurveyClosePolicy` applies effort and method-defined completeness rules.
-- **Offline data:** encrypted catalog contents and research assets are bundled; data stays in SQLite with schema 27. **No claim of end-to-end encryption of local field records is made.**
+- **Offline data:** catalog and research assets are bundled for offline use; data stays in SQLite with schema 27. **No claim of end-to-end encryption of local field records is made.**
 - **Scientific labeling:** the 96-card research subset has only six source-reviewed conservation entries. Unreviewed species show neutral **Status unverified**, without invented rarity. DENR and IUCN are separately labeled.
 - **Privacy controls:** automatic Android backup is disabled, optional field backup exists, and restore refuses a nonempty workspace.
 - **Release identity:** package `org.phwildlife.survey.beta08` and the previously pinned signing identity are maintained by the verified build record. Latest preview version is 99.

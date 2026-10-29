@@ -368,10 +368,8 @@ public final class Rc11PrioritySpeciesView {
         block.addView(heading);
         // APA-style parenthetical citation belongs beside the actual claim.
         // The complete source record appears only once in the reference drawer.
-        String statement=item.value.trim().replaceAll("[\\\\.\\\\s]+$","");
-        TextView description=text(a,statement+" "+
-            ResearchCitationFormatter.inText(item.source,item.sourceYear)+".",
-            14,false,UiKit.INK);
+        TextView description=text(a,ResearchCitationFormatter.citeClaim(
+            item.value,item.source,item.sourceYear),15,false,UiKit.INK);
         description.setLineSpacing(dp(a,3),1.05f);
         description.setContentDescription(item.label+". "+description.getText());
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
@@ -411,7 +409,8 @@ public final class Rc11PrioritySpeciesView {
             card.addView(more);
             toggle.setOnClickListener(v->{
                 boolean open=more.getVisibility()!=View.VISIBLE;
-                more.setVisibility(open?View.VISIBLE:View.GONE);
+                if(open)UiMotion.reveal(a,more);
+                else UiMotion.hide(more);
                 toggle.setText(open?"Show fewer":"Show "+(available.size()-2)+" more");
                 toggle.setContentDescription((open?"Collapse ":"Expand ")+area.toLowerCase(Locale.ROOT)+" research notes");
             });
@@ -426,8 +425,8 @@ public final class Rc11PrioritySpeciesView {
         references.setVisibility(View.GONE);
         references.setPadding(dp(a,9),dp(a,6),dp(a,9),dp(a,12));
         references.addView(text(a,"References",16,true,UiKit.FOREST));
-        TextView note=text(a,"APA 7 author–date citations are shown beside claims. "+
-            "Incomplete catalog metadata is identified rather than guessed.",12,false,UiKit.MUTED);
+        TextView note=text(a,"Research citations follow APA 7 author–date style. "+
+            "Some source records still need full bibliographic details.",12,false,UiKit.MUTED);
         references.addView(note);
         LinkedHashMap<String,Fact> unique=new LinkedHashMap<>();
         for(Fact fact:facts)if(!unique.containsKey(fact.url))unique.put(fact.url,fact);
@@ -443,9 +442,10 @@ public final class Rc11PrioritySpeciesView {
             entry.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
             references.addView(entry);
         }
-        references.addView(text(a,"Additional literature and scientific review",
+        references.addView(text(a,"Further reading and review notes",
             13,true,UiKit.FOREST));
-        Rc14Bibliography.add(a,references,scientific);
+        Rc14Bibliography.add(a,references,scientific,
+            new HashSet<String>(unique.keySet()));
         Rc12ScientificReview.add(a,references,scientific);
         if(!sourceKey.isEmpty()){
             TextView provenance=text(a,"Catalog record: "+sourceKey,11,false,UiKit.MUTED);
@@ -473,7 +473,8 @@ public final class Rc11PrioritySpeciesView {
         parent.addView(references);
         toggle.setOnClickListener(v->{
             boolean open=references.getVisibility()!=View.VISIBLE;
-            references.setVisibility(open?View.VISIBLE:View.GONE);
+            if(open)UiMotion.reveal(a,references);
+            else UiMotion.hide(references);
             toggle.setText(open?"Hide references  ▴":"References & study details  ▾");
             toggle.setContentDescription(open?"Close cited sources and study details":
                 "Open cited sources and study details");

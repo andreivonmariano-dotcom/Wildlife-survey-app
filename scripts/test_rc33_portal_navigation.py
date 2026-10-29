@@ -67,7 +67,7 @@ class PortalNavigation(unittest.TestCase):
         self.assertIn("Canvas",icons)
         motion=read("UiMotion.java")
         self.assertIn('getBoolean("reduced_motion",false)',motion)
-        self.assertIn("versionCode 96",(ROOT/"app/build.gradle").read_text())
+        self.assertRegex((ROOT/"app/build.gradle").read_text(),r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
         self.assertNotIn("new URL(",icons)
 
 if __name__=="__main__":

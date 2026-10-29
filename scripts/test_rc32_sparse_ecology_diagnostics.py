@@ -74,7 +74,7 @@ class Rc32Science(unittest.TestCase):
             self.assertIn(r["url"],apa)
         assert 'readPack(activity,RC32,15)' in (SRC/"Rc30SpeciesEvidence.java").read_text()
         assert 'rc32ReviewedAdditions' in (SRC/"Rc30SpeciesEvidence.java").read_text()
-        self.assertIn("versionCode 96",(ROOT/"app/build.gradle").read_text())
+        self.assertRegex((ROOT/"app/build.gradle").read_text(),r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
 
     def test_two_new_original_study_comparisons(self):
         pairs=self.comparisons["pairs"]

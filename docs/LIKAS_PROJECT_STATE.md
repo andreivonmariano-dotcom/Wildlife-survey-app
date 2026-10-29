@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC26 signed debug APK code82 independently verified, emulator pending
+
+- RC26 production source committed `f4461be0de201478ae80b3706a38220f57cd5a32`; DOI test assertion corrected in `6663b22ac1726aabc6d917ff86250d432663fb2e`. First Python CI flagged an accidental test DOI mutation, not a scientific source-data difference. Corrected scientific-core CI **40824567946 completed SUCCESS** (Python science suite, JVM tests and Android assembly).
+- Downloaded GitHub artifact **12876111374**, extracted `/mnt/data/LIKAS-v0.27.3-RC26-fieldwork-readability-debug.apk` in this chat. APK size **9,600,314 bytes**, SHA256 **e1fbb6d6c839123e5071466a1bdd4179868abf6bacd92d0255df0b0c31d6b8bd**. ZIP integrity, compiled manifest package `org.phwildlife.survey.beta08`, version `0.27.3-rc26-fieldwork-readability-preview`, code82, 96 accounts, 452 biological facts and four RC26 facts all verified. Actual v2 APK signing DER SHA256 **f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937** matches established identity. Direct APK attached to this conversation.
+- Android14 320dp emulator workflow **40824440899** on same Android source remained running at last check. Need 16/16, 96 renders, 200% Home/Setup/History/Habitat/Library and Recorder/Compare/Conservation captures, old/new SQLite fixture preservation and retained media marker before passing this gate.
+- No real handset accessed. Physical survey lifecycle Complete / Incomplete / Not Counted, true GNSS/altitude provenance, WAV/photo endurance, export and restoration against actual owner records are all **PENDING**. Do not treat emulator as field certification. Approved startup assets, app ID, schema27 and historical records preserved.
+
+---
+
+
 ## 29 October 2026 | RC26 Q1/Q2/Q3: science, field screen and real-phone acceptance scope
 
 - Owner selected Q1/Q2/Q3: continue missing primary habitat/natural history, refine Home/Survey Setup/History at large type, and test field workflows on Android.

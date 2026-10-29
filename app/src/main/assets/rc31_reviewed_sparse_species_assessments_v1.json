@@ -229,14 +229,14 @@
     {
       "scientificName": "Kaloula picta",
       "section": "Habitat",
-      "label": "Agusan Marsh specimen context",
-      "text": "An Agusan Marsh inventory documented Kaloula picta among non-peat and non-freshwater-swamp survey records, rather than from the study's peat-swamp sampling column.",
-      "source": "Sanguila et al. (2026), ZooKeys 1272:203–251",
-      "url": "https://doi.org/10.3897/zookeys.1272.167304",
-      "sourceType": "peer_reviewed_field_inventory",
-      "sourceYear": 2026,
-      "sourceLocation": "Table 1, Kaloula picta row: OS (other surveys); material examined at Bunawan",
-      "studyScope": "One study's other-survey category, not proof that the species avoids peat or freshwater swamps or a quantified preference."
+      "label": "Agusan del Sur stream and farmland-edge encounters",
+      "text": "A Caraga amphibian field survey recorded Kaloula picta beside streams and near cornfields outside the selected mining site near Bunawan, Agusan del Sur.",
+      "source": "Galolo et al. (2021), Proceedings of the International Academy of Ecology and Environmental Sciences 11(4):159–187",
+      "url": "https://www.iaees.org/publications/journals/piaees/articles/2021-11%284%29/amphibian-diversity-endemism-habitat-associations.pdf",
+      "sourceType": "peer_reviewed_site_specific_amphibian_field_survey",
+      "sourceYear": 2021,
+      "sourceLocation": "Kaloula picta species note near the Caraga locality discussion, printed amphibian habitat notes",
+      "studyScope": "Site-specific field encounters at streams and an agricultural edge near Bunawan, not an experiment or a quantified regional habitat preference. No assertion that the species avoids peat or freshwater swamps."
     },
     {
       "scientificName": "Kaloula picta",

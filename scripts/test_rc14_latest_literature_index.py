@@ -51,7 +51,7 @@ class LiteratureIndex(unittest.TestCase):
         view=(CODE/"Rc11PrioritySpeciesView.java").read_text()
         bibliography=(CODE/"Rc14Bibliography.java").read_text()
         self.assertIn('rc14_recent_peer_reviewed_2025_2026_v1.json',view)
-        self.assertIn('Rc14Bibliography.add(a,references,scientific)',view)
+        self.assertIn('Rc14Bibliography.add(a,references,scientific,',view)
         self.assertNotIn('link(a,references,"View publication",fact.url)',view)
         self.assertIn('rc14_96_species_literature_index_v1.json',bibliography)
         self.assertIn('Uri.parse(url)',bibliography)

@@ -20,6 +20,25 @@ Never fabricate an unknown trait or automatically convert missing research to an
 - Do not erase the original bibliographic record to shorten a sentence. Edit only the presentation, or add a short curated paraphrase with its source.
 - Every public card description should add a concrete species fact. A sentence whose only purpose is to defend the app's methodology belongs in technical documentation, not the field guide.
 
+## Approved reference websites by evidentiary purpose
+
+Official and curated sources complement, rather than replace, original scientific papers. The application ships a machine-readable source catalog at `app/src/main/assets/likas_scientific_reference_sources_v1.json` (10 vetted entries).
+
+| Wildlife topic | Preferred websites | Safe use |
+|---|---|---|
+| Mammal classification | American Society of Mammalogists Mammal Diversity Database, `https://www.mammaldiversity.org/` | Accepted names, synonyms, original authorities, country distribution and revision citations. MDD v2.5, released 28 July 2026 |
+| Mammal morphology and ecology | ASM `Mammalian Species` journal, `https://www.mammalsociety.org/publications/mammalian-species` | Individual published research-based species treatments and measurements with publication dates |
+| Philippine mammal distribution and ecology | Field Museum Synopsis, `https://www.fieldmuseum.org/project-narrative/science/synopsis-of-philippine-mammals`, and Philippine Mammal Project, `https://www.philippinemammalproject.com/research.html` | Philippine specimen history, historic island occurrence, original descriptions and field papers. The online Synopsis' last major revision was 2010, so modern publications override it |
+| Bats | Bat Conservation International, `https://www.batcon.org/about-bats/bat-profiles/` | Natural-history overview; follow the linked research for quantitative claims |
+| Amphibian accounts | UC Berkeley-led AmphibiaWeb, `https://amphibiaweb.org/` | Habitat, calls, natural history and reference links |
+| Amphibian taxonomy | American Museum of Natural History, `https://amphibiansoftheworld.amnh.org/` | Scientific names, synonyms, original descriptions and taxonomic history; record the access date for its live version 6.2 |
+| Reptile taxonomy | The Reptile Database, `https://www.reptile-database.org/` | Valid names, descriptions, type localities, taxonomic changes, publication links; original paper is preferred for identification detail |
+| Global conservation | IUCN Red List, `https://www.iucnredlist.org/` | Exact species-level IUCN assessment and year, not an undated or Philippine legal conservation category |
+| Philippine conservation status | Original published Philippine DENR administrative orders and annexes | National legal status, with order number and effective date distinct from IUCN global category |
+| General natural history cross-check | University of Michigan Animal Diversity Web, `https://animaldiversity.org/` | Supporting context only, as many pages are student-authored; not sole authority for diagnosis or changed conservation status |
+
+Do not treat the words "specialist" in a legitimate institution's name as a demand for specialist sign-off. Curated online scientific entries are references, not peer-reviewed publications. Record `sourceType` and `retrievalDate` separately, and follow the original DOI for high-stakes morphology or taxonomic conflicts. Reproduce neither database prose nor images without their permitted usage rights.
+
 ## Working research inventory
 
 - Full priority registry: **96**, unchanged, 24 birds + 24 amphibians + 24 reptiles + 24 mammals. The owner's earlier 92 count has no matching recorded source-defined subset.

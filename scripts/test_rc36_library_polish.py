@@ -43,7 +43,7 @@ class LibraryPolishContract(unittest.TestCase):
         self.assertIn("options.inPreferredConfig=Bitmap.Config.RGB_565;",photo)
         self.assertIn('thumbnailForHabitat(Activity a,String photoId)',photo)
         self.assertIn('!"habitat".equals(item.optString("category"))',photo)
-        self.assertIn('OfflinePhotoEvidence.thumbnailForHabitat(', (JAVA/"LikasDiscoveryActivity.java").read_text())
+        self.assertIn('OfflinePhotoEvidence.galleryPhotoForHabitat(', (JAVA/"LikasDiscoveryActivity.java").read_text())
         original=json.loads((ASSETS/"offline_photo_manifest_v1.json").read_text())
         habitat=json.loads((ASSETS/"offline_habitat_profiles_v1.json").read_text())
         ids={i["id"] for i in original["items"] if i.get("category")=="habitat"}
@@ -61,7 +61,7 @@ class LibraryPolishContract(unittest.TestCase):
         for forbidden in ("getWritableDatabase(", "execSQL(", "deleteDatabase("):
             self.assertNotIn(forbidden,source)
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 100",gradle)
+        self.assertIn("versionCode 101",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
 

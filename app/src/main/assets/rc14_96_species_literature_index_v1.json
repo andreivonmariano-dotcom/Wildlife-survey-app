@@ -859,10 +859,23 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+          "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+          "sourceType": "original_taxonomic_revision",
+          "publicationYear": 1997,
+          "latestConfirmed": false,
+          "sourceLocation": "pp. 407, 409–410, 416–418",
+          "topics": [
+            "Identification",
+            "Habitat",
+            "Ecology"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Platymantis rabori",
@@ -2853,10 +2866,34 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Brown, Brown & Alcala (1997), Proc. California Acad. Sci. 49:405–421",
+          "url": "https://archive.org/download/biostor-3273/biostor-3273.pdf",
+          "sourceType": "original_taxonomic_revision",
+          "publicationYear": 1997,
+          "latestConfirmed": false,
+          "sourceLocation": "pp. 407, 409–410, 416–418",
+          "topics": [
+            "Identification",
+            "Habitat",
+            "Ecology"
+          ]
+        },
+        {
+          "source": "Brown, Brown, Alcala & Frost (1997), Herpetological Review 28:131, nomenclatural replacement",
+          "url": "https://multimedia20stg.blob.core.windows.net/publicaciones/Savage%20and%20Heyer%201997%20%28Digital%20webbing%20formulae%20for%20anurans%20-%20a%20refinement%29.pdf",
+          "sourceType": "original_nomenclatural_replacement",
+          "publicationYear": 1997,
+          "latestConfirmed": false,
+          "sourceLocation": "Herpetological Review 28(3):131, replacement name isarog for reticulatus Brown et al. 1997",
+          "topics": [
+            "Taxonomy"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 4
     },
     {
       "scientificName": "Platymantis negrosensis",

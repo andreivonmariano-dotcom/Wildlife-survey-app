@@ -276,8 +276,8 @@ public final class LikasDiscoveryActivity extends Activity {
         Button next=UiKit.button(this,"›","quiet");
         previous.setContentDescription("Previous "+title+" card");
         next.setContentDescription("Next "+title+" card");
-        header.addView(previous,new LinearLayout.LayoutParams(dp(46),dp(48)));
-        header.addView(next,new LinearLayout.LayoutParams(dp(46),dp(48)));
+        header.addView(previous,new LinearLayout.LayoutParams(dp(48),dp(48)));
+        header.addView(next,new LinearLayout.LayoutParams(dp(48),dp(48)));
         String railKey=(isHabitat?"habitats:":"species:")+title;
         int restoreOffset=railOffsets.getOrDefault(railKey,0);
         HorizontalScrollView scroll=new HorizontalScrollView(this);

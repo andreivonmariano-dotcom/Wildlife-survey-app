@@ -18,6 +18,7 @@ public final class Rc30SpeciesEvidence {
     private Rc30SpeciesEvidence(){}
     private static final String FILE="rc30_reviewed_priority_evidence_v1.json";
     private static final String RC31="rc31_reviewed_sparse_species_assessments_v1.json";
+    private static final String RC32="rc32_sparse_priority_ecology_diagnostics_v1.json";
     private static final String[] TOPICS={"Identification","Habitat","Distribution",
         "Natural history","Conservation"};
 
@@ -46,6 +47,7 @@ public final class Rc30SpeciesEvidence {
             // Read and validate both source packs before making any visible change.
             JSONArray original=readPack(activity,FILE,8);
             JSONArray latest=readPack(activity,RC31,26);
+            JSONArray diagnostic=readPack(activity,RC32,15);
             JSONObject updated=new JSONObject(corpus.toString());
             JSONArray accounts=updated.getJSONArray("accounts");
             if(accounts.length()!=96||corpus.optInt("sourceFactCount")!=456)
@@ -56,9 +58,9 @@ public final class Rc30SpeciesEvidence {
                 byName.put(account.getString("scientificName"),account);
             }
             HashSet<String> known=new HashSet<>();
-            int applied=0,rc30Count=0,rc31Count=0;
-            for(int pack=0;pack<2;pack++){
-                JSONArray records=pack==0?original:latest;
+            int applied=0,rc30Count=0,rc31Count=0,rc32Count=0;
+            for(int pack=0;pack<3;pack++){
+                JSONArray records=pack==0?original:pack==1?latest:diagnostic;
                 for(int i=0;i<records.length();i++){
                     JSONObject record=records.getJSONObject(i);
                     String name=record.getString("scientificName");
@@ -97,7 +99,8 @@ public final class Rc30SpeciesEvidence {
                         target.put(new JSONObject(record.toString()));
                         applied++;
                         if(pack==0)rc30Count++;
-                        else rc31Count++;
+                        else if(pack==1)rc31Count++;
+                        else rc32Count++;
                     }
                 }
             }
@@ -114,6 +117,7 @@ public final class Rc30SpeciesEvidence {
             updated.put("rc30Merged",true);
             updated.put("rc30ReviewedAdditions",rc30Count);
             updated.put("rc31ReviewedAdditions",rc31Count);
+            updated.put("rc32ReviewedAdditions",rc32Count);
             return updated;
         }catch(Exception problem){
             // An invalid record never exposes a partially modified research account.

@@ -10,7 +10,9 @@ public final class UiMotion {
     private UiMotion(){}
 
     private static boolean animate(Activity a) {
-        return ValueAnimator.areAnimatorsEnabled() &&
+        return !a.getSharedPreferences("likas_ui",Activity.MODE_PRIVATE)
+                .getBoolean("reduced_motion",false) &&
+            ValueAnimator.areAnimatorsEnabled() &&
             a.getResources().getConfiguration().fontScale<1.60f;
     }
     private static float dp(Activity a,int n){

@@ -62,7 +62,7 @@ class ConservationCardQA(unittest.TestCase):
         self.assertIn('OfflinePhotoEvidence.thumbnailForTaxon(this,scientific)',src)
         self.assertIn('UiMotion.enter(this,content)',src)
         self.assertIn('putExtra("taxon_key",entry.optString("sourceTaxonKey"))',src)
-        self.assertIn("Rarity unassessed",src)
+        self.assertIn("Status is not rarity",src)
         self.assertNotIn('Priority species',src)
         self.assertNotIn('rare"',''.join(src.splitlines()[:80]))
 

@@ -166,4 +166,26 @@ public final class Rc11SpeciesAccountInstrumentedTest {
         }
     }
 
+    @Test public void testAllPriorityAccountCorpusFillsPreviouslyFactEmptyNames(){
+        String[] names={"Dicaeum anthonyi","Desmalopex microleucoptera"};
+        String[] documented={"Northern Luzon","Morphological differentiation"};
+        for(int i=0;i<names.length;i++){
+            final String species=names[i];
+            final String detail=documented[i];
+            Intent intent=new Intent(InstrumentationRegistry.getInstrumentation()
+                .getTargetContext(),TaxonDetailActivity.class);
+            intent.putExtra("taxon_query",species);
+            try(ActivityScenario<TaxonDetailActivity> scenario=ActivityScenario.launch(intent)){
+                scenario.onActivity(a->{
+                    ArrayList<View> views=descendants(a.getWindow().getDecorView());
+                    assertTrue(containsText(views,species));
+                    assertTrue("Original literature fact visible for "+species,
+                        containsText(views,detail));
+                    assertTrue(containsText(views,"Sources & details"));
+                    assertFalse(containsText(views,"A detailed account is not yet source-checked"));
+                });
+            }
+        }
+    }
+
 }

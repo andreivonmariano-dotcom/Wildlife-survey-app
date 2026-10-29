@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC19 Android emulator acceptance confirmed and 96 screenshots reviewed
+
+- **Verified QA run:** GitHub Android emulator run `40805609892` completed successfully on RC19 source `f6bc1653ca37a5e2e03a8aa0d4186240af869552`. Retrieved real evidence artifact `12868850112` (`LIKAS-RC7-device-emulator-evidence`) and inspected the extracted `instrumentation.txt`: **OK (13 tests)**, `EMULATOR-SMOKE-PASS`, `RECORDER-DOCK-INSTRUMENTED-PASS`, and `ALL-96-RENDERED-SPECIES-AUDIT-PASS`.
+- **Rendered screen audit:** All **96 of 96 JPEG captures** present, 480 × 960 pixels from the 320dp emulator. Their byte hashes are distinct, the per-species CSV contains 96 unique indexed records, and each CSV byte count matches its JPEG. The CSV has exactly 24 birds, 24 amphibians, 24 reptiles, and 24 mammals. Its count of rendered scientific cards ranges from one to five per account: 14 accounts with one, 35 with two, 27 with three, 13 with four and seven with five. Reviewed four 24-screen contact sheets for first-viewport overlap, title wrapping, visible cards and photo placement. No obvious catastrophic header/card overlap appeared in the overview; the images do **not** validate below-the-fold scrolling, all expanded details, 200% font, TalkBack or physical-device layout.
+- **Upgrade data retention:** `previous-db.sqlite` and `after-upgrade-db.sqlite` are **byte-identical** (1,613,824 bytes each, SHA-256 `07fdfede0556fac7bd03bd77a4b1112b4a4c771cc0db5e26cc8c20ec4eff20e1`). This is emulator fixture evidence, not a live owner's phone database or a complete media-restore test.
+- **Exact direct APK revalidated:** Re-downloaded signed RC19 artifact `12867598019`. The extracted `app-debug.apk` is 9,536,155 bytes, SHA-256 `69e51aa59ac089e6198c1e0500eb7794483f3e0a1d083e0e21b868426cb8758b`, valid APK ZIP, and contains 96 accounts, 377 cited biological facts and the RC19 evidence source. Independently parsed the Android APK v2 signing block. Certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches the pinned RC4/RC19 signer. Emulator version.txt reports versionCode **72**, versionName `0.27.3-rc19-all-species-screen-audit-preview`, minSdk 26 and targetSdk 34. The original APK and complete emulator QA ZIP were delivered as direct current-session chat attachments.
+- **Outstanding:** 27 Identification, 52 Habitat, 24 Distribution, 78 Natural history and 77 Conservation topic gaps remain. Each gap requires its own published or attributed source, without fabricated placeholders. Physical-device installation, upgrade with actual owner records, long-session field testing and broader accessibility still require real evidence. This is an RC19 **preview**, and PR #38 remains draft.
+- **Next:** Continue source-bounded work on the 27 missing identification sections, using original descriptions where available. Preserve RC4-derived core branch, SQLite 27, historical data, startup isolation, source lineage and signing. Never count all-96 screenshot opens as scientific completeness.
+
+---
+
+
 ## 29 October 2026 | RC19 emulator verification recovered in new project chat
 
 - **Verified:** GitHub Actions emulator run `40805609892`, job `123223716928`, finished successfully. The full job log reports `OK (13 tests)` and `DEVICE BACKUP TEST PASSED`; `testAll96ActualSpeciesScreensHaveCitedCardAndNoBoilerplate` returned status 0. Emulator evidence artifact `12868850112` (`LIKAS-RC7-device-emulator-evidence`, 4,386,328 bytes) exists and is not expired.

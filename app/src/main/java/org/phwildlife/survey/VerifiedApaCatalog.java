@@ -56,6 +56,24 @@ public final class VerifiedApaCatalog {
             "Esselstyn, J. A., Widmann, P., & Heaney, L. R. (2004). The mammals of Palawan Island, Philippines. Proceedings of the Biological Society of Washington, 117(3), 271–302. https://www.biodiversitylibrary.org/part/49110","Proceedings of the Biological Society of Washington"));
         m.put("https://iucnhornbills.org/rufous-headed-hornbill/",new Record("(IUCN SSC Hornbill Specialist Group, n.d.)",
             "IUCN SSC Hornbill Specialist Group. (n.d.). Rufous-headed Hornbill. https://iucnhornbills.org/rufous-headed-hornbill/",""));
+        m.put("https://iucnhornbills.org/northern-rufous-hornbill/",new Record("(IUCN SSC Hornbill Specialist Group, n.d.)",
+            "IUCN SSC Hornbill Specialist Group. (n.d.). Northern Rufous Hornbill. https://iucnhornbills.org/northern-rufous-hornbill/",""));
+        m.put("https://iucnhornbills.org/writhed-hornbill-2/",new Record("(IUCN SSC Hornbill Specialist Group, n.d.)",
+            "IUCN SSC Hornbill Specialist Group. (n.d.). Writhed Hornbill. https://iucnhornbills.org/writhed-hornbill-2/",""));
+        m.put("https://doi.org/10.2305/IUCN.UK.2020-3.RLTS.T22682522A184689600.en",new Record("(BirdLife International, 2020)",
+            "BirdLife International. (2020). Rhabdotorrhinus leucocephalus. The IUCN Red List of Threatened Species 2020, e.T22682522A184689600. https://doi.org/10.2305/IUCN.UK.2020-3.RLTS.T22682522A184689600.en","The IUCN Red List of Threatened Species"));
+        m.put("https://doi.org/10.2305/IUCN.UK.2016-3.RLTS.T22717516A94536769.en",new Record("(BirdLife International, 2016)",
+            "BirdLife International. (2016). Dicaeum retrocinctum. The IUCN Red List of Threatened Species 2016, e.T22717516A94536769. https://doi.org/10.2305/IUCN.UK.2016-3.RLTS.T22717516A94536769.en","The IUCN Red List of Threatened Species"));
+        m.put("https://nc.iucnredlist.org/redlist/content/attachment_files/2024-2_RL_Table_7.pdf",new Record("(IUCN, 2024)",
+            "International Union for Conservation of Nature. (2024). [Table of species with IUCN Red List category changes, 2024-2] (Table 7). https://nc.iucnredlist.org/redlist/content/attachment_files/2024-2_RL_Table_7.pdf",""));
+        m.put("https://doi.org/10.2305/IUCN.UK.2024-2.RLTS.T22683542A241691549.en",new Record("(BirdLife International, 2024)",
+            "BirdLife International. (2024). Actenoides hombroni. The IUCN Red List of Threatened Species 2024, e.T22683542A241691549. https://doi.org/10.2305/IUCN.UK.2024-2.RLTS.T22683542A241691549.en","The IUCN Red List of Threatened Species"));
+        m.put("https://bmb.gov.ph/downloads/WRD/WC/WC2020/stat_and_lists_of_wildlife/fauna/dao-2019-09.pdf",new Record("(Department of Environment and Natural Resources, 2019)",
+            "Department of Environment and Natural Resources. (2019). Updated national list of threatened Philippine fauna and their categories (Administrative Order No. 2019-09). https://bmb.gov.ph/downloads/WRD/WC/WC2020/stat_and_lists_of_wildlife/fauna/dao-2019-09.pdf",""));
+        m.put("https://doi.org/10.2307/1380399",new Record("(Musser & Gordon, 1981)",
+            "Musser, G. G., & Gordon, L. K. (1981). A new species of Crateromys (Muridae) from the Philippines. Journal of Mammalogy, 62(3), 513–525. https://doi.org/10.2307/1380399","Journal of Mammalogy"));
+        m.put("https://digitalcommons.usf.edu/auk/vol70/iss1/20/",new Record("(Manuel & Gilliard, 1953)",
+            "Manuel, C. G., & Gilliard, E. T. (1953). A new name for a flowerpecker from the Philippines. The Auk, 70(1), 90. https://digitalcommons.usf.edu/auk/vol70/iss1/20/","The Auk"));
         ENTRIES=Collections.unmodifiableMap(m);
     }
     private static Record match(String url){

@@ -49,6 +49,23 @@ class PublicationFirstPolicy(unittest.TestCase):
         self.assertFalse(any(fact["label"]=="Later Sibuyan records"
                              for taxon in pack["records"] for fact in taxon["items"]))
 
+    def test_authoritative_sources_named_and_ranked(self):
+        catalog=json.loads((ASSETS/"likas_scientific_reference_sources_v1.json").read_text())
+        self.assertEqual("likas-authoritative-literature-source-catalog-v1",
+                         catalog["schemaVersion"])
+        urls={x["id"]:x["url"] for x in catalog["sources"]}
+        for src in ("ASM_MDD","ASM_MAMMALIAN_SPECIES",
+                    "FIELD_MUSEUM_PHILIPPINE_MAMMALS","PHILIPPINE_MAMMAL_PROJECT",
+                    "BAT_CONSERVATION_INTERNATIONAL","AMPHIBIAWEB","AMNH_ASW",
+                    "REPTILE_DATABASE","IUCN_RED_LIST"):
+            self.assertIn(src,urls)
+            self.assertTrue(urls[src].startswith("https://"))
+        self.assertEqual("curated_scientific_taxonomic_database",
+                         next(x["type"] for x in catalog["sources"]
+                              if x["id"]=="ASM_MDD"))
+        self.assertTrue(any("original_peer_reviewed" in x for x in catalog["sourceOrder"]))
+        self.assertIn("access date",catalog["rule"])
+
     def test_user_facing_copy_uses_publications_not_signoffs(self):
         view=(JAVA/"Rc11PrioritySpeciesView.java").read_text()
         panel=(JAVA/"Rc12ScientificReview.java").read_text()

@@ -1,6 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | RC19 Q1/Q2/Q3 source update and full 96-screen audit (verification pending)
+
+- **Owner request:** Continue all 31 original diagnosis gaps, habitat and dated conservation facts, and inspect every rendered priority account. Code changes are on scientific-core draft PR #38, branch `feature/likas-core-fieldwork-post-rc4`. Original Android package and SQLite 27 preserved; no specialist signoff and no unnecessary AI-style caveats.
+- **Actual source updates:** `rc19_priority_literature_batch_v1.json` contains **21 source-backed notes** for seven species: Palawan Forest Turtle, Cantor's Giant Softshell, northern/southern Phloeomys cloud rats, Platymantis negrosensis, P. hazelae and P. banahao. `rc18_unified_96_priority_accounts_v1.json` now holds **96/96 accounts with 377 unique biology facts**. Three RC19 notes are taxonomy-only in the reference source, not fake biology cards; 18 appear in main cards. Bibliography `rc14_96_species_literature_index_v1.json` has **261 unique taxon-source URLs**. IUCN 2018/Pelochelys and 2000/Siebenrockiella assessments are clearly dated. Date of source research: 29 Oct 2026.
+- **Scientific gaps:** 27 species without an identification fact, 52 without habitat, 24 without distribution, 78 natural-history, 77 conservation. Taxa with 2025–26 papers separately verified: 13 (unchanged). All 96 have at least one biology fact and bibliography; not all are scientifically completed. Source type distinguishes peer-reviewed papers, published species monographs and curated databases.
+- **Screen audit code:** Android instrumentation test `testAll96ActualSpeciesScreensHaveCitedCardAndNoBoilerplate` launches all 96 real `TaxonDetailActivity` screens and writes 96 320dp JPEG images + CSV audit. `scripts/run_emulator_rc7_qa.sh` requires **13** tests and copies all screenshots into emulator QA ZIP, plus byte-exact database upgrade testing. `scripts/test_rc19_full_account_audit.py` checks evidence and screenshot contract. This is implemented but actual 96-render screenshots and test success must be verified.
+- **Version:** `0.27.3-rc19-all-species-screen-audit-preview`, versionCode **72**, package `org.phwildlife.survey.beta08`, pinned cert fingerprint `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Signed APK and physical handset **unconfirmed** at writing; do not link guessed APK or present unverified 13/13 QA claims.
+- **Next:** Check final CI core run, correct any contracts, collect signed artifact into current runtime and verify. Check emulator 96 screenshot test and PNG/JPEG contact sheet; report per-page exceptions. Preserve historical field survey DB, signed install, original media and rc9 checklist identity. PR #38 stays draft.
+---
+
+
 ## 29 October 2026 | Verified signed RC18B APK, 96 priority accounts
 
 - **Exact validated Android build:** Scientific Core QA workflow `40804296215` succeeded, artifact `12866474833`, name `LIKAS-RC18B-unified-accounts-debug`; source build versionCode `71` and versionName `0.27.3-rc18b-priority-accounts-preview`. Extracted directly to `/mnt/data/LIKAS-v0.27.3-RC18B-all-96-priority-accounts-debug.apk`, **9,530,212 bytes**, SHA-256 `b3cda19ba209367f6c381ff88a398672cdb28d26109d13318fa1bf6867a1af6d`. ZIP integrity passed, Android manifest package `org.phwildlife.survey.beta08`, v2 certificate fingerprint matches pinned identity `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`.

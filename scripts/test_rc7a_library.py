@@ -118,7 +118,7 @@ class Rc7aLibraryTests(unittest.TestCase):
         self.assertIn("taxon_occurrence_evidence",detail)
 
     def test_home_and_catalog_open_new_library(self):
-        for n in ("WelcomeActivity","CatalogActivity"):
+        for n in ("LikasLibraryActivity","CatalogActivity"):
             self.assertIn("Rc7SpeciesLibraryActivity.class",
                           (CODE/(n+".java")).read_text())
         manifest=(ROOT/"app/src/main/AndroidManifest.xml").read_text()

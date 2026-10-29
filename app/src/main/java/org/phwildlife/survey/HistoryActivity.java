@@ -27,10 +27,7 @@ public class HistoryActivity extends Activity {
     private String surveySearch="";
     private final Handler searchHandler=new Handler(Looper.getMainLooper());
     private Runnable pendingSearch;
-    private static final String OUTCOME_SQL=
-        "CASE WHEN s.outcome IS NOT NULL THEN s.outcome "+
-        "WHEN s.ended IS NULL THEN 'active' "+
-        "WHEN COALESCE(s.complete,0)=1 THEN 'complete' ELSE 'incomplete' END";
+    private static final String OUTCOME_SQL=SurveyOutcomeSql.RESOLVED;
     private static final String[] OUTCOME_LABELS={
         "All outcomes","Complete","Incomplete","Canceled / Not counted","Active"};
     private static final String[] OUTCOME_VALUES={

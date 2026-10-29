@@ -76,7 +76,8 @@ public final class Rc8TraitComparisonActivity extends Activity {
                 if(out.size()+n>750000)throw new IllegalStateException("Species corpus too large");
                 out.write(block,0,n);
             }
-            JSONObject current=new JSONObject(out.toString("UTF-8"));
+            JSONObject current=Rc30SpeciesEvidence.merge(a,
+                new JSONObject(out.toString("UTF-8")));
             JSONArray accounts=current.getJSONArray("accounts");
             if(current.optInt("prioritySpeciesCount")!=96||accounts.length()!=96)
                 throw new IllegalStateException("Current cited species corpus incomplete");

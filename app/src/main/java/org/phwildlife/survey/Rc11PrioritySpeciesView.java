@@ -116,7 +116,8 @@ public final class Rc11PrioritySpeciesView {
                 if(categories==null)break;
                 HashSet<String> unique=new HashSet<>();
                 for(String key:AREAS){
-                    JSONArray claims=categories.optJSONArray(key);
+                    JSONArray claims=categories.optJSONArray(
+                        "Range".equals(key)?"Distribution":key);
                     if(claims==null)continue;
                     for(int j=0;j<claims.length();j++){
                         JSONObject item=claims.optJSONObject(j);

@@ -5,18 +5,29 @@ import android.content.Intent;
 import android.net.Uri;
 import android.graphics.Typeface;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 
-/** One DOI-linked bibliography for each priority species, retaining all older references. */
+/** Compact, offline, source-linked bibliography with local year and topic filters. */
 public final class Rc14Bibliography {
     private Rc14Bibliography(){}
     private static JSONObject index;
+    private static final String[] YEARS={
+        "All years","2025–2026","2020–2024","Before 2020","Year not listed"
+    };
+    private static final String[] TOPICS={
+        "All topics","Identification","Habitat","Distribution",
+        "Ecology","Conservation","Taxonomy","Other"
+    };
     private static int dp(Activity a,int px){
         return Math.round(px*a.getResources().getDisplayMetrics().density);
     }
@@ -26,7 +37,7 @@ public final class Rc14Bibliography {
             ByteArrayOutputStream out=new ByteArrayOutputStream()){
             byte[] buffer=new byte[8192];int n;
             while((n=in.read(buffer))!=-1){
-                if(out.size()+n>140000)throw new IllegalArgumentException("Bibliography too large");
+                if(out.size()+n>160000)throw new IllegalArgumentException("Bibliography too large");
                 out.write(buffer,0,n);
             }
             JSONObject obj=new JSONObject(out.toString("UTF-8"));
@@ -52,8 +63,7 @@ public final class Rc14Bibliography {
         String journal=paper.optString("journal").trim();
         String doi=paper.optString("doi").trim();
         int year=paper.optInt("publicationYear");
-        LinearLayout item=new LinearLayout(a);
-        item.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout item=new LinearLayout(a);item.setOrientation(LinearLayout.VERTICAL);
         item.setPadding(dp(a,4),dp(a,7),dp(a,4),dp(a,8));
         if(!authors.isEmpty()&&year>1800){
             item.addView(text(a,authors+" · "+year,true));
@@ -61,7 +71,6 @@ public final class Rc14Bibliography {
             if(!doi.isEmpty())imprint+=" · DOI: "+doi;
             item.addView(text(a,imprint,false));
         }else{
-            // Older references retain their unaltered author/journal/source citation.
             item.addView(text(a,citation,true));
         }
         Button open=UiKit.button(a,
@@ -72,30 +81,48 @@ public final class Rc14Bibliography {
         open.setOnClickListener(v->a.startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url))));
         where.addView(item);
     }
-    public static void add(Activity a,LinearLayout parent,String scientific){
-        JSONArray profiles=load(a).optJSONArray("profiles");
-        if(profiles==null)return;
-        JSONArray refs=null;
-        for(int i=0;i<profiles.length();i++){
-            JSONObject p=profiles.optJSONObject(i);
-            if(p!=null&&scientific.equalsIgnoreCase(p.optString("scientificName"))){
-                refs=p.optJSONArray("publications");break;
-            }
+    private static boolean yearMatches(JSONObject paper,int choice){
+        int year=paper.optInt("publicationYear",0);
+        switch(choice){
+            case 1:return year>=2025&&year<=2026;
+            case 2:return year>=2020&&year<=2024;
+            case 3:return year>0&&year<2020;
+            case 4:return year==0;
+            default:return true;
         }
-        if(refs==null)return;
-        parent.addView(text(a,"Research references · "+refs.length(),true));
-        LinearLayout more=new LinearLayout(a);more.setOrientation(LinearLayout.VERTICAL);
-        more.setVisibility(View.GONE);
+    }
+    private static boolean topicMatches(JSONObject paper,int choice){
+        if(choice==0)return true;
+        JSONArray tagged=paper.optJSONArray("topics");
+        if(tagged==null)return false;
+        for(int i=0;i<tagged.length();i++)
+            if(TOPICS[choice].equals(tagged.optString(i)))return true;
+        return false;
+    }
+    private static void render(Activity a,LinearLayout area,TextView count,
+            JSONArray refs,int year,int topic){
+        area.removeAllViews();
+        ArrayList<JSONObject> matches=new ArrayList<>();
         for(int i=0;i<refs.length();i++){
-            JSONObject entry=refs.optJSONObject(i);
-            if(entry==null)continue;
-            show(a,i<3?parent:more,entry);
+            JSONObject p=refs.optJSONObject(i);
+            if(p!=null&&yearMatches(p,year)&&topicMatches(p,topic))matches.add(p);
         }
-        if(refs.length()>3){
-            final int remaining=refs.length()-3;
+        count.setText("Research references · "+matches.size());
+        if(matches.isEmpty()){
+            area.addView(text(a,"No sources match these filters.",false));
+            return;
+        }
+        final int first=Math.min(3,matches.size());
+        for(int i=0;i<first;i++)show(a,area,matches.get(i));
+        if(matches.size()>first){
+            LinearLayout more=new LinearLayout(a);
+            more.setOrientation(LinearLayout.VERTICAL);
+            more.setVisibility(View.GONE);
+            for(int i=first;i<matches.size();i++)show(a,more,matches.get(i));
+            final int remaining=matches.size()-first;
             Button toggle=UiKit.button(a,"Show "+remaining+" more sources  ▾","quiet");
-            parent.addView(toggle,new LinearLayout.LayoutParams(-1,dp(a,46)));
-            parent.addView(more);
+            area.addView(toggle,new LinearLayout.LayoutParams(-1,dp(a,46)));
+            area.addView(more);
             toggle.setOnClickListener(v->{
                 boolean open=more.getVisibility()!=View.VISIBLE;
                 more.setVisibility(open?View.VISIBLE:View.GONE);
@@ -103,5 +130,62 @@ public final class Rc14Bibliography {
                     "Show "+remaining+" more sources  ▾");
             });
         }
+    }
+    private static Spinner spinner(Activity a,String[] choices){
+        Spinner spinner=new Spinner(a);
+        ArrayAdapter<String> adapter=new ArrayAdapter<>(a,
+            android.R.layout.simple_spinner_item,choices);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setMinimumHeight(dp(a,44));
+        return spinner;
+    }
+    public static void add(Activity a,LinearLayout parent,String scientific){
+        JSONArray profiles=load(a).optJSONArray("profiles");
+        if(profiles==null)return;
+        JSONArray found=null;
+        for(int i=0;i<profiles.length();i++){
+            JSONObject p=profiles.optJSONObject(i);
+            if(p!=null&&scientific.equalsIgnoreCase(p.optString("scientificName"))){
+                found=p.optJSONArray("publications");break;
+            }
+        }
+        if(found==null)return;
+        final JSONArray refs=found;
+        TextView count=text(a,"Research references · "+refs.length(),true);
+        parent.addView(count);
+        LinearLayout filterPanel=new LinearLayout(a);
+        filterPanel.setOrientation(LinearLayout.VERTICAL);
+        filterPanel.setVisibility(View.GONE);
+        filterPanel.setPadding(dp(a,4),dp(a,5),dp(a,4),dp(a,5));
+        filterPanel.addView(text(a,"Publication year",false));
+        Spinner year=spinner(a,YEARS);
+        filterPanel.addView(year,new LinearLayout.LayoutParams(-1,dp(a,46)));
+        filterPanel.addView(text(a,"Research topic",false));
+        Spinner topic=spinner(a,TOPICS);
+        filterPanel.addView(topic,new LinearLayout.LayoutParams(-1,dp(a,46)));
+        Button filters=UiKit.button(a,"Filter references  ▾","quiet");
+        filters.setContentDescription("Show publication year and research topic filters");
+        parent.addView(filters,new LinearLayout.LayoutParams(-1,dp(a,45)));
+        parent.addView(filterPanel);
+        filters.setOnClickListener(v->{
+            boolean open=filterPanel.getVisibility()!=View.VISIBLE;
+            filterPanel.setVisibility(open?View.VISIBLE:View.GONE);
+            filters.setText(open?"Hide filters  ▴":"Filter references  ▾");
+        });
+        LinearLayout results=new LinearLayout(a);
+        results.setOrientation(LinearLayout.VERTICAL);
+        parent.addView(results);
+        Runnable refresh=()->render(a,results,count,refs,
+            year.getSelectedItemPosition(),topic.getSelectedItemPosition());
+        AdapterView.OnItemSelectedListener listener=new AdapterView.OnItemSelectedListener(){
+            @Override public void onItemSelected(AdapterView<?> p,View v,int pos,long id){
+                refresh.run();
+            }
+            @Override public void onNothingSelected(AdapterView<?> p){refresh.run();}
+        };
+        year.setOnItemSelectedListener(listener);
+        topic.setOnItemSelectedListener(listener);
+        render(a,results,count,refs,0,0);
     }
 }

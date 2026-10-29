@@ -15,6 +15,10 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import static org.junit.Assert.*;
 
 /** Disposable-emulator UI assertions for the 96-taxon shared species card. */
@@ -185,6 +189,67 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                     assertFalse(containsText(views,"A detailed account is not yet source-checked"));
                 });
             }
+        }
+    }
+
+    @Test public void testAll96ActualSpeciesScreensHaveCitedCardAndNoBoilerplate()
+            throws Exception{
+        android.content.Context target=InstrumentationRegistry.getInstrumentation()
+            .getTargetContext();
+        StringBuilder raw=new StringBuilder();
+        try(InputStream in=target.getAssets().open("rc18_unified_96_priority_accounts_v1.json")){
+            byte[] buffer=new byte[8192];int length;
+            while((length=in.read(buffer))!=-1)
+                raw.append(new String(buffer,0,length,StandardCharsets.UTF_8));
+        }
+        JSONArray accounts=new JSONObject(raw.toString()).getJSONArray("accounts");
+        assertEquals(96,accounts.length());
+        File dir=new File(target.getFilesDir(),"rc19-all-96-screen-audit");
+        assertTrue(dir.isDirectory()||dir.mkdirs());
+        StringBuilder manifest=new StringBuilder("index,scientificName,group,visibleCards,bytes\n");
+        for(int i=0;i<accounts.length();i++){
+            JSONObject species=accounts.getJSONObject(i);
+            final int number=i;
+            final String name=species.getString("scientificName");
+            final String group=species.getString("group");
+            Intent intent=new Intent(target,TaxonDetailActivity.class);
+            intent.putExtra("taxon_query",name);
+            try(ActivityScenario<TaxonDetailActivity> screen=ActivityScenario.launch(intent)){
+                screen.onActivity(activity->{
+                    View root=activity.getWindow().getDecorView();
+                    ArrayList<View> all=descendants(root);
+                    assertTrue("Missing species title "+name,containsText(all,name));
+                    assertTrue("Missing references "+name,containsText(all,"Sources & details"));
+                    int count=0;
+                    for(String heading:new String[]{"Identification","Habitat",
+                        "Range","Natural history","Conservation"})
+                        if(containsText(all,heading))count++;
+                    assertTrue("No biological card for "+name,count>0);
+                    for(String forbidden:new String[]{
+                        "specialist key review remains pending",
+                        "A detailed account is not yet source-checked",
+                        "Unassessed. No reviewed ecological profile installed."})
+                        assertFalse("Defensive copy for "+name,containsText(all,forbidden));
+                    assertTrue("Screen was not laid out "+name,
+                        root.getWidth()>0&&root.getHeight()>0);
+                    Bitmap bitmap=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
+                        Bitmap.Config.RGB_565);
+                    root.draw(new Canvas(bitmap));
+                    File output=new File(dir,String.format(java.util.Locale.ROOT,
+                        "%03d.jpg",number));
+                    try(FileOutputStream stream=new FileOutputStream(output)){
+                        assertTrue(bitmap.compress(Bitmap.CompressFormat.JPEG,65,stream));
+                    }catch(Exception e){throw new IllegalStateException(e);}
+                    bitmap.recycle();
+                    manifest.append(number).append(",").append(name).append(",")
+                        .append(group).append(",").append(count).append(",")
+                        .append(output.length()).append("\n");
+                });
+            }
+        }
+        try(FileOutputStream out=new FileOutputStream(new File(target.getFilesDir(),
+            "rc19-all-96-screen-audit.csv"))){
+            out.write(manifest.toString().getBytes(StandardCharsets.UTF_8));
         }
     }
 

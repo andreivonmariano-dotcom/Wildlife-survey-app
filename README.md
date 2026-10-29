@@ -1,3 +1,11 @@
+# LIKAS RC35 | Species Library crash hotfix
+
+The owner reported a launch crash from the new conservation-based species carousel. The root cause was `LikasDiscoveryActivity.level()` calling `JSONObject.optJSONObject()` on a **missing** status for 90 of 96 research accounts. The signed RC35 debug preview now shows **neutral cards without fabricated conservation categories**. Six dated IUCN/DENR entries and all 505 original+reviewed research facts remain intact.
+
+**Build:** `0.27.3-rc35-species-crash-hotfix-preview`, versionCode **95**, unchanged `org.phwildlife.survey.beta08`, SQLite27 and pinned signer. The Scientific Core QA workflow **40853862614** passed, with Python/JVM tests, APK assembly and **Android instrumented-test compilation**. The device launch tests were **not run**. APK SHA-256 `c64b236fa509cb038085e7e75b4288c69102785c0f72e967d93cbc236e1e7fc8`. See `docs/LIKAS_RC35_SPECIES_LIBRARY_CRASH_HOTFIX.md` and `docs/LIKAS_PROJECT_STATE.md` for root cause, fix, verification and device QA limits.
+
+---
+
 # LIKAS v0.27.3 RC34 | Conservation cards and swipe habitat library
 
 **Development candidate:** `0.27.3-rc34-conservation-cards-preview` (versionCode **94**). Same Android package `org.phwildlife.survey.beta08`, preserved signer and SQLite **27**.

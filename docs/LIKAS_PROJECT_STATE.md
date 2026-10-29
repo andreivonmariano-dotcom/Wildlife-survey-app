@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC20 signed APK and full Android emulator QA VERIFIED
+
+- **Direct signed preview:** RC20 code (`0.27.3-rc20-documented-species-preview`, versionCode **73**) passes Scientific Core QA, including runs `40808121265`, `40808196208` and `40808189815`. APK artifacts `12868578618` and `12869087632` are byte-identical. Actual extracted APK `LIKAS-v0.27.3-RC20-documented-species-debug.apk` is **9,553,587 bytes**, SHA-256 `268fed26f364bc670a3245eafe630dec9c51805c4767a25545cd7a643e534629`, with valid ZIP, compiled 393-fact corpus and RC20 source batch. Parsed compiled AndroidManifest.xml: package `org.phwildlife.survey.beta08`, versionCode **73**, proper versionName. APK signing block v2 certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches original pinned identity. A verified direct sandbox APK link was delivered during this conversation only.
+- **Real Android emulator:** GitHub workflow `40807884582` succeeded on Android source commit `94f4f639...`; later commits modify tests and docs only. Retrieved evidence artifact `12868574937`. Actual instrumented Android 14 log says **OK (13 tests)**. All **96** taxon views produced distinct 480×960 JPEG screenshots, every CSV byte count matches, with 24 each Birds, Amphibians, Reptiles and Mammals. All 96 rendered the new evidence topic summary. Reviewed four 24-screen contact sheets. No obvious first-viewport title/card overlaps; not a below-fold or device-accessibility guarantee.
+- **Upgrade retention:** Emulator before/after SQLite files **byte-identical** at 1,613,824 bytes, SHA-256 `cd3aa2331a0727ec5e20085e49a91cb7d3d910d1d25d3ee3dff64feefd57e212`. Script verifies old-installation media fixture. Real owner-data upgrade on a physical handset remains untested.
+- **Source coverage now:** 96/96 account screens, **393** cited biology facts, **269** per-species source links, **58** existing offline photos. Missing sections: 18 Identification, 51 Habitat, 24 Distribution, 75 Natural history, 76 Conservation. Nine species received new Identification content drawn from original research or clearly distinguished secondary references; no unsupported diagnosis or site occurrence was added.
+- **Next:** Continue published-original diagnostic work on the remaining **18** identification gaps, then credible habitat/ecology/conservation evidence. Keep startup branch and original media untouched. PR #38 stays draft pending real handset, user records and larger-font tests. Direct artifact from another chat must not be reused without verifying it is mounted. Complete QA details: `docs/LIKAS_RC20_SOURCE_GAPS_AND_SCREEN_REFINEMENT.md`.
+
+---
+
+
 ## 29 October 2026 | RC20 sourced species batch and accessibility controls, preview QA pending
 
 - **Owner accepted Q1/Q2/Q3:** Extend missing identifications using cited primary or labeled secondary sources, add sourced habitat/natural-history/conservation facts, refine 96 species screens and build a new signed preview. Startup branch remains isolated. No user study/field archive, SQLite 27, package ID or signing identity changes.

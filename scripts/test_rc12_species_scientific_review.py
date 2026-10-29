@@ -72,9 +72,10 @@ class ScientificReviewRegisterContract(unittest.TestCase):
         review=(JAVA/"Rc12ScientificReview.java").read_text()
         self.assertIn('rc12_primary_diagnoses_v1.json',ui)
         self.assertIn("Rc12ScientificReview.add(a,references,scientific)",ui)
-        self.assertIn("Scientific checklist",review)
-        self.assertIn('optInt("expertApprovedCount",-1)!=0',review)
-        self.assertIn('rc12_species_scientific_review_register_v1.json',review)
+        self.assertIn("Literature coverage",review)
+        self.assertIn('rc13_publication_coverage_v1.json',review)
+        self.assertNotIn("Specialist sign-off:",review)
+        self.assertNotIn("Scientific checklist",review)
         self.assertIn("setVisibility(View.GONE)",review)
 
 if __name__=="__main__":

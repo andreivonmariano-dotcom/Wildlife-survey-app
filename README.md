@@ -1,3 +1,13 @@
+# LIKAS RC40 | Home and field-language fixes
+
+**Source candidate:** `0.27.3-rc40-home-layout-copy-preview` (versionCode **100**). **Signed APK and device acceptance not yet confirmed.** The verified RC39 debug binary remains the last downloaded preview until RC40 CI and signer checks pass.
+
+The reported Home-screen defect has a source fix: the formerly oversized Fieldwork panel is replaced by a compact content-sized tile, with Library and Settings retained as separate entries. Fieldwork removes duplicate headings and integrates the latest record into History. Survey setup shows labels for numeric defaults and units. The analysis outcome expression is shared with History to handle legacy records consistently. The field countdown respects Less motion. Habitat and species copy is shorter, and curated research claims use direct scientific language while retaining citations.
+
+Read `docs/LIKAS_RC40_SCREENSHOT_AUDIT.md` for screenshots, source checks and unverified physical-device acceptance.
+
+---
+
 # LIKAS RC39 | Field Guide Studio
 
 **Current source preview:** `0.27.3-rc39-field-guide-studio-preview`, versionCode **99**; package `org.phwildlife.survey.beta08`; pinned signer; SQLite **27**. **Signed development APK verified:** Scientific Core QA run `40875251725` passed. APK package `org.phwildlife.survey.beta08`, versionCode 99, matching original v2 signer. Artifact `12898476132` was extracted as `LIKAS-v0.27.3-RC39-field-guide-studio-debug.apk` (SHA-256 `ecd6c43f617e18008b497a4c396dcc502e93e71a1a1ee023e4462ba64a94e16e`). Physical phone and upgrade checks remain pending.

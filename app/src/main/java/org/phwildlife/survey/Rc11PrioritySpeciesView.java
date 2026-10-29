@@ -13,7 +13,9 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,6 +24,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
@@ -378,11 +381,11 @@ public final class Rc11PrioritySpeciesView {
         list.addView(block);
         referenced.add(item);
     }
-    private static void section(Activity a,LinearLayout parent,String area,
+    private static View section(Activity a,LinearLayout parent,String area,
             String icon,ArrayList<Fact> all,ArrayList<Fact> references){
         ArrayList<Fact> available=new ArrayList<>();
         for(Fact item:all)if(area.equals(item.area))available.add(item);
-        if(available.isEmpty())return;
+        if(available.isEmpty())return null;
         LinearLayout card=new LinearLayout(a);card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(a,13),dp(a,13),dp(a,13),dp(a,12));
         card.setBackground(UiKit.surface(a));
@@ -419,6 +422,7 @@ public final class Rc11PrioritySpeciesView {
         }
         LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
         cardLp.bottomMargin=dp(a,11);parent.addView(card,cardLp);
+        return card;
     }
     private static void sourceDrawer(Activity a,LinearLayout parent,String scientific,
             String citation,String sourceUrl,String sourceKey,ArrayList<Fact> facts){
@@ -517,9 +521,48 @@ public final class Rc11PrioritySpeciesView {
         coverageLp.bottomMargin=dp(a,9);
         parent.addView(evidenceCoverage,coverageLp);
         OfflinePhotoEvidence.addCompactForTaxon(a,parent,scientific);
+        // Jump links only target sections with documented research facts.
+        int navigationIndex=parent.getChildCount();
         ArrayList<Fact> displayed=new ArrayList<>();
-        for(int i=0;i<AREAS.length;i++)
-            section(a,parent,AREAS[i],ICONS[i],facts,displayed);
+        LinkedHashMap<String,View> sections=new LinkedHashMap<>();
+        for(int i=0;i<AREAS.length;i++){
+            View card=section(a,parent,AREAS[i],ICONS[i],facts,displayed);
+            if(card!=null)sections.put(AREAS[i],card);
+        }
+        if(sections.size()>1){
+            LinearLayout navigation=new LinearLayout(a);
+            navigation.setOrientation(LinearLayout.VERTICAL);
+            TextView label=text(a,"Jump to section",12,true,UiKit.FOREST);
+            label.setPadding(dp(a,2),dp(a,2),0,dp(a,6));
+            navigation.addView(label);
+            HorizontalScrollView rail=new HorizontalScrollView(a);
+            rail.setHorizontalScrollBarEnabled(false);
+            LinearLayout links=new LinearLayout(a);
+            links.setOrientation(LinearLayout.HORIZONTAL);
+            for(Map.Entry<String,View> entry:sections.entrySet()){
+                String area=entry.getKey();
+                View target=entry.getValue();
+                Button jump=UiKit.button(a,area,"quiet");
+                jump.setContentDescription("Jump to "+area+" research section");
+                jump.setMinHeight(dp(a,48));
+                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,dp(a,52));
+                lp.rightMargin=dp(a,7);
+                links.addView(jump,lp);
+                jump.setOnClickListener(v->{
+                    if(parent.getParent() instanceof ScrollView){
+                        ScrollView page=(ScrollView)parent.getParent();
+                        // Immediate jumps remain usable with Less motion enabled.
+                        page.post(()->page.scrollTo(0,
+                            Math.max(0,target.getTop()-dp(a,8))));
+                    }
+                });
+            }
+            rail.addView(links);
+            navigation.addView(rail,new LinearLayout.LayoutParams(-1,dp(a,56)));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+            lp.bottomMargin=dp(a,12);
+            parent.addView(navigation,navigationIndex,lp);
+        }
         sourceDrawer(a,parent,scientific,
             column(taxon,"source")+" · "+column(taxon,"source_version"),
             column(taxon,"source_url"),column(taxon,"taxon_key"),facts);

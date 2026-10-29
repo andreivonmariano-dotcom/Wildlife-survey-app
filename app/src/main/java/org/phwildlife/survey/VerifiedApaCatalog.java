@@ -74,6 +74,8 @@ public final class VerifiedApaCatalog {
             "Musser, G. G., & Gordon, L. K. (1981). A new species of Crateromys (Muridae) from the Philippines. Journal of Mammalogy, 62(3), 513–525. https://doi.org/10.2307/1380399","Journal of Mammalogy"));
         m.put("https://digitalcommons.usf.edu/auk/vol70/iss1/20/",new Record("(Manuel & Gilliard, 1953)",
             "Manuel, C. G., & Gilliard, E. T. (1953). A new name for a flowerpecker from the Philippines. The Auk, 70(1), 90. https://digitalcommons.usf.edu/auk/vol70/iss1/20/","The Auk"));
+        m.put("https://www.iaees.org/publications/journals/piaees/articles/2021-11%284%29/amphibian-diversity-endemism-habitat-associations.pdf",new Record("(Galolo et al., 2021)",
+            "Galolo, A. R. V., Demayo, C. G., Raganas, C. D., & Paz, S. L. (2021). Amphibian diversity, endemism and habitat associations within and outside the selected mining sites in Caraga Region, Philippines. Proceedings of the International Academy of Ecology and Environmental Sciences, 11(4), 159–187. https://www.iaees.org/publications/journals/piaees/articles/2021-11%284%29/amphibian-diversity-endemism-habitat-associations.pdf","Proceedings of the International Academy of Ecology and Environmental Sciences"));
         ENTRIES=Collections.unmodifiableMap(m);
     }
     private static Record match(String url){

@@ -342,7 +342,7 @@ public final class TaxonDetailActivity extends Activity {
                     paragraph("Reviewed habitat codes",habitats);
                     String low=ecology.isNull(1)?"Unassessed":ecology.getString(1)+" m";
                     String high=ecology.isNull(2)?"Unassessed":ecology.getString(2)+" m";
-                    paragraph("Published elevation reference","Minimum: "+low+
+                    paragraph("Elevation range","Minimum: "+low+
                         " · Maximum: "+high);
                     paragraph("Habitat reference",ecology.getString(3)+
                         " ("+ecology.getString(4)+")");
@@ -351,7 +351,7 @@ public final class TaxonDetailActivity extends Activity {
                     if(!ecology.isNull(6)&&
                         ecology.getString(6).startsWith("https://")){
                         String cited=ecology.getString(6);
-                        sourceLink("Open habitat study",cited,"https://");
+                        sourceLink("Habitat source",cited,"https://");
                     }
                 }
             }
@@ -390,14 +390,7 @@ public final class TaxonDetailActivity extends Activity {
             }catch(Exception ignored){}
             if(regional.length()>0)
                 paragraph("Regional occurrence evidence",regional.toString());
-            else paragraph("Regional occurrence evidence","Not assessed in the installed evidence catalog");
-            TextView foot=text("The source and edition for each reference appear above. "+
-                "Source links require internet. External photographs and recordings "+
-                "remain with their publishers. No reference confirms a sighting "+
-                "at this station.",12,false);
-            foot.setTextColor(UiKit.MUTED);
-            foot.setPadding(0,dp(15),0,0);
-            content.addView(foot);
+            else paragraph("Regional occurrence evidence","No regional record in this catalog");
         }catch(Exception ex){showMessage("Unable to read this species record.");}
     }
     @Override protected void onDestroy(){db.close();super.onDestroy();}

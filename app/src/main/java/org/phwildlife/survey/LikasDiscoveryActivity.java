@@ -64,6 +64,9 @@ public final class LikasDiscoveryActivity extends Activity {
         return 0;
     }
     private int level(JSONObject status){
+        // Most catalog species have no independently reviewed dated assessment yet.
+        // A missing status must render a neutral card, not crash or imply LC/DD.
+        if(status==null)return 0;
         return Math.max(categoryLevel(status.optJSONObject("iucn")),
             categoryLevel(status.optJSONObject("denr")));
     }

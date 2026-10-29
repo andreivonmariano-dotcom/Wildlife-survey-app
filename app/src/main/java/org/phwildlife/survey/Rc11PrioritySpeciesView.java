@@ -123,9 +123,10 @@ public final class Rc11PrioritySpeciesView {
                         if(item==null)continue;
                         add(list,unique,key,item.optString("label"),
                             item.optString("text"),item.optString("source"),
-                            item.optString("url"),item.optString("studyScope"),
-                            item.optString("sourceLocation"),
-                            item.optString("sourceType"));
+                            item.optString("url"),
+                            item.isNull("studyScope")?"":item.optString("studyScope"),
+                            item.isNull("sourceLocation")?"":item.optString("sourceLocation"),
+                            "");
                     }
                 }
                 if(!list.isEmpty())return list;

@@ -4,9 +4,19 @@ on:
   push:
     branches:
       - feature/likas-core-fieldwork-post-rc4
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - '.gitignore'
   pull_request:
     branches:
       - feature/v0.27.3-startup-living-forest
+  workflow_dispatch:
+
+# Only the latest source revision needs a scientific-core build.
+concurrency:
+  group: likas-science-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -91,13 +101,27 @@ jobs:
       - name: Verify assembly artifact exists (not published)
         run: test -s app/build/outputs/apk/debug/app-debug.apk
 
+      - name: Label APK artifact with its actual Gradle version
+        run: |
+          python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+          gradle=Path("app/build.gradle").read_text()
+          name=re.search(r"versionName\\s+'([^']+)'",gradle)
+          code=re.search(r"versionCode\\s+(\\d+)",gradle)
+          assert name and code, "Missing Gradle version metadata"
+          label=f"LIKAS-{name.group(1)}-code{code.group(1)}-debug"
+          with open(os.environ["GITHUB_ENV"],"a") as env:
+              env.write(f"LIKAS_ARTIFACT={label}\\n")
+          print(label)
+          PY
       - name: Attach verified development APK for direct chat delivery
         if: |
           (github.event_name == 'push' && github.ref == 'refs/heads/feature/likas-core-fieldwork-post-rc4') ||
           (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feature/likas-core-fieldwork-post-rc4')
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC36-library-polish-debug
+          name: ${{ env.LIKAS_ARTIFACT }}
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 5

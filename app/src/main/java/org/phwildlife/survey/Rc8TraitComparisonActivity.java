@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 
 /** Evidence comparison only. Never identifies a field observation or writes to SQLite. */
 public final class Rc8TraitComparisonActivity extends Activity {
@@ -264,7 +265,8 @@ public final class Rc8TraitComparisonActivity extends Activity {
         }
         return items;
     }
-    private void addClaims(LinearLayout parent,JSONObject profile,String category){
+    private void addClaims(LinearLayout parent,JSONObject profile,String category,
+            LinkedHashMap<String,JSONObject> references){
         parent.addView(text(label(profile,habitatMode),14,true));
         if(!habitatMode){
             String scientific=profile.optString("scientificName");
@@ -292,29 +294,18 @@ public final class Rc8TraitComparisonActivity extends Activity {
         int count=0;
         for(JSONObject item:list){
             if(count++>=4){parent.addView(text("More cited statements appear in the full species account.",12,false));break;}
-            parent.addView(text(item.optString("label")+": "+item.optString("value"),14,false));
             String source=item.optString("source"),url=item.optString("url");
-            String year=item.isNull("sourceYear")?"Year not recorded":
-                String.valueOf(item.optInt("sourceYear"));
-            String sourceType=item.optString("sourceType").replace('_',' ');
+            int year=item.optInt("sourceYear",0);
+            String claim=item.optString("value").trim().replaceAll("[.\\\\s]+$","");
+            parent.addView(text(item.optString("label")+": "+claim+" "+
+                ResearchCitationFormatter.inText(source,year)+".",14,false));
             String scope=item.optString("studyScope");
-            String details="Source: "+source+" · "+year+
-                (sourceType.isEmpty()?"":" · "+sourceType)+
-                (scope.isEmpty()?"":"\nStudy limit: "+scope);
-            TextView citation=text(details,11,false);
-            citation.setTextColor(UiKit.MUTED);parent.addView(citation);
-            if(url.startsWith("https://")){
-                Button open=UiKit.button(this,"Open cited source","quiet");
-                parent.addView(open,new LinearLayout.LayoutParams(-1,dp(41)));
-                open.setOnClickListener(v->{
-                    try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}
-                    catch(Exception e){
-                        new android.app.AlertDialog.Builder(this)
-                            .setMessage("No application is available to open this source.")
-                            .setPositiveButton("Close",null).show();
-                    }
-                });
+            if(!scope.isEmpty()){
+                TextView limit=text("Study scope: "+scope,12,false);
+                limit.setTextColor(UiKit.MUTED);parent.addView(limit);
             }
+            if(url.startsWith("https://")&&!references.containsKey(url))
+                references.put(url,item);
         }
     }
     private void render(){
@@ -341,10 +332,25 @@ public final class Rc8TraitComparisonActivity extends Activity {
             card.setPadding(dp(11),dp(9),dp(11),dp(10));
             card.setBackground(UiKit.surface(this));
             card.addView(text(field,16,true));
-            addClaims(card,a,field);
+            LinkedHashMap<String,JSONObject> references=new LinkedHashMap<>();
+            addClaims(card,a,field,references);
             TextView divider=text("Compared with",12,false);
             divider.setTextColor(UiKit.POND);card.addView(divider);
-            addClaims(card,b,field);
+            addClaims(card,b,field,references);
+            if(!references.isEmpty()){
+                card.addView(text("References",13,true));
+                for(JSONObject source:references.values()){
+                    String entry=ResearchCitationFormatter.sourceRecord(
+                        source.optString("source"),source.optInt("sourceYear",0),
+                        source.optString("url"));
+                    TextView citation=text(entry,12,false);
+                    citation.setTextColor(UiKit.MUTED);
+                    citation.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
+                    citation.setMovementMethod(
+                        android.text.method.LinkMovementMethod.getInstance());
+                    card.addView(citation);
+                }
+            }
             LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(-1,-2);
             params.bottomMargin=dp(12);results.addView(card,params);
         }

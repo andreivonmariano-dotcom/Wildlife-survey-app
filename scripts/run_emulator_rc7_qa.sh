@@ -54,6 +54,10 @@ adb exec-out run-as "$PKG" cat files/rc11_species_account_320dp.png > emulator-q
 test -s emulator-qa/species-account-320dp.png
 adb exec-out run-as "$PKG" cat files/rc21_recorder_large_text.png > emulator-qa/recorder-200percent-font.png
 test -s emulator-qa/recorder-200percent-font.png
+adb exec-out run-as "$PKG" cat files/rc24_compare_200percent.png > emulator-qa/compare-200percent-font.png
+test -s emulator-qa/compare-200percent-font.png
+adb exec-out run-as "$PKG" cat files/rc24_conservation_200percent.png > emulator-qa/conservation-200percent-font.png
+test -s emulator-qa/conservation-200percent-font.png
 echo '=== Collect real 320dp screenshots for every priority species ==='
 mkdir -p emulator-qa/all-96-species-screens
 adb exec-out run-as "$PKG" cat files/rc19-all-96-screen-audit.csv > emulator-qa/all-96-species-audit.csv

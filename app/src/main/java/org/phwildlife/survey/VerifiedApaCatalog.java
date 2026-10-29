@@ -76,6 +76,16 @@ public final class VerifiedApaCatalog {
             "Manuel, C. G., & Gilliard, E. T. (1953). A new name for a flowerpecker from the Philippines. The Auk, 70(1), 90. https://digitalcommons.usf.edu/auk/vol70/iss1/20/","The Auk"));
         m.put("https://www.iaees.org/publications/journals/piaees/articles/2021-11%284%29/amphibian-diversity-endemism-habitat-associations.pdf",new Record("(Galolo et al., 2021)",
             "Galolo, A. R. V., Demayo, C. G., Raganas, C. D., & Paz, S. L. (2021). Amphibian diversity, endemism and habitat associations within and outside the selected mining sites in Caraga Region, Philippines. Proceedings of the International Academy of Ecology and Environmental Sciences, 11(4), 159–187. https://www.iaees.org/publications/journals/piaees/articles/2021-11%284%29/amphibian-diversity-endemism-habitat-associations.pdf","Proceedings of the International Academy of Ecology and Environmental Sciences"));
+        m.put("https://doi.org/10.3897/herpetozoa.36.e96841",new Record("(Zdunek & Webb, 2023)",
+            "Zdunek, P., & Webb, M. S. (2023). Observation records of the Bangon Monitor Lizard, Varanus bangonorum (Squamata, Varanidae), with emphasis on behaviour and local threats, from the Municipality of Abra de Ilog, Occidental Mindoro, Philippines. Herpetozoa, 36, 1–8. https://doi.org/10.3897/herpetozoa.36.e96841","Herpetozoa"));
+        m.put("https://iucn-mlsg.org/species/philippine-species/varanus-bangonorum/",new Record("(IUCN SSC Monitor Lizard Specialist Group, n.d.)",
+            "IUCN SSC Monitor Lizard Specialist Group. (n.d.). Varanus bangonorum. https://iucn-mlsg.org/species/philippine-species/varanus-bangonorum/",""));
+        m.put("https://doi.org/10.1655/HERPMONOGRAPHS-D-10-00005.1",new Record("(Welton et al., 2010)",
+            "Welton, L. J., Siler, C. D., Linkem, C. W., Diesmos, A. C., & Brown, R. M. (2010). Philippine bent-toed geckos of the Cyrtodactylus agusanensis complex: Multilocus phylogeny, morphological diversity, and descriptions of three new species. Herpetological Monographs, 24(1), 55–85. https://doi.org/10.1655/HERPMONOGRAPHS-D-10-00005.1","Herpetological Monographs"));
+        m.put("https://doi.org/10.5852/ejt.2024.961.2681",new Record("(Das et al., 2024)",
+            "Das, I., Gowri Shankar, P., Swamy, P., Williams, R. C., Lalremsanga, H. T., Prashanth, P., Sahoo, G., Vijayakumar, S. P., Höglund, J., Shanker, K., Dutta, S. K., Ganesh, S. R., & Wüster, W. (2024). Taxonomic revision of the king cobra Ophiophagus hannah (Cantor, 1836) species complex (Reptilia: Serpentes: Elapidae), with the description of two new species. European Journal of Taxonomy, 961, 1–51. https://doi.org/10.5852/ejt.2024.961.2681","European Journal of Taxonomy"));
+        m.put("https://ncr.denr.gov.ph/news-events/cloud-rat-o-buot-nakuha-sa-las-pinas-city-ng-denr-meo-south/",new Record("(Department of Environment and Natural Resources, n.d.)",
+            "Department of Environment and Natural Resources. (n.d.). Cloud rat o buot, nakuha sa Las Piñas City ng DENR MEO South. https://ncr.denr.gov.ph/news-events/cloud-rat-o-buot-nakuha-sa-las-pinas-city-ng-denr-meo-south/",""));
         ENTRIES=Collections.unmodifiableMap(m);
     }
     private static Record match(String url){

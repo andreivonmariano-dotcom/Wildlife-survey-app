@@ -329,13 +329,13 @@
       "scientificName": "Dicaeum kampalili",
       "section": "Identification",
       "label": "Original nomenclature and species separation",
-      "text": "Manuel and Gilliard published the replacement name Dicaeum kampalili in 1953 for the Mt. Kampalili flowerpecker. Clements subsequently separated the Mindanao species from the Luzon Yellow-crowned Flowerpecker D. anthonyi.",
+      "text": "Manuel and Gilliard published the replacement name Dicaeum kampalili in 1953 for a flowerpecker named from Mt. Kampalili on Mindanao. This nomenclatural source does not provide a validated field identification key.",
       "source": "Manuel & Gilliard (1953), The Auk 70(1), Article 20",
       "url": "https://digitalcommons.usf.edu/auk/vol70/iss1/20/",
       "sourceType": "original_nomenclatural_note_not_field_diagnosis",
       "sourceYear": 1953,
       "sourceLocation": "The Auk 70(1), Article 20, replacement name; comparative interpretation in Clements v2023",
-      "studyScope": "Nomenclature and taxonomic split, not a verified visual or vocal diagnostic character. A true key still requires original comparative descriptions or examined specimen images.",
+      "studyScope": "Name and type-locality evidence only. The separate 2023 Clements review treats the Mindanao taxon as distinct from the Luzon Yellow-crowned Flowerpecker D. anthonyi. Neither source establishes field diagnostic characters from the evidence reviewed here.",
       "diagnosticReadiness": "taxonomy_only",
       "comparisonSourceUrl": "https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2023/updates-and-corrections/"
     }

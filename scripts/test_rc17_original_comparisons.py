@@ -13,7 +13,7 @@ class OriginalComparisonTests(unittest.TestCase):
         old={x["scientificName"]:x for x in base["profiles"]}
         self.assertEqual(96,len(old))
         self.assertEqual(96,len(idx["profiles"]))
-        self.assertEqual(250,sum(x["referenceCount"] for x in idx["profiles"]))
+        self.assertEqual(252,sum(x["referenceCount"] for x in idx["profiles"]))
         self.assertEqual(13,idx["recentVerifiedTaxa"])
         for x in idx["profiles"]:
             self.assertEqual(x["sourceTaxonKey"],old[x["scientificName"]]["sourceTaxonKey"])

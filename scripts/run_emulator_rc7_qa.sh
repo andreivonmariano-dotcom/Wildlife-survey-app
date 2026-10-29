@@ -47,11 +47,13 @@ adb shell pm grant "$PKG" android.permission.ACCESS_COARSE_LOCATION || true
 adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 adb shell am instrument -w -r \
   "$PKG.test/androidx.test.runner.AndroidJUnitRunner" | tee emulator-qa/instrumentation.txt
-grep -Eq 'OK \(13 tests?\)' emulator-qa/instrumentation.txt
+grep -Eq 'OK \(14 tests?\)' emulator-qa/instrumentation.txt
 adb exec-out run-as "$PKG" cat files/rc7_library_screen.png > emulator-qa/library-320dp.png
 test -s emulator-qa/library-320dp.png
 adb exec-out run-as "$PKG" cat files/rc11_species_account_320dp.png > emulator-qa/species-account-320dp.png
 test -s emulator-qa/species-account-320dp.png
+adb exec-out run-as "$PKG" cat files/rc21_recorder_large_text.png > emulator-qa/recorder-200percent-font.png
+test -s emulator-qa/recorder-200percent-font.png
 echo '=== Collect real 320dp screenshots for every priority species ==='
 mkdir -p emulator-qa/all-96-species-screens
 adb exec-out run-as "$PKG" cat files/rc19-all-96-screen-audit.csv > emulator-qa/all-96-species-audit.csv

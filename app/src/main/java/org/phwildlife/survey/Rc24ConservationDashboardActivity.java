@@ -63,7 +63,8 @@ public final class Rc24ConservationDashboardActivity extends Activity {
                 if(out.size()+n>750000)throw new IllegalStateException("Conservation corpus too large");
                 out.write(b,0,n);
             }
-            JSONObject data=new JSONObject(out.toString("UTF-8"));
+            JSONObject data=Rc30SpeciesEvidence.merge(activity,
+                new JSONObject(out.toString("UTF-8")));
             if(data.optInt("prioritySpeciesCount")!=96||
                 data.getJSONArray("accounts").length()!=96)
                 throw new IllegalStateException("Species reference incomplete");

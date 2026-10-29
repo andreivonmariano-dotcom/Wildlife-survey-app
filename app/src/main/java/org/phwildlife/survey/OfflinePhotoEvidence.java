@@ -89,23 +89,55 @@ public final class OfflinePhotoEvidence {
         }
         return availablePhotoTaxa.contains(scientific.toLowerCase(java.util.Locale.ROOT));
     }
-    /** iNaturalist references are rendered only if a verified JPEG was bundled. */
-    /** Small, downsampled thumbnail for offline catalog rows. Attribution is in species detail. */
-    public static ImageView thumbnailForTaxon(Activity a,String scientific){
-        JSONObject photo=findForTaxon(a,scientific);
+    /** Only approved, bundled JPGs are eligible. Keep decoded previews memory-bounded. */
+    private static final android.util.LruCache<String,Bitmap> previewCache=
+        new android.util.LruCache<String,Bitmap>(4*1024*1024){
+            @Override protected int sizeOf(String key,Bitmap bitmap){
+                return bitmap.getByteCount();
+            }
+        };
+    private static ImageView thumbnail(Activity a,JSONObject photo,String label){
         if(photo==null)return null;
-        try(InputStream in=a.getAssets().open(photo.optString("offlineAsset"))){
-            BitmapFactory.Options options=new BitmapFactory.Options();
-            options.inSampleSize=4;
-            Bitmap bitmap=BitmapFactory.decodeStream(in,null,options);
-            if(bitmap==null)return null;
-            ImageView thumb=new ImageView(a);
-            thumb.setImageBitmap(bitmap);
-            thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            thumb.setContentDescription("Offline photographic identification reference of "+scientific+
-                ", photographer "+photo.optString("author"));
-            return thumb;
+        String asset=photo.optString("offlineAsset");
+        if(!asset.matches("offline_photos/(species|habitat|inat)_[a-z0-9_]+\\.jpg"))
+            return null;
+        try{
+            Bitmap bitmap=previewCache.get(asset);
+            if(bitmap==null||bitmap.isRecycled()){
+                try(InputStream in=a.getAssets().open(asset)){
+                    BitmapFactory.Options options=new BitmapFactory.Options();
+                    options.inSampleSize=4;
+                    options.inPreferredConfig=Bitmap.Config.RGB_565;
+                    bitmap=BitmapFactory.decodeStream(in,null,options);
+                }
+                if(bitmap==null)return null;
+                previewCache.put(asset,bitmap);
+            }
+            ImageView view=new ImageView(a);
+            view.setImageBitmap(bitmap);
+            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            view.setContentDescription(label+", photographer "+photo.optString("author")+
+                ". Full attribution in the detail view.");
+            return view;
         }catch(Exception ignored){return null;}
+    }
+    /** Small offline thumbnail. Rights and original credits remain in species detail. */
+    public static ImageView thumbnailForTaxon(Activity a,String scientific){
+        return thumbnail(a,findForTaxon(a,scientific),
+            "Approved offline photograph of "+scientific);
+    }
+    /** Thumbnail only for an approved habitat photo ID, never a network image. */
+    public static ImageView thumbnailForHabitat(Activity a,String photoId){
+        if(photoId==null||photoId.trim().isEmpty())return null;
+        JSONArray list=manifest(a).optJSONArray("items");
+        if(list==null)return null;
+        for(int i=0;i<list.length();i++){
+            JSONObject item=list.optJSONObject(i);
+            if(item==null||!"habitat".equals(item.optString("category"))||
+                !photoId.equals(item.optString("id")))continue;
+            return thumbnail(a,item,"Offline habitat photograph");
+        }
+        return null;
     }
     /**
      * Compact licensed-photo preview for the priority field cards.

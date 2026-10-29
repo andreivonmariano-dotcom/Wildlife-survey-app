@@ -17,8 +17,9 @@ class IllustratedUiContract(unittest.TestCase):
                       'case "bird":','case "frog":','case "mammal":'):
             self.assertIn(piece,portal)
         home=welcome.split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]
-        for title in ('"Fieldwork"','"Library"','"Settings"','"Resume survey in progress"'):
+        for title in ('"Fieldwork"','"Library"','"Settings"'):
             self.assertIn(title,home)
+        self.assertIn("Resume survey in progress",home)
         field=welcome.split("private void fieldworkHub(){",1)[1].split("/** A brief, read-only",1)[0]
         for label in ('"Birds"','"Herpetofauna"','"Mammals"','"Custom"',
                       '"History"','"Analysis"','HistoryActivity.class',

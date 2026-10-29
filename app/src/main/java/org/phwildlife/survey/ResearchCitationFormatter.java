@@ -32,22 +32,24 @@ public final class ResearchCitationFormatter {
         Matcher found=yearMatch(source);
         return found==null?"n.d.":found.group(2)+found.group(3);
     }
-    public static String authorLabel(String source){
+    /** Preserves every author recorded in the source label for reference entries. */
+    private static String fullAuthorLabel(String source){
         String raw=clean(source);
         if(raw.isEmpty())return "";
         Matcher match=yearMatch(raw);
-        String authors;
-        if(match!=null)authors=match.group(1).trim();
-        else {
-            int divider=raw.indexOf(" · ");
-            if(divider>=0)raw=raw.substring(0,divider).trim();
-            int firstComma=raw.indexOf(',');
-            // Keep author lists together. In multi-author source labels, APA uses
-            // first author + et al. for three or more authors.
-            authors=firstComma>=0?raw.substring(0,firstComma).trim():raw;
-            if(firstComma>=0&&raw.substring(firstComma).contains("&"))
-                return authors+" et al.";
-        }
+        if(match!=null)return match.group(1).trim();
+        int divider=raw.indexOf(" · ");
+        if(divider>=0)raw=raw.substring(0,divider).trim();
+        int comma=raw.indexOf(", ");
+        if(comma<0)return raw;
+        int second=raw.indexOf(", ",comma+2);
+        if(second>comma&&raw.substring(comma+2,second).contains("&"))
+            return raw.substring(0,second).trim();
+        return raw.substring(0,comma).trim();
+    }
+    public static String authorLabel(String source){
+        String authors=fullAuthorLabel(source);
+        if(authors.isEmpty())return "";
         if(authors.matches(".*?,\\s*[^,]+?\\s*&\\s*[^,]+$"))
             return authors.substring(0,authors.indexOf(',')).trim()+" et al.";
         if(authors.matches(".*?,\\s*[^,]+,\\s*[^,]+$"))
@@ -65,7 +67,7 @@ public final class ResearchCitationFormatter {
         return s+" "+inText(source,year)+".";
     }
     public static String sourceRecord(String source,int year,String url){
-        String original=clean(source),author=authorLabel(source);
+        String original=clean(source),author=fullAuthorLabel(source);
         String date=yearLabel(year,source);
         Matcher match=yearMatch(original);
         String work="";

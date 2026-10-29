@@ -41,6 +41,7 @@ public final class Rc11PrioritySpeciesView {
     private static JSONObject peerReviewed;
     private static JSONObject recent;
     private static JSONObject newStudies;
+    private static JSONObject nextStudies;
     private static final JSONObject[] packs=new JSONObject[PACKS.length];
     private static int dp(Activity a,float n){
         return Math.round(a.getResources().getDisplayMetrics().density*n);
@@ -62,6 +63,7 @@ public final class Rc11PrioritySpeciesView {
         if(peerReviewed==null)peerReviewed=asset(a,"rc13_peer_reviewed_batch1_v1.json",40000);
         if(recent==null)recent=asset(a,"rc14_recent_peer_reviewed_2025_2026_v1.json",40000);
         if(newStudies==null)newStudies=asset(a,"rc15_publication_batch_v1.json",40000);
+        if(nextStudies==null)nextStudies=asset(a,"rc16_publication_batch_v1.json",40000);
         for(int i=0;i<PACKS.length;i++)
             if(packs[i]==null)packs[i]=asset(a,PACKS[i],65000);
     }
@@ -100,7 +102,24 @@ public final class Rc11PrioritySpeciesView {
         load(a);
         ArrayList<Fact> list=new ArrayList<>();
         HashSet<String> seen=new HashSet<>();
-        // New, directly verified taxonomic and habitat studies appear first.
+        // New diagnosis and habitat publications appear before prior field notes.
+        JSONArray nextClaims=nextStudies.optJSONArray("records");
+        if(nextClaims!=null)for(int i=0;i<nextClaims.length();i++){
+            JSONObject species=nextClaims.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("scopeLimit"),item.optString("sourceLocation"),
+                    "publication_source");
+            }
+        }
         JSONArray newestClaims=newStudies.optJSONArray("records");
         if(newestClaims!=null)for(int i=0;i<newestClaims.length();i++){
             JSONObject species=newestClaims.optJSONObject(i);

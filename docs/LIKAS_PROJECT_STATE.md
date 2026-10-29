@@ -1,5 +1,14 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC27C code87 evidence-driven Habitat tab alignment correction
+
+- Actual RC27B emulator workflow **40829509376** failed 15/16. Retrieved diagnostic artifact **12878581024** and visual screenshot `habitat-before-assert.png`. Guide begins y=132 px and My records begins y=155 px. Both are measured 144 px high. The second button is shifted 23 px down and clipped to 121 px within the horizontal row.
+- The confirmed cause is Android's default horizontal `LinearLayout` **baselineAligned=true**: multi-line and one-line button text baselines pushed sibling buttons to different top coordinates. RC27C code87 sets `tabs.setBaselineAligned(false)`, maintains both 96dp large-text action heights, and adds a strict same-top-edge test plus original full-visible-rectangle assertion. No biological, survey, package, SQLite, signer, GPS, audio, photo or startup changes.
+- Commit **24c93782b09c7ba186637e6b830104dfd10ff505** builds on latest concurrent research/UI commits rather than replacing them. Code87 target is `0.27.3-rc27c-habitat-tab-alignment-preview`. Build, real 16/16 emulator proof, direct signed APK and phone QA remain separate gates. Do not treat code85/86 as accessibility-accepted.
+
+---
+
+
 ## 29 October 2026 | RC27B core QA and signed APK independently verified in resumed chat
 
 - **Source HEAD verified:** `08c63f87faf734c81694a7ca32bf742ce061aaff` on RC4-derived `feature/likas-core-fieldwork-post-rc4`. Scientific Core QA workflow **40829515167** completed **success** for this exact commit, including Python evidence tests, JVM tests, Android assembly and media/signing configuration. Its artifact **12877174481** is named `LIKAS-RC27B-keyboard-screen-qa-debug`.

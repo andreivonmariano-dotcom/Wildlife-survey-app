@@ -49,7 +49,7 @@ public final class Rc14Bibliography {
     }
     private static TextView text(Activity a,String value,boolean title){
         TextView t=new TextView(a);
-        t.setText(value);t.setTextSize(title?13:12);
+        t.setText(value);t.setTextSize(title?14:12);
         t.setTextColor(title?UiKit.INK:UiKit.MUTED);
         if(title)t.setTypeface(null,Typeface.BOLD);
         t.setTextIsSelectable(true);
@@ -68,7 +68,19 @@ public final class Rc14Bibliography {
         String articleTitle=paper.isNull("articleTitle")?"":paper.optString("articleTitle");
         TextView apa=text(a,ResearchCitationFormatter.publicationReference(
             authors,year,articleTitle,journal,doi,url,citation),true);
-        apa.setLineSpacing(dp(a,2),1.04f);
+        apa.setLineSpacing(dp(a,3),1.09f);
+        String verifiedJournal=VerifiedApaCatalog.journal(url);
+        if(verifiedJournal!=null){
+            android.text.SpannableString styled=new android.text.SpannableString(
+                apa.getText());
+            int at=styled.toString().indexOf(verifiedJournal);
+            if(at>=0){
+                styled.setSpan(new android.text.style.StyleSpan(Typeface.ITALIC),
+                    at,at+verifiedJournal.length(),
+                    android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                apa.setText(styled);
+            }
+        }
         apa.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
         apa.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
         item.addView(apa);

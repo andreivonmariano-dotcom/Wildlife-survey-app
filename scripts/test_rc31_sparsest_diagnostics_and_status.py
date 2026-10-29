@@ -89,7 +89,7 @@ class SourceAndEvidence(unittest.TestCase):
         self.assertIn('isDatedIucn(kind)',conservation)
         self.assertIn('"government_national_conservation_record"',conservation)
         catalog=(JAVA/"VerifiedApaCatalog.java").read_text()
-        self.assertEqual(catalog.count('m.put("https://'),28)
+        self.assertEqual(catalog.count('m.put("https://'),33)
         for rec in self.rc31["records"]:
             self.assertIn(rec["url"],catalog)
         self.assertIn("versionCode 91",(ROOT/"app/build.gradle").read_text())

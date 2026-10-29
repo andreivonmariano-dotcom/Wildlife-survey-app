@@ -52,6 +52,8 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                 assertTrue(containsText(views,"Habitat"));
                 assertTrue(containsText(views,"Sources & details"));
                 assertTrue("Cited topic coverage visible",containsText(views,"of 5 research topics documented"));
+                assertTrue("Per-note research provenance visible",containsText(views,"Source: "));
+                assertTrue("Comparison snapshot labeled",containsText(views,"Compare evidence snapshots"));
                 assertTrue(containsText(views,"Photo reference"));
                 assertTrue(containsText(views,"View photo & credits"));
                 assertFalse("Long legacy photo caption must stay hidden by default",
@@ -222,6 +224,8 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                     assertTrue("Missing references "+name,containsText(all,"Sources & details"));
                     assertTrue("Missing cited-topic coverage "+name,
                         containsText(all,"of 5 research topics documented"));
+                    assertTrue("Missing on-card citation "+name,
+                        containsText(all,"Source: "));
                     int count=0;
                     for(String heading:new String[]{"Identification","Habitat",
                         "Range","Natural history","Conservation"})

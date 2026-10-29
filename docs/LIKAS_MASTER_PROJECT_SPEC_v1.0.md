@@ -244,11 +244,15 @@ The target information architecture has five top-level destinations: **Survey**,
 
 **U-03 | Minimal title startup (owner revision, 28 October 2026).** Replace the animated day/night forest startup scene with a text-only LIKAS wordmark on a simple solid forest-green background. Transition automatically to Home through a short, accessibility-aware fade/scale animation. Honor system reduced-motion settings and let the user skip motion by tapping. Resume Survey stays available on Home, not as an extra startup button. Keep the approved launcher icon and historical field records unchanged. No heavy scene renderer or forced long splash delay.
 
-**U-04 | Performance and accessibility.** Limit animation to ambient/startup surfaces and suspend it when hidden. Respect reduced-motion preferences and battery constraints. Provide a static fallback. All labels, buttons, timers, and warnings must be actual accessible UI controls, not embedded words in artwork.
+**U-04 | Performance and accessibility.** Keep startup and secondary interface animations brief and nonessential. Permit subtle transitions for navigation and expanded research details, never for primary field-recording controls. Respect system animation/reduced-motion settings, large type and battery constraints. Provide a static fallback. All labels, buttons, timers, and warnings must be real accessible UI controls.
 
 **U-05 | Field-first ergonomics.** Large touch targets, high sunlight contrast, glove-friendly spacing, one-handed observation capture, meaningful offline feedback, and dark-mode legibility. Never place critical actions beneath system navigation or a decorative layer.
 
 **U-06 | Clarity.** Remove duplicated station actions, redundant explanatory paragraphs, developer artifacts, dead toggles, and ambiguous labels. Use short language in the interface, with protocol help available on demand. Prevent accidental exits without trapping users in a survey.
+
+**U-07 | Academic citation and natural scientific prose (owner decision, 29 October 2026).** Write species and ecology statements as concise biological findings, not publisher-led announcements such as “Organization describes” or “published species notes.” Place APA 7 author–date citations in the text beside supported facts and collect source-linked bibliography at the end of each reference account. Avoid repeated “Source:” lines under every paragraph. Preserve each original claim, full source identity, URL or DOI, source date, research scope, and review status in the stored research data. Do not invent missing bibliographic authors, dates, article titles or geographic observations. Mark incomplete reference entries for metadata review.
+
+**U-08 | Minimal research interface (owner decision, 29 October 2026).** Use a consistent restrained palette, short labels, clear hierarchy, readable research cards, compact Back navigation and optional smooth transitions that do not impede accessibility. Keep survey initiation, Resume, Save Observation and End Survey readily available. Group secondary data-management and advanced research tools under labeled disclosures without removing them.
 
 # 15. Privacy, permissions, security, and legal context
 
@@ -362,3 +366,6 @@ A failed P0 regression blocks release. A feature without field validation must b
 **v1.0.1, 28 October 2026:** U-03 amended by the product owner's explicit startup-scene reset. Retired the unused forest image plates, `ForestBackdropView`, and dedicated forest-background instructions. Kept launcher icon and shared brand colors. New scenery remains undecided; no APK/device validation is claimed.
 
 **v1.0.2, 28 October 2026:** User superseded earlier forest scene directions with a minimalist wordmark-to-Home transition. T/H/L specifications reinforced: source-checked offline habitat and species accounts need dated row-level citations and licensing-compliant, visibly credited photographs; never auto-fill unsupported diagnostic or locality facts. Starter offline reference accounts are not a substitute for full licensed taxon coverage. Accessibility and source-provenance rules unchanged.
+
+
+**v1.0.3, 29 October 2026:** Adopted U-07 and U-08 for APA 7 inline citations, deduplicated bibliographies, concise evidence-first biological copy, minimalist field UI and short accessible secondary transitions. Updated U-04 to allow unobtrusive non-startup UI motion. Raw research data, survey science rules and installed device data remain protected. RC28 scientific core is a development preview pending independent emulator/phone acceptance.

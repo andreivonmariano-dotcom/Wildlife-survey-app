@@ -29,7 +29,7 @@ class FieldGuideStudioQA(unittest.TestCase):
             'if(animate)UiMotion.enter(this,content);',
             'emptyState()',
             '"No matches"',
-            '"All species"',
+            '"Full Philippine species checklist"',
             '"All habitats"',
         ):self.assertIn(token,cards,token)
         self.assertIn("if(status==null)return 0;",cards)
@@ -75,8 +75,8 @@ class FieldGuideStudioQA(unittest.TestCase):
 
     def test_install_identity_schema_and_source_pack_stable(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 100",gradle)
-        self.assertIn("versionName '0.27.3-rc40-home-layout-copy-preview'",gradle)
+        self.assertIn("versionCode 101",gradle)
+        self.assertIn("versionName '0.27.3-rc41-field-readiness-preview'",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",read("FieldDb.java"))
         self.assertIn('rc34_conservation_card_status_v1.json',read("LikasDiscoveryActivity.java"))

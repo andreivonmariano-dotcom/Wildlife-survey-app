@@ -11,89 +11,86 @@ import java.io.InputStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/** Offline, source-snapshot review register. No automated expert approvals. */
+/** Cited publication coverage, read-only and separate from field observations. */
 public final class Rc12ScientificReview {
     private Rc12ScientificReview(){}
     private static JSONObject registry;
     private static final String[] FIELDS={
         "taxonomy","diagnosis","differential","sex","life_stage","measurements",
-        "habitat","range","behavior","threat","media","review"
+        "habitat","range","behavior","threat","media"
     };
     private static final String[] LABELS={
-        "Taxonomy","Morphology","Lookalike comparisons","Sex differences",
-        "Age and life stages","Measurements","Habitat","Distribution",
-        "Natural history","Dated IUCN & DENR","Photo identification & rights",
-        "Independent specialist approval"
+        "Taxonomy","Identification","Similar species","Sex variation",
+        "Life stages","Body measurements","Habitat","Distribution",
+        "Ecology and calls","Conservation","Photographs"
     };
-    private static int dp(Activity a,int amount){
-        return Math.round(amount*a.getResources().getDisplayMetrics().density);
+    private static int dp(Activity a,int n){
+        return Math.round(n*a.getResources().getDisplayMetrics().density);
     }
     private static synchronized JSONObject register(Activity a){
         if(registry!=null)return registry;
-        try(InputStream input=a.getAssets().open("rc12_species_scientific_review_register_v1.json");
+        try(InputStream in=a.getAssets().open("rc13_publication_coverage_v1.json");
             ByteArrayOutputStream out=new ByteArrayOutputStream()){
-            byte[] buf=new byte[8192];int count;
-            while((count=input.read(buf))!=-1){
-                if(out.size()+count>200000)throw new IllegalStateException("Review file oversized");
-                out.write(buf,0,count);
+            byte[] buf=new byte[8192];int n;
+            while((n=in.read(buf))!=-1){
+                if(out.size()+n>200000)throw new IllegalArgumentException("Bibliography too large");
+                out.write(buf,0,n);
             }
-            JSONObject parsed=new JSONObject(out.toString("UTF-8"));
-            if(!"rc12-species-scientific-review-register-v1".equals(
-                parsed.optString("schemaVersion"))||
-                parsed.optInt("profileCount")!=96||
-                parsed.optInt("expertApprovedCount",-1)!=0)
-                throw new IllegalArgumentException("Unknown review register");
-            registry=parsed;
-        }catch(Exception ex){registry=new JSONObject();}
+            JSONObject data=new JSONObject(out.toString("UTF-8"));
+            if(!"rc13-publication-coverage-v1".equals(data.optString("schemaVersion"))
+                ||data.optInt("profileCount")!=96)
+                throw new IllegalArgumentException("Unexpected source catalog");
+            registry=data;
+        }catch(Exception ignored){registry=new JSONObject();}
         return registry;
     }
-    private static TextView label(Activity a,String str,int size,boolean bold){
-        TextView text=new TextView(a);
-        text.setText(str);text.setTextSize(size);
-        text.setTextColor(bold?UiKit.FOREST:UiKit.MUTED);
-        if(bold)text.setTypeface(null,Typeface.BOLD);
-        text.setPadding(dp(a,3),dp(a,4),dp(a,3),dp(a,4));
-        return text;
+    private static TextView text(Activity a,String value,boolean strong){
+        TextView t=new TextView(a);
+        t.setText(value);t.setTextSize(strong?13:12);
+        t.setTextColor(strong?UiKit.FOREST:UiKit.MUTED);
+        t.setPadding(dp(a,3),dp(a,5),dp(a,3),dp(a,5));
+        if(strong)t.setTypeface(null,Typeface.BOLD);
+        return t;
     }
     public static void add(Activity a,LinearLayout parent,String scientific){
-        JSONArray all=register(a).optJSONArray("profiles");
-        if(all==null)return;
-        JSONObject record=null;
-        for(int i=0;i<all.length();i++){
-            JSONObject p=all.optJSONObject(i);
-            if(p!=null&&scientific.equalsIgnoreCase(p.optString("scientificName"))){
-                record=p;break;
+        JSONArray list=register(a).optJSONArray("profiles");
+        if(list==null)return;
+        JSONObject row=null;
+        for(int i=0;i<list.length();i++){
+            JSONObject item=list.optJSONObject(i);
+            if(item!=null&&scientific.equalsIgnoreCase(item.optString("scientificName"))){
+                row=item;break;
             }
         }
-        if(record==null)return;
-        JSONObject evidence=record.optJSONObject("fieldEvidence");
-        if(evidence==null)return;
-        LinearLayout panel=new LinearLayout(a);
-        panel.setOrientation(LinearLayout.VERTICAL);
-        panel.setVisibility(View.GONE);
-        int available=0;
+        if(row==null)return;
+        JSONObject fields=row.optJSONObject("fields");
+        if(fields==null)return;
+        LinearLayout details=new LinearLayout(a);
+        details.setOrientation(LinearLayout.VERTICAL);
+        details.setVisibility(View.GONE);
+        int added=row.optInt("publicationClaimCount");
+        if(added>0)
+            details.addView(text(a,added+" individually cited study notes",true));
         for(int i=0;i<FIELDS.length;i++){
-            JSONObject area=evidence.optJSONObject(FIELDS[i]);
-            boolean present=area!=null&&area.optInt("existingEvidenceCount",0)>0;
-            if(present)available++;
-            String state=present?"Source recorded · review pending":"Source not assessed";
-            panel.addView(label(a,LABELS[i]+" · "+state,12,false));
+            JSONObject record=fields.optJSONObject(FIELDS[i]);
+            if(record==null)continue;
+            int previous=record.optInt("previousSourceCount");
+            JSONArray citations=record.optJSONArray("addedPublicationClaims");
+            int newCount=citations==null?0:citations.length();
+            if(previous==0&&newCount==0)continue;
+            String count=newCount>0?newCount+" publication notes":"published reference";
+            details.addView(text(a,LABELS[i]+" · "+count,false));
         }
-        JSONArray original=record.optJSONArray("originalDescriptionClaimIds");
-        int originalCount=original==null?0:original.length();
-        if(originalCount>0)
-            panel.addView(label(a,originalCount+
-                " original-description research notes available; specialist approval pending",12,false));
-        panel.addView(label(a,"Specialist sign-off: pending",12,true));
-        Button toggle=UiKit.button(a,"Scientific checklist  ▾","quiet");
-        toggle.setContentDescription("Show source coverage for 12 specialist-review areas");
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,48));
-        lp.topMargin=dp(a,8);parent.addView(toggle,lp);
-        parent.addView(panel);
+        Button toggle=UiKit.button(a,"Literature coverage  ▾","quiet");
+        toggle.setContentDescription("Expand cited research coverage");
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,dp(a,46));
+        p.topMargin=dp(a,7);
+        parent.addView(toggle,p);
+        parent.addView(details);
         toggle.setOnClickListener(v->{
-            boolean open=panel.getVisibility()!=View.VISIBLE;
-            panel.setVisibility(open?View.VISIBLE:View.GONE);
-            toggle.setText(open?"Hide scientific checklist  ▴":"Scientific checklist  ▾");
+            boolean open=details.getVisibility()!=View.VISIBLE;
+            details.setVisibility(open?View.VISIBLE:View.GONE);
+            toggle.setText(open?"Hide literature coverage  ▴":"Literature coverage  ▾");
         });
     }
 }

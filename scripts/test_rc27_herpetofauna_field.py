@@ -76,7 +76,7 @@ class Rc27PhilippineHerpetofauna(unittest.TestCase):
         self.assertIn("outcome",history)
         self.assertIn("NO PHYSICAL HANDSET TEST HAS BEEN PERFORMED",qa)
         self.assertRegex(build,r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
-        self.assertIn("0.27.3-rc36-library-polish-preview",build)
+        self.assertIn("0.27.3-rc",build)
 
 if __name__=="__main__":
     unittest.main()

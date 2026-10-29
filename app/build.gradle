@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 93
-        versionName '0.27.3-rc33-portal-ui-preview'
+        versionCode 94
+        versionName '0.27.3-rc34-conservation-cards-preview'
     }
     signingConfigs {
         debug {

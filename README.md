@@ -7,7 +7,7 @@ LIKAS is an offline-first Android biodiversity fieldwork and reference tool for 
 **Application ID:** `org.phwildlife.survey.beta08`  
 **SQLite schema:** **27**
 
-**Release gate:** RC41 is source code until its GitHub Actions scientific QA succeeds and the exact signed APK is inspected. Do not treat an older APK or a queued build as the current release. The most recently verified signed preview is RC39 (versionCode 99); physical upgrade testing is still required.
+**Build status (30 October 2026):** RC41 signed development APK was verified from Scientific Core QA run **40908133636**, code commit `8d2918665eccd8d6a037d616cd58a9a9dde6cf96` (package `org.phwildlife.survey.beta08`, versionCode **101**, original signing certificate). This is not yet production/field-accepted. Physical upgrade, survey-retention, restoration, and emulator checks remain unverified. Follow direct-download policy for an actual APK file, not a GitHub artifact link.
 
 ## What LIKAS currently provides
 

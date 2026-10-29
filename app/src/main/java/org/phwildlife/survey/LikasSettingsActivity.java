@@ -49,9 +49,9 @@ public final class LikasSettingsActivity extends Activity {
         body.setPadding(0,dp(8),0,dp(24));scroll.addView(body);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         body.addView(LikasPortalUi.kicker(this,"YOUR APP"));
-        TextView headline=LikasPortalUi.text(this,"Make it yours.",29,
+        TextView headline=LikasPortalUi.text(this,"App settings",29,
             LikasPortalUi.CANOPY,true);body.addView(headline);
-        TextView sub=LikasPortalUi.text(this,"Your field data stays local.",13,
+        TextView sub=LikasPortalUi.text(this,"Backups and preferences",13,
             UiKit.MUTED,false);sub.setPadding(0,dp(5),0,dp(20));body.addView(sub);
         Switch reduce=new Switch(this);
         reduce.setText("Less motion");
@@ -83,7 +83,7 @@ public final class LikasSettingsActivity extends Activity {
             new AlertDialog.Builder(this).setTitle("LIKAS")
                 .setMessage("Version "+version+"\n\nPhilippine biodiversity toolkit. "+
                     "Survey records and offline research stay on this device. "+
-                    "References are not field observations.")
+                    "References are separate from field records.")
                 .setPositiveButton("Close",null).show();
         });
         body.addView(about);

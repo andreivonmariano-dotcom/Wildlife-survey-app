@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 94
-        versionName '0.27.3-rc34-conservation-cards-preview'
+        versionCode 95
+        versionName '0.27.3-rc35-species-crash-hotfix-preview'
     }
     signingConfigs {
         debug {

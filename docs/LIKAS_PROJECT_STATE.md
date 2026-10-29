@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC24C code80 Android 14 emulator gate passed and visually inspected
+
+- Android emulator workflow **40820651226**, source commit `c1d56af06e20dc5ba838775d8c43a660816041d9` (includes all RC24C UI, instrumentation and code80 production edits) **completed success**. Later changes were only Python version-assertion updates, documentation and core CI artifact label, not Android production source.
+- GitHub artifact **12874622732**, copied into the current conversation as `/mnt/data/LIKAS-RC24C-Android14-emulator-QA.zip`, **4,734,741 bytes**, SHA256 **849d8c21eaa28db19e6fae8725839504975153638cd2533039cf099f75822e67**, ZIP integrity valid with 119 entries.
+- `instrumentation.txt`: **OK (14 tests)**. `version.txt`: **versionCode 80**, versionName `0.27.3-rc24c-large-text-header-preview`. 96 individual species JPEG screenshots were present and hash-distinct.
+- Original and upgraded disposable emulator SQLite databases each **1,613,824 bytes**, byte-identical with SHA256 **fe1e9ee53c47c3c33e7fa6b22604f81b80177f6ece956be7bd12d339940c0045**. This is test data, NOT a verified migration of the owner's complete historical phone archive.
+- Manually inspected `conservation-200percent-font.png` and `compare-200percent-font.png`. Both full headings render on a single line without mid-word wrap or ellipsis. Group and scope controls on Conservation, and Reference A/B selectors on Compare, remain visible in the first viewport at 200% Android font scale. Existing screen-reader descriptions are source coded but real TalkBack navigation remains untested.
+- Signed APK same source code80 was already verified and directly delivered in this conversation (SHA256 `e28a2901d11e1aa95bafa69d2ce04fc44139fcb74e2712c3e3c17f4b53cbb224`, pinned v2 signer). Scientific fact corpus remains 96 species, 441 facts, 299 source links, one unfilled Identification. Startup art remains isolated. Physical-phone GNSS, owner record upgrade, lengthy field sessions and TalkBack are open release gates.
+
+---
+
+
 ## 29 October 2026 | RC24C code80 source QA and signed APK independently verified
 
 - GitHub Actions Scientific Core QA run **40820731316** on source commit `ce0a67664108191c321cafdd15a0a0dd06697314` finished **success**, including Python source/science/migration checks, JVM tests and APK assembly. Companion run 40820735945 was also successful.

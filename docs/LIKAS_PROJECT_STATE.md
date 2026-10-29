@@ -1,6 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | RC14 emulator QA finished successfully
+
+- **Exact emulator QA:** GitHub Actions `40798527846`, artifact `12865226988`, downloaded as `LIKAS-RC14-emulator-evidence.zip`. Verified `instrumentation.txt` reports **OK (10 tests)**, Android 14 API34 **320dp**, installed versionCode **66** with `rc14-recent-literature-preview`. Both `EMULATOR-SMOKE-PASS` and `RECORDER-DOCK-INSTRUMENTED-PASS` markers present.
+- **Upgrade preservation:** previous SQLite database `wildlife_field_v03.db` 1,613,824 bytes matches the post-upgrade DB **byte-for-byte**. Recorder dock and linked-source species cards passed. Run used source `ded1ea1c`, same Android implementation and version as later successful core build `185998bb`, with only the source-test assertion updated afterward.
+- **Direct verified QA files in current session:** `/mnt/data/LIKAS-RC14-emulator-evidence.zip`, `/mnt/data/LIKAS_RC14_species_account_320dp.png`. Source snapshot reviewed, photograph attribution retained and concise icon-led Identification card visible. APK `/mnt/data/LIKAS-v0.27.3-RC14-recent-literature-debug.apk` versionCode66 SHA256 `d988009e7a37ef278a9f984af80b29b2f2066225f002420da0230dad902903c4` remains exact validated binary. Revalidate paths in subsequent sessions.
+- **Physical-phone QA remains open.** Do not promote the 96 bibliography source index to 96 latest-reviewed papers. Only **10/96** priority taxa received fresh 2025–2026 peer-reviewed verification in this research pass; the other 86 remain open.
+
+---
+
+
+
 ## 29 October 2026 | RC14 signed APK verified after Java bibliography callback fix
 
 - **Compiled successfully:** Scientific Core QA run **40798545386**, downloadable APK artifact **12864642430** on app commit **185998bbc2fbaa7f9eff876852b24a0386ebe4de**. A prior attempted build on source `f451738a` failed on a non-final Java lambda variable in `Rc14Bibliography.java`. Corrected the capture to `final int remaining` in commit **ded1ea1c** and adjusted the regression check in **185998bb**. Do not mistake the failed attempt for a built APK.

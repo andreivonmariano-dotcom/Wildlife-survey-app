@@ -38,6 +38,7 @@ public final class Rc11PrioritySpeciesView {
     private static final String[] ICONS={"search","leaf","pin","tracks","shield"};
     private static JSONObject matrix;
     private static JSONObject primary;
+    private static JSONObject peerReviewed;
     private static final JSONObject[] packs=new JSONObject[PACKS.length];
     private static int dp(Activity a,float n){
         return Math.round(a.getResources().getDisplayMetrics().density*n);
@@ -56,6 +57,7 @@ public final class Rc11PrioritySpeciesView {
     private static synchronized void load(Activity a){
         if(matrix==null)matrix=asset(a,"rc8_evidence_comparisons_v1.json",450000);
         if(primary==null)primary=asset(a,"rc12_primary_diagnoses_v1.json",55000);
+        if(peerReviewed==null)peerReviewed=asset(a,"rc13_peer_reviewed_batch1_v1.json",40000);
         for(int i=0;i<PACKS.length;i++)
             if(packs[i]==null)packs[i]=asset(a,PACKS[i],65000);
     }
@@ -94,7 +96,24 @@ public final class Rc11PrioritySpeciesView {
         load(a);
         ArrayList<Fact> list=new ArrayList<>();
         HashSet<String> seen=new HashSet<>();
-        // Original treatments precede source summaries, without changing approval status.
+        // Journal articles and original descriptions appear before older summary sources.
+        JSONArray newStudies=peerReviewed.optJSONArray("records");
+        if(newStudies!=null)for(int i=0;i<newStudies.length();i++){
+            JSONObject species=newStudies.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("scopeLimit"),item.optString("sourceLocation"),
+                    item.optString("reviewState"));
+            }
+        }
         JSONArray original=primary.optJSONArray("records");
         if(original!=null)for(int i=0;i<original.length();i++){
             JSONObject species=original.optJSONObject(i);
@@ -160,7 +179,8 @@ public final class Rc11PrioritySpeciesView {
             source.trim().isEmpty()||!url.startsWith("https://"))return;
         String key=area+"|"+value.trim().toLowerCase(Locale.ROOT);
         if(!seen.add(key))return;
-        list.add(new Fact(area,label,value,source,url,limitation,publication,review));
+        list.add(new Fact(area,label,Rc13FieldGuideCopy.fieldText(value),
+            source,url,limitation,publication,review));
     }
     private static final class Glyph extends View {
         final String type;
@@ -279,8 +299,7 @@ public final class Rc11PrioritySpeciesView {
         references.setOrientation(LinearLayout.VERTICAL);
         references.setVisibility(View.GONE);
         references.setPadding(dp(a,9),dp(a,6),dp(a,9),dp(a,12));
-        references.addView(text(a,"References · specialist review in progress",
-            12,false,UiKit.MUTED));
+        references.addView(text(a,"Bibliography",12,true,UiKit.FOREST));
         Rc12ScientificReview.add(a,references,scientific);
         HashSet<String> unique=new HashSet<>();
         if(!citation.isEmpty()){
@@ -300,7 +319,7 @@ public final class Rc11PrioritySpeciesView {
             mp.topMargin=dp(a,15);references.addView(provenance,mp);
         }
         if(!facts.isEmpty()){
-            TextView notes=text(a,"Evidence notes",13,true,UiKit.FOREST);
+            TextView notes=text(a,"Study details",13,true,UiKit.FOREST);
             LinearLayout.LayoutParams np=new LinearLayout.LayoutParams(-1,-2);
             np.topMargin=dp(a,15);references.addView(notes,np);
             for(Fact fact:facts){

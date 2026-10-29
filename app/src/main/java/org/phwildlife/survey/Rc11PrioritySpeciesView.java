@@ -42,6 +42,7 @@ public final class Rc11PrioritySpeciesView {
     private static JSONObject recent;
     private static JSONObject newStudies;
     private static JSONObject nextStudies;
+    private static JSONObject originalComparisons;
     private static final JSONObject[] packs=new JSONObject[PACKS.length];
     private static int dp(Activity a,float n){
         return Math.round(a.getResources().getDisplayMetrics().density*n);
@@ -64,6 +65,7 @@ public final class Rc11PrioritySpeciesView {
         if(recent==null)recent=asset(a,"rc14_recent_peer_reviewed_2025_2026_v1.json",40000);
         if(newStudies==null)newStudies=asset(a,"rc15_publication_batch_v1.json",40000);
         if(nextStudies==null)nextStudies=asset(a,"rc16_publication_batch_v1.json",40000);
+        if(originalComparisons==null)originalComparisons=asset(a,"rc17_verified_research_v1.json",40000);
         for(int i=0;i<PACKS.length;i++)
             if(packs[i]==null)packs[i]=asset(a,PACKS[i],65000);
     }
@@ -102,7 +104,24 @@ public final class Rc11PrioritySpeciesView {
         load(a);
         ArrayList<Fact> list=new ArrayList<>();
         HashSet<String> seen=new HashSet<>();
-        // New diagnosis and habitat publications appear before prior field notes.
+        // Original diagnoses and recent measured field studies.
+        JSONArray recentClaims=originalComparisons.optJSONArray("records");
+        if(recentClaims!=null)for(int i=0;i<recentClaims.length();i++){
+            JSONObject species=recentClaims.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("scopeLimit"),item.optString("sourceLocation"),
+                    "publication_source");
+            }
+        }
         JSONArray nextClaims=nextStudies.optJSONArray("records");
         if(nextClaims!=null)for(int i=0;i<nextClaims.length();i++){
             JSONObject species=nextClaims.optJSONObject(i);
@@ -414,6 +433,13 @@ public final class Rc11PrioritySpeciesView {
         LinearLayout utilities=new LinearLayout(a);
         utilities.setOrientation(LinearLayout.VERTICAL);
         utilities.setPadding(0,dp(a,8),0,0);
+        if(Rc9DifferentialActivity.hasPair(a,scientific)){
+            Button differential=UiKit.button(a,"Compare similar species","secondary");
+            utilities.addView(differential,new LinearLayout.LayoutParams(-1,dp(a,48)));
+            differential.setOnClickListener(v->a.startActivity(
+                new Intent(a,Rc9DifferentialActivity.class)
+                    .putExtra("scientific_name",scientific)));
+        }
         Button compare=UiKit.button(a,"Compare species traits","quiet");
         utilities.addView(compare,new LinearLayout.LayoutParams(-1,dp(a,48)));
         compare.setOnClickListener(v->a.startActivity(

@@ -1,5 +1,14 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC27C signed code87 APK verified; Android emulator evidence pending
+
+- Scientific Core QA run **40831095486** succeeded on the RC27C production source plus recent APA citation revisions. Artifact **12878841330** retrieved into current chat; exact `/mnt/data/LIKAS-v0.27.3-RC27C-habitat-tab-alignment-debug.apk` **9,608,640 bytes**, SHA256 **8cd392f567d281e9d7f3d235a70a71940f6ab0f8325add2c11ad71f4569c610d**. Embedded app package `org.phwildlife.survey.beta08`, version `0.27.3-rc27c-habitat-tab-alignment-preview`, source Gradle code87, 96 accounts, 456 facts, 4 new RC27 facts, valid APK ZIP and pinned signing v2 cert SHA256 **f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937** confirmed. A verified direct download link was delivered in this conversation.
+- Matching RC27C Android emulator workflow **40831072626** remained in progress at this note. Only its real instrumentation and screenshot artifact can establish the no-clipping fix, 16/16 tests, 96 species screens and preserved disposable SQLite. Physical-phone survey, GNSS, audio, photograph and historical record upgrade remain untested.
+- Latest owner handoff ZIP `LIKAS-RC27C-Phone-Field-QA-Kit.zip` is created, ZIP verified and downloadable, with 14 test rows initially NOT TESTED and safe read-only ADB metadata collection. It is not actual hardware evidence.
+
+---
+
+
 ## 29 October 2026 | RC27C code87 evidence-driven Habitat tab alignment correction
 
 - Actual RC27B emulator workflow **40829509376** failed 15/16. Retrieved diagnostic artifact **12878581024** and visual screenshot `habitat-before-assert.png`. Guide begins y=132 px and My records begins y=155 px. Both are measured 144 px high. The second button is shifted 23 px down and clipped to 121 px within the horizontal row.

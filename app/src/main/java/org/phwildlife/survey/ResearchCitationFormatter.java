@@ -61,12 +61,24 @@ public final class ResearchCitationFormatter {
         if(author.isEmpty())return "(Source details unavailable)";
         return "("+author+", "+yearLabel(year,source)+")";
     }
+    /** Exact verified DOI record takes priority over potentially abbreviated labels. */
+    public static String inText(String source,int year,String url){
+        String checked=VerifiedApaCatalog.inText(url);
+        return checked==null?inText(source,year):checked;
+    }
+    public static String citeClaim(String claim,String source,int year,String url){
+        String s=clean(claim);
+        if(s.endsWith("."))s=s.substring(0,s.length()-1);
+        return s+" "+inText(source,year,url)+".";
+    }
     public static String citeClaim(String claim,String source,int year){
         String s=clean(claim);
         if(s.endsWith("."))s=s.substring(0,s.length()-1);
         return s+" "+inText(source,year)+".";
     }
     public static String sourceRecord(String source,int year,String url){
+        String verified=VerifiedApaCatalog.reference(url);
+        if(verified!=null)return verified;
         String original=clean(source),author=fullAuthorLabel(source);
         String date=yearLabel(year,source);
         Matcher match=yearMatch(original);
@@ -102,6 +114,8 @@ public final class ResearchCitationFormatter {
     /** Full APA reference when original metadata identifies all authors and the work title. */
     public static String publicationReference(String authors,int year,String articleTitle,
             String journal,String doi,String url,String source){
+        String verified=VerifiedApaCatalog.reference(url);
+        if(verified!=null)return verified;
         String name=clean(authors),title=clean(articleTitle),venue=clean(journal);
         if(name.isEmpty()||title.isEmpty()||name.contains("et al."))
             return sourceRecord(source,year,url);

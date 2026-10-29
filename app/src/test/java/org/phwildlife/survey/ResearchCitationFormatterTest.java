@@ -57,7 +57,7 @@ public final class ResearchCitationFormatterTest {
             "Warguez et al. (2022), Journal of Threatened Taxa",2022,url);
         assertTrue(apa.startsWith("Reintar, A. R. T."));
         assertTrue(apa.contains("14(3), 20713–20720"));
-        assertEquals(18,VerifiedApaCatalog.count());
+        assertEquals(27,VerifiedApaCatalog.count());
     }
 
     @Test public void reviewedLiteratureDateAndSynthesisLabels(){

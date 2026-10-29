@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 67
-        versionName '0.27.3-rc15-literature-cards-preview'
+        versionCode 68
+        versionName '0.27.3-rc16-filtered-literature-preview'
     }
     signingConfigs {
         debug {

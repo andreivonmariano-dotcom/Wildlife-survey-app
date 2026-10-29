@@ -65,16 +65,13 @@ public final class Rc14Bibliography {
         int year=paper.optInt("publicationYear");
         LinearLayout item=new LinearLayout(a);item.setOrientation(LinearLayout.VERTICAL);
         item.setPadding(dp(a,4),dp(a,7),dp(a,4),dp(a,8));
-        if(!authors.isEmpty()&&year>1800){
-            item.addView(text(a,authors+" · "+year,true));
-            String imprint=journal.isEmpty()?"Published research":journal;
-            if(paper.optString("sourceType").startsWith("curated_"))
-                imprint="Curated record · "+imprint;
-            if(!doi.isEmpty())imprint+=" · DOI: "+doi;
-            item.addView(text(a,imprint,false));
-        }else{
-            item.addView(text(a,citation,true));
-        }
+        String articleTitle=paper.isNull("articleTitle")?"":paper.optString("articleTitle");
+        TextView apa=text(a,ResearchCitationFormatter.publicationReference(
+            authors,year,articleTitle,journal,doi,url,citation),true);
+        apa.setLineSpacing(dp(a,2),1.04f);
+        apa.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
+        apa.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+        item.addView(apa);
         String sourceType=paper.optString("sourceType").trim();
         if(!sourceType.isEmpty()){
             // Expose the actual source class, including secondary or curated sources.
@@ -116,7 +113,7 @@ public final class Rc14Bibliography {
             JSONObject p=refs.optJSONObject(i);
             if(p!=null&&yearMatches(p,year)&&topicMatches(p,topic))matches.add(p);
         }
-        count.setText("Research references · "+matches.size());
+        count.setText("Related literature · "+matches.size());
         if(matches.isEmpty()){
             area.addView(text(a,"No sources match these filters.",false));
             return;
@@ -161,7 +158,7 @@ public final class Rc14Bibliography {
         }
         if(found==null)return;
         final JSONArray refs=found;
-        TextView count=text(a,"Research references · "+refs.length(),true);
+        TextView count=text(a,"Related literature · "+refs.length(),true);
         parent.addView(count);
         LinearLayout filterPanel=new LinearLayout(a);
         filterPanel.setOrientation(LinearLayout.VERTICAL);

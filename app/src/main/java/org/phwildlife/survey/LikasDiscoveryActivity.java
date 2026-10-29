@@ -287,15 +287,36 @@ public final class LikasDiscoveryActivity extends Activity {
         LinearLayout row=new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setPadding(dp(2),dp(2),dp(16),dp(10));
-        for(JSONObject item:data){
-            JSONObject status=statusIndex.get(item.optString("scientificName"));
-            View card=isHabitat?habitatCard(item):speciesCard(item,status);
+        // Keep positions stable while only building cards near the current viewport.
+        ArrayList<FrameLayout> slots=new ArrayList<>();
+        for(int i=0;i<data.size();i++){
+            FrameLayout slot=new FrameLayout(this);
+            slot.setMinimumHeight(dp(largeText()?625:410));
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(cardWidth()),-2);
             lp.rightMargin=dp(11);
-            row.addView(card,lp);
+            row.addView(slot,lp);
+            slots.add(slot);
         }
         scroll.addView(row,new HorizontalScrollView.LayoutParams(-2,-2));
         int stride=dp(cardWidth()+11);
+        // At most five active cards per shelf, including one on either side of view.
+        Runnable hydrate=()->{
+            int center=Math.max(0,Math.min(data.size()-1,
+                (scroll.getScrollX()+stride/2)/stride));
+            for(int i=0;i<slots.size();i++){
+                FrameLayout slot=slots.get(i);
+                if(Math.abs(i-center)<=2){
+                    if(slot.getChildCount()==0){
+                        JSONObject item=data.get(i);
+                        JSONObject status=statusIndex.get(item.optString("scientificName"));
+                        View card=isHabitat?habitatCard(item):speciesCard(item,status);
+                        slot.addView(card,new FrameLayout.LayoutParams(-1,-2));
+                    }
+                }else if(slot.getChildCount()>0){
+                    slot.removeAllViews();
+                }
+            }
+        };
         Runnable update=()->{
             int index=Math.max(0,Math.min(data.size()-1,
                 (scroll.getScrollX()+stride/2)/stride));
@@ -314,11 +335,13 @@ public final class LikasDiscoveryActivity extends Activity {
         });
         scroll.setOnScrollChangeListener((View v,int x,int y,int oldX,int oldY)->{
             railOffsets.put(railKey,x);
+            hydrate.run();
             update.run();
         });
         // Capture before the new view's first scroll callback changes the map.
         scroll.post(()->{
             scroll.scrollTo(restoreOffset,0);
+            hydrate.run();
             update.run();
         });
         scroll.setContentDescription("Swipe "+title+" cards horizontally, "+

@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+
+## 29 October 2026 | RC16 direct signed APK verified, literature exports available
+
+- **RC16 Scientific Core QA passed:** GitHub run `40801323727`, APK artifact `12866705208`. Source code contains year and topic selectors inside the single bibliography drawer. Earlier source tests required a correction to the exact Filter references disclosure label, and a null-DOI Android presentation fix; subsequent core run is green.
+- **APK file verified in this conversation:** `/mnt/data/LIKAS-v0.27.3-RC16-filtered-literature-debug.apk`, **9,470,086 bytes**, SHA-256 `c80f5b31fd68672a8e6bd785e43876f2a82fc6bff27c293002736c7da77bffb7`. Contains versionName `0.27.3-rc16-filtered-literature-preview` and package `org.phwildlife.survey.beta08`; source versionCode **68**, SQLite **27**, v2 signing certificate SHA256 matched pinned `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. APK ZIP tested valid. Bundles all 58 offline reference JPEGs, 96 species references, 245 distinct species-source links and 14 RC16 research statements across nine species.
+- **Direct source exports verified in this conversation:** `/mnt/data/LIKAS_RC16_96_species_bibliography.json` and `/mnt/data/LIKAS_RC16_new_publication_findings.json` created from the verified APK. Must verify these exact files again in future conversations.
+- **Emulator acceptance:** Android 14 API34 at 320dp upgrade/backup run `40801298180` was **still in progress at this entry**. Do not claim a pass or screenshot without a successful conclusion and separately checked evidence. Real-phone QA remains open.
+- Original RC9/RC10/RC12 citations and signed app identity were preserved. No specialist sign-off gate. Remaining individual current-literature searches: **84 species**, not a falsely complete 96.
+
+---
+
+
 ## 29 October 2026 | RC16 original-source and reference-filter candidate
 
 - Latest owner request: implement Q1/Q2/Q3 together, source-based diagnosis/range for amphibians and reptiles, mammal/bird habitat/population sources, and compact year/topic bibliography filters. Preserve 96 priority species and no specialist approval, no AI-style defensive text.

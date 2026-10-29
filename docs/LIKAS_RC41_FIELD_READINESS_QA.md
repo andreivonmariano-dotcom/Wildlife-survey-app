@@ -51,3 +51,15 @@ Checked source commit `0841d5f9441734accfee1a8b3a1131dfd19741af` on isolated `qa
 | Temporary unsigned `:app:assembleDebug` | Pass; manifest retains package `org.phwildlife.survey.beta08`, versionCode 101 and RC41 versionName |
 
 The unsigned proof APK is not installable as an update to the original signed app. It lacks the CI-prepared approved JPEGs and generated MDD catalog, and was not delivered as a release artifact. No replacement key was created. Source inspection supports the Home/recorder/library/navigation contracts; 320dp/200%-font rendering, gallery timing, device instrumentation, GPS/media, record-preserving upgrade and recovery fault injection still require device or dedicated fixture QA. The existing partial-restore risk remains a release concern; no destructive recovery changes were made without rollback coverage.
+
+
+## Signed RC41 GitHub acceptance update | 30 October 2026
+
+- **Code and CI:** Active app-source commit `8d2918665eccd8d6a037d616cd58a9a9dde6cf96` (merged PR #39, corrected the two obsolete UI assertions). GitHub Scientific Core QA run **40908133636** completed **success**, with artifact **12912227441** (`LIKAS-0.27.3-rc41-field-readiness-preview-code101-debug`). This audit did not change Android source, scientific records, survey data or signing settings.
+- **Binary inspected:** Downloaded the exact CI artifact and extracted `app-debug.apk`. APK SHA-256 **`53be72c0c020884091f35d6dd1e4b8a06733da736083bcc5c365edad3fee9f34`**, **9,670,326 bytes**. ZIP integrity passed. Binary Android manifest confirms package `org.phwildlife.survey.beta08`, versionCode **101**, versionName `0.27.3-rc41-field-readiness-preview`. APK Signature Scheme v2 cryptographic signature **and the full APK signed-content SHA-256 digest** verified, signer certificate SHA-256 **`f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`**, unchanged from RC39. APK includes **58** authorized offline JPGs and `ph_mammals_mdd_v2_5.json`.
+- **Delivery:** Verified signed development preview copied into this ChatGPT conversation's `/mnt/data/LIKAS-v0.27.3-RC41-field-readiness-debug.apk`, and a direct file link delivered. This is an RC41 *development preview*, not production field acceptance.
+- **Unverified:** physical Android install/upgrade from RC39 with backed-up records, emulator instrumentation execution, 320dp/200%-font/accessible navigation, real GPS/elevation and survey workflows, backup restore and partial-restore rollback, long-session battery/performance and external photo rights/device behaviour. Keep the original SQLite **27**, original signing identity and all survey outcomes. Do not call RC41 production-ready.
+- **Next:** independent real-device upgrade and data-preservation tests; staged fault-injected recovery fix; new version only after acceptance and verified APK. The QA artifact retention is five days; archived copies outside this chat need independent verification.
+
+---
+

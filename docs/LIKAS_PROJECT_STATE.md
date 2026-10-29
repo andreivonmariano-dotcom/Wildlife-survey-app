@@ -1,6 +1,20 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | RC15 recent literature expansion, DOI bibliography, signed APK
+
+- Owner accepted Q1/Q2/Q3: continue recent amphibian/reptile identification literature, bird/mammal habitat and distribution references, and a compact authors/year/journal/DOI bibliography for every priority species. Current owner policy is publication-backed facts without specialist approval or AI-style disclaimers. Publication date does not establish that a paper is universally the most recent.
+- **Published science:** `rc15_publication_batch_v1.json` provides **13 directly sourced concise claims for six existing priority taxa**: `Platymantis pygmaeus` (Meneses et al. 2026, taxonomic correction regarding Romblon `P. guiting`); `Hydrosaurus pustulatus` (Sanguila et al. 2026 Agusan Marsh species treatment, including an individual juvenile measurement and riparian habitat); `Harpyionycteris whiteheadi` (Yangurin et al. 2025 Mt. Kampalili fruit bats); `Pithecophaga jefferyi` (Sutton et al. 2026 modeled Eastern Mindanao nesting habitat/mining/ancestral-domain overlap); `Penelopides panini` and `Rhabdotorrhinus waldeni` (Warguez et al. 2022 Central Panay habitat comparison). Full citation details, DOI and study scope: `docs/LIKAS_RC15_LITERATURE_CARD_UPDATE.md`.
+- **All 96 species retained**, 24 per bird/amphibian/reptile/mammal group. Current source-index file `rc14_96_species_literature_index_v1.json` now contains **241 species–reference links**, including older curated sources and papers, and **12** taxa with newly checked 2025–26 publications; **84** still need targeted newest-paper search. Do not call all 241 links peer-reviewed or all 96 profiles fully verified.
+- **UI:** `Rc11PrioritySpeciesView.java` loads 13 new claims before earlier research packs. `Rc14Bibliography.java` renders structured author/year on one line, journal + DOI beneath for metadata-bearing papers, with direct Open study link; original unstructured source citations remain unchanged. First three sources initially, rest behind Show more. Nothing added to main species cards as empty or defensive placeholders.
+- **Automated checks:** `scripts/test_rc15_literature_cards.py` guards six taxon keys, 13 paper claims, 241 bibliographic links, 96 species, metadata/provenance and no specialist signoff. Scientific Core QA **40799830441** completed success, artifact **12865925337**, on source commit `87e3655789598419a978c69f9d4f22400781754e`. Package/signing, Android compilation and source tests passed. Android emulator `40799816763` ran on equivalent code at versionCode67 and was in progress when this handoff was written; verify before reporting device QA pass.
+- **Verified actual release artifact from this conversation:** `/mnt/data/LIKAS-v0.27.3-RC15-literature-cards-debug.apk`, **9,462,831 bytes**, SHA256 **d9855a9db166b64cf95cacd1338684f6e2764325bd856ba7c75afdf199464167**. Package `org.phwildlife.survey.beta08`, versionName `0.27.3-rc15-literature-cards-preview`, versionCode **67**, APK signing v2 cert SHA256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, SQLite 27 unchanged, 58 offline JPG. Recheck exact file path in future sessions. All changes on draft PR #38, no branch merge or live field database mutation.
+- **Next:** finish/check RC15 Android API34 upgrade/backup UI acceptance on exact code67; source-check the other 84 priority taxa in manageable publication batches, prioritizing diagnostic comparisons, current island ranges and habitat notes. Maintain main/approved startup assets and historic surveys.
+
+---
+
+
+
 ## 29 October 2026 | RC14 emulator QA finished successfully
 
 - **Exact emulator QA:** GitHub Actions `40798527846`, artifact `12865226988`, downloaded as `LIKAS-RC14-emulator-evidence.zip`. Verified `instrumentation.txt` reports **OK (10 tests)**, Android 14 API34 **320dp**, installed versionCode **66** with `rc14-recent-literature-preview`. Both `EMULATOR-SMOKE-PASS` and `RECORDER-DOCK-INSTRUMENTED-PASS` markers present.

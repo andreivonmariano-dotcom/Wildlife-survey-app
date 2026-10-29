@@ -16,10 +16,7 @@ public final class Rc13FieldGuideCopy {
         "; this is not a site occurrence claim.",
         ". This is a published range/habitat summary, not proof of occurrence at a LIKAS station.",
         "; survey-site occupancy is not established.",
-        "; avoid merging its range with the southern Buceros mindanensis concept.",
-        ". Voice and colors vary by sex and light, so record photography and exact detection type.",
-        ". Its type record was at roughly 1,640 m; this is not a species-wide elevation envelope.",
-        ". It should not be interpreted as an endemic Mariana deer or an observation at a Philippine survey site."
+        ". Voice and colors vary by sex and light, so record photography and exact detection type."
     };
     public static String fieldText(String value){
         if(value==null)return "";

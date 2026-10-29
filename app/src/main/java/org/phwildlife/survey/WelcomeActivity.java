@@ -98,6 +98,17 @@ public class WelcomeActivity extends Activity {
         cancelGpsLookup();persistSetup();super.onPause();
     }
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);home();}
+    @Override public void onBackPressed(){
+        if("setup".equals(currentScreen)){
+            if(custom)customPicker();else fieldworkHub();
+        }else if("custom".equals(currentScreen)){
+            fieldworkHub();
+        }else if("fieldwork".equals(currentScreen)){
+            home();
+        }else{
+            super.onBackPressed();
+        }
+    }
     private boolean isSurveyActive(){return activeSurvey()!=null;}
     private boolean homeVisible=true;
     private boolean playedStartupHomeTransition=false;

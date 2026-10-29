@@ -44,10 +44,10 @@ class FieldLayoutContractTest(unittest.TestCase):
         self.assertIn('surveyTile(first,"Herpetofauna"',text)
         self.assertIn('surveyTile(second,"Mammals"',text)
         self.assertIn('surveyTile(second,"Custom"',text)
-        self.assertIn("tile.setMinimumHeight(dp(96))",text)
+        self.assertIn("LikasPortalUi.action(this,title,detail,art,tap)",text)
         self.assertIn('Button resume=UiKit.button(this,"Resume Survey","primary")',text)
         self.assertIn('String unfinished=activeSurvey()',text)
-        self.assertIn('tools.setVisibility(View.GONE)',text)
+        self.assertIn('LikasLibraryActivity.class',text)
 
     def test_four_part_setup_preserves_real_field_inputs(self):
         text=self.home
@@ -69,8 +69,8 @@ class FieldLayoutContractTest(unittest.TestCase):
 
     def test_unified_palette_and_action_colors(self):
         text=self.styles
-        for token in ("BG=Color.rgb(247,249,246)","FOREST=Color.rgb(34,91,67)",
-                      "POND=Color.rgb(51,126,115)","case \"outline-danger\""):
+        for token in ("BG=Color.rgb(247,248,242)","FOREST=Color.rgb(35,88,68)",
+                      "POND=Color.rgb(53,120,113)","case \"outline-danger\""):
             self.assertIn(token,text)
 
 

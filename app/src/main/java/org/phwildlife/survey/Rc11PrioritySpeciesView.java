@@ -431,7 +431,6 @@ public final class Rc11PrioritySpeciesView {
         references.setVisibility(View.GONE);
         references.setPadding(dp(a,9),dp(a,6),dp(a,9),dp(a,12));
         references.addView(text(a,"References",16,true,UiKit.FOREST));
-        references.addView(note);
         LinkedHashMap<String,Fact> unique=new LinkedHashMap<>();
         for(Fact fact:facts)if(!unique.containsKey(fact.url))unique.put(fact.url,fact);
         ArrayList<Fact> entries=new ArrayList<>(unique.values());

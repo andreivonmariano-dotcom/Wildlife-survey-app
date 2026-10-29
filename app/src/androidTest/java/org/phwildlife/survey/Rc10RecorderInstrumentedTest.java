@@ -120,9 +120,14 @@ public final class Rc10RecorderInstrumentedTest {
                         Math.round(48*activity.getResources().getDisplayMetrics().density));
                     assertTrue(end.getContentDescription().toString().contains("Not Counted"));
                     assertNotNull("GPS has a spoken current state",gps);
-                    assertTrue("GPS spoken status agrees with label",
-                        gps.getContentDescription().toString()
-                            .contains(gps.getText().toString()));
+                    String displayedGps=gps.getText().toString();
+                    String accessibleGps=gps.getContentDescription().toString();
+                    // Visual "· details" is an action cue, not part of the fix state.
+                    String measuredState=displayedGps.replace(" · details","").trim();
+                    assertTrue("GPS spoken status agrees with displayed fix state",
+                        accessibleGps.startsWith(measuredState));
+                    assertTrue("GPS spoken action remains available",
+                        accessibleGps.contains("Open GPS details"));
                     Bitmap image=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
                         Bitmap.Config.ARGB_8888);
                     root.draw(new Canvas(image));

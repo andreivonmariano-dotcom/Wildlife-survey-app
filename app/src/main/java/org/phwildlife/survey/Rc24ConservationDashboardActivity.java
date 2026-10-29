@@ -120,7 +120,7 @@ public final class Rc24ConservationDashboardActivity extends Activity {
         boolean largeText=getResources().getConfiguration().fontScale>=1.60f;
         page.addView(UiKit.navigationHeader(this,
             largeText?"Conservation":"Conservation evidence","Library",this::finish));
-        String explanation="Offline research snapshot across 96 Philippine priority species. "+
+        String explanation="Offline research snapshot for 96 source-reviewed Philippine species. "+
             "Only individually cited conservation records appear. An unassessed species "+
             "is not Least Concern, and a dated assessment is not a current census.";
         TextView context=text(largeText?

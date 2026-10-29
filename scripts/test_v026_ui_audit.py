@@ -51,10 +51,13 @@ class CleanFieldUi(unittest.TestCase):
         self.assertNotIn('UiKit.button(this,"Camera / trap deployment history"',history)
     def test_closed_legacy_records_keep_correct_outcome(self):
         history=src("HistoryActivity.java")
-        for key in ("OUTCOME_SQL","WHEN s.ended IS NULL THEN 'active'",
-                    "WHEN COALESCE(s.complete,0)=1 THEN 'complete'",
+        for key in ("OUTCOME_SQL","SurveyOutcomeSql.RESOLVED",
                     "SurveyMethods.displayLabel"):
             self.assertIn(key,history)
+        sql=src("SurveyOutcomeSql.java")
+        for key in ("WHEN s.ended IS NULL THEN 'active'",
+                    "WHEN COALESCE(s.complete,0)=1 THEN 'complete'"):
+            self.assertIn(key,sql)
     def test_missing_original_photos_cannot_be_ignored_in_exports(self):
         photos=src("PhotoEvidence.java")
         self.assertIn('throw new FileNotFoundException(',photos)

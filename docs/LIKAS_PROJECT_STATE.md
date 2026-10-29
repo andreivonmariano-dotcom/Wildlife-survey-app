@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC22 source, signed APK and new research QA verified; emulator QA pending
+
+- Scientific Core QA completed success in runs 40813434462 (source commit c15e2d1 including new tests) and 40813547425 (later documentation branch). Historical tests for all 96 taxon source mappings and new scripts/test_rc22_original_studies.py passed; Android app/debug assembled.
+- Signed debug APK downloaded from artifact 12870733760 (LIKAS-RC22-original-studies-debug). Verified current-session /mnt/data/LIKAS-v0.27.3-RC22-original-studies-debug.apk, 9,573,299 bytes, SHA-256 63afa9629c53f4bbd4abd88d49a130301261f61c305166849635f206e6d78430. APK ZIP integrity checked. Compiled AndroidManifest.xml embeds package org.phwildlife.survey.beta08 and versionName 0.27.3-rc22-original-studies-preview; signed APK v2 certificate SHA-256 f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937 matches established signing key. Gradle versionCode 76. Embedded assets verified 96 priority species, 426 facts and exact 13-record RC22 evidence batch.
+- Added 13 sourced facts: five newly documented Identification topics, original field habitat and historic localities for crocodile, Gallicolumba keayi camera/vegetation study, Rusa alfredi camera evidence, Fejervarya wetland habitats, Varanus bitatawa original feeding guild, Platymantis spelaeus egg-laying. 290 per-species bibliography links, seven unsupported Identification topics remain. No misrepresentation of historic locality as current observer sighting.
+- Android emulator workflow 40813385969 triggered by app/build.gradle source code76 was still in progress at last query. It must independently pass 14 Android instrumentation tests, the full 96-screenshot render sweep, 200 percent text End Survey, original SQLite preservation and private-media fixture before emulator acceptance. RC21B's prior pass is not new RC22 emulator evidence.
+- Direct RC22 APK link delivered in current chat. The file path must be verified in any other session. The master spec/data schema, startup animation, app ID, signing, survey closure policy, historical survey records and licensed image bundle remained unchanged.
+- Physical-phone and owner historical data upgrades remain unverified. PR #38 stays draft. Immediate next action: collect and inspect the specific 40813385969 QA artifact, update this state, direct attach its ZIP, then continue original species diagnoses for the seven gaps and conservation field research.
+
+---
+
 ## 29 October 2026 | RC22 original diagnoses and original Philippine habitat studies | Source staged, signed QA pending
 
 - **Owner selected Q1/Q2:** Continue original species descriptions for 12 unfilled identification accounts and original Philippine field studies on threatened endemic species. Do not start unrelated phone UI or startup animation changes.

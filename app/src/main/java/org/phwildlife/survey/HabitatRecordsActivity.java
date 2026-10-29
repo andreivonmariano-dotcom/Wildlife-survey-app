@@ -52,11 +52,11 @@ public final class HabitatRecordsActivity extends Activity {
         guideTab.setContentDescription("Habitat reference guide tab");
         recordsTab.setContentDescription("My recorded site habitats tab");
         int tabHeight=FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale);
-        tabs.addView(guideTab,new LinearLayout.LayoutParams(0,-2,1));
-        LinearLayout.LayoutParams other=new LinearLayout.LayoutParams(0,-2,1);
+        tabs.addView(guideTab,new LinearLayout.LayoutParams(0,dp(tabHeight),1));
+        LinearLayout.LayoutParams other=new LinearLayout.LayoutParams(0,dp(tabHeight),1);
         other.leftMargin=dp(8);
         tabs.addView(recordsTab,other);
-        root.addView(tabs);
+        root.addView(tabs,new LinearLayout.LayoutParams(-1,dp(tabHeight)));
         Button researchToggle=UiKit.button(this,largeText?
             "Research tools  ▾":"Habitat research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand source-linked habitat comparisons and species associations");

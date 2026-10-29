@@ -13,7 +13,7 @@ class Rc10Tests(unittest.TestCase):
     def test_research_ui_and_evidence(self):
         library = (JAVA / "Rc7SpeciesLibraryActivity.java").read_text()
         review = (JAVA / "Rc9ProfileCompleteness.java").read_text()
-        self.assertIn("Priority: diagnosis unassessed", library)
+        self.assertIn("Published research", library)
         self.assertIn("researchPanel.setVisibility", library)
         self.assertIn("rc8_evidence_comparisons_v1.json", review)
         self.assertIn("Read cited scientific source", review)

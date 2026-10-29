@@ -20,7 +20,7 @@ class CurrentPublicationBatch(unittest.TestCase):
         self.assertEqual(pack["taxonCount"],6)
         self.assertEqual(pack["claimCount"],13)
         self.assertEqual(index["recentVerifiedTaxa"],12)
-        self.assertEqual(sum(x["referenceCount"] for x in indexed.values()),241)
+        self.assertEqual(sum(x["referenceCount"] for x in indexed.values()),245)
         self.assertEqual(set(x["scientificName"] for x in pack["records"]),{
             "Platymantis pygmaeus","Hydrosaurus pustulatus",
             "Harpyionycteris whiteheadi","Pithecophaga jefferyi",
@@ -54,7 +54,7 @@ class CurrentPublicationBatch(unittest.TestCase):
                       'paper.optString("doi")','paper.optInt("publicationYear")',
                       'imprint+=" · DOI: "+doi','"Open study ↗"'):
             self.assertIn(field,source)
-        self.assertIn("final int remaining=refs.length()-3",source)
+        self.assertIn("final int remaining=matches.size()-first",source)
         self.assertIn("Uri.parse(url)",source)
 
 if __name__=="__main__":

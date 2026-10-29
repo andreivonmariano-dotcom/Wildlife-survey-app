@@ -123,9 +123,7 @@ public final class Rc24ConservationDashboardActivity extends Activity {
         String explanation="Offline research snapshot for 96 source-reviewed Philippine species. "+
             "Only individually cited conservation records appear. An unassessed species "+
             "is not Least Concern, and a dated assessment is not a current census.";
-        TextView context=text(largeText?
-            "Cited evidence, not current population counts. Tap for limits.":explanation,
-            13,false);
+        TextView context=text("Dated IUCN and DENR assessments",13,false);
         context.setContentDescription("Read conservation evidence limits. "+explanation);
         context.setFocusable(true);
         context.setOnClickListener(v->new AlertDialog.Builder(this)

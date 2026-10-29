@@ -43,7 +43,21 @@ public final class ResearchCitationFormatterTest {
             "Sutton et al. (2026), Bird Conservation International 36:e33",
             2026,"https://doi.org/10.1017/S0959270926100586");
         assertFalse(study.contains("et al.."));
-        assertTrue(study.contains("Sutton et al. (2026)."));
+        assertTrue(study.contains("Sutton, L. J."));
+        assertTrue(study.contains("Bird Conservation International"));
+        assertTrue(study.contains("https://doi.org/10.1017/S0959270926100586"));
+    }
+
+    @Test public void correctedFirstAuthorFromVerifiedDOI(){
+        String url="https://doi.org/10.11609/jott.7261.14.3.20713-20720";
+        assertEquals("(Reintar et al., 2022)",
+            ResearchCitationFormatter.inText(
+                "Warguez et al. (2022), Journal of Threatened Taxa",2022,url));
+        String apa=ResearchCitationFormatter.sourceRecord(
+            "Warguez et al. (2022), Journal of Threatened Taxa",2022,url);
+        assertTrue(apa.startsWith("Reintar, A. R. T."));
+        assertTrue(apa.contains("14(3), 20713–20720"));
+        assertEquals(14,VerifiedApaCatalog.count());
     }
 
     @Test public void datedInstitutionalNotices(){

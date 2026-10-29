@@ -1,5 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC39 independent static app audit | No application code changes
+
+- **Reviewed baseline:** `feature/likas-core-fieldwork-post-rc4`, signed development APK `0.27.3-rc39-field-guide-studio-preview` versionCode **99**, SHA-256 `ecd6c43f617e18008b497a4c396dcc502e93e71a1a1ee023e4462ba64a94e16e`, successful GitHub Scientific Core QA **40875251725**. APK ZIP integrity, 96 curated account records, 15 habitats, 6 reviewed conservation records and 58 authorized JPEGs confirmed in the available binary. No emulator or physical phone acceptance completed.
+- **Report:** `docs/LIKAS_RC39_APP_AUDIT_2026-10-29.md` (severity, evidence, corrected user-facing copy, recommended tests).
+- **High-priority:** Dashboard summary uses literal `outcome='complete'` etc. History applies a legacy NULL outcome fallback. Historic complete/incomplete records can be misrepresented in the Dashboard; archive headline includes active events. Fix using a shared read-only outcome expression and legacy database fixtures. Discovery rebuilds 96+ cards and does thumbnail decoding on UI thread, a measured performance QA priority.
+- **Other issues:** survey timer flashes near completion without respecting Less motion; gallery arrows use 46dp width; Home may require scrolling to reach all three destinations on smaller phones; some screen-reader Back labels misstate the actual destination; Latest record opens generic History; ordinary ZIP backups contain sensitive field data and rely on user storage choices; RC39 artifact name still says RC36; forest animation assets remain packaged despite the minimalist launch and require reference review before removal.
+- **Product scope:** Research/Conservation Watch and comprehensive ecological atlas remain roadmap goals. Do not describe them as fully shipped.
+- **Audit boundary:** no code, approved art, research content, SQLite schema, surveys, checklists or signing settings changed. Runtime crashes, frame stutter, screen clipping and phone migrations are **not proven** by a static review.
+- **Next:** correct Dashboard outcome arithmetic and Less motion, then add tested lazy gallery rendering and accessibility controls; complete emulator and physical signed-upgrade acceptance before a new RC APK.
+
+---
+
+
 ## 29 October 2026 | RC39 ambitious Field Guide Studio | Source implementation, APK QA pending
 
 - **Baseline:** verified RC38 signed debug 98 at app commit `890690329d784156a4c554b8dd014713df5f1558`, pinned signer SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`.

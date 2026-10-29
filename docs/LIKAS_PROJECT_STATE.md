@@ -1,6 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | RC13B signed development artifact verified for authoritative websites
+
+- **GitHub Scientific Core QA completed SUCCESS:** workflow run `40797131764`, artifact `12864366817`, attached ZIP `LIKAS-RC13B-authoritative-sources-build.zip`.
+- **Exact direct APK verified in current session:** `/mnt/data/LIKAS-v0.27.3-RC13B-authoritative-sources-debug.apk`, **9,443,227 bytes**, SHA-256 `615f987e9345836a223599ac8b1dc8f5f8e2844a32341eeec6d2174b8de3ac1d`, versionName `0.27.3-rc13b-authoritative-sources-preview`, versionCode **65**, package `org.phwildlife.survey.beta08`, SQLite v27 unchanged. APK archive valid; Android v2 signing certificate SHA-256 matched pinned `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Includes exactly 10 scientific-source entries, 96 priority species, 11 publication topics, 15 new peer-reviewed findings, and 58 offline photos.
+- **Build vs device QA:** The Scientific Core pipeline passed for source catalog content. Current code65 Android emulator run `40797060979` remained in progress at the time this state was written. Do not imply a completed code65 emulator or physical-device test without later confirming it. Older RC13 emulator run `40796559175` succeeded, but is **not** proof for RC13B code65.
+- No specialist approval process; no AI-style defense sentences at the end of species facts. Official scientific websites are citation inputs, not reviewer gatekeepers. Source types distinguish original peer-reviewed treatments from dated curated pages. For updated species biological descriptions, original taxonomic publications take precedence over summaries.
+- Branch `feature/likas-core-fieldwork-post-rc4`, PR #38 draft; original survey data and startup animation branch untouched.
+
+---
+
+
+
 ## 29 October 2026 | Authoritative websites added to publication-first policy
 
 - Owner explicitly approved **IUCN Red List**, **AmphibiaWeb**, **The Reptile Database** and requested equivalent reputable **mammal websites**. A ten-entry source registry `app/src/main/assets/likas_scientific_reference_sources_v1.json` records official domains, group, permitted citation topics, scientific source type, and recency limitations. Mammal references: **American Society of Mammalogists MDD v2.5** (2026 taxonomy), ASM *Mammalian Species* original published accounts, Field Museum *Synopsis of Philippine Mammals* (last major 2010 revision), Philippine Mammal Project publications, Bat Conservation International bat profiles. Amphibian taxonomy: **AMNH Amphibian Species of the World 6.2**. University of Michigan Animal Diversity Web is secondary crosscheck only due to student-authored account limitations.

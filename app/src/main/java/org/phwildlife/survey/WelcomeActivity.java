@@ -85,9 +85,11 @@ public class WelcomeActivity extends Activity {
     }
     @Override protected void onResume(){
         super.onResume();
-        if(root!=null&&homeVisible){
+        if(root!=null&&(homeVisible||"fieldwork".equals(currentScreen))){
             String current=activeSurvey();
-            if(!java.util.Objects.equals(current,lastHomeActiveSurvey))home();
+            if(!java.util.Objects.equals(current,lastHomeActiveSurvey)){
+                if(homeVisible)home();else fieldworkHub();
+            }
         }else if(root!=null&&"setup".equals(currentScreen)&&projectChoice!=null){
             refreshProjectOptions();refreshStudyChoices();
         }
@@ -131,57 +133,58 @@ public class WelcomeActivity extends Activity {
         return label;
     }
     private void surveyTile(LinearLayout parent,String title,String detail,Runnable tap){
-        LinearLayout tile=vertical();tile.setGravity(Gravity.CENTER_VERTICAL);
-        tile.setPadding(dp(14),dp(10),dp(8),dp(10));
-        tile.setBackground(UiKit.surface(this));
-        TextView name=text(title,17,true);name.setPadding(0,0,0,dp(3));
-        tile.addView(name);
-        TextView caption=text(detail,12,false);caption.setTextColor(MUTED);
-        caption.setPadding(0,0,0,0);tile.addView(caption);
-        tile.setMinimumHeight(dp(96));tile.setFocusable(true);
-        name.setMaxLines(3);caption.setMaxLines(3);
-        tile.setContentDescription(title+", "+detail);
-        boolean stacked=FieldLayoutPolicy.stackSurveyTiles(
-            getResources().getConfiguration().screenWidthDp,
-            getResources().getConfiguration().fontScale);
-        LinearLayout.LayoutParams lp=stacked?
-            new LinearLayout.LayoutParams(-1,-2):
-            new LinearLayout.LayoutParams(0,-2,1f);
-        if(stacked)lp.bottomMargin=dp(8);
-        else lp.rightMargin=dp(7);
+        String art="field";
+        if("Birds".equals(title))art="species";
+        if("Herpetofauna".equals(title))art="habitat";
+        if("Mammals".equals(title))art="shield";
+        if("Custom".equals(title))art="settings";
+        View tile=LikasPortalUi.action(this,title,detail,art,tap);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.bottomMargin=dp(8);
         parent.addView(tile,lp);
-        tile.setOnClickListener(v->tap.run());
     }
     private void home(){
         homeVisible=true;currentScreen="home";main.removeAllViews();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        LinearLayout header=new LinearLayout(this);
-        header.setGravity(Gravity.CENTER_VERTICAL);
-        header.setOrientation(LinearLayout.HORIZONTAL);
-        ImageView logo=new ImageView(this);logo.setImageResource(R.drawable.likas_frog_icon);
-        logo.setContentDescription("LIKAS frog pond logo");
-        header.addView(logo,new LinearLayout.LayoutParams(dp(52),dp(52)));
-        LinearLayout brand=vertical();brand.setPadding(dp(12),0,0,0);
-        TextView wordmark=text("LIKAS",25,true);
-        wordmark.setPadding(0,0,0,0);brand.addView(wordmark);
-        TextView sub=text("Philippine Biodiversity Toolkit",12,false);
-        sub.setPadding(0,dp(2),0,0);
-        sub.setTextColor(MUTED);brand.addView(sub);
-        header.addView(brand,new LinearLayout.LayoutParams(0,-2,1));
-        LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
-        headerLp.bottomMargin=dp(18);main.addView(header,headerLp);
-        // Transition the wordmark gently after the minimal title screen.
-        // Do not animate the survey form or restart this on normal navigation.
-        if(!playedStartupHomeTransition &&
-           getIntent().getBooleanExtra("show_menu",false) &&
-           android.animation.ValueAnimator.areAnimatorsEnabled()){
-            playedStartupHomeTransition=true;
-            header.setAlpha(0f);
-            header.setTranslationY(dp(10));
-            header.animate().alpha(1f).translationY(0f)
-                .setStartDelay(70).setDuration(230).start();
+        lastHomeActiveSurvey=activeSurvey();
+        main.addView(LikasPortalUi.hero(this),new LinearLayout.LayoutParams(-1,dp(180)));
+        TextView guidance=LikasPortalUi.kicker(this,"CHOOSE YOUR SPACE");
+        main.addView(guidance);
+        View field=LikasPortalUi.tile(this,"Fieldwork","Surveys · Data · History",
+            "field",LikasPortalUi.CANOPY,Color.WHITE,this::fieldworkHub);
+        LinearLayout.LayoutParams fieldLp=new LinearLayout.LayoutParams(-1,-2);
+        fieldLp.bottomMargin=dp(12);main.addView(field,fieldLp);
+        View library=LikasPortalUi.tile(this,"Library","Species · Habitats · Guides",
+            "library",Color.rgb(222,237,208),Color.WHITE,()->
+                startActivity(new Intent(this,LikasLibraryActivity.class)));
+        LinearLayout.LayoutParams libraryLp=new LinearLayout.LayoutParams(-1,-2);
+        libraryLp.bottomMargin=dp(12);main.addView(library,libraryLp);
+        View settings=LikasPortalUi.tile(this,"Settings","Backups · App · Storage",
+            "settings",Color.rgb(231,239,238),Color.WHITE,()->
+                startActivity(new Intent(this,LikasSettingsActivity.class)));
+        main.addView(settings);
+        if(lastHomeActiveSurvey!=null){
+            main.addView(LikasPortalUi.kicker(this,"IN PROGRESS"));
+            View resume=LikasPortalUi.action(this,"Resume survey",
+                "Your field session is still open","field",()->
+                startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
+            main.addView(resume);
         }
-        main.addView(FieldVisuals.section(this,"Fieldwork","Start or resume a survey"));
+        if(!playedStartupHomeTransition &&
+           getIntent().getBooleanExtra("show_menu",false)){
+            playedStartupHomeTransition=true;
+            UiMotion.enter(this,main);
+        }
+    }
+    private void fieldworkHub(){
+        homeVisible=false;currentScreen="fieldwork";main.removeAllViews();
+        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
+        main.addView(UiKit.navigationHeader(this,"Fieldwork","Home",this::home));
+        main.addView(LikasPortalUi.kicker(this,"SURVEYS"));
+        TextView intro=LikasPortalUi.text(this,"Go to the field.",25,
+            LikasPortalUi.CANOPY,true);
+        intro.setPadding(dp(2),dp(2),dp(2),dp(12));main.addView(intro);
+        main.addView(FieldVisuals.section(this,"Start a survey","Choose a wildlife group"));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
@@ -206,23 +209,19 @@ public class WelcomeActivity extends Activity {
             main.addView(activeCard);
         }else{
             main.addView(step("NEW","Choose wildlife group"));
-            LinearLayout first=new LinearLayout(this);
-            first.setOrientation(FieldLayoutPolicy.stackSurveyTiles(
-                getResources().getConfiguration().screenWidthDp,
-                getResources().getConfiguration().fontScale)?
-                LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+            LinearLayout first=vertical();
             surveyTile(first,"Birds","Counts and transects",()->setup("Birds",false));
             surveyTile(first,"Herpetofauna","Calls and encounters",()->setup("Herpetofauna",false));
             main.addView(first);
             LinearLayout second=new LinearLayout(this);
-            second.setOrientation(first.getOrientation());
+            second.setOrientation(LinearLayout.VERTICAL);
             surveyTile(second,"Mammals","Signs and stations",()->setup("Mammals",false));
             surveyTile(second,"Custom","Other field methods",()->customPicker());
             LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(-1,-2);
             secondLp.topMargin=dp(9);main.addView(second,secondLp);
         }
 
-        main.addView(FieldVisuals.section(this,"Workspace","Projects and saved surveys"));
+        main.addView(FieldVisuals.section(this,"Workspace","Projects and records"));
         toolRow(main,"Projects & stations",()->
             startActivity(new Intent(this,SitesActivity.class)));
         addHomeRecentSurvey();
@@ -240,53 +239,17 @@ public class WelcomeActivity extends Activity {
         dashboard.setOnClickListener(v->startActivity(new Intent(this,DashboardActivity.class)));
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
         shortcutsLp.topMargin=dp(9);main.addView(shortcutRow,shortcutsLp);
-        main.addView(FieldVisuals.section(this,"Species Library","Offline identification and research"));
-        Button catalog=UiKit.button(this,"Open Species Library","primary");
-        main.addView(catalog,new LinearLayout.LayoutParams(-1,dp(actionDp())));
-        catalog.setOnClickListener(v->startActivity(
-            new Intent(this,Rc7SpeciesLibraryActivity.class)));
-        main.addView(FieldVisuals.section(this,"Habitats",
-            "Habitat guides and site records"));
-        Button habitat=UiKit.button(this,"Explore habitats","secondary");
-        main.addView(habitat,new LinearLayout.LayoutParams(-1,dp(actionDp())));
-        habitat.setOnClickListener(v->startActivity(
-            new Intent(this,HabitatRecordsActivity.class)));
-
-        Button toolsToggle=UiKit.button(this,"More tools  ▾","quiet");
-        LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(actionDp()));
-        toolMargin.topMargin=dp(12);main.addView(toolsToggle,toolMargin);
-        LinearLayout tools=vertical();
-        tools.setVisibility(View.GONE);
-        toolsToggle.setOnClickListener(v->{
-            boolean expanded=tools.getVisibility()!=View.VISIBLE;
-            if(expanded)UiMotion.reveal(this,tools);
-            else UiMotion.hide(tools);
-            toolsToggle.setText(expanded?"Less tools  ▴":"More tools  ▾");
-            toolsToggle.setContentDescription(expanded?
-                "Hide field tools and settings":"Show field tools and settings");
-        });
-        tools.addView(text("References and saved data",13,true));
-        toolRow(tools,"Source catalogs & regional records",()->
-            startActivity(new Intent(this,CatalogActivity.class)));
-        toolRow(tools,"Manage saved data",()->
-            startActivity(new Intent(this,DataManagementActivity.class)));
-        toolRow(tools,"Full backup & restore",()->
-            startActivity(new Intent(this,FieldBackupActivity.class)));
-        tools.addView(text("Field evidence",13,true));
-        toolRow(tools,"Sound recordings",()->
+        main.addView(LikasPortalUi.kicker(this,"FIELD TOOLS"));
+        toolRow(main,"Site habitats",()->
+            startActivity(new Intent(this,HabitatRecordsActivity.class)));
+        toolRow(main,"Audio",()->
             startActivity(new Intent(this,CallLibraryActivity.class)));
-        toolRow(tools,"Camera and trap records",()->
+        toolRow(main,"Camera traps",()->
             startActivity(new Intent(this,TrapProtocolActivity.class)));
-        toolRow(tools,"Other method evidence",()->
+        toolRow(main,"Protocols",()->
             startActivity(new Intent(this,FieldProtocolsActivity.class)));
-        tools.addView(text("Study and archive management",13,true));
-        toolRow(tools,"Study protocols",()->
+        toolRow(main,"Study plans",()->
             startActivity(new Intent(this,StudyProtocolsActivity.class)));
-        toolRow(tools,"Scientific data review",()->
-            startActivity(new Intent(this,AuditActivity.class)));
-        toolRow(tools,"Import older v0.7 export",()->
-            startActivity(new Intent(this,ImportActivity.class)));
-        main.addView(tools);
     }
     /** A brief, read-only link to the latest archived or active survey. */
     private void addHomeRecentSurvey(){
@@ -310,16 +273,14 @@ public class WelcomeActivity extends Activity {
     }
 
     private void toolRow(LinearLayout parent,String name,Runnable action){
-        TextView item=text(name+"   ›",16,true);
-        item.setPadding(dp(16),dp(14),dp(12),dp(14));
-        item.setBackground(UiKit.surface(this));
-        item.setFocusable(true);
-        item.setMinHeight(dp(48));
-        item.setGravity(Gravity.CENTER_VERTICAL);
-        item.setContentDescription("Open "+name);
-        LinearLayout.LayoutParams margins=new LinearLayout.LayoutParams(-1,-2);
-        margins.bottomMargin=dp(8);parent.addView(item,margins);
-        item.setOnClickListener(v->action.run());
+        String artwork="protocol";
+        if("Audio".equals(name))artwork="audio";
+        if("Camera traps".equals(name))artwork="photo";
+        if("Site habitats".equals(name))artwork="habitat";
+        if("Projects & stations".equals(name))artwork="map";
+        View item=LikasPortalUi.action(this,name,"",artwork,action);
+        LinearLayout.LayoutParams margin=new LinearLayout.LayoutParams(-1,-2);
+        margin.bottomMargin=dp(8);parent.addView(item,margin);
     }
     private void card(String name,String desc,Runnable action){
         LinearLayout wrapper=vertical();
@@ -336,7 +297,7 @@ public class WelcomeActivity extends Activity {
     private void customPicker(){
         homeVisible=false;currentScreen="custom";main.removeAllViews();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        Button back=UiKit.button(this,"← Back","secondary");main.addView(back);back.setOnClickListener(v->home());
+        Button back=UiKit.button(this,"← Back","secondary");main.addView(back);back.setOnClickListener(v->fieldworkHub());
         heading("Custom survey","Select a wildlife group.");
         card("Birds","Custom bird survey",()->setup("Birds",true));
         card("Herpetofauna","Custom reptile and amphibian survey",()->setup("Herpetofauna",true));
@@ -352,7 +313,7 @@ public class WelcomeActivity extends Activity {
         LinearLayout.LayoutParams backLp=new LinearLayout.LayoutParams(
             dp(largeText()?96:112),dp(largeText()?actionDp():48));
         main.addView(back,backLp);
-        back.setOnClickListener(v->{if(custom)customPicker();else home();});
+        back.setOnClickListener(v->{if(custom)customPicker();else fieldworkHub();});
         heading((custom?"Custom · ":"")+profile+" survey",
             "Set method, location, and effort before starting.");
         choices=SurveyMethods.forProfile(profile);

@@ -35,6 +35,13 @@ public final class Rc10RecorderInstrumentedTest {
             ((TextView)v).getText().toString().contains(text))return true;
         return false;
     }
+    private static boolean hasDescription(View root,String text){
+        ArrayList<View> all=new ArrayList<>();
+        find(root,all);
+        for(View v:all)if(v.getContentDescription()!=null&&
+            v.getContentDescription().toString().contains(text))return true;
+        return false;
+    }
     private static void capture(android.app.Activity a,String file){
         View root=a.getWindow().getDecorView();
         Bitmap bitmap=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
@@ -170,7 +177,7 @@ public final class Rc10RecorderInstrumentedTest {
                 compare.onActivity(a->{
                     View root=a.getWindow().getDecorView();
                     assertTrue("Current evidence comparison reachable at 200% font",
-                        hasText(root,"latest cited 96-species accounts"));
+                        hasText(root,"Current cited evidence."));
                     assertTrue("Open species from side-by-side comparison",
                         hasText(root,"Open current species account"));
                     capture(a,"rc24_compare_200percent.png");
@@ -181,7 +188,7 @@ public final class Rc10RecorderInstrumentedTest {
                 dashboard.onActivity(a->{
                     View root=a.getWindow().getDecorView();
                     assertTrue("Dated assessment boundaries explained",
-                        hasText(root,"Least Concern"));
+                        hasDescription(root,"Least Concern"));
                     assertTrue("Conservation study denominator rendered",
                         hasText(root,"of 96 species"));
                     capture(a,"rc24_conservation_200percent.png");

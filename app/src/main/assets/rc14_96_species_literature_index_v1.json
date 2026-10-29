@@ -203,10 +203,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Center for Conservation Innovations Philippines (2026), Mindoro Bleeding-heart rediscovery notice",
+          "url": "https://conservation-innovations.org/mindoros-rarest-bird-captured-on-camera-after-two-decades/",
+          "sourceType": "documented_conservation_field_observation",
+          "publicationYear": 2026,
+          "latestConfirmed": false,
+          "sourceLocation": "3 September 2026 announcement; Iraya Mangyan forest monitoring project",
+          "topics": [
+            "Habitat"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 3
+      "referenceCount": 4
     },
     {
       "scientificName": "Dicaeum quadricolor",
@@ -1836,10 +1847,21 @@
           "topics": [
             "Identification"
           ]
+        },
+        {
+          "source": "Marler (2016), Journal of Threatened Taxa 8(12):9443–9448",
+          "url": "https://doi.org/10.11609/jott.2867.8.12.9443-9448",
+          "sourceType": "peer_reviewed_baited_camera_trap_field_study",
+          "publicationYear": 2016,
+          "latestConfirmed": false,
+          "sourceLocation": "Abstract and Results, two baited sampling localities",
+          "topics": [
+            "Habitat"
+          ]
         }
       ],
       "recencyStatus": "source_present_recent_publication_search_pending",
-      "referenceCount": 4
+      "referenceCount": 5
     },
     {
       "scientificName": "Sus cebifrons",
@@ -2863,10 +2885,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Brown, Alcala, Diesmos & Alcala (1997), Proceedings of the California Academy of Sciences 50(1):1–20",
+          "url": "https://researcharchive.calacademy.org/research/herpetology/philippine_collection/phil_pdfs/casp_50_001.pdf",
+          "sourceType": "original_species_description_acoustic_table",
+          "publicationYear": 1997,
+          "latestConfirmed": false,
+          "sourceLocation": "Table 4, P. negrosensis, printed pp. 15–16",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Platymantis naomii",
@@ -3004,10 +3037,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Brown, Alcala, Diesmos & Alcala (1997), Proceedings of the California Academy of Sciences 50(1):1–20",
+          "url": "https://researcharchive.calacademy.org/research/herpetology/philippine_collection/phil_pdfs/casp_50_001.pdf",
+          "sourceType": "original_species_description_acoustic_table",
+          "publicationYear": 1997,
+          "latestConfirmed": false,
+          "sourceLocation": "Table 4, P. banahao, printed pp. 15–16",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Pelophryne albotaeniata",
@@ -3035,10 +3079,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Das (2008), Raffles Bulletin of Zoology 56(2):435–443",
+          "url": "https://www.science.nus.edu.sg/wp-content/uploads/sites/11/2008/09/56rbz435-443-1.pdf",
+          "sourceType": "peer_reviewed_comparative_specimen_table",
+          "publicationYear": 2008,
+          "latestConfirmed": false,
+          "sourceLocation": "Table 3, printed p. 441, P. albotaeniata column; examined FMNH specimens listed on p. 443",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Limnonectes beloncioi",
@@ -3109,10 +3164,21 @@
           "topics": [
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Herr et al. (2021), Ichthyology & Herpetology 109:188–210",
+          "url": "https://doi.org/10.1643/h2020095",
+          "sourceType": "original_species_revision_comparative_acoustics",
+          "publicationYear": 2021,
+          "latestConfirmed": false,
+          "sourceLocation": "Diagnosis of L. beloncioi; Table 4, Palawan L. acanthi male calls (n=4)",
+          "topics": [
+            "Identification"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Kaloula picta",

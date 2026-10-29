@@ -1,7 +1,7 @@
 # LIKAS
 ## Master Project Charter, Product Requirements, and Scientific Standards
 
-**Version:** 1.0.4 (29 October 2026 academic field-guide and reference amendment; canonical filename retained)  
+**Version:** 1.0.5 (29 October 2026 academic field-guide and reference amendment; canonical filename retained)  
 **Date:** 27 October 2026  
 **Product:** LIKAS, a Philippines-first biodiversity field and knowledge platform  
 **Status:** Proposed authoritative project specification, pending adoption into Project instructions and the development repository  
@@ -373,3 +373,12 @@ A failed P0 regression blocks release. A feature without field validation must b
 **v1.0.3, 29 October 2026:** Adopted U-07 and U-08 for APA 7 inline citations, deduplicated bibliographies, concise evidence-first biological copy, minimalist field UI and short accessible secondary transitions. Updated U-04 to allow unobtrusive non-startup UI motion. Raw research data, survey science rules and installed device data remain protected. RC28 scientific core is a development preview pending independent emulator/phone acceptance.
 
 **v1.0.4, 29 October 2026:** Owner accepted a combined 30-screen UI review, full APA reference cleanup and illustrated offline research field-guide direction (U-09). RC29 implements a reviewed subset of scholarly DOI metadata without implying the remaining source records are APA complete; preserve verified photo licenses and all survey data and state semantics. Physical/emulator acceptance is an independent release gate.
+
+
+### U-10 | Three-space portal and original retro artwork (owner accepted 29 October 2026)
+
+The short LIKAS splash opens a top-level portal containing **Fieldwork**, **Library** and **Settings** only. Use short, distinct labels and minimalist original artwork on the primary action cards. Fieldwork includes surveys, active survey resume, stations, history, data summaries and method-specific capture tools. Library includes species, habitats, photography, published comparisons, conservation and original source citations. Settings includes backup/restore, storage, imports, app metadata and motion accessibility. Do not put destructive data management next to start-survey actions, and do not start a survey merely by entering Library or Settings.
+
+The default visual language uses warm pale surfaces, deep forest-green and pond-teal accents, soft corners, generous text spacing and a few hand-drawn vector glyphs. Avoid dense spreadsheet-like stacks on hub screens. Maintain readable 200%-font layouts, large touch targets, system Back behavior, and reduced-motion support. Approved original forest startup imagery and the retro pixel-art pond-frog icon are maintained by an explicit owner-approved asset review, with exact source file and copyright provenance. The front-facing frog emerging half-submerged in water may be visually informed by *Staurois natator*. The mascot **must not** be shown or cited as a research photograph or verified taxonomic evidence. The change must preserve Android identity, signing certificate, source science and all user survey records and complete/incomplete/not-counted outcomes.
+
+**Implementation boundary:** RC33 creates the navigation/hub redesign, theme and icon. It does not declare every deeper form, species account or habitat list visually complete. Record device screenshots and accessibility acceptance separately from source-level tests and APK assembly.

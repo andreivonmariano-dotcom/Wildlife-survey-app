@@ -37,6 +37,9 @@ public final class UiKit {
     // At large font sizes retain a spoken destination, but give the title room.
     Button back=button(a,largeText?"‹":"‹ "+backLabel,"secondary");
     back.setContentDescription("Back to "+backLabel);
+    // Navigation uses a compact icon at large font sizes; do not reserve
+    // a 96dp tall action footprint above the pinned research tabs.
+    if(largeText)back.setMinHeight(dp(a,48));
     row.addView(back,new LinearLayout.LayoutParams(dp(a,largeText?60:120),dp(a,48)));
     back.setOnClickListener(v->onBack.run());
     TextView heading=new TextView(a);

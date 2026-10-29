@@ -1,3 +1,13 @@
+# LIKAS v0.27.3 RC27 | Philippine reptile ecology and large-text field UI
+
+**Source candidate:** `0.27.3-rc27-herpetofauna-field-preview` (versionCode **85**), application ID `org.phwildlife.survey.beta08`, SQLite **27**, pinned Android signing certificate. This candidate has not yet passed new emulator or real-phone acceptance. The previous RC26C emulator had **15/16 tests**, with partial Habitat tab clipping at 200% font. RC27 adjusts the compact navigation Back arrow and retains the existing 16-test screen suite.
+
+Q1 adds four study-scoped facts across three reptile species, for a total **96 accounts, 456 facts and 306 links**. Q2 preserves RC26 Home, Setup and History large-text updates and targets the measured Habitat clipping. Q3 includes a **read-only** `scripts/rc27_phone_readonly_audit.sh` and fourteen handset acceptance checks, all pending actual hardware. No survey records, End Survey decisions, app package, signing key, database schema or startup artwork change.
+
+See `docs/LIKAS_RC27_SCIENCE_AND_UI_QA.md`, `docs/LIKAS_RC27_PHONE_FIELD_QA.md` and `docs/LIKAS_PROJECT_STATE.md`. Do not mistake a successful debug build for a tested field release.
+
+---
+
 # LIKAS v0.27.3 RC26C | Primary ecology and field screen review
 
 **Latest scientific-core debug preview on draft PR #38:** `0.27.3-rc26c-fieldwork-readability-preview`, versionCode **84**, application ID `org.phwildlife.survey.beta08`, SQLite **27**, existing pinned Android signing certificate. This branch's README history below contains older independent release candidates; do not mistake its RC4 startup heading for the current scientific-core code.

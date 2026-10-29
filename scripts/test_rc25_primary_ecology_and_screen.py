@@ -19,13 +19,13 @@ class Rc25PrimaryEcologyAccessibility(unittest.TestCase):
 
     def test_corpus_and_source_counts(self):
         self.assertEqual(self.corpus["prioritySpeciesCount"],96)
-        self.assertEqual(self.corpus["sourceFactCount"],452)
+        self.assertEqual(self.corpus["sourceFactCount"],456)
         self.assertEqual(self.batch["recordCount"],7)
         self.assertEqual(len(self.batch["records"]),7)
-        self.assertEqual(sum(p["referenceCount"] for p in self.book["profiles"]),303)
+        self.assertEqual(sum(p["referenceCount"] for p in self.book["profiles"]),306)
         self.assertEqual(self.corpus["sectionMissingCounts"],{
-            "Identification":1,"Habitat":40,"Distribution":23,
-            "Natural history":65,"Conservation":69})
+            "Identification":1,"Habitat":38,"Distribution":22,
+            "Natural history":64,"Conservation":69})
         self.assertEqual(self.corpus["sourceFactCount"],sum(len(facts)
             for account in self.corpus["accounts"]
             for facts in account["sections"].values()))
@@ -80,8 +80,8 @@ class Rc25PrimaryEcologyAccessibility(unittest.TestCase):
         self.assertIn("species-library-200percent-font.png",runner)
         self.assertIn("habitats-200percent-font.png",runner)
         self.assertIn("16 tests?",runner)
-        self.assertIn("versionCode 84",gradle)
-        self.assertIn("0.27.3-rc26c-fieldwork-readability-preview",gradle)
+        self.assertIn("versionCode 85",gradle)
+        self.assertIn("0.27.3-rc27-herpetofauna-field-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

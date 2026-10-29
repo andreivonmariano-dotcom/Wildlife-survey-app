@@ -16,11 +16,11 @@ class Rc22OriginalStudies(unittest.TestCase):
         self.assertEqual(self.batch["recordCount"],13)
         self.assertEqual(len(self.batch["records"]),13)
         self.assertEqual(self.corpus["prioritySpeciesCount"],96)
-        self.assertEqual(self.corpus["sourceFactCount"],452)
-        self.assertEqual(sum(p["referenceCount"] for p in self.library["profiles"]),303)
+        self.assertEqual(self.corpus["sourceFactCount"],456)
+        self.assertEqual(sum(p["referenceCount"] for p in self.library["profiles"]),306)
         self.assertEqual(self.corpus["sectionMissingCounts"],{
-            "Identification":1,"Habitat":40,"Distribution":23,
-            "Natural history":65,"Conservation":69})
+            "Identification":1,"Habitat":38,"Distribution":22,
+            "Natural history":64,"Conservation":69})
         for account in self.corpus["accounts"]:
             self.assertEqual(account["coverage"]["citedBiologicalFacts"],
                              sum(len(x) for x in account["sections"].values()))
@@ -74,8 +74,8 @@ class Rc22OriginalStudies(unittest.TestCase):
         build=(ROOT/"app/build.gradle").read_text()
         db=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
-        self.assertIn("versionCode 84",build)
-        self.assertIn("0.27.3-rc26c-fieldwork-readability-preview",build)
+        self.assertIn("versionCode 85",build)
+        self.assertIn("0.27.3-rc27-herpetofauna-field-preview",build)
         self.assertIn("super(context,NAME,null,27)",db)
 
 if __name__=="__main__":

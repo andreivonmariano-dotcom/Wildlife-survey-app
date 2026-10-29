@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC27 research expansion, emulator clipping correction and device QA kit (source candidate)
+
+- Owner reselected Q1/Q2/Q3. Current RC26C candidate code84 is signed and passed scientific-core tests, but its actual Android 14 emulator workflow **40826262462 FAILED 15/16**. Downloaded artifact 12876987641 and independently read instrumentation. One real failure: `HabitatRecordsActivity` My records tab at fontScale 2.0 had 121px visible out of measured 144px. Since the runner stopped at instrumentation failure, its saved ZIP held 9 files, not all 96 screenshots; do **not** mark RC26C emulator-accepted. Old/new disposable SQLite files exist but are not owner phone data.
+- New RC27 candidate addresses a likely height contributor in the shared `UiKit.navigationHeader`: the icon-only back button at large text inherited the full large-font main-action minimum (96dp). Set its compact navigation-only minimum to 48dp, preserving a normal touch target and full spoken Back label, to free vertical room above pinned Habitat tabs. Actual 16-test Android emulator screenshot gate **pending**; this source fix is not yet proven.
+- Four source-scoped primary studies facts were added: `Hydrosaurus pustulatus` northeast Mindanao day/night shelter/activity (Sanguila 2016), `Varanus marmoratus` northern Sierra Madre habitat observations (Brown 2013), and two `Varanus dalubhasa` Caramoan coastal/mangrove habitat and Lahuy specimen records (Clores 2021). No inference of national range or current observer site presence. Corpus now **96 species, 456 facts, 306 species/publication links**, section gaps Identification 1, Habitat 38, Distribution 22, Natural history 64, Conservation 69. Species keys, old survey data, IUCN/DENR records and startup remain unchanged.
+- Source tests and a read-only Android-phone audit script are added. `docs/LIKAS_RC27_PHONE_FIELD_QA.md` lists 14 actual handset checks with all **NOT TESTED**. A script can capture device metadata only; it cannot substitute for real GNSS, camera, WAV, 3 survey outcomes, zero-detection visit and historical archive tests.
+- Target `0.27.3-rc27-herpetofauna-field-preview`, versionCode **85**, package `org.phwildlife.survey.beta08`, SQLite **27**, pinned signer unchanged. Source test/build CI, emulator, actual newly signed APK verification, and direct current-chat file delivery remain next gates. No physical phone has been connected.
+
+---
+
+
 ## 29 October 2026 | RC26C code84 signed source accepted; emulator acceptance open
 
 - RC26B emulator **40825425678** returned **15/16** (one failure): Habitat My records button intrinsic 144px, only 121px visible at 200% Android text. All other tests, including the new Home→Setup post-layout measurement, passed. RC26B code83 was signed but not emulator accepted.

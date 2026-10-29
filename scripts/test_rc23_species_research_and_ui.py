@@ -18,11 +18,11 @@ class Rc23SpeciesResearch(unittest.TestCase):
         self.assertEqual(self.batch["recordCount"],9)
         self.assertEqual(len(self.batch["records"]),9)
         self.assertEqual(len(self.corpus["accounts"]),96)
-        self.assertEqual(self.corpus["sourceFactCount"],452)
-        self.assertEqual(sum(p["referenceCount"] for p in self.bib["profiles"]),303)
+        self.assertEqual(self.corpus["sourceFactCount"],456)
+        self.assertEqual(sum(p["referenceCount"] for p in self.bib["profiles"]),306)
         self.assertEqual(self.corpus["sectionMissingCounts"],{
-            "Identification":1,"Habitat":40,"Distribution":23,
-            "Natural history":65,"Conservation":69})
+            "Identification":1,"Habitat":38,"Distribution":22,
+            "Natural history":64,"Conservation":69})
         for account in self.corpus["accounts"]:
             self.assertEqual(account["coverage"]["citedBiologicalFacts"],
                              sum(len(v) for v in account["sections"].values()))
@@ -79,8 +79,8 @@ class Rc23SpeciesResearch(unittest.TestCase):
         self.assertIn("latest cited 96-species accounts",compare)
         self.assertIn("Search offline species by common, scientific or former name",picker)
         self.assertIn("Search species by scientific, common or former name",detail)
-        self.assertIn("versionCode 84",gradle)
-        self.assertIn("0.27.3-rc26c-fieldwork-readability-preview",gradle)
+        self.assertIn("versionCode 85",gradle)
+        self.assertIn("0.27.3-rc27-herpetofauna-field-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

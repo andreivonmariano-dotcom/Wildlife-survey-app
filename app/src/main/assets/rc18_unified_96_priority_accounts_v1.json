@@ -4,7 +4,7 @@
   "purpose": "Unify previously attributed and published biological facts for all 96 species; source coverage does not imply absent traits or a complete diagnostic key.",
   "policy": "Show source-linked biological claims only. Do not fabricate missing ecological sections or site occurrence. Curated database evidence remains distinguishable from peer-reviewed research.",
   "prioritySpeciesCount": 96,
-  "sourceFactCount": 452,
+  "sourceFactCount": 456,
   "topics": [
     "Identification",
     "Habitat",
@@ -14,9 +14,9 @@
   ],
   "sectionMissingCounts": {
     "Identification": 1,
-    "Habitat": 40,
-    "Distribution": 23,
-    "Natural history": 65,
+    "Habitat": 38,
+    "Distribution": 22,
+    "Natural history": 64,
     "Conservation": 69
   },
   "accounts": [
@@ -2819,20 +2819,33 @@
             "studyScope": "Specimens and figure records from Samar Island Natural Park, not all Philippine populations."
           }
         ],
-        "Natural history": [],
+        "Natural history": [
+          {
+            "section": "Natural history",
+            "label": "Day-active and nocturnal shelter observations",
+            "text": "During northeast Mindanao surveys, Philippine sailfin lizards were seen active in daylight and found resting in rock crevices at night along rivers at sampled sites between 170 and 420 m elevation.",
+            "source": "Sanguila et al. (2016), ZooKeys 624:1–132",
+            "url": "https://doi.org/10.3897/zookeys.624.9814",
+            "origin": "rc27_primary_herpetofauna_v1.json",
+            "sourceType": "peer_reviewed_herpetofauna_field_survey",
+            "sourceYear": 2016,
+            "sourceLocation": "Species account Hydrosaurus pustulatus, local survey observations",
+            "studyScope": "Documented northeast Mindanao river sites and sampled individuals only. Not a universal activity schedule, national elevation limit or claim of present occurrence at any user station."
+          }
+        ],
         "Conservation": []
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
           "Identification",
           "Habitat",
-          "Distribution"
+          "Distribution",
+          "Natural history"
         ],
         "sectionsWithoutCitedData": [
-          "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 8
+        "citedBiologicalFacts": 9
       },
       "sourceReferences": 4
     },
@@ -7076,22 +7089,48 @@
             "studyScope": null
           }
         ],
-        "Habitat": [],
-        "Distribution": [],
+        "Habitat": [
+          {
+            "section": "Habitat",
+            "label": "Caramoan coastal and mangrove record",
+            "text": "Researchers documented a water monitor assigned to V. dalubhasa near mangrove vegetation in the Caramoan Island Group and described coastal plains and river margins among reported habitat contexts.",
+            "source": "Clores et al. (2021), Journal of Asia-Pacific Biodiversity 14:1–14",
+            "url": "https://doi.org/10.1016/j.japb.2020.11.005",
+            "origin": "rc27_primary_herpetofauna_v1.json",
+            "sourceType": "peer_reviewed_herpetofauna_field_survey",
+            "sourceYear": 2021,
+            "sourceLocation": "Varanidae: Varanus dalubhasa, Figure 16 and Caramoan study account",
+            "studyScope": "Caramoan Island Group survey context with one collected individual at a coastal mangrove-adjacent locality. Broad habitat descriptions reference related earlier work, not quantified habitat preference."
+          }
+        ],
+        "Distribution": [
+          {
+            "section": "Distribution",
+            "label": "Caramoan survey specimen",
+            "text": "The Caramoan Island Group survey documented a specimen assigned to Varanus dalubhasa near Sitio Bogtong on Lahuy Island.",
+            "source": "Clores et al. (2021), Journal of Asia-Pacific Biodiversity 14:1–14",
+            "url": "https://doi.org/10.1016/j.japb.2020.11.005",
+            "origin": "rc27_primary_herpetofauna_v1.json",
+            "sourceType": "peer_reviewed_herpetofauna_field_survey",
+            "sourceYear": 2021,
+            "sourceLocation": "Varanidae: Varanus dalubhasa, Lahuy Island account",
+            "studyScope": "A published 2021 Caramoan specimen record, not proof of current occurrence elsewhere or a generalized geographic range."
+          }
+        ],
         "Natural history": [],
         "Conservation": []
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
-          "Identification"
+          "Identification",
+          "Habitat",
+          "Distribution"
         ],
         "sectionsWithoutCitedData": [
-          "Habitat",
-          "Distribution",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "citedBiologicalFacts": 3
       },
       "sourceReferences": 2
     },
@@ -7120,7 +7159,20 @@
             "studyScope": "Microscopic scale-count characters from comparative specimens; counts are not a simple photo-based key."
           }
         ],
-        "Habitat": [],
+        "Habitat": [
+          {
+            "section": "Habitat",
+            "label": "Northern Sierra Madre disturbed-site encounters",
+            "text": "The 2013 northern Luzon survey reported marbled water monitors in coastal and agricultural areas, scrub vegetation, secondary growth, primary forest patches and forest edges at low to mid elevations.",
+            "source": "Brown et al. (2013), ZooKeys 266:1–120",
+            "url": "https://doi.org/10.3897/zookeys.266.3982",
+            "origin": "rc27_primary_herpetofauna_v1.json",
+            "sourceType": "peer_reviewed_herpetofauna_field_survey",
+            "sourceYear": 2013,
+            "sourceLocation": "Family Varanidae: Varanus marmoratus, species account",
+            "studyScope": "Field encounters and synthesis from Cagayan and Isabela, northern Luzon, not an occupancy model or evidence that every Philippine island has the species."
+          }
+        ],
         "Distribution": [
           {
             "section": "Distribution",
@@ -7141,14 +7193,14 @@
       "coverage": {
         "sectionsWithPublishedRecords": [
           "Identification",
+          "Habitat",
           "Distribution"
         ],
         "sectionsWithoutCitedData": [
-          "Habitat",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 2
+        "citedBiologicalFacts": 3
       },
       "sourceReferences": 2
     },

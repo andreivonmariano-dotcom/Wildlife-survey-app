@@ -1359,10 +1359,21 @@
           "topics": [
             "Identification"
           ]
+        },
+        {
+          "source": "Sanguila et al. (2016), ZooKeys 624:1–132",
+          "url": "https://doi.org/10.3897/zookeys.624.9814",
+          "sourceType": "peer_reviewed_herpetofauna_field_survey",
+          "publicationYear": 2016,
+          "latestConfirmed": false,
+          "sourceLocation": "Species account Hydrosaurus pustulatus, local survey observations",
+          "topics": [
+            "Ecology"
+          ]
         }
       ],
       "recencyStatus": "recent_2025_2026_publication_verified",
-      "referenceCount": 4
+      "referenceCount": 5
     },
     {
       "scientificName": "Varanus olivaceus",
@@ -3392,10 +3403,22 @@
             "Identification",
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Clores et al. (2021), Journal of Asia-Pacific Biodiversity 14:1–14",
+          "url": "https://doi.org/10.1016/j.japb.2020.11.005",
+          "sourceType": "peer_reviewed_herpetofauna_field_survey",
+          "publicationYear": 2021,
+          "latestConfirmed": false,
+          "sourceLocation": "Varanidae: Varanus dalubhasa, Figure 16 and Caramoan study account",
+          "topics": [
+            "Habitat",
+            "Distribution"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Varanus marmoratus",
@@ -3423,10 +3446,21 @@
             "Distribution",
             "Taxonomy"
           ]
+        },
+        {
+          "source": "Brown et al. (2013), ZooKeys 266:1–120",
+          "url": "https://doi.org/10.3897/zookeys.266.3982",
+          "sourceType": "peer_reviewed_herpetofauna_field_survey",
+          "publicationYear": 2013,
+          "latestConfirmed": false,
+          "sourceLocation": "Family Varanidae: Varanus marmoratus, species account",
+          "topics": [
+            "Habitat"
+          ]
         }
       ],
       "recencyStatus": "recent_peer_reviewed_search_pending",
-      "referenceCount": 2
+      "referenceCount": 3
     },
     {
       "scientificName": "Varanus palawanensis",

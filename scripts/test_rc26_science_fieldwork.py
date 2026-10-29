@@ -14,11 +14,11 @@ class Rc26ScienceAndFieldwork(unittest.TestCase):
         book=json.loads((ASSETS/"rc14_96_species_literature_index_v1.json").read_text())
         self.assertEqual(batch["recordCount"],4)
         self.assertEqual(corpus["prioritySpeciesCount"],96)
-        self.assertEqual(corpus["sourceFactCount"],452)
-        self.assertEqual(sum(p["referenceCount"] for p in book["profiles"]),303)
+        self.assertEqual(corpus["sourceFactCount"],456)
+        self.assertEqual(sum(p["referenceCount"] for p in book["profiles"]),306)
         self.assertEqual(corpus["sectionMissingCounts"],{
-            "Identification":1,"Habitat":40,"Distribution":23,
-            "Natural history":65,"Conservation":69})
+            "Identification":1,"Habitat":38,"Distribution":22,
+            "Natural history":64,"Conservation":69})
         taxon={a["scientificName"]:a for a in corpus["accounts"]}
         refs={p["scientificName"]:{r["url"] for r in p["publications"]}
               for p in book["profiles"]}
@@ -66,8 +66,8 @@ class Rc26ScienceAndFieldwork(unittest.TestCase):
                          "habitats-200percent-font.png"):
             self.assertIn(filename,runner)
         self.assertIn("16 tests?",runner)
-        self.assertIn("versionCode 84",gradle)
-        self.assertIn("0.27.3-rc26c-fieldwork-readability-preview",gradle)
+        self.assertIn("versionCode 85",gradle)
+        self.assertIn("0.27.3-rc27-herpetofauna-field-preview",gradle)
         matrix=(ROOT/"docs/LIKAS_RC26_PHONE_FIELD_QA.md").read_text()
         self.assertIn("NO PHYSICAL PHONE TEST PERFORMED",matrix)
         self.assertIn("Complete",matrix)

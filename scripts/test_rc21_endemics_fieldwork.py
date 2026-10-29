@@ -17,12 +17,12 @@ class Rc21EndemicsFieldwork(unittest.TestCase):
     def test_six_identity_gaps_resolved_and_twelve_still_open(self):
         self.assertEqual(self.batch["newFactCount"],20)
         self.assertEqual(len(self.batch["facts"]),20)
-        self.assertEqual(self.corpus["sourceFactCount"],452)
-        self.assertEqual(sum(x["referenceCount"] for x in self.bibliography["profiles"]),303)
+        self.assertEqual(self.corpus["sourceFactCount"],456)
+        self.assertEqual(sum(x["referenceCount"] for x in self.bibliography["profiles"]),306)
         self.assertEqual(len(self.corpus["accounts"]),96)
         self.assertEqual(self.corpus["sectionMissingCounts"],{
-            "Identification":1,"Habitat":40,"Distribution":23,
-            "Natural history":65,"Conservation":69})
+            "Identification":1,"Habitat":38,"Distribution":22,
+            "Natural history":64,"Conservation":69})
         names={a["scientificName"] for a in self.corpus["accounts"]}
         self.assertEqual(names,{p["scientificName"] for p in self.bibliography["profiles"]})
         for account in self.corpus["accounts"]:
@@ -79,8 +79,8 @@ class Rc21EndemicsFieldwork(unittest.TestCase):
         self.assertIn('font_scale 2.0',recorder)
         self.assertIn('recorder-200percent-font.png',runner)
         self.assertIn('16 tests?',runner)
-        self.assertIn("versionCode 84",gradle)
-        self.assertIn("0.27.3-rc26c-fieldwork-readability-preview",gradle)
+        self.assertIn("versionCode 85",gradle)
+        self.assertIn("0.27.3-rc27-herpetofauna-field-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

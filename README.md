@@ -1,3 +1,15 @@
+# LIKAS RC38 | Illustrated portal and biodiversity gallery
+
+**Development source preview:** `0.27.3-rc38-illustrated-ui-preview`, versionCode **98**, same package `org.phwildlife.survey.beta08`, retained signing setup and SQLite **27**. **Build and on-device acceptance not yet confirmed at the time of this note.**
+
+The short splash still opens Fieldwork, Library and Settings. The portal now has distinct illustrated surfaces and minimal local line art. Fieldwork uses a two-column wildlife-method grid for Birds, Herpetofauna, Mammals and Custom, followed by illustrated History and Analysis shortcuts. The Library places large Species and Habitats entrances above a four-tile reference grid. Settings presents Backup, Storage, Import and Data check as compact data tiles. A large-text configuration stacks the compact grids rather than squeezing controls.
+
+The side-scrolling species cards use a restrained colour frame only for individually checked dated IUCN or DENR assessments. The reviewed six-entry display is unchanged. The remaining 90 original research accounts stay neutral and unverified. No guessed rarity tier, local occurrence, or Priority label is presented. The existing licensed photos, scientific facts, survey lifecycle, GPS, recorded history, data export and startup art are not modified.
+
+See `docs/LIKAS_RC38_ILLUSTRATED_UI_QA.md` and `docs/LIKAS_PROJECT_STATE.md` for test status and release gate.
+
+---
+
 # LIKAS RC36 | Smoother species and habitat cards
 
 **Signed development preview:** `0.27.3-rc36-library-polish-preview`, versionCode **96**, original package `org.phwildlife.survey.beta08`, pinned debug signer and SQLite **27**.

@@ -72,7 +72,8 @@ public final class HabitatRecordsActivity extends Activity {
         // Research controls scroll with the habitat cards, not as a fixed tall header.
         researchToggle.setOnClickListener(v->{
             boolean open=researchTools.getVisibility()!=android.view.View.VISIBLE;
-            researchTools.setVisibility(open?android.view.View.VISIBLE:android.view.View.GONE);
+            if(open)UiMotion.reveal(this,researchTools);
+            else UiMotion.hide(researchTools);
             researchToggle.setText(open?
                 (largeText?"Hide tools  ▴":"Hide habitat research tools  ▴"):
                 (largeText?"Research tools  ▾":"Habitat research tools  ▾"));

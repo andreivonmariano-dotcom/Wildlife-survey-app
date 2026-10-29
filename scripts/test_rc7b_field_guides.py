@@ -63,7 +63,7 @@ class Rc7bFieldGuideTests(unittest.TestCase):
         self.assertIn("screenDp<385f",view)
         self.assertIn("OfflinePhotoEvidence.thumbnailForTaxon(",view)
         self.assertIn("Rc7LiteratureNotes.available(",view)
-        self.assertIn('if(filter==3&&!OfflinePhotoEvidence.hasOfflineTaxon',view)
+        self.assertIn('if(filter==2&&!OfflinePhotoEvidence.hasOfflineTaxon',view)
         detail=(CODE/"TaxonDetailActivity.java").read_text()
         self.assertIn("Rc7LiteratureNotes.add(this,content,scientific)",detail)
         ref=(CODE/"Rc7LiteratureNotes.java").read_text()

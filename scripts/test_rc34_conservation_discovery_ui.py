@@ -47,7 +47,15 @@ class ConservationCardQA(unittest.TestCase):
     def test_only_assessment_categories_choose_card_frame(self):
         src=(CODE/"LikasDiscoveryActivity.java").read_text()
         self.assertIn('categoryLevel(JSONObject data)',src)
+        self.assertIn('if(status==null)return 0;',src)
         self.assertIn('return Math.max(categoryLevel(status.optJSONObject("iucn"))',src)
+        # Real corpus contains many taxa with no reviewed dated assessment.
+        # Each still gets a tappable neutral species card.
+        without={x["scientificName"] for x in self.index["accounts"]} - {
+            x["scientificName"] for x in self.pack["items"]}
+        self.assertEqual(len(without),90)
+        self.assertIn('View card=isHabitat?habitatCard(item):speciesCard(item,status);',src)
+        self.assertIn('return UiKit.BORDER;',src)
         self.assertIn('statusIndex.containsKey(s.optString("scientificName"))',src)
         self.assertIn('new HorizontalScrollView(this)',src)
         self.assertIn('setSmoothScrollingEnabled(true)',src)

@@ -42,6 +42,19 @@ public final class Rc10RecorderInstrumentedTest {
             v.getContentDescription().toString().contains(text))return true;
         return false;
     }
+    private static void assertFirstFilterVisible(View root,String name){
+        ArrayList<View> all=new ArrayList<>();
+        find(root,all);
+        android.widget.Spinner first=null;
+        for(View v:all)if(v instanceof android.widget.Spinner){
+            first=(android.widget.Spinner)v;break;
+        }
+        assertNotNull(name+" first filter present",first);
+        android.graphics.Rect area=new android.graphics.Rect();
+        assertTrue(name+" first filter visible",first.getGlobalVisibleRect(area));
+        assertTrue(name+" first filter not clipped at 200 percent",
+            area.height()>=first.getHeight()-2);
+    }
     private static void capture(android.app.Activity a,String file){
         View root=a.getWindow().getDecorView();
         Bitmap bitmap=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
@@ -180,6 +193,7 @@ public final class Rc10RecorderInstrumentedTest {
                         hasText(root,"Current cited evidence."));
                     assertTrue("Open species from side-by-side comparison",
                         hasText(root,"Open current species account"));
+                    assertFirstFilterVisible(root,"Comparison");
                     capture(a,"rc24_compare_200percent.png");
                 });
             }
@@ -191,6 +205,7 @@ public final class Rc10RecorderInstrumentedTest {
                         hasDescription(root,"Least Concern"));
                     assertTrue("Conservation study denominator rendered",
                         hasText(root,"of 96 species"));
+                    assertFirstFilterVisible(root,"Conservation");
                     capture(a,"rc24_conservation_200percent.png");
                 });
             }

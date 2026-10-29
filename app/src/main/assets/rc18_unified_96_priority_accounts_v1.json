@@ -4,7 +4,7 @@
   "purpose": "Unify previously attributed and published biological facts for all 96 species; source coverage does not imply absent traits or a complete diagnostic key.",
   "policy": "Show source-linked biological claims only. Do not fabricate missing ecological sections or site occurrence. Curated database evidence remains distinguishable from peer-reviewed research.",
   "prioritySpeciesCount": 96,
-  "sourceFactCount": 413,
+  "sourceFactCount": 426,
   "topics": [
     "Identification",
     "Habitat",
@@ -13,10 +13,10 @@
     "Conservation"
   ],
   "sectionMissingCounts": {
-    "Identification": 12,
+    "Identification": 7,
     "Habitat": 46,
-    "Distribution": 24,
-    "Natural history": 73,
+    "Distribution": 23,
+    "Natural history": 71,
     "Conservation": 70
   },
   "accounts": [
@@ -812,6 +812,30 @@
             "sourceYear": null,
             "sourceLocation": null,
             "studyScope": null
+          },
+          {
+            "section": "Habitat",
+            "label": "Measured understorey and canopy associations",
+            "text": "A 2018 Northwest Panay field survey found detections positively associated with dense understorey at 1.5 m and dense canopy cover (model P values 0.001 and 0.003).",
+            "source": "Mynott, Abrahams & Kerhoas (2021), Bird Conservation International 31:640–655",
+            "url": "https://doi.org/10.1017/S0959270920000611",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "peer_reviewed_field_habitat_model",
+            "sourceYear": 2021,
+            "sourceLocation": "Results, Habitat preference; 93 habitat plots, 31 sightings",
+            "studyScope": "GLM for measured plots in Northwest Panay in 2018. Statistical associations are not a confirmed occupancy map for all of Panay or Negros."
+          },
+          {
+            "section": "Habitat",
+            "label": "Camera-trap effort and detections",
+            "text": "The 2018 study recorded three camera-trap detections on separate days at one Northwest Panay location during 161 camera-days of sampling.",
+            "source": "Mynott, Abrahams & Kerhoas (2021), Bird Conservation International 31:640–655",
+            "url": "https://doi.org/10.1017/S0959270920000611",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "peer_reviewed_camera_trap_study",
+            "sourceYear": 2021,
+            "sourceLocation": "Results, 2018 camera-trap detections",
+            "studyScope": "Three detections at one camera location do not establish independent individuals or density; study effort was 161 camera-days."
           }
         ],
         "Distribution": [
@@ -854,7 +878,7 @@
         "sectionsWithoutCitedData": [
           "Natural history"
         ],
-        "citedBiologicalFacts": 4
+        "citedBiologicalFacts": 6
       },
       "sourceReferences": 2
     },
@@ -1532,7 +1556,20 @@
         "url": "https://www.researchgate.net/publication/360034142_Checklist_of_amphibians_of_the_Philippines_version_2025-1"
       },
       "sections": {
-        "Identification": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Published advertisement-call structure",
+            "text": "The species' published male advertisement calls consist of paired calls with two notes each; part of the second note is amplitude-modulated and the calls contain multiple harmonics.",
+            "source": "Brown et al. (2002), Silliman Journal 43(1):91–109",
+            "url": "https://www.stii.dost.gov.ph/images/jdownloads/pdf_files/psta/PSTA_2014_July-Dec.pdf",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "original_bioacoustic_study_abstract",
+            "sourceYear": 2002,
+            "sourceLocation": "DOST abstract of Brown et al., Advertisement calls of two endangered endemic Philippine frogs",
+            "studyScope": "Acoustic structure from male calls at limestone localities in southern Negros; archived study abstract, not a quantified recognition threshold."
+          }
+        ],
         "Habitat": [
           {
             "section": "Habitat",
@@ -1573,20 +1610,33 @@
             "studyScope": null
           }
         ],
-        "Natural history": [],
+        "Natural history": [
+          {
+            "section": "Natural history",
+            "label": "Observed limestone-crevice egg laying",
+            "text": "A 2010 comparative limestone-frog description reports direct-developing eggs of P. spelaeus deposited in limestone crevices.",
+            "source": "Siler et al. (2010), Zootaxa 2482:25–42, Platymantis biak description",
+            "url": "https://tb.plazi.org/GgServer/html/03F587EFFFCAFFEC5BB593F6FDC2FD0D",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "published_comparative_field_observation",
+            "sourceYear": 2010,
+            "sourceLocation": "Natural history discussion, note on P. spelaeus egg deposition",
+            "studyScope": "Observation attributed to C. D. Siler, not a measured egg count, seasonality estimate or study of nationwide nesting sites."
+          }
+        ],
         "Conservation": []
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
+          "Identification",
           "Habitat",
-          "Distribution"
+          "Distribution",
+          "Natural history"
         ],
         "sectionsWithoutCitedData": [
-          "Identification",
-          "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 3
+        "citedBiologicalFacts": 5
       },
       "sourceReferences": 2
     },
@@ -2313,7 +2363,20 @@
         "url": "https://www.researchgate.net/publication/360034142_Checklist_of_amphibians_of_the_Philippines_version_2025-1"
       },
       "sections": {
-        "Identification": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Revised stream-frog comparison",
+            "text": "The 2017 revision reports male snout–vent lengths of 61.7–79.5 mm and a graded dark-to-light flank colour transition in sampled S. everetti, distinguishing its comparison series from S. acai.",
+            "source": "Brown et al. (2017), Herpetological Monographs 31:182–203",
+            "url": "https://www.researchgate.net/publication/320362775_Taxonomic_Reappraisal_of_the_Northeast_Mindanao_Stream_Frog_Sanguirana_albotuberculataInger_1954_Validation_ofRana_mearnsi_Stejneger_1905_and_Description_of_a_New_Species_from_the_Central_Philippines",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "original_taxonomic_revision",
+            "sourceYear": 2017,
+            "sourceLocation": "Table 3, comparison of Sanguirana acai and S. everetti",
+            "studyScope": "Examined samples and taxonomic comparison; body size and flank gradient alone do not distinguish all Philippine Sanguirana. Former West Visayan everetti populations were reassigned to S. acai."
+          }
+        ],
         "Habitat": [],
         "Distribution": [
           {
@@ -2346,15 +2409,15 @@
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
+          "Identification",
           "Distribution"
         ],
         "sectionsWithoutCitedData": [
-          "Identification",
           "Habitat",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 2
+        "citedBiologicalFacts": 3
       },
       "sourceReferences": 2
     },
@@ -2431,9 +2494,34 @@
             "sourceYear": null,
             "sourceLocation": "Native Habitat",
             "studyScope": "General habitat range, not a spatial distribution prediction."
+          },
+          {
+            "section": "Habitat",
+            "label": "Observed disturbance and salinity tolerance",
+            "text": "The northern Sierra Madre survey reports live Philippine crocodiles in freshwater rivers, creeks and ponds, and in coastal riverine habitats with saline conditions in parts of Isabela.",
+            "source": "Brown et al. (2013), ZooKeys 266:1–120",
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3591760/",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "peer_reviewed_herpetofaunal_field_survey",
+            "sourceYear": 2013,
+            "sourceLocation": "Species account, Crocodylus mindorensis, Isabela field records",
+            "studyScope": "Observed habitats in Isabela, not a claim of broad marine tolerance or current persistence at every listed locality."
           }
         ],
-        "Distribution": [],
+        "Distribution": [
+          {
+            "section": "Distribution",
+            "label": "Historical mapped locality records",
+            "text": "The published northern Sierra Madre survey documented crocodile observations in parts of Maconacon, Divilacan, Palanan, San Mariano, Benito Soliven and San Guillermo, Isabela.",
+            "source": "Brown et al. (2013), ZooKeys 266:1–120",
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3591760/",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "peer_reviewed_herpetofaunal_field_survey",
+            "sourceYear": 2013,
+            "sourceLocation": "Species account, Crocodylus mindorensis, documented municipalities",
+            "studyScope": "Historical field records from this survey. They are not live 2026 point occurrences and must not populate the app's local range filter."
+          }
+        ],
         "Natural history": [
           {
             "section": "Natural history",
@@ -2467,13 +2555,12 @@
         "sectionsWithPublishedRecords": [
           "Identification",
           "Habitat",
+          "Distribution",
           "Natural history",
           "Conservation"
         ],
-        "sectionsWithoutCitedData": [
-          "Distribution"
-        ],
-        "citedBiologicalFacts": 7
+        "sectionsWithoutCitedData": [],
+        "citedBiologicalFacts": 9
       },
       "sourceReferences": 2
     },
@@ -2994,20 +3081,33 @@
             "studyScope": null
           }
         ],
-        "Natural history": [],
+        "Natural history": [
+          {
+            "section": "Natural history",
+            "label": "Frugivory in original species description",
+            "text": "The original 2010 species description characterizes Varanus bitatawa as a frugivorous forest monitor from the central and northern Sierra Madre.",
+            "source": "Welton et al. (2010), Biology Letters 6:654–658",
+            "url": "https://doi.org/10.1098/rsbl.2010.0119",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "original_species_description",
+            "sourceYear": 2010,
+            "sourceLocation": "Abstract and Discussion",
+            "studyScope": "Described feeding guild and field context, not a quantified diet sample or evidence of current presence anywhere in the mapped forest."
+          }
+        ],
         "Conservation": []
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
           "Identification",
           "Habitat",
-          "Distribution"
+          "Distribution",
+          "Natural history"
         ],
         "sectionsWithoutCitedData": [
-          "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 6
+        "citedBiologicalFacts": 7
       },
       "sourceReferences": 3
     },
@@ -4023,6 +4123,18 @@
             "sourceYear": null,
             "sourceLocation": null,
             "studyScope": null
+          },
+          {
+            "section": "Habitat",
+            "label": "2012 Negros camera-trap context",
+            "text": "A March–April 2012 survey in North Negros Natural Park photographed wild Visayan spotted deer during 185 camera-trap days, supporting occurrence in the park's forest interior at that time.",
+            "source": "Oryx (2013), First images of the Visayan spotted deer and Visayan warty pig",
+            "url": "https://www.cambridge.org/core/journals/oryx/article/first-images-of-the-visayan-spotted-deer-and-visayan-warty-pig/CE0FE89440441E0B22B70C7769D12907",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "peer_reviewed_camera_trap_field_study",
+            "sourceYear": 2013,
+            "sourceLocation": "Fieldwork and results, North Negros Natural Park",
+            "studyScope": "Detection of species during limited 2012 camera effort; no abundance or current site presence inferred."
           }
         ],
         "Distribution": [
@@ -4113,7 +4225,7 @@
           "Conservation"
         ],
         "sectionsWithoutCitedData": [],
-        "citedBiologicalFacts": 8
+        "citedBiologicalFacts": 9
       },
       "sourceReferences": 3
     },
@@ -6517,7 +6629,20 @@
         "url": "https://www.researchgate.net/publication/360034142_Checklist_of_amphibians_of_the_Philippines_version_2025-1"
       },
       "sections": {
-        "Identification": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Agusan Marsh comparative characters",
+            "text": "A 2026 specimen-based account describes an olive-grey back, a vertebral stripe absent in most examined frogs, yellow bars on the inner hind limbs or groin, and no outer tarsal or fifth-toe flap compared with F. moodiei.",
+            "source": "Sanguila et al. (2026), ZooKeys 1272:203–251",
+            "url": "https://doi.org/10.3897/zookeys.1272.167304",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "peer_reviewed_field_identification",
+            "sourceYear": 2026,
+            "sourceLocation": "Fejervarya vittigera treatment, Identification, Fig. 4D",
+            "studyScope": "Character combination attributed to examined Agusan Marsh vouchers. Stripe variable; not a validated all-island field key."
+          }
+        ],
         "Habitat": [
           {
             "section": "Habitat",
@@ -6530,6 +6655,18 @@
             "sourceYear": null,
             "sourceLocation": null,
             "studyScope": null
+          },
+          {
+            "section": "Habitat",
+            "label": "Observed wetland microhabitats",
+            "text": "Examined Agusan Marsh frogs were reported along rice-field irrigation channels and in quiet pools beside creeks and rivers.",
+            "source": "Sanguila et al. (2026), ZooKeys 1272:203–251",
+            "url": "https://doi.org/10.3897/zookeys.1272.167304",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "peer_reviewed_field_survey",
+            "sourceYear": 2026,
+            "sourceLocation": "Fejervarya vittigera treatment, Remarks",
+            "studyScope": "Agusan Marsh locality observations, not a nationwide habitat preference or site occupancy prediction."
           }
         ],
         "Distribution": [],
@@ -6538,15 +6675,15 @@
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
+          "Identification",
           "Habitat"
         ],
         "sectionsWithoutCitedData": [
-          "Identification",
           "Distribution",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "citedBiologicalFacts": 3
       },
       "sourceReferences": 2
     },
@@ -7027,7 +7164,20 @@
         "url": "https://www.researchgate.net/publication/362324825_Checklist_of_reptiles_of_the_Philippines_version_2026-1"
       },
       "sections": {
-        "Identification": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Philippine snake-key character",
+            "text": "The published Philippine Trimeresurus key describes a red tail contrasting with a green body in life; other characters are necessary and colour alone cannot confirm an identification.",
+            "source": "Leviton et al. (2019), Illustrated Key to the Snakes of the Philippines",
+            "url": "https://www.researchgate.net/publication/336170835_Illustrated_Key_to_the_Snakes_of_the_Philippines",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "peer_reviewed_taxonomic_key",
+            "sourceYear": 2019,
+            "sourceLocation": "Genus Trimeresurus, Philippine species key, couplet 1a",
+            "studyScope": "Key also uses hemipenes; do not handle this venomous snake for identification. Colour notes apply to living specimens and may vary."
+          }
+        ],
         "Habitat": [],
         "Distribution": [
           {
@@ -7048,15 +7198,15 @@
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
+          "Identification",
           "Distribution"
         ],
         "sectionsWithoutCitedData": [
-          "Identification",
           "Habitat",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "citedBiologicalFacts": 2
       },
       "sourceReferences": 2
     },
@@ -7071,7 +7221,20 @@
         "url": "https://www.researchgate.net/publication/362324825_Checklist_of_reptiles_of_the_Philippines_version_2026-1"
       },
       "sections": {
-        "Identification": [],
+        "Identification": [
+          {
+            "section": "Identification",
+            "label": "Specimen-based scale comparison",
+            "text": "A published comparative treatment reports 55–65 preanofemoral pores, 14–17 dorsal tubercle rows and snout–vent length up to 103.5 mm for Gekko gigante.",
+            "source": "Rösler et al. (2006), Salamandra 42:197–211",
+            "url": "https://www.researchgate.net/publication/267834640_Gekko_ernstkelleri_sp_n_-_a_new_gekkonid_lizard_from_Panay_Island_Philippines",
+            "origin": "rc22_original_diagnoses_habitat_field_studies_v1.json",
+            "sourceType": "peer_reviewed_taxonomic_comparison",
+            "sourceYear": 2006,
+            "sourceLocation": "Comparisons, Gekko gigante paragraph, page 199",
+            "studyScope": "Rösler et al. compile comparison with Brown & Alcala (1978) and Alcala (1986); measurements are specimen-based, not remotely confirmed by a photograph."
+          }
+        ],
         "Habitat": [],
         "Distribution": [
           {
@@ -7092,15 +7255,15 @@
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
+          "Identification",
           "Distribution"
         ],
         "sectionsWithoutCitedData": [
-          "Identification",
           "Habitat",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 1
+        "citedBiologicalFacts": 2
       },
       "sourceReferences": 2
     },

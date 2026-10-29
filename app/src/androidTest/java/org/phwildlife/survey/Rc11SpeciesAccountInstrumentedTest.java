@@ -99,6 +99,32 @@ public final class Rc11SpeciesAccountInstrumentedTest {
             });
         }
     }
+    @Test public void testRc30ReviewAddsMissingTopicsWithoutInventingRange()throws Exception{
+        String[] names={"Pithecophaga jefferyi","Acerodon leucotis",
+            "Bubalus mindorensis"};
+        String[] sources={"Documented island distribution",
+            "Historical Busuanga and Palawan records",
+            "Observed social grouping on Mindoro"};
+        for(int i=0;i<names.length;i++){
+            String taxon=names[i],expected=sources[i];
+            Intent intent=new Intent(InstrumentationRegistry.getInstrumentation()
+                .getTargetContext(),TaxonDetailActivity.class);
+            intent.putExtra("taxon_query",taxon);
+            try(ActivityScenario<TaxonDetailActivity> screen=
+                    ActivityScenario.launch(intent)){
+                screen.onActivity(a->{
+                    ArrayList<View> views=descendants(a.getWindow().getDecorView());
+                    assertTrue("Reviewed fact not displayed for "+taxon,
+                        containsText(views,expected));
+                    assertTrue("Inline citation missing for "+taxon,
+                        containsText(views," ("));
+                    assertTrue("Original source drawer missing for "+taxon,
+                        containsText(views,"References"));
+                });
+            }
+        }
+    }
+
     @Test public void testSparsePriorityHasNoPlaceholderStack()throws Exception{
         Intent intent=new Intent(InstrumentationRegistry.getInstrumentation()
             .getTargetContext(),TaxonDetailActivity.class);

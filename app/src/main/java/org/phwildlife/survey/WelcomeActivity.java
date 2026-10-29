@@ -26,6 +26,7 @@ import java.util.ArrayList;
 public class WelcomeActivity extends Activity {
     private final int BG=UiKit.BG,INK=UiKit.INK,GREEN=UiKit.FOREST,MUTED=UiKit.MUTED;
     private LinearLayout main,root,setupFooter;
+    private ScrollView shellScroll;
     private Button setupStartButton;
     private String profile="Birds";
     private boolean custom=false;
@@ -116,6 +117,7 @@ public class WelcomeActivity extends Activity {
     private void buildShell(){
         root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(16),dp(12),dp(16),dp(12));
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
+        shellScroll=scroll;
         main=vertical();main.setPadding(0,0,0,dp(24));scroll.addView(main);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1f));
         // One persistent GPS continuation action; never duplicate it in the form.
@@ -128,6 +130,9 @@ public class WelcomeActivity extends Activity {
         setupFooter.setVisibility(View.GONE);
         root.addView(setupFooter);
         setContentView(root);
+    }
+    private void scrollTop(){
+        if(shellScroll!=null)shellScroll.post(()->shellScroll.scrollTo(0,0));
     }
     private void heading(String title,String subtitle) {
         TextView h=text(title,24,true);h.setPadding(dp(2),dp(6),0,0);
@@ -178,7 +183,7 @@ public class WelcomeActivity extends Activity {
         parent.addView(tile,lp);
     }
     private void home(){
-        homeVisible=true;currentScreen="home";main.removeAllViews();
+        homeVisible=true;currentScreen="home";main.removeAllViews();scrollTop();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         lastHomeActiveSurvey=activeSurvey();
         main.addView(LikasPortalUi.hero(this),new LinearLayout.LayoutParams(-1,dp(152)));
@@ -212,7 +217,7 @@ public class WelcomeActivity extends Activity {
         }
     }
     private void fieldworkHub(){
-        homeVisible=false;currentScreen="fieldwork";main.removeAllViews();
+        homeVisible=false;currentScreen="fieldwork";main.removeAllViews();scrollTop();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         main.addView(UiKit.navigationHeader(this,"Fieldwork","Home",this::home));
         main.addView(FieldVisuals.section(this,"New survey","Choose wildlife group"));
@@ -340,7 +345,7 @@ public class WelcomeActivity extends Activity {
         main.addView(wrapper,lp);wrapper.setOnClickListener(v->action.run());
     }
     private void customPicker(){
-        homeVisible=false;currentScreen="custom";main.removeAllViews();
+        homeVisible=false;currentScreen="custom";main.removeAllViews();scrollTop();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         Button back=UiKit.button(this,"← Back","secondary");main.addView(back);back.setOnClickListener(v->fieldworkHub());
         heading("Custom survey","Select a wildlife group.");
@@ -364,7 +369,7 @@ public class WelcomeActivity extends Activity {
     }
     private void setup(String selected,boolean isCustom){
         homeVisible=false;currentScreen="setup";profile=selected;custom=isCustom;
-        main.removeAllViews();
+        main.removeAllViews();scrollTop();
         setupStartButton.setText("Continue to GPS");
         setupStartButton.setContentDescription("Continue "+profile+" survey setup to GPS preflight");
         setupFooter.setVisibility(View.VISIBLE);

@@ -50,9 +50,9 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                 assertTrue(containsText(views,"Pithecophaga jefferyi"));
                 assertTrue(containsText(views,"Identification"));
                 assertTrue(containsText(views,"Habitat"));
-                assertTrue(containsText(views,"Sources & details"));
+                assertTrue(containsText(views,"References & study details"));
                 assertTrue("Cited topic coverage visible",containsText(views,"of 5 research topics documented"));
-                assertTrue("Per-note research provenance visible",containsText(views,"Source: "));
+                assertTrue("Per-note research provenance visible",containsText(views," ("));
                 assertTrue("Comparison snapshot labeled",containsText(views,"Compare current cited traits"));
                 assertTrue(containsText(views,"Photo reference"));
                 assertTrue(containsText(views,"View photo & credits"));
@@ -69,13 +69,14 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                 assertTrue("Vector field icons required",icons>=2);
                 for(View v:views)
                     if(v instanceof Button&&((Button)v).getText().toString()
-                        .startsWith("Sources & details")){
+                        .startsWith("References & study details")){
                         v.performClick();break;
                     }
                 assertTrue(containsText(descendants(root),"Study details"));
-                assertTrue(containsText(descendants(root),"Research references"));
+                assertTrue(containsText(descendants(root),"References"));
                 assertTrue(containsText(descendants(root),"Bacus et al."));
-                assertTrue(containsText(descendants(root),"Open study"));
+                assertTrue("At least one clickable source URI remains in references",
+                    containsText(descendants(root),"https://"));
                 assertTrue(containsText(descendants(root),"Filter references"));
                 for(View v:descendants(root))
                     if(v instanceof Button&&((Button)v).getText().toString()
@@ -106,7 +107,7 @@ public final class Rc11SpeciesAccountInstrumentedTest {
             scenario.onActivity(activity->{
                 ArrayList<View> views=descendants(activity.getWindow().getDecorView());
                 assertTrue(containsText(views,"Buceros hydrocorax"));
-                assertTrue(containsText(views,"Sources & details"));
+                assertTrue(containsText(views,"References & study details"));
                 assertFalse(containsText(views,"Unassessed. No reviewed ecological profile installed."));
                 assertFalse(containsText(views,"A detailed account is not yet source-checked"));
                 assertFalse(containsText(views,"Review status: Not independently reviewed"));
@@ -127,7 +128,7 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                     containsText(initial,"Published body measures"));
                 boolean opened=false;
                 for(View v:initial)if(v instanceof Button&&
-                    ((Button)v).getText().toString().startsWith("Sources & details")){
+                    ((Button)v).getText().toString().startsWith("References & study details")){
                     assertTrue(v.performClick());
                     opened=true;break;
                 }
@@ -188,7 +189,7 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                     assertTrue(containsText(views,species));
                     assertTrue("Original literature fact visible for "+species,
                         containsText(views,detail));
-                    assertTrue(containsText(views,"Sources & details"));
+                    assertTrue(containsText(views,"References & study details"));
                     assertFalse(containsText(views,"A detailed account is not yet source-checked"));
                 });
             }
@@ -221,11 +222,11 @@ public final class Rc11SpeciesAccountInstrumentedTest {
                     View root=activity.getWindow().getDecorView();
                     ArrayList<View> all=descendants(root);
                     assertTrue("Missing species title "+name,containsText(all,name));
-                    assertTrue("Missing references "+name,containsText(all,"Sources & details"));
+                    assertTrue("Missing references "+name,containsText(all,"References & study details"));
                     assertTrue("Missing cited-topic coverage "+name,
                         containsText(all,"of 5 research topics documented"));
                     assertTrue("Missing on-card citation "+name,
-                        containsText(all,"Source: "));
+                        containsText(all," ("));
                     int count=0;
                     for(String heading:new String[]{"Identification","Habitat",
                         "Range","Natural history","Conservation"})

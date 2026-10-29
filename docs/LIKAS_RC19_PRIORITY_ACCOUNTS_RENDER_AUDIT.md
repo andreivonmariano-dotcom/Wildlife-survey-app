@@ -26,3 +26,14 @@ New `app/src/main/assets/rc19_priority_literature_batch_v1.json` stores **21 sou
 ## Next research work
 
 The remaining 27 identification gaps and topic deficits require targeted original diagnostic papers, island-specific research and separately dated IUCN/DENR conservation records. A 96-record bibliography is not equal to 96 current species diagnoses. Keep source discovery at exact original-publication or curated authority level, never fill blanks with animal-family generalities.
+
+## Verified Android 14 emulator evidence, 29 October 2026
+
+Actual Android emulator workflow `40805609892` completed **success** and returned artifact `12868850112`. Extracted `instrumentation.txt` reports `OK (13 tests)`. The run includes `EMULATOR-SMOKE-PASS`, `RECORDER-DOCK-INSTRUMENTED-PASS` and `ALL-96-RENDERED-SPECIES-AUDIT-PASS`.
+
+- 96 distinct real activity JPEG captures are present, 480 × 960 pixels at 320dp. Audit CSV has 96 rows (24 each of birds, amphibians, reptiles and mammals) and every listed JPEG byte count matches. Rendered card-count histogram: 14 with one, 35 with two, 27 with three, 13 with four, and seven with five.
+- Reviewed four contact sheets covering all screenshot thumbnails. No obvious severe first-viewport card/header overlap was found. This is a *first-frame* visual sweep, not an end-to-end scroll or expanded-detail visual check, not a 200% font or TalkBack assessment and not physical handset acceptance.
+- Original signed RC7C emulator upgrade fixture SQLite was preserved byte-for-byte: `previous-db.sqlite` and `after-upgrade-db.sqlite` both SHA-256 `07fdfede0556fac7bd03bd77a4b1112b4a4c771cc0db5e26cc8c20ec4eff20e1`.
+- Scientific Core QA run `40805615786` succeeded. Re-downloaded artifact `12867598019`, extracted the 9,536,155-byte RC19 APK with SHA-256 `69e51aa59ac089e6198c1e0500eb7794483f3e0a1d083e0e21b868426cb8758b`; independently validated APK ZIP contents and v2 signing certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Runtime manifest version report confirms versionCode 72 and versionName `0.27.3-rc19-all-species-screen-audit-preview`.
+- RC19 is a development preview. Its 96 working reference screens are not 96 scientifically complete accounts. The five source-coverage gap totals remain unchanged. Next work is sourced diagnosis research, not invented content.
+

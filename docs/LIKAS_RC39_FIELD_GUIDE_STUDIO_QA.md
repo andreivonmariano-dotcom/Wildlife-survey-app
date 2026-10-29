@@ -34,3 +34,7 @@
 Only the 96 research accounts have the illustrated gallery. `All species` remains the full separate offline taxon catalog. Photo rights and source links are unchanged. No new rarity reviews, live conservation feeds or media are claimed. Physical device testing is not complete simply from successful CI.
 
 **Affected requirements:** U-04, U-07, U-09, U-10, U-11, G-01, G-03, S-01, S-09, L-02, L-04, H-02, C-01, E-01, E-04, E-05, DL-01, CC-01.
+
+## Current CI result and pending release
+
+First RC39 run `40873681599` failed one source-text contract expecting the old phrase `Rarity unassessed`. The same distinction is now clearly stated as `Status is not rarity`. The stale assertion was corrected in commit `6baa8fa9875f0ccfd95543dac852241d694fc0ef`. Latest corrected CI run `40874694689` was queued at the last check. Python/JVM/Android compilation and signed APK inspection for the corrected release still require a completed run, and no RC39 direct APK should be claimed yet.

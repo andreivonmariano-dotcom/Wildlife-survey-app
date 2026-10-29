@@ -52,7 +52,7 @@ public final class OfflineFieldLibrary {
         out.addView(text(a,name,true));
         String cleaned=body.trim();
         if(!citations.isEmpty()){
-            cleaned=cleaned.replaceAll("[.\\\\s]+$","");
+            if(cleaned.endsWith("."))cleaned=cleaned.substring(0,cleaned.length()-1);
             cleaned+=" "+citations+".";
         }
         out.addView(text(a,cleaned,false));
@@ -229,7 +229,7 @@ public final class OfflineFieldLibrary {
             toggle.setOnClickListener(v->{
                 boolean open=detail.getVisibility()!=View.VISIBLE;
                 for(int n=0;n<openDetails.size();n++){
-                    openDetails.get(n).setVisibility(View.GONE);
+                    UiMotion.hide(openDetails.get(n));
                     toggles.get(n).setText(labels.get(n)+"  ▾");
                 }
                 if(open){
@@ -258,7 +258,7 @@ public final class OfflineFieldLibrary {
                         citationList(a,detail,pack.optJSONArray("sources"),
                             profile.optJSONArray("sourceIds"));
                     }
-                    detail.setVisibility(View.VISIBLE);
+                    UiMotion.reveal(a,detail);
                     toggle.setText(name+"  ▴");
                 }
                 teaser.setVisibility(open?View.GONE:View.VISIBLE);

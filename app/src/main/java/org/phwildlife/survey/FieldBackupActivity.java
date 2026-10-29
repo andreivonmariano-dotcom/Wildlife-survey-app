@@ -26,7 +26,7 @@ public final class FieldBackupActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16),dp(12),dp(16),dp(16));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Backup & recovery","Workspace",this::finish));
+        root.addView(UiKit.navigationHeader(this,"Backup & recovery","Settings",this::finish));
         ScrollView scroller=new ScrollView(this);
         LinearLayout contents=new LinearLayout(this);
         contents.setOrientation(LinearLayout.VERTICAL);

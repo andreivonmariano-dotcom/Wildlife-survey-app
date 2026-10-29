@@ -181,7 +181,7 @@ public class WelcomeActivity extends Activity {
         homeVisible=true;currentScreen="home";main.removeAllViews();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         lastHomeActiveSurvey=activeSurvey();
-        main.addView(LikasPortalUi.hero(this),new LinearLayout.LayoutParams(-1,dp(180)));
+        main.addView(LikasPortalUi.hero(this),new LinearLayout.LayoutParams(-1,dp(152)));
         if(lastHomeActiveSurvey!=null){
             View session=LikasPortalUi.session(this,()->
                 startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
@@ -190,17 +190,17 @@ public class WelcomeActivity extends Activity {
             resumeLp.topMargin=dp(12);
             main.addView(session,resumeLp);
         }
-        TextView guidance=LikasPortalUi.kicker(this,"CHOOSE YOUR SPACE");
+        TextView guidance=LikasPortalUi.kicker(this,"EXPLORE LIKAS");
         main.addView(guidance);
         View field=LikasPortalUi.tile(this,"Fieldwork","Surveys · Data · History",
             "field",LikasPortalUi.CANOPY,Color.WHITE,this::fieldworkHub);
         LinearLayout.LayoutParams fieldLp=new LinearLayout.LayoutParams(-1,-2);
-        fieldLp.bottomMargin=dp(12);main.addView(field,fieldLp);
+        fieldLp.bottomMargin=dp(9);main.addView(field,fieldLp);
         View library=LikasPortalUi.tile(this,"Library","Species · Habitats · Guides",
             "library",Color.rgb(222,237,208),Color.WHITE,()->
                 startActivity(new Intent(this,LikasLibraryActivity.class)));
         LinearLayout.LayoutParams libraryLp=new LinearLayout.LayoutParams(-1,-2);
-        libraryLp.bottomMargin=dp(12);main.addView(library,libraryLp);
+        libraryLp.bottomMargin=dp(9);main.addView(library,libraryLp);
         View settings=LikasPortalUi.tile(this,"Settings","Backups · App · Storage",
             "settings",Color.rgb(231,239,238),Color.WHITE,()->
                 startActivity(new Intent(this,LikasSettingsActivity.class)));
@@ -215,11 +215,7 @@ public class WelcomeActivity extends Activity {
         homeVisible=false;currentScreen="fieldwork";main.removeAllViews();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         main.addView(UiKit.navigationHeader(this,"Fieldwork","Home",this::home));
-        main.addView(LikasPortalUi.kicker(this,"SURVEYS"));
-        TextView intro=LikasPortalUi.text(this,"Go to the field.",25,
-            LikasPortalUi.CANOPY,true);
-        intro.setPadding(dp(2),dp(2),dp(2),dp(12));main.addView(intro);
-        main.addView(FieldVisuals.section(this,"Start a survey","Choose a wildlife group"));
+        main.addView(FieldVisuals.section(this,"New survey","Choose wildlife group"));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
@@ -243,7 +239,6 @@ public class WelcomeActivity extends Activity {
             activeCard.addView(resume,new LinearLayout.LayoutParams(-1,dp(actionDp())));
             main.addView(activeCard);
         }else{
-            main.addView(step("NEW","Choose wildlife group"));
             LinearLayout first=new LinearLayout(this);
             first.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
             surveyTile(first,"Birds","Counts · Transects",()->setup("Birds",false));
@@ -257,13 +252,12 @@ public class WelcomeActivity extends Activity {
             secondLp.topMargin=dp(10);main.addView(second,secondLp);
         }
 
-        main.addView(FieldVisuals.section(this,"Workspace","Projects and records"));
+        main.addView(FieldVisuals.section(this,"Records",null));
         toolRow(main,"Projects & stations",()->
             startActivity(new Intent(this,SitesActivity.class)));
-        addHomeRecentSurvey();
         LinearLayout shortcutRow=new LinearLayout(this);
         shortcutRow.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        View history=LikasPortalUi.mini(this,"History","Past surveys","history",
+        View history=LikasPortalUi.mini(this,"History",recentSurveySummary(),"history",
             ()->startActivity(new Intent(this,HistoryActivity.class)));
         shortcutRow.addView(history,new LinearLayout.LayoutParams(
             largeText()?-1:0,-2,1));
@@ -309,26 +303,18 @@ public class WelcomeActivity extends Activity {
             if(show)UiMotion.reveal(this,moreTools);
         });
     }
-    /** A brief, read-only link to the latest archived or active survey. */
-    private void addHomeRecentSurvey(){
-        String summary="No survey recorded yet";
+    /** Short status caption for the single History destination. */
+    private String recentSurveySummary(){
         try(FieldDb d=new FieldDb(this);
             Cursor c=d.getReadableDatabase().rawQuery(
                 "SELECT COALESCE(survey_profile,taxon_group,'Birds'),"+
-                "COALESCE(station_id,''),COALESCE(outcome,'active'),started "+
+                "COALESCE(outcome,CASE WHEN ended IS NULL THEN 'active' "+
+                "WHEN complete=1 THEN 'complete' ELSE 'incomplete' END) "+
                 "FROM surveys ORDER BY started DESC LIMIT 1",null)){
-            if(c.moveToFirst()){
-                String station=c.getString(1);
-                String status=c.getString(2).replace('_',' ');
-                summary=c.getString(0)+" · "+status+
-                    (station.isEmpty()?"":" · Station "+station);
-            }
-        }catch(Exception ignored){summary="Open history to review saved surveys";}
-        View recent=LikasPortalUi.action(this,"Latest record",summary,
-            "history",()->startActivity(new Intent(this,HistoryActivity.class)));
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.topMargin=dp(5);lp.bottomMargin=dp(8);
-        main.addView(recent,lp);
+            if(c.moveToFirst())
+                return c.getString(0)+" · "+c.getString(1).replace('_',' ');
+        }catch(Exception ignored){}
+        return "Past surveys";
     }
 
     private void toolRow(LinearLayout parent,String name,Runnable action){
@@ -379,7 +365,7 @@ public class WelcomeActivity extends Activity {
     private void setup(String selected,boolean isCustom){
         homeVisible=false;currentScreen="setup";profile=selected;custom=isCustom;
         main.removeAllViews();
-        setupStartButton.setText(largeText()?"Continue to GPS":"Continue to GPS · "+profile);
+        setupStartButton.setText("Continue to GPS");
         setupStartButton.setContentDescription("Continue "+profile+" survey setup to GPS preflight");
         setupFooter.setVisibility(View.VISIBLE);
         Button back=button("‹ Back");
@@ -387,8 +373,7 @@ public class WelcomeActivity extends Activity {
             dp(largeText()?96:112),dp(largeText()?actionDp():48));
         main.addView(back,backLp);
         back.setOnClickListener(v->{if(custom)customPicker();else fieldworkHub();});
-        heading((custom?"Custom · ":"")+profile+" survey",
-            "Set method, location, and effort before starting.");
+        heading((custom?"Custom · ":"")+profile+" survey",null);
         choices=SurveyMethods.forProfile(profile);
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){
@@ -471,7 +456,7 @@ public class WelcomeActivity extends Activity {
         });
         gpsLookupButton=UiKit.button(this,"Choose checklist area by GPS","secondary");
         main.addView(gpsLookupButton);
-        boundaryMessage=text("Select a region or use GPS to suggest one.",12,false);
+        boundaryMessage=text("",12,false);
         boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
         gpsLookupButton.setOnClickListener(v->suggestBoundary());
         // Sampling stations are assigned within field visits, never in survey setup.
@@ -483,27 +468,33 @@ public class WelcomeActivity extends Activity {
         durationEntry.setTextSize(16);durationEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         durationEntry.setHint("Point count duration (minutes)");
         durationEntry.setText("10");
+        TextView durationLabel=text("Point count duration (minutes)",13,true);
+        main.addView(durationLabel);
         main.addView(durationEntry);
         transectDurationEntry=new EditText(this);
         transectDurationEntry.setTextSize(16);transectDurationEntry.setSingleLine(true);
         transectDurationEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         transectDurationEntry.setHint("Timed interval (minutes)");
         transectDurationEntry.setText("120");
+        TextView timedLabel=text("Sampling duration (minutes)",13,true);
+        main.addView(timedLabel);
         main.addView(transectDurationEntry);
         radiusEntry=new EditText(this);radiusEntry.setTextSize(16);radiusEntry.setSingleLine(true);
         radiusEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        radiusEntry.setHint("Fixed point-count radius (m, optional)");
+        radiusEntry.setHint("Optional");
+        TextView radiusLabel=text("Fixed radius (m)",13,true);
+        main.addView(radiusLabel);
         main.addView(radiusEntry);
-        routeHeader=text("Planned route",17,true);main.addView(routeHeader);
+        routeHeader=text("Planned route length (km)",13,true);main.addView(routeHeader);
         routeLengthEntry=new EditText(this);
         routeLengthEntry.setSingleLine(true);routeLengthEntry.setTextSize(17);
         routeLengthEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        routeLengthEntry.setHint("Planned route length (km)");routeLengthEntry.setText("2");
+        routeLengthEntry.setHint("Kilometres");routeLengthEntry.setText("2");
         main.addView(routeLengthEntry);
         spacingChoice=new Spinner(this);
         spacingChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"100 m","250 m","500 m","Custom spacing"}));
-        spacingHeader=text("Distance between stations",13,false);main.addView(spacingHeader);
+        spacingHeader=text("Station spacing",13,true);main.addView(spacingHeader);
         main.addView(spacingChoice);
         spacingChoice.setSelection(1);
         customSpacingEntry=new EditText(this);
@@ -563,8 +554,11 @@ public class WelcomeActivity extends Activity {
             if(choice>=0&&choice<choices.length)methodHint.setText(choices[choice].description);
             refreshStudyChoices();
             if(choice>=0&&choice<choices.length){
+                durationLabel.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);
                 durationEntry.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);
+                radiusLabel.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);
                 radiusEntry.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);
+                timedLabel.setVisibility(!choices[choice].code.equals("point_count")&&SurveyMethods.timedInterval(choices[choice].code)?View.VISIBLE:View.GONE);
                 transectDurationEntry.setVisibility(!choices[choice].code.equals("point_count")&&SurveyMethods.timedInterval(choices[choice].code)?View.VISIBLE:View.GONE);
                 if(choices[choice].code.equals("amphibian_calls"))transectDurationEntry.setText("5");
                 else if(choices[choice].code.equals("visual_encounter")||choices[choice].code.equals("area_search")||
@@ -576,8 +570,11 @@ public class WelcomeActivity extends Activity {
                 applyTemplateSelection();
             }
         });
+        durationLabel.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
         durationEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
+        radiusLabel.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
         radiusEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
+        timedLabel.setVisibility(!choices[0].code.equals("point_count")&&SurveyMethods.timedInterval(choices[0].code)?View.VISIBLE:View.GONE);
         transectDurationEntry.setVisibility(!choices[0].code.equals("point_count")&&SurveyMethods.timedInterval(choices[0].code)?View.VISIBLE:View.GONE);
         lineBearingEntry.setVisibility(View.GONE);
         updateRoutePreview();

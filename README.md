@@ -1,3 +1,13 @@
+# LIKAS v0.27.3 RC29 | Offline research field guides and APA references
+
+**Source candidate:** `0.27.3-rc29-research-field-guide-preview` (versionCode **89**), Android package `org.phwildlife.survey.beta08`, SQLite **27**, existing signing setup. A successful signed APK build and emulator acceptance are separate gates. Never treat this development branch as field-certified.
+
+RC29 audits all 30 declared Android activities at source level, refines the 96 priority species field-guide layout, foregrounds existing licensed offline photos and photographer credits, trims technical phrasing, gives conservation evidence proper in-text citations, and shows source-linked references behind compact disclosures. **14 DOI-linked works have publisher/indexer-verified full APA 7 citation data.** The existing 306 species-reference links remain in the catalog, but the remaining incomplete metadata is not claimed to be APA-complete.
+
+The complete 96-species / 456-fact source corpus, original observation/effort records, End Survey controls, photo rights, SQLite27, and approved startup assets are unchanged. See `docs/LIKAS_RC29_UI_SCREEN_APA_FIELD_GUIDE_QA.md` for the precise screen inventory, citation-coverage limits and acceptance gates.
+
+---
+
 # LIKAS v0.27.3 RC27B | Philippine reptile ecology and large-text field UI
 
 **Source candidate:** `0.27.3-rc27b-keyboard-screen-qa-preview` (versionCode **86**), application ID `org.phwildlife.survey.beta08`, SQLite **27**, pinned Android signing certificate. This candidate has not yet passed new emulator or real-phone acceptance. The previous RC26C emulator had **15/16 tests**, with partial Habitat tab clipping at 200% font. RC27B hides inherited soft keyboards and tests the Habitat screen after layout; RC27 adjusted the compact navigation Back arrow and retains the existing 16-test screen suite.

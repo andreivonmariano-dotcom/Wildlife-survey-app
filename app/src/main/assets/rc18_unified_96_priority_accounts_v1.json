@@ -5049,7 +5049,7 @@
           {
             "section": "Conservation",
             "label": "IUCN global status, 2021",
-            "text": "BirdLife assessed the Palawan Hornbill as Vulnerable in July 2021 with a decreasing population trend; logging, trapping and mining feature among listed threats.",
+            "text": "BirdLife's 2021 global assessment listed the Palawan Hornbill as Vulnerable with a decreasing population trend; logging, trapping and mining feature among listed threats.",
             "source": "BirdLife International (2021), IUCN Anthracoceros marchei",
             "url": "https://doi.org/10.2305/IUCN.UK.2021-3.RLTS.T22682444A205515479.en",
             "origin": "rc21_diagnosis_conservation_batch_v1.json",

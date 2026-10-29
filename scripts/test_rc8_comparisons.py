@@ -76,7 +76,7 @@ class Rc8ScienceComparisons(unittest.TestCase):
         ui=(CODE/"Rc8TraitComparisonActivity.java").read_text()
         for token in ("rc8_evidence_comparisons_v1.json","getAssets().open",
                       "Species (96)","Habitats (15)","Not assessed",
-                      "Open cited source","Compared with","setContentDescription",
+                      "ResearchCitationFormatter.sourceRecord(","setAutoLinkMask","Compared with","setContentDescription",
                       "sourceTaxonKey"):
             # sourceTaxonKey is stored in the asset, not necessarily rendered.
             if token=="sourceTaxonKey":

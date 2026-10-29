@@ -52,7 +52,7 @@ class CurrentPublicationBatch(unittest.TestCase):
         self.assertIn("Rc14Bibliography.add(a,references,scientific)",ui)
         for field in ('paper.optString("authors")','paper.optString("journal")',
                       'paper.isNull("doi")?"":paper.optString("doi")','paper.optInt("publicationYear")',
-                      'imprint+=" · DOI: "+doi','"Open study ↗"'):
+                      'ResearchCitationFormatter.publicationReference(','"Open study ↗"'):
             self.assertIn(field,source)
         self.assertIn("final int remaining=matches.size()-first",source)
         self.assertIn("Uri.parse(url)",source)

@@ -39,6 +39,8 @@
         <activity android:name=".TrapProtocolActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".FieldProtocolsActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".StudyProtocolsActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".LikasDiscoveryActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".LikasHabitatProfileActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".LikasLibraryActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".LikasSettingsActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".WelcomeActivity" android:screenOrientation="portrait" android:exported="false" />

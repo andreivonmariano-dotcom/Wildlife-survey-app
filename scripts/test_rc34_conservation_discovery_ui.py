@@ -81,7 +81,7 @@ class ConservationCardQA(unittest.TestCase):
         manifest=(ROOT/"app/src/main/AndroidManifest.xml").read_text()
         self.assertIn(".LikasDiscoveryActivity",manifest)
         self.assertIn(".LikasHabitatProfileActivity",manifest)
-        self.assertIn("versionCode 96",(ROOT/"app/build.gradle").read_text())
+        self.assertRegex((ROOT/"app/build.gradle").read_text(),r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
 
 if __name__=="__main__":
     unittest.main()

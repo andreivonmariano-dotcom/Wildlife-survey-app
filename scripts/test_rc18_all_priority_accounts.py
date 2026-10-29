@@ -45,7 +45,7 @@ class UnifiedPriorityCorpus(unittest.TestCase):
                     self.assertFalse(fact["text"].startswith(("Check the ","Record the ","Avoid assigning")))
             no_data={section for section,items in item["sections"].items() if not items}
             self.assertEqual(no_data,set(item["coverage"]["sectionsWithoutCitedData"]))
-        self.assertEqual(count,393)
+        self.assertEqual(count,413)
         self.assertEqual(refs["recentVerifiedTaxa"],13)
         self.assertEqual(sum(p["referenceCount"] for p in refs["profiles"]),281)
 

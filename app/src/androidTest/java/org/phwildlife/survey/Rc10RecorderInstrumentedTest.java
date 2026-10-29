@@ -86,7 +86,7 @@ public final class Rc10RecorderInstrumentedTest {
         android.app.Instrumentation instrumentation=
             androidx.test.platform.app.InstrumentationRegistry.getInstrumentation();
         try{
-            try(java.io.ParcelFileDescriptor fd=instrumentation.getUiAutomation()
+            try(android.os.ParcelFileDescriptor fd=instrumentation.getUiAutomation()
                     .executeShellCommand("settings put system font_scale 2.0")){}
             android.os.SystemClock.sleep(1200);
             Intent intent=new Intent(ApplicationProvider.getApplicationContext(),
@@ -134,7 +134,7 @@ public final class Rc10RecorderInstrumentedTest {
                 });
             }
         }finally{
-            try(java.io.ParcelFileDescriptor fd=instrumentation.getUiAutomation()
+            try(android.os.ParcelFileDescriptor fd=instrumentation.getUiAutomation()
                     .executeShellCommand("settings put system font_scale 1.0")){}
             android.os.SystemClock.sleep(800);
         }

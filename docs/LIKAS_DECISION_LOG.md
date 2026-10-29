@@ -258,3 +258,8 @@ The owner selected Q1/Q2/Q3 of the card-interface design, then explicitly abolis
 ### 2026-10-29 | RC37 library usability without biological data changes | Scoped implementation
 
 The owner requested continued improvements to LIKAS. This pass retains the accepted three-space portal, source-first species cards and no public Priority tier. Per-shelf card positions survive tab switching and activity recreation. Longer species profiles gain quick links to existing cited topics only. Less motion is respected in card step controls. No animal distribution, conservation status, taxonomic source, study claim, media license, survey state or SQLite record is changed. Signed release and handset QA are separate gates. See `docs/LIKAS_RC37_LIBRARY_NAVIGATION_QA.md`.
+
+
+### 2026-10-29 | Illustrated LIKAS portal, survey tiles and collectible-style conservation cards | Owner-directed refinement
+
+The owner repeated the preference for a fast startup followed by **Fieldwork**, **Library** and **Settings**, with shorter text and stronger original artwork. RC38 builds on the existing RC33–RC37 architecture. Two-column field method panels and History/Analysis shortcuts reduce repetitive menu stacks. Library presents Species and Habitats as larger illustrated entrances, followed by compact secondary reference tiles. Species frames are distinguished only by individually checked and dated IUCN or DENR categories. Rarity is not equated to conservation status, and unverified status gets no badges. Prior 96 evidence accounts, field records, database schema, signing identity and startup visuals remain untouched. RC38 source is not a field-tested release. See `docs/LIKAS_RC38_ILLUSTRATED_UI_QA.md`.

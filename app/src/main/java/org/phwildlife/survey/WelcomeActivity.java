@@ -138,7 +138,7 @@ public class WelcomeActivity extends Activity {
         tile.addView(name);
         TextView caption=text(detail,12,false);caption.setTextColor(MUTED);
         caption.setPadding(0,0,0,0);tile.addView(caption);
-        tile.setMinimumHeight(dp(104));tile.setFocusable(true);
+        tile.setMinimumHeight(dp(96));tile.setFocusable(true);
         name.setMaxLines(3);caption.setMaxLines(3);
         tile.setContentDescription(title+", "+detail);
         boolean stacked=FieldLayoutPolicy.stackSurveyTiles(
@@ -181,7 +181,7 @@ public class WelcomeActivity extends Activity {
             header.animate().alpha(1f).translationY(0f)
                 .setStartDelay(70).setDuration(230).start();
         }
-        main.addView(FieldVisuals.section(this,"Fieldwork","Choose or resume a survey"));
+        main.addView(FieldVisuals.section(this,"Fieldwork","Start or resume a survey"));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
@@ -222,7 +222,7 @@ public class WelcomeActivity extends Activity {
             secondLp.topMargin=dp(9);main.addView(second,secondLp);
         }
 
-        main.addView(FieldVisuals.section(this,"Workspace","Projects and recent fieldwork"));
+        main.addView(FieldVisuals.section(this,"Workspace","Projects and saved surveys"));
         toolRow(main,"Projects & stations",()->
             startActivity(new Intent(this,SitesActivity.class)));
         addHomeRecentSurvey();
@@ -240,53 +240,38 @@ public class WelcomeActivity extends Activity {
         dashboard.setOnClickListener(v->startActivity(new Intent(this,DashboardActivity.class)));
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
         shortcutsLp.topMargin=dp(9);main.addView(shortcutRow,shortcutsLp);
-        Button dataManager=UiKit.button(this,"Manage saved data","quiet");
-        LinearLayout.LayoutParams dataLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
-        dataLp.topMargin=dp(5);main.addView(dataManager,dataLp);
-        dataManager.setOnClickListener(v->startActivity(
-            new Intent(this,DataManagementActivity.class)));
-        Button recover=UiKit.button(this,"Full fieldwork backup & restore","secondary");
-        LinearLayout.LayoutParams backupLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
-        backupLp.topMargin=dp(6);main.addView(recover,backupLp);
-        recover.setOnClickListener(v->startActivity(
-            new Intent(this,FieldBackupActivity.class)));
-
-        main.addView(FieldVisuals.section(this,"Species Library","Source-linked offline references"));
-        Button catalog=UiKit.button(this,"Search Species Library","primary");
+        main.addView(FieldVisuals.section(this,"Species Library","Offline identification and research"));
+        Button catalog=UiKit.button(this,"Open Species Library","primary");
         main.addView(catalog,new LinearLayout.LayoutParams(-1,dp(actionDp())));
         catalog.setOnClickListener(v->startActivity(
             new Intent(this,Rc7SpeciesLibraryActivity.class)));
-        Button librarySources=UiKit.button(this,"Source catalogs & regional records","quiet");
-        LinearLayout.LayoutParams sourcesLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
-        sourcesLp.topMargin=dp(6);
-        main.addView(librarySources,sourcesLp);
-        librarySources.setOnClickListener(v->startActivity(
-            new Intent(this,CatalogActivity.class)));
-        TextView scope=text("Species accounts include taxonomic and available habitat evidence. "+
-            "A checklist listing does not establish presence at your survey station.",12,false);
-        scope.setTextColor(MUTED);
-        scope.setPadding(dp(6),dp(7),dp(6),dp(4));
-        main.addView(scope);
-
-        main.addView(FieldVisuals.section(this,"Habitat & Ecology",
-            "Site habitats and environmental measurements"));
-        Button habitat=UiKit.button(this,"Explore habitats & site records","secondary");
+        main.addView(FieldVisuals.section(this,"Habitats",
+            "Habitat guides and site records"));
+        Button habitat=UiKit.button(this,"Explore habitats","secondary");
         main.addView(habitat,new LinearLayout.LayoutParams(-1,dp(actionDp())));
         habitat.setOnClickListener(v->startActivity(
             new Intent(this,HabitatRecordsActivity.class)));
 
-        Button toolsToggle=UiKit.button(this,"Field tools & settings  ▾","quiet");
+        Button toolsToggle=UiKit.button(this,"More tools  ▾","quiet");
         LinearLayout.LayoutParams toolMargin=new LinearLayout.LayoutParams(-1,dp(actionDp()));
         toolMargin.topMargin=dp(12);main.addView(toolsToggle,toolMargin);
         LinearLayout tools=vertical();
         tools.setVisibility(View.GONE);
         toolsToggle.setOnClickListener(v->{
             boolean expanded=tools.getVisibility()!=View.VISIBLE;
-            tools.setVisibility(expanded?View.VISIBLE:View.GONE);
-            toolsToggle.setText(expanded?"Field tools & settings  ▴":"Field tools & settings  ▾");
+            if(expanded)UiMotion.reveal(this,tools);
+            else UiMotion.hide(tools);
+            toolsToggle.setText(expanded?"Less tools  ▴":"More tools  ▾");
             toolsToggle.setContentDescription(expanded?
                 "Hide field tools and settings":"Show field tools and settings");
         });
+        tools.addView(text("References and saved data",13,true));
+        toolRow(tools,"Source catalogs & regional records",()->
+            startActivity(new Intent(this,CatalogActivity.class)));
+        toolRow(tools,"Manage saved data",()->
+            startActivity(new Intent(this,DataManagementActivity.class)));
+        toolRow(tools,"Full backup & restore",()->
+            startActivity(new Intent(this,FieldBackupActivity.class)));
         tools.addView(text("Field evidence",13,true));
         toolRow(tools,"Sound recordings",()->
             startActivity(new Intent(this,CallLibraryActivity.class)));

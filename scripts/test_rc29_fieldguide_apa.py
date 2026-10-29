@@ -22,7 +22,7 @@ class Rc29ResearchGuide(unittest.TestCase):
     def test_verified_doi_uses_exact_urls_and_no_network_requests(self):
         apa=(SRC/"VerifiedApaCatalog.java").read_text()
         cited=(SRC/"ResearchCitationFormatter.java").read_text()
-        self.assertEqual(27, len(re.findall(r'\bm.put\("https?://', apa)))
+        self.assertEqual(28, len(re.findall(r'\bm.put\("https?://', apa)))
         self.assertIn("Reintar, A. R. T.",apa)
         self.assertIn('Sutton, L. J.',apa)
         self.assertIn('Meneses, C. G.',apa)

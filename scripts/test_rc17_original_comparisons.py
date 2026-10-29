@@ -35,7 +35,7 @@ class OriginalComparisonTests(unittest.TestCase):
                 self.assertNotIn("specialist approval",claim["statement"].lower())
     def test_two_new_original_description_pairs_and_live_button(self):
         pairs=json.loads((ASSETS/"rc9_differential_traits_v1.json").read_text())
-        self.assertEqual(4,len(pairs["pairs"]))
+        self.assertEqual(6,len(pairs["pairs"]))
         paired={frozenset((p["a"],p["b"])):p for p in pairs["pairs"]}
         for species in [("Platymantis pygmaeus","Platymantis naomii"),
                         ("Varanus bitatawa","Varanus olivaceus")]:

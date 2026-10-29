@@ -38,3 +38,7 @@ Only the 96 research accounts have the illustrated gallery. `All species` remain
 ## Current CI result and pending release
 
 First RC39 run `40873681599` failed one source-text contract expecting the old phrase `Rarity unassessed`. The same distinction is now clearly stated as `Status is not rarity`. The stale assertion was corrected in commit `6baa8fa9875f0ccfd95543dac852241d694fc0ef`. Latest corrected CI run `40874694689` was queued at the last check. Python/JVM/Android compilation and signed APK inspection for the corrected release still require a completed run, and no RC39 direct APK should be claimed yet.
+
+## Verified signed RC39 preview, 29 October 2026
+
+Scientific Core QA run **40875251725** completed **success**, with Python source/science tests, JVM tests and Android app/instrumentation compilation. GitHub artifact **12898476132** was retrieved directly into this conversation. Despite an obsolete CI artifact name, its APK binary manifest was decoded and verified as package `org.phwildlife.survey.beta08`, versionCode **99**, versionName `0.27.3-rc39-field-guide-studio-preview`. Its APK v2 signing certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches the previous release candidate. The exact direct-chat APK is `LIKAS-v0.27.3-RC39-field-guide-studio-debug.apk` (9,670,010 bytes, SHA-256 `ecd6c43f617e18008b497a4c396dcc502e93e71a1a1ee023e4462ba64a94e16e`). ZIP CRC passed. Physical phone and emulator, 320dp/200%-font, TalkBack and real saved-survey upgrade acceptance remain open.

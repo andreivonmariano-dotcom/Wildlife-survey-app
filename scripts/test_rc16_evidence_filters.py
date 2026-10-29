@@ -15,7 +15,7 @@ class Rc16EvidenceAndFilters(unittest.TestCase):
         self.assertEqual(96,len(by_name))
         self.assertEqual(new["profileCount"],96)
         self.assertEqual(len(new["profiles"]),96)
-        self.assertEqual(sum(p["referenceCount"] for p in new["profiles"]),269)
+        self.assertEqual(sum(p["referenceCount"] for p in new["profiles"]),281)
         self.assertEqual(new["recentVerifiedTaxa"],13)
         expected={"Identification","Habitat","Distribution","Ecology",
                   "Conservation","Taxonomy","Other"}

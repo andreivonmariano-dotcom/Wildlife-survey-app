@@ -125,7 +125,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         researchPanel.setOrientation(LinearLayout.VERTICAL);
         researchPanel.setVisibility(View.GONE);
         root.addView(researchPanel);
-        researchPanel.addView(label("Cited scientific comparisons and geographic evidence. No tool confirms a site observation.",12,false));
+        researchPanel.addView(label("Identification, habitat and photo references",12,false));
         researchToggle.setOnClickListener(v->{
             boolean open=researchPanel.getVisibility()!=View.VISIBLE;
             researchPanel.setVisibility(open?View.VISIBLE:View.GONE);

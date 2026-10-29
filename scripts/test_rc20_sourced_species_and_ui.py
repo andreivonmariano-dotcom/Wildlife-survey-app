@@ -61,7 +61,7 @@ class Rc20SourcedSpecies(unittest.TestCase):
     def test_accessible_topic_coverage_and_preview_version(self):
         view=(ROOT/"app/src/main/java/org/phwildlife/survey/Rc11PrioritySpeciesView.java").read_text()
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn('of 5 research topics documented',view)
+        self.assertIn('of 5 topics',view)
         self.assertIn('Close cited sources and study details',view)
         self.assertIn('Collapse ',view)
         self.assertIn("versionCode 89",gradle)

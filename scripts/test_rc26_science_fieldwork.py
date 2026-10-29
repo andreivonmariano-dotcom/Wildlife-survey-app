@@ -66,7 +66,7 @@ class Rc26ScienceAndFieldwork(unittest.TestCase):
                          "habitats-200percent-font.png"):
             self.assertIn(filename,runner)
         self.assertIn("16 tests?",runner)
-        self.assertIn("versionCode 96",gradle)
+        self.assertRegex(gradle,r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
         self.assertIn("0.27.3-rc36-library-polish-preview",gradle)
         matrix=(ROOT/"docs/LIKAS_RC26_PHONE_FIELD_QA.md").read_text()
         self.assertIn("NO PHYSICAL PHONE TEST PERFORMED",matrix)

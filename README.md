@@ -1,3 +1,15 @@
+# LIKAS v0.27.3 RC30 | Priority species evidence completion and APA research
+
+**Science preview candidate:** `0.27.3-rc30-priority-evidence-preview` (versionCode **90**), package `org.phwildlife.survey.beta08`, SQLite **27** and existing signing identity. A successful build is not real-phone or field acceptance.
+
+A source-level audit shows **96 priority species**, including only **9 species with at least one fact in all five research sections** at the original 456-fact baseline. The RC30 append-only reference pack adds **8 verifiable study-scoped facts for 6 species**, producing **464 cited facts and 294/480 populated topic slots** in the merged in-app research views. **13 of 96** species then have at least one fact in all five sections. These counts do **not** establish complete taxonomic diagnoses, range maps, modern IUCN/DENR assessments or photograph coverage. Missing: Identification 1, Habitat 37, Distribution 18, Natural history 61, Conservation 69.
+
+`Rc30SpeciesEvidence.merge` adds these eight facts transactionally to read-only copies for species accounts, comparisons and conservation. Original `rc18` research JSON, taxonomic files, field observations and survey schema remain unchanged. APA 7 in-text and source entries now include **18 individually verified or explicitly attributed references** in the exact-link catalog, with no fabricated author names or document dates. The only undated specialist account is marked `n.d.`.
+
+See [all 96 accounts and missing sections](docs/LIKAS_RC30_PRIORITY_COMPLETENESS_AUDIT.md), [current QA/status](docs/LIKAS_PROJECT_STATE.md), and [RC29 UI/readability audit](docs/LIKAS_RC29_UI_SCREEN_APA_FIELD_GUIDE_QA.md). Verify source QA, signed APK and Android emulator separately. In-place phone upgrade and owner survey backup/restore remain untested.
+
+---
+
 # LIKAS v0.27.3 RC29 | Offline research field guides and APA references
 
 **Source candidate:** `0.27.3-rc29-research-field-guide-preview` (versionCode **89**), Android package `org.phwildlife.survey.beta08`, SQLite **27**, existing signing setup. A successful signed APK build and emulator acceptance are separate gates. Never treat this development branch as field-certified.

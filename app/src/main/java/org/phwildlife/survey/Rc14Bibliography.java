@@ -48,15 +48,26 @@ public final class Rc14Bibliography {
         String citation=paper.optString("source").trim();
         String url=paper.optString("url").trim();
         if(citation.isEmpty()||!url.startsWith("https://"))return;
-        LinearLayout item=new LinearLayout(a);item.setOrientation(LinearLayout.VERTICAL);
-        item.setPadding(dp(a,4),dp(a,8),dp(a,4),dp(a,8));
-        if(paper.optBoolean("latestConfirmed"))
-            item.addView(text(a,"2025–26 research",false));
-        item.addView(text(a,citation,true));
+        String authors=paper.optString("authors").trim();
+        String journal=paper.optString("journal").trim();
+        String doi=paper.optString("doi").trim();
+        int year=paper.optInt("publicationYear");
+        LinearLayout item=new LinearLayout(a);
+        item.setOrientation(LinearLayout.VERTICAL);
+        item.setPadding(dp(a,4),dp(a,7),dp(a,4),dp(a,8));
+        if(!authors.isEmpty()&&year>1800){
+            item.addView(text(a,authors+" · "+year,true));
+            String imprint=journal.isEmpty()?"Published research":journal;
+            if(!doi.isEmpty())imprint+=" · DOI: "+doi;
+            item.addView(text(a,imprint,false));
+        }else{
+            // Older references retain their unaltered author/journal/source citation.
+            item.addView(text(a,citation,true));
+        }
         Button open=UiKit.button(a,
             url.startsWith("https://doi.org/")?"Open study ↗":"Open source ↗","quiet");
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,43));
-        lp.topMargin=dp(a,3);item.addView(open,lp);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,41));
+        lp.topMargin=dp(a,2);item.addView(open,lp);
         open.setContentDescription("Open original reference: "+citation);
         open.setOnClickListener(v->a.startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url))));
         where.addView(item);

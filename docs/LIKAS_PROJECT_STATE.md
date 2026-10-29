@@ -1,6 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | RC17 signed APK exists and was verified in current conversation
+
+- **Actual build completed:** GitHub Scientific Core QA run **40802695497** succeeded on code commit **920c55dfaf5bedffa34ca16a2420414a4cbe6ccf**, artifact **12867041613** (`LIKAS-RC17-original-comparisons-debug`). Subsequent docs-only commits do not alter the compiled source.
+- **Direct current-session APK:** `/mnt/data/LIKAS-v0.27.3-RC17-original-comparisons-debug.apk`, **9,475,029 bytes**, SHA-256 `42cdf02d7da5b61a0e98347426497c36b544cb665795831b5fca7dd70d9df182`. Android ZIP integrity passed. Binary manifest contains package `org.phwildlife.survey.beta08` and versionName `0.27.3-rc17-original-comparisons-preview`; Gradle versionCode **69**. Android v2 signing block certificate SHA256 matches pinned `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Bundles **96** priority taxa, **250** distinct species/source links, **16** RC17 statements, **4** comparison pairs/**14** source-backed character contrasts, **58** original offline photo files. Historical survey DB and prior evidence packs unchanged.
+- **Android emulator QA status at this writing:** Run **40802538832** launched at versionCode 69 on code commit `bb1b0297c`, still running `Run 320dp API34 emulator and backup tests`. Do not claim an 11/11 instrumentation pass or preserved legacy SQLite DB until its output is downloaded and checked. Source and Android build tests already passed on 40802695497. No physical handset test.
+- **Direct-download requirement:** APK direct sandbox link was provided in the current chat only after artifact unpacking and binary integrity/identity check. Do not reuse the path in a future chat without re-verification.
+
+---
+
+
+
 ## 29 October 2026 | RC17 actual Android implementation of Q1/Q2/Q3 (QA candidate)
 
 - **Owner challenge addressed:** Yes, work must be implemented in the actual source APK, not merely research notes. Current app code from `feature/likas-core-fieldwork-post-rc4`, PR #38 draft; prior verified RC16 had versionCode 68. New RC17 **source** versionCode **69** `0.27.3-rc17-original-comparisons-preview`, package `org.phwildlife.survey.beta08`, original debug signing and SQLite 27 unchanged. No APK release may be claimed until GitHub build artifact extraction and verification.

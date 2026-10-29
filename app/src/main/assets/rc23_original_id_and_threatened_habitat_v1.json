@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "rc23-original-id-threatened-habitat-v1",
+  "asOf": "2026-10-29",
+  "recordCount": 9,
+  "policy": "Original acoustic evidence is not a photo key. Dated forest records cannot be generalized into local occupancy or current population. Distinguish source date, type and locality.",
+  "records": [
+    {
+      "scientificName": "Pelophryne albotaeniata",
+      "section": "Identification",
+      "label": "Comparative snout and male size",
+      "text": "A specimen-based 2008 character table records a vertical snout profile, exposed tympanum and maximum measured male snout–vent length of 19.9 mm for P. albotaeniata.",
+      "source": "Das (2008), Raffles Bulletin of Zoology 56(2):435–443",
+      "url": "https://www.science.nus.edu.sg/wp-content/uploads/sites/11/2008/09/56rbz435-443-1.pdf",
+      "sourceType": "peer_reviewed_comparative_specimen_table",
+      "sourceYear": 2008,
+      "sourceLocation": "Table 3, printed p. 441, P. albotaeniata column; examined FMNH specimens listed on p. 443",
+      "studyScope": "Specimen-based comparative summary in a paper about two Bornean species. Snout and size traits do not alone diagnose all Philippine Pelophryne; dorsolateral stripes are variable."
+    },
+    {
+      "scientificName": "Limnonectes acanthi",
+      "section": "Identification",
+      "label": "Male-call comparison with L. beloncioi",
+      "text": "In a 2021 comparative series of four Palawan males, L. acanthi advertisement-call notes contain two pulses, versus one in the Mindoro–Semirara sister species L. beloncioi.",
+      "source": "Herr et al. (2021), Ichthyology & Herpetology 109:188–210",
+      "url": "https://doi.org/10.1643/h2020095",
+      "sourceType": "original_species_revision_comparative_acoustics",
+      "sourceYear": 2021,
+      "sourceLocation": "Diagnosis of L. beloncioi; Table 4, Palawan L. acanthi male calls (n=4)",
+      "studyScope": "Acoustic differential in sampled populations, not a visual identification criterion. The authors state external morphology cannot reliably separate the species; island names are not diagnostic by themselves."
+    },
+    {
+      "scientificName": "Platymantis negrosensis",
+      "section": "Identification",
+      "label": "Original advertisement-call series",
+      "text": "The original species description records a Kwek-Kwek advertisement call, sometimes a single note and sometimes a short sequence of two to five notes.",
+      "source": "Brown, Alcala, Diesmos & Alcala (1997), Proceedings of the California Academy of Sciences 50(1):1–20",
+      "url": "https://researcharchive.calacademy.org/research/herpetology/philippine_collection/phil_pdfs/casp_50_001.pdf",
+      "sourceType": "original_species_description_acoustic_table",
+      "sourceYear": 1997,
+      "sourceLocation": "Table 4, P. negrosensis, printed pp. 15–16",
+      "studyScope": "Original study's small recorded call series (n=2); onomatopoeia alone cannot prove species identity. Numeric frequencies not transcribed from OCR."
+    },
+    {
+      "scientificName": "Platymantis banahao",
+      "section": "Identification",
+      "label": "Original advertisement-call series",
+      "text": "The 1997 original comparison describes a repeated Tut-Tut-Tut advertisement call with roughly six to twenty-four successive notes in sampled P. banahao males.",
+      "source": "Brown, Alcala, Diesmos & Alcala (1997), Proceedings of the California Academy of Sciences 50(1):1–20",
+      "url": "https://researcharchive.calacademy.org/research/herpetology/philippine_collection/phil_pdfs/casp_50_001.pdf",
+      "sourceType": "original_species_description_acoustic_table",
+      "sourceYear": 1997,
+      "sourceLocation": "Table 4, P. banahao, printed pp. 15–16",
+      "studyScope": "Recorded sample size n=4; not a sound classifier, not a claim that every male gives the full reported number of notes."
+    },
+    {
+      "scientificName": "Gallicolumba platenae",
+      "section": "Habitat",
+      "label": "2026 upland camera-trap microhabitat",
+      "text": "An Indigenous-led Mindoro camera-trap survey recorded one Mindoro Bleeding-heart in forest above 900 m on 1 August 2026, beyond its commonly cited lower-elevation records.",
+      "source": "Center for Conservation Innovations Philippines (2026), Mindoro Bleeding-heart rediscovery notice",
+      "url": "https://conservation-innovations.org/mindoros-rarest-bird-captured-on-camera-after-two-decades/",
+      "sourceType": "documented_conservation_field_observation",
+      "sourceYear": 2026,
+      "sourceLocation": "3 September 2026 announcement; Iraya Mangyan forest monitoring project",
+      "studyScope": "Single confirmed photographed bird in one upland forest location. This is not a full habitat-range shift, abundance estimate or public release of sensitive coordinates."
+    },
+    {
+      "scientificName": "Gallicolumba platenae",
+      "section": "Conservation",
+      "label": "Remaining forest survey need",
+      "text": "The September 2026 rediscovery team identified protection and restoration of Mindoro's remaining forests as priorities after its single 2026 camera-trap record.",
+      "source": "Center for Conservation Innovations Philippines (2026), Mindoro Bleeding-heart rediscovery notice",
+      "url": "https://conservation-innovations.org/mindoros-rarest-bird-captured-on-camera-after-two-decades/",
+      "sourceType": "conservation_program_field_report",
+      "sourceYear": 2026,
+      "sourceLocation": "3 September 2026, original project announcement",
+      "studyScope": "Conservation-team recommendation and documented finding, not a species-wide threat-rate model or government protection order."
+    },
+    {
+      "scientificName": "Manis culionensis",
+      "section": "Habitat",
+      "label": "Camera-detected Palawan habitat types",
+      "text": "A 2016 baited camera-trap study photographed Palawan Pangolin three times at two Palawan localities, reporting mangrove, lowland-forest and riverine-forest settings.",
+      "source": "Marler (2016), Journal of Threatened Taxa 8(12):9443–9448",
+      "url": "https://doi.org/10.11609/jott.2867.8.12.9443-9448",
+      "sourceType": "peer_reviewed_baited_camera_trap_field_study",
+      "sourceYear": 2016,
+      "sourceLocation": "Abstract and Results, two baited sampling localities",
+      "studyScope": "Three photographs do not prove three individuals, population density or unbaited habitat preference. No precise sensitive coordinates are imported."
+    },
+    {
+      "scientificName": "Sus cebifrons",
+      "section": "Habitat",
+      "label": "Historical forest-range contraction",
+      "text": "The IUCN wild-pig specialist account describes former primary and secondary forest use from lowland to about 1,600 m, with remaining populations mostly in isolated higher-elevation forests after lowland forest loss.",
+      "source": "IUCN SSC Wild Pig Specialist Group, Sus cebifrons detailed account",
+      "url": "https://www.iucn-wpsg.org/visayan-warty-pig-detailed",
+      "sourceType": "published_specialist_species_account",
+      "sourceYear": null,
+      "sourceLocation": "Habitat and Subspecies/distribution",
+      "studyScope": "Specialist summary is not an independently surveyed elevation threshold. The account cautions that some altered-habitat reports may involve feral pigs or hybrids."
+    },
+    {
+      "scientificName": "Sus cebifrons",
+      "section": "Conservation",
+      "label": "Hunting and hybridization threats",
+      "text": "The specialist account identifies hunting, habitat loss and possible hybridization with domestic pigs as threats to fragmented Visayan Warty Pig populations.",
+      "source": "IUCN SSC Wild Pig Specialist Group, Sus cebifrons detailed account",
+      "url": "https://www.iucn-wpsg.org/visayan-warty-pig-detailed",
+      "sourceType": "published_specialist_species_account",
+      "sourceYear": null,
+      "sourceLocation": "Status and conservation",
+      "studyScope": "Threats in a specialist account, not a quantified population trend or a new 2026 IUCN status reassessment."
+    }
+  ]
+}

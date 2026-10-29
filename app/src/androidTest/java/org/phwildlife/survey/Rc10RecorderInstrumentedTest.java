@@ -118,6 +118,11 @@ public final class Rc10RecorderInstrumentedTest {
                     assertTrue("End Survey action usable",end.isEnabled());
                     assertTrue("End Survey minimum touch height",end.getHeight()>=
                         Math.round(48*activity.getResources().getDisplayMetrics().density));
+                    android.graphics.Rect visible=new android.graphics.Rect();
+                    assertTrue("End Survey has a screen-visible rectangle",
+                        end.getGlobalVisibleRect(visible));
+                    assertTrue("Entire End Survey action fits inside display at 200% font",
+                        visible.height()>=end.getHeight()-2);
                     assertTrue(end.getContentDescription().toString().contains("Not Counted"));
                     assertNotNull("GPS has a spoken current state",gps);
                     String displayedGps=gps.getText().toString();

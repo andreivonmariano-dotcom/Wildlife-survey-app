@@ -74,8 +74,8 @@ class Rc22OriginalStudies(unittest.TestCase):
         build=(ROOT/"app/build.gradle").read_text()
         db=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
-        self.assertIn("versionCode 94",build)
-        self.assertIn("0.27.3-rc34-conservation-cards-preview",build)
+        self.assertIn("versionCode 95",build)
+        self.assertIn("0.27.3-rc35-species-crash-hotfix-preview",build)
         self.assertIn("super(context,NAME,null,27)",db)
 
 if __name__=="__main__":

@@ -18,11 +18,11 @@ class Rc23SpeciesResearch(unittest.TestCase):
         self.assertEqual(self.batch["recordCount"],9)
         self.assertEqual(len(self.batch["records"]),9)
         self.assertEqual(len(self.corpus["accounts"]),96)
-        self.assertEqual(self.corpus["sourceFactCount"],435)
-        self.assertEqual(sum(p["referenceCount"] for p in self.bib["profiles"]),296)
+        self.assertEqual(self.corpus["sourceFactCount"],441)
+        self.assertEqual(sum(p["referenceCount"] for p in self.bib["profiles"]),299)
         self.assertEqual(self.corpus["sectionMissingCounts"],{
-            "Identification":3,"Habitat":44,"Distribution":23,
-            "Natural history":71,"Conservation":69})
+            "Identification":1,"Habitat":42,"Distribution":23,
+            "Natural history":69,"Conservation":69})
         for account in self.corpus["accounts"]:
             self.assertEqual(account["coverage"]["citedBiologicalFacts"],
                              sum(len(v) for v in account["sections"].values()))
@@ -30,8 +30,7 @@ class Rc23SpeciesResearch(unittest.TestCase):
                              {k for k,v in account["sections"].items() if not v})
         missing={x["scientificName"] for x in self.corpus["accounts"]
                  if not x["sections"]["Identification"]}
-        self.assertEqual(missing,{
-            "Platymantis hazelae","Platymantis isarog","Dicaeum kampalili"})
+        self.assertEqual(missing,{"Dicaeum kampalili"})
 
     def test_all_new_facts_correspond_to_exact_named_species_and_study(self):
         accounts={a["scientificName"]:a for a in self.corpus["accounts"]}
@@ -76,12 +75,12 @@ class Rc23SpeciesResearch(unittest.TestCase):
         self.assertIn("out.size()+n>300000",bibliography)
         self.assertIn("Evidence type: ",bibliography)
         self.assertIn('Source: "+item.source',account)
-        self.assertIn("Compare evidence snapshots",account)
-        self.assertIn("earlier trait reference pack",compare)
+        self.assertIn("Compare current cited traits",account)
+        self.assertIn("latest cited 96-species accounts",compare)
         self.assertIn("Search offline species by common, scientific or former name",picker)
         self.assertIn("Search species by scientific, common or former name",detail)
-        self.assertIn("versionCode 77",gradle)
-        self.assertIn("0.27.3-rc23-species-library-preview",gradle)
+        self.assertIn("versionCode 78",gradle)
+        self.assertIn("0.27.3-rc24-conservation-comparison-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

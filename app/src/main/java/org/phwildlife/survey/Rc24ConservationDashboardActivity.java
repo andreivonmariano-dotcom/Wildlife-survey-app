@@ -235,6 +235,7 @@ public final class Rc24ConservationDashboardActivity extends Activity {
         }
         JSONArray all=conservation(account);
         int displayed=0,matched=0;
+        java.util.LinkedHashMap<String,String> cited=new java.util.LinkedHashMap<>();
         for(int i=0;i<all.length();i++){
             JSONObject fact=all.optJSONObject(i);
             if(fact==null||!correctScope(fact,filter))continue;
@@ -242,19 +243,44 @@ public final class Rc24ConservationDashboardActivity extends Activity {
             if(displayed>=3)continue;
             displayed++;
             card.addView(text(scopeLabel(fact)+" · "+fact.optString("label"),12,true));
-            card.addView(text(fact.optString("text"),13,false));
-            String year=fact.isNull("sourceYear")?"Year not recorded":
-                String.valueOf(fact.optInt("sourceYear"));
-            card.addView(text("Source ("+year+"): "+fact.optString("source"),11,false));
-            String scope=fact.isNull("studyScope")?"":fact.optString("studyScope");
-            if(!scope.isEmpty())card.addView(text("Study scope: "+scope,11,false));
             String url=fact.optString("url");
-            if(url.startsWith("https://")){
-                Button open=UiKit.button(this,"Read cited source","quiet");
-                open.setContentDescription("Open "+fact.optString("source"));
-                card.addView(open,new LinearLayout.LayoutParams(-1,dp(48)));
-                open.setOnClickListener(v->openSource(url));
+            String source=fact.optString("source");
+            int year=fact.isNull("sourceYear")?0:fact.optInt("sourceYear",0);
+            card.addView(text(ResearchCitationFormatter.citeClaim(
+                Rc13FieldGuideCopy.fieldText(fact.optString("text")),
+                source,year,url),14,false));
+            String scope=fact.isNull("studyScope")?"":fact.optString("studyScope");
+            if(!scope.isEmpty()){
+                TextView note=text("Study scope: "+scope,12,false);
+                note.setTextColor(UiKit.MUTED);
+                card.addView(note);
             }
+            if(url.startsWith("https://"))cited.put(url,source);
+        }
+        if(!cited.isEmpty()){
+            Button sourcesToggle=UiKit.button(this,
+                "References ("+cited.size()+")  ▾","quiet");
+            card.addView(sourcesToggle,new LinearLayout.LayoutParams(-1,dp(48)));
+            LinearLayout references=new LinearLayout(this);
+            references.setOrientation(LinearLayout.VERTICAL);
+            references.setVisibility(View.GONE);
+            card.addView(references);
+            for(java.util.Map.Entry<String,String> pair:cited.entrySet()){
+                String url=pair.getKey();
+                TextView citation=text(ResearchCitationFormatter.sourceRecord(
+                    pair.getValue(),0,url),12,false);
+                citation.setTextColor(UiKit.MUTED);
+                citation.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
+                citation.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+                references.addView(citation);
+            }
+            sourcesToggle.setOnClickListener(v->{
+                boolean expanded=references.getVisibility()!=View.VISIBLE;
+                if(expanded)UiMotion.reveal(this,references);
+                else UiMotion.hide(references);
+                sourcesToggle.setText(expanded?"Hide references  ▴":
+                    "References ("+cited.size()+")  ▾");
+            });
         }
         if(matched>displayed)card.addView(text("+"+(matched-displayed)+
             " more cited notes in the full account.",12,false));

@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC37 cited species navigation and card-position continuity | Code committed, build not yet verified
+
+- **Source baseline:** 4bcc3c99fba4a7ffaa61e6830714a6a4c5280276 on `feature/likas-core-fieldwork-post-rc4`, following signed RC36 versionCode 96.
+- **Changes:** preserve separate horizontal library rail positions across tabs and Activity recreation, respect reduced motion for Previous/Next, and add chapter jump controls for populated, cited sections in long species profiles.
+- **Version:** RC37 preview versionCode 97, versionName `0.27.3-rc37-library-navigation-preview`. Original application ID and pinned signer configuration, SQLite 27, source facts, photos, survey outcomes and data remain unchanged.
+- **Regression coverage:** `scripts/test_rc37_species_section_navigation.py` and version-aware RC36 contract. GitHub CI build, Android 14 run, signed APK attachment, accessibility screenshots, historic survey upgrade and actual field acceptance are pending independent verification.
+- **Next:** verify CI and signed APK for RC37; deliver an exact direct APK attachment; inspect library layout at 320dp/200% text, TalkBack, and in-place upgrade. Then refine survey setup screens in separate work without modifying startup assets.
+- **Scope:** `docs/LIKAS_RC37_LIBRARY_NAVIGATION_QA.md`.
+
+---
+
+
 ## 29 October 2026 | RC36 library refinements after RC35 crash hotfix | Verified signed preview
 
 - **Owner direction:** continue improving current LIKAS UI, with short text, smooth horizontal wildlife/habitat cards, no Priority tier, independent dated IUCN/DENR status and no guessed rarity. Follow current accepted three-space navigation and pixel-frog brand. This work remains focused on the library, not all field forms.

@@ -6,15 +6,21 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.InputType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
@@ -23,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Locale;
 
 /** Offline, source-first discovery cards. No priority or unverified rarity tiers. */
 public final class LikasDiscoveryActivity extends Activity {
@@ -32,6 +39,12 @@ public final class LikasDiscoveryActivity extends Activity {
     private final Map<String,Integer> railOffsets=new HashMap<>();
     private LinearLayout content;
     private Button speciesTab,habitatTab;
+    private EditText searchInput;
+    private Button clearSearch;
+    private final Handler searchHandler=new Handler(Looper.getMainLooper());
+    private final Runnable searchRefresh=()->{railOffsets.clear();render(false);};
+    private String searchQuery="";
+    private String speciesGroup="All",habitatGroup="All";
     private boolean showingHabitat;
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private JSONObject load(String filename,int maxBytes)throws Exception {
@@ -288,6 +301,69 @@ public final class LikasDiscoveryActivity extends Activity {
             data.size()+" references");
         content.addView(scroll);
     }
+    /** Filter only the documented offline illustrated references, never survey observations. */
+    private boolean matches(JSONObject item,boolean isHabitat){
+        String group=item.optString("group");
+        String selected=isHabitat?habitatGroup:speciesGroup;
+        if(!"All".equals(selected)&&!selected.equals(group))return false;
+        String query=searchQuery.trim().toLowerCase(Locale.ROOT);
+        if(query.isEmpty())return true;
+        String haystack=(isHabitat?
+            item.optString("name")+" "+group+" "+item.optString("overview"):
+            item.optString("commonName")+" "+item.optString("scientificName")+" "+group)
+                .toLowerCase(Locale.ROOT);
+        return haystack.contains(query);
+    }
+    private void filterRail(){
+        String[] names=showingHabitat?
+            new String[]{"All","Terrestrial","Edaphic","Aquatic","Coastal","Human-modified"}:
+            new String[]{"All","Birds","Amphibians","Reptiles","Mammals"};
+        String selected=showingHabitat?habitatGroup:speciesGroup;
+        HorizontalScrollView rail=new HorizontalScrollView(this);
+        rail.setHorizontalScrollBarEnabled(false);
+        LinearLayout chips=new LinearLayout(this);
+        chips.setOrientation(LinearLayout.HORIZONTAL);
+        chips.setPadding(dp(2),dp(10),dp(10),dp(6));
+        for(String name:names){
+            boolean active=name.equals(selected);
+            Button chip=UiKit.button(this,name,active?"pond":"quiet");
+            chip.setTextSize(12);
+            chip.setContentDescription("Filter "+(showingHabitat?"habitats":"species")+
+                " by "+name+(active?", selected":""));
+            chip.setMinHeight(dp(48));
+            chip.setOnClickListener(v->{
+                if(active)return;
+                if(showingHabitat)habitatGroup=name;else speciesGroup=name;
+                railOffsets.clear();
+                render(false);
+            });
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,dp(48));
+            lp.rightMargin=dp(8);
+            chips.addView(chip,lp);
+        }
+        rail.addView(chips,new HorizontalScrollView.LayoutParams(-2,-2));
+        content.addView(rail);
+    }
+    private void emptyState(){
+        LinearLayout empty=new LinearLayout(this);
+        empty.setOrientation(LinearLayout.VERTICAL);
+        empty.setGravity(Gravity.CENTER);
+        empty.setPadding(dp(22),dp(35),dp(22),dp(35));
+        empty.setBackground(surface(this,Color.WHITE,UiKit.BORDER,20));
+        empty.addView(new LikasPortalUi.Glyph(this,
+            showingHabitat?"habitat":"species",UiKit.POND),
+            new LinearLayout.LayoutParams(dp(52),dp(52)));
+        TextView title=note("No matches",19,UiKit.INK,true);
+        title.setGravity(Gravity.CENTER);
+        title.setPadding(0,dp(12),0,dp(5));
+        empty.addView(title);
+        TextView copy=note("Try another name or group.",13,UiKit.MUTED,false);
+        copy.setGravity(Gravity.CENTER);
+        empty.addView(copy);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.topMargin=dp(15);
+        content.addView(empty,lp);
+    }
     private boolean largeText(){
         return getResources().getConfiguration().fontScale>=1.60f;
     }
@@ -302,38 +378,71 @@ public final class LikasDiscoveryActivity extends Activity {
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?68:52));
         lp.topMargin=dp(16);content.addView(b,lp);
     }
-    private void render(){
+    private void render(){render(true);}
+    private void render(boolean animate){
         content.removeAllViews();
         speciesTab.setEnabled(showingHabitat);
         habitatTab.setEnabled(!showingHabitat);
         speciesTab.setText(showingHabitat?"Species":"Species ●");
         habitatTab.setText(showingHabitat?"Habitats ●":"Habitats");
+        boolean narrowed=!searchQuery.trim().isEmpty() ||
+            !(showingHabitat?"All".equals(habitatGroup):"All".equals(speciesGroup));
         if(showingHabitat){
             content.addView(LikasPortalUi.kicker(this,"ECOSYSTEMS"));
             content.addView(note("Habitats",27,UiKit.INK,true));
-            TextView sub=note("Swipe the cards. Open a field guide.",13,UiKit.MUTED,false);
-            sub.setPadding(0,dp(5),0,dp(6));content.addView(sub);
-            for(String group:new String[]{"Terrestrial","Edaphic","Aquatic","Coastal","Human-modified"}){
+            TextView sub=note("Offline ecosystem field guides",13,UiKit.MUTED,false);
+            sub.setPadding(0,dp(4),0,dp(3));content.addView(sub);
+            filterRail();
+            int found=0;
+            for(JSONObject p:habitats)if(matches(p,true))found++;
+            TextView count=note(found+" of "+habitats.size()+" illustrated habitats",
+                12,UiKit.MUTED,false);
+            count.setPadding(dp(2),dp(4),0,0);content.addView(count);
+            if(found==0)emptyState();
+            else if(narrowed){
                 ArrayList<JSONObject> matches=new ArrayList<>();
-                for(JSONObject p:habitats)if(group.equals(p.optString("group")))matches.add(p);
-                shelf(group,matches,true);
+                for(JSONObject p:habitats)if(matches(p,true))matches.add(p);
+                shelf("Matches",matches,true);
+            }else{
+                for(String group:new String[]{"Terrestrial","Edaphic","Aquatic","Coastal","Human-modified"}){
+                    ArrayList<JSONObject> matches=new ArrayList<>();
+                    for(JSONObject p:habitats)if(group.equals(p.optString("group")))matches.add(p);
+                    shelf(group,matches,true);
+                }
             }
             action("All habitats",()->startActivity(new Intent(this,HabitatRecordsActivity.class)));
         }else{
             content.addView(LikasPortalUi.kicker(this,"WILDLIFE"));
             content.addView(note("Species",27,UiKit.INK,true));
-            TextView sub=note("Dated IUCN and DENR records. Rarity unassessed.",13,UiKit.MUTED,false);
-            sub.setPadding(0,dp(5),0,dp(6));content.addView(sub);
-            ArrayList<JSONObject> conservation=new ArrayList<>();
-            for(JSONObject s:species)if(statusIndex.containsKey(s.optString("scientificName")))conservation.add(s);
-            conservation.sort((a,b)->Integer.compare(
-                level(statusIndex.get(b.optString("scientificName"))),
-                level(statusIndex.get(a.optString("scientificName")))));
-            shelf("Conservation",conservation,false);
-            for(String group:new String[]{"Birds","Amphibians","Reptiles","Mammals"}){
-                ArrayList<JSONObject> groupAccounts=new ArrayList<>();
-                for(JSONObject a:species)if(group.equals(a.optString("group")))groupAccounts.add(a);
-                shelf(group,groupAccounts,false);
+            TextView sub=note("Illustrated research accounts · Status is not rarity",
+                13,UiKit.MUTED,false);
+            sub.setPadding(0,dp(4),0,dp(3));content.addView(sub);
+            filterRail();
+            int found=0;
+            for(JSONObject p:species)if(matches(p,false))found++;
+            TextView count=note(found+" of "+species.size()+" illustrated accounts",
+                12,UiKit.MUTED,false);
+            count.setPadding(dp(2),dp(4),0,0);content.addView(count);
+            if(found==0)emptyState();
+            else if(narrowed){
+                ArrayList<JSONObject> matches=new ArrayList<>();
+                for(JSONObject p:species)if(matches(p,false))matches.add(p);
+                shelf("Matches",matches,false);
+            }else{
+                ArrayList<JSONObject> conservation=new ArrayList<>();
+                for(JSONObject s:species)
+                    if(statusIndex.containsKey(s.optString("scientificName")))
+                        conservation.add(s);
+                conservation.sort((first,second)->Integer.compare(
+                    level(statusIndex.get(second.optString("scientificName"))),
+                    level(statusIndex.get(first.optString("scientificName")))));
+                shelf("Conservation",conservation,false);
+                for(String group:new String[]{"Birds","Amphibians","Reptiles","Mammals"}){
+                    ArrayList<JSONObject> groupAccounts=new ArrayList<>();
+                    for(JSONObject p:species)if(group.equals(p.optString("group")))
+                        groupAccounts.add(p);
+                    shelf(group,groupAccounts,false);
+                }
             }
             action("All species",()->startActivity(new Intent(this,Rc7SpeciesLibraryActivity.class)));
             TextView caveat=note("Unverified means LIKAS has not checked the status. "+
@@ -341,7 +450,7 @@ public final class LikasDiscoveryActivity extends Activity {
                 12,UiKit.MUTED,false);
             caveat.setPadding(dp(2),dp(16),dp(2),dp(7));content.addView(caveat);
         }
-        UiMotion.enter(this,content);
+        if(animate)UiMotion.enter(this,content);
     }
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);
@@ -371,6 +480,9 @@ public final class LikasDiscoveryActivity extends Activity {
             Bundle previous=saved.getBundle("railOffsets");
             if(previous!=null)
                 for(String key:previous.keySet())railOffsets.put(key,previous.getInt(key));
+            searchQuery=saved.getString("searchQuery","");
+            speciesGroup=saved.getString("speciesGroup","All");
+            habitatGroup=saved.getString("habitatGroup","All");
         }
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(15),dp(10),dp(15),dp(7));
@@ -385,6 +497,44 @@ public final class LikasDiscoveryActivity extends Activity {
         speciesTab.setOnClickListener(v->{showingHabitat=false;render();});
         habitatTab.setOnClickListener(v->{showingHabitat=true;render();});
         root.addView(tabs);
+        LinearLayout searchBar=new LinearLayout(this);
+        searchBar.setOrientation(LinearLayout.HORIZONTAL);
+        searchBar.setGravity(Gravity.CENTER_VERTICAL);
+        searchBar.setPadding(dp(8),0,dp(6),0);
+        searchBar.setBackground(surface(this,Color.WHITE,UiKit.BORDER,17));
+        LinearLayout.LayoutParams searchLp=new LinearLayout.LayoutParams(-1,dp(largeText()?68:58));
+        searchLp.topMargin=dp(10);
+        root.addView(searchBar,searchLp);
+        TextView glass=note("⌕",27,UiKit.POND,false);
+        glass.setGravity(Gravity.CENTER);
+        glass.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        searchBar.addView(glass,new LinearLayout.LayoutParams(dp(34),-1));
+        searchInput=new EditText(this);
+        searchInput.setSingleLine(true);
+        searchInput.setTextSize(15);
+        searchInput.setHint("Find name or habitat");
+        searchInput.setInputType(InputType.TYPE_CLASS_TEXT);
+        searchInput.setBackgroundColor(Color.TRANSPARENT);
+        searchInput.setContentDescription("Search illustrated offline species and habitat accounts");
+        searchInput.setPadding(dp(4),0,dp(4),0);
+        searchInput.setText(searchQuery);
+        searchBar.addView(searchInput,new LinearLayout.LayoutParams(0,-1,1f));
+        clearSearch=UiKit.button(this,"×","quiet");
+        clearSearch.setTextSize(19);
+        clearSearch.setContentDescription("Clear library search");
+        clearSearch.setVisibility(searchQuery.isEmpty()?View.GONE:View.VISIBLE);
+        clearSearch.setOnClickListener(v->searchInput.setText(""));
+        searchBar.addView(clearSearch,new LinearLayout.LayoutParams(dp(48),dp(48)));
+        searchInput.addTextChangedListener(new TextWatcher(){
+            public void beforeTextChanged(CharSequence s,int start,int count,int after){}
+            public void onTextChanged(CharSequence s,int start,int before,int count){
+                searchQuery=s.toString();
+                clearSearch.setVisibility(searchQuery.isEmpty()?View.GONE:View.VISIBLE);
+                searchHandler.removeCallbacks(searchRefresh);
+                searchHandler.postDelayed(searchRefresh,180);
+            }
+            public void afterTextChanged(Editable text){}
+        });
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
         content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);
         content.setPadding(dp(1),dp(9),dp(1),dp(20));
@@ -398,6 +548,13 @@ public final class LikasDiscoveryActivity extends Activity {
         for(Map.Entry<String,Integer> entry:railOffsets.entrySet())
             positions.putInt(entry.getKey(),entry.getValue());
         out.putBundle("railOffsets",positions);
+        out.putString("searchQuery",searchQuery);
+        out.putString("speciesGroup",speciesGroup);
+        out.putString("habitatGroup",habitatGroup);
         super.onSaveInstanceState(out);
+    }
+    @Override protected void onDestroy(){
+        searchHandler.removeCallbacks(searchRefresh);
+        super.onDestroy();
     }
 }

@@ -1,7 +1,7 @@
 # LIKAS
 ## Master Project Charter, Product Requirements, and Scientific Standards
 
-**Version:** 1.0.1 (28 October 2026 startup-scenery amendment; canonical filename retained)  
+**Version:** 1.0.4 (29 October 2026 academic field-guide and reference amendment; canonical filename retained)  
 **Date:** 27 October 2026  
 **Product:** LIKAS, a Philippines-first biodiversity field and knowledge platform  
 **Status:** Proposed authoritative project specification, pending adoption into Project instructions and the development repository  
@@ -254,6 +254,8 @@ The target information architecture has five top-level destinations: **Survey**,
 
 **U-08 | Minimal research interface (owner decision, 29 October 2026).** Use a consistent restrained palette, short labels, clear hierarchy, readable research cards, compact Back navigation and optional smooth transitions that do not impede accessibility. Keep survey initiation, Resume, Save Observation and End Survey readily available. Group secondary data-management and advanced research tools under labeled disclosures without removing them.
 
+**U-09 | Illustrated scientific accounts and reference completion (owner decision, 29 October 2026).** Give every species account the same readable order: identity and taxonomy, vetted offline photograph with photographer/license credit if available, identification, habitat, geographic range, natural history, dated conservation evidence, and APA 7 author–date references. Put the organism and verified findings ahead of publisher descriptions and technical notices. Group longer study caveats under clear expandable research details. Do not fill a missing photo with invented illustrations or make unsupported site-occurrence claims. Treat bibliography completion as a measured review task: retain an exact link, source type and original source text for each record, mark incomplete metadata, and replace provisional labels only after checking original publication records. A source link is not automatically an APA-complete reference. Audit each Android screen at normal and enlarged text, including direct image-license and source-access controls.
+
 # 15. Privacy, permissions, security, and legal context
 
 **C-01 | Data ownership.** Survey records belong to the project user or organization under the applicable project agreement. No automatic public submission, publication, analytics upload, or sharing.
@@ -369,3 +371,5 @@ A failed P0 regression blocks release. A feature without field validation must b
 
 
 **v1.0.3, 29 October 2026:** Adopted U-07 and U-08 for APA 7 inline citations, deduplicated bibliographies, concise evidence-first biological copy, minimalist field UI and short accessible secondary transitions. Updated U-04 to allow unobtrusive non-startup UI motion. Raw research data, survey science rules and installed device data remain protected. RC28 scientific core is a development preview pending independent emulator/phone acceptance.
+
+**v1.0.4, 29 October 2026:** Owner accepted a combined 30-screen UI review, full APA reference cleanup and illustrated offline research field-guide direction (U-09). RC29 implements a reviewed subset of scholarly DOI metadata without implying the remaining source records are APA complete; preserve verified photo licenses and all survey data and state semantics. Physical/emulator acceptance is an independent release gate.

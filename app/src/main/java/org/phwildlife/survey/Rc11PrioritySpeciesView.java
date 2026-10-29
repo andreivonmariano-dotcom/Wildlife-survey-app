@@ -398,6 +398,7 @@ public final class Rc11PrioritySpeciesView {
                 boolean open=more.getVisibility()!=View.VISIBLE;
                 more.setVisibility(open?View.VISIBLE:View.GONE);
                 toggle.setText(open?"Show fewer":"Show "+(available.size()-2)+" more");
+                toggle.setContentDescription((open?"Collapse ":"Expand ")+area.toLowerCase(Locale.ROOT)+" research notes");
             });
         }
         LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
@@ -432,6 +433,7 @@ public final class Rc11PrioritySpeciesView {
             }
         }
         Button toggle=UiKit.button(a,"Sources & details  ▾","secondary");
+        toggle.setContentDescription("Open cited sources and study details");
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,50));
         lp.topMargin=dp(a,4);parent.addView(toggle,lp);
         parent.addView(references);
@@ -439,6 +441,8 @@ public final class Rc11PrioritySpeciesView {
             boolean open=references.getVisibility()!=View.VISIBLE;
             references.setVisibility(open?View.VISIBLE:View.GONE);
             toggle.setText(open?"Hide sources & details  ▴":"Sources & details  ▾");
+            toggle.setContentDescription(open?"Close cited sources and study details":
+                "Open cited sources and study details");
         });
     }
     private static void link(Activity a,LinearLayout parent,String label,String url){
@@ -454,8 +458,16 @@ public final class Rc11PrioritySpeciesView {
         TextView meta=text(a,subtitle,13,false,UiKit.MUTED);
         LinearLayout.LayoutParams metaLp=new LinearLayout.LayoutParams(-1,-2);
         metaLp.bottomMargin=dp(a,11);parent.addView(meta,metaLp);
-        OfflinePhotoEvidence.addCompactForTaxon(a,parent,scientific);
         ArrayList<Fact> facts=facts(a,scientific);
+        HashSet<String> topics=new HashSet<>();
+        for(Fact item:facts)topics.add(item.area);
+        String coverageText=topics.size()+" of 5 research topics documented";
+        TextView evidenceCoverage=text(a,coverageText,12,false,UiKit.MUTED);
+        evidenceCoverage.setContentDescription("Evidence coverage: "+coverageText);
+        LinearLayout.LayoutParams coverageLp=new LinearLayout.LayoutParams(-1,-2);
+        coverageLp.bottomMargin=dp(a,9);
+        parent.addView(evidenceCoverage,coverageLp);
+        OfflinePhotoEvidence.addCompactForTaxon(a,parent,scientific);
         ArrayList<Fact> displayed=new ArrayList<>();
         for(int i=0;i<AREAS.length;i++)
             section(a,parent,AREAS[i],ICONS[i],facts,displayed);

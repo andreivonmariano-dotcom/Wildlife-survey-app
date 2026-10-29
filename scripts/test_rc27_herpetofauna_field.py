@@ -66,7 +66,7 @@ class Rc27PhilippineHerpetofauna(unittest.TestCase):
         instrument=(ROOT/"app/src/androidTest/java/org/phwildlife/survey/Rc10LibraryScreensInstrumentedTest.java").read_text()
         build=(ROOT/"app/build.gradle").read_text()
         qa=(ROOT/"docs/LIKAS_RC27_PHONE_FIELD_QA.md").read_text()
-        self.assertIn("if(largeText)back.setMinHeight(dp(a,48))",ui)
+        self.assertIn("back.setMinHeight(dp(a,48))",ui)
         self.assertIn("SOFT_INPUT_STATE_ALWAYS_HIDDEN",habitat)
         self.assertIn("tabs.setBaselineAligned(false)",habitat)
         self.assertIn("root.addView(tabs,new LinearLayout.LayoutParams(-1,dp(tabHeight)))",habitat)

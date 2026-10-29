@@ -138,10 +138,30 @@ public class WelcomeActivity extends Activity {
         }
     }
     private TextView step(String number,String title){
-        TextView label=text(number+"   "+title,16,true);
+        TextView label=text(number+"    "+title,16,true);
         label.setTextColor(UiKit.FOREST);
-        label.setPadding(dp(3),dp(14),dp(3),dp(9));
+        label.setLetterSpacing(.025f);
+        label.setMinHeight(dp(52));
+        label.setGravity(Gravity.CENTER_VERTICAL);
+        label.setPadding(dp(14),dp(9),dp(12),dp(9));
+        android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
+        bg.setColor(Color.rgb(228,239,229));
+        bg.setCornerRadius(dp(14));
+        label.setBackground(bg);
         return label;
+    }
+    /** Native input hints, numeric keyboard types, validators and saved values remain intact. */
+    private void styleSetupInput(EditText input){
+        if(input==null)return;
+        input.setTextColor(UiKit.INK);
+        input.setHintTextColor(UiKit.MUTED);
+        input.setMinHeight(dp(56));
+        input.setPadding(dp(15),dp(11),dp(15),dp(11));
+        android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
+        bg.setColor(Color.WHITE);
+        bg.setStroke(dp(1),UiKit.BORDER);
+        bg.setCornerRadius(dp(14));
+        input.setBackground(bg);
     }
     private void surveyTile(LinearLayout parent,String title,String detail,Runnable tap){
         String art="field";
@@ -584,6 +604,9 @@ public class WelcomeActivity extends Activity {
             advancedToggle.setText(open?"− Hide additional details":"＋ Additional survey details");
         });
 
+        for(EditText entry:new EditText[]{observerEntry,durationEntry,transectDurationEntry,
+            radiusEntry,routeLengthEntry,customSpacingEntry,lineBearingEntry,regionEntry,
+            areaEntry,templateName})styleSetupInput(entry);
         main.addView(step("04","Begin survey"));
         studyOptions=vertical();
         studyOptions.setVisibility(View.GONE);

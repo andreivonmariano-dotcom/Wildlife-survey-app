@@ -213,13 +213,13 @@
         "sectionsWithPublishedRecords": [
           "Identification",
           "Habitat",
+          "Natural history",
           "Conservation"
         ],
         "sectionsWithoutCitedData": [
-          "Distribution",
-          "Natural history"
+          "Distribution"
         ],
-        "citedBiologicalFacts": 12
+        "citedBiologicalFacts": 14
       },
       "sourceReferences": 6
     },
@@ -2106,14 +2106,14 @@
       "coverage": {
         "sectionsWithPublishedRecords": [
           "Identification",
+          "Habitat",
           "Distribution"
         ],
         "sectionsWithoutCitedData": [
-          "Habitat",
           "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 4
+        "citedBiologicalFacts": 6
       },
       "sourceReferences": 3
     },
@@ -4820,15 +4820,15 @@
       },
       "coverage": {
         "sectionsWithPublishedRecords": [
-          "Identification"
+          "Identification",
+          "Habitat",
+          "Natural history"
         ],
         "sectionsWithoutCitedData": [
-          "Habitat",
           "Distribution",
-          "Natural history",
           "Conservation"
         ],
-        "citedBiologicalFacts": 4
+        "citedBiologicalFacts": 7
       },
       "sourceReferences": 2
     },

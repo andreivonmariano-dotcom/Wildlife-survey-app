@@ -78,7 +78,7 @@ class Rc21EndemicsFieldwork(unittest.TestCase):
         self.assertIn('largeTextKeepsEndSurveyAndGpsAccessible',recorder)
         self.assertIn('font_scale 2.0',recorder)
         self.assertIn('recorder-200percent-font.png',runner)
-        self.assertIn('14 tests?',runner)
+        self.assertIn('15 tests?',runner)
         self.assertIn("versionCode 81",gradle)
         self.assertIn("0.27.3-rc25-primary-ecology-accessibility-preview",gradle)
 

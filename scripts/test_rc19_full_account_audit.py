@@ -50,6 +50,6 @@ class Rc19AllAccounts(unittest.TestCase):
         self.assertIn("Rc11PrioritySpeciesView$Glyph",code)
         self.assertIn("rc19-all-96-screen-audit.csv",sh)
         self.assertIn("ALL-96-RENDERED-SPECIES-AUDIT-PASS",sh)
-        self.assertIn("14 tests?",sh)
+        self.assertIn("15 tests?",sh)
 if __name__=="__main__":
     unittest.main()

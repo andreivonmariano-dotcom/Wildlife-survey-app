@@ -1,6 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+## 29 October 2026 | Authoritative websites added to publication-first policy
+
+- Owner explicitly approved **IUCN Red List**, **AmphibiaWeb**, **The Reptile Database** and requested equivalent reputable **mammal websites**. A ten-entry source registry `app/src/main/assets/likas_scientific_reference_sources_v1.json` records official domains, group, permitted citation topics, scientific source type, and recency limitations. Mammal references: **American Society of Mammalogists MDD v2.5** (2026 taxonomy), ASM *Mammalian Species* original published accounts, Field Museum *Synopsis of Philippine Mammals* (last major 2010 revision), Philippine Mammal Project publications, Bat Conservation International bat profiles. Amphibian taxonomy: **AMNH Amphibian Species of the World 6.2**. University of Michigan Animal Diversity Web is secondary crosscheck only due to student-authored account limitations.
+- **No specialist signature or approval gate.** Primary peer-reviewed biological papers remain highest priority for morphology, quantitative ecology and revised ranges. Reputable curated website entries are admissible when correctly labeled and dated; official IUCN global status and DENR Philippine legal status require separate species-level evidence.
+- Website curation policy now lives in `docs/LIKAS_PUBLICATION_FIRST_CONTENT_STANDARD.md`. 96 priority taxa unchanged; source audit holds 15 recent peer-reviewed claims + 16 previous publication-treatment claims and 11 research topics. No incomplete biological fact has been invented.
+- Source distribution build now targets **RC13B** `0.27.3-rc13b-authoritative-sources-preview`, **versionCode65**, package `org.phwildlife.survey.beta08`, SQLite 27, previous pinned Android debug certificate. New test `scripts/test_rc13_publication_policy.py` checks official URLs and source priority. Full CI/emulator build and attachment must be reverified after latest commit. Preserve direct APK download and no false claim of physical handset QA.
+
+---
+
+
+
 ## 29 October 2026 | Owner overrides RC12: literature-only standards and no AI-style field-guide copy
 
 - **Latest owner directive:** Execute Q1/Q2 publication and peer-reviewed curation, without ANY specialist certification, checklist signoff, credential or named reviewer workflow. Source/citation verification is still required. Remove defensive, wordy AI-style explanations and redundant qualifying endings from visible app statements. The project writing standard is `docs/LIKAS_PUBLICATION_FIRST_CONTENT_STANDARD.md`. The appendix field of RC12's expert-gate source JSON is **historical**, not current policy.

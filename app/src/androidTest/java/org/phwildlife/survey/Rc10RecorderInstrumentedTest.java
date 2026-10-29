@@ -82,4 +82,62 @@ public final class Rc10RecorderInstrumentedTest {
             });
         }
     }
+    @Test public void largeTextKeepsEndSurveyAndGpsAccessible()throws Exception{
+        android.app.Instrumentation instrumentation=
+            androidx.test.platform.app.InstrumentationRegistry.getInstrumentation();
+        try{
+            try(java.io.ParcelFileDescriptor fd=instrumentation.getUiAutomation()
+                    .executeShellCommand("settings put system font_scale 2.0")){}
+            android.os.SystemClock.sleep(1200);
+            Intent intent=new Intent(ApplicationProvider.getApplicationContext(),
+                MainActivity.class);
+            intent.putExtra("create_new",true);
+            intent.putExtra("survey_profile","Birds");
+            intent.putExtra("survey_method","opportunistic");
+            intent.putExtra("start_without_gps",true);
+            intent.putExtra("observer_name","LIKAS-RC21-ACCESSIBILITY-QA");
+            try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(intent)){
+                scenario.onActivity(activity->{
+                    View root=activity.getWindow().getDecorView();
+                    ArrayList<View> all=new ArrayList<>();
+                    find(root,all);
+                    Button end=null;
+                    TextView gps=null;
+                    for(View v:all){
+                        if(v instanceof Button &&
+                                "End Survey".equals(((Button)v).getText().toString()))
+                            end=(Button)v;
+                        if(v instanceof TextView &&
+                                ((TextView)v).getText().toString().contains("GPS"))
+                            if(v.getContentDescription()!=null &&
+                                v.getContentDescription().toString()
+                                    .contains("Open GPS details"))gps=(TextView)v;
+                    }
+                    assertNotNull("200 percent text: persistent End Survey",end);
+                    assertTrue("End Survey action visible",end.isShown());
+                    assertTrue("End Survey action usable",end.isEnabled());
+                    assertTrue("End Survey minimum touch height",end.getHeight()>=
+                        Math.round(48*activity.getResources().getDisplayMetrics().density));
+                    assertTrue(end.getContentDescription().toString().contains("Not Counted"));
+                    assertNotNull("GPS has a spoken current state",gps);
+                    assertTrue("GPS spoken status agrees with label",
+                        gps.getContentDescription().toString()
+                            .contains(gps.getText().toString()));
+                    Bitmap image=Bitmap.createBitmap(root.getWidth(),root.getHeight(),
+                        Bitmap.Config.ARGB_8888);
+                    root.draw(new Canvas(image));
+                    try(FileOutputStream out=new FileOutputStream(
+                        new File(activity.getFilesDir(),"rc21_recorder_large_text.png"))){
+                        assertTrue(image.compress(Bitmap.CompressFormat.PNG,90,out));
+                    }catch(Exception error){throw new IllegalStateException(error);}
+                    image.recycle();
+                });
+            }
+        }finally{
+            try(java.io.ParcelFileDescriptor fd=instrumentation.getUiAutomation()
+                    .executeShellCommand("settings put system font_scale 1.0")){}
+            android.os.SystemClock.sleep(800);
+        }
+    }
+
 }

@@ -93,7 +93,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         root.setPadding(dp(15),dp(11),dp(15),dp(12));
         root.setBackgroundColor(UiKit.BG);
         root.addView(UiKit.navigationHeader(this,
-            largeText?"Species":"Philippine Species Library","Home",this::finish));
+            largeText?"Species":"Philippine species checklist","Library",this::finish));
         String fullSourceLine="Source-linked offline taxonomy · WBCP 2025 · Sy 2025/2026 · MDD 2.5";
         TextView sourceBanner=label("Search Philippine wildlife references",13,false);
         sourceBanner.setContentDescription(fullSourceLine);

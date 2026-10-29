@@ -76,6 +76,12 @@ RC39 has a coherent offline fieldwork foundation and preserves several non-negot
 
 **Fix:** Audit actual view references and remove only verified dead assets under owner approval. Name CI artifacts from `versionName`/versionCode, and keep the original frog icon and scientific photos intact.
 
+### A10 | Medium | Recorder UI and scientific lifecycle are tightly coupled (confirmed maintainability risk)
+
+**Evidence:** `MainActivity.java` is approximately 158 kB and contains form rendering, observation validation, pause/effort timers, GNSS handling, survey finalization and export navigation. `WelcomeActivity.java` is roughly 63 kB and includes portal screens alongside setup, GPS region resolution and route templates. This size and mixed responsibility increase the regression surface for every UI redesign; source length alone does not prove a runtime failure.
+
+**Fix:** Refactor incrementally behind existing policy tests, starting with pure view rendering, setup field state and background I/O. Do not rewrite the survey engine or change SQLite IDs/outcomes to achieve a cosmetic result.
+
 ### A09 | Product roadmap | All-in-one coverage remains incomplete (not a regression)
 
 **Evidence:** The master specification lists Research and Conservation Watch, Habitat and Ecology Atlas, and advanced research export as target pillars. The confirmed RC39 app provides meaningful Fieldwork and offline species/habitat references, but no verified live, source-labeled wildlife research/news feed or complete offline ecological atlas was established during this audit.

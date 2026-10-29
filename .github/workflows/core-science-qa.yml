@@ -87,7 +87,7 @@ jobs:
           print("Verified 49 attributed CC-licensed or owner-authorized photos for RC7D")
           PY
       - name: Run JVM unit tests and compile Android preview
-        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
       - name: Verify assembly artifact exists (not published)
         run: test -s app/build/outputs/apk/debug/app-debug.apk
 
@@ -97,7 +97,7 @@ jobs:
           (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feature/likas-core-fieldwork-post-rc4')
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC34-conservation-cards-debug
+          name: LIKAS-RC35-species-crash-hotfix-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14

@@ -19,8 +19,8 @@ class CurrentPublicationBatch(unittest.TestCase):
         self.assertEqual(len(indexed),96)
         self.assertEqual(pack["taxonCount"],6)
         self.assertEqual(pack["claimCount"],13)
-        self.assertEqual(index["recentVerifiedTaxa"],12)
-        self.assertEqual(sum(x["referenceCount"] for x in indexed.values()),245)
+        self.assertEqual(index["recentVerifiedTaxa"],13)
+        self.assertEqual(sum(x["referenceCount"] for x in indexed.values()),250)
         self.assertEqual(set(x["scientificName"] for x in pack["records"]),{
             "Platymantis pygmaeus","Hydrosaurus pustulatus",
             "Harpyionycteris whiteheadi","Pithecophaga jefferyi",

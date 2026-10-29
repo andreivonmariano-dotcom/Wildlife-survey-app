@@ -1,5 +1,14 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 29 October 2026 | RC27C emulator result: Habitat alignment PASSED; 5 citation-UI tests failed
+
+- Actual RC27C code87 emulator workflow **40830850203** completed **failure**, running 16 Android instrumentation tests with **5 failures**. Downloaded actual artifact **12878193364** into current chat, read `instrumentation.txt`. The dedicated 200% Habitat/Species Library test completed **success**, confirming `tabs.setBaselineAligned(false)` resolved the earlier 23px tab-geometry problem in that build.
+- Remaining five failures occur in `Rc11SpeciesAccountInstrumentedTest`, where old test assertions still required the retired `Sources & details` UI and `Source:` text. The concurrently merged APA author-date citation/source drawer now uses `References & study details`, parenthetical citations and reference URLs. Original scientific taxon evidence remains intact; these are UI contract test failures, not successful emulator acceptance. Source test update commit `e264ec0e21700583415de19b74e2033378e3003a` checks the current user-facing source affordance, retaining the 96-species screen sweep. Further concurrently committed field UI changes require fresh test runs.
+- **Status: RC27C signed code87 debug APK verified, 16/16 emulator acceptance NOT achieved; real physical phone UNTESTED.** Do not represent this build as a stable field release. On any newer app source, run fresh current-head CI/emulator and inspect screenshots and data migration without silently reusing prior results.
+
+---
+
+
 ## 29 October 2026 | RC27C signed code87 APK verified; Android emulator evidence pending
 
 - Scientific Core QA run **40831095486** succeeded on the RC27C production source plus recent APA citation revisions. Artifact **12878841330** retrieved into current chat; exact `/mnt/data/LIKAS-v0.27.3-RC27C-habitat-tab-alignment-debug.apk` **9,608,640 bytes**, SHA256 **8cd392f567d281e9d7f3d235a70a71940f6ab0f8325add2c11ad71f4569c610d**. Embedded app package `org.phwildlife.survey.beta08`, version `0.27.3-rc27c-habitat-tab-alignment-preview`, source Gradle code87, 96 accounts, 456 facts, 4 new RC27 facts, valid APK ZIP and pinned signing v2 cert SHA256 **f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937** confirmed. A verified direct download link was delivered in this conversation.

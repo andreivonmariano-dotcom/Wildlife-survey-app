@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC43 merged into active development branch and rebuilt successfully
+
+- **PR #40 merged** into authoritative active Android branch `feature/likas-core-fieldwork-post-rc4`; merge commit **`0786a482b79bbc5fb80113e6f34c1d095e57e29b`**. The divergent historical `main` app code remains untouched.
+- **Independent active-branch CI:** push-triggered Scientific Core QA run **41004124109** completed **success**, produced signed artifact **12954533229** (`LIKAS-0.27.3-rc43-approved-icons-preview-code103-debug`). The merged APK is **byte-for-byte identical** to previously delivered signed RC43 APK: 9,777,880 bytes, SHA-256 **`50aa01fffca23a9516f01a36d2d7716971e2fb6831930d1bb9d83ca947872a4a`**.
+- **Features in exact signed APK:** 18 user-approved green pixel-art icon files SHA-256 matched to original owner lock, correct writhed hornbill, *Staurois natator* and *Rusa marianna* survey artwork, original frog launcher unchanged, no Plant/Invertebrates icon, no new Custom Survey creation, and unchanged prior survey schema/data/export code.
+- **Signing and safety:** Original Android package `org.phwildlife.survey.beta08`, versionCode **103**, pinned certificate SHA-256 **`f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`**. APK v2 signature and signed-content digest verified; checks run from original CI build. Back up the app's records before installing as an update; no actual field phone upgrade test has been completed.
+- **Handoff:** The verified direct chat APK is `/mnt/data/LIKAS-v0.27.3-RC43-approved-green-icons-debug.apk` in the current conversation only. Android device, GPS/elevation, actual archive retention, accessibility at 320dp/200% font and recovery fault-injection remain outstanding.
+- **Reference:** `docs/LIKAS_RC43_APPROVED_ICON_QA.md` and `docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md`. Next versions must preserve the approved icon checksums and original signing identity.
+
+---
+
+
 ## 30 October 2026 | RC43 signed icons integrated and verified; APK delivered
 
 - **Approved artwork integrated:** All **18** owner-approved, green 16-bit pixel-art 512px PNGs are now committed under `app/src/main/res/drawable-nodpi/likas_approved_*.png`. `LikasPortalUi.java` maps field, library, settings, and survey tiles to exact PNG resources, keeping crisp bitmap edges and vector fallback only for unapproved additional symbols. Writhed hornbill, *Staurois natator*, and *Rusa marianna* icons are the approved Birds, Herpetofauna and Mammals surveys. No Invertebrate or Plant icon added. Frog launcher source is untouched.

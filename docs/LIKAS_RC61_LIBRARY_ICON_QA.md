@@ -5,7 +5,7 @@
 **User directive:** apply the two newly generated Library illustrations for Conservation and Habitat links, and fix visual clipping of Photos and Sources icons.
 
 ## Implementation
-- Two new **generated** PNG art resources, `res/drawable-nodpi/likas_generated_conservation.png` and `likas_generated_habitat_links.png`, derived from the owner's in-conversation generated imagery. They retain the shield/leaf and linked forest/wetland imagery, and receive an optical transparent margin plus indexed 96×96 pixel-art optimization. Distinguish these newly selected images from the **original approved 18 PNGs**, which remain byte-identical.
+- Two new **generated** PNG art resources, `res/drawable-nodpi/likas_generated_conservation.png` and `likas_generated_habitat_links.png`, derived from the owner's in-conversation generated imagery. They retain the shield/leaf and linked forest/wetland imagery, and receive an optical transparent margin plus indexed 64×64 pixel-art optimization. Distinguish these newly selected images from the **original approved 18 PNGs**, which remain byte-identical.
 - Library Conservation and Habitat links map directly to these icon resources. Retire the unused prior source-drawn `PixelShield`.
 - Photos and Sources keep the **original approved camera and reports source PNGs**; they receive Library-only alias names and a 40dp displayed art footprint inside the unchanged 50dp plate. This addresses apparent crowding at the icon edges without cropping or editing the raster source.
 - Use `CENTER_INSIDE` for icon images, with exact 50dp plate, at least 5dp internal optical spacing on the two previously full-bleed art items. Other art display and the Seven Library destination routes are retained.

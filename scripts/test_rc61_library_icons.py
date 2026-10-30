@@ -20,14 +20,14 @@ def verify_png(path):
         if kind==b"IEND":break
     assert offset==len(data),(path,"trailing PNG data")
     assert b"PLTE" in chunks and b"tRNS" in chunks,(path,"transparent indexed art required")
-    assert b"IEND" in chunks and size==(96,96),(path,size)
+    assert b"IEND" in chunks and size==(64,64),(path,size)
     assert len(zlib.decompress(image_data))>1000,path
     return hashlib.sha256(data).hexdigest()
 class Rc61IconArt(unittest.TestCase):
     def test_generated_pngs_are_valid_and_transparent(self):
         for name in ("conservation","habitat_links"):
             path=ICONS/f"likas_generated_{name}.png"
-            self.assertGreater(path.stat().st_size,2000)
+            self.assertGreater(path.stat().st_size,1200)
             print(name,verify_png(path))
     def test_approved_18_resources_never_replaced(self):
         existing=list(ICONS.glob("likas_approved_*.png"))

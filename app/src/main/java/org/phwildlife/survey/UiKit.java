@@ -38,11 +38,12 @@ public final class UiKit {
     LinearLayout row=new LinearLayout(a);
     row.setOrientation(LinearLayout.HORIZONTAL);
     row.setGravity(Gravity.CENTER_VERTICAL);
-    boolean largeText=a.getResources().getConfiguration().fontScale>=1.60f;
+    boolean largeText=a.getResources().getConfiguration().fontScale>=1.30f;
     // One small icon-only Back action, with the full destination spoken to assistive tools.
     Button back=button(a,"‹","quiet");
     back.setContentDescription("Back to "+backLabel);
-    back.setTextSize(26);
+    back.setTextSize(18);
+    back.setPadding(0,0,0,0);
     back.setMinWidth(dp(a,48));
     back.setMinHeight(dp(a,48));
     row.addView(back,new LinearLayout.LayoutParams(dp(a,48),dp(a,48)));
@@ -51,14 +52,15 @@ public final class UiKit {
     heading.setText(title);
     heading.setTextSize(largeText?17:20);
     heading.setTextColor(INK);
-    heading.setSingleLine(true);
-    heading.setEllipsize(android.text.TextUtils.TruncateAt.END);
+    heading.setSingleLine(!largeText);
+    if(largeText)heading.setMaxLines(2);
+    else heading.setEllipsize(android.text.TextUtils.TruncateAt.END);
     heading.setContentDescription(title);
     heading.setTypeface(null,Typeface.BOLD);
     heading.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
     heading.setPadding(dp(a,13),0,dp(a,3),0);
     row.addView(heading,new LinearLayout.LayoutParams(0,-2,1f));
-    row.setMinimumHeight(dp(a,52));
+    row.setMinimumHeight(dp(a,largeText?64:52));
     return row;
   }
   public static Button button(Activity a,String title,String type) {

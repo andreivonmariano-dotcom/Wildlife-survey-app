@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 104
-        versionName '0.27.3-rc44-ui-harmony-preview'
+        versionCode 105
+        versionName '0.27.3-rc45-responsive-layout-preview'
     }
     signingConfigs {
         debug {

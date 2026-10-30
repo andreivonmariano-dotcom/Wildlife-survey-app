@@ -285,7 +285,10 @@ public final class LikasDiscoveryActivity extends Activity {
         ArrayList<FrameLayout> slots=new ArrayList<>();
         for(int i=0;i<data.size();i++){
             FrameLayout slot=new FrameLayout(this);
-            slot.setMinimumHeight(dp(largeText()?625:410));
+            // Unhydrated slots stay stable but do not reserve 410-625dp of empty space.
+            // Each card can still grow beyond these minima for long names and large type.
+            int baseline=largeText()?(isHabitat?420:400):(isHabitat?330:310);
+            slot.setMinimumHeight(dp(baseline));
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(cardWidth()),-2);
             lp.rightMargin=dp(11);
             row.addView(slot,lp);

@@ -15,25 +15,32 @@ import android.widget.TextView;
 /** Preferences and local data safety; destructive management stays in its confirmed workflow. */
 public final class LikasSettingsActivity extends Activity {
     private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
-    private boolean largeText(){
-        return getResources().getConfiguration().fontScale>=1.60f;
+    private boolean stackPortalPairs(){
+        android.content.res.Configuration config=getResources().getConfiguration();
+        return FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale);
     }
     private void options(LinearLayout parent,String first,String firstHint,String firstArt,
             Class<?> firstTarget,String second,String secondHint,String secondArt,
             Class<?> secondTarget){
         LinearLayout row=new LinearLayout(this);
-        row.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        View a=LikasPortalUi.mini(this,first,firstHint,firstArt,
-            ()->startActivity(new Intent(this,firstTarget)));
-        View b=LikasPortalUi.mini(this,second,secondHint,secondArt,
-            ()->startActivity(new Intent(this,secondTarget)));
+        row.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        View a=stackPortalPairs()?
+            LikasPortalUi.action(this,first,firstHint,firstArt,
+                ()->startActivity(new Intent(this,firstTarget))):
+            LikasPortalUi.mini(this,first,firstHint,firstArt,
+                ()->startActivity(new Intent(this,firstTarget)));
+        View b=stackPortalPairs()?
+            LikasPortalUi.action(this,second,secondHint,secondArt,
+                ()->startActivity(new Intent(this,secondTarget))):
+            LikasPortalUi.mini(this,second,secondHint,secondArt,
+                ()->startActivity(new Intent(this,secondTarget)));
         LinearLayout.LayoutParams left=new LinearLayout.LayoutParams(
-            largeText()?-1:0,-2,1);
+            stackPortalPairs()?-1:0,-2,1);
         left.bottomMargin=dp(10);row.addView(a,left);
         LinearLayout.LayoutParams right=new LinearLayout.LayoutParams(
-            largeText()?-1:0,-2,1);
+            stackPortalPairs()?-1:0,-2,1);
         right.bottomMargin=dp(10);
-        if(!largeText())right.leftMargin=dp(10);
+        if(!stackPortalPairs())right.leftMargin=dp(10);
         row.addView(b,right);
         parent.addView(row);
     }

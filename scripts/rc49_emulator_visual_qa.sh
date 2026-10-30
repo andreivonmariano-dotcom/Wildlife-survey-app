@@ -18,13 +18,16 @@ visit() {
   local screen="$1"
   local label="$2"
   echo "Starting $screen" | tee -a emulator-qa/summary.txt
-  adb shell am start -n "$PKG/org.phwildlife.survey.$screen" > "emulator-qa/${screen}-start.txt" 2>&1 || true
+  adb shell run-as "$PKG" /system/bin/am start -n "$PKG/org.phwildlife.survey.$screen" > "emulator-qa/${screen}-start.txt" 2>&1 || true
   sleep 3
   capture "$label"
 }
 adb shell am start -n "$PKG/org.phwildlife.survey.LikasLaunchActivity" > emulator-qa/launch.txt 2>&1 || true
 sleep 7
 capture "01-after-launch-360dp"
+adb shell input swipe 180 685 180 165 520
+sleep 2
+capture "01b-home-scrolled-360dp"
 visit WelcomeActivity 02-home-360dp
 visit Rc7SpeciesLibraryActivity 03-species-library-360dp
 visit HabitatRecordsActivity 04-habitats-360dp

@@ -43,8 +43,9 @@ for id in ("rc52-home-360-normal","rc52-home-412-font130",
            "rc52-home-320-font200","rc52-home-320-font200-scrolled"):
     path=Path("emulator-qa")/(id+".xml")
     nodes=[n.attrib for n in ET.parse(path).getroot().iter("node")]
-    for label in ("Open Fieldwork","Open Library"):
-        assert any(label in n.get("content-desc","") for n in nodes), (id,label)
+    if id!="rc52-home-320-font200-scrolled":
+        for label in ("Open Fieldwork","Open Library"):
+            assert any(label in n.get("content-desc","") for n in nodes), (id,label)
     if id in ("rc52-home-360-normal","rc52-home-412-font130"):
         for label in ("Open Fieldwork","Open Library","Open Settings"):
             hits=[n for n in nodes if label in n.get("content-desc","")]

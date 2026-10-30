@@ -21,3 +21,11 @@ This is **Part 2** of the accepted staged LIKAS refinement. It extends the RC47 
 Added `scripts/test_rc48_home_fieldwork.py` for Home hierarchy, active Fieldwork wording, responsive capture tools, shared field-input presentation and survey lifecycle invariants. Existing CI Python/JVM, APK build and pinned-signature checks must pass before merge. This **does not** count as in-field validation: 320/360/390/412dp and 100/130/160/200% fonts, IME focus and dock visibility, TalkBack, actual GPS denied/stale fixes, photo/camera flow, landscape/insets and RC47-to-RC48 upgrade with real data still require direct device/emulator acceptance.
 
 **Known separate release blockers:** Interrupted backup restore can leave partial media changes; historical NULL survey outcomes may be represented inconsistently in some derived exports. RC48 does not resolve these.
+
+## Verified merged-build results, 30 October 2026
+
+- **PR QA:** Scientific Core QA **41025648619** passed **310 Python tests**, JVM unit tests and Android `:app:assembleDebug` plus AndroidTest APK compilation.
+- **Active-branch signed CI:** workflow **41025896914** passed on the exact merge commit **`41828e20ba6a8226b592369ee751797516bcdaf9`**, producing artifact **12963711954**, `LIKAS-0.27.3-rc48-home-fieldwork-preview-code108-debug`.
+- **Direct APK delivery:** Extracted from the merged-workflow artifact as `LIKAS-v0.27.3-RC48-home-fieldwork-debug.apk` in the active conversation. This path is not guaranteed in later chats. **9,779,924 bytes**, SHA-256 **`226df5e5b751d0dba5aa8a739b9eeeab5920e69fc358f5362968e8833d68bda3`**.
+- **Independent binary verification:** APK ZIP CRCs passed. Binary Android manifest parsed to package **`org.phwildlife.survey.beta08`**, versionCode **108**, versionName **`0.27.3-rc48-home-fieldwork-preview`**. APK Signature Scheme v2 cryptographic signature and signed-content digest passed against the unchanged original certificate SHA-256 **`f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`**. The APK includes 18 approved pixel PNGs, 58 offline reference JPGs and compiled Android DEX.
+- **Not tested on hardware:** No handset screenshot or physical-installed migration, TalkBack, daylight contrast, IME/dock overlap or GPS receiver trial was executed. Preserve the known restore and export blockers.

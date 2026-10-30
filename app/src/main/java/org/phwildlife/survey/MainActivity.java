@@ -1846,6 +1846,10 @@ public class MainActivity extends Activity implements LocationListener {
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
             toast("Location permission is needed to record GPS track");return;
         }
+        if(locations==null||!locations.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            if(trackingView!=null)trackingView.setText("GPS path unavailable · device GPS is off");
+            return;
+        }
         if(eventId==null||TrackService.wasStopped(this))return;
         Intent i=new Intent(this,TrackService.class);
         i.setAction(TrackService.ACTION_START);i.putExtra("event_id",eventId);
@@ -2586,7 +2590,8 @@ public class MainActivity extends Activity implements LocationListener {
             (method.equals("line_transect")||method.equals("ves_transect")))startTracking();
         if(active)getSharedPreferences("field_resume",MODE_PRIVATE).edit().putString("screen","survey").commit();
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-            if(active&&!TrackService.isRunning()&&!TrackService.wasStopped(this)){
+            if(active&&!TrackService.isRunning()&&!TrackService.wasStopped(this)&&
+                locations!=null&&locations.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                 try{TrackService.startGnss(this);}catch(Exception e){
                     toast("Continuous GPS unavailable: "+e.getClass().getSimpleName());
                 }

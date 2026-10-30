@@ -24,3 +24,13 @@ Source: owner-supplied RC43 screenshots of Home, Fieldwork, Library and Settings
 - These pending field checks prevent labeling this preview production-ready.
 
 **Audit status:** source implementation is committed. Automated CI and signed APK results must be appended only after observed success; this file alone is not proof of compilation or on-device behavior.
+
+## Verified signed RC44 preview | 30 October 2026
+
+- **Source code tested:** `31f04de4b4041d1c18277168b7ca4c1727eb19ea`. Subsequent pending changes on the development branch were documentation-only.
+- **Scientific Core QA run:** **41006102621** (push) **success**. **292 Python tests passed**, including original RC43 exact 18-icon byte/hash locks, the RC44 rounding/palette/motion contract and historical survey contracts. Gradle `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest` **BUILD SUCCESSFUL**. Instrumentation was compiled but not executed on an emulator or phone. Artifact **12955084788** (`LIKAS-0.27.3-rc44-ui-harmony-preview-code104-debug`).
+- **Verified binary:** `LIKAS-v0.27.3-RC44-ui-harmony-debug.apk`, **9,777,896 bytes**, SHA-256 `0f4c710bd91144e0115d2d71cbe562d1b3ecfd6a3db299c9dfc5f127d56c471e`. Valid APK ZIP and v2 signature, signed-content digest verified independently; certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches RC43. Binary manifest confirms `org.phwildlife.survey.beta08`, versionCode **104** and versionName `0.27.3-rc44-ui-harmony-preview`.
+- **Immutable approved assets:** All **18** `res/drawable-nodpi-v4/likas_approved_*.png` in the signed APK have the approved pack's SHA-256 digests. Compiled launcher resources and all pre-existing image files are **byte-for-byte identical** to the verified RC43 APK. No asset was regenerated or recolored.
+- **Offline references:** **58** bundled JPGs and `assets/ph_mammals_mdd_v2_5.json` confirmed present.
+- **Delivery:** APK extracted from the exact successful CI artifact and placed at `/mnt/data/LIKAS-v0.27.3-RC44-ui-harmony-debug.apk` in the current conversation. Do not assume this path exists in another chat without checking.
+- **Unverified:** physically installing/upgrading RC43 with saved data, 320dp/large-font/TalkBack, transition smoothness on phone, real fieldwork and GNSS, and fault-injected partial backup recovery. Do not call this production/field-accepted.

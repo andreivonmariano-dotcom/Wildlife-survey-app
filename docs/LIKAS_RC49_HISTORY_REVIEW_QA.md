@@ -22,3 +22,12 @@ Part 3 of the accepted incremental LIKAS interface refinement adopts the shared 
 - `scripts/test_rc49_history_review.py` covers read-only data paths, display null handling, preserved input validation/audit transactions, outcome SQL, pagination and version identity.
 - The app must pass the full Python/JVM/Android tests and signed merged-branch APK inspection. These automated gates do **not** establish visual correctness at 320dp/200% font, TalkBack reading order, keyboard reflow, a large archival edit history, actual APK upgrade with real surveys, or field daylight contrast.
 - **Separate release blockers remain:** Non-atomic backup restore and inconsistent legacy NULL-outcome handling in some derived exports. Neither is fixed in this History UI pass.
+
+## Verified merged-build results | 30 October 2026
+
+- **Source:** PR #46 merged at `c35426e3a820c2cc4658c022fe7b626a5cc0b3ca`. PR Scientific Core QA **41028714285** passed **316 Python tests**, Gradle JVM tests and Android app/AndroidTest APK compilation.
+- **Merged-branch CI:** GitHub Actions push run **41028923966** passed. Signed artifact **12964408568**: `LIKAS-0.27.3-rc49-history-review-preview-code109-debug`.
+- **Direct signed APK:** Downloaded ZIP, verified checksums and extracted `app-debug.apk` as `LIKAS-v0.27.3-RC49-history-review-debug.apk` for direct attachment in the RC49 conversation. **9,781,724 bytes**, SHA-256 `270e18bc2efd3207cd6f1779bc377be11f39a1841402f7e6df781267ff79fcb9`.
+- **Independent APK verification:** Android binary manifest package `org.phwildlife.survey.beta08`, code **109**, versionName `0.27.3-rc49-history-review-preview`; APK Signature Scheme v2 signature and signed-content digest valid; original certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`.
+- **Bundled content:** APK readable, compiled DEX and Android manifest present, all **18** owner-locked pixel PNG resources and **58** offline photo JPG files present.
+- **Limits:** No actual installed APK upgrade with existing survey records, device/emulator screenshots, large-type/IME/TalkBack testing, or backup/export correction testing completed. This is a development preview. Other chats must not assume this chat's local APK is mounted.

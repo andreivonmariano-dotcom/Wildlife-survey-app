@@ -21,10 +21,10 @@ The owner-approved pack was produced and directly delivered in ChatGPT as `LIKAS
 
 Approved display assets must remain green-dominant genuine crisp retro pixel art. Do not introduce alternate colors or stylized replacement animals. Artwork is illustrative and not a field-identification plate. At phone size verify readability, crop, padding, and attribution for reference photographs separately.
 
-**Integration status:** The binary assets exist in the conversation ZIP, **not yet in the GitHub repository or signed APK**. Never treat this doc or a preview sheet as proof of integration. Import only these approved binaries after SHA-256 matching, add precise asset-selection tests, and verify on a device.
+**Integration status (RC43):** The exact 18 approved 512px PNG files are committed to `app/src/main/res/drawable-nodpi/`, mapped to portal UI by `LikasPortalUi.java`, and independently confirmed byte-for-byte in the signed `0.27.3-rc43-approved-icons-preview` APK (versionCode 103). Every icon is guarded by `scripts/test_rc43_approved_icon_lock.py`. Device readability and 320dp/large-text accessibility checks remain unverified; see `docs/LIKAS_RC43_APPROVED_ICON_QA.md`.
 
 ## Custom Survey feature retirement
 
 On the development branch `feature/likas-approved-green-icons-no-custom-survey`, the UI creation entry point and picker for Custom Survey were removed. The supported *new* survey categories remain Birds, Herpetofauna and Mammals. Preserve all old surveys, recordings, method tags, SQLite 27 schema, history, backups, and CSV export paths. Existing method-specific custom field values, station definitions and study plans must not be deleted indiscriminately. Historic custom survey records must remain inspectable.
 
-**Build status:** no new signed APK or physical device validation from this asset lock. Retire the feature without silently deleting prior data. Do not imply new compiled icons are shipped.
+**Build status (RC43):** The signed CI APK with all approved icons and no new Custom Survey creation passed automated tests and signature verification. Physical device upgrade and restore checks remain unverified.

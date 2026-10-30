@@ -45,7 +45,7 @@ class Rc54SetupVisualContract(unittest.TestCase):
           'persistSetup();',
           'radiusEntry.setError("Enter 1 to 2000 meters or leave blank")',
         ):self.assertIn(token,a)
-        self.assertIn("versionCode 116",(ROOT/"app/build.gradle").read_text())
-        self.assertIn("0.27.3-rc56-live-recorder-preview",(ROOT/"app/build.gradle").read_text())
+        self.assertIn("versionCode 117",(ROOT/"app/build.gradle").read_text())
+        self.assertIn("0.27.3-rc57-home-visual-preview",(ROOT/"app/build.gradle").read_text())
         self.assertIn("super(context,NAME,null,27)",read("FieldDb.java"))
 if __name__=="__main__":unittest.main()

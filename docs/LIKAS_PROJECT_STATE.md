@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC47 design-system foundation merged (Part 1 of UI unification)
+
+- **Current code:** PR **#44** merged as `cbe828de29cdd8047fcdfe54e3116ae0a4ebefbd` into active `feature/likas-core-fieldwork-post-rc4`. Preview `0.27.3-rc47-design-system-preview`, **versionCode 107**, original package `org.phwildlife.survey.beta08`, SQLite **27**.
+- **New shared styles:** `LikasDesignSystem.java` specifies a 4dp spacing rhythm, radius/type/touch metrics, and the shared 390dp/130% single-column breakpoint. `UiKit.page(...)` gives Library and Settings a common Back/scroll layout; `FieldVisuals.section(...)` now shares section typography. Visible control/card outlines are darker for contrast and legible amber is used for warning text. `LikasPortalUi.tile(...)` honors the supplied surface color; action descriptions include subtitles.
+- **Protected:** All 18 approved PNGs and frog launcher unchanged, plus source citations, checklist resources, GPS, taxon identification, survey outcomes and archived events. No schema or data migration. Gallery/Recorder/History/Camera remain outside this staged UI refactor.
+- **QA:** PR Scientific Core QA **41023848103** passed **305 Python tests**, JVM unit tests, signed app and AndroidTest APK compilation. Active merged-branch CI and exact APK verification are separate gates before direct download.
+- **Acceptability:** Device screenshots at 320/360/390/412dp, font scales 100/130/160/200%, keyboard/TalkBack, daylight contrast and in-place RC46 upgrade with actual user records remain unverified. The earlier partial-backup-restore and historical NULL-outcome research-export risks remain unresolved.
+- **Next:** Apply shared components to Home and record/review screens only after checking RC47 handset screenshots and preserving always-available Save/End Survey actions. See `docs/LIKAS_RC47_DESIGN_SYSTEM_FOUNDATIONS.md`.
+
+---
+
 ## 30 October 2026 | RC46 second layout pass merged, build acceptance in progress
 
 - **Source:** PR #43 merged at `d8b19490347b643fe8258b6506c3f682f3f385fa` into active `feature/likas-core-fieldwork-post-rc4`. Android versionName `0.27.3-rc46-field-layout-hierarchy-preview`, versionCode **106**, app ID `org.phwildlife.survey.beta08`, SQLite **27**.

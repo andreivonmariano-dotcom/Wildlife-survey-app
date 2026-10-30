@@ -1,5 +1,19 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC43 signed icons integrated and verified; APK delivered
+
+- **Approved artwork integrated:** All **18** owner-approved, green 16-bit pixel-art 512px PNGs are now committed under `app/src/main/res/drawable-nodpi/likas_approved_*.png`. `LikasPortalUi.java` maps field, library, settings, and survey tiles to exact PNG resources, keeping crisp bitmap edges and vector fallback only for unapproved additional symbols. Writhed hornbill, *Staurois natator*, and *Rusa marianna* icons are the approved Birds, Herpetofauna and Mammals surveys. No Invertebrate or Plant icon added. Frog launcher source is untouched.
+- **Custom Survey:** No new Custom Survey tile, picker, mode flag or launch extra; existing historic custom survey rows and exports remain supported by unchanged `FieldDb.java`, `MainActivity.java` and History. No SQL migration, data deletion or scientific source changes.
+- **Version:** `0.27.3-rc43-approved-icons-preview`, versionCode **103**, Android package `org.phwildlife.survey.beta08`, SQLite **27**.
+- **Successful CI:** GitHub Scientific Core QA **41003514753**, code commit `449af5fb2cb22a16c5b7333965e4b1cbab7b1789`, artifact **12954352549**; **287 Python tests passed** and Gradle JVM test, signed app APK and AndroidTest APK tasks completed `BUILD SUCCESSFUL`.
+- **Independent APK verification:** APK Signature Scheme v2 signer signature and APK signed-content SHA-256 digest verified. Certificate SHA-256 **`f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`** unchanged; APK SHA-256 **`50aa01fffca23a9516f01a36d2d7716971e2fb6831930d1bb9d83ca947872a4a`**, size **9,777,880 bytes**. Binary manifest versionCode 103 and versionName confirmed; **18** embedded PNGs checked byte-for-byte against locked archive; **58** licensed offline JPGs and pinned mammal catalog included. Launcher compiled XML differs from RC42 solely by Android resource ID relocation, with no modified source icon resources or prior bitmap assets.
+- **Delivery:** Verified direct APK at `/mnt/data/LIKAS-v0.27.3-RC43-approved-green-icons-debug.apk` in this conversation, not automatically available in other chats. Link must be reverified in each new session.
+- **Review:** PR **#40**, branch `feature/likas-approved-green-icons-no-custom-survey` into active baseline `feature/likas-core-fieldwork-post-rc4`; never merge old `main` code. Detailed QA: `docs/LIKAS_RC43_APPROVED_ICON_QA.md`.
+- **Remaining acceptance:** actual phone upgrade over old installed version preserving historic field data, 320dp/200%-font/TalkBack icon legibility, instrumentation execution, real GPS/elevation/survey use, and high-risk staged backup restore tests remain undone. This is a signed **development preview**, not field-certified production.
+
+---
+
+
 ## 30 October 2026 | Signed RC42 Custom Survey retirement preview available; icon integration pending
 
 - **Signed source build:** `feature/likas-approved-green-icons-no-custom-survey`, code commit `7fe1c9828db093aa8e54c47f0c43a3bf56b57e35`, GitHub Scientific Core QA **41000265332** completed **success**, artifact **12953177274** (`LIKAS-0.27.3-rc42-custom-survey-retirement-preview-code102-debug`).

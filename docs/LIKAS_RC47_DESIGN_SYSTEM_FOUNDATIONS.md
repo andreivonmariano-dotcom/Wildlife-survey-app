@@ -45,3 +45,12 @@ This is **not** full application screen migration. Home and the live recorder re
 Source contracts and JVM unit tests check the tokens, preserved routes, responsive policy and critical exit controls. A signed APK build is a source/integrity gate; it does not prove layout acceptability on real devices. Test 320/360/390/412dp screens at 100/130/160/200% system type, TalkBack, keyboard state, direct access to End Survey, contrast in daylight and installed upgrade retaining survey records.
 
 **Separate release blockers:** A backup restore may partially modify the app if interrupted, and derived research exports may handle historical NULL survey outcomes differently from History. This UI pass does not fix either issue.
+
+## Merged-branch signed artifact verification
+
+- PR #44 merged at `cbe828de29cdd8047fcdfe54e3116ae0a4ebefbd`; active-branch GitHub Actions run **41024068239** passed, artifact **12962428249**.
+- Downloaded the workflow artifact ZIP, verified ZIP CRCs and extracted the exact `app-debug.apk` as `LIKAS-v0.27.3-RC47-design-system-debug.apk` in the active chat.
+- APK size: **9,779,900 bytes**. SHA-256: `d18d32b3df3b3fedd9d411e322616c0a484b57fcbb06ac4eef91add8ce84d439`.
+- Independently parsed binary Android manifest: package `org.phwildlife.survey.beta08`, **versionCode 107**, versionName `0.27.3-rc47-design-system-preview`. Verified APK Signature Scheme v2 signature and signed-content digest against the **original certificate** SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`.
+- APK contains all **18** approved pixel PNG resources, **58** offline reference JPGs, compiled DEX and the packaged mammal checklist. CI icon-hash tests also passed. Existing survey methods, data model and active survey controls were not changed.
+- **No phone acceptance:** Installed upgrade, TalkBack, 320dp/200%-font screenshots, sunlight readability and actual GPS/IME behavior were not run. This is still a preview, not a field-accepted release.

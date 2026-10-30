@@ -1,5 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC45 responsive layout merged, signed preview verified
+
+- **Active code:** PR **#42**, merge **`e5f27c5efe4a0012543d39dd642a87a0c4d096e9`** on `feature/likas-core-fieldwork-post-rc4`. App `0.27.3-rc45-responsive-layout-preview`, **versionCode 105**, original app ID `org.phwildlife.survey.beta08`, schema **27**.
+- **Layout:** Shared screen-width (<390dp) or enlarged-text (>=130%) rule for Fieldwork, Library and Settings; compact horizontal one-column actions; near-full-width species search with visible Unidentified action; reduced overly tall gallery shelf slots; wrapping large-type navigation; font-aware auxiliary recorder targets. Pinned Save/Review/End Survey, three survey groups and all Complete/Incomplete/Not Counted outcomes preserved.
+- **QA:** PR Scientific Core QA **41014610988** passed **297 Python tests**, Gradle JVM unit tests, app and AndroidTest APK compilation. Merged active-branch push QA **41014826232** **passed**, signed APK artifact **12958709056**.
+- **Direct signed APK:** `LIKAS-v0.27.3-RC45-responsive-layout-debug.apk` (9,778,644 bytes; SHA-256 `60986cea4643c867b08536fef705d7021869473d9cc4de94d4e16af57af94455`) was directly attached in the RC45 conversation. Independently parsed binary manifest code105 and confirmed APK v2 signature/content digest and unchanged original certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Other chats must not assume this file path is mounted.
+- **Immutable:** All 18 approved artwork icons, original launcher, 58 offline photos, taxonomy/citations, SQLite, archived surveys and signing remain untouched. See `docs/LIKAS_RC45_RESPONSIVE_LAYOUT_QA.md` and acceptance decision in `docs/LIKAS_DECISION_LOG.md`.
+- **Outstanding visual acceptance:** Actual screenshots at 320/360/390/412dp and 100/130/160/200% font, TalkBack, keyboard-open recorder, physical upgrade with real records, outdoor readability. Continue Home active-session hierarchy, species picker density and GPS diagram/retry ordering in a later visual pass after screenshot evaluation.
+- **Separate production blockers:** Atomic backup restore and consistent derived-export handling of historical NULL outcomes remain unresolved, with no source modifications in this layout pass.
+
+---
+
+
 ## 30 October 2026 | RC44 visual layout and accessibility source audit
 
 - **Scope:** Current RC44 `versionCode 104` source, no Android code or asset changes, no new APK. Detailed findings are in `docs/LIKAS_RC44_VISUAL_LAYOUT_AUDIT_2026_10_30.md` (GitHub audit commit `2ff89697278b63a616c1d5225a2fa4e2af03aa4f`).

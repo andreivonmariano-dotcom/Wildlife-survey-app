@@ -107,14 +107,9 @@ public final class LikasPortalUi {
     }
     /** Active surveys receive a smaller header; font-scaled text controls actual height. */
     public static View hero(Activity a,boolean compact){
-        FrameLayout cover=new FrameLayout(a);
-        GradientDrawable backdrop=new GradientDrawable(GradientDrawable.Orientation.TL_BR,
-            new int[]{DEEP,CANOPY,UiKit.FOREST});
-        backdrop.setCornerRadius(dp(a,26));cover.setBackground(backdrop);
-        cover.setClipToOutline(true);
-        cover.setMinimumHeight(dp(a,compact?88:151));
-        // Vector-only contour lines gently evoke a shaded forest canopy.
-        View contours=new View(a){
+        // Draw contours behind real text; never let a decorative MATCH_PARENT
+        // child force a wrap-content card to occupy an entire scroll viewport.
+        FrameLayout cover=new FrameLayout(a){
             private final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);
             @Override protected void onDraw(Canvas canvas){
                 super.onDraw(canvas);
@@ -134,7 +129,12 @@ public final class LikasPortalUi {
                 canvas.drawCircle(w*.89f,h*.19f,dp(a,42),p);
             }
         };
-        cover.addView(contours,new FrameLayout.LayoutParams(-1,-1));
+        cover.setWillNotDraw(false);
+        GradientDrawable backdrop=new GradientDrawable(GradientDrawable.Orientation.TL_BR,
+            new int[]{DEEP,CANOPY,UiKit.FOREST});
+        backdrop.setCornerRadius(dp(a,26));cover.setBackground(backdrop);
+        cover.setClipToOutline(true);
+        cover.setMinimumHeight(dp(a,compact?88:151));
         LinearLayout words=new LinearLayout(a);words.setOrientation(LinearLayout.VERTICAL);
         boolean showFrog=a.getResources().getConfiguration().fontScale<1.30f;
         // Reserve illustration clearance only when art is drawn beside the text.

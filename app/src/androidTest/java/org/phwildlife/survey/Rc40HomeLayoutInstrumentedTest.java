@@ -46,6 +46,13 @@ public final class Rc40HomeLayoutInstrumentedTest {
                 View library=find(root,"Open Library. Species · Habitats · Guides");
                 View settings=find(root,"Open Settings. Backups · App · Storage");
                 assertNotNull("Fieldwork",field);
+                View hero=find(root,"LIKAS. Philippine wildlife surveys, species, and habitats.");
+                assertNotNull("Hero card",hero);
+                if(a.getResources().getConfiguration().fontScale<1.30f){
+                    float heroDp=hero.getHeight()/a.getResources().getDisplayMetrics().density;
+                    assertTrue("Decorative Home header must stay content-sized: "+heroDp,
+                        heroDp<250f);
+                }
                 assertNotNull("Library",library);
                 assertNotNull("Settings",settings);
                 float density=a.getResources().getDisplayMetrics().density;

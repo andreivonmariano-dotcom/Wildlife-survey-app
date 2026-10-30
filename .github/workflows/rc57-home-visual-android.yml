@@ -2,7 +2,7 @@ name: LIKAS RC57 screen 1 Home large-text recheck and research regression
 on:
   push:
     branches:
-      - feature/likas-rc57-home-theme-screen1
+      - feature/likas-rc57-home-large-text-visual
   workflow_dispatch:
 permissions:
   contents: read

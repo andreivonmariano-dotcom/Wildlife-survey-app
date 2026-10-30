@@ -7,6 +7,15 @@ public final class FieldLayoutPolicyTest {
         assertTrue(FieldLayoutPolicy.stackSurveyTiles(411,1.5f));
         assertFalse(FieldLayoutPolicy.stackSurveyTiles(420,1f));
     }
+    @Test public void portalPairsRespondToAvailableWidthAndTextScale(){
+        assertTrue(FieldLayoutPolicy.stackPortalPair(320,1f));
+        assertTrue(FieldLayoutPolicy.stackPortalPair(360,1f));
+        assertFalse(FieldLayoutPolicy.stackPortalPair(390,1f));
+        assertTrue(FieldLayoutPolicy.stackPortalPair(412,1.3f));
+        assertFalse(FieldLayoutPolicy.stackPortalPair(412,1.0f));
+        assertEquals(FieldLayoutPolicy.stackSurveyTiles(360,1f),
+            FieldLayoutPolicy.stackPortalPair(360,1f));
+    }
     @Test public void entryStacksOnlyWhenTooNarrow(){
         assertTrue(FieldLayoutPolicy.stackSpeciesEntry(320,1f));
         assertTrue(FieldLayoutPolicy.stackSpeciesEntry(393,1.8f));

@@ -81,7 +81,14 @@ public final class Rc53FieldworkScreenInstrumentedTest {
                 assertEquals(herps.getWidth(),mammals.getWidth());
                 assertNotNull(findLabel(decor,"Records & projects"));
                 View toggle=findDescription(decor,"Show additional field tools");
+                if(toggle==null){
+                    // The screenshot pass may leave this persisted preference expanded.
+                    toggle=findDescription(decor,"Hide additional field tools");
+                    assertNotNull("Field tools toggle must remain available",toggle);
+                    toggle.performClick();
+                }
                 assertNotNull(toggle);
+                assertEquals("Show additional field tools",String.valueOf(toggle.getContentDescription()));
                 toggle.performClick();
                 assertNotNull(findDescription(decor,"Open Site habitats"));
                 assertNotNull(findDescription(decor,"Open Camera traps"));

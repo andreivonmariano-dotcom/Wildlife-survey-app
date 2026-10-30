@@ -42,7 +42,14 @@ public class HistoryActivity extends Activity {
     private boolean largeText(){return getResources().getConfiguration().fontScale>=1.60f;}
     private int actionDp(){return FieldLayoutPolicy.actionHeightDp(
         getResources().getConfiguration().fontScale);}
-    private EditText field(String hint,String init){EditText v=new EditText(this);v.setHint(hint);v.setText(init==null?"":init);v.setSingleLine(true);return v;}
+    private EditText field(String hint,String init){
+        EditText v=new EditText(this);
+        v.setHint(hint);
+        v.setText(init==null?"":init);
+        v.setSingleLine(true);
+        UiKit.fieldInput(this,v);
+        return v;
+    }
     @Override public void onCreate(Bundle b){super.onCreate(b);db=new FieldDb(this);eventFilter=getIntent().getStringExtra("event_id");draw();}
     @Override protected void onDestroy(){
         searchHandler.removeCallbacksAndMessages(null);
@@ -50,7 +57,11 @@ public class HistoryActivity extends Activity {
         super.onDestroy();
     }
     private void draw(){
-        root=column();root.setBackgroundColor(UiKit.BG);root.setPadding(dp(14),dp(10),dp(14),dp(10));
+        root=column();root.setBackgroundColor(UiKit.BG);
+        root.setPadding(dp(LikasDesignSystem.SCREEN_GUTTER),
+            dp(LikasDesignSystem.SPACE_MD),
+            dp(LikasDesignSystem.SCREEN_GUTTER),
+            dp(LikasDesignSystem.SPACE_SM));
         root.addView(UiKit.navigationHeader(this,
             eventFilter==null?(largeText()?"History":"Survey history"):"Observations",
             eventFilter==null?"Home":"All surveys",()->{
@@ -77,17 +88,34 @@ public class HistoryActivity extends Activity {
                 @Override public void onNothingSelected(android.widget.AdapterView<?> parent){}
             });
             outcomes.setContentDescription("Filter saved surveys by outcome");
-            root.addView(outcomes,new LinearLayout.LayoutParams(-1,dp(largeText()?72:52)));
+            root.addView(UiKit.caption(this,"Survey status"));
+            root.addView(outcomes,new LinearLayout.LayoutParams(-1,dp(largeText()?72:56)));
             EditText search=new EditText(this);search.setSingleLine(true);
-            search.setTextSize(15);
-            search.setHint(largeText()?"Search surveys":"Search group, method, station, date");
+            search.setTextSize(LikasDesignSystem.TEXT_BODY);
+            search.setHint("Search group, method, station, date");
             search.setContentDescription("Search survey group, method, station or date");
+            UiKit.fieldInput(this,search);
             search.setText(surveySearch);
-            root.addView(search,new LinearLayout.LayoutParams(-1,dp(largeText()?72:52)));
+            LinearLayout searchRow=new LinearLayout(this);
+            searchRow.setOrientation(LinearLayout.HORIZONTAL);
+            searchRow.setGravity(Gravity.CENTER_VERTICAL);
+            searchRow.addView(search,new LinearLayout.LayoutParams(0,-2,1f));
+            Button clear=UiKit.button(this,"Clear","quiet");
+            clear.setContentDescription("Clear survey search");
+            LinearLayout.LayoutParams clearLp=new LinearLayout.LayoutParams(
+                dp(76),-2);
+            clearLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+            searchRow.addView(clear,clearLp);
+            clear.setEnabled(!surveySearch.isEmpty());
+            clear.setOnClickListener(v->search.setText(""));
+            LinearLayout.LayoutParams searchLp=new LinearLayout.LayoutParams(-1,-2);
+            searchLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+            root.addView(searchRow,searchLp);
             search.addTextChangedListener(new TextWatcher(){
                 public void beforeTextChanged(CharSequence s,int st,int n,int after){}
                 public void onTextChanged(CharSequence s,int st,int before,int count){
                     surveySearch=s.toString().trim();
+                    clear.setEnabled(!surveySearch.isEmpty());
                     if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
                     pendingSearch=()->{
                         surveyOffset=0;
@@ -127,12 +155,15 @@ public class HistoryActivity extends Activity {
                     "complete".equals(outcome)?"Complete":
                     "incomplete".equals(outcome)?"Incomplete":
                     c.isNull(5)?"Active":c.getInt(6)==1?"Complete":"Incomplete";
-                LinearLayout card=column();card.setPadding(dp(12),dp(9),dp(12),dp(9));
+                LinearLayout card=column();card.setPadding(
+                    dp(LikasDesignSystem.SPACE_MD),dp(LikasDesignSystem.SPACE_SM),
+                    dp(LikasDesignSystem.SPACE_MD),dp(LikasDesignSystem.SPACE_SM));
                 card.setBackground(UiKit.surface(this));
                 TextView name=text(profile+" · "+SurveyMethods.displayLabel(profile,method),16);
                 name.setTypeface(null,Typeface.BOLD);card.addView(name);
                 TextView meta=text((site.isEmpty()?"":site+" · ")+date+
                     "\n"+c.getInt(7)+" observations",12);
+                meta.setTextSize(LikasDesignSystem.TEXT_CAPTION);
                 meta.setTextColor(UiKit.MUTED);card.addView(meta);
                 TextView badge=text(state+"  ›",13);badge.setTypeface(null,Typeface.BOLD);
                 badge.setTextColor("Not counted".equals(state)?Color.rgb(163,58,48):
@@ -142,7 +173,7 @@ public class HistoryActivity extends Activity {
                 card.setContentDescription(profile+", "+state+", "+c.getInt(7)+
                     " observations. Open survey.");
                 LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-                lp.bottomMargin=dp(9);rows.addView(card,lp);
+                lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);rows.addView(card,lp);
                 card.setOnClickListener(v->{eventFilter=event;observationOffset=0;draw();});
             }
             if(rowsThisPage==PAGE_SIZE){
@@ -236,6 +267,9 @@ public class HistoryActivity extends Activity {
             "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,u.station_id,''),COALESCE(p.sequence_number,u.sequence_number,0),r.point_count_id,r.sampling_unit_id FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id LEFT JOIN sampling_units u ON u.id=r.sampling_unit_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,u.sequence_number,0),r.detected_at,r.id LIMIT ? OFFSET ?",
             new String[]{event,String.valueOf(PAGE_SIZE),String.valueOf(observationOffset)})){
             int pageCount=c.getCount();
+            if(observationOffset==0)
+                rows.addView(FieldVisuals.section(this,"Observations",
+                    "Tap a record to review evidence, photographs or corrections"));
             if(pageCount==0&&observationOffset==0)
                 rows.addView(text("No detections recorded. The survey event remains saved.",14));
             while(c.moveToNext()){
@@ -250,6 +284,8 @@ public class HistoryActivity extends Activity {
                     " · "+dist+"\n"+c.getString(6),12);
                 detail.setTextColor(UiKit.MUTED);card.addView(detail);
                 card.setMinimumHeight(dp(85));card.setFocusable(true);
+                card.setContentDescription(c.getString(1)+", "+c.getInt(3)+
+                    " individuals, "+dist+". Review observation and edit history.");
                 LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
                 cardLp.bottomMargin=dp(7);rows.addView(card,cardLp);
                 card.setOnClickListener(v->recordDetail(record));
@@ -276,19 +312,65 @@ public class HistoryActivity extends Activity {
         return o;
     }
     private void recordDetail(long id){
-        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT * FROM field_records WHERE id=? AND deleted_at IS NULL",new String[]{String.valueOf(id)})){
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT * FROM field_records WHERE id=? AND deleted_at IS NULL",
+            new String[]{String.valueOf(id)})){
             if(!c.moveToFirst()){draw();return;}
             JSONObject original=snapshot(c);
             String title=original.optString("raw_identification","Observation "+id);
             new AlertDialog.Builder(this).setTitle(title)
-              .setItems(new String[]{"Edit observation","Photos","Edit history","Delete observation"},(dialog,index)->{
-                  if(index==0)edit(id,original);
-                  else if(index==1)viewPhotos(id);
-                  else if(index==2)audit(id);
+              .setItems(new String[]{"View recorded details","Edit observation",
+                  "Photos","Edit history","Delete observation"},(dialog,index)->{
+                  if(index==0)showRecordDetails(id,original);
+                  else if(index==1)edit(id,original);
+                  else if(index==2)viewPhotos(id);
+                  else if(index==3)audit(id);
                   else deletePrompt(id,original);
               })
               .setNegativeButton("Back",null).show();
         }catch(Exception e){Toast.makeText(this,"Cannot open record: "+e.getMessage(),Toast.LENGTH_LONG).show();}
+    }
+    /** Present exactly the stored observation evidence, with missing values explicit. */
+    private static String observed(JSONObject source,String key){
+        if(!source.has(key)||source.isNull(key))return "Not recorded";
+        String value=source.optString(key,"").trim();
+        return value.isEmpty()?"Not recorded":value;
+    }
+    private void evidenceLine(LinearLayout parent,String label,String value){
+        TextView heading=UiKit.caption(this,label);
+        heading.setPadding(0,dp(LikasDesignSystem.SPACE_SM),0,0);
+        parent.addView(heading);
+        TextView data=text(value,LikasDesignSystem.TEXT_BODY);
+        data.setPadding(0,0,0,0);
+        parent.addView(data);
+    }
+    private void showRecordDetails(long id,JSONObject source){
+        LinearLayout contents=column();
+        contents.setPadding(dp(LikasDesignSystem.SPACE_LG),
+            dp(LikasDesignSystem.SPACE_SM),
+            dp(LikasDesignSystem.SPACE_LG),
+            dp(LikasDesignSystem.SPACE_MD));
+        evidenceLine(contents,"Observation ID",String.valueOf(id));
+        evidenceLine(contents,"Original field identification",observed(source,"raw_identification"));
+        evidenceLine(contents,"Scientific name recorded",observed(source,"scientific_name"));
+        evidenceLine(contents,"Taxonomic group",observed(source,"taxon_group"));
+        evidenceLine(contents,"Individuals recorded",observed(source,"individual_count"));
+        evidenceLine(contents,"Detection method",observed(source,"detection_method"));
+        evidenceLine(contents,"Detected at",observed(source,"detected_at"));
+        evidenceLine(contents,"Horizontal distance (m)",observed(source,"horizontal_m"));
+        evidenceLine(contents,"Distance source",observed(source,"distance_method"));
+        evidenceLine(contents,"Identification confidence",observed(source,"identification_confidence"));
+        evidenceLine(contents,"Identification evidence",observed(source,"identification_review_note"));
+        evidenceLine(contents,"Habitat / microhabitat",observed(source,"habitat"));
+        evidenceLine(contents,"Behavior",observed(source,"behavior"));
+        evidenceLine(contents,"Field notes",observed(source,"notes"));
+        evidenceLine(contents,"Observer latitude",observed(source,"observer_lat"));
+        evidenceLine(contents,"Observer longitude",observed(source,"observer_lon"));
+        evidenceLine(contents,"GPS accuracy (m)",observed(source,"gps_accuracy_m"));
+        ScrollView scroll=new ScrollView(this);
+        scroll.addView(contents);
+        new AlertDialog.Builder(this).setTitle("Recorded observation")
+            .setView(scroll).setPositiveButton("Close",null).show();
     }
     private void viewPhotos(long record){
         java.util.ArrayList<String> names=new java.util.ArrayList<>();
@@ -317,6 +399,10 @@ public class HistoryActivity extends Activity {
         EditText distance=field("Horizontal distance (m)",before.isNull("horizontal_m")?"":before.optString("horizontal_m"));
         distance.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         EditText notes=field("Natural history / notes",before.optString("notes",""));
+        notes.setSingleLine(false);notes.setMinLines(3);
+        notes.setInputType(InputType.TYPE_CLASS_TEXT|
+            InputType.TYPE_TEXT_FLAG_MULTI_LINE|
+            InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         EditText reason=field("Reason for correction (recommended)","");
         EditText confidenceNote=field("Identification evidence / notes",before.optString("identification_review_note",""));
         Spinner confidence=new Spinner(this);

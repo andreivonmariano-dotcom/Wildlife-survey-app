@@ -13,7 +13,9 @@ class SurveyStartGpsSmokeTest(unittest.TestCase):
         self.assertIn('launch.putExtra("start_without_gps",true)',text)
         self.assertIn('skipConfirmationOpen=true',text)
         self.assertIn("setPositiveButton(\"Start with missing GPS\"",text)
-        self.assertLess(text.index('Button skip='),text.index('satelliteStatus=new TextView'))
+        self.assertIn('addAction(footer,skip)',text)
+        self.assertIn('page.addView(footer)',text)
+        self.assertIn('diagnostics.setVisibility(View.GONE)',text)
 
     def test_start_requires_verification_or_explicit_skip(self):
         text=(CODE / "MainActivity.java").read_text(encoding="utf-8")

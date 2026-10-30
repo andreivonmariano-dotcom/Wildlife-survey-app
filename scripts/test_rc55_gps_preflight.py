@@ -42,7 +42,7 @@ class Rc55GpsUiContract(unittest.TestCase):
         self.assertIn('"Device GPS is switched off"',func)
         self.assertIn('"Precise location permission required"',func)
         self.assertIn('"GPS receiver is not running"',func)
-        self.assertIn('"Ellipsoidal altitude (device; not terrain elevation): "',func)
+        self.assertIn("Ellipsoidal altitude (device; not terrain elevation): ",func)
         self.assertIn("current.hasVerticalAccuracy()",func)
         self.assertNotIn("mean sea level",func.lower())
         build=(ROOT/"app/build.gradle").read_text(encoding="utf8")

@@ -100,9 +100,19 @@ d=[n.attrib.get("content-desc","") for name in pages
 assert any(t.startswith("Open Android device location settings") for t in d),    "Location settings unreachable at 200% text"
 print("RC55 320dp/200% scrolling and Location settings PASS")
 PY
-# Turn the device provider back on before the saved survey + recorder tests.
-adb shell cmd location set-location-enabled true \
-  || adb shell settings put secure location_mode 3
+# This is a fresh disposable CI AVD, NEVER an owner's phone.
+# Isolate screenshot navigation from instrumentation fixtures. In particular,
+# reenabling GPS while preflight is visible could legitimately auto-start a
+# synthetic survey and invalidate zero-record assertions.
+adb shell am force-stop "$PKG" >/dev/null || true
+adb uninstall "$PKG" >/dev/null
+adb install -r app/build/outputs/apk/debug/app-debug.apk >/dev/null
+adb shell pm grant "$PKG" android.permission.ACCESS_COARSE_LOCATION
+adb shell pm grant "$PKG" android.permission.ACCESS_FINE_LOCATION
+adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS
+# Keep location disabled to prevent emulator-generated starting fixes in tests.
+adb shell cmd location set-location-enabled false \
+  || adb shell settings put secure location_mode 0
 adb shell wm size 360x800
 adb shell settings put system font_scale 1.0
 gradle --no-daemon :app:connectedDebugAndroidTest \

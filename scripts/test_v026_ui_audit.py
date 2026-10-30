@@ -27,7 +27,7 @@ class CleanFieldUi(unittest.TestCase):
     def test_home_puts_shortcuts_first_and_groups_other_tools(self):
         home=src("WelcomeActivity.java")
         for key in ('"Fieldwork"','"Library"','"Settings"',
-                    'LikasPortalUi.hero(this)',
+                    'LikasPortalUi.hero(this,lastHomeActiveSurvey!=null)',
                     'LikasLibraryActivity.class','LikasSettingsActivity.class',
                     'HistoryActivity.class','SitesActivity.class'):
             self.assertIn(key,home)

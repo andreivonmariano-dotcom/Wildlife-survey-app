@@ -95,7 +95,7 @@ public final class SurveyGpsActivity extends Activity {
         content.setOrientation(LinearLayout.VERTICAL);
         TextView explanation=UiKit.caption(this,stationMode?
             "Wait for a recent, accurate station fix. A missing fix can be flagged.":
-            "A recent device GPS fix within 10 m starts the survey automatically. You may start with the initial position missing.");
+            "Auto-starts with a fresh GPS fix within 10 m. Otherwise flag the starting position missing.");
         explanation.setTextSize(LikasDesignSystem.TEXT_BODY);
         explanation.setPadding(dp(4),dp(LikasDesignSystem.SPACE_SM),
             dp(4),dp(LikasDesignSystem.SPACE_LG));
@@ -278,7 +278,7 @@ public final class SurveyGpsActivity extends Activity {
             qualifiedFix=null;
             startButton.setEnabled(false);
             setStatus("Device GPS is switched off");
-            setStatusDetails("Open Location settings and enable device location to obtain a GPS fix. "+
+            setStatusDetails("Enable device location to obtain a GPS fix. "+
                 "No starting position has been recorded.");
             return;
         }

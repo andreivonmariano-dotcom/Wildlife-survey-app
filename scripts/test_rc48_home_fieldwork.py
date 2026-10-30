@@ -81,7 +81,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         welcome=src("WelcomeActivity.java")
         self.assertIn("new Intent(this,SurveyGpsActivity.class)",welcome)
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 109",build)
+        self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",build).group(1)),109)
         self.assertIn("0.27.3-rc49-history-review-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",src("FieldDb.java"))

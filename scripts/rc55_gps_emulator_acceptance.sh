@@ -59,10 +59,13 @@ adb shell wm size 320x720
 adb shell settings put system font_scale 2.0
 launch_survey
 capture rc55-survey-gps-disabled-320-font200
-adb shell input swipe 155 475 155 150 400
+# At 200% text the sticky footer starts near y480. Swipe INSIDE the ScrollView.
+adb shell input swipe 155 405 155 122 450
 sleep 1
-capture rc55-survey-gps-320-font200-scrolled
-launch_survey
+capture rc55-survey-gps-320-font200-scrolled1
+adb shell input swipe 155 405 155 122 450
+sleep 1
+capture rc55-survey-gps-320-font200-scrolled2
 python3 - <<'PY'
 from xml.etree import ElementTree as ET
 from pathlib import Path
@@ -79,8 +82,23 @@ for name in ("rc55-survey-gps-disabled-360",
     else:
         assert any("Start survey with its starting GPS position missing" in d for d in desc),name
         assert any("Cancel GPS acquisition and return to survey setup" in d for d in desc),name
-    assert any(d.startswith("Open Android device location settings") for d in desc),name
+    if "320-font200" not in name:
+        assert any(d.startswith("Open Android device location settings") for d in desc),name
     print(name,"navigation and disabled-GPS status PASS")
+# On narrow/large-font phones, advanced controls are below the fold by design.
+# Prove they are reachable with actual content-area scrolling.
+from hashlib import sha256
+p=Path("emulator-qa")
+first=(p/"rc55-survey-gps-disabled-320-font200.png").read_bytes()
+scrolled=(p/"rc55-survey-gps-320-font200-scrolled1.png").read_bytes()
+assert sha256(first).digest()!=sha256(scrolled).digest(),"200% GPS page did not scroll"
+pages=["rc55-survey-gps-disabled-320-font200",
+       "rc55-survey-gps-320-font200-scrolled1",
+       "rc55-survey-gps-320-font200-scrolled2"]
+d=[n.attrib.get("content-desc","") for name in pages
+   for n in ET.parse(p/(name+".xml")).getroot().iter("node")]
+assert any(t.startswith("Open Android device location settings") for t in d),    "Location settings unreachable at 200% text"
+print("RC55 320dp/200% scrolling and Location settings PASS")
 PY
 # Turn the device provider back on before the saved survey + recorder tests.
 adb shell cmd location set-location-enabled true \

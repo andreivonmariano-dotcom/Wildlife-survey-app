@@ -40,7 +40,7 @@ class Rc40ScreenAudit(unittest.TestCase):
         self.assertNotIn('"Go to the field."',field)
         self.assertNotIn('step("NEW"',field)
         self.assertIn('recentSurveySummary()',field)
-        for key in ("home","fieldwork","setup","custom"):
+        for key in ("home","fieldwork","setup"):
             self.assertIn('scrollTop();',home)
         self.assertIn('shellScroll.post(()->shellScroll.scrollTo(0,0))',home)
 

@@ -61,8 +61,8 @@ class Rc46FieldLayoutHierarchy(unittest.TestCase):
 
     def test_version_and_reference_assets_are_unchanged(self):
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 107",gradle)
-        self.assertIn("0.27.3-rc47-design-system-preview",gradle)
+        self.assertIn("versionCode 108",gradle)
+        self.assertIn("0.27.3-rc48-home-fieldwork-preview",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
         self.assertIn("frame.setClipToOutline(true)",source("LikasPortalUi.java"))

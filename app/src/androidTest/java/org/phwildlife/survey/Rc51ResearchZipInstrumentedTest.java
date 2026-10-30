@@ -109,10 +109,12 @@ public final class Rc51ResearchZipInstrumentedTest {
             for(String filename:new String[]{"occupancy_visits.csv","sdm_occurrences.csv",
                 "distance_samples.csv","distance_review.csv","distance_flatfile_draft.csv"}){
                 String content=archive.get(filename);
-                assertTrue(filename+" omitted modern survey",includes(content,MODERN));
-                assertTrue(filename+" omitted legacy completed survey",includes(content,LEGACY));
+                // distance_samples.csv has a point-count ID rather than an event_id column.
+                String prefix=filename.equals("distance_samples.csv")?"PC_":"";
+                assertTrue(filename+" omitted modern survey",includes(content,prefix+MODERN));
+                assertTrue(filename+" omitted legacy completed survey",includes(content,prefix+LEGACY));
                 for(String invalid:new String[]{INCOMPLETE,EXCLUDED,ACTIVE,ANOMALY})
-                    assertFalse(filename+" wrongly included "+invalid,includes(content,invalid));
+                    assertFalse(filename+" wrongly included "+invalid,includes(content,prefix+invalid));
             }
             assertTrue("Completed zero-detection visit should retain effort",
                 includes(archive.get("occupancy_visits.csv"),ZERO));

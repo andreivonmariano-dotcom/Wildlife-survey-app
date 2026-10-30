@@ -1,8 +1,6 @@
 package org.phwildlife.survey;
 
 import android.app.Activity;
-import android.graphics.Typeface;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,19 +13,12 @@ public final class FieldVisuals {
     public static LinearLayout section(Activity a,String title,String caption){
         LinearLayout content=new LinearLayout(a);
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(dp(a,3),dp(a,15),dp(a,3),dp(a,9));
-        TextView heading=new TextView(a);
-        heading.setText(title);
-        heading.setTextSize(17);
-        heading.setTypeface(null,Typeface.BOLD);
-        heading.setTextColor(UiKit.FOREST);
-        content.addView(heading);
+        content.setPadding(0,0,0,dp(a,LikasDesignSystem.SPACE_SM));
+        content.addView(UiKit.sectionTitle(a,title));
         if(caption!=null&&!caption.isEmpty()){
-            TextView note=new TextView(a);
-            note.setText(caption);
-            note.setTextSize(12);
-            note.setTextColor(UiKit.MUTED);
-            note.setPadding(0,dp(a,3),0,0);
+            TextView note=UiKit.caption(a,caption);
+            note.setPadding(dp(a,LikasDesignSystem.SPACE_XS),0,
+                dp(a,LikasDesignSystem.SPACE_XS),0);
             content.addView(note);
         }
         return content;
@@ -35,11 +26,11 @@ public final class FieldVisuals {
     public static TextView context(Activity a,String value){
         TextView note=new TextView(a);
         note.setText(value);
-        note.setTextSize(13);
+        note.setTextSize(LikasDesignSystem.TEXT_CAPTION);
         note.setTextColor(UiKit.INK);
         note.setBackground(UiKit.surface(a));
         note.setPadding(dp(a,12),dp(a,11),dp(a,12),dp(a,11));
-        note.setMinHeight(dp(a,46));
+        note.setMinHeight(dp(a,LikasDesignSystem.MIN_TOUCH_DP));
         return note;
     }
 }

@@ -33,3 +33,7 @@ No physical Android install over RC39/RC41/RC42 with backed-up user survey recor
 ## Handoff
 
 The actual signed APK was delivered as a direct ChatGPT conversation download at `/mnt/data/LIKAS-v0.27.3-RC43-approved-green-icons-debug.apk`. Paths from other chats/sessions must be independently verified and cannot be assumed present. Review PR #40 against `feature/likas-core-fieldwork-post-rc4`; preserve `main` as a divergent historical branch, not the app-source baseline.
+
+## Final merge and active-branch reproducibility check
+
+On 30 October 2026, PR #40 merged into `feature/likas-core-fieldwork-post-rc4` as commit `0786a482b79bbc5fb80113e6f34c1d095e57e29b`. Its push-triggered GitHub Actions Scientific Core QA run **41004124109** passed, and artifact **12954533229** contained an APK **byte-for-byte identical** to the previously inspected RC43 binary (SHA-256 `50aa01fffca23a9516f01a36d2d7716971e2fb6831930d1bb9d83ca947872a4a`). Thus the downloadable signed RC43 file corresponds exactly to the merged active development source and its original signing certificate. Subsequent documentation-only commits do not change the app or artifact.

@@ -28,13 +28,15 @@ class PortalNavigation(unittest.TestCase):
     def test_fieldwork_is_distinct_and_preserves_methods(self):
         c=read("WelcomeActivity.java")
         tools=c.split("private void fieldworkHub(){",1)[1].split("/** Short status caption",1)[0]
-        for label in ('"Birds"','"Herpetofauna"','"Mammals"','"Custom"',
+        for label in ('"Birds"','"Herpetofauna"','"Mammals"',
                       'HistoryActivity.class','DashboardActivity.class',
                       'SitesActivity.class','CallLibraryActivity.class',
                       'TrapProtocolActivity.class'):
             self.assertIn(label,tools)
         self.assertNotIn('Rc7SpeciesLibraryActivity.class',tools)
-        self.assertIn('private void setup(String selected,boolean isCustom)',c)
+        self.assertIn('private void setup(String selected)',c)
+        self.assertNotIn('surveyTile(second,"Custom"',tools)
+        self.assertNotIn('private void customPicker()',c)
         self.assertIn('private String activeSurvey()',c)
         self.assertIn('this::home',tools)
 

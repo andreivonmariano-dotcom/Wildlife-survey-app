@@ -21,7 +21,7 @@ class Rc50Reliability(unittest.TestCase):
 
     def test_derived_exports_use_shared_legacy_outcome_resolution(self):
         source = contents("ResearchExports.java")
-        self.assertIn('private static final String COMPLETE="("+SurveyOutcomeSql.RESOLVED+")=\'complete\'";',source)
+        self.assertIn("SurveyOutcomeSql.COMPLETE",source)
         self.assertNotIn("COALESCE(s.outcome,'active')='complete'",source)
         self.assertNotIn("COALESCE(outcome,'active')='complete'",source)
         self.assertIn('("+SurveyOutcomeSql.RESOLVED+"),e.habitat_code',source)
@@ -59,8 +59,8 @@ class Rc50Reliability(unittest.TestCase):
 
     def test_version_identity_and_schema_unchanged(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 110",gradle)
-        self.assertIn("0.27.3-rc50-field-reliability-preview",gradle)
+        self.assertIn("versionCode 111",gradle)
+        self.assertIn("0.27.3-rc51-research-export-preview",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",contents("FieldDb.java"))
 

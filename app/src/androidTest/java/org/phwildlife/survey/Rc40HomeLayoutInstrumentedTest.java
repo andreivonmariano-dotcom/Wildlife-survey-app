@@ -42,9 +42,9 @@ public final class Rc40HomeLayoutInstrumentedTest {
         try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(intent)){
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
-                View field=find(root,"Open Fieldwork. Surveys · Data · History");
-                View library=find(root,"Open Library. Species · Habitats · Guides");
-                View settings=find(root,"Open Settings. Backups · App · Storage");
+                View field=find(root,"Open Fieldwork. Surveys & history");
+                View library=find(root,"Open Library. Species & habitats");
+                View settings=find(root,"Open Settings. Backups & preferences");
                 assertNotNull("Fieldwork",field);
                 View hero=find(root,"LIKAS. Philippine wildlife surveys, species, and habitats.");
                 assertNotNull("Hero card",hero);
@@ -74,7 +74,7 @@ public final class Rc40HomeLayoutInstrumentedTest {
         try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(intent)){
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
-                View field=find(root,"Open Fieldwork. Surveys · Data · History");
+                View field=find(root,"Open Fieldwork. Surveys & history");
                 assertNotNull(field);
                 field.performClick();
                 View birds=find(root,"Open Birds. Counts · Transects");

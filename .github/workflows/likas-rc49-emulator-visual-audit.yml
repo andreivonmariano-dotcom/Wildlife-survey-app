@@ -57,36 +57,7 @@ jobs:
           heap-size: 512M
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
-          script: |
-            set -uo pipefail
-            mkdir -p emulator-qa
-            adb install -r app/build/outputs/apk/debug/app-debug.apk > emulator-qa/install.txt 2>&1
-            PKG=org.phwildlife.survey.beta08
-            adb shell wm size 360x800
-            adb shell wm density 160
-            adb shell settings put system font_scale 1.0
-            capture() {
-              NAME="$1"
-              adb shell screencap -p /sdcard/likas-screen.png && adb pull /sdcard/likas-screen.png "emulator-qa/$NAME.png" >/dev/null 2>&1
-              adb shell uiautomator dump /sdcard/likas-hierarchy.xml >/dev/null 2>&1 && adb pull /sdcard/likas-hierarchy.xml "emulator-qa/$NAME.xml" >/dev/null 2>&1 || true
-            }
-            adb shell am start -n "$PKG/org.phwildlife.survey.LikasLaunchActivity" > emulator-qa/launch.txt 2>&1
-            sleep 8
-            capture "01-home-360dp"
-            for SCREEN in WelcomeActivity Rc7SpeciesLibraryActivity HabitatRecordsActivity HistoryActivity DashboardActivity LikasLibraryActivity MainActivity; do
-              adb shell am start -n "$PKG/org.phwildlife.survey.$SCREEN" > "emulator-qa/$SCREEN-start.txt" 2>&1 || true
-              sleep 3
-              capture "02-$SCREEN-360dp"
-            done
-            adb shell settings put system font_scale 2.0
-            adb shell wm size 320x720
-            adb shell am start -n "$PKG/org.phwildlife.survey.WelcomeActivity" > emulator-qa/large-font-start.txt 2>&1 || true
-            sleep 4
-            capture "03-home-320dp-font200"
-            adb shell am start -n "$PKG/org.phwildlife.survey.Rc7SpeciesLibraryActivity" >> emulator-qa/large-font-start.txt 2>&1 || true
-            sleep 4
-            capture "04-library-320dp-font200"
-            adb logcat -d -t 500 > emulator-qa/logcat-tail.txt || true
+          script: bash scripts/rc49_emulator_visual_qa.sh
       - name: Upload emulator evidence even if audit fails
         if: always()
         uses: actions/upload-artifact@v4

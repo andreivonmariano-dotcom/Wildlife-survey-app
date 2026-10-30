@@ -46,10 +46,11 @@ class Rc43ApprovedIconLock(unittest.TestCase):
         ui=UI.read_text(encoding="utf-8")
         mapped=set(re.findall(r'R\.drawable\.(likas_approved_[a-z_]+)',ui))
         self.assertEqual(mapped,{n[:-4] for n in APPROVED})
-        self.assertIn("addApprovedIcon(art,a,icon,field?CREAM:CANOPY,62,36)",ui)
-        self.assertIn("addApprovedIcon(art,a,symbol,CANOPY,49,30)",ui)
-        self.assertIn("addApprovedIcon(plate,a,symbol,CANOPY,47,28)",ui)
+        self.assertIn("addApprovedIcon(art,a,icon,field?CREAM:CANOPY,64,36)",ui)
+        self.assertIn("addApprovedIcon(art,a,symbol,CANOPY,52,30)",ui)
+        self.assertIn("addApprovedIcon(plate,a,symbol,CANOPY,50,28)",ui)
         self.assertIn("setFilterBitmap(false)",ui)
+        self.assertIn("frame.setClipToOutline(true)",ui)
         self.assertIn("IMPORTANT_FOR_ACCESSIBILITY_NO",ui)
         self.assertIn("new Glyph(a,symbol,glyphColor)",ui) # fallback for unmapped tools
 

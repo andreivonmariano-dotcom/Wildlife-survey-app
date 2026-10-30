@@ -3,11 +3,11 @@
 LIKAS is an offline-first Android biodiversity fieldwork and reference tool for Philippine wildlife surveys.
 
 **Active development branch:** `feature/likas-core-fieldwork-post-rc4`  
-**Current development preview:** `0.27.3-rc48-home-fieldwork-preview` (versionCode **108**)  
+**Current development preview:** `0.27.3-rc49-history-review-preview` (versionCode **109**)  
 **Application ID:** `org.phwildlife.survey.beta08`  
 **SQLite schema:** **27**
 
-**Build status (30 October 2026):** RC48 Home and Fieldwork refinement merged through PR #45 at `41828e20ba6a8226b592369ee751797516bcdaf9`. PR Scientific Core QA **41025648619** passed **310 Python tests**, JVM tests, app and AndroidTest APK compilation. Merged-branch push CI **41025896914** also passed and produced signed APK artifact **12963711954**. The independently inspected code108 APK is **9,779,924 bytes**, SHA-256 `226df5e5b751d0dba5aa8a739b9eeeab5920e69fc358f5362968e8833d68bda3`, with correct package/version and APK v2 signature verified against the original certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. This remains a development preview requiring handset and installed-upgrade acceptance.
+**Build status (30 October 2026):** RC49 History/observation review merged in PR #46 at `c35426e3a820c2cc4658c022fe7b626a5cc0b3ca`. PR Scientific Core QA **41028714285** passed **316 Python tests**, JVM tests, app and AndroidTest APK compilation. Merged-branch push CI **41028923966** passed with signed APK artifact **12964408568**. The independently inspected code109 APK is **9,781,724 bytes**, SHA-256 `270e18bc2efd3207cd6f1779bc377be11f39a1841402f7e6df781267ff79fcb9`, with correct package/version and a valid APK v2 signature/digest under the original certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Development preview only: installed upgrade and real-device accessibility checks are not complete.
 
 ## What LIKAS currently provides
 
@@ -31,6 +31,8 @@ Two slower device workflows are **manual acceptance checks**:
 Do not add APKs, keystores, local caches, emulator captures or generated photo-review packs to Git. These are covered by `.gitignore`. Signed APKs belong in short-lived CI artifacts and verified, direct conversation downloads.
 
 ## Current project records
+
+- [RC49 History review and signed QA](docs/LIKAS_RC49_HISTORY_REVIEW_QA.md)
 
 - [Project state and next-chat handoff](docs/LIKAS_PROJECT_STATE.md)
 - [Decision log](docs/LIKAS_DECISION_LOG.md)

@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/** Small, original vector symbols and spacious home cards. No external font or image dependency. */
+/** Compact field portal with approved pixel-art tiles and vector fallback symbols. */
 public final class LikasPortalUi {
     private LikasPortalUi(){}
     public static final int CANOPY=Color.rgb(20,55,43);
@@ -28,6 +28,54 @@ public final class LikasPortalUi {
     public static final int SAND=Color.rgb(245,238,222);
     private static int dp(Activity a,int value){
         return Math.round(a.getResources().getDisplayMetrics().density*value);
+    }
+    /** Exact owner-approved green pixel art; the launcher remains a separate, untouched resource. */
+    private static int approvedIconResource(String symbol){
+        if(symbol==null)return 0;
+        switch(symbol){
+            case "field":case "fieldwork":return R.drawable.likas_approved_fieldwork;
+            case "library":case "species":case "guide":
+                return R.drawable.likas_approved_species_library;
+            case "settings":return R.drawable.likas_approved_settings;
+            case "bird":case "birds":return R.drawable.likas_approved_birds_writhed_hornbill;
+            case "frog":case "herpetofauna":
+                return R.drawable.likas_approved_herpetofauna_staurois_natator;
+            case "mammal":case "mammals":return R.drawable.likas_approved_mammals_rusa_marianna;
+            case "habitat":case "habitats":return R.drawable.likas_approved_habitats;
+            case "research":return R.drawable.likas_approved_research;
+            case "news":return R.drawable.likas_approved_news;
+            case "history":return R.drawable.likas_approved_history;
+            case "chart":case "analysis":return R.drawable.likas_approved_analysis;
+            case "backup":return R.drawable.likas_approved_backup;
+            case "photo":case "camera":case "trap":return R.drawable.likas_approved_camera;
+            case "gps":return R.drawable.likas_approved_gps;
+            case "map":case "project":case "projects":return R.drawable.likas_approved_projects;
+            case "protocol":case "report":case "reports":return R.drawable.likas_approved_reports;
+            case "offline":return R.drawable.likas_approved_offline;
+            case "help":return R.drawable.likas_approved_help;
+            default:return 0; // The approved set has no audio/conservation glyph.
+        }
+    }
+    /** Preserve precise pixel edges at all device densities; unknown symbols keep legacy glyphs. */
+    private static void addApprovedIcon(FrameLayout frame,Activity a,String symbol,int glyphColor,
+            int approvedDp,int fallbackDp){
+        int res=approvedIconResource(symbol);
+        View art;
+        int size;
+        if(res!=0){
+            ImageView image=new ImageView(a);
+            android.graphics.drawable.Drawable drawable=a.getResources().getDrawable(res,a.getTheme());
+            if(drawable instanceof android.graphics.drawable.BitmapDrawable){
+                ((android.graphics.drawable.BitmapDrawable)drawable).setFilterBitmap(false);
+            }
+            image.setImageDrawable(drawable);
+            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            art=image;size=approvedDp;
+        }else{
+            art=new Glyph(a,symbol,glyphColor);size=fallbackDp;
+        }
+        frame.addView(art,new FrameLayout.LayoutParams(dp(a,size),dp(a,size),Gravity.CENTER));
     }
     private static GradientDrawable rounded(Activity a,int fill,int stroke,int radius){
         GradientDrawable d=new GradientDrawable();d.setColor(fill);
@@ -135,8 +183,7 @@ public final class LikasPortalUi {
         FrameLayout art=new FrameLayout(a);
         art.setBackground(rounded(a,field?Color.argb(42,236,247,218):
             Color.argb(90,255,255,255),Color.TRANSPARENT,14));
-        art.addView(new Glyph(a,icon,field?CREAM:CANOPY),
-            new FrameLayout.LayoutParams(dp(a,36),dp(a,36),Gravity.CENTER));
+        addApprovedIcon(art,a,icon,field?CREAM:CANOPY,62,36);
         LinearLayout.LayoutParams artLp=new LinearLayout.LayoutParams(dp(a,62),dp(a,62));
         artLp.leftMargin=dp(a,10);
         panel.addView(art,artLp);
@@ -193,8 +240,7 @@ public final class LikasPortalUi {
         panel.setMinimumHeight(dp(a,126));
         FrameLayout art=new FrameLayout(a);
         art.setBackground(rounded(a,Color.rgb(230,240,227),Color.TRANSPARENT,13));
-        art.addView(new Glyph(a,symbol,CANOPY),
-            new FrameLayout.LayoutParams(dp(a,30),dp(a,30),Gravity.CENTER));
+        addApprovedIcon(art,a,symbol,CANOPY,49,30);
         panel.addView(art,new LinearLayout.LayoutParams(dp(a,49),dp(a,49)));
         TextView name=text(a,title,16,CANOPY,true);
         LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(-1,-2);
@@ -224,8 +270,7 @@ public final class LikasPortalUi {
         item.setMinimumHeight(dp(a,75));
         FrameLayout plate=new FrameLayout(a);
         plate.setBackground(rounded(a,Color.rgb(231,241,231),Color.TRANSPARENT,13));
-        plate.addView(new Glyph(a,symbol,CANOPY),
-            new FrameLayout.LayoutParams(dp(a,28),dp(a,28),Gravity.CENTER));
+        addApprovedIcon(plate,a,symbol,CANOPY,47,28);
         item.addView(plate,new LinearLayout.LayoutParams(dp(a,47),dp(a,47)));
         LinearLayout copy=new LinearLayout(a);copy.setOrientation(LinearLayout.VERTICAL);
         TextView name=text(a,title,16,CANOPY,true);copy.addView(name);

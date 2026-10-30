@@ -96,6 +96,20 @@ public final class BackupRoundTripInstrumentedTest {
         assertTrue(media.delete());
         assertTrue("Restore workspace should be empty after fixture deletion",
             FieldBackupArchive.canRestore(ctx));
+        // Fault injection after the first attachment verifies that no partial
+        // media, preferences or restored survey rows survive a recoverable error.
+        boolean simulatedFailure=false;
+        try{
+            FieldBackupArchive.restoreIntoEmptyForTest(ctx,
+                new ByteArrayInputStream(archive.toByteArray()),1);
+        }catch(java.io.IOException expected){
+            simulatedFailure=expected.getMessage().contains("Injected restore failure");
+        }
+        assertTrue("Expected fault-injected restore to fail",simulatedFailure);
+        assertFalse("Rolled-back media must not remain",media.exists());
+        assertEquals("No survey should become visible after failed restore",0,count(ctx,"surveys"));
+        assertTrue("Original empty workspace remains restorable",
+            FieldBackupArchive.canRestore(ctx));
         String msg=FieldBackupArchive.restoreIntoEmpty(ctx,
             new ByteArrayInputStream(archive.toByteArray()));
         assertTrue(msg.contains("Restore installed"));

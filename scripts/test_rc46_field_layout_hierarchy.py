@@ -12,7 +12,7 @@ class Rc46FieldLayoutHierarchy(unittest.TestCase):
         portal=source("LikasPortalUi.java")
         welcome=source("WelcomeActivity.java")
         self.assertIn("public static View hero(Activity a,boolean compact)",portal)
-        self.assertIn("cover.setMinimumHeight(dp(a,compact?88:151))",portal)
+        self.assertIn("cover.setMinimumHeight(dp(a,compact?88:(largeHomeText?118:151)))",portal)
         self.assertIn("boolean showFrog=a.getResources().getConfiguration().fontScale<1.30f",portal)
         self.assertIn("dp(a,showFrog?76:20)",portal)
         self.assertIn("new FrameLayout.LayoutParams(-1,-2,Gravity.TOP)",portal)

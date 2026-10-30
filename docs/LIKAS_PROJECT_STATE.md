@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | RC60 main Library: all three visual decisions resolved and emulator verified
+
+- **Current latest preview:** `feature/likas-rc60-library-visual-consistency`, draft PR **#57** on draft RC59 PR #56, exact app-code/test SHA `2803c6e4498266bf1377780cfe62a527dc52e59c`, versionCode **120** (`0.27.3-rc60-library-visual-preview`), same original app ID, signing certificate and SQLite schema **27**. Integrated scientific core remains RC49 and draft PR chain stays unmerged.
+- **Three owner-requested decisions implemented on main Library only:** original source-drawn non-antialiased 16×16 Conservation pixel shield with leaf instead of inconsistent legacy vector; page title uses shared **23sp TEXT_PAGE** token and section headings use local medium **14sp** font for stronger hierarchy under Android14 non-linear font scaling; Species/Habitats featured pale-green cards reuse shared accessible left-icon/right-chevron action. No owner-approved PNG altered and no unsupported habitat/status claims added.
+- **Actual Android QA:** run **41096525113 success**, 352 Python tests, signed Android/JVM build and **9 Android instrumentation tests**. Ten real top/bottom screenshots at 320/360/412dp with 100/130/200% text. All seven Library destinations, 48dp touch minima, no text ellipses, scroll reachability, pixel shield presence, native title hierarchy and consistent featured card arrows verified. Evidence artifact **12997026459**. First two candidate runs failed stale old component test expectations and then a real 412dp/130% font-size hierarchy issue; both corrected before final success.
+- **Verified direct APK:** artifact **12995533844**, **9,788,456 bytes**, SHA256 `11e571f02f272b11fa988de7edffc64468bdb6724aecd1707175e353c0704c9b`. Independently validated v2 signer RSA signature, complete signed-content digest, APK ZIP and binary manifest versionCode120. Original cert `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. All 79 checked reference/photo/approved art assets byte-identical to RC59. APK, before/after Android PNG and raw evidence ZIP delivered directly in implementation chat.
+- **Open release gates:** real phone sunlight/TalkBack, real installed historical-data upgrade, backup/media integrity and full field session still unverified. RC60 remains development-only draft. QA `docs/LIKAS_RC60_LIBRARY_VISUAL_QA.md`.
+- **Next owner-screen audit:** Species Discover individually, with actual screenshots and approved icon mapping before edits.
+
+---
+
 ## 31 October 2026 | RC59 main Library hub comprehensive visual audit accepted on emulator
 
 - **Current latest UI preview:** `feature/likas-rc59-library-hub-visual`, draft PR **#56** into draft RC58 #55, exact app source SHA **`48df5c1c3e6660939f6f9f00f17f92a8d354d191`**, versionCode **119** (`0.27.3-rc59-library-hub-preview`). Earlier stacked PRs remain draft; integrated core remains RC49. App ID `org.phwildlife.survey.beta08`, signer, DB schema 27 and all biological reference assets preserved.

@@ -32,7 +32,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
             self.assertIn('"'+profile+'"',hub)
         self.assertIn('LikasPortalUi.action(this,"History"',hub)
         self.assertIn('LikasPortalUi.action(this,"Analysis"',hub)
-        self.assertIn("surveyTile(main,"Birds"",hub)
+        self.assertIn('surveyTile(main,"Birds"',hub)
         for target in ("SitesActivity.class","HistoryActivity.class",
                        "DashboardActivity.class","FieldProtocolsActivity.class"):
             self.assertIn(target,hub)

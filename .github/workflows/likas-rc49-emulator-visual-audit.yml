@@ -1,0 +1,97 @@
+name: LIKAS RC49 independent emulator visual audit
+on:
+  push:
+    branches:
+      - audit/rc49-emulator-2026-10-30
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  emulator-visual-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+      - run: sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0' 'platform-tools'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - uses: actions/cache@v4
+        with:
+          path: .taxonomy-cache/mdd-v2.5.csv
+          key: mdd-v2.5-533e662fd5b8f66a5f56c191e7efac44
+      - uses: actions/cache/restore@v4
+        with:
+          path: .signing/wildlife-beta08.keystore
+          key: wildlife-v08-beta-debug-signing-v1
+      - name: Assert unchanged release signer
+        run: |
+          test -s .signing/wildlife-beta08.keystore
+          keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/likas-cert.der
+          echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/likas-cert.der' | sha256sum -c -
+      - name: Prepare assets and compile tested APK
+        run: |
+          python3 scripts/prepare_mdd_mammals.py
+          python3 scripts/prepare_offline_photos.py
+          python3 scripts/audit_inaturalist_photos.py --install-approved
+          gradle --no-daemon :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Allow KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Boot Android 14 and capture screens + accessibility trees
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          cores: 2
+          ram-size: 2048M
+          heap-size: 512M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: |
+            set -uo pipefail
+            mkdir -p emulator-qa
+            adb install -r app/build/outputs/apk/debug/app-debug.apk > emulator-qa/install.txt 2>&1
+            PKG=org.phwildlife.survey.beta08
+            adb shell wm size 360x800
+            adb shell wm density 160
+            adb shell settings put system font_scale 1.0
+            capture() {
+              NAME="$1"
+              adb shell screencap -p /sdcard/likas-screen.png && adb pull /sdcard/likas-screen.png "emulator-qa/$NAME.png" >/dev/null 2>&1
+              adb shell uiautomator dump /sdcard/likas-hierarchy.xml >/dev/null 2>&1 && adb pull /sdcard/likas-hierarchy.xml "emulator-qa/$NAME.xml" >/dev/null 2>&1 || true
+            }
+            adb shell am start -n "$PKG/org.phwildlife.survey.LikasLaunchActivity" > emulator-qa/launch.txt 2>&1
+            sleep 8
+            capture "01-home-360dp"
+            for SCREEN in WelcomeActivity Rc7SpeciesLibraryActivity HabitatRecordsActivity HistoryActivity DashboardActivity LikasLibraryActivity MainActivity; do
+              adb shell am start -n "$PKG/org.phwildlife.survey.$SCREEN" > "emulator-qa/$SCREEN-start.txt" 2>&1 || true
+              sleep 3
+              capture "02-$SCREEN-360dp"
+            done
+            adb shell settings put system font_scale 2.0
+            adb shell wm size 320x720
+            adb shell am start -n "$PKG/org.phwildlife.survey.WelcomeActivity" > emulator-qa/large-font-start.txt 2>&1 || true
+            sleep 4
+            capture "03-home-320dp-font200"
+            adb shell am start -n "$PKG/org.phwildlife.survey.Rc7SpeciesLibraryActivity" >> emulator-qa/large-font-start.txt 2>&1 || true
+            sleep 4
+            capture "04-library-320dp-font200"
+            adb logcat -d -t 500 > emulator-qa/logcat-tail.txt || true
+      - name: Upload emulator evidence even if audit fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LIKAS-RC49-emulator-visual-audit-evidence
+          path: emulator-qa/
+          if-no-files-found: warn
+          retention-days: 7

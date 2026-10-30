@@ -194,7 +194,9 @@ public class WelcomeActivity extends Activity {
         homeVisible=true;currentScreen="home";main.removeAllViews();scrollTop();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         lastHomeActiveSurvey=activeSurvey();
-        main.addView(LikasPortalUi.hero(this),new LinearLayout.LayoutParams(-1,dp(152)));
+        // Dynamic height avoids cutting off enlarged typography or the decorative mark.
+        main.addView(LikasPortalUi.hero(this,lastHomeActiveSurvey!=null),
+            new LinearLayout.LayoutParams(-1,-2));
         if(lastHomeActiveSurvey!=null){
             View session=LikasPortalUi.session(this,()->
                 startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
@@ -203,8 +205,8 @@ public class WelcomeActivity extends Activity {
             resumeLp.topMargin=dp(12);
             main.addView(session,resumeLp);
         }
-        TextView guidance=LikasPortalUi.kicker(this,"EXPLORE LIKAS");
-        main.addView(guidance);
+        if(lastHomeActiveSurvey==null)
+            main.addView(LikasPortalUi.kicker(this,"EXPLORE LIKAS"));
         View field=LikasPortalUi.tile(this,"Fieldwork","Surveys · Data · History",
             "field",LikasPortalUi.CANOPY,Color.WHITE,this::fieldworkHub);
         LinearLayout.LayoutParams fieldLp=new LinearLayout.LayoutParams(-1,-2);

@@ -85,6 +85,7 @@ public class MainActivity extends Activity implements LocationListener {
     private Button endSurveyButton,markButton,saveButton,reviewButton,pointNextButton;
     private LinearLayout groupBar,advancedPanel,lineRow,birdMeasurements,herpPanel,mammalPanel;
     private ScrollView fieldScroll;
+    private boolean inputKeyboardVisible=false;
     private boolean returnToHome=false;
     private final String[] groups=Taxa.GROUPS;
     private String samplingUnitId=null;
@@ -209,6 +210,7 @@ public class MainActivity extends Activity implements LocationListener {
         view.setFocusable(true);
     }
     private void draw(){
+        inputKeyboardVisible=false;
         LinearLayout root=vertical();root.setBackgroundColor(BACK);root.setPadding(dp(12),dp(5),dp(12),dp(7));
         // At large system font, keep the fixed survey dock fully in frame.
         // The complete status card remains reachable at the start of the field scroll.
@@ -219,14 +221,14 @@ public class MainActivity extends Activity implements LocationListener {
         Button home=UiKit.button(this,largeText?"‹":"‹ Home","secondary");
         home.setContentDescription("Back to Home");
         home.setTextSize(largeText?20:13);
-        top.addView(home,new LinearLayout.LayoutParams(dp(78),dp(49)));
+        top.addView(home,new LinearLayout.LayoutParams(dp(78),dp(largeText?64:49)));
         home.setOnClickListener(v->navigateHome());
         TextView title=label(profile+" Survey",19,true);title.setGravity(Gravity.CENTER);
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
         Button export=UiKit.button(this,largeText?"ZIP":"Export","secondary");
         export.setContentDescription("Export research ZIP");
         export.setTextSize(largeText?14:13);
-        top.addView(export,new LinearLayout.LayoutParams(dp(84),dp(49)));export.setOnClickListener(v->exportZip());
+        top.addView(export,new LinearLayout.LayoutParams(dp(84),dp(largeText?64:49)));export.setOnClickListener(v->exportZip());
         root.addView(top);
         // Fixed status HUD: short, high-contrast survey state, always visible.
         LinearLayout hud=vertical();
@@ -711,6 +713,21 @@ public class MainActivity extends Activity implements LocationListener {
             startActivity(new Intent(this,HistoryActivity.class).putExtra("event_id",eventId));
         });
         setContentView(root);
+        // adjustResize keeps the Save/Review/End dock on screen. When the keyboard
+        // occupies the viewport, reclaim the noncritical top navigation row and
+        // progress detail rather than moving or hiding survey completion controls.
+        final android.graphics.Rect visibleFrame=new android.graphics.Rect();
+        root.getViewTreeObserver().addOnGlobalLayoutListener(()->{
+            if(!root.isAttachedToWindow())return;
+            root.getWindowVisibleDisplayFrame(visibleFrame);
+            int obscured=getResources().getDisplayMetrics().heightPixels-visibleFrame.bottom;
+            boolean keyboardShown=obscured>dp(160);
+            if(inputKeyboardVisible==keyboardShown)return;
+            inputKeyboardVisible=keyboardShown;
+            top.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
+            progressView.setVisibility(keyboardShown||
+                progressView.getText().length()==0?View.GONE:View.VISIBLE);
+        });
         updateMethods();refreshAutocomplete();status();
         watchDraftFields();
 
@@ -2084,7 +2101,8 @@ public class MainActivity extends Activity implements LocationListener {
                     if(!active||!result.eventId.equals(eventId))return;
                     if(progressView!=null){
                         progressView.setText(result.progress);
-                        progressView.setVisibility(result.progress.isEmpty()?View.GONE:View.VISIBLE);
+                        progressView.setVisibility(inputKeyboardVisible||result.progress.isEmpty()?
+            View.GONE:View.VISIBLE);
                     }
                     if(trackingView!=null&&!result.track.isEmpty())
                         trackingView.setText(result.track);

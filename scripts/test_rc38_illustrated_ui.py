@@ -58,8 +58,8 @@ class IllustratedUiContract(unittest.TestCase):
 
     def test_app_identity_is_stable(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 105",build)
-        self.assertIn("versionName '0.27.3-rc45-responsive-layout-preview'",build)
+        self.assertIn("versionCode 106",build)
+        self.assertIn("versionName '0.27.3-rc46-field-layout-hierarchy-preview'",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",src("FieldDb.java"))
 

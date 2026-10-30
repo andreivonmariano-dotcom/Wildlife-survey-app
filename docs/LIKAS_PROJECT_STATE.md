@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | Screen 3 Survey Setup UI review in RC54 draft, Android QA pending
+
+- **Owner direction:** Proceed with screen-by-screen theme standardization after verified RC52 Home and RC53 Fieldwork; Screen 3 is actual **Survey Setup**, covering Birds, Herpetofauna and Mammals, not a new scientific-method release.
+- **Source lineage:** `feature/likas-rc54-survey-setup-screen3`, draft PR **#51** into draft RC53 PR #50, itself based on draft RC52 #49, RC51 #48, RC50 #47. Integrated core still RC49. RC54 app preview `0.27.3-rc54-survey-setup-preview`, versionCode **114**, package `org.phwildlife.survey.beta08`, original signing and SQLite schema **27** unchanged.
+- **UI scope:** Four numbered section headers simplified and standardized; duplicate border around individual method choices removed; labels/selector touch heights/accessibility names shared; Project + Manage controls stack at narrow widths or enlarged fonts; Birds line-transect bearing has a persistent conditionally visible label; additional-details/study-rule toggles expose spoken expanded/collapsed state. Single pinned Continue to GPS outside scroll remains unchanged. All native radio method selection, validation, units, persisted values, survey semantics, taxonomy, references and locked artwork unchanged.
+- **QA:** Added Python source contract and `Rc54SurveySetupInstrumentedTest` for three taxon setups, conditional bearing, advanced controls, and GPS footer; dedicated Android 14 CI captures 360dp/100% of all three taxa, 412dp/130% Birds, 320dp/200% Birds across scroll positions and reruns Home/Fieldwork/ZIP scientific regressions. An initial CI attempt exposed stale test assertions for the old project selector breakpoint, updated in branch. **At this documentation checkpoint, final Android acceptance and an APK are unverified.** Do not claim successful build until CI and actual APK integrity checks complete.
+- **Next:** complete Android screenshot+test review, sign/verify code114 APK and deliver direct chat link if passing; then screen 4 GPS acquisition. QA file: `docs/LIKAS_RC54_SURVEY_SETUP_SCREEN_QA.md` on RC54 branch. Physical TalkBack, in-place historic upgrade and remaining scientific/recovery audit gates unchanged.
+
+---
+
 ## 30 October 2026 | RC53 Screen 2 Fieldwork visual/layout acceptance PASSED on Android 14
 
 - **Owner direction and scope:** Continue actual LIKAS screen-by-screen visual standardization. Screen 1 Home passed in RC52; Screen 2 **Fieldwork hub** now passed in RC53. Next target is **Screen 3 Survey Setup**, not another broad audit. Preserve real scientific workflows and locked pixel artwork.

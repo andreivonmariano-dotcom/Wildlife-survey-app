@@ -43,7 +43,7 @@ class FieldLayoutContractTest(unittest.TestCase):
         self.assertIn('surveyTile(first,"Birds"',text)
         self.assertIn('surveyTile(first,"Herpetofauna"',text)
         self.assertIn('surveyTile(second,"Mammals"',text)
-        self.assertIn('surveyTile(second,"Custom"',text)
+        self.assertNotIn('surveyTile(second,"Custom"',text)
         self.assertIn("LikasPortalUi.mini(this,title,detail,art,tap)",text)
         self.assertIn('Button resume=UiKit.button(this,"Resume Survey","primary")',text)
         self.assertIn('String unfinished=activeSurvey()',text)

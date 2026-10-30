@@ -62,8 +62,10 @@ adb shell wm size 320x720
 adb shell settings put system font_scale 2.0
 enter_setup Birds
 capture rc54-setup-Birds-320-font200-top
-for index in 1 2 3 4 5 6; do
-  adb shell input swipe 160 602 160 150 450
+# At 200% text the sticky GPS footer begins near y=635. The visible
+# ScrollView ends at y=580, so start swipes well INSIDE its content bounds.
+for index in 1 2 3 4 5 6 7 8 9; do
+  adb shell input swipe 160 520 160 132 450
   sleep 1
   capture "rc54-setup-Birds-320-font200-scroll$index"
 done
@@ -78,6 +80,19 @@ for name in ("rc54-setup-Birds-360-top","rc54-setup-Herpetofauna-360-top",
                or "Continue Herpetofauna survey setup to GPS preflight" in n.get("content-desc","")
                or "Continue Mammals survey setup to GPS preflight" in n.get("content-desc","")
                for n in nodes), ("Pinned GPS action missing",name)
+# Confirm that tall-font scrolling really reaches content, rather than
+# producing identical top-screen captures after a swipe outside the viewport.
+from hashlib import sha256
+initial=Path("emulator-qa/rc54-setup-Birds-320-font200-top.png").read_bytes()
+later=Path("emulator-qa/rc54-setup-Birds-320-font200-scroll1.png").read_bytes()
+assert sha256(initial).digest()!=sha256(later).digest(), "200% setup did not actually scroll"
+large_nodes=[n.attrib for name in ["rc54-setup-Birds-320-font200-top"]+
+  [f"rc54-setup-Birds-320-font200-scroll{i}" for i in range(1,10)]
+  for n in ET.parse(Path("emulator-qa")/(name+".xml")).getroot().iter("node")]
+large_words=" ".join(n.get("text","") for n in large_nodes)
+for label in ("Survey method","Project and location","Sampling effort","Begin survey",
+              "Checklist region","Point count duration (minutes)"):
+    assert label in large_words,("200% screen never exposed",label)
 for taxon in ("Birds","Herpetofauna","Mammals"):
     names=[f"rc54-setup-{taxon}-360-"+step for step in ("top","middle","bottom")]
     nodes=[n.attrib for name in names for n in ET.parse(

@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC57 Home screen recheck accepted on Android emulator
+
+- **Latest source baseline:** `feature/likas-rc57-home-large-text-visual`, draft PR **#54** into draft RC56 PR #53, tested app+QA code `13261f6f49a1a68c86b2fbf76f02a531c2256f4e`. Integrated core remains RC49; code117 preview `0.27.3-rc57-home-visual-preview`, app ID `org.phwildlife.survey.beta08`, original debug signer, SQLite schema 27.
+- **Observed and fixed:** actual prior RC52 320dp/200%-font Home had hero height 250dp and Settings reaching the scroll boundary at 684dp; revised actual RC57 Android 14 screenshot measures hero **215dp** and Settings ending at 653dp, **31dp above** scroll boundary. Normal 360dp/100% and 412dp/130% typography/hero remain the same. The approved frog and 18 pixel art resources were preserved.
+- **Verified:** workflow **41084197310 success** (343 Python tests, Android/JVM compile, 3 Android instrumentation incl. actual scientific ZIP). Actual screenshots inspected. Signed APK artifact **12990743567**, APK size **9,786,904 bytes**, SHA-256 `41a3b6a2913506ac52e87db14268b1274a4e5425ee4e109bbd6384452bfdc923`. APK CRC, Android v2 signature and whole-content digest verified, certificate matches original pinned `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. APK, screenshot comparison PNG and raw emulator evidence ZIP directly provided in this chat.
+- **Release gates remain:** draft PR chain unmerged, real in-place historical upgrade/data restore, GPS device quality, TalkBack, keyboard, outdoor glare and long-session record/export tests still open; **not field-ready**. App data and survey controls unchanged.
+- **Next:** Screen 2 **Fieldwork hub** actual visual review, then continue one screen at a time with the same design system and emulator checks. QA: `docs/LIKAS_RC57_HOME_VISUAL_QA.md`.
+
+---
+
 ## 30 October 2026 | Independent RC49 Android 14 emulator/source audit (no app changes)
 
 - **Baseline:** authoritative active core branch at `82e4e2ac7be10f94fa9f1672261a7110f58ebbee`, versionCode 109 and SQLite 27, inspected by a separate QA workstream. No production Android code or signing changed in this audit. The original RC49 signed APK, SHA-256 `270e18bc2efd3207cd6f1779bc377be11f39a1841402f7e6df781267ff79fcb9`, was retrieved and reverified in the audit conversation.

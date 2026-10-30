@@ -113,25 +113,28 @@ public final class SurveyGpsActivity extends Activity {
             });
             content.addView(skip);
         }
+        // Receiver diagnostics are optional, below the actions needed to proceed safely.
+        LinearLayout diagnostics=new LinearLayout(this);
+        diagnostics.setOrientation(LinearLayout.VERTICAL);
         if(!stationMode){
             satelliteStatus=new TextView(this);
             satelliteStatus.setText("Satellites: waiting for receiver");
             satelliteStatus.setTextSize(14);
             satelliteStatus.setTextColor(UiKit.INK);
-            content.addView(satelliteStatus);
+            diagnostics.addView(satelliteStatus);
             signalStatus=new TextView(this);
             signalStatus.setText("Signal quality: waiting");
             signalStatus.setTextSize(14);
             signalStatus.setTextColor(UiKit.INK);
-            content.addView(signalStatus);
+            diagnostics.addView(signalStatus);
             skyView=new SatelliteSkyView(this);
-            content.addView(skyView,new LinearLayout.LayoutParams(
-                -1,Math.round(290f*getResources().getDisplayMetrics().density)));
+            diagnostics.addView(skyView,new LinearLayout.LayoutParams(
+                -1,Math.round(240f*getResources().getDisplayMetrics().density)));
             TextView legend=new TextView(this);
             legend.setText("Green outline = satellite used for position fix");
             legend.setTextColor(UiKit.INK);
             legend.setTextSize(12);
-            content.addView(legend);
+            diagnostics.addView(legend);
         }
         startButton=UiKit.button(this,stationMode?"Start station with current GPS":
             "Start survey with verified GPS","primary");
@@ -166,6 +169,22 @@ public final class SurveyGpsActivity extends Activity {
             "Cancel GPS and return to setup","secondary");
         cancel.setOnClickListener(v->cancel());
         content.addView(cancel);
+        if(!stationMode){
+            diagnostics.setVisibility(View.GONE);
+            Button detailToggle=UiKit.button(this,"Satellite details ▾","quiet");
+            detailToggle.setContentDescription("Show satellite signal and sky details");
+            detailToggle.setOnClickListener(v->{
+                boolean open=diagnostics.getVisibility()!=View.VISIBLE;
+                diagnostics.setVisibility(open?View.VISIBLE:View.GONE);
+                detailToggle.setText(open?"Hide satellite details ▴":"Satellite details ▾");
+                detailToggle.setContentDescription(open?
+                    "Hide satellite signal and sky details":"Show satellite signal and sky details");
+            });
+            LinearLayout.LayoutParams detailLp=new LinearLayout.LayoutParams(-1,-2);
+            detailLp.topMargin=gap/2;
+            content.addView(detailToggle,detailLp);
+            content.addView(diagnostics);
+        }
         ScrollView page=new ScrollView(this);
         page.setFillViewport(true);
         page.addView(content);

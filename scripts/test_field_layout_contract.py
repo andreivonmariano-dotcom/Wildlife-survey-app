@@ -69,8 +69,8 @@ class FieldLayoutContractTest(unittest.TestCase):
 
     def test_unified_palette_and_action_colors(self):
         text=self.styles
-        for token in ("BG=Color.rgb(247,248,242)","FOREST=Color.rgb(35,88,68)",
-                      "POND=Color.rgb(53,120,113)","case \"outline-danger\""):
+        for token in ("BG=Color.rgb(247,248,242)","FOREST=Color.rgb(33,83,53)",
+                      "POND=Color.rgb(46,105,65)","case \"outline-danger\""):
             self.assertIn(token,text)
 
 

@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 103
-        versionName '0.27.3-rc43-approved-icons-preview'
+        versionCode 104
+        versionName '0.27.3-rc44-ui-harmony-preview'
     }
     signingConfigs {
         debug {

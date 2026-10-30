@@ -68,7 +68,7 @@ public final class LikasSettingsActivity extends Activity {
         options(body,"Backup","Save · Restore","backup",FieldBackupActivity.class,
             "Storage","My records","settings",DataManagementActivity.class);
         options(body,"Import","Source files","protocol",ImportActivity.class,
-            "Data check","Review records","shield",AuditActivity.class);
+            "Data check","Review records","reports",AuditActivity.class);
         body.addView(LikasPortalUi.kicker(this,"ABOUT"));
         View about=LikasPortalUi.action(this,"About LIKAS","Version · Privacy","library",()->{
             String version="Version unavailable";

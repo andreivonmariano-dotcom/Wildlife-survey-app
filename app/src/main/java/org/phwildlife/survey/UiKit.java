@@ -13,15 +13,20 @@ import android.widget.TextView;
 /** Small shared visual system for the offline survey application. */
 public final class UiKit {
   private UiKit(){}
-  // Field palette pairs with the LIKAS pond frog icon and stays legible in sunlight.
+  // Shared forest palette. Warm off-white is reserved for readable field surfaces.
   public static final int BG=Color.rgb(247,248,242);
-  public static final int INK=Color.rgb(23,54,44);
-  public static final int FOREST=Color.rgb(35,88,68);
-  public static final int POND=Color.rgb(53,120,113);
-  public static final int MUTED=Color.rgb(88,108,99);
+  public static final int INK=Color.rgb(19,51,38);
+  public static final int DEEP=Color.rgb(10,42,29);
+  public static final int FOREST=Color.rgb(33,83,53);
+  public static final int POND=Color.rgb(46,105,65);
+  public static final int MUTED=Color.rgb(81,106,87);
+  public static final int LEAF_LIGHT=Color.rgb(237,246,231);
+  public static final int LEAF_MID=Color.rgb(228,239,220);
+  public static final int HIGHLIGHT=Color.rgb(205,230,160);
+  // Distinct diagnostic/warning colors remain available where the meaning requires them.
   public static final int BLUE=Color.rgb(40,88,137);
   public static final int AMBER=Color.rgb(164,102,44);
-  public static final int BORDER=Color.rgb(218,228,217);
+  public static final int BORDER=Color.rgb(217,228,210);
   private static int dp(Activity a,int n){return (int)(a.getResources().getDisplayMetrics().density*n+0.5);}
   public static TextView title(Activity a,String title) {
     TextView t=new TextView(a);t.setText(title);t.setTextSize(23);t.setTypeface(null,Typeface.BOLD);

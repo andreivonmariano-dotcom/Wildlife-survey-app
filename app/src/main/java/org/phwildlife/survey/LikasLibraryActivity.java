@@ -21,7 +21,7 @@ public final class LikasLibraryActivity extends Activity {
     }
     private void discover(LinearLayout p,String title,String subtitle,String icon,String view){
         View card=LikasPortalUi.tile(this,title,subtitle,icon,
-            LikasPortalUi.MOSS,Color.WHITE,()->
+            UiKit.LEAF_LIGHT,Color.WHITE,()->
             startActivity(new Intent(this,LikasDiscoveryActivity.class)
                 .putExtra("view",view)));
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);

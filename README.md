@@ -3,11 +3,11 @@
 LIKAS is an offline-first Android biodiversity fieldwork and reference tool for Philippine wildlife surveys.
 
 **Active development branch:** `feature/likas-core-fieldwork-post-rc4`  
-**Current development preview:** `0.27.3-rc43-approved-icons-preview` (versionCode **103**)  
+**Current development preview:** `0.27.3-rc44-ui-harmony-preview` (versionCode **104**)  
 **Application ID:** `org.phwildlife.survey.beta08`  
 **SQLite schema:** **27**
 
-**Build status (30 October 2026):** RC43 signed development APK from Scientific Core QA run **41003514753**, code commit `449af5fb2cb22a16c5b7333965e4b1cbab7b1789`, passed **287 Python tests**, Android unit tests, APK signing and resource checks. All **18** SHA-256-locked owner-approved green icons are bundled byte-for-byte. APK SHA-256: `50aa01fffca23a9516f01a36d2d7716971e2fb6831930d1bb9d83ca947872a4a`. Physical upgrade, archived-survey retention and recovery checks remain unverified. Follow direct-download policy for the actual signed file.
+**Build status (30 October 2026):** RC44 source commit `31f04de4b4041d1c18277168b7ca4c1727eb19ea` passed Scientific Core QA run **41006102621**, **292 Python tests**, JVM unit tests and signed APK assembly. The independently inspected code104 APK is signed by the original certificate (SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`), with all 18 owner-locked PNGs unchanged. APK SHA-256 `0f4c710bd91144e0115d2d71cbe562d1b3ecfd6a3db299c9dfc5f127d56c471e`. It is a development preview, not physically field-tested.
 
 ## What LIKAS currently provides
 
@@ -19,7 +19,7 @@ The research/news feed and comprehensive ecological atlas remain planned feature
 
 ## Development and QA
 
-**Merged PR #40:** The Custom Survey creation UI is retired, while existing records and exports remain supported. All 18 approved green pixel icons are integrated in signed RC43. The active branch's successful CI run **41004124109** produced an APK byte-identical to the independently verified release candidate. See `docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md` and `docs/LIKAS_RC43_APPROVED_ICON_QA.md`; physical-device acceptance remains pending.
+**RC44 visual polish:** Approved square PNGs are rounded only in Android views. Shared forest-green tokens, smaller Mammals card and optional low-motion page fades are integrated. Historical data, Custom Survey retirement and the frog launcher remain unchanged. See [RC44 UI QA](docs/LIKAS_RC44_UI_HARMONY_QA.md) and [locked icon record](docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md).
 
 
 The current scientific build workflow is [`.github/workflows/core-science-qa.yml`](.github/workflows/core-science-qa.yml). It automatically runs on application/source changes and checks source contracts, evidence, database identity, pinned signing identity, photo rights, JVM unit tests, and APK compilation. Documentation-only changes do not trigger builds. Superseded runs are canceled.
@@ -34,6 +34,7 @@ Do not add APKs, keystores, local caches, emulator captures or generated photo-r
 
 - [Project state and next-chat handoff](docs/LIKAS_PROJECT_STATE.md)
 - [Decision log](docs/LIKAS_DECISION_LOG.md)
+- [RC44 signed UI harmony QA](docs/LIKAS_RC44_UI_HARMONY_QA.md)
 - [RC43 signed icon-integrated preview QA](docs/LIKAS_RC43_APPROVED_ICON_QA.md)
 - [Locked 18-icon owner artwork](docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md)
 - [RC41 source and device QA checklist](docs/LIKAS_RC41_FIELD_READINESS_QA.md)

@@ -19,13 +19,13 @@ import android.widget.TextView;
 /** Compact field portal with approved pixel-art tiles and vector fallback symbols. */
 public final class LikasPortalUi {
     private LikasPortalUi(){}
-    public static final int CANOPY=Color.rgb(20,55,43);
-    public static final int DEEP=Color.rgb(12,43,38);
-    public static final int MOSS=Color.rgb(92,130,91);
-    public static final int WATER=Color.rgb(49,116,124);
-    public static final int CREAM=Color.rgb(255,252,241);
-    public static final int LIME=Color.rgb(207,227,162);
-    public static final int SAND=Color.rgb(245,238,222);
+    public static final int CANOPY=UiKit.INK;
+    public static final int DEEP=UiKit.DEEP;
+    public static final int MOSS=UiKit.MUTED;
+    public static final int WATER=UiKit.POND;
+    public static final int CREAM=Color.rgb(250,253,243);
+    public static final int LIME=UiKit.HIGHLIGHT;
+    public static final int SAND=UiKit.BG;
     private static int dp(Activity a,int value){
         return Math.round(a.getResources().getDisplayMetrics().density*value);
     }
@@ -75,6 +75,8 @@ public final class LikasPortalUi {
         }else{
             art=new Glyph(a,symbol,glyphColor);size=fallbackDp;
         }
+        // Clip the image itself with the holder's rounded outline. Keep PNG bytes intact.
+        frame.setClipToOutline(true);
         frame.addView(art,new FrameLayout.LayoutParams(dp(a,size),dp(a,size),Gravity.CENTER));
     }
     private static GradientDrawable rounded(Activity a,int fill,int stroke,int radius){
@@ -86,7 +88,7 @@ public final class LikasPortalUi {
     private static android.graphics.drawable.Drawable tapBackground(Activity a,int fill,int stroke,int radius){
         GradientDrawable solid=rounded(a,fill,stroke,radius);
         GradientDrawable mask=rounded(a,Color.WHITE,Color.TRANSPARENT,radius);
-        return new RippleDrawable(ColorStateList.valueOf(Color.argb(35,55,127,102)),solid,mask);
+        return new RippleDrawable(ColorStateList.valueOf(Color.argb(28,46,105,65)),solid,mask);
     }
     public static TextView text(Activity a,String label,int size,int color,boolean bold){
         TextView t=new TextView(a);t.setText(label);t.setTextSize(size);t.setTextColor(color);
@@ -103,7 +105,7 @@ public final class LikasPortalUi {
     public static View hero(Activity a){
         FrameLayout cover=new FrameLayout(a);
         GradientDrawable backdrop=new GradientDrawable(GradientDrawable.Orientation.TL_BR,
-            new int[]{DEEP,CANOPY,WATER});
+            new int[]{DEEP,CANOPY,UiKit.FOREST});
         backdrop.setCornerRadius(dp(a,26));cover.setBackground(backdrop);
         cover.setClipToOutline(true);
         cover.setMinimumHeight(dp(a,151));
@@ -143,6 +145,8 @@ public final class LikasPortalUi {
         ImageView frog=new ImageView(a);
         frog.setImageResource(R.drawable.likas_natator_frog);
         frog.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        frog.setBackground(rounded(a,UiKit.LEAF_LIGHT,Color.TRANSPARENT,12));
+        frog.setClipToOutline(true);
         frog.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         FrameLayout.LayoutParams iconLp=new FrameLayout.LayoutParams(
             dp(a,54),dp(a,54),Gravity.TOP|Gravity.RIGHT);
@@ -158,7 +162,7 @@ public final class LikasPortalUi {
         final boolean field="Fieldwork".equals(title);
         final boolean large=a.getResources().getConfiguration().fontScale>=1.60f;
         final int fill=field?CANOPY:("Settings".equals(title)?
-            Color.rgb(231,240,236):Color.rgb(236,245,231));
+            UiKit.LEAF_MID:UiKit.LEAF_LIGHT);
         final int ink=field?CREAM:CANOPY;
         LinearLayout panel=new LinearLayout(a);
         panel.setOrientation(LinearLayout.HORIZONTAL);
@@ -181,10 +185,10 @@ public final class LikasPortalUi {
         }
         panel.addView(copy,new LinearLayout.LayoutParams(0,-2,1f));
         FrameLayout art=new FrameLayout(a);
-        art.setBackground(rounded(a,field?Color.argb(42,236,247,218):
-            Color.argb(90,255,255,255),Color.TRANSPARENT,14));
-        addApprovedIcon(art,a,icon,field?CREAM:CANOPY,62,36);
-        LinearLayout.LayoutParams artLp=new LinearLayout.LayoutParams(dp(a,62),dp(a,62));
+        art.setBackground(rounded(a,field?UiKit.FOREST:UiKit.LEAF_MID,
+            Color.TRANSPARENT,14));
+        addApprovedIcon(art,a,icon,field?CREAM:CANOPY,64,36);
+        LinearLayout.LayoutParams artLp=new LinearLayout.LayoutParams(dp(a,64),dp(a,64));
         artLp.leftMargin=dp(a,10);
         panel.addView(art,artLp);
         panel.setContentDescription("Open "+title+
@@ -200,7 +204,7 @@ public final class LikasPortalUi {
         FrameLayout panel=new FrameLayout(a);
         GradientDrawable bg=new GradientDrawable(
             GradientDrawable.Orientation.LEFT_RIGHT,
-            new int[]{Color.rgb(25,73,65),WATER});
+            new int[]{DEEP,UiKit.FOREST});
         bg.setCornerRadius(dp(a,20));
         panel.setBackground(bg);
         panel.setClipToOutline(true);
@@ -235,13 +239,13 @@ public final class LikasPortalUi {
     public static View mini(Activity a,String title,String detail,String symbol,Runnable open){
         LinearLayout panel=new LinearLayout(a);
         panel.setOrientation(LinearLayout.VERTICAL);
-        panel.setPadding(dp(a,15),dp(a,13),dp(a,12),dp(a,13));
-        panel.setBackground(tapBackground(a,Color.WHITE,Color.rgb(219,230,215),18));
+        panel.setPadding(dp(a,14),dp(a,12),dp(a,12),dp(a,12));
+        panel.setBackground(tapBackground(a,Color.WHITE,UiKit.BORDER,18));
         panel.setMinimumHeight(dp(a,126));
         FrameLayout art=new FrameLayout(a);
-        art.setBackground(rounded(a,Color.rgb(230,240,227),Color.TRANSPARENT,13));
-        addApprovedIcon(art,a,symbol,CANOPY,49,30);
-        panel.addView(art,new LinearLayout.LayoutParams(dp(a,49),dp(a,49)));
+        art.setBackground(rounded(a,UiKit.LEAF_MID,Color.TRANSPARENT,13));
+        addApprovedIcon(art,a,symbol,CANOPY,52,30);
+        panel.addView(art,new LinearLayout.LayoutParams(dp(a,52),dp(a,52)));
         TextView name=text(a,title,16,CANOPY,true);
         LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(-1,-2);
         nameLp.topMargin=dp(a,9);
@@ -265,13 +269,13 @@ public final class LikasPortalUi {
             Runnable open){
         LinearLayout item=new LinearLayout(a);item.setOrientation(LinearLayout.HORIZONTAL);
         item.setGravity(Gravity.CENTER_VERTICAL);
-        item.setBackground(tapBackground(a,Color.WHITE,Color.rgb(226,233,225),17));
+        item.setBackground(tapBackground(a,Color.WHITE,UiKit.BORDER,17));
         item.setPadding(dp(a,14),dp(a,12),dp(a,12),dp(a,12));
         item.setMinimumHeight(dp(a,75));
         FrameLayout plate=new FrameLayout(a);
-        plate.setBackground(rounded(a,Color.rgb(231,241,231),Color.TRANSPARENT,13));
-        addApprovedIcon(plate,a,symbol,CANOPY,47,28);
-        item.addView(plate,new LinearLayout.LayoutParams(dp(a,47),dp(a,47)));
+        plate.setBackground(rounded(a,UiKit.LEAF_MID,Color.TRANSPARENT,12));
+        addApprovedIcon(plate,a,symbol,CANOPY,50,28);
+        item.addView(plate,new LinearLayout.LayoutParams(dp(a,50),dp(a,50)));
         LinearLayout copy=new LinearLayout(a);copy.setOrientation(LinearLayout.VERTICAL);
         TextView name=text(a,title,16,CANOPY,true);copy.addView(name);
         if(subtitle!=null&&!subtitle.isEmpty()){

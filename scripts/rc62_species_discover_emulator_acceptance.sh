@@ -41,7 +41,7 @@ PY
 adb shell wm size 360x800
 adb shell settings put system font_scale 1.0
 gradle --no-daemon :app:connectedDebugAndroidTest \
-  '-Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.Rc58LibraryVisualInstrumentedTest,org.phwildlife.survey.Rc51ResearchZipInstrumentedTest' \
+  '-Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.Rc60LibraryVisualInstrumentedTest,org.phwildlife.survey.Rc58LibraryVisualInstrumentedTest,org.phwildlife.survey.Rc51ResearchZipInstrumentedTest' \
   > emulator-qa/rc62-library-science-instrumentation.txt 2>&1 || {
     tail -n 150 emulator-qa/rc62-library-science-instrumentation.txt; exit 1;
   }

@@ -23,8 +23,8 @@ class Rc48HomeFieldwork(unittest.TestCase):
         welcome=src("WelcomeActivity.java")
         hub=welcome.split("private void fieldworkHub(){",1)[1].split(
             "/** Short status caption",1)[0]
-        self.assertIn('FieldVisuals.section(this,"Current survey","Continue field recording")',hub)
-        self.assertIn('FieldVisuals.section(this,"New survey","Choose wildlife group")',hub)
+        self.assertIn('FieldVisuals.section(this,"Current survey",null)',hub)
+        self.assertIn('FieldVisuals.section(this,"New survey","Choose a wildlife group")',hub)
         self.assertLess(hub.index('if(unfinished!=null)'),
                         hub.index('FieldVisuals.section(this,"Current survey"'))
         self.assertIn('UiKit.button(this,"Resume Survey","primary")',hub)
@@ -32,7 +32,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
             self.assertIn('"'+profile+'"',hub)
         self.assertIn('LikasPortalUi.action(this,"History"',hub)
         self.assertIn('LikasPortalUi.action(this,"Analysis"',hub)
-        self.assertIn("boolean stacked=stackPortalPairs()",hub)
+        self.assertIn("surveyTile(main,"Birds"",hub)
         for target in ("SitesActivity.class","HistoryActivity.class",
                        "DashboardActivity.class","FieldProtocolsActivity.class"):
             self.assertIn(target,hub)

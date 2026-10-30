@@ -33,9 +33,9 @@ class Rc44UiHarmony(unittest.TestCase):
 
     def test_compact_three_group_fieldwork_and_relevant_icons(self):
         welcome=read("WelcomeActivity.java")
-        self.assertIn('surveyTile(first,"Birds"',welcome)
-        self.assertIn('surveyTile(first,"Herpetofauna"',welcome)
-        self.assertIn('surveyTile(second,"Mammals"',welcome)
+        self.assertIn('surveyTile(main,"Birds"',welcome)
+        self.assertIn('surveyTile(main,"Herpetofauna"',welcome)
+        self.assertIn('surveyTile(main,"Mammals"',welcome)
         self.assertIn('"Mammals".equals(title)',welcome)
         self.assertIn('LikasPortalUi.action(this,title,detail,art,tap)',welcome)
         self.assertNotIn('surveyTile(second,"Custom"',welcome)

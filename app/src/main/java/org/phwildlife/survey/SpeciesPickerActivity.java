@@ -202,14 +202,18 @@ public final class SpeciesPickerActivity extends Activity {
             nameSuggestions.getFilter().filter(search.getText().toString(),
                 count->{if(count>0)search.showDropDown();});
         });
-        searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(45),dp(54)));
+        searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(54)));
+        root.addView(searchRow);
+        // Keep unidentified records visible without taking width from species search.
+        LinearLayout unidentifiedRow=new LinearLayout(this);
+        unidentifiedRow.setGravity(Gravity.END);
         Button unknown=UiKit.button(this,"Unidentified","secondary");
         unknown.setTextSize(12);
         unknown.setContentDescription("Record an unidentified species");
-        LinearLayout.LayoutParams unknownSpace=new LinearLayout.LayoutParams(dp(122),dp(54));
-        unknownSpace.leftMargin=dp(7);
-        searchRow.addView(unknown,unknownSpace);
-        root.addView(searchRow);
+        LinearLayout.LayoutParams unknownSpace=new LinearLayout.LayoutParams(-2,dp(48));
+        unknownSpace.topMargin=dp(6);
+        unidentifiedRow.addView(unknown,unknownSpace);
+        root.addView(unidentifiedRow);
         unknown.setOnClickListener(v->{
             String[] unknowns=Taxa.unknownLabels(currentGroup());
             new AlertDialog.Builder(this).setTitle("Unidentified observation")

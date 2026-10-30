@@ -19,7 +19,7 @@ The research/news feed and comprehensive ecological atlas remain planned feature
 
 ## Development and QA
 
-**Current change in PR #40:** The Custom Survey creation UI is retired, while existing recorded surveys and exports remain supported. The 18 approved pixel icons are integrated in the signed RC43 preview. See `docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md` and `docs/LIKAS_RC43_APPROVED_ICON_QA.md`. Device acceptance is pending.
+**Merged PR #40:** The Custom Survey creation UI is retired, while existing records and exports remain supported. All 18 approved green pixel icons are integrated in signed RC43. The active branch's successful CI run **41004124109** produced an APK byte-identical to the independently verified release candidate. See `docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md` and `docs/LIKAS_RC43_APPROVED_ICON_QA.md`; physical-device acceptance remains pending.
 
 
 The current scientific build workflow is [`.github/workflows/core-science-qa.yml`](.github/workflows/core-science-qa.yml). It automatically runs on application/source changes and checks source contracts, evidence, database identity, pinned signing identity, photo rights, JVM unit tests, and APK compilation. Documentation-only changes do not trigger builds. Superseded runs are canceled.

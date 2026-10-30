@@ -13,8 +13,9 @@ class Rc44UiHarmony(unittest.TestCase):
         self.assertIn("frame.setClipToOutline(true)",portal)
         self.assertIn("frog.setClipToOutline(true)",portal)
         self.assertIn("setFilterBitmap(false)",portal)
-        for size in ("64,36","52,30","50,28"):
+        for size in ("52,30","50,28"):
             self.assertIn(size,portal)
+        self.assertIn("LikasDesignSystem.HOME_ICON_DP,36",portal)
         self.assertIn("approvedIconResource(String symbol)",portal)
         self.assertIn("new Glyph(a,symbol,glyphColor)",portal)
 

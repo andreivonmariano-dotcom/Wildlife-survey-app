@@ -19,7 +19,8 @@ class Rc46FieldLayoutHierarchy(unittest.TestCase):
         home=welcome.split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]
         self.assertIn("hero(this,lastHomeActiveSurvey!=null)",home)
         self.assertIn("new LinearLayout.LayoutParams(-1,-2)",home)
-        self.assertIn("if(lastHomeActiveSurvey==null)",home)
+        self.assertNotIn('LikasPortalUi.kicker(this,"EXPLORE LIKAS")',home)
+        self.assertIn("fieldLp.topMargin=dp(LikasDesignSystem.HOME_HERO_GAP_DP)",home)
         self.assertIn('LikasPortalUi.session(this,()->',home)
         self.assertLess(home.index("LikasPortalUi.session(this,()->"),
                         home.index('LikasPortalUi.tile(this,"Fieldwork"'))

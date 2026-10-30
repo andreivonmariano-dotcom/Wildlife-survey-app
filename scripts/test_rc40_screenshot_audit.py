@@ -18,7 +18,7 @@ class Rc40ScreenAudit(unittest.TestCase):
         body=portal.split("public static View tile(",1)[1].split(
             "/** Persistent field-session",1)[0]
         self.assertIn("LinearLayout panel=new LinearLayout(a)",body)
-        self.assertIn("panel.setMinimumHeight(dp(a,108))",body)
+        self.assertIn("panel.setMinimumHeight(dp(a,LikasDesignSystem.HOME_CARD_MIN_DP))",body)
         self.assertIn("panel.setOrientation(LinearLayout.HORIZONTAL)",body)
         self.assertNotIn("new FrameLayout(a);\n        panel.setBackground(",body)
         self.assertNotIn("panel.addView(backdrop",body)

@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC53 Screen 2 Fieldwork visual/layout acceptance PASSED on Android 14
+
+- **Owner direction and scope:** Continue actual LIKAS screen-by-screen visual standardization. Screen 1 Home passed in RC52; Screen 2 **Fieldwork hub** now passed in RC53. Next target is **Screen 3 Survey Setup**, not another broad audit. Preserve real scientific workflows and locked pixel artwork.
+- **Source:** RC53 branch `feature/likas-rc53-fieldwork-screen2-theme`; emulator-tested app SHA **`b91a49d783c05e9efd5656cfd6c80527578e9f64`**, doc-only follow-up **`390d99a45a9cbb8c7418bf11606790e496a17ff3`**. Draft PR **#50** into RC52 draft PR #49, in turn based on RC51 draft #48 and RC50 draft #47. No merge to core; integrated baseline is still RC49.
+- **UI improvements:** Uniform full-width horizontal taxon actions for Birds/Herpetofauna/Mammals across 320/360/412dp; one consistent full-width Records & projects group (Projects & stations, History, Analysis); removed duplicate Field tools section heading inside the collapsed/expanded More field tools panel; retained five tool destinations. A currently active survey shows Current survey, In progress and primary Resume; new-survey choices remain hidden. Existing artwork, app identity and signing, survey lifecycle and End Survey, research ZIP, GPS, SQLite **27** unchanged. Preview versionCode **113**, versionName `0.27.3-rc53-fieldwork-hub-preview`.
+- **Verified QA:** Android 14 API 34 workflow **41053372822 SUCCESS**, pinned original debug signing cert, **331 Python tests**, signed Android/JVM compile, **4 Home/Fieldwork Android instrumentation tests** plus **1 exact scientific research ZIP test**, all passed. Actual screenshots personally inspected **360dp/100%**, **412dp/130%**, **320dp/200%**, and **320dp/200% scrolled with expanded tools**. Screen reader labels verified through hierarchy; no horizontal clipping seen. Synthetic active-survey fixture created/deleted only on clean disposable emulator, no real data used.
+- **Direct APK evidence:** artifact **12975352964**, actual `LIKAS-v0.27.3-RC53-fieldwork-hub-preview-debug.apk` **9,783,472 bytes**, SHA256 **`585780ae65cf5699e03b8ba1eb61027e7e7537cb7cdfd666c7bd340b465f619a`**. APK ZIP CRCs passed, exactly 18 locked approved pixel art resources verified, CI pinned signing cert SHA256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Evidence artifact **12976026685**. APK and evidence ZIP directly attached in original chat, paths must be reverified in any future chat.
+- **Caveat:** Audio uses existing vector fallback icon because no approved pixel audio glyph exists; do not introduce an unapproved art asset automatically. Real handset outdoor glare/TalkBack, historical full upgrade, restore process death, export snapshot concurrency and missing protocol photo/WAV audit remain open. This is a tested **draft preview**, not stable field release.
+- **QA file:** `docs/LIKAS_RC53_FIELDWORK_SCREEN_QA.md` on RC53 branch, with test lineage and screenshots.
+
+---
+
 ## 30 October 2026 | Screen 2 Fieldwork UI refinement in RC53 draft PR #50, Android acceptance pending
 
 - **Owner direction:** Continue the one-screen-at-a-time actual Android layout and theme audit after emulator-verifying Home RC52. Screen 2 is **Fieldwork hub**, not the live survey recorder or Survey Setup.

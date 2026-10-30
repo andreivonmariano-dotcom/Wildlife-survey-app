@@ -328,3 +328,6 @@ Screen 1 of the iterative LIKAS design audit adopted shared Home action tokens, 
 
 ### 2026-10-30 | Fieldwork hub screen 2 full-width theme | Owner-approved audit in progress
 Continued owner's one-screen visual review with Fieldwork hub. Apply shared pale-leaf/forest contrast, full-width taxon navigation and consistent records actions, while preserving active-survey Resume and not exposing a second New survey during an active event. Preserve approved wildlife art, study protocol and recording/export behavior. RC53 draft PR #50 targets this change; Android screenshots and signed test APK are required before marking accepted. See `docs/LIKAS_RC53_FIELDWORK_SCREEN_QA.md` in RC53 branch.
+
+### 2026-10-30 | Fieldwork screen 2 Android 14 QA | Accepted as reviewed preview
+RC53 Fieldwork hub preview code113 passed Android 14 screenshots at 360dp/100%, 412dp/130%, and 320dp/200% and scoped navigation/active Resume/ZIP tests (run 41053372822; 331 Python, 5 Android instrumentation, 0 failures). All three taxon selections and the three Records/Analysis routes use full-width rows; collapsed/expanded field tools remain reachable. The original 18 pixel PNGs and survey data/End Survey controls are protected. Draft PR #50 is not merged and not a field release. Next separately scoped UI review is Survey Setup. QA: `docs/LIKAS_RC53_FIELDWORK_SCREEN_QA.md` on RC53 branch.

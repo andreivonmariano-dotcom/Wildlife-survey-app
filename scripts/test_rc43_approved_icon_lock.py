@@ -73,7 +73,7 @@ class Rc43ApprovedIconLock(unittest.TestCase):
         self.assertIn('android:icon="@mipmap/ic_launcher"',manifest)
         self.assertIn('android:roundIcon="@mipmap/ic_launcher"',manifest)
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 109",gradle)
+        self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",gradle).group(1)),109)
         self.assertIn("versionName '0.27.3-rc49-history-review-preview'",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         field=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()

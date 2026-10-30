@@ -1,5 +1,19 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | Continued RC50 scientific export and evidence-integrity audit (source review; no production change)
+
+- **Request:** Continue auditing LIKAS rather than adding visual features. Scope was an independent, non-destructive source review plus a minimal synthetic SQLite outcome fixture; **no new emulator run and no new APK** for this continuation.
+- **Verified baseline:** active core RC49 at `f734c6033a598ff0e5a478600c1341e705d2b243` (docs-only after RC49); unmerged RC50 draft PR #47 source at `72c0c3b23c538562a274534fead9e2bba09f45e7`, build versionCode 110, unchanged package and SQLite 27.
+- **P1 finding, export consistency:** RC50 `ResearchExports` resolves ended legacy NULL-outcome complete surveys using `SurveyOutcomeSql.RESOLVED`, but `MainActivity` still labels NULL outcomes as active in raw observation/station-unit exports and excludes these legacy complete events from `distance_samples.csv` / `distance_review.csv`. `DistanceExport` independently uses `COALESCE(outcome,'complete')` plus `complete=1` without requiring an end timestamp. A controlled three-event SQLite fixture yielded: MainActivity old filter = modern completed only; DistanceExport old filter = modern + ended legacy + contrived anomalous active NULL-outcome/complete=1; shared resolver = modern + ended legacy only. This tests rule divergence, not prevalence in a real field database.
+- **P1 finding, evidence QA blind spot:** `DataAudit.run` checks on-disk existence for `observation_media` only, not `protocol_media` or `acoustic_clips`. Missing field-protocol photos and original WAV files can therefore escape this particular integrity report even though the separate exporters can depend on them.
+- **P1 risk requiring test:** `MainActivity.exportZip` iterates numerous separate table queries through `csv()` without a single explicit export snapshot/transaction, allowing a possible inconsistent multi-file research export if survey data changes concurrently. This was source-inspected but not concurrency-reproduced.
+- **Prior P0 release gates remain:** Historical real-data RC49->RC50 upgrade, process death/power failure mid-backup restore, handset location/elevation and accessibility checks. RC50 restores are tested for caught Java exceptions but not atomic across a sudden process exit.
+- **Confirmed protections:** Manifest uses `android:allowBackup="false"`, launcher-only exported Activity, and non-exported location service. No new privacy issue demonstrated in this pass.
+- **Next audit sequence:** (1) run full ZIP against legacy and modern completed/active/incomplete/not_counted fixtures with byte/row/column checks; (2) add protocol-photo and WAV missing-file audit fixtures; (3) test archived-record in-place upgrade and a deliberately interrupted recovery; (4) emulator survey-lifecycle/History/Settings/large-text walkthrough; (5) review taxonomy, habitat evidence and research Watch claims after data safety is satisfactory.
+- **Full evidence and scope:** `docs/LIKAS_RC50_CONTINUED_AUDIT_2026_10_30.md`. No code, schema, signer, visuals, or APK changed in this audit.
+
+---
+
 ## 30 October 2026 | RC50 Home and data-reliability fixes: Android emulator verified, draft not merged
 
 - **Branch and PR:** `feature/likas-rc50-field-reliability`, draft PR **#47** based on authoritative core branch RC49. Last tested implementation SHA `72c0c3b23c538562a274534fead9e2bba09f45e7`. Version `0.27.3-rc50-field-reliability-preview`, versionCode **110**, app ID `org.phwildlife.survey.beta08`, SQLite schema **27**. No approved pixel artwork or taxonomy sources changed.

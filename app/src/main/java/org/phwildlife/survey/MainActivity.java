@@ -204,7 +204,7 @@ public class MainActivity extends Activity implements LocationListener {
         return t;
     }
     private void disclosureTarget(TextView view){
-        view.setMinHeight(dp(46));
+        view.setMinHeight(dp(48));
         view.setGravity(Gravity.CENTER_VERTICAL);
         view.setFocusable(true);
     }
@@ -213,6 +213,8 @@ public class MainActivity extends Activity implements LocationListener {
         // At large system font, keep the fixed survey dock fully in frame.
         // The complete status card remains reachable at the start of the field scroll.
         boolean largeText=getResources().getConfiguration().fontScale>=1.60f;
+        int touchDp=FieldLayoutPolicy.actionHeightDp(
+            getResources().getConfiguration().fontScale);
         LinearLayout top=horizontal();
         Button home=UiKit.button(this,largeText?"‹":"‹ Home","secondary");
         home.setContentDescription("Back to Home");
@@ -268,9 +270,9 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(lineRow,new LinearLayout.LayoutParams(-1,-2));
         LinearLayout utilityRow=horizontal();
         pauseButton=UiKit.button(this,"Pause effort","secondary");
-        utilityRow.addView(pauseButton,new LinearLayout.LayoutParams(0,dp(47),1));
+        utilityRow.addView(pauseButton,new LinearLayout.LayoutParams(0,dp(touchDp),1));
         progressButton=UiKit.button(this,"Station progress","secondary");
-        LinearLayout.LayoutParams progressLp=new LinearLayout.LayoutParams(0,dp(47),1);
+        LinearLayout.LayoutParams progressLp=new LinearLayout.LayoutParams(0,dp(touchDp),1);
         progressLp.leftMargin=dp(7);utilityRow.addView(progressButton,progressLp);
         content.addView(utilityRow);
         progressButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
@@ -471,11 +473,11 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout speciesActions=horizontal();
         Button unknownBtn=UiKit.button(this,"Unidentified","quiet");
         unknownBtn.setTextSize(13);
-        LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(0,dp(46),1);
+        LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(0,dp(touchDp),1);
         speciesActions.addView(unknownBtn,unknownLp);
         favoriteButton=UiKit.button(this,"☆","quiet");
         favoriteButton.setTextSize(22);
-        LinearLayout.LayoutParams starP=new LinearLayout.LayoutParams(dp(52),dp(46));
+        LinearLayout.LayoutParams starP=new LinearLayout.LayoutParams(dp(52),dp(touchDp));
         starP.leftMargin=dp(6);speciesActions.addView(favoriteButton,starP);
         favoriteButton.setContentDescription("Add or remove favorite species");
         favoriteButton.setOnClickListener(v->toggleFavorite());
@@ -507,10 +509,10 @@ public class MainActivity extends Activity implements LocationListener {
             method.equals("live_trap_check")||method.equals("bat_acoustic")||
             method.equals("drift_fence_check")?"Individuals / evidence count":"Individuals";
         TextView countLabel=label(countBasis,14,true);countLine.addView(countLabel,weighted(1));
-        Button minus=button("−");countLine.addView(minus,new LinearLayout.LayoutParams(dp(55),dp(46)));
+        Button minus=button("−");countLine.addView(minus,new LinearLayout.LayoutParams(dp(55),dp(touchDp)));
         countView=label("1",19,true);countView.setGravity(Gravity.CENTER);
         countLine.addView(countView,new LinearLayout.LayoutParams(dp(48),-2));
-        Button plus=button("+");countLine.addView(plus,new LinearLayout.LayoutParams(dp(55),dp(46)));
+        Button plus=button("+");countLine.addView(plus,new LinearLayout.LayoutParams(dp(55),dp(touchDp)));
         content.addView(countLine);
         LinearLayout confidenceBlock=vertical();
         confidenceBlock.addView(label("Identification confidence",12,true));

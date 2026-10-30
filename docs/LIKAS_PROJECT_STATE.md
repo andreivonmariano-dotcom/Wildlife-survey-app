@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC49 History and observation review merged (Part 3)
+
+- **Code:** PR **#46**, merge **`c35426e3a820c2cc4658c022fe7b626a5cc0b3ca`** into active `feature/likas-core-fieldwork-post-rc4`. Development preview `0.27.3-rc49-history-review-preview`, **versionCode 109**, original app ID `org.phwildlife.survey.beta08`, SQLite **27**.
+- **History and review:** Outcome-filter selector and survey search use shared field style, a visible Clear control and stable 220ms search debounce; the survey outcome panel and observation headings are more readable. Observation action sheet offers **View recorded details** before Edit/Photos/Edit history/Delete, showing only currently stored fields with NULL shown as Not recorded. Historical identification values remain in the existing edit history. Correction notes are multiline, and the audit dialog shows original and revised JSON snapshots, action, time and reason.
+- **Preserved:** Unchanged complete/incomplete/not_counted/active semantics, zero-detection surveys, correction validations, transactional `record_edits`, soft deletion, database schema, derived export behavior, all original artworks and signing continuity. No research claims, species source data or GPS values modified.
+- **QA:** PR scientific workflow **41028714285** passed **316 Python tests**, JVM tests and Android app/AndroidTest compilation. Merged-branch push APK/signature verification and attached direct download remain separate gates; do not claim verified signed binary until complete.
+- **Device gates:** Real 320–412dp and 100–200% font layouts, long edit histories, TalkBack reading order, search/keyboard transitions, true in-place RC48 upgrade with records/photos and outdoor contrast remain unverified. Known independent restore/legacy NULL-outcome export blockers remain.
+- **References:** `docs/LIKAS_RC49_HISTORY_REVIEW_QA.md`, existing design system and master spec. Next after device validation: review other field-management screens and actual accessible data-correction workflow.
+
+---
+
 ## 30 October 2026 | RC48 Home and Fieldwork UI refinement merged (Part 2)
 
 - **Source:** PR **#45**, merge `41828e20ba6a8226b592369ee751797516bcdaf9` on authoritative `feature/likas-core-fieldwork-post-rc4`. New preview `0.27.3-rc48-home-fieldwork-preview`, **versionCode 108**, unchanged app ID `org.phwildlife.survey.beta08` and SQLite **27**.

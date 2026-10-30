@@ -29,7 +29,6 @@ public class WelcomeActivity extends Activity {
     private ScrollView shellScroll;
     private Button setupStartButton;
     private String profile="Birds";
-    private boolean custom=false;
     private String currentScreen="home";
     private static final int GPS_PERMISSION_REQUEST=71;
     private final Handler gpsHandler=new Handler(Looper.getMainLooper());
@@ -74,11 +73,12 @@ public class WelcomeActivity extends Activity {
         buildShell();
         String screen=getPreferences(MODE_PRIVATE).getString("screen","home");
         String rememberedProfile=getPreferences(MODE_PRIVATE).getString("profile","Birds");
-        boolean rememberedCustom=getPreferences(MODE_PRIVATE).getBoolean("custom",false);
         boolean showMenu=getIntent().getBooleanExtra("show_menu",false);
         if(showMenu)home();
-        else if(screen.equals("setup")&&!isSurveyActive()){setup(rememberedProfile,rememberedCustom);restoreSetup();}
-        else if(screen.equals("custom")&&!isSurveyActive())customPicker();
+        else if(screen.equals("setup")&&!isSurveyActive() &&
+                (rememberedProfile.equals("Birds")||rememberedProfile.equals("Herpetofauna")||rememberedProfile.equals("Mammals"))){
+            setup(rememberedProfile);restoreSetup();
+        }
         else home();
         if(!showMenu&&isSurveyActive()&&
             getSharedPreferences("field_resume",MODE_PRIVATE).getString("screen","home").equals("survey"))
@@ -101,8 +101,9 @@ public class WelcomeActivity extends Activity {
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);home();}
     @Override public void onBackPressed(){
         if("setup".equals(currentScreen)){
-            if(custom)customPicker();else fieldworkHub();
+            fieldworkHub();
         }else if("custom".equals(currentScreen)){
+            // Legacy preference from older APKs; no new Custom Survey screen.
             fieldworkHub();
         }else if("fieldwork".equals(currentScreen)){
             home();
@@ -173,7 +174,6 @@ public class WelcomeActivity extends Activity {
         if("Birds".equals(title))art="bird";
         if("Herpetofauna".equals(title))art="frog";
         if("Mammals".equals(title))art="mammal";
-        if("Custom".equals(title))art="settings";
         View tile=LikasPortalUi.mini(this,title,detail,art,tap);
         boolean stacked=parent.getOrientation()==LinearLayout.VERTICAL;
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(
@@ -246,13 +246,12 @@ public class WelcomeActivity extends Activity {
         }else{
             LinearLayout first=new LinearLayout(this);
             first.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-            surveyTile(first,"Birds","Counts · Transects",()->setup("Birds",false));
-            surveyTile(first,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna",false));
+            surveyTile(first,"Birds","Counts · Transects",()->setup("Birds"));
+            surveyTile(first,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna"));
             main.addView(first);
             LinearLayout second=new LinearLayout(this);
             second.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-            surveyTile(second,"Mammals","Signs · Stations",()->setup("Mammals",false));
-            surveyTile(second,"Custom","Other methods",()->customPicker());
+            surveyTile(second,"Mammals","Signs · Stations",()->setup("Mammals"));
             LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(-1,-2);
             secondLp.topMargin=dp(10);main.addView(second,secondLp);
         }
@@ -344,15 +343,6 @@ public class WelcomeActivity extends Activity {
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(9);
         main.addView(wrapper,lp);wrapper.setOnClickListener(v->action.run());
     }
-    private void customPicker(){
-        homeVisible=false;currentScreen="custom";main.removeAllViews();scrollTop();
-        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        Button back=UiKit.button(this,"← Back","secondary");main.addView(back);back.setOnClickListener(v->fieldworkHub());
-        heading("Custom survey","Select a wildlife group.");
-        card("Birds","Custom bird survey",()->setup("Birds",true));
-        card("Herpetofauna","Custom reptile and amphibian survey",()->setup("Herpetofauna",true));
-        card("Mammals","Custom mammal survey",()->setup("Mammals",true));
-    }
     /** Highlight the checked native radio control without replacing its semantics. */
     private void updateMethodSelection(int checked){
         if(methodChoices==null)return;
@@ -367,8 +357,8 @@ public class WelcomeActivity extends Activity {
             item.setSelected(selected);
         }
     }
-    private void setup(String selected,boolean isCustom){
-        homeVisible=false;currentScreen="setup";profile=selected;custom=isCustom;
+    private void setup(String selected){
+        homeVisible=false;currentScreen="setup";profile=selected;
         main.removeAllViews();scrollTop();
         setupStartButton.setText("Continue to GPS");
         setupStartButton.setContentDescription("Continue "+profile+" survey setup to GPS preflight");
@@ -377,8 +367,8 @@ public class WelcomeActivity extends Activity {
         LinearLayout.LayoutParams backLp=new LinearLayout.LayoutParams(
             dp(largeText()?96:112),dp(largeText()?actionDp():48));
         main.addView(back,backLp);
-        back.setOnClickListener(v->{if(custom)customPicker();else fieldworkHub();});
-        heading((custom?"Custom · ":"")+profile+" survey",null);
+        back.setOnClickListener(v->fieldworkHub());
+        heading(profile+" survey",null);
         choices=SurveyMethods.forProfile(profile);
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){
@@ -1028,7 +1018,6 @@ public class WelcomeActivity extends Activity {
         i.putExtra("route_template_id",templateId);
         i.putExtra("save_route_template",saveNewTemplate);
         i.putExtra("route_template_name",routeName);
-        i.putExtra("custom_survey",custom);
         i.putExtra("basic_log_only",m.basicLog);
         if(studyChoice!=null&&!studyTemplateIds.isEmpty()){
             int index=studyChoice.getSelectedItemPosition();
@@ -1042,7 +1031,7 @@ public class WelcomeActivity extends Activity {
     }
     private void persistSetup(){
         android.content.SharedPreferences.Editor e=getPreferences(MODE_PRIVATE).edit()
-           .putString("screen",currentScreen).putString("profile",profile).putBoolean("custom",custom);
+           .putString("screen",currentScreen).putString("profile",profile);
         if(currentScreen.equals("setup")&&durationEntry!=null){
             e.putString("observer",observerEntry.getText().toString())
              .putString("duration",durationEntry.getText().toString())

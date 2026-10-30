@@ -59,7 +59,7 @@ public final class TaxonDetailActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(18),dp(15),dp(18),dp(15));
-        root.addView(UiKit.navigationHeader(this,"Species Library","Back",this::finish));
+        root.addView(UiKit.navigationHeader(this,"Species Library","previous screen",this::finish));
         screenCaption=text("Identification, habitat and research sources",12,false);
         screenCaption.setTextColor(UiKit.MUTED);
         root.addView(screenCaption);

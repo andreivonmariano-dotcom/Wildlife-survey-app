@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | Screen-by-screen UI/theme audit resumed: RC52 Home draft, pending emulator acceptance
+
+- **Owner direction:** Return to actual app layouts, fix one screen at a time and standardize the visual language. Begin at Home, then Fieldwork, survey setup, GPS, recorder, History, Library/Species/Habitats, Settings. Approved art and scientific/data semantics protected; this is not authorization to redesign/relicense original icons or change startup assets.
+- **Source lineage:** RC52 visual branch `feature/likas-rc52-home-theme-screen1`, child of emulator-verified draft RC51 (`a2d3277897390948225229cd0bdf8a9d6d838f2c`), draft **PR #49** into RC51 PR #48 (whose base is RC50 PR #47). Core RC49 remains the official integrated code; all three pending PRs are draft and must not be merged automatically. RC52 preview versionName `0.27.3-rc52-home-theme-preview`, versionCode 112, app ID and SQLite 27 unchanged.
+- **Actual screenshots reviewed before code:** RC51 Home Android 14 360dp/100%, RC50 Home 320dp/200%, RC49 Fieldwork/History/Library/Discovery/Setup. Home issue: duplicate `EXPLORE LIKAS` heading, inconsistent secondary menu surfaces, long labels requiring extra height on 320dp/200%. RC50 repaired earlier oversized Home hero; preserve.
+- **RC52 Home modifications:** Single branded Hero with existing approved `Explore. Record. Conserve.` tagline, remove redundant kicker, preserve resume-before-destinations, keep Fieldwork visually primary, give Library and Settings same `LEAF_LIGHT` surface, shorten subtitles, constrain shared Home action typography/icons and intrinsic min-height through new `LikasDesignSystem` tokens. No approved PNG or frog changed.
+- **Verification underway:** Dedicated Android 14 workflow screenshots at 360dp/100%, 412dp/130%, and 320dp/200%, plus Home/Birds setup navigation instrumentation and RC51 full research ZIP scientific regression. Draft UI PR source and audit plan: `docs/LIKAS_RC52_SCREEN_BY_SCREEN_VISUAL_AUDIT.md`. Await successful actual screenshots and compiled/signed APK before claiming result; first CI attempt encountered obsolete source assertions tied to old layout sizes, updated in the development branch.
+- **Next:** inspect RC52 emulator screenshots and controls/contrast; fix any discovered issues, obtain successful CI and verify APK before direct chat delivery; then begin **Screen 2 Fieldwork hub**, including 320dp/200% readability, History and Analysis destinations, current-survey Resume placement, duplicate action cleanup.
+- **Other release blockers remain:** No historical-data upgrade, power-loss restore atomicity, physical phone GNSS/altitude, accessible TalkBack/outdoor checks, concurrent export snapshot or missing protocol-media/WAV completeness check. Layout work must not claim field-ready.
+
+---
+
 ## 30 October 2026 | RC51 exact research ZIP eligibility verified in Android emulator (draft PR #48)
 
 - **Scope:** Owner-directed continuation of source/data audit. RC51 development branch `feature/likas-rc51-research-export-audit` at tested SHA `a2d3277897390948225229cd0bdf8a9d6d838f2c` is a **draft child of RC50 PR #47**, tracked as **PR #48**. Neither RC50 nor RC51 is merged into the active core RC49 branch. Version `0.27.3-rc51-research-export-preview`, versionCode **111**, package `org.phwildlife.survey.beta08`, SQLite schema **27**, approved 18 PNGs and offline biological resources unchanged.

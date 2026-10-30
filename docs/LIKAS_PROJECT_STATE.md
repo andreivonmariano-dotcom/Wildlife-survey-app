@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | Screen 2 Fieldwork UI refinement in RC53 draft PR #50, Android acceptance pending
+
+- **Owner direction:** Continue the one-screen-at-a-time actual Android layout and theme audit after emulator-verifying Home RC52. Screen 2 is **Fieldwork hub**, not the live survey recorder or Survey Setup.
+- **Source branch:** `feature/likas-rc53-fieldwork-screen2-theme`, draft PR **#50** based on RC52 draft PR #49 (RC51 #48 and RC50 #47 still drafts). Latest source revision at handoff `878d5dfb841b1198cdb193fb4c3c8b54362c36e3`. Integrated core remains RC49. RC53 preview name `0.27.3-rc53-fieldwork-hub-preview`, **versionCode 113**, original package/signing/schema 27 unchanged.
+- **Scoped design changes:** Three identical full-width horizontal taxon actions (Birds, Herpetofauna, Mammals) instead of mixed 2-column/third-row layout; uniform full-width Projects & stations/History/Analysis rows; concise `Records & projects` heading and no duplicate `Field tools` subheading within persisted More field tools expansion. Current survey explicitly labelled In progress with primary Resume; while active, New survey options remain hidden. All approved pixel art, data, study protocols, camera/audio tool destinations and End Survey code remain untouched.
+- **Tests:** Python historical layout contracts updated for purposeful single-column decision; new `scripts/test_rc53_fieldwork_hub.py` and `Rc53FieldworkScreenInstrumentedTest.java` cover empty workspace, active synthetic Resume, readable card actions, and expand/collapse. New CI `.github/workflows/rc53-fieldwork-theme-android.yml` captures 360dp/100%, 412dp/130% and 320dp/200% actual Fieldwork screenshots and reruns RC51 exact research ZIP scientific regression. **At this checkpoint, Android CI has not yet completed**; first run `41052039709` failed only four stale source assertions (updated). Do not claim an accepted build or verified APK until final green run, screenshot inspection, independent artifact check and direct in-chat delivery.
+- **QA record:** `docs/LIKAS_RC53_FIELDWORK_SCREEN_QA.md` on RC53 branch. After a successful fieldwork layout pass, next screen to audit separately is Survey Setup, including native units, method groups, validation and pinned Continue to GPS.
+
+---
+
 ## 30 October 2026 | RC52 screen 1 Home visual pass completed in Android emulator (draft PR #49)
 
 - **Source and PR:** `feature/likas-rc52-home-theme-screen1`, Android-tested app source `28cf4e17a2988b5e5cc94ff429212f607957f925`; documentation-only follow-up `da03cb00b5664f8561c71aeb1012103e2dc317b3`. PR **#49 draft** into RC51 PR #48, which remains draft into RC50 PR #47. Active integrated core remains RC49. VersionName `0.27.3-rc52-home-theme-preview`, versionCode **112**, application ID `org.phwildlife.survey.beta08`, SQLite **27**, same original signing cert.

@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 116
-        versionName '0.27.3-rc56-live-recorder-preview'
+        versionCode 117
+        versionName '0.27.3-rc57-home-visual-preview'
     }
     signingConfigs {
         debug {

@@ -59,8 +59,8 @@ class Rc47DesignSystem(unittest.TestCase):
 
     def test_scientific_identity_and_survey_exit_unchanged(self):
         build=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 108",build)
-        self.assertIn("0.27.3-rc48-home-fieldwork-preview",build)
+        self.assertIn("versionCode 109",build)
+        self.assertIn("0.27.3-rc49-history-review-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",read("FieldDb.java"))
         recorder=read("MainActivity.java")

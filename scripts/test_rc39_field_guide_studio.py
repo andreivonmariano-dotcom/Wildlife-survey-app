@@ -75,8 +75,8 @@ class FieldGuideStudioQA(unittest.TestCase):
 
     def test_install_identity_schema_and_source_pack_stable(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 108",gradle)
-        self.assertIn("versionName '0.27.3-rc48-home-fieldwork-preview'",gradle)
+        self.assertIn("versionCode 109",gradle)
+        self.assertIn("versionName '0.27.3-rc49-history-review-preview'",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",read("FieldDb.java"))
         self.assertIn('rc34_conservation_card_status_v1.json',read("LikasDiscoveryActivity.java"))

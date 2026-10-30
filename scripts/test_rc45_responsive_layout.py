@@ -54,8 +54,8 @@ class Rc45LayoutContract(unittest.TestCase):
 
     def test_version_and_data_identity_stay_compatible(self):
         build=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 108",build)
-        self.assertIn("0.27.3-rc48-home-fieldwork-preview",build)
+        self.assertIn("versionCode 109",build)
+        self.assertIn("0.27.3-rc49-history-review-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
 

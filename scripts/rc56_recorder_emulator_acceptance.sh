@@ -5,7 +5,8 @@ mkdir -p emulator-qa
 # CI uses only a disposable Android 14 virtual device. Never touch owner's records.
 prepare_clean(){
   adb shell am force-stop "$PKG" >/dev/null 2>&1 || true
-  adb shell pm clear "$PKG" >/dev/null
+  adb uninstall "$PKG" >/dev/null 2>&1 || true
+  adb install -r app/build/outputs/apk/debug/app-debug.apk >/dev/null
   adb shell pm grant "$PKG" android.permission.ACCESS_COARSE_LOCATION
   adb shell pm grant "$PKG" android.permission.ACCESS_FINE_LOCATION
   adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS
@@ -14,8 +15,14 @@ prepare_clean(){
 }
 capture_from_app(){
   local name="$1"
-  adb exec-out run-as "$PKG" cat "files/$name" > "emulator-qa/$name"
-  test -s "emulator-qa/$name"
+  adb pull "/sdcard/Pictures/LIKAS_RC56/$name" "emulator-qa/$name" >/dev/null
+  python3 - "$name" <<'PY'
+from pathlib import Path
+import sys
+raw=(Path("emulator-qa")/sys.argv[1]).read_bytes()
+assert raw[:8]==b"\x89PNG\r\n\x1a\n",("Screenshot not a PNG",sys.argv[1],raw[:80])
+assert len(raw)>5000,(sys.argv[1],"Screenshot unexpectedly tiny")
+PY
 }
 adb install -r app/build/outputs/apk/debug/app-debug.apk > emulator-qa/install.txt 2>&1
 adb shell wm density 160

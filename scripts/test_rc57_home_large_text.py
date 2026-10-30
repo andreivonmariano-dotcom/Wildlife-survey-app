@@ -15,8 +15,8 @@ class Rc57Home(unittest.TestCase):
         self.assertIn("likas_approved_fieldwork",source)
     def test_same_identity_next_upgrade_code(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 121",gradle)
-        self.assertIn("0.27.3-rc61-library-icon-preview",gradle)
+        self.assertIn("versionCode 122",gradle)
+        self.assertIn("0.27.3-rc62-species-discover-preview",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         db=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
         self.assertIn("super(context,NAME,null,27)",db)

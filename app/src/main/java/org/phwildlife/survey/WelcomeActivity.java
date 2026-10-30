@@ -145,18 +145,42 @@ public class WelcomeActivity extends Activity {
     private void heading(String title,String subtitle) {
         main.addView(FieldVisuals.section(this,title,subtitle));
     }
-    private TextView step(String number,String title){
-        TextView label=text(number+"    "+title,16,true);
-        label.setTextColor(UiKit.FOREST);
-        label.setLetterSpacing(.025f);
-        label.setMinHeight(dp(52));
-        label.setGravity(Gravity.CENTER_VERTICAL);
-        label.setPadding(dp(14),dp(9),dp(12),dp(9));
-        android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
-        bg.setColor(UiKit.LEAF_MID);
-        bg.setCornerRadius(dp(LikasDesignSystem.RADIUS_INPUT));
-        label.setBackground(bg);
+    /** Quiet step heading, consistent with the LIKAS page and section hierarchy. */
+    private View step(String number,String title){
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setPadding(dp(LikasDesignSystem.SPACE_XS),dp(LikasDesignSystem.SPACE_LG),
+            dp(LikasDesignSystem.SPACE_XS),dp(LikasDesignSystem.SPACE_SM));
+        TextView index=text(number,12,true);
+        index.setTextColor(UiKit.FOREST);
+        index.setGravity(Gravity.CENTER);
+        index.setMinWidth(dp(38));
+        index.setMinHeight(dp(36));
+        index.setPadding(dp(5),dp(5),dp(5),dp(5));
+        android.graphics.drawable.GradientDrawable marker=new android.graphics.drawable.GradientDrawable();
+        marker.setColor(UiKit.LEAF_MID);
+        marker.setCornerRadius(dp(LikasDesignSystem.RADIUS_INPUT));
+        index.setBackground(marker);
+        row.addView(index,new LinearLayout.LayoutParams(dp(38),dp(36)));
+        TextView label=text(title,LikasDesignSystem.TEXT_SECTION,true);
+        label.setTextColor(UiKit.INK);
+        label.setPadding(dp(LikasDesignSystem.SPACE_MD),0,0,0);
+        row.addView(label,new LinearLayout.LayoutParams(0,-2,1));
+        return row;
+    }
+    private TextView setupLabel(String value){
+        TextView label=text(value,LikasDesignSystem.TEXT_CONTROL,true);
+        label.setPadding(dp(LikasDesignSystem.SPACE_XS),
+            dp(LikasDesignSystem.SPACE_MD),
+            dp(LikasDesignSystem.SPACE_XS),
+            dp(LikasDesignSystem.SPACE_XS));
         return label;
+    }
+    private void setupSpinner(Spinner spinner,String description){
+        spinner.setContentDescription(description);
+        spinner.setMinimumHeight(dp(56));
+        spinner.setPadding(dp(8),dp(6),dp(8),dp(6));
     }
     /** Native input hints, numeric keyboard types, validators and saved values remain intact. */
     private void styleSetupInput(EditText input){
@@ -378,12 +402,14 @@ public class WelcomeActivity extends Activity {
         methodChoices.setOnCheckedChangeListener((group,checked)->refreshStudyChoices());
         main.addView(step("01","Survey method"));
         LinearLayout methodsCard=vertical();
-        methodsCard.setPadding(dp(12),dp(6),dp(10),dp(6));
-        methodsCard.setBackground(UiKit.surface(this));
+        // Each radio choice already has an outlined surface; avoid nesting borders.
+        methodsCard.setPadding(0,0,0,0);
         methodsCard.addView(methodChoices);
         TextView methodHint=LikasPortalUi.text(this,choices[0].description,13,
             UiKit.MUTED,false);
-        methodHint.setPadding(dp(8),dp(4),dp(8),dp(10));
+        methodHint.setPadding(dp(LikasDesignSystem.SPACE_XS),
+            dp(LikasDesignSystem.SPACE_XS),
+            dp(LikasDesignSystem.SPACE_XS),dp(LikasDesignSystem.SPACE_SM));
         methodsCard.addView(methodHint);
         main.addView(methodsCard);
         updateMethodSelection(1000);
@@ -397,7 +423,7 @@ public class WelcomeActivity extends Activity {
         }
         if(names.isEmpty()){projectKeys.add("default");names.add("General field project");}
         projectChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));
-        main.addView(text("Project",13,false));
+        main.addView(setupLabel("Project"));
         projectChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
             public void onNothingSelected(android.widget.AdapterView<?> parent){}
             public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
@@ -406,25 +432,27 @@ public class WelcomeActivity extends Activity {
             }
         });
         LinearLayout projectRow=new LinearLayout(this);
-        projectRow.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        boolean stackProjectControls=stackPortalPairs();
+        projectRow.setOrientation(stackProjectControls?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         projectRow.setGravity(Gravity.CENTER_VERTICAL);
-        projectChoice.setContentDescription("Choose survey project");
         projectRow.addView(projectChoice,new LinearLayout.LayoutParams(
-            largeText()?-1:0,dp(largeText()?72:52),1f));
+            stackProjectControls?-1:0,dp(stackProjectControls?64:56),1f));
         Button projectManage=UiKit.button(this,"Manage","secondary");
         LinearLayout.LayoutParams manageWidth=new LinearLayout.LayoutParams(
-            largeText()?-1:dp(110),dp(largeText()?actionDp():52));
-        if(largeText())manageWidth.topMargin=dp(6);
+            stackProjectControls?-1:dp(116),dp(stackProjectControls?actionDp():56));
+        if(stackProjectControls)manageWidth.topMargin=dp(LikasDesignSystem.SPACE_SM);
         else manageWidth.leftMargin=dp(8);
         projectRow.addView(projectManage,manageWidth);
         main.addView(projectRow);
         projectManage.setContentDescription("Manage projects and sampling stations");
         projectManage.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
-        main.addView(text("Checklist region",16,true));
+        main.addView(setupLabel("Checklist region"));
         geographicChoice=new Spinner(this);
         geographicChoice.setAdapter(new ArrayAdapter<String>(
             this,android.R.layout.simple_spinner_dropdown_item,GeoRegions.LABELS));
         geographicChoice.setSelection(0);
+        setupSpinner(projectChoice,"Choose survey project");
+        setupSpinner(geographicChoice,"Choose checklist region");
         main.addView(geographicChoice);
         geographicChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
             public void onNothingSelected(android.widget.AdapterView<?> parent){}
@@ -439,7 +467,9 @@ public class WelcomeActivity extends Activity {
             }
         });
         gpsLookupButton=UiKit.button(this,"Choose checklist area by GPS","secondary");
-        main.addView(gpsLookupButton);
+        LinearLayout.LayoutParams lookupLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
+        lookupLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+        main.addView(gpsLookupButton,lookupLp);
         boundaryMessage=text("",12,false);
         boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
         gpsLookupButton.setOnClickListener(v->suggestBoundary());
@@ -452,7 +482,7 @@ public class WelcomeActivity extends Activity {
         durationEntry.setTextSize(16);durationEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         durationEntry.setHint("Point count duration (minutes)");
         durationEntry.setText("10");
-        TextView durationLabel=text("Point count duration (minutes)",13,true);
+        TextView durationLabel=setupLabel("Point count duration (minutes)");
         main.addView(durationLabel);
         main.addView(durationEntry);
         transectDurationEntry=new EditText(this);
@@ -460,16 +490,16 @@ public class WelcomeActivity extends Activity {
         transectDurationEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         transectDurationEntry.setHint("Timed interval (minutes)");
         transectDurationEntry.setText("120");
-        TextView timedLabel=text("Sampling duration (minutes)",13,true);
+        TextView timedLabel=setupLabel("Sampling duration (minutes)");
         main.addView(timedLabel);
         main.addView(transectDurationEntry);
         radiusEntry=new EditText(this);radiusEntry.setTextSize(16);radiusEntry.setSingleLine(true);
         radiusEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         radiusEntry.setHint("Optional");
-        TextView radiusLabel=text("Fixed radius (m)",13,true);
+        TextView radiusLabel=setupLabel("Fixed radius (m)");
         main.addView(radiusLabel);
         main.addView(radiusEntry);
-        routeHeader=text("Planned route length (km)",13,true);main.addView(routeHeader);
+        routeHeader=setupLabel("Planned route length (km)");main.addView(routeHeader);
         routeLengthEntry=new EditText(this);
         routeLengthEntry.setSingleLine(true);routeLengthEntry.setTextSize(17);
         routeLengthEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -478,8 +508,9 @@ public class WelcomeActivity extends Activity {
         spacingChoice=new Spinner(this);
         spacingChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"100 m","250 m","500 m","Custom spacing"}));
-        spacingHeader=text("Station spacing",13,true);main.addView(spacingHeader);
+        spacingHeader=setupLabel("Station spacing");main.addView(spacingHeader);
         main.addView(spacingChoice);
+        setupSpinner(spacingChoice,"Choose sampling-station spacing");
         spacingChoice.setSelection(1);
         customSpacingEntry=new EditText(this);
         customSpacingEntry.setHint("Custom spacing (meters)");
@@ -487,9 +518,10 @@ public class WelcomeActivity extends Activity {
         customSpacingEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         customSpacingEntry.setVisibility(View.GONE);main.addView(customSpacingEntry);
         stationCountPreview=text("",13,true);stationCountPreview.setTextColor(GREEN);main.addView(stationCountPreview);
-        repeatHeader=text("Repeat monitoring route",14,true);main.addView(repeatHeader);
+        repeatHeader=setupLabel("Repeat monitoring route");main.addView(repeatHeader);
         templateChoice=new Spinner(this);
         main.addView(templateChoice);
+        setupSpinner(templateChoice,"Choose a repeat monitoring route");
         templateHint=text("Saved routes reuse permanent stations.",12,false);
         templateHint.setTextColor(MUTED);main.addView(templateHint);
         saveTemplateChoice=new CheckBox(this);
@@ -531,6 +563,8 @@ public class WelcomeActivity extends Activity {
         lineBearingEntry.setTextSize(16);
         lineBearingEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         lineBearingEntry.setHint("Transect magnetic bearing (0–359°)");
+        TextView bearingLabel=setupLabel("Transect magnetic bearing (0–359°)");
+        main.addView(bearingLabel);
         main.addView(lineBearingEntry);
         methodChoices.setOnCheckedChangeListener((group,checked)->{
             updateMethodSelection(checked);
@@ -549,7 +583,9 @@ public class WelcomeActivity extends Activity {
                     choices[choice].code.equals("track_sign")||choices[choice].code.equals("coverboard_search"))transectDurationEntry.setText("30");
                 else if(choices[choice].code.equals("spotlight")||choices[choice].code.equals("bat_acoustic"))transectDurationEntry.setText("60");
                 else transectDurationEntry.setText("120");
-                lineBearingEntry.setVisibility(profile.equals("Birds")&&choices[choice].code.equals("line_transect")?View.VISIBLE:View.GONE);
+                boolean showBearing=profile.equals("Birds")&&choices[choice].code.equals("line_transect");
+                bearingLabel.setVisibility(showBearing?View.VISIBLE:View.GONE);
+                lineBearingEntry.setVisibility(showBearing?View.VISIBLE:View.GONE);
                 updateRoutePreview();
                 applyTemplateSelection();
             }
@@ -560,6 +596,7 @@ public class WelcomeActivity extends Activity {
         radiusEntry.setVisibility(choices[0].code.equals("point_count")?View.VISIBLE:View.GONE);
         timedLabel.setVisibility(!choices[0].code.equals("point_count")&&SurveyMethods.timedInterval(choices[0].code)?View.VISIBLE:View.GONE);
         transectDurationEntry.setVisibility(!choices[0].code.equals("point_count")&&SurveyMethods.timedInterval(choices[0].code)?View.VISIBLE:View.GONE);
+        bearingLabel.setVisibility(View.GONE);
         lineBearingEntry.setVisibility(View.GONE);
         updateRoutePreview();
         regionEntry=new EditText(this);regionEntry.setSingleLine(true);
@@ -577,12 +614,16 @@ public class WelcomeActivity extends Activity {
         advancedToggle.setMinHeight(dp(48));
         advancedToggle.setGravity(Gravity.CENTER_VERTICAL);
         advancedToggle.setFocusable(true);
+        advancedToggle.setClickable(true);
+        advancedToggle.setContentDescription("Show additional survey details");
         main.addView(advancedToggle);
         main.addView(extraDetails);
         advancedToggle.setOnClickListener(v->{
             boolean open=extraDetails.getVisibility()!=View.VISIBLE;
             extraDetails.setVisibility(open?View.VISIBLE:View.GONE);
             advancedToggle.setText(open?"− Hide additional details":"＋ Additional survey details");
+            advancedToggle.setContentDescription(open?"Hide additional survey details":
+                "Show additional survey details");
         });
 
         for(EditText entry:new EditText[]{observerEntry,durationEntry,transectDurationEntry,
@@ -592,19 +633,24 @@ public class WelcomeActivity extends Activity {
         studyOptions=vertical();
         studyOptions.setVisibility(View.GONE);
         studyChoice=new Spinner(this);
-        studyOptions.addView(studyChoice,new LinearLayout.LayoutParams(-1,dp(52)));
+        setupSpinner(studyChoice,"Select optional study protocol requirements");
+        studyOptions.addView(studyChoice,new LinearLayout.LayoutParams(-1,dp(56)));
         Button manageStudies=UiKit.button(this,"Manage study templates","quiet");
         studyOptions.addView(manageStudies,new LinearLayout.LayoutParams(-1,dp(actionDp())));
         manageStudies.setOnClickListener(v->
             startActivity(new Intent(this,StudyProtocolsActivity.class)));
         studyToggle=text("＋ Study rules (optional)",14,true);
         studyToggle.setTextColor(GREEN);studyToggle.setMinHeight(dp(48));
-        studyToggle.setGravity(Gravity.CENTER_VERTICAL);studyToggle.setFocusable(true);
+        studyToggle.setGravity(Gravity.CENTER_VERTICAL);
+        studyToggle.setFocusable(true);studyToggle.setClickable(true);
+        studyToggle.setContentDescription("Show optional study rules");
         studyToggle.setOnClickListener(v->{
             boolean open=studyOptions.getVisibility()!=View.VISIBLE;
             if(open)UiMotion.reveal(this,studyOptions);
             else UiMotion.hide(studyOptions);
             refreshStudyTitle();
+            studyToggle.setContentDescription(open?"Hide optional study rules":
+                "Show optional study rules");
         });
         main.addView(studyToggle);main.addView(studyOptions);
         studyChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){

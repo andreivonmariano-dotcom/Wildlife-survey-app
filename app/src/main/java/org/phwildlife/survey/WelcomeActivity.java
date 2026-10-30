@@ -162,22 +162,16 @@ public class WelcomeActivity extends Activity {
     private void styleSetupInput(EditText input){
         UiKit.fieldInput(this,input);
     }
+    /** Consistent survey-group actions at normal and enlarged text sizes. */
     private void surveyTile(LinearLayout parent,String title,String detail,Runnable tap){
         String art="field";
         if("Birds".equals(title))art="bird";
         if("Herpetofauna".equals(title))art="frog";
         if("Mammals".equals(title))art="mammal";
-        // The third survey group occupies a single row: use a compact horizontal card.
-        // Full-width single-column choices use compact horizontal cards.
-        boolean stacked=parent.getOrientation()==LinearLayout.VERTICAL;
-        View tile=("Mammals".equals(title)||stacked)
-            ?LikasPortalUi.action(this,title,detail,art,tap)
-            :LikasPortalUi.mini(this,title,detail,art,tap);
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(
-            stacked?-1:0,-2,1);
-        if(stacked)lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
-        else if(parent.getChildCount()>0)lp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
-        parent.addView(tile,lp);
+        View item=LikasPortalUi.action(this,title,detail,art,tap);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+        parent.addView(item,lp);
     }
     private void home(){
         homeVisible=true;currentScreen="home";main.removeAllViews();scrollTop();
@@ -223,65 +217,50 @@ public class WelcomeActivity extends Activity {
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
-            main.addView(FieldVisuals.section(this,"Current survey","Continue field recording"));
+            main.addView(FieldVisuals.section(this,"Current survey",null));
             LinearLayout activeCard=vertical();
-            activeCard.setPadding(dp(14),dp(10),dp(14),dp(12));
+            activeCard.setPadding(dp(14),dp(12),dp(14),dp(12));
             activeCard.setBackground(UiKit.surface(this));
-            TextView banner=text("Survey in progress",17,true);
-            banner.setTextColor(GREEN);activeCard.addView(banner);
+            TextView banner=text("In progress",LikasDesignSystem.TEXT_SECTION,true);
+            banner.setTextColor(GREEN);
+            activeCard.addView(banner);
             try(FieldDb d=new FieldDb(this);Cursor c=d.getReadableDatabase().rawQuery(
                 "SELECT COALESCE(survey_profile,taxon_group,'Birds'),method,COALESCE(project_id,'default') "+
                 "FROM surveys WHERE id=?",new String[]{unfinished})){
                 if(c.moveToFirst()){
                     String methodName=SurveyMethods.lookup(c.getString(0),c.getString(1)).label;
-                    TextView detail=text(c.getString(0)+" · "+methodName+"\nProject: "+c.getString(2),13,false);
-                    detail.setTextColor(MUTED);activeCard.addView(detail);
+                    TextView detail=text(c.getString(0)+" · "+methodName+"\nProject: "+c.getString(2),
+                        LikasDesignSystem.TEXT_CAPTION,false);
+                    detail.setTextColor(MUTED);
+                    activeCard.addView(detail);
                 }
             }catch(Exception ignored){}
             Button resume=UiKit.button(this,"Resume Survey","primary");
             resume.setOnClickListener(v->startActivity(
                 new Intent(this,MainActivity.class).putExtra("resume",true)));
-            activeCard.addView(resume,new LinearLayout.LayoutParams(-1,dp(actionDp())));
+            LinearLayout.LayoutParams resumeLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
+            resumeLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+            activeCard.addView(resume,resumeLp);
             main.addView(activeCard);
         }else{
-            main.addView(FieldVisuals.section(this,"New survey","Choose wildlife group"));
-            LinearLayout first=new LinearLayout(this);
-            first.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-            surveyTile(first,"Birds","Counts · Transects",()->setup("Birds"));
-            surveyTile(first,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna"));
-            main.addView(first);
-            LinearLayout second=new LinearLayout(this);
-            second.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-            surveyTile(second,"Mammals","Signs · Stations",()->setup("Mammals"));
-            LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(-1,-2);
-            secondLp.topMargin=dp(10);main.addView(second,secondLp);
+            main.addView(FieldVisuals.section(this,"New survey","Choose a wildlife group"));
+            // One full-width action per taxon, rather than an inconsistent compact grid.
+            surveyTile(main,"Birds","Counts · Transects",()->setup("Birds"));
+            surveyTile(main,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna"));
+            surveyTile(main,"Mammals","Signs · Stations",()->setup("Mammals"));
         }
 
-        main.addView(FieldVisuals.section(this,"Records",null));
+        main.addView(FieldVisuals.section(this,"Records & projects",null));
         toolRow(main,"Projects & stations",()->
             startActivity(new Intent(this,SitesActivity.class)));
-        LinearLayout shortcutRow=new LinearLayout(this);
-        shortcutRow.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        boolean stacked=stackPortalPairs();
         Runnable openHistory=()->startActivity(new Intent(this,HistoryActivity.class));
-        View history=stacked?
-            LikasPortalUi.action(this,"History",recentSurveySummary(),"history",openHistory):
-            LikasPortalUi.mini(this,"History",recentSurveySummary(),"history",openHistory);
-        shortcutRow.addView(history,new LinearLayout.LayoutParams(
-            stacked?-1:0,-2,1));
+        View history=LikasPortalUi.action(this,"History",recentSurveySummary(),"history",openHistory);
+        addFieldworkRow(main,history);
         Runnable openAnalysis=()->startActivity(new Intent(this,DashboardActivity.class));
-        View dashboard=stacked?
-            LikasPortalUi.action(this,"Analysis","Survey data","chart",openAnalysis):
-            LikasPortalUi.mini(this,"Analysis","Survey data","chart",openAnalysis);
-        LinearLayout.LayoutParams dashLp=new LinearLayout.LayoutParams(
-            stacked?-1:0,-2,1);
-        if(stacked)dashLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
-        else dashLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
-        shortcutRow.addView(dashboard,dashLp);
-        LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
-        shortcutsLp.topMargin=dp(10);main.addView(shortcutRow,shortcutsLp);
+        View dashboard=LikasPortalUi.action(this,"Analysis","Survey summaries","chart",openAnalysis);
+        addFieldworkRow(main,dashboard);
+
         LinearLayout moreTools=vertical();
-        moreTools.addView(FieldVisuals.section(this,"Field tools",null));
         toolRow(moreTools,"Site habitats",()->
             startActivity(new Intent(this,HabitatRecordsActivity.class)));
         toolRow(moreTools,"Audio",()->
@@ -295,11 +274,13 @@ public class WelcomeActivity extends Activity {
         boolean expanded=getSharedPreferences("likas_ui",MODE_PRIVATE)
             .getBoolean("field_tools_open",false);
         moreTools.setVisibility(expanded?View.VISIBLE:View.GONE);
-        Button toolsToggle=UiKit.button(this,expanded?"Hide field tools":"More field tools","secondary");
+        Button toolsToggle=UiKit.button(this,expanded?"Hide field tools":"More field tools",
+            "secondary");
         toolsToggle.setContentDescription(expanded?"Hide additional field tools":
             "Show additional field tools");
         LinearLayout.LayoutParams toggleLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
-        toggleLp.topMargin=dp(13);
+        toggleLp.topMargin=dp(LikasDesignSystem.SPACE_MD);
+        toggleLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
         main.addView(toolsToggle,toggleLp);
         main.addView(moreTools);
         toolsToggle.setOnClickListener(v->{
@@ -328,6 +309,11 @@ public class WelcomeActivity extends Activity {
         return "Past surveys";
     }
 
+    private void addFieldworkRow(LinearLayout parent,View item){
+        LinearLayout.LayoutParams margin=new LinearLayout.LayoutParams(-1,-2);
+        margin.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+        parent.addView(item,margin);
+    }
     private void toolRow(LinearLayout parent,String name,Runnable action){
         String artwork="protocol";
         if("Audio".equals(name))artwork="audio";
@@ -335,8 +321,7 @@ public class WelcomeActivity extends Activity {
         if("Site habitats".equals(name))artwork="habitat";
         if("Projects & stations".equals(name))artwork="map";
         View item=LikasPortalUi.action(this,name,"",artwork,action);
-        LinearLayout.LayoutParams margin=new LinearLayout.LayoutParams(-1,-2);
-        margin.bottomMargin=dp(8);parent.addView(item,margin);
+        addFieldworkRow(parent,item);
     }
     private void card(String name,String desc,Runnable action){
         LinearLayout wrapper=vertical();

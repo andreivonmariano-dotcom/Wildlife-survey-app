@@ -173,15 +173,17 @@ public final class LikasPortalUi {
             int tint,int background,Runnable open){
         final boolean field="Fieldwork".equals(title);
         final boolean large=a.getResources().getConfiguration().fontScale>=1.60f;
-        final int fill=field?CANOPY:("Settings".equals(title)?
-            UiKit.LEAF_MID:UiKit.LEAF_LIGHT);
+        // Use the caller's semantic card surface without changing approved art.
+        final int fill=tint;
         final int ink=field?CREAM:CANOPY;
         LinearLayout panel=new LinearLayout(a);
         panel.setOrientation(LinearLayout.HORIZONTAL);
         panel.setGravity(Gravity.CENTER_VERTICAL);
         panel.setPadding(dp(a,18),dp(a,12),dp(a,14),dp(a,12));
         panel.setMinimumHeight(dp(a,108));
-        panel.setBackground(tapBackground(a,fill,Color.TRANSPARENT,19));
+        panel.setBackground(tapBackground(a,fill,
+            field?Color.TRANSPARENT:UiKit.CONTROL_BORDER,
+            LikasDesignSystem.RADIUS_CARD));
         panel.setElevation(dp(a,1));
         LinearLayout copy=new LinearLayout(a);
         copy.setOrientation(LinearLayout.VERTICAL);
@@ -197,8 +199,9 @@ public final class LikasPortalUi {
         }
         panel.addView(copy,new LinearLayout.LayoutParams(0,-2,1f));
         FrameLayout art=new FrameLayout(a);
-        art.setBackground(rounded(a,field?UiKit.FOREST:UiKit.LEAF_MID,
-            Color.TRANSPARENT,14));
+        int iconSurface=field?UiKit.FOREST:
+            (background==Color.WHITE?UiKit.LEAF_MID:background);
+        art.setBackground(rounded(a,iconSurface,Color.TRANSPARENT,14));
         addApprovedIcon(art,a,icon,field?CREAM:CANOPY,64,36);
         LinearLayout.LayoutParams artLp=new LinearLayout.LayoutParams(dp(a,64),dp(a,64));
         artLp.leftMargin=dp(a,10);
@@ -252,13 +255,13 @@ public final class LikasPortalUi {
         LinearLayout panel=new LinearLayout(a);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(a,14),dp(a,12),dp(a,12),dp(a,12));
-        panel.setBackground(tapBackground(a,Color.WHITE,UiKit.BORDER,18));
+        panel.setBackground(tapBackground(a,Color.WHITE,UiKit.CONTROL_BORDER,18));
         panel.setMinimumHeight(dp(a,126));
         FrameLayout art=new FrameLayout(a);
         art.setBackground(rounded(a,UiKit.LEAF_MID,Color.TRANSPARENT,13));
         addApprovedIcon(art,a,symbol,CANOPY,52,30);
         panel.addView(art,new LinearLayout.LayoutParams(dp(a,52),dp(a,52)));
-        TextView name=text(a,title,16,CANOPY,true);
+        TextView name=text(a,title,LikasDesignSystem.TEXT_CARD,CANOPY,true);
         LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(-1,-2);
         nameLp.topMargin=dp(a,9);
         panel.addView(name,nameLp);
@@ -281,7 +284,7 @@ public final class LikasPortalUi {
             Runnable open){
         LinearLayout item=new LinearLayout(a);item.setOrientation(LinearLayout.HORIZONTAL);
         item.setGravity(Gravity.CENTER_VERTICAL);
-        item.setBackground(tapBackground(a,Color.WHITE,UiKit.BORDER,17));
+        item.setBackground(tapBackground(a,Color.WHITE,UiKit.CONTROL_BORDER,17));
         item.setPadding(dp(a,14),dp(a,12),dp(a,12),dp(a,12));
         item.setMinimumHeight(dp(a,75));
         FrameLayout plate=new FrameLayout(a);
@@ -289,7 +292,7 @@ public final class LikasPortalUi {
         addApprovedIcon(plate,a,symbol,CANOPY,50,28);
         item.addView(plate,new LinearLayout.LayoutParams(dp(a,50),dp(a,50)));
         LinearLayout copy=new LinearLayout(a);copy.setOrientation(LinearLayout.VERTICAL);
-        TextView name=text(a,title,16,CANOPY,true);copy.addView(name);
+        TextView name=text(a,title,LikasDesignSystem.TEXT_CARD,CANOPY,true);copy.addView(name);
         if(subtitle!=null&&!subtitle.isEmpty()){
             TextView detail=text(a,subtitle,12,UiKit.MUTED,false);
             LinearLayout.LayoutParams x=new LinearLayout.LayoutParams(-1,-2);
@@ -299,7 +302,8 @@ public final class LikasPortalUi {
         lp.leftMargin=dp(a,13);item.addView(copy,lp);
         TextView arrow=text(a,"›",24,WATER,false);item.addView(arrow);
         item.setFocusable(true);item.setClickable(true);
-        item.setContentDescription("Open "+title);
+        item.setContentDescription("Open "+title+
+            (subtitle==null||subtitle.isEmpty()?"":". "+subtitle));
         item.setOnClickListener(v->open.run());
         return item;
     }

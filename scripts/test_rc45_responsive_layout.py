@@ -17,7 +17,8 @@ class Rc45LayoutContract(unittest.TestCase):
                        "LikasSettingsActivity.java"):
             text = source(screen)
             self.assertIn("FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale)",text)
-            self.assertIn("stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL",text)
+            self.assertTrue("stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in text
+                            or "stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in text)
 
     def test_picker_has_a_readable_search_field_and_unidentified_action(self):
         picker=source("SpeciesPickerActivity.java")

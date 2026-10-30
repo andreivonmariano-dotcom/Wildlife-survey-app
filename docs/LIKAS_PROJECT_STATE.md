@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC55 Screen 4 GPS preflight actual UI revision, Android QA pending
+
+- **User direction:** Continue actual Android screen-by-screen audit after emulator-verified RC54 Survey Setup; focus now on Screen 4 GPS preflight. This is a scientific provenance-sensitive screen. Do not edit actual historical survey position data.
+- **Draft source lineage:** `feature/likas-rc55-gps-preflight-screen4`, draft PR #52 based on RC54 draft PR #51 (upstream RC53 #50, RC52 #49, RC51 #48, RC50 #47 drafts). Integrated core RC49 unchanged. RC55 `0.27.3-rc55-gps-preflight-preview`, versionCode **115**, same app ID `org.phwildlife.survey.beta08`, schema 27 and pinned signing certificate.
+- **Scoped code change:** `SurveyGpsActivity` now shares LIKAS back header, status card, body typography and buttons. Survey/station missing-GPS confirmation and return actions live in a persistent bottom footer, while retry, location settings and optional satellite chart scroll. The periodic status refresh prioritizes denied precise permission and GPS-provider-disabled state before querying the latest fix, preventing a false GNSS-running message. Live fix details explicitly label device GPS, horizontal accuracy, fix age, and *device ellipsoidal altitude (not terrain elevation)* with vertical accuracy only when supplied. No GPS thresholds, receiver acquisition, accepted fix criteria, recorded timestamps, station-missing semantics, automatic survey launch, coordinates, SQLite schema or research exports modified.
+- **Tests:** `scripts/test_rc55_gps_preflight.py`, `Rc55GpsPreflightInstrumentedTest.java`, `scripts/rc55_gps_emulator_acceptance.sh` and `.github/workflows/rc55-gps-preflight-android.yml`. Android 14 QA covers GPS disabled survey/station at 360dp/100%, 412dp/130%, 320dp/200%, single pinned safe actions, and prior Home/Fieldwork/Setup/research ZIP fixtures. Initial CI was blocked by outdated assertions expecting old GPS button order, adapted to new layout. **At this record, final CI, screenshot review and APK are not yet verified.**
+- **Next:** resolve CI findings without changing recording semantics, inspect actual screenshots and signed APK, then begin Screen 5 live recorder. The field test of physical GNSS/vertical datum, TalkBack, historical in-place data upgrade, process-death restoration, research export snapshot and media integrity remain outstanding. No field readiness claim.
+- **QA file:** `docs/LIKAS_RC55_GPS_PREFLIGHT_SCREEN_QA.md` in RC55 draft branch. Original locked artwork untouched.
+
+---
+
 ## 30 October 2026 | RC54 Screen 3 Survey Setup Android review PASSED, preview APK delivered
 
 - **Owner request and lineage:** Proceed with screen-by-screen actual Android visual audit after RC52 Home and RC53 Fieldwork. Screen 3 Survey Setup now passed. RC54 feature `feature/likas-rc54-survey-setup-screen3` in **draft PR #51** based on RC53 draft #50 (ancestor RC52 #49, RC51 #48, RC50 #47). Tested **app code** SHA `ae5bda21cc2a4ba8a166659bf9ba9a82f070c3fa`; QA documentation-only head `bcf861cc59d3ac47c0e4679d9caebafe332a2d17`. Integrated core RC49 untouched; no automatic merges.

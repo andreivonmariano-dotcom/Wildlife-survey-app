@@ -17,6 +17,13 @@ public final class LikasDesignSystem {
     public static final int TEXT_BODY=15, TEXT_CAPTION=13;
     public static final int TEXT_CONTROL=14;
 
+    // Home navigation cards use one secondary surface and a stronger fieldwork primary.
+    // Keep scaled text intrinsic height instead of fixed-height card clipping.
+    public static final int HOME_CARD_MIN_DP=100;
+    public static final int HOME_ICON_DP=56;
+    public static final int HOME_HERO_GAP_DP=16;
+    public static final int TEXT_HOME_ACTION=20;
+
     public static final int MIN_TOUCH_DP=48;
 
     /** On narrow phones, favor readable full-width cards over a nominal two-column grid. */

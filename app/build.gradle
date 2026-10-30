@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 111
-        versionName '0.27.3-rc51-research-export-preview'
+        versionCode 112
+        versionName '0.27.3-rc52-home-theme-preview'
     }
     signingConfigs {
         debug {

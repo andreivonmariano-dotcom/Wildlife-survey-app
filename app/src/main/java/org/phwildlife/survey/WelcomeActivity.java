@@ -194,19 +194,21 @@ public class WelcomeActivity extends Activity {
             resumeLp.topMargin=dp(LikasDesignSystem.SPACE_MD);
             main.addView(session,resumeLp);
         }
-        if(lastHomeActiveSurvey==null)
-            main.addView(LikasPortalUi.kicker(this,"EXPLORE LIKAS"));
-        View field=LikasPortalUi.tile(this,"Fieldwork","Surveys · Data · History",
+        // The brand hero already introduces LIKAS; omit a second decorative heading.
+        // Give the destinations breathing room without pushing actions off small phones.
+        View field=LikasPortalUi.tile(this,"Fieldwork","Surveys & history",
             "field",LikasPortalUi.CANOPY,Color.WHITE,this::fieldworkHub);
         LinearLayout.LayoutParams fieldLp=new LinearLayout.LayoutParams(-1,-2);
-        fieldLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);main.addView(field,fieldLp);
-        View library=LikasPortalUi.tile(this,"Library","Species · Habitats · Guides",
-            "library",UiKit.LEAF_LIGHT,Color.WHITE,()->
+        fieldLp.topMargin=dp(LikasDesignSystem.HOME_HERO_GAP_DP);
+        fieldLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+        main.addView(field,fieldLp);
+        View library=LikasPortalUi.tile(this,"Library","Species & habitats",
+            "library",UiKit.LEAF_LIGHT,UiKit.LEAF_MID,()->
                 startActivity(new Intent(this,LikasLibraryActivity.class)));
         LinearLayout.LayoutParams libraryLp=new LinearLayout.LayoutParams(-1,-2);
         libraryLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);main.addView(library,libraryLp);
-        View settings=LikasPortalUi.tile(this,"Settings","Backups · App · Storage",
-            "settings",UiKit.LEAF_MID,Color.WHITE,()->
+        View settings=LikasPortalUi.tile(this,"Settings","Backups & preferences",
+            "settings",UiKit.LEAF_LIGHT,UiKit.LEAF_MID,()->
                 startActivity(new Intent(this,LikasSettingsActivity.class)));
         main.addView(settings);
         // A short page transition; disabled by Less motion or the OS animator setting.

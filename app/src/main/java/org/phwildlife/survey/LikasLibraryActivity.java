@@ -88,12 +88,12 @@ public final class LikasLibraryActivity extends Activity {
         discover(body,"Habitats","Habitat profiles","habitat","habitats");
         body.addView(librarySection("Reference tools",null));
         toolPair(body,"Similar species","Compare traits","research",
-            Rc9DifferentialActivity.class,"Photos","Offline images","photo",
+            Rc9DifferentialActivity.class,"Photos","Offline images","library-photo",
             Rc8PhotoComparisonActivity.class);
-        toolPair(body,"Conservation","Dated assessments","conservation-pixel-shield",
-            Rc24ConservationDashboardActivity.class,"Sources","Checklists","protocol",
+        toolPair(body,"Conservation","Dated assessments","library-conservation",
+            Rc24ConservationDashboardActivity.class,"Sources","Checklists","library-sources",
             CatalogActivity.class);
-        add(body,"Habitat links","Cited associations","habitat",
+        add(body,"Habitat links","Cited associations","library-habitat-links",
             HabitatSpeciesEvidenceActivity.class);
         setContentView(root);
         UiMotion.enter(this,body);

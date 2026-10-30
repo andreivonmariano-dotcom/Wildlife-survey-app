@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | Locked 18-icon system and Custom Survey retirement proposal
+
+- **Owner-approved visual lock:** Original frog launcher stays unchanged. Exactly **18** green retro pixel-art in-app icon assets are approved: 15 existing tiles plus writhed hornbill, *Staurois natator* and *Rusa marianna* survey artwork. Plant and invertebrate icons are excluded. The new approved ZIP is `LIKAS_APPROVED_18_GREEN_ICONS_LOCKED_2026-10-30.zip` (SHA-256 `e0d91a0ca47f59c0e9a414d53f4d9b7e26f18bd068461ec6a3419976ca64ddc3`), with individual file digests in its manifest. Assets remain outside the GitHub repo and signed app pending binary import, as recorded in `docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md`.
+- **User choice:** Remove the new **Custom Survey** workflow, including its setup tile, group picker, mode and saved mode preference; continue only Birds, Herpetofauna, Mammals as survey entry groups. Do **not** remove existing custom survey data, records, research files, station/spacing controls, historic methods, backups or exports.
+- **Code proposal:** Branch `feature/likas-approved-green-icons-no-custom-survey` removes entry/creation UI in `WelcomeActivity.java`, falls back safely from older saved Custom screen preference, and adds `scripts/test_rc42_custom_survey_retirement.py`. Preserves `MainActivity.java`, `FieldDb.java`, History and export implementations. This is source-only and has **not** been shipped as a new APK.
+- **Current verified signed APK:** Remains RC41, versionCode **101**, code commit `8d2918665eccd8d6a037d616cd58a9a9dde6cf96`, CI run `40908133636`. Future release needs actual APK build, original signer, icons in Android resources, and phone/upgrade validation.
+- **Next:** Validate source changes in Android CI and test archive compatibility. Import only the 18 locked PNGs after verifying their SHA-256 from the owner pack. Keep launcher untouched. No insect/plant tile. Do not label artwork integrated until it appears in verified built APK.
+
+---
+
+
 ## 30 October 2026 | RC41 signed APK independently verified and delivered
 
 - **Code and CI:** Active app-source commit `8d2918665eccd8d6a037d616cd58a9a9dde6cf96` (merged PR #39, corrected the two obsolete UI assertions). GitHub Scientific Core QA run **40908133636** completed **success**, with artifact **12912227441** (`LIKAS-0.27.3-rc41-field-readiness-preview-code101-debug`). This audit did not change Android source, scientific records, survey data or signing settings.

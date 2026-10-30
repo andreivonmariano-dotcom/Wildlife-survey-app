@@ -140,7 +140,7 @@ public final class LikasPortalUi {
         // Reserve illustration clearance only when art is drawn beside the text.
         words.setPadding(dp(a,22),dp(a,compact?12:20),
             dp(a,showFrog?76:20),dp(a,compact?12:19));
-        TextView mark=text(a,compact?"LIKAS":"LIKAS   /   PH",
+        TextView mark=text(a,"LIKAS",
             compact?22:12,compact?CREAM:LIME,true);
         mark.setLetterSpacing(compact ? 0.05f : 0.14f);
         words.addView(mark);
@@ -149,7 +149,7 @@ public final class LikasPortalUi {
         LinearLayout.LayoutParams titleLp=new LinearLayout.LayoutParams(-1,-2);
         titleLp.topMargin=dp(a,compact?1:19);words.addView(title,titleLp);
         if(!compact){
-            TextView sub=text(a,"Surveys · Species · Habitats",13,Color.rgb(222,235,218),false);
+            TextView sub=text(a,"Explore. Record. Conserve.",13,Color.rgb(222,235,218),false);
             LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
             subLp.topMargin=dp(a,4);words.addView(sub,subLp);
         }
@@ -180,17 +180,17 @@ public final class LikasPortalUi {
         panel.setOrientation(LinearLayout.HORIZONTAL);
         panel.setGravity(Gravity.CENTER_VERTICAL);
         panel.setPadding(dp(a,18),dp(a,12),dp(a,14),dp(a,12));
-        panel.setMinimumHeight(dp(a,108));
+        panel.setMinimumHeight(dp(a,LikasDesignSystem.HOME_CARD_MIN_DP));
         panel.setBackground(tapBackground(a,fill,
             field?Color.TRANSPARENT:UiKit.CONTROL_BORDER,
             LikasDesignSystem.RADIUS_CARD));
         panel.setElevation(dp(a,1));
         LinearLayout copy=new LinearLayout(a);
         copy.setOrientation(LinearLayout.VERTICAL);
-        TextView name=text(a,title,large?20:21,ink,true);
+        TextView name=text(a,title,large?18:LikasDesignSystem.TEXT_HOME_ACTION,ink,true);
         copy.addView(name,new LinearLayout.LayoutParams(-1,-2));
         if(detail!=null&&!detail.isEmpty()){
-            TextView caption=text(a,detail,large?13:12,
+            TextView caption=text(a,detail,LikasDesignSystem.TEXT_CAPTION,
                 field?Color.rgb(225,237,215):MOSS,false);
             caption.setMaxLines(large?3:2);
             LinearLayout.LayoutParams captionLp=new LinearLayout.LayoutParams(-1,-2);
@@ -202,8 +202,10 @@ public final class LikasPortalUi {
         int iconSurface=field?UiKit.FOREST:
             (background==Color.WHITE?UiKit.LEAF_MID:background);
         art.setBackground(rounded(a,iconSurface,Color.TRANSPARENT,14));
-        addApprovedIcon(art,a,icon,field?CREAM:CANOPY,64,36);
-        LinearLayout.LayoutParams artLp=new LinearLayout.LayoutParams(dp(a,64),dp(a,64));
+        addApprovedIcon(art,a,icon,field?CREAM:CANOPY,
+            LikasDesignSystem.HOME_ICON_DP,36);
+        LinearLayout.LayoutParams artLp=new LinearLayout.LayoutParams(
+            dp(a,LikasDesignSystem.HOME_ICON_DP),dp(a,LikasDesignSystem.HOME_ICON_DP));
         artLp.leftMargin=dp(a,10);
         panel.addView(art,artLp);
         panel.setContentDescription("Open "+title+

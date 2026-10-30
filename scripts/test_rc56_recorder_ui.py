@@ -20,6 +20,8 @@ class Rc56RecorderLayout(unittest.TestCase):
         self.assertIn('TextView detectionLabel=label("Detection type"',block)
         self.assertIn('lineRow=vertical()',block)
         self.assertIn('Transect magnetic bearing (0–359°)',block)
+        self.assertIn('"Herp survey":profile+" Survey"',block)
+        self.assertIn('title.setContentDescription(profile+" Survey")',block)
 
     def test_count_and_selected_group_accessibility(self):
         a=src("MainActivity.java")
@@ -52,6 +54,9 @@ class Rc56RecorderLayout(unittest.TestCase):
             'FieldQuickActions.preferenceKey(profile,method)',
             'ResearchExports.',
         ):self.assertIn(term,a)
+        self.assertIn('gpsView.setText(permissionMissing?',a)
+        self.assertIn('"Precise GPS permission needed · details":"Device GPS off · details"',a)
+        self.assertIn('countView.setContentDescription(count+" individuals or evidence items")',a)
         self.assertIn("versionCode 116",(ROOT/"app/build.gradle").read_text())
         self.assertIn("0.27.3-rc56-live-recorder-preview",(ROOT/"app/build.gradle").read_text())
         self.assertIn("super(context,NAME,null,27)",src("FieldDb.java"))

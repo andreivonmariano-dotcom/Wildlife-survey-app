@@ -367,7 +367,7 @@ public class HistoryActivity extends Activity {
             dp(LikasDesignSystem.SPACE_LG),
             dp(LikasDesignSystem.SPACE_MD));
         evidenceLine(contents,"Observation ID",String.valueOf(id));
-        evidenceLine(contents,"Original field identification",observed(source,"raw_identification"));
+        evidenceLine(contents,"Current recorded identification",observed(source,"raw_identification"));
         evidenceLine(contents,"Scientific name recorded",observed(source,"scientific_name"));
         evidenceLine(contents,"Taxonomic group",observed(source,"taxon_group"));
         evidenceLine(contents,"Individuals recorded",observed(source,"individual_count"));

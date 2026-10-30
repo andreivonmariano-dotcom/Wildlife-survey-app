@@ -63,6 +63,10 @@ public class WelcomeActivity extends Activity {
     }
     private Button button(String label){return UiKit.button(this,label,"secondary");}
     private boolean largeText(){return getResources().getConfiguration().fontScale>=1.60f;}
+    private boolean stackPortalPairs(){
+        android.content.res.Configuration config=getResources().getConfiguration();
+        return FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale);
+    }
     private int actionDp(){return FieldLayoutPolicy.actionHeightDp(
         getResources().getConfiguration().fontScale);}
     private LinearLayout vertical(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
@@ -247,12 +251,12 @@ public class WelcomeActivity extends Activity {
             main.addView(activeCard);
         }else{
             LinearLayout first=new LinearLayout(this);
-            first.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+            first.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
             surveyTile(first,"Birds","Counts · Transects",()->setup("Birds"));
             surveyTile(first,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna"));
             main.addView(first);
             LinearLayout second=new LinearLayout(this);
-            second.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+            second.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
             surveyTile(second,"Mammals","Signs · Stations",()->setup("Mammals"));
             LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(-1,-2);
             secondLp.topMargin=dp(10);main.addView(second,secondLp);
@@ -262,16 +266,16 @@ public class WelcomeActivity extends Activity {
         toolRow(main,"Projects & stations",()->
             startActivity(new Intent(this,SitesActivity.class)));
         LinearLayout shortcutRow=new LinearLayout(this);
-        shortcutRow.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        shortcutRow.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         View history=LikasPortalUi.mini(this,"History",recentSurveySummary(),"history",
             ()->startActivity(new Intent(this,HistoryActivity.class)));
         shortcutRow.addView(history,new LinearLayout.LayoutParams(
-            largeText()?-1:0,-2,1));
+            stackPortalPairs()?-1:0,-2,1));
         View dashboard=LikasPortalUi.mini(this,"Analysis","Survey data","chart",
             ()->startActivity(new Intent(this,DashboardActivity.class)));
         LinearLayout.LayoutParams dashLp=new LinearLayout.LayoutParams(
-            largeText()?-1:0,-2,1);
-        if(largeText())dashLp.topMargin=dp(9);
+            stackPortalPairs()?-1:0,-2,1);
+        if(stackPortalPairs())dashLp.topMargin=dp(9);
         else dashLp.leftMargin=dp(10);
         shortcutRow.addView(dashboard,dashLp);
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);

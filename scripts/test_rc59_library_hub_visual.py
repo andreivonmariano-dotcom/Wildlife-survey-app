@@ -14,7 +14,7 @@ class Rc59HubVisual(unittest.TestCase):
         self.assertIn("UiKit.page(this,\"Library\",\"Home\",this::finish,body)",src)
         self.assertIn("FieldVisuals.section(this,\"Species & habitats\"",src)
         self.assertIn("FieldVisuals.section(this,\"Reference tools\"",src)
-        self.assertIn("config.screenWidthDp<600",src)
+        self.assertIn("getResources().getConfiguration().screenWidthDp<600",src)
         self.assertIn("libraryScroll.setPadding(0,0,dp(8),0)",src)
         self.assertIn("View.SCROLLBARS_OUTSIDE_INSET",src)
         self.assertIn("LikasPortalUi.tile(this",src)

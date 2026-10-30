@@ -134,22 +134,24 @@ public final class LikasPortalUi {
             new int[]{DEEP,CANOPY,UiKit.FOREST});
         backdrop.setCornerRadius(dp(a,26));cover.setBackground(backdrop);
         cover.setClipToOutline(true);
-        cover.setMinimumHeight(dp(a,compact?88:151));
+        // Reduce only the large-font Home hero; preserve the normal-size design.
+        final boolean largeHomeText=!compact && a.getResources().getConfiguration().fontScale>=1.60f;
+        cover.setMinimumHeight(dp(a,compact?88:(largeHomeText?118:151)));
         LinearLayout words=new LinearLayout(a);words.setOrientation(LinearLayout.VERTICAL);
         boolean showFrog=a.getResources().getConfiguration().fontScale<1.30f;
         // Reserve illustration clearance only when art is drawn beside the text.
-        words.setPadding(dp(a,22),dp(a,compact?12:20),
-            dp(a,showFrog?76:20),dp(a,compact?12:19));
+        words.setPadding(dp(a,22),dp(a,compact?12:(largeHomeText?11:20)),
+            dp(a,showFrog?76:20),dp(a,compact?12:(largeHomeText?11:19)));
         TextView mark=text(a,"LIKAS",
             compact?22:12,compact?CREAM:LIME,true);
         mark.setLetterSpacing(compact ? 0.05f : 0.14f);
         words.addView(mark);
-        TextView title=text(a,"Philippine wildlife",compact?14:26,
+        TextView title=text(a,"Philippine wildlife",compact?14:(largeHomeText?21:26),
             compact?Color.rgb(222,235,218):CREAM,!compact);
         LinearLayout.LayoutParams titleLp=new LinearLayout.LayoutParams(-1,-2);
-        titleLp.topMargin=dp(a,compact?1:19);words.addView(title,titleLp);
+        titleLp.topMargin=dp(a,compact?1:(largeHomeText?8:19));words.addView(title,titleLp);
         if(!compact){
-            TextView sub=text(a,"Explore. Record. Conserve.",13,Color.rgb(222,235,218),false);
+            TextView sub=text(a,"Explore. Record. Conserve.",largeHomeText?12:13,Color.rgb(222,235,218),false);
             LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
             subLp.topMargin=dp(a,4);words.addView(sub,subLp);
         }

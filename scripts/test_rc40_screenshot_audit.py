@@ -22,7 +22,7 @@ class Rc40ScreenAudit(unittest.TestCase):
         self.assertIn("panel.setOrientation(LinearLayout.HORIZONTAL)",body)
         self.assertNotIn("new FrameLayout(a);\n        panel.setBackground(",body)
         self.assertNotIn("panel.addView(backdrop",body)
-        self.assertIn("new LinearLayout.LayoutParams(-1,dp(152))",home)
+        self.assertIn("new LinearLayout.LayoutParams(-1,-2)",home)
         main=home.split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]
         for title in ('"Fieldwork"','"Library"','"Settings"'):
             self.assertIn(title,main)
@@ -118,8 +118,8 @@ class Rc40ScreenAudit(unittest.TestCase):
 
     def test_upgrade_keeps_signed_app_and_database_identity(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 105",build)
-        self.assertIn("0.27.3-rc45-responsive-layout-preview",build)
+        self.assertIn("versionCode 106",build)
+        self.assertIn("0.27.3-rc46-field-layout-hierarchy-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
 

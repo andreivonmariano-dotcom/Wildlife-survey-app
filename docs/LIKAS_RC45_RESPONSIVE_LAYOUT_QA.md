@@ -26,3 +26,12 @@ These results establish that the source builds, not that the visual outcome has 
 Continue the separate data-integrity workstream for non-atomic restore and legacy-outcome export parity; these are not solved by layout-only changes.
 
 **Disposition:** RC45 source integrated on the active branch after successful PR QA; active-build artifact inspection and direct chat APK delivery must be recorded separately after verification.
+
+## Active-branch signed artifact verification | 30 October 2026
+
+- **Active-branch Scientific Core QA:** run **41014826232**, **success**, based on merged app-code commit **`e5f27c5efe4a0012543d39dd642a87a0c4d096e9`**. Artifact **12958709056**, named `LIKAS-0.27.3-rc45-responsive-layout-preview-code105-debug`.
+- **Verified APK:** `LIKAS-v0.27.3-RC45-responsive-layout-debug.apk`, **9,778,644 bytes**, SHA-256 **`60986cea4643c867b08536fef705d7021869473d9cc4de94d4e16af57af94455`**. ZIP CRC passes, compiled DEX and binary manifest present, 18 approved icon PNGs, 58 offline photos and mammal checklist bundled.
+- **Independently parsed binary manifest:** package `org.phwildlife.survey.beta08`, versionCode **105**, versionName `0.27.3-rc45-responsive-layout-preview`.
+- **Independently verified APK Signature Scheme v2:** RSA SHA-256 signature and signed-content chunk digest both valid; signer certificate SHA-256 **`f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`** exactly matches RC44. No replacement signing identity or package migration.
+- **Direct download:** exact APK was copied into the active conversation's `/mnt/data/` and directly linked there. Other chats must verify this file separately.
+- **Not tested:** actual phone upgrades, 320dp/200%-text rendered screenshots, TalkBack, field GPS, on-device backups/exports, battery/performance and survey data retention. Production acceptance is not claimed.

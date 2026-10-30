@@ -147,6 +147,15 @@ public final class LikasDiscoveryActivity extends Activity {
         media.addView(new LikasPortalUi.Glyph(this,
             wildlifeGlyph(entry.optString("group")),UiKit.FOREST),
             new FrameLayout.LayoutParams(dp(70),dp(70),Gravity.CENTER));
+        // Distinguish a drawn category glyph from a licensed photograph.
+        // The asynchronous photo covers this entire illustration layer if available.
+        TextView illustration=note("ILLUSTRATION",9,UiKit.MUTED,true);
+        illustration.setLetterSpacing(.08f);
+        illustration.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        FrameLayout.LayoutParams artworkCaption=new FrameLayout.LayoutParams(
+            -2,-2,Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL);
+        artworkCaption.bottomMargin=dp(6);
+        media.addView(illustration,artworkCaption);
         ImageView photo=OfflinePhotoEvidence.galleryPhotoForTaxon(this,scientific);
         media.addView(photo,new FrameLayout.LayoutParams(-1,-1));
         card.addView(media,new LinearLayout.LayoutParams(-1,dp(152)));
@@ -376,6 +385,12 @@ public final class LikasDiscoveryActivity extends Activity {
         String selected=showingHabitat?habitatGroup:speciesGroup;
         HorizontalScrollView rail=new HorizontalScrollView(this);
         rail.setHorizontalScrollBarEnabled(false);
+        if(!showingHabitat){
+            // A subtle disappearing edge reveals additional off-screen wildlife groups.
+            rail.setHorizontalFadingEdgeEnabled(true);
+            rail.setFadingEdgeLength(dp(22));
+            rail.setContentDescription("Species group filters. Swipe horizontally for more groups.");
+        }
         LinearLayout chips=new LinearLayout(this);
         chips.setOrientation(LinearLayout.HORIZONTAL);
         chips.setPadding(dp(2),dp(10),dp(10),dp(6));
@@ -477,11 +492,15 @@ public final class LikasDiscoveryActivity extends Activity {
             }
             action("All habitats",()->startActivity(new Intent(this,HabitatRecordsActivity.class)));
         }else{
-            content.addView(LikasPortalUi.kicker(this,"WILDLIFE"));
-            content.addView(note("Species",27,UiKit.INK,true));
-            TextView sub=note("Offline species guides",
-                13,UiKit.MUTED,false);
-            sub.setPadding(0,dp(4),0,dp(3));content.addView(sub);
+            // At 200% text, tab and context already identify Species. Preserve
+            // the page heading but remove the redundant kicker/description.
+            if(!largeText())content.addView(LikasPortalUi.kicker(this,"WILDLIFE"));
+            content.addView(note("Species",largeText()?23:27,UiKit.INK,true));
+            if(!largeText()){
+                TextView sub=note("Offline species guides",
+                    13,UiKit.MUTED,false);
+                sub.setPadding(0,dp(4),0,dp(3));content.addView(sub);
+            }
             filterRail();
             int found=0;
             for(JSONObject p:species)if(matches(p,false))found++;

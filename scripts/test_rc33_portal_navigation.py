@@ -15,7 +15,7 @@ class PortalNavigation(unittest.TestCase):
         splash=read("LikasLaunchActivity.java")
         assert 'new Intent(this,WelcomeActivity.class)' in splash
         home=welcome.split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]
-        self.assertIn('LikasPortalUi.hero(this)',home)
+        self.assertIn('LikasPortalUi.hero(this,lastHomeActiveSurvey!=null)',home)
         for label in ('"Fieldwork"','"Library"','"Settings"'):
             self.assertIn(label,home)
         self.assertIn("LikasLibraryActivity.class",home)

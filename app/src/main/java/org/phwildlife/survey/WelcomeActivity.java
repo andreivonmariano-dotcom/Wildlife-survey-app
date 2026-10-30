@@ -261,18 +261,16 @@ public class WelcomeActivity extends Activity {
         LinearLayout shortcutRow=new LinearLayout(this);
         shortcutRow.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         boolean stacked=stackPortalPairs();
+        Runnable openHistory=()->startActivity(new Intent(this,HistoryActivity.class));
         View history=stacked?
-            LikasPortalUi.action(this,"History",recentSurveySummary(),"history",
-                ()->startActivity(new Intent(this,HistoryActivity.class))):
-            LikasPortalUi.mini(this,"History",recentSurveySummary(),"history",
-                ()->startActivity(new Intent(this,HistoryActivity.class)));
+            LikasPortalUi.action(this,"History",recentSurveySummary(),"history",openHistory):
+            LikasPortalUi.mini(this,"History",recentSurveySummary(),"history",openHistory);
         shortcutRow.addView(history,new LinearLayout.LayoutParams(
             stacked?-1:0,-2,1));
+        Runnable openAnalysis=()->startActivity(new Intent(this,DashboardActivity.class));
         View dashboard=stacked?
-            LikasPortalUi.action(this,"Analysis","Survey data","chart",
-                ()->startActivity(new Intent(this,DashboardActivity.class))):
-            LikasPortalUi.mini(this,"Analysis","Survey data","chart",
-                ()->startActivity(new Intent(this,DashboardActivity.class)));
+            LikasPortalUi.action(this,"Analysis","Survey data","chart",openAnalysis):
+            LikasPortalUi.mini(this,"Analysis","Survey data","chart",openAnalysis);
         LinearLayout.LayoutParams dashLp=new LinearLayout.LayoutParams(
             stacked?-1:0,-2,1);
         if(stacked)dashLp.topMargin=dp(LikasDesignSystem.SPACE_SM);

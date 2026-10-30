@@ -31,8 +31,8 @@ class Rc52HomeTheme(unittest.TestCase):
 
     def test_same_package_schema_and_preview_version(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 115",build)
-        self.assertIn("0.27.3-rc55-gps-preflight-preview",build)
+        self.assertIn("versionCode 116",build)
+        self.assertIn("0.27.3-rc56-live-recorder-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
 if __name__=="__main__": unittest.main()

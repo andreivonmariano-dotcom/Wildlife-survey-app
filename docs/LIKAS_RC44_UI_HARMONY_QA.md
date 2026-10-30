@@ -34,3 +34,9 @@ Source: owner-supplied RC43 screenshots of Home, Fieldwork, Library and Settings
 - **Offline references:** **58** bundled JPGs and `assets/ph_mammals_mdd_v2_5.json` confirmed present.
 - **Delivery:** APK extracted from the exact successful CI artifact and placed at `/mnt/data/LIKAS-v0.27.3-RC44-ui-harmony-debug.apk` in the current conversation. Do not assume this path exists in another chat without checking.
 - **Unverified:** physically installing/upgrading RC43 with saved data, 320dp/large-font/TalkBack, transition smoothness on phone, real fieldwork and GNSS, and fault-injected partial backup recovery. Do not call this production/field-accepted.
+
+## Active-branch merge and reproducibility confirmation
+
+PR **#41** merged into `feature/likas-core-fieldwork-post-rc4` at **`ea0efb15aa1ad53ab520cd9619c44429e4e6226a`**. The subsequent **push-triggered** Scientific Core QA run **41006647041** completed **success** and uploaded signed artifact **12956325239**. The APK downloaded from this active-branch artifact was compared byte-for-byte with the delivered RC44 APK. **Identical:** SHA-256 `0f4c710bd91144e0115d2d71cbe562d1b3ecfd6a3db299c9dfc5f127d56c471e`, 9,777,896 bytes.
+
+This confirms that the directly delivered RC44 APK matches the code now merged into the authoritative active development branch. Documentation-only commits after the merge do not change application code or binary assets. Device upgrade and visual accessibility testing remain unverified.

@@ -31,7 +31,7 @@ class IllustratedUiContract(unittest.TestCase):
         library=src("LikasLibraryActivity.java")
         self.assertIn('discover(body,"Species"',library)
         self.assertIn('discover(body,"Habitats"',library)
-        self.assertIn("LikasPortalUi.tile(this,title,subtitle,icon",library)
+        self.assertIn("LikasPortalUi.libraryFeature(this,title,subtitle,icon",library)
         self.assertIn("LikasPortalUi.mini(this,first,firstDetail,firstIcon",library)
         self.assertIn("Rc24ConservationDashboardActivity.class",library)
         self.assertNotIn("MainActivity.class",library)

@@ -42,7 +42,7 @@ class Rc44UiHarmony(unittest.TestCase):
         settings=read("LikasSettingsActivity.java")
         self.assertIn('"Data check","Review records","reports"',settings)
         library=read("LikasLibraryActivity.java")
-        self.assertIn('LikasPortalUi.tile(',library)
+        self.assertIn('LikasPortalUi.libraryFeature(',library)
 
     def test_motion_is_nonblocking_and_accessible(self):
         motion=read("UiMotion.java")

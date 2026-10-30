@@ -72,6 +72,9 @@ public final class LikasPortalUi {
             image.setScaleType(ImageView.ScaleType.FIT_CENTER);
             image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
             art=image;size=approvedDp;
+        }else if("conservation-pixel-shield".equals(symbol)){
+            // A source-defined pixel shield, not a replacement for locked approved PNGs.
+            art=new PixelShield(a);size=36;
         }else{
             art=new Glyph(a,symbol,glyphColor);size=fallbackDp;
         }
@@ -310,6 +313,66 @@ public final class LikasPortalUi {
             (subtitle==null||subtitle.isEmpty()?"":". "+subtitle));
         item.setOnClickListener(v->open.run());
         return item;
+    }
+
+    /**
+     * Pixel-grid shield with a small leaf mark for a conservation destination.
+     * Drawn as discrete squares, retaining the 18 owner-approved PNGs byte-for-byte.
+     * Decorative only: the enclosing Library action has the accessible label.
+     */
+    public static final class PixelShield extends View {
+        private static final String[] GRID={
+            "0000011111100000",
+            "0001111111111000",
+            "0011122222211100",
+            "0111222222221110",
+            "0111222332221110",
+            "0111233333221110",
+            "0111333332221110",
+            "0011233332221100",
+            "0011223322221100",
+            "0011222322221100",
+            "0001122322211000",
+            "0000112322110000",
+            "0000012222100000",
+            "0000001111000000",
+            "0000000110000000",
+            "0000000000000000"
+        };
+        private final Paint pixels=new Paint();
+        PixelShield(Activity a){
+            super(a);
+            pixels.setAntiAlias(false);
+            pixels.setFilterBitmap(false);
+            setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        @Override protected void onDraw(Canvas canvas){
+            super.onDraw(canvas);
+            float cell=Math.min(getWidth(),getHeight())/16f;
+            float left=(getWidth()-cell*16)/2f;
+            float top=(getHeight()-cell*16)/2f;
+            for(int row=0;row<GRID.length;row++){
+                String strip=GRID[row];
+                for(int column=0;column<strip.length();column++){
+                    char kind=strip.charAt(column);
+                    if(kind=='0')continue;
+                    pixels.setColor(kind=='1'?UiKit.INK:
+                        (kind=='2'?UiKit.LEAF_LIGHT:UiKit.FOREST));
+                    canvas.drawRect(left+column*cell,top+row*cell,
+                        left+(column+1)*cell,top+(row+1)*cell,pixels);
+                }
+            }
+        }
+    }
+
+    /** Library-only featured navigation, with the same icon-left and arrow-right affordance as other actions. */
+    public static View libraryFeature(Activity a,String title,String subtitle,
+            String icon,Runnable open){
+        LinearLayout panel=(LinearLayout)action(a,title,subtitle,icon,open);
+        panel.setBackground(tapBackground(a,UiKit.LEAF_LIGHT,UiKit.CONTROL_BORDER,
+            LikasDesignSystem.RADIUS_CARD));
+        panel.setMinimumHeight(dp(a,LikasDesignSystem.HOME_CARD_MIN_DP));
+        return panel;
     }
 
     /** Hand-drawn vector glyphs read well at 24–48dp. Pure decoration, parent has the label. */

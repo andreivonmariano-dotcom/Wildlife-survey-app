@@ -2,11 +2,12 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 /** Reading space. No survey event, effort or observation is created here. */
 public final class LikasLibraryActivity extends Activity {
@@ -19,12 +20,21 @@ public final class LikasLibraryActivity extends Activity {
         lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);p.addView(action,lp);
     }
     private void discover(LinearLayout p,String title,String subtitle,String icon,String view){
-        View card=LikasPortalUi.tile(this,title,subtitle,icon,
-            UiKit.LEAF_LIGHT,Color.WHITE,()->
+        View card=LikasPortalUi.libraryFeature(this,title,subtitle,icon,()->
             startActivity(new Intent(this,LikasDiscoveryActivity.class)
                 .putExtra("view",view)));
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
         lp.bottomMargin=dp(LikasDesignSystem.SPACE_MD);p.addView(card,lp);
+    }
+    /** Local section treatment keeps page title visually dominant at 200% font. */
+    private LinearLayout librarySection(String title,String caption){
+        LinearLayout section=FieldVisuals.section(this,title,caption);
+        TextView heading=(TextView)section.getChildAt(0);
+        heading.setTextSize(14);
+        heading.setLetterSpacing(.06f);
+        heading.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
+        heading.setTextColor(UiKit.FOREST);
+        return section;
     }
     private boolean stackPortalPairs(){
         android.content.res.Configuration config=getResources().getConfiguration();
@@ -63,19 +73,24 @@ public final class LikasLibraryActivity extends Activity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         LinearLayout body=new LinearLayout(this);
         LinearLayout root=UiKit.page(this,"Library","Home",this::finish,body);
+        // Android 14 font scaling is nonlinear. Use the shared full page-title token
+        // rather than the compact navigation default so sections remain subordinate.
+        LinearLayout navigation=(LinearLayout)root.getChildAt(0);
+        TextView pageTitle=(TextView)navigation.getChildAt(1);
+        pageTitle.setTextSize(LikasDesignSystem.TEXT_PAGE);
         // Reserve a small strip for the system scroll indicator so it never paints
         // over a card outline or its arrow. Restrict this to the Library hub.
         ScrollView libraryScroll=(ScrollView)root.getChildAt(1);
         libraryScroll.setPadding(0,0,dp(8),0);
         libraryScroll.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
-        body.addView(FieldVisuals.section(this,"Species & habitats","Offline field guides"));
+        body.addView(librarySection("Species & habitats","Offline field guides"));
         discover(body,"Species","Illustrated accounts","species","species");
         discover(body,"Habitats","Habitat profiles","habitat","habitats");
-        body.addView(FieldVisuals.section(this,"Reference tools",null));
+        body.addView(librarySection("Reference tools",null));
         toolPair(body,"Similar species","Compare traits","research",
             Rc9DifferentialActivity.class,"Photos","Offline images","photo",
             Rc8PhotoComparisonActivity.class);
-        toolPair(body,"Conservation","Dated assessments","shield",
+        toolPair(body,"Conservation","Dated assessments","conservation-pixel-shield",
             Rc24ConservationDashboardActivity.class,"Sources","Checklists","protocol",
             CatalogActivity.class);
         add(body,"Habitat links","Cited associations","habitat",

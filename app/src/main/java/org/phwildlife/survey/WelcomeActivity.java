@@ -151,7 +151,7 @@ public class WelcomeActivity extends Activity {
         label.setGravity(Gravity.CENTER_VERTICAL);
         label.setPadding(dp(14),dp(9),dp(12),dp(9));
         android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
-        bg.setColor(Color.rgb(228,239,229));
+        bg.setColor(UiKit.LEAF_MID);
         bg.setCornerRadius(dp(14));
         label.setBackground(bg);
         return label;
@@ -174,7 +174,10 @@ public class WelcomeActivity extends Activity {
         if("Birds".equals(title))art="bird";
         if("Herpetofauna".equals(title))art="frog";
         if("Mammals".equals(title))art="mammal";
-        View tile=LikasPortalUi.mini(this,title,detail,art,tap);
+        // The third survey group occupies a single row: use a compact horizontal card.
+        View tile="Mammals".equals(title)
+            ?LikasPortalUi.action(this,title,detail,art,tap)
+            :LikasPortalUi.mini(this,title,detail,art,tap);
         boolean stacked=parent.getOrientation()==LinearLayout.VERTICAL;
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(
             stacked?-1:0,-2,1);
@@ -202,19 +205,18 @@ public class WelcomeActivity extends Activity {
         LinearLayout.LayoutParams fieldLp=new LinearLayout.LayoutParams(-1,-2);
         fieldLp.bottomMargin=dp(9);main.addView(field,fieldLp);
         View library=LikasPortalUi.tile(this,"Library","Species · Habitats · Guides",
-            "library",Color.rgb(222,237,208),Color.WHITE,()->
+            "library",UiKit.LEAF_LIGHT,Color.WHITE,()->
                 startActivity(new Intent(this,LikasLibraryActivity.class)));
         LinearLayout.LayoutParams libraryLp=new LinearLayout.LayoutParams(-1,-2);
         libraryLp.bottomMargin=dp(9);main.addView(library,libraryLp);
         View settings=LikasPortalUi.tile(this,"Settings","Backups · App · Storage",
-            "settings",Color.rgb(231,239,238),Color.WHITE,()->
+            "settings",UiKit.LEAF_MID,Color.WHITE,()->
                 startActivity(new Intent(this,LikasSettingsActivity.class)));
         main.addView(settings);
-        if(!playedStartupHomeTransition &&
-           getIntent().getBooleanExtra("show_menu",false)){
+        // A short page transition; disabled by Less motion or the OS animator setting.
+        if(!playedStartupHomeTransition && getIntent().getBooleanExtra("show_menu",false))
             playedStartupHomeTransition=true;
-            UiMotion.enter(this,main);
-        }
+        UiMotion.enter(this,main);
     }
     private void fieldworkHub(){
         homeVisible=false;currentScreen="fieldwork";main.removeAllViews();scrollTop();
@@ -298,14 +300,15 @@ public class WelcomeActivity extends Activity {
         main.addView(moreTools);
         toolsToggle.setOnClickListener(v->{
             boolean show=moreTools.getVisibility()!=View.VISIBLE;
-            moreTools.setVisibility(show?View.VISIBLE:View.GONE);
             toolsToggle.setText(show?"Hide field tools":"More field tools");
             toolsToggle.setContentDescription(show?"Hide additional field tools":
                 "Show additional field tools");
             getSharedPreferences("likas_ui",MODE_PRIVATE).edit()
                 .putBoolean("field_tools_open",show).apply();
             if(show)UiMotion.reveal(this,moreTools);
+            else UiMotion.hide(moreTools);
         });
+        UiMotion.enter(this,main);
     }
     /** Short status caption for the single History destination. */
     private String recentSurveySummary(){
@@ -350,7 +353,7 @@ public class WelcomeActivity extends Activity {
             View item=methodChoices.getChildAt(i);
             boolean selected=item.getId()==checked;
             android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
-            bg.setColor(selected?Color.rgb(230,243,231):Color.WHITE);
+            bg.setColor(selected?UiKit.LEAF_LIGHT:Color.WHITE);
             bg.setStroke(dp(selected?2:1),selected?UiKit.POND:UiKit.BORDER);
             bg.setCornerRadius(dp(16));
             item.setBackground(bg);
@@ -613,7 +616,8 @@ public class WelcomeActivity extends Activity {
         studyToggle.setGravity(Gravity.CENTER_VERTICAL);studyToggle.setFocusable(true);
         studyToggle.setOnClickListener(v->{
             boolean open=studyOptions.getVisibility()!=View.VISIBLE;
-            studyOptions.setVisibility(open?View.VISIBLE:View.GONE);
+            if(open)UiMotion.reveal(this,studyOptions);
+            else UiMotion.hide(studyOptions);
             refreshStudyTitle();
         });
         main.addView(studyToggle);main.addView(studyOptions);
@@ -625,6 +629,7 @@ public class WelcomeActivity extends Activity {
         });
         refreshStudyChoices();
         // The only Continue to GPS action is pinned beneath the scroll area.
+        UiMotion.enter(this,main);
     }
     private void refreshStudyTitle(){
         if(studyToggle==null||studyChoice==null||studyOptions==null)return;

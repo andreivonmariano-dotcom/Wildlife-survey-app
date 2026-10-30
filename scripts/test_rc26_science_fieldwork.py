@@ -54,7 +54,7 @@ class Rc26ScienceAndFieldwork(unittest.TestCase):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertIn("setContentDescription(\"Continue \"+profile",home)
         self.assertIn("setupFooter.addView(setupStartButton",home)
-        self.assertIn("largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL",home)
+        self.assertIn("projectRow.setOrientation(stackProjectControls?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL)",home)
         self.assertIn("Filter saved surveys by outcome",history)
         self.assertIn("Search survey group, method, station or date",history)
         self.assertIn("FieldLayoutPolicy.actionHeightDp",habitat)

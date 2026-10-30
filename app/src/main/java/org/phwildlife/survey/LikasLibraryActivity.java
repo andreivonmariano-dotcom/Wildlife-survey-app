@@ -36,10 +36,16 @@ public final class LikasLibraryActivity extends Activity {
             String secondIcon,Class<?> secondTarget){
         LinearLayout row=new LinearLayout(this);
         row.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        View a=LikasPortalUi.mini(this,first,firstDetail,firstIcon,
-            ()->startActivity(new Intent(this,firstTarget)));
-        View b=LikasPortalUi.mini(this,second,secondDetail,secondIcon,
-            ()->startActivity(new Intent(this,secondTarget)));
+        View a=stackPortalPairs()?
+            LikasPortalUi.action(this,first,firstDetail,firstIcon,
+                ()->startActivity(new Intent(this,firstTarget))):
+            LikasPortalUi.mini(this,first,firstDetail,firstIcon,
+                ()->startActivity(new Intent(this,firstTarget)));
+        View b=stackPortalPairs()?
+            LikasPortalUi.action(this,second,secondDetail,secondIcon,
+                ()->startActivity(new Intent(this,secondTarget))):
+            LikasPortalUi.mini(this,second,secondDetail,secondIcon,
+                ()->startActivity(new Intent(this,secondTarget)));
         LinearLayout.LayoutParams aLp=new LinearLayout.LayoutParams(
             stackPortalPairs()?-1:0,-2,1);
         aLp.bottomMargin=dp(9);row.addView(a,aLp);

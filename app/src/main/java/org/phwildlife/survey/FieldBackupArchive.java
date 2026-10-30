@@ -280,45 +280,132 @@ public final class FieldBackupArchive {
             return dir;
         }catch(Exception e){clear(dir);throw e;}
     }
-    /** Only for a fresh, empty LIKAS workspace, then exit the process to clear caches. */
+    /** One destination and its prepared payload and possible previous private preference file. */
+    private static final class RestoreItem {
+        final File prepared,target,previous;
+        boolean originalMoved,installed;
+        RestoreItem(File prepared,File target,File previous){
+            this.prepared=prepared;this.target=target;this.previous=previous;
+        }
+    }
+    /** Atomic rename on the same private app filesystem; never silently copy over a user file. */
+    private static void moveNew(File from,File to)throws IOException{
+        require(from.isFile(),"Missing prepared restore file");
+        require(!to.exists(),"Restore destination already exists: "+to.getName());
+        File parent=to.getParentFile();
+        require(parent!=null&&(parent.isDirectory()||parent.mkdirs()),
+            "Cannot create restore destination folder");
+        Files.move(from.toPath(),to.toPath(),StandardCopyOption.ATOMIC_MOVE);
+    }
+    /** Only for a fresh, empty LIKAS workspace. Restart after restoring. */
     public static String restoreIntoEmpty(Context ctx,InputStream input)throws Exception{
+        return restoreIntoEmptyInternal(ctx,input,-1);
+    }
+    // Package-private failure injection for isolated Android instrumentation, not normal field use.
+    static String restoreIntoEmptyForTest(Context ctx,InputStream input,int failAfterAttachments)
+            throws Exception{
+        require(failAfterAttachments>0,"Invalid test failure injection point");
+        return restoreIntoEmptyInternal(ctx,input,failAfterAttachments);
+    }
+    private static String restoreIntoEmptyInternal(Context ctx,InputStream input,
+            int failAfterAttachments)throws Exception{
         require(canRestore(ctx),"Restore is blocked: this workspace has saved field data.");
-        File dir=unpack(ctx,input);
+        File archive=unpack(ctx,input);
+        File staging=null;
+        File incomingDb=null;
+        boolean keepForRecovery=false;
         try{
             require(canRestore(ctx),"Workspace changed during backup validation.");
             File db=ctx.getDatabasePath(FieldDb.NAME);
             File databaseDir=db.getParentFile();
             require(databaseDir!=null&&(databaseDir.exists()||databaseDir.mkdirs()),
                 "Cannot prepare database directory");
-            File old=new File(databaseDir,FieldDb.NAME+".before-restore");
-            require(!old.exists(),"A prior recovery safety copy exists. Do not overwrite it.");
-            // Database helper connections are closed by the empty-workspace check.
-            File incoming=new File(databaseDir,FieldDb.NAME+".incoming");
-            copy(new File(dir,DATABASE),incoming);
-            checkDatabase(incoming);
-            if(db.exists())require(db.renameTo(old),
-                "Cannot preserve original empty database before recovery");
-            boolean restored=incoming.renameTo(db);
-            if(!restored){
-                if(old.exists())old.renameTo(db);
-                throw new IOException("Cannot install the validated database snapshot.");
-            }
-            // Restore only app-owned field media and saved settings, no arbitrary paths.
-            File root=new File(ctx.getApplicationInfo().dataDir);
+            File oldDb=new File(databaseDir,FieldDb.NAME+".before-restore");
+            require(!oldDb.exists(),"A prior recovery safety copy exists. Do not overwrite it.");
+            // Prepare and verify EVERYTHING before writing to live user data paths.
+            // Staging is under app-private files on the same filesystem as media/preferences.
+            staging=new File(ctx.getFilesDir(),".likas-restore-"+UUID.randomUUID());
+            require(staging.mkdirs(),"Cannot create private restore transaction");
             JSONObject hashes=new JSONObject(new String(
-                Files.readAllBytes(new File(dir,"manifest.json").toPath()),"UTF-8"))
+                Files.readAllBytes(new File(archive,"manifest.json").toPath()),"UTF-8"))
                 .getJSONObject("files");
+            ArrayList<RestoreItem> items=new ArrayList<>();
+            File root=new File(ctx.getApplicationInfo().dataDir);
             Iterator<String> names=hashes.keys();
             while(names.hasNext()){
                 String name=names.next();
                 if(DATABASE.equals(name))continue;
-                File dest;
-                if(name.startsWith("prefs/"))dest=new File(root,"shared_prefs/"+name.substring(6));
-                else dest=new File(ctx.getFilesDir(),name.substring("media/".length()));
-                copy(new File(dir,name),dest);
+                require(safeName(name),"Unsafe backup attachment name");
+                File target=name.startsWith("prefs/")
+                    ?new File(root,"shared_prefs/"+name.substring(6))
+                    :new File(ctx.getFilesDir(),name.substring("media/".length()));
+                File prepared=new File(staging,"new/"+name);
+                copy(new File(archive,name),prepared);
+                require(checksum(prepared).equalsIgnoreCase(hashes.getString(name)),
+                    "Prepared restore checksum mismatch: "+name);
+                // Old preference files are preserved until all files and the DB activate.
+                if(name.startsWith("media/"))
+                    require(!target.exists(),"Existing field media must never be overwritten");
+                items.add(new RestoreItem(prepared,target,new File(staging,"old/"+name)));
             }
-            // Retain before-restore database as an explicit local rollback artifact.
-            return "Restore installed. Close and restart LIKAS before viewing fieldwork.";
-        }finally{clear(dir);}
+            incomingDb=new File(databaseDir,FieldDb.NAME+".incoming-"+UUID.randomUUID());
+            copy(new File(archive,DATABASE),incomingDb);
+            checkDatabase(incomingDb);
+            boolean dbMoved=false;
+            boolean dbInstalled=false;
+            try{
+                int installedCount=0;
+                for(RestoreItem item:items){
+                    if(item.target.exists()){
+                        require(item.target.isFile(),"Cannot replace an existing directory");
+                        moveNew(item.target,item.previous);
+                        item.originalMoved=true;
+                    }
+                    moveNew(item.prepared,item.target);
+                    item.installed=true;
+                    if(failAfterAttachments>0&&++installedCount==failAfterAttachments)
+                        throw new IOException("Injected restore failure after an attachment");
+                }
+                // Activate SQLite LAST. A failed media/prefs step cannot expose
+                // the restored survey rows as if the complete restore succeeded.
+                if(db.exists()){
+                    moveNew(db,oldDb);
+                    dbMoved=true;
+                }
+                moveNew(incomingDb,db);
+                dbInstalled=true;
+                checkDatabase(db);
+                return "Restore installed. Close and restart LIKAS before viewing fieldwork.";
+            }catch(Exception failure){
+                // Reverse installation order. Preserve staged originals if rollback fails.
+                boolean rollbackOk=true;
+                try{
+                    if(dbInstalled){
+                        require(db.delete(),"Cannot remove incomplete restored database");
+                    }
+                    if(dbMoved)moveNew(oldDb,db);
+                }catch(Exception rollback){
+                    rollbackOk=false;failure.addSuppressed(rollback);
+                }
+                for(int i=items.size()-1;i>=0;i--){
+                    RestoreItem item=items.get(i);
+                    try{
+                        if(item.installed)
+                            require(item.target.delete(),"Cannot remove partial restore attachment");
+                        if(item.originalMoved)moveNew(item.previous,item.target);
+                    }catch(Exception rollback){
+                        rollbackOk=false;failure.addSuppressed(rollback);
+                    }
+                }
+                keepForRecovery=!rollbackOk;
+                if(keepForRecovery)failure.addSuppressed(new IOException(
+                    "Rollback incomplete. Preserve private restore staging and inspect before retrying."));
+                throw failure;
+            }
+        }finally{
+            if(incomingDb!=null&&incomingDb.exists())incomingDb.delete();
+            if(staging!=null&&!keepForRecovery)clear(staging);
+            clear(archive);
+        }
     }
 }

@@ -65,7 +65,7 @@ class Rc47DesignSystem(unittest.TestCase):
         self.assertIn("super(context,NAME,null,27)",read("FieldDb.java"))
         recorder=read("MainActivity.java")
         for label in ('"Save Observation"','"End Survey"','"Review Records"',
-                      '"Finish Complete"','"End Incomplete"','"Cancel Survey"'):
+                      '"Finish Complete"','"End Incomplete"','"Cancel Survey · Not Counted"'):
             self.assertIn(label,recorder)
 
 if __name__=="__main__":unittest.main()

@@ -3,11 +3,11 @@
 LIKAS is an offline-first Android biodiversity fieldwork and reference tool for Philippine wildlife surveys.
 
 **Active development branch:** `feature/likas-core-fieldwork-post-rc4`  
-**Current development preview:** `0.27.3-rc47-design-system-preview` (versionCode **107**)  
+**Current development preview:** `0.27.3-rc48-home-fieldwork-preview` (versionCode **108**)  
 **Application ID:** `org.phwildlife.survey.beta08`  
 **SQLite schema:** **27**
 
-**Build status (30 October 2026):** RC47 source merged in PR #44, code merge `cbe828de29cdd8047fcdfe54e3116ae0a4ebefbd`. Scientific Core QA **41024068239** passed on the active branch, including **305 Python tests**, JVM tests, signed APK and AndroidTest APK compilation. The signed code107 APK has SHA-256 `d18d32b3df3b3fedd9d411e322616c0a484b57fcbb06ac4eef91add8ce84d439`; APK v2 signed-content and original signing-certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` were independently verified. This is a development preview without physical-device/upgrade acceptance.
+**Build status (30 October 2026):** RC48 Home and Fieldwork refinement merged through PR #45 at `41828e20ba6a8226b592369ee751797516bcdaf9`. PR Scientific Core QA **41025648619** passed **310 Python tests**, JVM tests, app and AndroidTest APK compilation. Merged-branch push CI **41025896914** also passed and produced signed APK artifact **12963711954**. The independently inspected code108 APK is **9,779,924 bytes**, SHA-256 `226df5e5b751d0dba5aa8a739b9eeeab5920e69fc358f5362968e8833d68bda3`, with correct package/version and APK v2 signature verified against the original certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. This remains a development preview requiring handset and installed-upgrade acceptance.
 
 ## What LIKAS currently provides
 
@@ -19,7 +19,7 @@ The research/news feed and comprehensive ecological atlas remain planned feature
 
 ## Development and QA
 
-**RC47 design-system foundation:** Shared spacing, font, corner, touch and responsive rules now serve Library and Settings through one page scaffold; Fieldwork uses common section typography and portal cards share accessible interaction styling. Prior RC44 approved art and startup remain unchanged. See [RC47 design system](docs/LIKAS_RC47_DESIGN_SYSTEM_FOUNDATIONS.md) and [locked icon record](docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md).
+**RC48 Home and Fieldwork integration:** The RC47 shared components now serve survey setup and observation inputs. Active surveys have a dedicated Current survey section; narrow-phone capture actions reflow without removing the pinned End Survey dock. See [RC48 field UI QA](docs/LIKAS_RC48_HOME_FIELDWORK_QA.md) and [RC47 design foundations](docs/LIKAS_RC47_DESIGN_SYSTEM_FOUNDATIONS.md).
 
 
 The current scientific build workflow is [`.github/workflows/core-science-qa.yml`](.github/workflows/core-science-qa.yml). It automatically runs on application/source changes and checks source contracts, evidence, database identity, pinned signing identity, photo rights, JVM unit tests, and APK compilation. Documentation-only changes do not trigger builds. Superseded runs are canceled.
@@ -34,6 +34,7 @@ Do not add APKs, keystores, local caches, emulator captures or generated photo-r
 
 - [Project state and next-chat handoff](docs/LIKAS_PROJECT_STATE.md)
 - [Decision log](docs/LIKAS_DECISION_LOG.md)
+- [RC48 Home and Fieldwork integration](docs/LIKAS_RC48_HOME_FIELDWORK_QA.md)
 - [RC47 shared design-system foundation](docs/LIKAS_RC47_DESIGN_SYSTEM_FOUNDATIONS.md)
 - [RC46 field-layout hierarchy](docs/LIKAS_RC46_FIELD_LAYOUT_HIERARCHY_QA.md)
 - [RC44 signed UI harmony QA](docs/LIKAS_RC44_UI_HARMONY_QA.md)

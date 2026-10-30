@@ -179,10 +179,11 @@ public class WelcomeActivity extends Activity {
         if("Herpetofauna".equals(title))art="frog";
         if("Mammals".equals(title))art="mammal";
         // The third survey group occupies a single row: use a compact horizontal card.
-        View tile="Mammals".equals(title)
+        // Full-width single-column choices use compact horizontal cards.
+        boolean stacked=parent.getOrientation()==LinearLayout.VERTICAL;
+        View tile=("Mammals".equals(title)||stacked)
             ?LikasPortalUi.action(this,title,detail,art,tap)
             :LikasPortalUi.mini(this,title,detail,art,tap);
-        boolean stacked=parent.getOrientation()==LinearLayout.VERTICAL;
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(
             stacked?-1:0,-2,1);
         if(stacked)lp.bottomMargin=dp(9);

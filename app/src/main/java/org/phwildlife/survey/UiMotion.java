@@ -22,11 +22,11 @@ public final class UiMotion {
     /** Fade the page into view after layout. Never change view dimensions. */
     public static void enter(Activity a,View root){
         if(root==null)return;
-        if(!animate(a)){root.setAlpha(1f);root.setTranslationY(0f);return;}
         root.animate().cancel();
+        if(!animate(a)){root.setAlpha(1f);root.setTranslationY(0f);return;}
         root.setAlpha(0f);
         root.setTranslationY(dp(a,4));
-        root.animate().alpha(1f).translationY(0f).setDuration(180)
+        root.animate().alpha(1f).translationY(0f).setDuration(155)
             .setInterpolator(new DecelerateInterpolator()).start();
     }
 

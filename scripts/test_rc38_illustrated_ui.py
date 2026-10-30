@@ -21,7 +21,7 @@ class IllustratedUiContract(unittest.TestCase):
             self.assertIn(title,home)
         self.assertIn("Resume survey in progress",home)
         field=welcome.split("private void fieldworkHub(){",1)[1].split("/** A brief, read-only",1)[0]
-        for label in ('"Birds"','"Herpetofauna"','"Mammals"','"Custom"',
+        for label in ('"Birds"','"Herpetofauna"','"Mammals"',
                       '"History"','"Analysis"','HistoryActivity.class',
                       'DashboardActivity.class'):
             self.assertIn(label,field)
@@ -58,8 +58,8 @@ class IllustratedUiContract(unittest.TestCase):
 
     def test_app_identity_is_stable(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 101",build)
-        self.assertIn("versionName '0.27.3-rc41-field-readiness-preview'",build)
+        self.assertIn("versionCode 103",build)
+        self.assertIn("versionName '0.27.3-rc43-approved-icons-preview'",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",src("FieldDb.java"))
 

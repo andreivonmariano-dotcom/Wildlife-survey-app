@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/likas-core-fieldwork-post-rc4
+      - feature/likas-approved-green-icons-no-custom-survey
     paths-ignore:
       - 'docs/**'
       - 'README.md'
@@ -11,6 +12,7 @@ on:
   pull_request:
     branches:
       - feature/v0.27.3-startup-living-forest
+      - feature/likas-core-fieldwork-post-rc4
   workflow_dispatch:
 
 # Only the latest source revision needs a scientific-core build.
@@ -117,8 +119,8 @@ jobs:
           PY
       - name: Attach verified development APK for direct chat delivery
         if: |
-          (github.event_name == 'push' && github.ref == 'refs/heads/feature/likas-core-fieldwork-post-rc4') ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feature/likas-core-fieldwork-post-rc4')
+          (github.event_name == 'push' && (github.ref == 'refs/heads/feature/likas-core-fieldwork-post-rc4' || github.ref == 'refs/heads/feature/likas-approved-green-icons-no-custom-survey')) ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feature/likas-approved-green-icons-no-custom-survey')
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.LIKAS_ARTIFACT }}

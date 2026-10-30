@@ -1,5 +1,44 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC43 signed icons integrated and verified; APK delivered
+
+- **Approved artwork integrated:** All **18** owner-approved, green 16-bit pixel-art 512px PNGs are now committed under `app/src/main/res/drawable-nodpi/likas_approved_*.png`. `LikasPortalUi.java` maps field, library, settings, and survey tiles to exact PNG resources, keeping crisp bitmap edges and vector fallback only for unapproved additional symbols. Writhed hornbill, *Staurois natator*, and *Rusa marianna* icons are the approved Birds, Herpetofauna and Mammals surveys. No Invertebrate or Plant icon added. Frog launcher source is untouched.
+- **Custom Survey:** No new Custom Survey tile, picker, mode flag or launch extra; existing historic custom survey rows and exports remain supported by unchanged `FieldDb.java`, `MainActivity.java` and History. No SQL migration, data deletion or scientific source changes.
+- **Version:** `0.27.3-rc43-approved-icons-preview`, versionCode **103**, Android package `org.phwildlife.survey.beta08`, SQLite **27**.
+- **Successful CI:** GitHub Scientific Core QA **41003514753**, code commit `449af5fb2cb22a16c5b7333965e4b1cbab7b1789`, artifact **12954352549**; **287 Python tests passed** and Gradle JVM test, signed app APK and AndroidTest APK tasks completed `BUILD SUCCESSFUL`.
+- **Independent APK verification:** APK Signature Scheme v2 signer signature and APK signed-content SHA-256 digest verified. Certificate SHA-256 **`f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`** unchanged; APK SHA-256 **`50aa01fffca23a9516f01a36d2d7716971e2fb6831930d1bb9d83ca947872a4a`**, size **9,777,880 bytes**. Binary manifest versionCode 103 and versionName confirmed; **18** embedded PNGs checked byte-for-byte against locked archive; **58** licensed offline JPGs and pinned mammal catalog included. Launcher compiled XML differs from RC42 solely by Android resource ID relocation, with no modified source icon resources or prior bitmap assets.
+- **Delivery:** Verified direct APK at `/mnt/data/LIKAS-v0.27.3-RC43-approved-green-icons-debug.apk` in this conversation, not automatically available in other chats. Link must be reverified in each new session.
+- **Review:** PR **#40**, branch `feature/likas-approved-green-icons-no-custom-survey` into active baseline `feature/likas-core-fieldwork-post-rc4`; never merge old `main` code. Detailed QA: `docs/LIKAS_RC43_APPROVED_ICON_QA.md`.
+- **Remaining acceptance:** actual phone upgrade over old installed version preserving historic field data, 320dp/200%-font/TalkBack icon legibility, instrumentation execution, real GPS/elevation/survey use, and high-risk staged backup restore tests remain undone. This is a signed **development preview**, not field-certified production.
+
+---
+
+
+## 30 October 2026 | Signed RC42 Custom Survey retirement preview available; icon integration pending
+
+- **Signed source build:** `feature/likas-approved-green-icons-no-custom-survey`, code commit `7fe1c9828db093aa8e54c47f0c43a3bf56b57e35`, GitHub Scientific Core QA **41000265332** completed **success**, artifact **12953177274** (`LIKAS-0.27.3-rc42-custom-survey-retirement-preview-code102-debug`).
+- **Verified directly from APK:** `org.phwildlife.survey.beta08`, `versionCode=102`, `versionName=0.27.3-rc42-custom-survey-retirement-preview`, APK SHA-256 `81f2afe980adc9618ed7e661953dc6c5cbeab1f4c412235a240f5ac187a1aaa4`, length **9,669,370 bytes**. ZIP CRC passed; APK Signature Scheme v2 signature and APK signed-content SHA-256 digest independently checked. Certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches prior LIKAS preview. Included **58** bundled reference JPGs and `assets/ph_mammals_mdd_v2_5.json`.
+- **CI gates:** **283 Python tests pass**, signed Gradle debug APK and AndroidTest APK compile; original signing certificate and evidence/photo checks passed. Android instrumentation was **compiled, not run**. No on-phone upgrade of live survey data, UI rendering at 320dp/200% font, GNSS/elevation or backup fault-injection tested.
+- **User-facing change actually shipped in binary:** Custom Survey **creation tile, group picker, mode/pref and launch extra are removed**. The standard Birds, Herpetofauna, Mammals creation paths remain. Recorder, SQLite **27**, original records, history and exports were not changed. Historical custom survey records remain expected to be readable, but this needs on-device upgrade validation.
+- **Important scope limitation:** The user's **18-icon approved green pixel-art pack is LOCKED but NOT yet included or wired into the RC42 APK**. The existing frog launcher and old in-app glyphs remain. Do not advertise the icon pack as shipped or replace it with regenerated artwork.
+- **Delivery:** Direct downloadable verified RC42 APK provided in ChatGPT as `/mnt/data/LIKAS-v0.27.3-RC42-custom-survey-retirement-debug.apk`. This local conversation path is not a permanent hosting location and should not be reused in other sessions without verification.
+- **Project branch and review:** RC42 is currently on proposed PR **#40**, not merged into `feature/likas-core-fieldwork-post-rc4`; the active branch still contains the verified RC41 source. The PR is still draft pending the 18-image binary asset import and full device checks. Build recipe on PR branch automatically attaches a signed QA artifact.
+- **Next concrete task:** Import only the approved, SHA-256 locked 18 icons from `LIKAS_APPROVED_18_GREEN_ICONS_LOCKED_2026-10-30.zip` into Android resources, wire correct icons without touching the frog launcher, and rebuild a versionCode greater than 102 after regression/device review. Do not delete historical survey data.
+
+---
+
+
+## 30 October 2026 | Locked 18-icon system and Custom Survey retirement proposal
+
+- **Owner-approved visual lock:** Original frog launcher stays unchanged. Exactly **18** green retro pixel-art in-app icon assets are approved: 15 existing tiles plus writhed hornbill, *Staurois natator* and *Rusa marianna* survey artwork. Plant and invertebrate icons are excluded. The new approved ZIP is `LIKAS_APPROVED_18_GREEN_ICONS_LOCKED_2026-10-30.zip` (SHA-256 `e0d91a0ca47f59c0e9a414d53f4d9b7e26f18bd068461ec6a3419976ca64ddc3`), with individual file digests in its manifest. Assets remain outside the GitHub repo and signed app pending binary import, as recorded in `docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md`.
+- **User choice:** Remove the new **Custom Survey** workflow, including its setup tile, group picker, mode and saved mode preference; continue only Birds, Herpetofauna, Mammals as survey entry groups. Do **not** remove existing custom survey data, records, research files, station/spacing controls, historic methods, backups or exports.
+- **Code proposal:** Branch `feature/likas-approved-green-icons-no-custom-survey` removes entry/creation UI in `WelcomeActivity.java`, falls back safely from older saved Custom screen preference, and adds `scripts/test_rc42_custom_survey_retirement.py`. Preserves `MainActivity.java`, `FieldDb.java`, History and export implementations. This is source-only and has **not** been shipped as a new APK.
+- **Current verified signed APK:** Remains RC41, versionCode **101**, code commit `8d2918665eccd8d6a037d616cd58a9a9dde6cf96`, CI run `40908133636`. Future release needs actual APK build, original signer, icons in Android resources, and phone/upgrade validation.
+- **Next:** Validate source changes in Android CI and test archive compatibility. Import only the 18 locked PNGs after verifying their SHA-256 from the owner pack. Keep launcher untouched. No insect/plant tile. Do not label artwork integrated until it appears in verified built APK.
+
+---
+
+
 ## 30 October 2026 | RC41 signed APK independently verified and delivered
 
 - **Code and CI:** Active app-source commit `8d2918665eccd8d6a037d616cd58a9a9dde6cf96` (merged PR #39, corrected the two obsolete UI assertions). GitHub Scientific Core QA run **40908133636** completed **success**, with artifact **12912227441** (`LIKAS-0.27.3-rc41-field-readiness-preview-code101-debug`). This audit did not change Android source, scientific records, survey data or signing settings.

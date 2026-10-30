@@ -40,7 +40,7 @@ class Rc40ScreenAudit(unittest.TestCase):
         self.assertNotIn('"Go to the field."',field)
         self.assertNotIn('step("NEW"',field)
         self.assertIn('recentSurveySummary()',field)
-        for key in ("home","fieldwork","setup","custom"):
+        for key in ("home","fieldwork","setup"):
             self.assertIn('scrollTop();',home)
         self.assertIn('shellScroll.post(()->shellScroll.scrollTo(0,0))',home)
 
@@ -118,8 +118,8 @@ class Rc40ScreenAudit(unittest.TestCase):
 
     def test_upgrade_keeps_signed_app_and_database_identity(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 101",build)
-        self.assertIn("0.27.3-rc41-field-readiness-preview",build)
+        self.assertIn("versionCode 103",build)
+        self.assertIn("0.27.3-rc43-approved-icons-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
 

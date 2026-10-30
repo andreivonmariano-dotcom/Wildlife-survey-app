@@ -5,7 +5,7 @@ public final class FieldLayoutPolicy {
     private FieldLayoutPolicy(){}
     // Portal rows must also respond to width, not only Android's large-text setting.
     public static boolean stackPortalPair(int availableWidthDp,float fontScale){
-        return availableWidthDp<390||fontScale>=1.30f;
+        return LikasDesignSystem.useSingleColumn(availableWidthDp,fontScale);
     }
     public static boolean stackSurveyTiles(int availableWidthDp,float fontScale){
         return stackPortalPair(availableWidthDp,fontScale);

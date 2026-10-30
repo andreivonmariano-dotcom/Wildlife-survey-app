@@ -61,7 +61,7 @@ class LibraryPolishContract(unittest.TestCase):
         for forbidden in ("getWritableDatabase(", "execSQL(", "deleteDatabase("):
             self.assertNotIn(forbidden,source)
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 106",gradle)
+        self.assertIn("versionCode 107",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
 

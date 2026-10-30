@@ -256,22 +256,33 @@ public final class LikasDiscoveryActivity extends Activity {
     private void shelf(String title,ArrayList<JSONObject> data,boolean isHabitat){
         if(data.isEmpty())return;
         LinearLayout header=new LinearLayout(this);
-        header.setOrientation(LinearLayout.HORIZONTAL);
-        header.setGravity(Gravity.CENTER_VERTICAL);
+        // At enlarged font sizes a heading such as Conservation must not be
+        // squeezed between the card counter and two fixed-width navigation taps.
+        final boolean stackedHeader=largeText();
+        header.setOrientation(stackedHeader?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        header.setGravity(stackedHeader?Gravity.LEFT:Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams headerLp=new LinearLayout.LayoutParams(-1,-2);
         headerLp.topMargin=dp(20);headerLp.bottomMargin=dp(9);
         content.addView(header,headerLp);
         TextView heading=note(title,19,UiKit.FOREST,true);
-        header.addView(heading,new LinearLayout.LayoutParams(0,-2,1));
+        header.addView(heading,new LinearLayout.LayoutParams(stackedHeader?-1:0,-2,
+            stackedHeader?0:1f));
+        LinearLayout controls=new LinearLayout(this);
+        controls.setOrientation(LinearLayout.HORIZONTAL);
+        controls.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams controlsLp=new LinearLayout.LayoutParams(
+            stackedHeader?-1:-2,-2);
+        if(stackedHeader)controlsLp.topMargin=dp(4);
+        header.addView(controls,controlsLp);
         TextView position=note("1 / "+data.size(),12,UiKit.MUTED,false);
         position.setGravity(Gravity.CENTER);
-        header.addView(position,new LinearLayout.LayoutParams(dp(51),dp(48)));
+        controls.addView(position,new LinearLayout.LayoutParams(dp(56),dp(48)));
         Button previous=UiKit.button(this,"‹","quiet");
         Button next=UiKit.button(this,"›","quiet");
         previous.setContentDescription("Previous "+title+" card");
         next.setContentDescription("Next "+title+" card");
-        header.addView(previous,new LinearLayout.LayoutParams(dp(48),dp(48)));
-        header.addView(next,new LinearLayout.LayoutParams(dp(48),dp(48)));
+        controls.addView(previous,new LinearLayout.LayoutParams(dp(48),dp(48)));
+        controls.addView(next,new LinearLayout.LayoutParams(dp(48),dp(48)));
         String railKey=(isHabitat?"habitats:":"species:")+title;
         int restoreOffset=railOffsets.getOrDefault(railKey,0);
         HorizontalScrollView scroll=new HorizontalScrollView(this);
@@ -564,7 +575,7 @@ public final class LikasDiscoveryActivity extends Activity {
         searchInput=new EditText(this);
         searchInput.setSingleLine(true);
         searchInput.setTextSize(15);
-        searchInput.setHint("Find name or habitat");
+        searchInput.setHint(largeText()?"Search":"Find name or habitat");
         searchInput.setInputType(InputType.TYPE_CLASS_TEXT);
         searchInput.setBackgroundColor(Color.TRANSPARENT);
         searchInput.setContentDescription("Search illustrated offline species and habitat accounts");

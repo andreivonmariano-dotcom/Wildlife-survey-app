@@ -66,7 +66,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         self.assertIn("markTime.setOnClickListener(v->markDetection())",recorder)
         self.assertIn("markButton.setOnClickListener(v->openCamera())",recorder)
         self.assertIn("quickCapture.setOnClickListener(v->{",recorder)
-        self.assertIn("UiKit.fieldInput(Activity a,TextView input)",src("UiKit.java"))
+        self.assertIn("public static void fieldInput(Activity a,TextView input)",src("UiKit.java"))
         self.assertIn("input.setHintTextColor(MUTED)",src("UiKit.java"))
 
     def test_pinned_survey_lifecycle_and_release_identity_are_unchanged(self):

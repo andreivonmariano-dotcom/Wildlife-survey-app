@@ -39,12 +39,12 @@ class Rc43ApprovedIconLock(unittest.TestCase):
         for name,digest in APPROVED.items():
             data=(RES/name).read_bytes()
             self.assertEqual(hashlib.sha256(data).hexdigest(),digest,name)
-            self.assertEqual(data[:8],b"\\x89PNG\\r\\n\\x1a\\n")
+            self.assertEqual(data[:8],b"\x89PNG\r\n\x1a\n")
             self.assertEqual(struct.unpack(">II",data[16:24]),(512,512))
 
     def test_navigation_uses_approved_bitmaps_and_crisp_sampling(self):
         ui=UI.read_text(encoding="utf-8")
-        mapped=set(re.findall(r'R\\.drawable\\.(likas_approved_[a-z_]+)',ui))
+        mapped=set(re.findall(r'R\.drawable\.(likas_approved_[a-z_]+)',ui))
         self.assertEqual(mapped,{n[:-4] for n in APPROVED})
         self.assertIn("addApprovedIcon(art,a,icon,field?CREAM:CANOPY,62,36)",ui)
         self.assertIn("addApprovedIcon(art,a,symbol,CANOPY,49,30)",ui)

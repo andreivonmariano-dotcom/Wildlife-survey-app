@@ -74,6 +74,11 @@ sleep 1
 capture rc53-fieldwork-320-bottom2
 tap_description "Show additional field tools"
 capture rc53-fieldwork-320-tools-expanded
+# The five expanded options follow the button in the scroll view, so check
+# them AFTER an ordinary swipe rather than assuming they are immediately onscreen.
+adb shell input swipe 150 595 150 190 480
+sleep 1
+capture rc53-fieldwork-320-tools-expanded-scrolled
 
 python3 - <<'PY'
 from xml.etree import ElementTree as ET
@@ -83,7 +88,8 @@ captures={
  "412":["rc53-fieldwork-412-font130","rc53-fieldwork-412-scrolled"],
  "320":["rc53-fieldwork-320-font200","rc53-fieldwork-320-mid",
         "rc53-fieldwork-320-bottom","rc53-fieldwork-320-bottom2",
-        "rc53-fieldwork-320-tools-expanded"]
+        "rc53-fieldwork-320-tools-expanded",
+        "rc53-fieldwork-320-tools-expanded-scrolled"]
 }
 for width,paths in captures.items():
     descriptions=[]

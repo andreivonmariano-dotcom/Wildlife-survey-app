@@ -3,9 +3,9 @@ set -euo pipefail
 mkdir -p emulator-qa
 PKG=org.phwildlife.survey.beta08
 adb install -r app/build/outputs/apk/debug/app-debug.apk > emulator-qa/install.txt 2>&1
-adb shell wm size 360x800
+adb shell wm size 320x720
 adb shell wm density 160
-adb shell settings put system font_scale 1.0
+adb shell settings put system font_scale 2.0
 capture() {
   local name="$1"
   adb shell screencap -p /sdcard/likas-screen.png
@@ -14,31 +14,70 @@ capture() {
   adb pull /sdcard/likas-hierarchy.xml "emulator-qa/${name}.xml" >/dev/null 2>&1 || true
   adb shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' > "emulator-qa/${name}-foreground.txt" || true
 }
-visit() {
-  local screen="$1"
-  local label="$2"
-  echo "Starting $screen" | tee -a emulator-qa/summary.txt
-  adb shell run-as "$PKG" /system/bin/am start -n "$PKG/org.phwildlife.survey.$screen" > "emulator-qa/${screen}-start.txt" 2>&1 || true
-  sleep 3
-  capture "$label"
+tap_match() {
+  local name="$1"
+  local attempt=0
+  while [ "$attempt" -lt 5 ]; do
+    adb shell uiautomator dump /sdcard/likas-current.xml >/dev/null 2>&1 || true
+    adb pull /sdcard/likas-current.xml emulator-qa/live.xml >/dev/null 2>&1 || true
+    local xy
+    xy=$(python3 - "$name" <<'PY'
+import re,sys,xml.etree.ElementTree as ET
+try:
+ root=ET.parse('emulator-qa/live.xml').getroot()
+ term=sys.argv[1].lower()
+ hits=[]
+ for n in root.iter('node'):
+  a=n.attrib
+  value=(a.get('text','')+' '+a.get('content-desc','')).lower()
+  if term in value:
+   b=re.findall(r'\d+',a.get('bounds',''))
+   if len(b)==4:
+    x1,y1,x2,y2=map(int,b)
+    hits.append((0 if a.get('clickable')=='true' else 1,(x1+x2)//2,(y1+y2)//2,value))
+ if hits:
+  _,x,y,_=sorted(hits)[0]
+  print(x,y)
+except Exception:
+ pass
+PY
+)
+    if [ -n "$xy" ]; then
+      echo "tap $name at $xy" >> emulator-qa/navigation.txt
+      adb shell input tap $xy
+      sleep 3
+      return 0
+    fi
+    adb shell input swipe 140 625 140 205 400
+    sleep 2
+    attempt=$((attempt+1))
+  done
+  echo "NOT FOUND: $name" >> emulator-qa/navigation.txt
+  return 1
 }
-adb shell am start -n "$PKG/org.phwildlife.survey.LikasLaunchActivity" > emulator-qa/launch.txt 2>&1 || true
-sleep 7
-capture "01-after-launch-360dp"
-adb shell input swipe 180 685 180 165 520
-sleep 2
-capture "01b-home-scrolled-360dp"
-visit WelcomeActivity 02-home-360dp
-visit Rc7SpeciesLibraryActivity 03-species-library-360dp
-visit HabitatRecordsActivity 04-habitats-360dp
-visit HistoryActivity 05-history-360dp
-visit DashboardActivity 06-dashboard-360dp
-visit LikasLibraryActivity 07-library-360dp
-visit MainActivity 08-recorder-entry-360dp
-adb shell settings put system font_scale 2.0
-adb shell wm size 320x720
-visit WelcomeActivity 09-home-320dp-font200
-visit Rc7SpeciesLibraryActivity 10-species-library-320dp-font200
-visit HistoryActivity 11-history-320dp-font200
-adb logcat -d -t 800 > emulator-qa/logcat-tail.txt || true
-echo 'Emulator screenshots, hierarchy files and launch logs collected.' | tee -a emulator-qa/summary.txt
+home() {
+  adb shell am force-stop "$PKG" || true
+  adb shell am start -n "$PKG/org.phwildlife.survey.LikasLaunchActivity" >> emulator-qa/launch.txt 2>&1
+  sleep 8
+}
+home
+capture 01-home-320-font200
+tap_match "Open Fieldwork" || true
+capture 02-fieldwork-320-font200
+tap_match "History" || true
+capture 03-history-from-fieldwork
+home
+tap_match "Open Fieldwork" || true
+tap_match "Birds" || true
+capture 04-bird-setup
+home
+tap_match "Open Library" || true
+capture 05-library-hub
+tap_match "Species" || true
+capture 06-species-through-library
+home
+tap_match "Open Library" || true
+tap_match "Habitat" || true
+capture 07-habitat-through-library
+adb logcat -d -t 1000 > emulator-qa/logcat-tail.txt || true
+echo 'Navigation through visible app controls completed.' >> emulator-qa/navigation.txt

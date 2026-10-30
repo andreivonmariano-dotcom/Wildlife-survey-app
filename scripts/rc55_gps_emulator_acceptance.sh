@@ -5,6 +5,7 @@ mkdir -p emulator-qa
 adb install -r app/build/outputs/apk/debug/app-debug.apk > emulator-qa/install.txt 2>&1
 adb shell pm grant "$PKG" android.permission.ACCESS_COARSE_LOCATION
 adb shell pm grant "$PKG" android.permission.ACCESS_FINE_LOCATION
+adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS
 # Ensure an explicit GPS-disabled state, never synthesize a location.
 adb shell cmd location set-location-enabled false \
   || adb shell settings put secure location_mode 0

@@ -1,5 +1,19 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | Signed RC42 Custom Survey retirement preview available; icon integration pending
+
+- **Signed source build:** `feature/likas-approved-green-icons-no-custom-survey`, code commit `7fe1c9828db093aa8e54c47f0c43a3bf56b57e35`, GitHub Scientific Core QA **41000265332** completed **success**, artifact **12953177274** (`LIKAS-0.27.3-rc42-custom-survey-retirement-preview-code102-debug`).
+- **Verified directly from APK:** `org.phwildlife.survey.beta08`, `versionCode=102`, `versionName=0.27.3-rc42-custom-survey-retirement-preview`, APK SHA-256 `81f2afe980adc9618ed7e661953dc6c5cbeab1f4c412235a240f5ac187a1aaa4`, length **9,669,370 bytes**. ZIP CRC passed; APK Signature Scheme v2 signature and APK signed-content SHA-256 digest independently checked. Certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches prior LIKAS preview. Included **58** bundled reference JPGs and `assets/ph_mammals_mdd_v2_5.json`.
+- **CI gates:** **283 Python tests pass**, signed Gradle debug APK and AndroidTest APK compile; original signing certificate and evidence/photo checks passed. Android instrumentation was **compiled, not run**. No on-phone upgrade of live survey data, UI rendering at 320dp/200% font, GNSS/elevation or backup fault-injection tested.
+- **User-facing change actually shipped in binary:** Custom Survey **creation tile, group picker, mode/pref and launch extra are removed**. The standard Birds, Herpetofauna, Mammals creation paths remain. Recorder, SQLite **27**, original records, history and exports were not changed. Historical custom survey records remain expected to be readable, but this needs on-device upgrade validation.
+- **Important scope limitation:** The user's **18-icon approved green pixel-art pack is LOCKED but NOT yet included or wired into the RC42 APK**. The existing frog launcher and old in-app glyphs remain. Do not advertise the icon pack as shipped or replace it with regenerated artwork.
+- **Delivery:** Direct downloadable verified RC42 APK provided in ChatGPT as `/mnt/data/LIKAS-v0.27.3-RC42-custom-survey-retirement-debug.apk`. This local conversation path is not a permanent hosting location and should not be reused in other sessions without verification.
+- **Project branch and review:** RC42 is currently on proposed PR **#40**, not merged into `feature/likas-core-fieldwork-post-rc4`; the active branch still contains the verified RC41 source. The PR is still draft pending the 18-image binary asset import and full device checks. Build recipe on PR branch automatically attaches a signed QA artifact.
+- **Next concrete task:** Import only the approved, SHA-256 locked 18 icons from `LIKAS_APPROVED_18_GREEN_ICONS_LOCKED_2026-10-30.zip` into Android resources, wire correct icons without touching the frog launcher, and rebuild a versionCode greater than 102 after regression/device review. Do not delete historical survey data.
+
+---
+
+
 ## 30 October 2026 | Locked 18-icon system and Custom Survey retirement proposal
 
 - **Owner-approved visual lock:** Original frog launcher stays unchanged. Exactly **18** green retro pixel-art in-app icon assets are approved: 15 existing tiles plus writhed hornbill, *Staurois natator* and *Rusa marianna* survey artwork. Plant and invertebrate icons are excluded. The new approved ZIP is `LIKAS_APPROVED_18_GREEN_ICONS_LOCKED_2026-10-30.zip` (SHA-256 `e0d91a0ca47f59c0e9a414d53f4d9b7e26f18bd068461ec6a3419976ca64ddc3`), with individual file digests in its manifest. Assets remain outside the GitHub repo and signed app pending binary import, as recorded in `docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md`.

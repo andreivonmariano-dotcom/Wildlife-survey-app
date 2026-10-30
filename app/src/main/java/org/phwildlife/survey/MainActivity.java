@@ -227,7 +227,9 @@ public class MainActivity extends Activity implements LocationListener {
         home.setTextSize(18);
         top.addView(home,new LinearLayout.LayoutParams(dp(48),dp(48)));
         home.setOnClickListener(v->navigateHome());
-        TextView title=label(profile+" Survey",largeText?17:19,true);
+        String screenTitle=largeText&&"Herpetofauna".equals(profile)?
+            "Herp survey":profile+" Survey";
+        TextView title=label(screenTitle,largeText?17:19,true);
         title.setGravity(Gravity.CENTER_VERTICAL);
         title.setMaxLines(2);
         title.setPadding(dp(LikasDesignSystem.SPACE_MD),0,dp(LikasDesignSystem.SPACE_SM),0);
@@ -562,7 +564,7 @@ public class MainActivity extends Activity implements LocationListener {
         minus.setContentDescription("Decrease individuals or evidence count");
         countLine.addView(minus,new LinearLayout.LayoutParams(dp(52),dp(touchDp)));
         countView=label("1",19,true);countView.setGravity(Gravity.CENTER);
-        countView.setContentDescription("Individuals or evidence count");
+        countView.setContentDescription("1 individuals or evidence items");
         countLine.addView(countView,new LinearLayout.LayoutParams(dp(48),-2));
         Button plus=UiKit.button(this,"+","secondary");
         plus.setContentDescription("Increase individuals or evidence count");
@@ -2515,6 +2517,7 @@ public class MainActivity extends Activity implements LocationListener {
             distanceEntry.setText(d.optString("distance",""));
             if(!d.optString("line","").isEmpty())lineEntry.setText(d.optString("line",""));
             count=d.optInt("count",1);countView.setText(""+count);
+            countView.setContentDescription(count+" individuals or evidence items");
             detectionSpinner.setSelection(d.optInt("detection",0));
             habitatEntry.setText(d.optString("habitat",""));
             tempEntry.setText(d.optString("air_temp",""));
@@ -2618,6 +2621,17 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void updateGpsLabel(Location fix){
         if(gpsView==null)return;
+        // Never announce "searching" when Android has disabled the receiver.
+        if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED||
+            locations==null||!locations.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            boolean permissionMissing=checkSelfPermission(
+                Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED;
+            gpsView.setText(permissionMissing?
+                "Precise GPS permission needed · details":"Device GPS off · details");
+            gpsView.setTextColor(UiKit.AMBER);
+            gpsView.setContentDescription(gpsView.getText()+". Open GPS details");
+            return;
+        }
         if(fix==null||!fix.hasAccuracy()){
             gpsView.setText(TrackService.wasStopped(this)?"GPS stopped · restart":
                 "GPS searching · details");

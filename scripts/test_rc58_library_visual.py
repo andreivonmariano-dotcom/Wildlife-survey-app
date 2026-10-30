@@ -24,8 +24,8 @@ class Rc58LibraryVisual(unittest.TestCase):
             self.assertIn(label,hub)
     def test_version_and_data_identity(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 118",build)
-        self.assertIn("0.27.3-rc58-library-discover-preview",build)
+        self.assertIn("versionCode 119",build)
+        self.assertIn("0.27.3-rc59-library-hub-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
 if __name__=="__main__":unittest.main()

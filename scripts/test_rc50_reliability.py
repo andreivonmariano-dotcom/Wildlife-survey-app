@@ -59,8 +59,8 @@ class Rc50Reliability(unittest.TestCase):
 
     def test_version_identity_and_schema_unchanged(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 115",gradle)
-        self.assertIn("0.27.3-rc55-gps-preflight-preview",gradle)
+        self.assertIn("versionCode 116",gradle)
+        self.assertIn("0.27.3-rc56-live-recorder-preview",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",contents("FieldDb.java"))
 

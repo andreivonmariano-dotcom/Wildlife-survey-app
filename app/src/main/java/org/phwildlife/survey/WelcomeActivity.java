@@ -260,16 +260,23 @@ public class WelcomeActivity extends Activity {
             startActivity(new Intent(this,SitesActivity.class)));
         LinearLayout shortcutRow=new LinearLayout(this);
         shortcutRow.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        View history=LikasPortalUi.mini(this,"History",recentSurveySummary(),"history",
-            ()->startActivity(new Intent(this,HistoryActivity.class)));
+        boolean stacked=stackPortalPairs();
+        View history=stacked?
+            LikasPortalUi.action(this,"History",recentSurveySummary(),"history",
+                ()->startActivity(new Intent(this,HistoryActivity.class))):
+            LikasPortalUi.mini(this,"History",recentSurveySummary(),"history",
+                ()->startActivity(new Intent(this,HistoryActivity.class)));
         shortcutRow.addView(history,new LinearLayout.LayoutParams(
-            stackPortalPairs()?-1:0,-2,1));
-        View dashboard=LikasPortalUi.mini(this,"Analysis","Survey data","chart",
-            ()->startActivity(new Intent(this,DashboardActivity.class)));
+            stacked?-1:0,-2,1));
+        View dashboard=stacked?
+            LikasPortalUi.action(this,"Analysis","Survey data","chart",
+                ()->startActivity(new Intent(this,DashboardActivity.class))):
+            LikasPortalUi.mini(this,"Analysis","Survey data","chart",
+                ()->startActivity(new Intent(this,DashboardActivity.class)));
         LinearLayout.LayoutParams dashLp=new LinearLayout.LayoutParams(
-            stackPortalPairs()?-1:0,-2,1);
-        if(stackPortalPairs())dashLp.topMargin=dp(9);
-        else dashLp.leftMargin=dp(10);
+            stacked?-1:0,-2,1);
+        if(stacked)dashLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+        else dashLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         shortcutRow.addView(dashboard,dashLp);
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
         shortcutsLp.topMargin=dp(10);main.addView(shortcutRow,shortcutsLp);

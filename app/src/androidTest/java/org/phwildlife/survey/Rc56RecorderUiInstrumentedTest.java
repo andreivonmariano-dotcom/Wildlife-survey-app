@@ -1,5 +1,10 @@
 package org.phwildlife.survey;
 import android.content.Intent;
+import android.content.ContentValues;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -17,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import static org.junit.Assert.*;
 
@@ -46,9 +52,30 @@ public final class Rc56RecorderUiInstrumentedTest {
         View v=a.getWindow().getDecorView();
         Bitmap image=Bitmap.createBitmap(v.getWidth(),v.getHeight(),Bitmap.Config.ARGB_8888);
         v.draw(new Canvas(image));
-        try(FileOutputStream out=new FileOutputStream(new File(a.getFilesDir(),name))){
-            assertTrue(image.compress(Bitmap.CompressFormat.PNG,95,out));
-        }catch(Exception ex){throw new IllegalStateException(ex);}
+        // The Gradle instrumentation runner removes the disposable test package;
+        // store screenshots in public Pictures so the AVD evidence survives uninstall.
+        if(Build.VERSION.SDK_INT>=29){
+            ContentValues data=new ContentValues();
+            data.put(MediaStore.Images.Media.DISPLAY_NAME,name);
+            data.put(MediaStore.Images.Media.MIME_TYPE,"image/png");
+            data.put(MediaStore.Images.Media.RELATIVE_PATH,
+                Environment.DIRECTORY_PICTURES+"/LIKAS_RC56");
+            data.put(MediaStore.Images.Media.IS_PENDING,1);
+            Uri target=a.getContentResolver().insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,data);
+            assertNotNull("MediaStore screenshot destination",target);
+            try(OutputStream out=a.getContentResolver().openOutputStream(target)){
+                assertNotNull(out);
+                assertTrue(image.compress(Bitmap.CompressFormat.PNG,95,out));
+            }catch(Exception ex){throw new IllegalStateException(ex);}
+            ContentValues done=new ContentValues();
+            done.put(MediaStore.Images.Media.IS_PENDING,0);
+            a.getContentResolver().update(target,done,null,null);
+        }else{
+            try(FileOutputStream out=new FileOutputStream(new File(a.getFilesDir(),name))){
+                assertTrue(image.compress(Bitmap.CompressFormat.PNG,95,out));
+            }catch(Exception ex){throw new IllegalStateException(ex);}
+        }
         image.recycle();
     }
     private static void footer(MainActivity a){

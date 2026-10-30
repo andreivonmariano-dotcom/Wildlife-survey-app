@@ -21,7 +21,7 @@ class ReleaseScreenAndPerfQA(unittest.TestCase):
         kit=read("UiKit.java")
         policy=read("FieldLayoutPolicy.java")
         self.assertIn("LikasPortalUi.mini(this,title,detail,art,tap)",home)
-        self.assertIn("second.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL)",home)
+        self.assertIn("second.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL)",home)
         self.assertIn("FieldLayoutPolicy.stackSpeciesEntry",recorder)
         self.assertIn("FieldLayoutPolicy.saveHeightDp",recorder)
         self.assertIn("FieldLayoutPolicy.actionHeightDp",recorder)

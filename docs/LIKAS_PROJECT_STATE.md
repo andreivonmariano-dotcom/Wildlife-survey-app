@@ -1,5 +1,18 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC44 rounded pixel icons, palette harmony and safe transitions delivered
+
+- **App code:** `feature/likas-rc44-ui-harmony` PR #41 based on active `feature/likas-core-fieldwork-post-rc4`, tested code commit `31f04de4b4041d1c18277168b7ca4c1727eb19ea`. VersionName **`0.27.3-rc44-ui-harmony-preview`**, versionCode **104**, original package `org.phwildlife.survey.beta08`, SQLite **27**. No survey methods, database schema, conservation references, survey outcomes or field-record files were rewritten.
+- **UI changes:** View-layer clipping of locked square icons into rounded holders (64dp large, 52dp mini, 50dp action), no PNG editing. Main portal gradients, typography/color tokens and borders harmonized under forest-greens `UiKit` with warm light cards. Mammals becomes a space-efficient horizontal survey card; Data check uses the approved Reports image. Remaining unapproved conservation/audio glyphs use the rounded visual treatment without pretending to be approved wildlife assets.
+- **Motion:** 155ms Home, Fieldwork and survey setup fade transitions; 160ms optional field-tools and study-rules reveal. Uses existing `Less motion`, Android animator-disable and large-font guards; main survey recorder remains unaffected.
+- **Verified signed GitHub CI:** Scientific Core QA **41006102621**, artifact **12955084788**, **292 Python tests pass**, Gradle JVM test and both app/APK instrumentation compilation succeed. Android instrumentation has **not** been run on a device.
+- **Independent APK verification:** `/mnt/data/LIKAS-v0.27.3-RC44-ui-harmony-debug.apk`, **9,777,896 bytes**, SHA-256 **`0f4c710bd91144e0115d2d71cbe562d1b3ecfd6a3db299c9dfc5f127d56c471e`**. Binary manifest versionCode 104 and package correct; APK Signature Scheme v2 signed-content digest and signature verified using preserved certificate SHA-256 **`f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`**. All **18** approved icon PNGs, original frog launcher resources and pre-existing bitmap images byte-for-byte unchanged relative to RC43. **58** offline JPGs and mammal catalog bundled.
+- **Remaining:** physical upgrade retaining existing records, usability at 320dp / 200% font, TalkBack, motion feel on handset, field GPS, and partial-restore safety tests. No field-readiness or production-release claim. Direct APK path belongs only to this chat; later sessions must independently verify or reattach it.
+- **QA record:** `docs/LIKAS_RC44_UI_HARMONY_QA.md`. Owner visual request accepted and logged; do not regenerate approved icon artwork.
+
+---
+
+
 ## 30 October 2026 | RC43 merged into active development branch and rebuilt successfully
 
 - **PR #40 merged** into authoritative active Android branch `feature/likas-core-fieldwork-post-rc4`; merge commit **`0786a482b79bbc5fb80113e6f34c1d095e57e29b`**. The divergent historical `main` app code remains untouched.

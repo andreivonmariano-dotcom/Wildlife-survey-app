@@ -24,10 +24,16 @@ public final class LikasSettingsActivity extends Activity {
             Class<?> secondTarget){
         LinearLayout row=new LinearLayout(this);
         row.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        View a=LikasPortalUi.mini(this,first,firstHint,firstArt,
-            ()->startActivity(new Intent(this,firstTarget)));
-        View b=LikasPortalUi.mini(this,second,secondHint,secondArt,
-            ()->startActivity(new Intent(this,secondTarget)));
+        View a=stackPortalPairs()?
+            LikasPortalUi.action(this,first,firstHint,firstArt,
+                ()->startActivity(new Intent(this,firstTarget))):
+            LikasPortalUi.mini(this,first,firstHint,firstArt,
+                ()->startActivity(new Intent(this,firstTarget)));
+        View b=stackPortalPairs()?
+            LikasPortalUi.action(this,second,secondHint,secondArt,
+                ()->startActivity(new Intent(this,secondTarget))):
+            LikasPortalUi.mini(this,second,secondHint,secondArt,
+                ()->startActivity(new Intent(this,secondTarget)));
         LinearLayout.LayoutParams left=new LinearLayout.LayoutParams(
             stackPortalPairs()?-1:0,-2,1);
         left.bottomMargin=dp(10);row.addView(a,left);

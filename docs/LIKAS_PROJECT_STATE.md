@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC46 second layout pass merged, build acceptance in progress
+
+- **Source:** PR #43 merged at `d8b19490347b643fe8258b6506c3f682f3f385fa` into active `feature/likas-core-fieldwork-post-rc4`. Android versionName `0.27.3-rc46-field-layout-hierarchy-preview`, versionCode **106**, app ID `org.phwildlife.survey.beta08`, SQLite **27**.
+- **Implemented layout:** Home uses a smaller dynamic hero during an active survey and preserves a prominent Resume action; hero text now determines height and avoids frog art at enlarged text. Recorder makes temporary room for keyboard input by hiding only noncritical top navigation/progress and keeps timers, GPS warnings and pinned Save/Review/End. Survey GPS preflight shows retry, settings and cancel before optional satellite diagnostics, now a collapsible smaller sky chart.
+- **QA:** PR Scientific Core QA **41021452529** passed **301 Python tests**, JVM tests, Android debug APK and AndroidTest compilation. Active-branch push run **41021671168** initiated from merge; verify final result and APK independently before delivery. See `docs/LIKAS_RC46_FIELD_LAYOUT_HIERARCHY_QA.md`.
+- **Protected:** All 18 locked icons, frog launcher, source-backed ecological and taxonomic data, GPS quality contract, all survey states and previous records unchanged. No SQLite upgrade. Original signing continuity remains mandatory.
+- **Pending:** live 320dp/200%-font screenshots, recorder keyboard resizing, TalkBack, field GPS/no-fix flow, in-place RC45-to-RC46 installation preserving data. Current preview is not field-accepted.
+- **Separate open risks:** interrupted backup restore may leave partial media; legacy NULL-outcome complete surveys may be excluded from derived exports. Do not label RC46 a resolution of these defects.
+
+---
+
 ## 30 October 2026 | RC45 responsive layout merged, signed preview verified
 
 - **Active code:** PR **#42**, merge **`e5f27c5efe4a0012543d39dd642a87a0c4d096e9`** on `feature/likas-core-fieldwork-post-rc4`. App `0.27.3-rc45-responsive-layout-preview`, **versionCode 105**, original app ID `org.phwildlife.survey.beta08`, schema **27**.

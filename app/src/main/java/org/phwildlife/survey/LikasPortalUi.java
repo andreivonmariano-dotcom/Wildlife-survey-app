@@ -103,12 +103,16 @@ public final class LikasPortalUi {
     }
 
     public static View hero(Activity a){
+        return hero(a,false);
+    }
+    /** Active surveys receive a smaller header; font-scaled text controls actual height. */
+    public static View hero(Activity a,boolean compact){
         FrameLayout cover=new FrameLayout(a);
         GradientDrawable backdrop=new GradientDrawable(GradientDrawable.Orientation.TL_BR,
             new int[]{DEEP,CANOPY,UiKit.FOREST});
         backdrop.setCornerRadius(dp(a,26));cover.setBackground(backdrop);
         cover.setClipToOutline(true);
-        cover.setMinimumHeight(dp(a,151));
+        cover.setMinimumHeight(dp(a,compact?88:151));
         // Vector-only contour lines gently evoke a shaded forest canopy.
         View contours=new View(a){
             private final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -132,16 +136,24 @@ public final class LikasPortalUi {
         };
         cover.addView(contours,new FrameLayout.LayoutParams(-1,-1));
         LinearLayout words=new LinearLayout(a);words.setOrientation(LinearLayout.VERTICAL);
-        words.setPadding(dp(a,22),dp(a,20),dp(a,18),dp(a,19));
-        TextView mark=text(a,"LIKAS   /   PH",12,LIME,true);mark.setLetterSpacing(.14f);
+        boolean showFrog=a.getResources().getConfiguration().fontScale<1.30f;
+        // Reserve illustration clearance only when art is drawn beside the text.
+        words.setPadding(dp(a,22),dp(a,compact?12:20),
+            dp(a,showFrog?76:20),dp(a,compact?12:19));
+        TextView mark=text(a,compact?"LIKAS":"LIKAS   /   PH",
+            compact?22:12,compact?CREAM:LIME,true);
+        mark.setLetterSpacing(compact?.05f:.14f);
         words.addView(mark);
-        TextView title=text(a,"Philippine wildlife",26,CREAM,true);
+        TextView title=text(a,"Philippine wildlife",compact?14:26,
+            compact?Color.rgb(222,235,218):CREAM,!compact);
         LinearLayout.LayoutParams titleLp=new LinearLayout.LayoutParams(-1,-2);
-        titleLp.topMargin=dp(a,19);words.addView(title,titleLp);
-        TextView sub=text(a,"Surveys · Species · Habitats",13,Color.rgb(222,235,218),false);
-        LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
-        subLp.topMargin=dp(a,4);words.addView(sub,subLp);
-        cover.addView(words,new FrameLayout.LayoutParams(-1,-1));
+        titleLp.topMargin=dp(a,compact?1:19);words.addView(title,titleLp);
+        if(!compact){
+            TextView sub=text(a,"Surveys · Species · Habitats",13,Color.rgb(222,235,218),false);
+            LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
+            subLp.topMargin=dp(a,4);words.addView(sub,subLp);
+        }
+        cover.addView(words,new FrameLayout.LayoutParams(-1,-2,Gravity.TOP));
         ImageView frog=new ImageView(a);
         frog.setImageResource(R.drawable.likas_natator_frog);
         frog.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -149,9 +161,9 @@ public final class LikasPortalUi {
         frog.setClipToOutline(true);
         frog.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         FrameLayout.LayoutParams iconLp=new FrameLayout.LayoutParams(
-            dp(a,54),dp(a,54),Gravity.TOP|Gravity.RIGHT);
-        iconLp.topMargin=dp(a,14);iconLp.rightMargin=dp(a,14);
-        cover.addView(frog,iconLp);
+            dp(a,compact?46:54),dp(a,compact?46:54),Gravity.TOP|Gravity.RIGHT);
+        iconLp.topMargin=dp(a,compact?10:14);iconLp.rightMargin=dp(a,14);
+        if(showFrog)cover.addView(frog,iconLp);
         cover.setContentDescription("LIKAS. Philippine wildlife surveys, species, and habitats.");
         return cover;
     }

@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC48 Home and Fieldwork UI refinement merged (Part 2)
+
+- **Source:** PR **#45**, merge `41828e20ba6a8226b592369ee751797516bcdaf9` on authoritative `feature/likas-core-fieldwork-post-rc4`. New preview `0.27.3-rc48-home-fieldwork-preview`, **versionCode 108**, unchanged app ID `org.phwildlife.survey.beta08` and SQLite **27**.
+- **Home/Fieldwork:** Adopted RC47 page gutters and spacing; the active-session view now displays a **Current survey** heading instead of misleading New survey wording, with Resume ahead of ordinary tools. Birds, Herpetofauna and Mammals setup remain, and stacked History/Analysis shortcuts now use compact actions sharing one destination callback.
+- **Survey setup:** Shared `UiKit.navigationHeader`, consistent native `UiKit.fieldInput` styles, accessible unselected selection outlines; project/route/method/study and GPS continuation logic unchanged.
+- **Recorder:** Shared native species/observation form styling; full-width Mark detection, Measure bearing and quick-capture/change action layout on narrow phones or fontScale >=130%; minimum accessible GPS and mark-clear targets; scaled station and photo action heights. Save Observation/Review Records/End Survey pinned dock, survey completion outcomes, timers, accuracy criteria, field datasets and archival state preserved.
+- **PR QA:** Scientific Core QA **41025648619** passed **310 Python tests** plus JVM unit tests, Android app and AndroidTest APK compilation. Merged-branch signed build and independent binary inspection remain separate acceptance gates.
+- **Unverified:** Physical/emulator screenshots at 320/360/390/412dp and 100/130/160/200% font, keyboard transition, TalkBack, outdoor contrast, actual GPS flow and in-place RC47 upgrade with nonempty surveys. Separate partial restore and NULL-outcome export issues remain unresolved.
+- **References:** `docs/LIKAS_RC48_HOME_FIELDWORK_QA.md`, RC47 design foundations and accepted specs. Next phase should tackle accessible review/History and field QA with screenshots, not new biology claims.
+
+---
+
 ## 30 October 2026 | RC47 design-system foundation merged and signed APK verified (Part 1)
 
 - **Current code:** PR **#44** merged as `cbe828de29cdd8047fcdfe54e3116ae0a4ebefbd` into active `feature/likas-core-fieldwork-post-rc4`. Preview `0.27.3-rc47-design-system-preview`, **versionCode 107**, original package `org.phwildlife.survey.beta08`, SQLite **27**.

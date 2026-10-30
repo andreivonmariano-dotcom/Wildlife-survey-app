@@ -63,6 +63,10 @@ public final class Rc53FieldworkScreenInstrumentedTest {
                 View open=findDescription(decor,"Open Fieldwork.");
                 assertNotNull("Home's Fieldwork destination",open);
                 open.performClick();
+            });
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            scenario.onActivity(a->{
+                View decor=a.getWindow().getDecorView();
                 for(String s:new String[]{"Open Birds.","Open Herpetofauna.","Open Mammals.",
                     "Open Projects & stations","Open History.","Open Analysis."}){
                     View choice=findDescription(decor,s);

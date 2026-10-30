@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC44 source audit, documentation only
+
+- Source audit recorded in `docs/LIKAS_RC44_COMPREHENSIVE_SOURCE_AUDIT_2026_10_30.md`, with RC44 code 104, unchanged package and schema 27.
+- Confirmed source risks: partial restore when backup database is installed before all media/settings files; ResearchExports NULL-outcome handling differs from History/Dashboard, potentially omitting eligible legacy complete events from derived files.
+- Remaining items: scientific scope check on generic copy trimming, duplicate Home/Library headings, device instrumentation and real in-place upgrade. Preserve all approved visual assets and the End Survey lifecycle.
+- No Android source edits, new APK or release verification was performed for the audit. Next: stage restore with rollback tests, reconcile export status queries, then controlled source-preserving copy changes and device QA.
+
+---
+
+
 ## 30 October 2026 | RC44 merged into active branch; signed APK byte-for-byte reproduced
 
 - **Code:** PR **#41** merged as `ea0efb15aa1ad53ab520cd9619c44429e4e6226a` into authoritative active `feature/likas-core-fieldwork-post-rc4`. Source includes 64dp/52dp/50dp UI-rounded (not altered) 18 locked pixel art PNGs, shared forest-green tokens, compact wide Mammals card, consistent reports icon for Data check, 155ms page transitions and optional reveals controlled by Less motion and OS/large-font policy. No SQLite, field recorder or signing changes.

@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | RC58 Library/Discover real Android 14 QA passed
+
+- **Current latest verified preview:** `feature/likas-rc58-library-discover-visual`, draft PR **#55** onto RC57 draft #54, exact Android code SHA `d3412aa8f1e2fc85c079f6185461feef17a51107`, version `0.27.3-rc58-library-discover-preview`, **code118**. Integrated core remains RC49. App ID `org.phwildlife.survey.beta08`, SQLite 27 and original signer unchanged.
+- **Verified actual UI:** Library hub, Species Discover and Habitats Discover at 360dp/100%, 412dp/130%, 320dp/200% using 15 actual Android View screenshots, workflow **41087810776 success**. At 320dp/200%, shortened native hint displays **Search** without clipping, and Conservation/Terrestrial shelf titles are one line above intact count/swipe controls. Approved original art and all seven Library reference destinations preserved; recorded scientific content unchanged.
+- **QA:** **346 Python tests**, Android/JVM signed build and **12 emulator instrumentation tests** (9 screen tests and 3 existing library swipe/research ZIP) passed. Artifact `12993620333` holds 15 PNGs, test logs and evidence. Original 320dp baseline is RC49 artifact `12968694224`.
+- **Direct APK:** CI artifact **12992996377**, verified APK **9,787,144 bytes**, SHA-256 `df5aa8b14c0bd8bbf2742d900f000733da3ff9365de67e4968c2c0ef910aaa98`. APK ZIP, v2 RSA signedData and signed whole-file digest independently verified against pinned certificate `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. 18 approved PNG and 58 offline JPG retained. APK, evidence ZIP, comparison PNG and screenshot contact sheet linked directly in implementing chat.
+- **Not field accepted:** draft chain unmerged; physical phone/TalkBack/keyboard, historic record in-place upgrade and backup recovery remain unverified. No species data/status or field storage changed.
+- **Next requested screen-by-screen scope:** full Species Account, Habitat Profile, Conservation, Sources and other Library reference destinations, inspecting actual emulator rendering at enlarged fonts before source-only fixes. QA: `docs/LIKAS_RC58_LIBRARY_DISCOVER_QA.md`.
+
+---
+
 ## 30 October 2026 | RC57 Home screen recheck accepted on Android emulator
 
 - **Latest source baseline:** `feature/likas-rc57-home-large-text-visual`, draft PR **#54** into draft RC56 PR #53, tested app+QA code `13261f6f49a1a68c86b2fbf76f02a531c2256f4e`. Integrated core remains RC49; code117 preview `0.27.3-rc57-home-visual-preview`, app ID `org.phwildlife.survey.beta08`, original debug signer, SQLite schema 27.

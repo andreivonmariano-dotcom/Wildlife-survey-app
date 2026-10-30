@@ -174,7 +174,7 @@ public final class Rc60LibraryVisualInstrumentedTest {
                 assertNotNull("Page title visible",pageTitle);
                 assertNotNull("First section header",speciesSection);
                 assertNotNull("Reference section header",referenceSection);
-                assertTrue("Page title must dominate scaled section typography",
+                assertTrue("Page title "+pageTitle.getTextSize()+" must dominate scaled section "+speciesSection.getTextSize(),
                     pageTitle.getTextSize()>speciesSection.getTextSize()*1.16f);
                 assertTrue("Reference section must remain subordinate",
                     pageTitle.getTextSize()>referenceSection.getTextSize()*1.16f);

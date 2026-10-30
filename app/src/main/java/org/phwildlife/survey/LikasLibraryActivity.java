@@ -73,6 +73,11 @@ public final class LikasLibraryActivity extends Activity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         LinearLayout body=new LinearLayout(this);
         LinearLayout root=UiKit.page(this,"Library","Home",this::finish,body);
+        // Android 14 font scaling is nonlinear. Use the shared full page-title token
+        // rather than the compact navigation default so sections remain subordinate.
+        LinearLayout navigation=(LinearLayout)root.getChildAt(0);
+        TextView pageTitle=(TextView)navigation.getChildAt(1);
+        pageTitle.setTextSize(LikasDesignSystem.TEXT_PAGE);
         // Reserve a small strip for the system scroll indicator so it never paints
         // over a card outline or its arrow. Restrict this to the Library hub.
         ScrollView libraryScroll=(ScrollView)root.getChildAt(1);

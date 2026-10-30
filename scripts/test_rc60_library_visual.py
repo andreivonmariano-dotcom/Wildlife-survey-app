@@ -28,6 +28,7 @@ class Rc60VisualDecisions(unittest.TestCase):
         self.assertIn("heading.setLetterSpacing(.06f)",library)
         self.assertIn("Typeface.create(\"sans-serif-medium\",Typeface.NORMAL)",library)
         self.assertIn('UiKit.page(this,"Library","Home",this::finish,body)',library)
+        self.assertIn("pageTitle.setTextSize(LikasDesignSystem.TEXT_PAGE)",library)
         self.assertIn('librarySection("Species & habitats"',library)
         self.assertIn('librarySection("Reference tools"',library)
     def test_main_destinations_use_same_open_cue_and_original_routing(self):

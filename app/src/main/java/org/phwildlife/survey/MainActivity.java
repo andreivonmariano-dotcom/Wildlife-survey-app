@@ -193,7 +193,8 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private EditText edit(String hint,int type){
         EditText e=new EditText(this);e.setHint(hint);e.setTextColor(INK);
-        e.setTextSize(16);e.setInputType(type);e.setSingleLine(true);return e;
+        e.setTextSize(16);e.setInputType(type);e.setSingleLine(true);
+        UiKit.fieldInput(this,e);return e;
     }
     private LinearLayout vertical(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;}
     private LinearLayout horizontal(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.HORIZONTAL);c.setGravity(Gravity.CENTER_VERTICAL);return c;}
@@ -211,7 +212,9 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void draw(){
         inputKeyboardVisible=false;
-        LinearLayout root=vertical();root.setBackgroundColor(BACK);root.setPadding(dp(12),dp(5),dp(12),dp(7));
+        LinearLayout root=vertical();root.setBackgroundColor(BACK);
+        root.setPadding(dp(LikasDesignSystem.SPACE_MD),dp(5),
+            dp(LikasDesignSystem.SPACE_MD),dp(7));
         // At large system font, keep the fixed survey dock fully in frame.
         // The complete status card remains reachable at the start of the field scroll.
         boolean largeText=getResources().getConfiguration().fontScale>=1.60f;
@@ -246,7 +249,7 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView=label("GPS searching · details",12,true);
         gpsView.setTextColor(UiKit.AMBER);
         gpsView.setOnClickListener(v->showGpsDetail());
-        gpsView.setMinHeight(dp(44));
+        gpsView.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));
         gpsView.setGravity(Gravity.CENTER_VERTICAL);
         gpsView.setFocusable(true);
         gpsView.setContentDescription("GPS searching. Open GPS details");
@@ -299,7 +302,7 @@ public class MainActivity extends Activity implements LocationListener {
         });
         // Optional settings are placed below the observation form.
         pointNextButton=UiKit.button(this,"Finish point · Next station","camera");
-        content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,dp(53)));
+        content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,dp(touchDp)));
         pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
         pointNextButton.setOnClickListener(v->{if(method.equals("point_count"))nextPoint();else nextSamplingUnit();});
         trackingView=label("Track: awaiting GPS",12,true);
@@ -307,13 +310,23 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(trackingView);
         trackingView.setVisibility(method.equals("line_transect")||method.equals("ves_transect")?View.VISIBLE:View.GONE);
 
+        // Stack both actions at phone widths and enlarged text to avoid clipped labels.
+        boolean stackCaptureActions=FieldLayoutPolicy.stackPortalPair(
+            getResources().getConfiguration().screenWidthDp,
+            getResources().getConfiguration().fontScale);
         LinearLayout detectRow=horizontal();
+        if(stackCaptureActions)detectRow.setOrientation(LinearLayout.VERTICAL);
         Button markTime=UiKit.button(this,"Mark detection","secondary");
         markTime.setContentDescription("Mark sighting time and available fresh observer GPS without saving an observation");
-        detectRow.addView(markTime,weighted(0.9f));
+        detectRow.addView(markTime,stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):weighted(0.9f));
         markButton=UiKit.button(this,"Measure bearing","secondary");
         markButton.setContentDescription("Open sighting camera to capture detection bearing and pitch");
-        detectRow.addView(markButton,weighted(1.1f));
+        LinearLayout.LayoutParams bearingLp=stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):weighted(1.1f);
+        if(stackCaptureActions)bearingLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+        else bearingLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+        detectRow.addView(markButton,bearingLp);
         content.addView(detectRow);
         markTime.setOnClickListener(v->markDetection());
         markButton.setOnClickListener(v->openCamera());
@@ -325,15 +338,17 @@ public class MainActivity extends Activity implements LocationListener {
             quickPrefs.getString(quickKey,null))};
         FieldQuickActions.Kind[] available=FieldQuickActions.choices(profile,method);
         LinearLayout captureRow=horizontal();
+        if(stackCaptureActions)captureRow.setOrientation(LinearLayout.VERTICAL);
         Button quickCapture=UiKit.button(this,FieldQuickActions.label(chosen[0]),"pond");
-        captureRow.addView(quickCapture,new LinearLayout.LayoutParams(0,
-            dp(FieldLayoutPolicy.actionHeightDp(
-                getResources().getConfiguration().fontScale)),1));
+        captureRow.addView(quickCapture,stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):
+            new LinearLayout.LayoutParams(0,dp(touchDp),1));
         Button changeQuick=UiKit.button(this,"Change","secondary");
-        LinearLayout.LayoutParams changeLp=new LinearLayout.LayoutParams(dp(105),
-            dp(FieldLayoutPolicy.actionHeightDp(
-                getResources().getConfiguration().fontScale)));
-        changeLp.leftMargin=dp(8);
+        LinearLayout.LayoutParams changeLp=stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):
+            new LinearLayout.LayoutParams(dp(105),dp(touchDp));
+        if(stackCaptureActions)changeLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+        else changeLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         captureRow.addView(changeQuick,changeLp);
         LinearLayout.LayoutParams captureLp=new LinearLayout.LayoutParams(-1,-2);
         captureLp.topMargin=dp(7);
@@ -440,6 +455,9 @@ public class MainActivity extends Activity implements LocationListener {
         TextView clear=label("Clear mark",12,true);
         clear.setTextColor(GREEN);
         clear.setPadding(dp(10),dp(8),dp(6),dp(8));
+        clear.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));
+        clear.setGravity(Gravity.CENTER_VERTICAL);
+        clear.setFocusable(true);
         clear.setOnClickListener(v->clearMark());
         markRow.addView(clear);
         content.addView(markRow);
@@ -451,12 +469,13 @@ public class MainActivity extends Activity implements LocationListener {
         boolean stackSpecies=FieldLayoutPolicy.stackSpeciesEntry(
             getResources().getConfiguration().screenWidthDp,
             getResources().getConfiguration().fontScale);
-        int fieldControlHeight=FieldLayoutPolicy.actionHeightDp(
-            getResources().getConfiguration().fontScale);
+        int fieldControlHeight=Math.max(56,FieldLayoutPolicy.actionHeightDp(
+            getResources().getConfiguration().fontScale));
         LinearLayout speciesRow=horizontal();
         if(stackSpecies)speciesRow.setOrientation(LinearLayout.VERTICAL);
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
+        UiKit.fieldInput(this,taxonEntry);
         taxonEntry.setThreshold(100);taxonEntry.setHint("Species or field ID");
         taxonEntry.setSelectAllOnFocus(true);
         speciesRow.addView(taxonEntry,stackSpecies?
@@ -637,7 +656,7 @@ public class MainActivity extends Activity implements LocationListener {
         }
         LinearLayout photoRow=horizontal();
         Button photoButton=UiKit.button(this,"Add photo","secondary");
-        photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(49),2));
+        photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(touchDp),2));
         photoStatus=label("",12,false);
         photoStatus.setVisibility(View.GONE);
         photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));

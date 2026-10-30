@@ -96,6 +96,24 @@ public final class UiKit {
     b.setBackgroundTintList(null);
     return b;
   }
+  /** Identical native EditText / autocomplete surfaces across setup and live recording.
+   * Only presentation is changed: no input type, text value or listener is overwritten. */
+  public static void fieldInput(Activity a,TextView input){
+    if(input==null)return;
+    input.setTextColor(INK);
+    input.setHintTextColor(MUTED);
+    input.setMinHeight(dp(a,Math.max(56,FieldLayoutPolicy.actionHeightDp(
+        a.getResources().getConfiguration().fontScale))));
+    input.setPadding(dp(a,LikasDesignSystem.SPACE_LG),
+        dp(a,LikasDesignSystem.SPACE_MD),
+        dp(a,LikasDesignSystem.SPACE_LG),
+        dp(a,LikasDesignSystem.SPACE_MD));
+    GradientDrawable bg=new GradientDrawable();
+    bg.setColor(Color.WHITE);
+    bg.setStroke(dp(a,1),CONTROL_BORDER);
+    bg.setCornerRadius(dp(a,LikasDesignSystem.RADIUS_INPUT));
+    input.setBackground(bg);
+  }
   /** Short, readable section titles for research and field-management screens. */
   public static TextView sectionTitle(Activity a,String title) {
     TextView t=new TextView(a);

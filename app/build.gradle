@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 107
-        versionName '0.27.3-rc47-design-system-preview'
+        versionCode 108
+        versionName '0.27.3-rc48-home-fieldwork-preview'
     }
     signingConfigs {
         debug {

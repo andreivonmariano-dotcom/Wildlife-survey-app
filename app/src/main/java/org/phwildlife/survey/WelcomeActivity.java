@@ -120,7 +120,10 @@ public class WelcomeActivity extends Activity {
     private boolean playedStartupHomeTransition=false;
     private String lastHomeActiveSurvey=null;
     private void buildShell(){
-        root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(16),dp(12),dp(16),dp(12));
+        root=vertical();root.setBackgroundColor(BG);
+        root.setPadding(dp(LikasDesignSystem.SCREEN_GUTTER),
+            dp(LikasDesignSystem.SPACE_MD),dp(LikasDesignSystem.SCREEN_GUTTER),
+            dp(LikasDesignSystem.SPACE_MD));
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
         shellScroll=scroll;
         main=vertical();main.setPadding(0,0,0,dp(24));scroll.addView(main);
@@ -140,12 +143,7 @@ public class WelcomeActivity extends Activity {
         if(shellScroll!=null)shellScroll.post(()->shellScroll.scrollTo(0,0));
     }
     private void heading(String title,String subtitle) {
-        TextView h=text(title,24,true);h.setPadding(dp(2),dp(6),0,0);
-        main.addView(h);
-        if(subtitle!=null&&!subtitle.isEmpty()){
-            TextView s=text(subtitle,13,false);s.setTextColor(MUTED);
-            s.setPadding(dp(2),dp(2),0,dp(10));main.addView(s);
-        }
+        main.addView(FieldVisuals.section(this,title,subtitle));
     }
     private TextView step(String number,String title){
         TextView label=text(number+"    "+title,16,true);
@@ -156,22 +154,13 @@ public class WelcomeActivity extends Activity {
         label.setPadding(dp(14),dp(9),dp(12),dp(9));
         android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
         bg.setColor(UiKit.LEAF_MID);
-        bg.setCornerRadius(dp(14));
+        bg.setCornerRadius(dp(LikasDesignSystem.RADIUS_INPUT));
         label.setBackground(bg);
         return label;
     }
     /** Native input hints, numeric keyboard types, validators and saved values remain intact. */
     private void styleSetupInput(EditText input){
-        if(input==null)return;
-        input.setTextColor(UiKit.INK);
-        input.setHintTextColor(UiKit.MUTED);
-        input.setMinHeight(dp(56));
-        input.setPadding(dp(15),dp(11),dp(15),dp(11));
-        android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
-        bg.setColor(Color.WHITE);
-        bg.setStroke(dp(1),UiKit.BORDER);
-        bg.setCornerRadius(dp(14));
-        input.setBackground(bg);
+        UiKit.fieldInput(this,input);
     }
     private void surveyTile(LinearLayout parent,String title,String detail,Runnable tap){
         String art="field";
@@ -186,8 +175,8 @@ public class WelcomeActivity extends Activity {
             :LikasPortalUi.mini(this,title,detail,art,tap);
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(
             stacked?-1:0,-2,1);
-        if(stacked)lp.bottomMargin=dp(9);
-        else if(parent.getChildCount()>0)lp.leftMargin=dp(10);
+        if(stacked)lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+        else if(parent.getChildCount()>0)lp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         parent.addView(tile,lp);
     }
     private void home(){
@@ -202,7 +191,7 @@ public class WelcomeActivity extends Activity {
                 startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
             session.setContentDescription("Resume survey in progress. Continue field recording.");
             LinearLayout.LayoutParams resumeLp=new LinearLayout.LayoutParams(-1,-2);
-            resumeLp.topMargin=dp(12);
+            resumeLp.topMargin=dp(LikasDesignSystem.SPACE_MD);
             main.addView(session,resumeLp);
         }
         if(lastHomeActiveSurvey==null)
@@ -210,12 +199,12 @@ public class WelcomeActivity extends Activity {
         View field=LikasPortalUi.tile(this,"Fieldwork","Surveys · Data · History",
             "field",LikasPortalUi.CANOPY,Color.WHITE,this::fieldworkHub);
         LinearLayout.LayoutParams fieldLp=new LinearLayout.LayoutParams(-1,-2);
-        fieldLp.bottomMargin=dp(9);main.addView(field,fieldLp);
+        fieldLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);main.addView(field,fieldLp);
         View library=LikasPortalUi.tile(this,"Library","Species · Habitats · Guides",
             "library",UiKit.LEAF_LIGHT,Color.WHITE,()->
                 startActivity(new Intent(this,LikasLibraryActivity.class)));
         LinearLayout.LayoutParams libraryLp=new LinearLayout.LayoutParams(-1,-2);
-        libraryLp.bottomMargin=dp(9);main.addView(library,libraryLp);
+        libraryLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);main.addView(library,libraryLp);
         View settings=LikasPortalUi.tile(this,"Settings","Backups · App · Storage",
             "settings",UiKit.LEAF_MID,Color.WHITE,()->
                 startActivity(new Intent(this,LikasSettingsActivity.class)));
@@ -229,10 +218,10 @@ public class WelcomeActivity extends Activity {
         homeVisible=false;currentScreen="fieldwork";main.removeAllViews();scrollTop();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         main.addView(UiKit.navigationHeader(this,"Fieldwork","Home",this::home));
-        main.addView(FieldVisuals.section(this,"New survey","Choose wildlife group"));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
+            main.addView(FieldVisuals.section(this,"Current survey","Continue field recording"));
             LinearLayout activeCard=vertical();
             activeCard.setPadding(dp(14),dp(10),dp(14),dp(12));
             activeCard.setBackground(UiKit.surface(this));
@@ -253,6 +242,7 @@ public class WelcomeActivity extends Activity {
             activeCard.addView(resume,new LinearLayout.LayoutParams(-1,dp(actionDp())));
             main.addView(activeCard);
         }else{
+            main.addView(FieldVisuals.section(this,"New survey","Choose wildlife group"));
             LinearLayout first=new LinearLayout(this);
             first.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
             surveyTile(first,"Birds","Counts · Transects",()->setup("Birds"));
@@ -270,21 +260,26 @@ public class WelcomeActivity extends Activity {
             startActivity(new Intent(this,SitesActivity.class)));
         LinearLayout shortcutRow=new LinearLayout(this);
         shortcutRow.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        View history=LikasPortalUi.mini(this,"History",recentSurveySummary(),"history",
-            ()->startActivity(new Intent(this,HistoryActivity.class)));
+        boolean stacked=stackPortalPairs();
+        Runnable openHistory=()->startActivity(new Intent(this,HistoryActivity.class));
+        View history=stacked?
+            LikasPortalUi.action(this,"History",recentSurveySummary(),"history",openHistory):
+            LikasPortalUi.mini(this,"History",recentSurveySummary(),"history",openHistory);
         shortcutRow.addView(history,new LinearLayout.LayoutParams(
-            stackPortalPairs()?-1:0,-2,1));
-        View dashboard=LikasPortalUi.mini(this,"Analysis","Survey data","chart",
-            ()->startActivity(new Intent(this,DashboardActivity.class)));
+            stacked?-1:0,-2,1));
+        Runnable openAnalysis=()->startActivity(new Intent(this,DashboardActivity.class));
+        View dashboard=stacked?
+            LikasPortalUi.action(this,"Analysis","Survey data","chart",openAnalysis):
+            LikasPortalUi.mini(this,"Analysis","Survey data","chart",openAnalysis);
         LinearLayout.LayoutParams dashLp=new LinearLayout.LayoutParams(
-            stackPortalPairs()?-1:0,-2,1);
-        if(stackPortalPairs())dashLp.topMargin=dp(9);
-        else dashLp.leftMargin=dp(10);
+            stacked?-1:0,-2,1);
+        if(stacked)dashLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+        else dashLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         shortcutRow.addView(dashboard,dashLp);
         LinearLayout.LayoutParams shortcutsLp=new LinearLayout.LayoutParams(-1,-2);
         shortcutsLp.topMargin=dp(10);main.addView(shortcutRow,shortcutsLp);
         LinearLayout moreTools=vertical();
-        moreTools.addView(LikasPortalUi.kicker(this,"FIELD TOOLS"));
+        moreTools.addView(FieldVisuals.section(this,"Field tools",null));
         toolRow(moreTools,"Site habitats",()->
             startActivity(new Intent(this,HabitatRecordsActivity.class)));
         toolRow(moreTools,"Audio",()->
@@ -361,8 +356,8 @@ public class WelcomeActivity extends Activity {
             boolean selected=item.getId()==checked;
             android.graphics.drawable.GradientDrawable bg=new android.graphics.drawable.GradientDrawable();
             bg.setColor(selected?UiKit.LEAF_LIGHT:Color.WHITE);
-            bg.setStroke(dp(selected?2:1),selected?UiKit.POND:UiKit.BORDER);
-            bg.setCornerRadius(dp(16));
+            bg.setStroke(dp(selected?2:1),selected?UiKit.POND:UiKit.CONTROL_BORDER);
+            bg.setCornerRadius(dp(LikasDesignSystem.RADIUS_BUTTON));
             item.setBackground(bg);
             item.setSelected(selected);
         }
@@ -373,19 +368,16 @@ public class WelcomeActivity extends Activity {
         setupStartButton.setText("Continue to GPS");
         setupStartButton.setContentDescription("Continue "+profile+" survey setup to GPS preflight");
         setupFooter.setVisibility(View.VISIBLE);
-        Button back=button("‹ Back");
-        LinearLayout.LayoutParams backLp=new LinearLayout.LayoutParams(
-            dp(largeText()?96:112),dp(largeText()?actionDp():48));
-        main.addView(back,backLp);
-        back.setOnClickListener(v->fieldworkHub());
-        heading(profile+" survey",null);
+        main.addView(UiKit.navigationHeader(this,profile+" survey","Fieldwork",
+            this::fieldworkHub));
         choices=SurveyMethods.forProfile(profile);
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){
             SurveyMethods.Method m=choices[i];
             String label=m.label+(m.basicLog?" · basic log":"");
             RadioButton rb=new RadioButton(this);
-            rb.setId(1000+i);rb.setText(label);rb.setTextSize(15);rb.setTextColor(INK);
+            rb.setId(1000+i);rb.setText(label);
+            rb.setTextSize(LikasDesignSystem.TEXT_BODY);rb.setTextColor(INK);
             rb.setButtonTintList(ColorStateList.valueOf(UiKit.POND));
             rb.setMinHeight(dp(54));
             rb.setPadding(dp(12),dp(10),dp(12),dp(10));

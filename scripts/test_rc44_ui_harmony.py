@@ -60,8 +60,8 @@ class Rc44UiHarmony(unittest.TestCase):
 
     def test_preserve_package_database_and_survey_contract(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 107",gradle)
-        self.assertIn("versionName '0.27.3-rc47-design-system-preview'",gradle)
+        self.assertIn("versionCode 108",gradle)
+        self.assertIn("versionName '0.27.3-rc48-home-fieldwork-preview'",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         db=read("FieldDb.java")
         self.assertIn("super(context,NAME,null,27)",db)

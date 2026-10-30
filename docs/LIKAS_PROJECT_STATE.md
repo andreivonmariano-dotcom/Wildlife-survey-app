@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC55 GPS preflight automated acceptance verified, preview APK delivered
+
+- **Latest audited RC55 app code:** `f86a7f62fd59155cfc1ef50b2404f1bcc486fb8d`, draft PR #52 on `feature/likas-rc55-gps-preflight-screen4`, stacked on RC54 PR #51. Package `org.phwildlife.survey.beta08`, versionName `0.27.3-rc55-gps-preflight-preview`, versionCode **115**, SQLite schema **27** and original signing identity preserved.
+- **Verified CI (30 October 2026):** Android 14 `41064080116` passed, with 9 GPS/Home/Fieldwork/Setup Android UI tests and 1 research ZIP instrumentation test. Lineage workflow `41064088903` also passed at the same app-code SHA.
+- **Actual visuals and APK:** Survey disabled-GPS screenshots at 360dp/100%, 412dp/130% and 320dp/200% with real scrolling were inspected; pinned missing-GPS/return controls remained legible and controls reachable. Station mode passed an instrumentation layout test but lacks a distinct screenshot. Downloaded artifact `12980648910`, extracted APK 9,785,276 bytes, SHA-256 `6ea5f93bbf79c254350a9bc589d929df86b06a0768ff1a77a2418efdd70b9e08`. APK CRC and v2 signer verification passed; signer cert `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. APK and evidence ZIP provided as **direct files in the continuation chat**; paths are session-specific.
+- **Development status:** RC55 accepted only as an **emulator-tested draft preview**. No app source change in this verification session. No merge to RC49 core. Physical GNSS, denied permission screenshots, station screenshots, TalkBack, actual in-place upgrade, process death, media audit and concurrent research export remain open. A working handset install/upgrade has **not** been verified.
+- **Next screen:** Screen 5 Live Recorder: observe active session state, timers, survey/GPS provenance, Save Observation/Review Records/End Survey accessibility at 320dp/200%, keyboard overlap, interrupted partial observation state. Preserve data, original pixel assets, current survey protocols and outcome resolution. See `docs/LIKAS_RC55_GPS_PREFLIGHT_SCREEN_QA.md` for evidence and caveats.
+
+---
+
 ## 30 October 2026 | Independent RC49 Android 14 emulator/source audit (no app changes)
 
 - **Baseline:** authoritative active core branch at `82e4e2ac7be10f94fa9f1672261a7110f58ebbee`, versionCode 109 and SQLite 27, inspected by a separate QA workstream. No production Android code or signing changed in this audit. The original RC49 signed APK, SHA-256 `270e18bc2efd3207cd6f1779bc377be11f39a1841402f7e6df781267ff79fcb9`, was retrieved and reverified in the audit conversation.

@@ -143,7 +143,7 @@ public final class Rc60LibraryVisualInstrumentedTest {
         data.put(MediaStore.Images.Media.DISPLAY_NAME,file);
         data.put(MediaStore.Images.Media.MIME_TYPE,"image/png");
         data.put(MediaStore.Images.Media.RELATIVE_PATH,
-            Environment.DIRECTORY_PICTURES+"/LIKAS_RC60");
+            Environment.DIRECTORY_PICTURES+"/LIKAS_RC61");
         data.put(MediaStore.Images.Media.IS_PENDING,1);
         Uri target=a.getContentResolver().insert(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,data);
@@ -206,7 +206,7 @@ public final class Rc60LibraryVisualInstrumentedTest {
                 verifyLibraryImage(root,"Sources",40);
 
                 verifyNoEllipsizedText(root);
-                capture(a,"rc60-"+preset()+"-top.png");
+                capture(a,"rc61-"+preset()+"-top.png");
             });
             scenario.onActivity(a->{
                 ScrollView list=scroll(a.getWindow().getDecorView());
@@ -223,7 +223,7 @@ public final class Rc60LibraryVisualInstrumentedTest {
                 assertTrue("Last reference action reachable",last.getGlobalVisibleRect(visible));
                 assertTrue("Last action fully visible",visible.height()>=last.getHeight()-2);
                 verifyNoEllipsizedText(root);
-                capture(a,"rc60-"+preset()+"-bottom.png");
+                capture(a,"rc61-"+preset()+"-bottom.png");
             });
         }
     }

@@ -17,7 +17,7 @@ class Rc59HubVisual(unittest.TestCase):
         self.assertIn("getResources().getConfiguration().screenWidthDp<600",src)
         self.assertIn("libraryScroll.setPadding(0,0,dp(8),0)",src)
         self.assertIn("View.SCROLLBARS_OUTSIDE_INSET",src)
-        self.assertIn("LikasPortalUi.tile(this",src)
+        self.assertIn("LikasPortalUi.libraryFeature(this",src)
         self.assertIn("LikasPortalUi.action(this",src)
     def test_provenance_and_assets_unmodified(self):
         src=(JAVA/"LikasLibraryActivity.java").read_text()
@@ -32,8 +32,8 @@ class Rc59HubVisual(unittest.TestCase):
         self.assertIn("setFilterBitmap(false)",design)
     def test_version_and_db_not_downgraded(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 119",gradle)
-        self.assertIn("0.27.3-rc59-library-hub-preview",gradle)
+        self.assertIn("versionCode 120",gradle)
+        self.assertIn("0.27.3-rc60-library-visual-preview",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
 if __name__=="__main__":unittest.main()

@@ -2252,6 +2252,15 @@ public class MainActivity extends Activity implements LocationListener {
             try(FieldDb exportDb=new FieldDb(getApplicationContext());
                 OutputStream os=getContentResolver().openOutputStream(exportUri);
                 ZipOutputStream z=new ZipOutputStream(os)){
+            writeResearchArchive(getApplicationContext(),exportDb,z);
+            runOnUiThread(()->toast("Survey ZIP exported"));
+            }catch(Exception e){
+                runOnUiThread(()->toast("Export error: "+e.getMessage()));
+            }finally{exportInProgress=false;}
+        },"LIKAS-Export").start();
+    }
+    /** Generates the exact research ZIP from the UI or a disposable Android test. */
+    static void writeResearchArchive(android.content.Context context,FieldDb exportDb,ZipOutputStream z)throws Exception{
             csv(exportDb,z,"projects.csv",
               "SELECT id,name,description,created_at FROM projects",
               "project_id,name,description,created_at");
@@ -2262,13 +2271,13 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id,start_gps_latitude,start_gps_longitude,start_gps_accuracy_m,start_gps_recorded_at,start_gps_status FROM surveys",
               "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id,start_gps_latitude,start_gps_longitude,start_gps_accuracy_m,start_gps_recorded_at_utc,start_gps_status");
             csv(exportDb,z,"observations.csv",
-              "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,COALESCE(s.outcome,'active'),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection,r.identification_confidence,r.identification_review_note FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
+              "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,("+SurveyOutcomeSql.RESOLVED+"),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection,r.identification_confidence,r.identification_review_note FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
               "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection,identification_confidence,identification_review_note");
             csv(exportDb,z,"sampling_units.csv",
-              "SELECT u.id,u.event_id,u.station_id,u.sequence_number,u.method,u.started,u.ended,u.target_seconds,u.completed,u.effort_minutes,u.effort_area_m2,u.effort_length_m,u.noise_score,u.wind_score,u.rain_condition,u.equipment_id,u.number_devices,u.trap_effort_hours,u.unit_paused_ms,u.camera_days_verified,u.trap_nights_verified,u.recorder_hours_verified,u.deployment_started_utc,u.deployment_ended_utc,u.downtime_hours,u.effort_remarks,COALESCE(s.outcome,'active'),u.gps_latitude,u.gps_longitude,u.gps_accuracy_m,u.gps_recorded_at,u.gps_status FROM sampling_units u JOIN surveys s ON s.id=u.event_id ORDER BY u.event_id,u.sequence_number",
+              "SELECT u.id,u.event_id,u.station_id,u.sequence_number,u.method,u.started,u.ended,u.target_seconds,u.completed,u.effort_minutes,u.effort_area_m2,u.effort_length_m,u.noise_score,u.wind_score,u.rain_condition,u.equipment_id,u.number_devices,u.trap_effort_hours,u.unit_paused_ms,u.camera_days_verified,u.trap_nights_verified,u.recorder_hours_verified,u.deployment_started_utc,u.deployment_ended_utc,u.downtime_hours,u.effort_remarks,("+SurveyOutcomeSql.RESOLVED+"),u.gps_latitude,u.gps_longitude,u.gps_accuracy_m,u.gps_recorded_at,u.gps_status FROM sampling_units u JOIN surveys s ON s.id=u.event_id ORDER BY u.event_id,u.sequence_number",
               "sampling_unit_id,event_id,station_id,sequence,method,start_utc,end_utc,target_seconds,completed,active_effort_minutes,searched_area_m2,searched_length_m,noise_score,wind_score,rain_condition,equipment_id,number_devices,device_hours,unit_paused_ms,verified_camera_days,verified_trap_nights,verified_recorder_hours,deployment_start_utc,deployment_end_utc,downtime_hours,effort_notes,survey_outcome,station_gps_lat,station_gps_lon,station_accuracy_m,gps_fix_at_utc,gps_status");
             csv(exportDb,z,"point_counts.csv",
-              "SELECT p.id,p.event_id,p.station_id,p.sequence_number,p.started,p.ended,p.target_seconds,p.completed,p.notes,p.unit_paused_ms,COALESCE(s.outcome,'active'),p.planned_chainage_m,p.gps_latitude,p.gps_longitude,p.gps_accuracy_m,p.gps_recorded_at,p.gps_status FROM point_counts p JOIN surveys s ON s.id=p.event_id ORDER BY p.event_id,p.sequence_number",
+              "SELECT p.id,p.event_id,p.station_id,p.sequence_number,p.started,p.ended,p.target_seconds,p.completed,p.notes,p.unit_paused_ms,("+SurveyOutcomeSql.RESOLVED+"),p.planned_chainage_m,p.gps_latitude,p.gps_longitude,p.gps_accuracy_m,p.gps_recorded_at,p.gps_status FROM point_counts p JOIN surveys s ON s.id=p.event_id ORDER BY p.event_id,p.sequence_number",
               "point_count_id,event_id,station_id,sequence,start_utc,end_utc,target_seconds,completed,notes,unit_paused_ms,survey_outcome,planned_chainage_m,station_gps_lat,station_gps_lon,station_gps_accuracy_m,gps_fix_at_utc,gps_status");
             csv(exportDb,z,"route_templates.csv",
               "SELECT id,project_id,name,method,planned_length_m,station_spacing_m,station_count,created_at_utc,notes FROM route_templates",
@@ -2277,7 +2286,7 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT template_id,station_id,sequence_number,chainage_m FROM route_template_stations ORDER BY template_id,sequence_number",
               "route_template_id,station_id,sequence_number,planned_chainage_m");
             csv(exportDb,z,"survey_stations.csv",
-              "SELECT r.event_id,r.station_id,r.sequence_number,r.planned_chainage_m,r.visit_state,r.captured_at,r.gps_latitude,r.gps_longitude,r.gps_accuracy_m,r.gps_status,COALESCE(s.outcome,'active') FROM survey_stations r JOIN surveys s ON s.id=r.event_id ORDER BY r.event_id,r.sequence_number",
+              "SELECT r.event_id,r.station_id,r.sequence_number,r.planned_chainage_m,r.visit_state,r.captured_at,r.gps_latitude,r.gps_longitude,r.gps_accuracy_m,r.gps_status,("+SurveyOutcomeSql.RESOLVED+") FROM survey_stations r JOIN surveys s ON s.id=r.event_id ORDER BY r.event_id,r.sequence_number",
               "event_id,station_id,sequence_number,planned_chainage_m,visit_state,count_started_at_utc,station_lat,station_lon,station_gps_accuracy_m,gps_status,survey_outcome");
             csv(exportDb,z,"survey_outcome_audit.csv",
               "SELECT id,event_id,previous_outcome,new_outcome,changed_at_utc,reason,record_count FROM survey_outcome_audit",
@@ -2289,31 +2298,26 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT id,event_id,recorded_at,latitude,longitude,accuracy_m,segment_m,accepted,reason FROM track_points ORDER BY id",
               "track_point_id,event_id,timestamp_utc,observer_lat,observer_lon,accuracy_m,accepted_segment_m,accepted,quality_reason");
             csv(exportDb,z,"distance_samples.csv",
-              "SELECT p.id,p.station_id,'point_count',COALESCE(s.region_label,''),s.area_km2,1.0,NULL,p.target_seconds,s.point_radius_m,p.completed FROM point_counts p JOIN surveys s ON s.id=p.event_id WHERE s.survey_profile='Birds' AND COALESCE(s.outcome,'active')='complete' UNION ALL SELECT id,COALESCE(station_id,''),'line_transect',COALESCE(region_label,''),area_km2,CASE WHEN effort_length_m>0 THEN effort_length_m/1000.0 ELSE NULL END,effort_length_m,planned_duration_s,NULL,complete FROM surveys WHERE survey_profile='Birds' AND method='line_transect' AND COALESCE(outcome,'active')='complete'",
+              "SELECT p.id,p.station_id,'point_count',COALESCE(s.region_label,''),s.area_km2,1.0,NULL,p.target_seconds,s.point_radius_m,p.completed FROM point_counts p JOIN surveys s ON s.id=p.event_id WHERE s.survey_profile='Birds' AND p.completed=1 AND ("+SurveyOutcomeSql.RESOLVED+")='complete' UNION ALL SELECT id,COALESCE(station_id,''),'line_transect',COALESCE(region_label,''),area_km2,CASE WHEN effort_length_m>0 THEN effort_length_m/1000.0 ELSE NULL END,effort_length_m,planned_duration_s,NULL,complete FROM surveys s WHERE s.survey_profile='Birds' AND s.method='line_transect' AND ("+SurveyOutcomeSql.RESOLVED+")='complete'",
               "Sample.Label,station_id,method,Region.Label,Area_km2,Effort_line_km_or_point_visits,line_length_m,planned_duration_seconds,point_radius_m,completed");
             DistanceExport.write(z,exportDb.getReadableDatabase());
             ResearchExports.write(z,exportDb.getReadableDatabase());
-            PhotoEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
-            AcousticEvidence.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
+            PhotoEvidence.writeZip(context,z,exportDb.getReadableDatabase());
+            AcousticEvidence.writeZip(context,z,exportDb.getReadableDatabase());
             TrapEvidence.writeZip(z,exportDb.getReadableDatabase());
             FieldProtocolEvidence.writeZip(z,exportDb.getReadableDatabase());
-            ProtocolEvidencePhotos.writeZip(getApplicationContext(),z,
+            ProtocolEvidencePhotos.writeZip(context,z,
                 exportDb.getReadableDatabase());
             StudyProtocolExports.writeZip(z,exportDb.getReadableDatabase());
-            DataAudit.writeZip(getApplicationContext(),z,exportDb.getReadableDatabase());
+            DataAudit.writeZip(context,z,exportDb.getReadableDatabase());
             csv(exportDb,z,"distance_review.csv",
-              "SELECT r.id,r.event_id,r.taxon_group,r.raw_identification,r.horizontal_m,r.perpendicular_m,r.individual_count,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,s.method,COALESCE(p.station_id,s.station_id),s.effort_length_m,s.point_target_s,s.region_label,s.area_km2,s.complete,r.point_count_id,r.protocol_window_flag FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' AND COALESCE(s.outcome,'active')='complete' AND (s.method='point_count' OR s.method='line_transect')",
+              "SELECT r.id,r.event_id,r.taxon_group,r.raw_identification,r.horizontal_m,r.perpendicular_m,r.individual_count,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,s.method,COALESCE(p.station_id,s.station_id),s.effort_length_m,s.point_target_s,s.region_label,s.area_km2,s.complete,r.point_count_id,r.protocol_window_flag FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id LEFT JOIN point_counts p ON p.id=r.point_count_id WHERE r.deleted_at IS NULL AND r.taxon_group='Birds' AND ("+SurveyOutcomeSql.RESOLVED+")='complete' AND (s.method='point_count' OR s.method='line_transect')",
               "record_id,event_id,taxon_group,taxon,horizontal_m,perpendicular_m,group_size,distance_method,initial_position,movement_status,candidate_flag,survey_method,station_id,effort_length_m,point_target_s,region_label,area_km2,completed,point_count_id,window_flag");
             csv(exportDb,z,"edit_history.csv",
               "SELECT id,record_id,action,edited_at,previous_json,current_json,reason FROM record_edits",
               "audit_id,record_id,action,edited_at,previous_json,current_json,reason");
-            runOnUiThread(()->toast("Survey ZIP exported"));
-            }catch(Exception e){
-                runOnUiThread(()->toast("Export error: "+e.getMessage()));
-            }finally{exportInProgress=false;}
-        },"LIKAS-Export").start();
     }
-    private void csv(FieldDb exportDb,ZipOutputStream z,String name,String sql,String header)throws Exception{
+    private static void csv(FieldDb exportDb,ZipOutputStream z,String name,String sql,String header)throws Exception{
         z.putNextEntry(new ZipEntry(name));z.write((header+"\n").getBytes(StandardCharsets.UTF_8));
         try(Cursor c=exportDb.getReadableDatabase().rawQuery(sql,null)){
             while(c.moveToNext()){

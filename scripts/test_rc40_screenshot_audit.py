@@ -67,7 +67,7 @@ class Rc40ScreenAudit(unittest.TestCase):
 
     def test_shared_legacy_outcome_sql(self):
         policy=source("SurveyOutcomeSql.java")
-        pieces=re.findall(r'"([^"]*)"',policy.split("RESOLVED =",1)[1])
+        pieces=re.findall(r'"([^"]*)"',policy.split("RESOLVED =",1)[1].split(";",1)[0])
         expression="".join(pieces)
         self.assertIn("s.outcome IS NOT NULL",expression)
         self.assertIn("s.ended IS NULL",expression)

@@ -47,7 +47,7 @@ class ReleaseScreenAndPerfQA(unittest.TestCase):
         self.assertNotIn("refreshTrack();",status)
     def test_export_uses_its_own_database_connection(self):
         recorder=read("MainActivity.java")
-        export=recorder.split("private void csv(FieldDb exportDb,",1)[1]
+        export=recorder.split("private static void csv(FieldDb exportDb,",1)[1]
         self.assertIn("exportDb.getReadableDatabase().rawQuery(sql,null)",export)
         self.assertNotIn("try(Cursor c=db.getReadableDatabase().rawQuery(sql,null))",export)
     def test_new_study_templates_are_scoped_and_older_templates_unchanged(self):

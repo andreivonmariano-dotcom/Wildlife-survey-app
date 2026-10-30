@@ -7,4 +7,6 @@ public final class SurveyOutcomeSql {
         "CASE WHEN s.outcome IS NOT NULL THEN s.outcome "+
         "WHEN s.ended IS NULL THEN 'active' "+
         "WHEN COALESCE(s.complete,0)=1 THEN 'complete' ELSE 'incomplete' END";
+    /** Derived analytical filter; surveys table must have the alias s. */
+    public static final String COMPLETE = "("+RESOLVED+")='complete'";
 }

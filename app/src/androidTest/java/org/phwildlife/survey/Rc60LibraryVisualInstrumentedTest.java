@@ -96,14 +96,30 @@ public final class Rc60LibraryVisualInstrumentedTest {
         }
         return null;
     }
-    private static boolean hasPixelShield(View root){
-        if(root instanceof LikasPortalUi.PixelShield)return true;
+    private static ImageView iconImage(View root){
+        if(root instanceof ImageView)return (ImageView)root;
         if(root instanceof ViewGroup){
             ViewGroup group=(ViewGroup)root;
-            for(int i=0;i<group.getChildCount();i++)
-                if(hasPixelShield(group.getChildAt(i)))return true;
+            for(int i=0;i<group.getChildCount();i++){
+                ImageView match=iconImage(group.getChildAt(i));
+                if(match!=null)return match;
+            }
         }
-        return false;
+        return null;
+    }
+    private static void verifyLibraryImage(View root,String label,int expectedSizeDp){
+        View card=described(root,"Open "+label+".");
+        assertNotNull("Library destination present: "+label,card);
+        ImageView image=iconImage(card);
+        assertNotNull("Image view must be present: "+label,image);
+        assertNotNull("Drawable must load: "+label,image.getDrawable());
+        float density=card.getResources().getDisplayMetrics().density;
+        assertTrue("Image fits its optical safe area: "+label,
+            image.getWidth()<=Math.round(expectedSizeDp*density)+1);
+        assertEquals("Non-cropping scale type: "+label,
+            ImageView.ScaleType.CENTER_INSIDE,image.getScaleType());
+        assertTrue("Image remains on-screen: "+label,
+            image.getHeight()>=Math.round((expectedSizeDp-1)*density));
     }
     private static void verifyFeaturedAffordance(View root,String prefix){
         View feature=described(root,prefix);
@@ -127,7 +143,7 @@ public final class Rc60LibraryVisualInstrumentedTest {
         data.put(MediaStore.Images.Media.DISPLAY_NAME,file);
         data.put(MediaStore.Images.Media.MIME_TYPE,"image/png");
         data.put(MediaStore.Images.Media.RELATIVE_PATH,
-            Environment.DIRECTORY_PICTURES+"/LIKAS_RC60");
+            Environment.DIRECTORY_PICTURES+"/LIKAS_RC61");
         data.put(MediaStore.Images.Media.IS_PENDING,1);
         Uri target=a.getContentResolver().insert(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,data);
@@ -184,11 +200,13 @@ public final class Rc60LibraryVisualInstrumentedTest {
                 verifyFeaturedAffordance(root,"Open Habitats.");
                 View conservation=described(root,"Open Conservation.");
                 assertNotNull(conservation);
-                assertTrue("Conservation uses a pixel-grid shield with leaf",
-                    hasPixelShield(conservation));
+                verifyLibraryImage(root,"Conservation",50);
+                verifyLibraryImage(root,"Habitat links",50);
+                verifyLibraryImage(root,"Photos",40);
+                verifyLibraryImage(root,"Sources",40);
 
                 verifyNoEllipsizedText(root);
-                capture(a,"rc60-"+preset()+"-top.png");
+                capture(a,"rc61-"+preset()+"-top.png");
             });
             scenario.onActivity(a->{
                 ScrollView list=scroll(a.getWindow().getDecorView());
@@ -205,7 +223,7 @@ public final class Rc60LibraryVisualInstrumentedTest {
                 assertTrue("Last reference action reachable",last.getGlobalVisibleRect(visible));
                 assertTrue("Last action fully visible",visible.height()>=last.getHeight()-2);
                 verifyNoEllipsizedText(root);
-                capture(a,"rc60-"+preset()+"-bottom.png");
+                capture(a,"rc61-"+preset()+"-bottom.png");
             });
         }
     }

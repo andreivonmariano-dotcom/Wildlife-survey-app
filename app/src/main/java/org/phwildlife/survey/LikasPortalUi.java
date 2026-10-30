@@ -42,15 +42,20 @@ public final class LikasPortalUi {
                 return R.drawable.likas_approved_herpetofauna_staurois_natator;
             case "mammal":case "mammals":return R.drawable.likas_approved_mammals_rusa_marianna;
             case "habitat":case "habitats":return R.drawable.likas_approved_habitats;
+            // New generated art stays separate from the 18 immutable owner-approved assets.
+            case "library-conservation":return R.drawable.likas_generated_conservation;
+            case "library-habitat-links":return R.drawable.likas_generated_habitat_links;
             case "research":return R.drawable.likas_approved_research;
             case "news":return R.drawable.likas_approved_news;
             case "history":return R.drawable.likas_approved_history;
             case "chart":case "analysis":return R.drawable.likas_approved_analysis;
             case "backup":return R.drawable.likas_approved_backup;
-            case "photo":case "camera":case "trap":return R.drawable.likas_approved_camera;
+            case "photo":case "camera":case "trap":case "library-photo":
+                return R.drawable.likas_approved_camera;
             case "gps":return R.drawable.likas_approved_gps;
             case "map":case "project":case "projects":return R.drawable.likas_approved_projects;
-            case "protocol":case "report":case "reports":return R.drawable.likas_approved_reports;
+            case "protocol":case "report":case "reports":case "library-sources":
+                return R.drawable.likas_approved_reports;
             case "offline":return R.drawable.likas_approved_offline;
             case "help":return R.drawable.likas_approved_help;
             default:return 0; // The approved set has no audio/conservation glyph.
@@ -69,12 +74,12 @@ public final class LikasPortalUi {
                 ((android.graphics.drawable.BitmapDrawable)drawable).setFilterBitmap(false);
             }
             image.setImageDrawable(drawable);
-            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            // Library-only optical insets prevent full-bleed Photos/Sources source PNGs
+            // appearing cut off. The approved bitmap bytes never change.
+            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            art=image;size=approvedDp;
-        }else if("conservation-pixel-shield".equals(symbol)){
-            // A source-defined pixel shield, not a replacement for locked approved PNGs.
-            art=new PixelShield(a);size=36;
+            art=image;size=("library-photo".equals(symbol) ||
+                "library-sources".equals(symbol))?Math.min(approvedDp,40):approvedDp;
         }else{
             art=new Glyph(a,symbol,glyphColor);size=fallbackDp;
         }
@@ -313,56 +318,6 @@ public final class LikasPortalUi {
             (subtitle==null||subtitle.isEmpty()?"":". "+subtitle));
         item.setOnClickListener(v->open.run());
         return item;
-    }
-
-    /**
-     * Pixel-grid shield with a small leaf mark for a conservation destination.
-     * Drawn as discrete squares, retaining the 18 owner-approved PNGs byte-for-byte.
-     * Decorative only: the enclosing Library action has the accessible label.
-     */
-    public static final class PixelShield extends View {
-        private static final String[] GRID={
-            "0000011111100000",
-            "0001111111111000",
-            "0011122222211100",
-            "0111222222221110",
-            "0111222332221110",
-            "0111233333221110",
-            "0111333332221110",
-            "0011233332221100",
-            "0011223322221100",
-            "0011222322221100",
-            "0001122322211000",
-            "0000112322110000",
-            "0000012222100000",
-            "0000001111000000",
-            "0000000110000000",
-            "0000000000000000"
-        };
-        private final Paint pixels=new Paint();
-        PixelShield(Activity a){
-            super(a);
-            pixels.setAntiAlias(false);
-            pixels.setFilterBitmap(false);
-            setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-        }
-        @Override protected void onDraw(Canvas canvas){
-            super.onDraw(canvas);
-            float cell=Math.min(getWidth(),getHeight())/16f;
-            float left=(getWidth()-cell*16)/2f;
-            float top=(getHeight()-cell*16)/2f;
-            for(int row=0;row<GRID.length;row++){
-                String strip=GRID[row];
-                for(int column=0;column<strip.length();column++){
-                    char kind=strip.charAt(column);
-                    if(kind=='0')continue;
-                    pixels.setColor(kind=='1'?UiKit.INK:
-                        (kind=='2'?UiKit.LEAF_LIGHT:UiKit.FOREST));
-                    canvas.drawRect(left+column*cell,top+row*cell,
-                        left+(column+1)*cell,top+(row+1)*cell,pixels);
-                }
-            }
-        }
     }
 
     /** Library-only featured navigation, with the same icon-left and arrow-right affordance as other actions. */

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 /** Reading space. No survey event, effort or observation is created here. */
 public final class LikasLibraryActivity extends Activity {
@@ -33,7 +34,9 @@ public final class LikasLibraryActivity extends Activity {
             String firstIcon,Class<?> firstTarget,String second,String secondDetail,
             String secondIcon,Class<?> secondTarget){
         LinearLayout row=new LinearLayout(this);
-        boolean stacked=stackPortalPairs();
+        // Phones keep a uniform one-column action list; tablets may retain paired mini cards.
+        boolean stacked=stackPortalPairs() ||
+            getResources().getConfiguration().screenWidthDp<600;
         row.setOrientation(stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         View a=stacked?
             LikasPortalUi.action(this,first,firstDetail,firstIcon,
@@ -60,17 +63,22 @@ public final class LikasLibraryActivity extends Activity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         LinearLayout body=new LinearLayout(this);
         LinearLayout root=UiKit.page(this,"Library","Home",this::finish,body);
+        // Reserve a small strip for the system scroll indicator so it never paints
+        // over a card outline or its arrow. Restrict this to the Library hub.
+        ScrollView libraryScroll=(ScrollView)root.getChildAt(1);
+        libraryScroll.setPadding(0,0,dp(8),0);
+        libraryScroll.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
         body.addView(FieldVisuals.section(this,"Species & habitats","Offline field guides"));
-        discover(body,"Species","Browse wildlife","species","species");
-        discover(body,"Habitats","Explore ecosystems","habitat","habitats");
+        discover(body,"Species","Illustrated accounts","species","species");
+        discover(body,"Habitats","Habitat profiles","habitat","habitats");
         body.addView(FieldVisuals.section(this,"Reference tools",null));
-        toolPair(body,"Similar species","Field traits","species",
+        toolPair(body,"Similar species","Compare traits","research",
             Rc9DifferentialActivity.class,"Photos","Offline images","photo",
             Rc8PhotoComparisonActivity.class);
-        toolPair(body,"Conservation","IUCN · DENR","shield",
+        toolPair(body,"Conservation","Dated assessments","shield",
             Rc24ConservationDashboardActivity.class,"Sources","Checklists","protocol",
             CatalogActivity.class);
-        add(body,"Habitat links","Habitat evidence","habitat",
+        add(body,"Habitat links","Cited associations","habitat",
             HabitatSpeciesEvidenceActivity.class);
         setContentView(root);
         UiMotion.enter(this,body);

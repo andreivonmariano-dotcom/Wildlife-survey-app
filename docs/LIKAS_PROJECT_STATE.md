@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | RC59 main Library hub comprehensive visual audit accepted on emulator
+
+- **Current latest UI preview:** `feature/likas-rc59-library-hub-visual`, draft PR **#56** into draft RC58 #55, exact app source SHA **`48df5c1c3e6660939f6f9f00f17f92a8d354d191`**, versionCode **119** (`0.27.3-rc59-library-hub-preview`). Earlier stacked PRs remain draft; integrated core remains RC49. App ID `org.phwildlife.survey.beta08`, signer, DB schema 27 and all biological reference assets preserved.
+- **Main Library only:** actual RC58 Android baseline at 320/360/412; found scroll indicator crossing right card borders, duplicate Species/Similar book art, inconsistent 2-column reference tools on phones and generic captions. RC59 reserves scrollbar clearance, uses existing approved `research` icon for Similar species, full-width reference rows under 600dp and accurate concise captions. Original 18 approved PNGs and 58 JPGs unchanged byte-for-byte, as are species/habitat JSON sources. Conservation still uses distinctive vector shield: no approved pixel shield available.
+- **Actual QA:** Android 14 workflow **41092228349 success**, **349 Python tests**, signed app/JVM build, **9 Android instrumentation tests**. Captured real top/bottom Library PNGs at 320dp/100%, 360dp/100%, 412dp/100%, 412dp/130%, 320dp/200% (10 PNGs). Verified all seven routes present, focusable, clickable, no text ellipses, >=48dp height, last Habitat links reachable by vertical scroll. Reference/ZIP regression tests passed. Evidence artifact **12995475372**.
+- **Direct preview APK:** Artifact **12995375464**. Exact downloadable code119 APK 9,787,340 bytes, SHA256 `3d32e126a0cd279be57398e446b0782634301c5fe6ea0e789d0aa66577bac08d`. Independently validated APK ZIP, binary manifest, original signer RSA signature and v2 12-chunk signed content digest. Direct APK, screenshots and evidence ZIP delivered in same chat.
+- **Still draft:** No physical field/sunlight or TalkBack, no in-place historical upgrade, incomplete backup recovery and method-specific scientific field QA. Do not call field-ready. QA: `docs/LIKAS_RC59_LIBRARY_HUB_QA.md`.
+- **Next per owner instruction:** audit only the **Species Discover screen** first, then separate Habitat Discover, species-account, habitat-profile and other Library references one by one, with actual emulator inspection and approved icon checks. Do not bundle multiple pages into one speculative redesign.
+
+---
+
 ## 31 October 2026 | RC58 Library/Discover real Android 14 QA passed
 
 - **Current latest verified preview:** `feature/likas-rc58-library-discover-visual`, draft PR **#55** onto RC57 draft #54, exact Android code SHA `d3412aa8f1e2fc85c079f6185461feef17a51107`, version `0.27.3-rc58-library-discover-preview`, **code118**. Integrated core remains RC49. App ID `org.phwildlife.survey.beta08`, SQLite 27 and original signer unchanged.

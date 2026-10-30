@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 118
-        versionName '0.27.3-rc58-library-discover-preview'
+        versionCode 119
+        versionName '0.27.3-rc59-library-hub-preview'
     }
     signingConfigs {
         debug {

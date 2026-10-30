@@ -26,7 +26,9 @@ class ReleaseScreenAndPerfQA(unittest.TestCase):
         self.assertIn("FieldLayoutPolicy.saveHeightDp",recorder)
         self.assertIn("FieldLayoutPolicy.actionHeightDp",recorder)
         self.assertIn("b.setMaxLines(3)",kit)
-        self.assertIn("availableWidthDp<390",policy)
+        self.assertIn("LikasDesignSystem.useSingleColumn(availableWidthDp,fontScale)",policy)
+        self.assertIn("screenWidthDp<390",
+            (ROOT/"app/src/main/java/org/phwildlife/survey/LikasDesignSystem.java").read_text().replace("availableWidthDp","screenWidthDp"))
         for label in ('"Save Observation"','"End Survey"'):
             self.assertIn(label,recorder)
     def test_hud_db_polling_is_off_main_thread_and_bounded(self):

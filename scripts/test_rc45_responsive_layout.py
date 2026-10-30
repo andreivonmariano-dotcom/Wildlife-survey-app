@@ -12,12 +12,13 @@ class Rc45LayoutContract(unittest.TestCase):
     def test_portals_share_width_and_text_scale_breakpoints(self):
         policy = source("FieldLayoutPolicy.java")
         self.assertIn("stackPortalPair(int availableWidthDp,float fontScale)", policy)
-        self.assertIn("return availableWidthDp<390||fontScale>=1.30f;", policy)
+        self.assertIn("LikasDesignSystem.useSingleColumn(availableWidthDp,fontScale)", policy)
         for screen in ("WelcomeActivity.java", "LikasLibraryActivity.java",
                        "LikasSettingsActivity.java"):
             text = source(screen)
             self.assertIn("FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale)",text)
-            self.assertIn("stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL",text)
+            self.assertTrue("stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in text
+                            or "stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in text)
 
     def test_picker_has_a_readable_search_field_and_unidentified_action(self):
         picker=source("SpeciesPickerActivity.java")
@@ -53,8 +54,8 @@ class Rc45LayoutContract(unittest.TestCase):
 
     def test_version_and_data_identity_stay_compatible(self):
         build=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 106",build)
-        self.assertIn("0.27.3-rc46-field-layout-hierarchy-preview",build)
+        self.assertIn("versionCode 107",build)
+        self.assertIn("0.27.3-rc47-design-system-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
 

@@ -30,7 +30,7 @@ class ResearchUi(unittest.TestCase):
         motion=(JAVA/"UiMotion.java").read_text()
         home=(JAVA/"WelcomeActivity.java").read_text()
         copy=(JAVA/"Rc13FieldGuideCopy.java").read_text()
-        self.assertIn("back.setMinHeight(dp(a,48))",palette)
+        self.assertIn("back.setMinHeight(dp(a,LikasDesignSystem.MIN_TOUCH_DP)",palette)
         self.assertIn("ValueAnimator.areAnimatorsEnabled()",motion)
         self.assertIn("fontScale<1.60f",motion)
         self.assertIn('UiKit.button(this,"Resume Survey","primary")',home)

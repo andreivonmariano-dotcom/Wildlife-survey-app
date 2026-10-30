@@ -57,8 +57,8 @@ class GalleryPerf(unittest.TestCase):
 
     def test_upgrade_identity_and_survey_outcomes(self):
         build=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 106",build)
-        self.assertIn("versionName '0.27.3-rc46-field-layout-hierarchy-preview'",build)
+        self.assertIn("versionCode 107",build)
+        self.assertIn("versionName '0.27.3-rc47-design-system-preview'",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn('super(context,NAME,null,27)',src("FieldDb.java"))
         main=src("MainActivity.java")

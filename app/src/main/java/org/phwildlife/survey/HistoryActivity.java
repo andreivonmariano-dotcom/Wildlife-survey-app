@@ -203,10 +203,26 @@ public class HistoryActivity extends Activity {
                 String state=outcome.equals("not_counted")?"Canceled · Not counted":
                     outcome.equals("incomplete")?"Incomplete":
                     outcome.equals("complete")?"Complete":"Active";
-                rows.addView(text(state+" · "+SurveyMethods.displayLabel(surveyProfile,meta.getString(1))+
+                LinearLayout summary=column();
+                summary.setBackground(UiKit.surface(this));
+                summary.setPadding(dp(LikasDesignSystem.SPACE_MD),
+                    dp(LikasDesignSystem.SPACE_SM),dp(LikasDesignSystem.SPACE_MD),
+                    dp(LikasDesignSystem.SPACE_SM));
+                TextView stateTitle=text(state,LikasDesignSystem.TEXT_SECTION);
+                stateTitle.setTypeface(null,Typeface.BOLD);
+                stateTitle.setTextColor("Canceled · Not counted".equals(state)?
+                    Color.rgb(163,58,48):"Incomplete".equals(state)?
+                    UiKit.AMBER:UiKit.FOREST);
+                summary.addView(stateTitle);
+                TextView details=text(SurveyMethods.displayLabel(surveyProfile,meta.getString(1))+
                     (meta.getString(0).isEmpty()?"":"\nStation "+meta.getString(0))+
                     "\nStarted "+meta.getString(2)+
-                    (meta.isNull(3)?"":"\nEnded "+meta.getString(3)),15));
+                    (meta.isNull(3)?"":"\nEnded "+meta.getString(3)),
+                    LikasDesignSystem.TEXT_CAPTION);
+                details.setTextColor(UiKit.MUTED);summary.addView(details);
+                LinearLayout.LayoutParams summaryLp=new LinearLayout.LayoutParams(-1,-2);
+                summaryLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+                rows.addView(summary,summaryLp);
             }
         }
         if(outcome.equals("incomplete")||outcome.equals("not_counted")){
@@ -529,14 +545,29 @@ public class HistoryActivity extends Activity {
     }
     private void audit(long id){
         StringBuilder msg=new StringBuilder();
-        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT edited_at,action,COALESCE(reason,''),previous_json FROM record_edits WHERE record_id=? ORDER BY id DESC",new String[]{String.valueOf(id)})){
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT edited_at,action,COALESCE(reason,''),previous_json,current_json "+
+            "FROM record_edits WHERE record_id=? ORDER BY id DESC",
+            new String[]{String.valueOf(id)})){
             if(c.getCount()==0)msg.append("No changes recorded.");
             while(c.moveToNext()){
                 msg.append(c.getString(0)).append(" · ").append(c.getString(1)).append("\n");
-                if(!c.getString(2).isEmpty())msg.append("Reason: ").append(c.getString(2)).append("\n");
-                msg.append("Before: ").append(c.getString(3)).append("\n\n");
+                if(!c.getString(2).isEmpty())
+                    msg.append("Reason: ").append(c.getString(2)).append("\n");
+                msg.append("Before:\n")
+                    .append(c.isNull(3)?"Not recorded":c.getString(3))
+                    .append("\nAfter:\n")
+                    .append(c.isNull(4)?"Not recorded":c.getString(4))
+                    .append("\n\n");
             }
         }
-        new AlertDialog.Builder(this).setTitle("Record edit history").setMessage(msg.toString()).setPositiveButton("Close",null).show();
+        TextView history=text(msg.toString(),LikasDesignSystem.TEXT_CAPTION);
+        history.setTextIsSelectable(true);
+        history.setPadding(dp(LikasDesignSystem.SPACE_LG),
+            dp(LikasDesignSystem.SPACE_MD),dp(LikasDesignSystem.SPACE_LG),
+            dp(LikasDesignSystem.SPACE_MD));
+        ScrollView scroll=new ScrollView(this);scroll.addView(history);
+        new AlertDialog.Builder(this).setTitle("Record edit history")
+            .setView(scroll).setPositiveButton("Close",null).show();
     }
 }

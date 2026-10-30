@@ -38,13 +38,13 @@ class FieldLayoutContractTest(unittest.TestCase):
         for outcome in ("Finish Complete","End Incomplete","Cancel Survey"):
             self.assertIn(outcome,text)
 
-    def test_home_has_large_two_column_survey_targets(self):
+    def test_home_has_accessible_full_width_survey_targets(self):
         text=self.home
-        self.assertIn('surveyTile(first,"Birds"',text)
-        self.assertIn('surveyTile(first,"Herpetofauna"',text)
-        self.assertIn('surveyTile(second,"Mammals"',text)
-        self.assertNotIn('surveyTile(second,"Custom"',text)
-        self.assertIn("LikasPortalUi.mini(this,title,detail,art,tap)",text)
+        self.assertIn('surveyTile(main,"Birds"',text)
+        self.assertIn('surveyTile(main,"Herpetofauna"',text)
+        self.assertIn('surveyTile(main,"Mammals"',text)
+        self.assertNotIn('surveyTile(main,"Custom"',text)
+        self.assertIn("LikasPortalUi.action(this,title,detail,art,tap)",text)
         self.assertIn('Button resume=UiKit.button(this,"Resume Survey","primary")',text)
         self.assertIn('String unfinished=activeSurvey()',text)
         self.assertIn('LikasLibraryActivity.class',text)

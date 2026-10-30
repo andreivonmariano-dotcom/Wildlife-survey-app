@@ -25,7 +25,7 @@ class IllustratedUiContract(unittest.TestCase):
                       '"History"','"Analysis"','HistoryActivity.class',
                       'DashboardActivity.class'):
             self.assertIn(label,field)
-        self.assertIn("LikasPortalUi.mini(this,title,detail,art,tap)",welcome)
+        self.assertIn("LikasPortalUi.action(this,title,detail,art,tap)",welcome)
 
     def test_library_is_separate_and_visual(self):
         library=src("LikasLibraryActivity.java")

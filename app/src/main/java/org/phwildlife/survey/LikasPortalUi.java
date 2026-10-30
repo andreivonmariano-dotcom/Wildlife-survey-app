@@ -142,7 +142,7 @@ public final class LikasPortalUi {
             dp(a,showFrog?76:20),dp(a,compact?12:19));
         TextView mark=text(a,compact?"LIKAS":"LIKAS   /   PH",
             compact?22:12,compact?CREAM:LIME,true);
-        mark.setLetterSpacing(compact?.05f:.14f);
+        mark.setLetterSpacing(compact ? 0.05f : 0.14f);
         words.addView(mark);
         TextView title=text(a,"Philippine wildlife",compact?14:26,
             compact?Color.rgb(222,235,218):CREAM,!compact);

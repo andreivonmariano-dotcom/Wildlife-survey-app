@@ -11,13 +11,16 @@ LIKAS is an offline-first Android biodiversity fieldwork and reference tool for 
 
 ## What LIKAS currently provides
 
-- **Fieldwork:** birds, amphibians/reptiles, mammals and custom protocols, project and station records, GPS/elevation, observations, effort, survey history and analysis. A survey can end as **Complete**, **Incomplete**, or **Not Counted**.
+- **Fieldwork:** birds, amphibians/reptiles and mammals, project and station records, GPS/elevation, observations, effort, survey history and analysis. A survey can end as **Complete**, **Incomplete**, or **Not Counted**.
 - **Library:** the full offline Philippine species checklist plus **96** curated illustrated research accounts, **15** habitat profiles, cited species/ecology references and approved offline photographs. Global IUCN and Philippine DENR statuses appear only when independently reviewed and dated. Unreviewed statuses stay neutral.
 - **Settings:** backup/recovery, storage, import, integrity checks and Less motion.
 
 The research/news feed and comprehensive ecological atlas remain planned features. Reference associations never create field observations.
 
 ## Development and QA
+
+**Next revision in review:** Owner-approved 18-icon green pixel-art set is locked in `docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md`. The `Custom Survey` creation menu is removed in the proposed feature branch, but archived custom survey records remain readable. Neither the new PNGs nor this change are included in the verified signed RC41 APK yet.
+
 
 The current scientific build workflow is [`.github/workflows/core-science-qa.yml`](.github/workflows/core-science-qa.yml). It automatically runs on application/source changes and checks source contracts, evidence, database identity, pinned signing identity, photo rights, JVM unit tests, and APK compilation. Documentation-only changes do not trigger builds. Superseded runs are canceled.
 

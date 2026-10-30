@@ -65,8 +65,8 @@ class Rc44UiHarmony(unittest.TestCase):
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         db=read("FieldDb.java")
         self.assertIn("super(context,NAME,null,27)",db)
-        main=read("MainActivity.java")
-        self.assertIn("SurveyOutcomeSql",main)
+        history=read("HistoryActivity.java")
+        self.assertIn("SurveyOutcomeSql.RESOLVED",history)
 
 if __name__=="__main__":
     unittest.main()

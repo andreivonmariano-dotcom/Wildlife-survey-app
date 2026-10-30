@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC44 visual layout and accessibility source audit
+
+- **Scope:** Current RC44 `versionCode 104` source, no Android code or asset changes, no new APK. Detailed findings are in `docs/LIKAS_RC44_VISUAL_LAYOUT_AUDIT_2026_10_30.md` (GitHub audit commit `2ff89697278b63a616c1d5225a2fa4e2af03aa4f`).
+- **High visual concerns:** Paired tiles stack only at fontScale 1.60 despite a width/1.30 rule in `FieldLayoutPolicy`; Species picker search is constrained by fixed 45dp dropdown and 122dp unknown action; Discover gallery reserves fixed 410dp/625dp slots for smaller minimum-height cards.
+- **Other findings:** Home active-session hero and frog text-clearance risk, field recorder HUD and footer compression under keyboard, 46–47dp controls, repetitive headings, incorrect Back-to-Back/Settings navigation labels, and GPS retry options placed below a fixed 290dp sky illustration.
+- **Next layout pass:** shared width/font-aware card rules, near-full-width species picker search with visible unidentified action, content-aware library shelves, compact active-session Home, content-aware tap targets, and evidence-preserving copy cleanup.
+- **Verification:** Source and prior QA inspected. No new RC44 phone screenshot, Android emulator test, TalkBack run, brightness/contrast measurement on a display, or 320dp/200% font render executed. Keep the earlier backup-restore and research-export data-safety findings as separate release blockers.
+- **Immutable scope:** Retain all 18 owner-approved pixel PNGs, original frog launcher, existing user records, SQLite 27, app ID/signing, and pinned End Survey states.
+
+---
+
+
 ## 30 October 2026 | RC44 source audit, documentation only
 
 - Source audit recorded in `docs/LIKAS_RC44_COMPREHENSIVE_SOURCE_AUDIT_2026_10_30.md`, with RC44 code 104, unchanged package and schema 27.

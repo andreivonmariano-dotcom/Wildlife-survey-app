@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 30 October 2026 | RC44 merged into active branch; signed APK byte-for-byte reproduced
+
+- **Code:** PR **#41** merged as `ea0efb15aa1ad53ab520cd9619c44429e4e6226a` into authoritative active `feature/likas-core-fieldwork-post-rc4`. Source includes 64dp/52dp/50dp UI-rounded (not altered) 18 locked pixel art PNGs, shared forest-green tokens, compact wide Mammals card, consistent reports icon for Data check, 155ms page transitions and optional reveals controlled by Less motion and OS/large-font policy. No SQLite, field recorder or signing changes.
+- **Verified merged CI:** GitHub Actions push run **41006647041** successful, signed artifact **12956325239**, and its APK was independently compared byte-for-byte with delivered RC44: exactly **9,777,896 bytes**, SHA-256 **`0f4c710bd91144e0115d2d71cbe562d1b3ecfd6a3db299c9dfc5f127d56c471e`**. Original certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`; app package `org.phwildlife.survey.beta08`; versionCode **104**, versionName `0.27.3-rc44-ui-harmony-preview`.
+- **Automated checks:** 292 Python tests pass, Gradle Android unit test + signed APK + AndroidTest APK build successful, 18 locked artwork hashes and launcher bitmaps intact, 58 offline JPGs and pinned mammal catalog bundled.
+- **Direct download:** In this conversation, verified APK at `/mnt/data/LIKAS-v0.27.3-RC44-ui-harmony-debug.apk`; in other conversations this exact path must be checked or reattached, never assumed present.
+- **Pending:** actual phone installation over RC43 retaining archived surveys, real TalkBack/320dp/200%-font screenshots, motion performance and reduced-motion toggle on device, GNSS field sessions, and fault-injected partial backup-restore recovery. No production/field acceptance claim.
+- **Detailed QA:** `docs/LIKAS_RC44_UI_HARMONY_QA.md`.
+
+---
+
+
 ## 30 October 2026 | RC44 rounded pixel icons, palette harmony and safe transitions delivered
 
 - **App code:** `feature/likas-rc44-ui-harmony` PR #41 based on active `feature/likas-core-fieldwork-post-rc4`, tested code commit `31f04de4b4041d1c18277168b7ca4c1727eb19ea`. VersionName **`0.27.3-rc44-ui-harmony-preview`**, versionCode **104**, original package `org.phwildlife.survey.beta08`, SQLite **27**. No survey methods, database schema, conservation references, survey outcomes or field-record files were rewritten.

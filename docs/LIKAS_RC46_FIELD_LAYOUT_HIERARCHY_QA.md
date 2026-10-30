@@ -22,3 +22,11 @@
 Physical/emulator instrumentation has **not** been executed. Test active and inactive Home at 320/360/390/412dp with 100/130/160/200% font, TalkBack, smallest-height device, GPS permission denied and no-fix paths, recorder keyboard opening/closing, and in-place RC45-to-RC46 upgrade retaining real records. The global-layout keyboard occlusion heuristic requires physical verification across navigation modes and soft keyboards. Check outdoor contrast and clipping after installing the exact signed development APK.
 
 **Separate release blockers:** Non-atomic backup restore and derived research export legacy-outcome parity remain unresolved. RC46 is a development preview, not field-accepted or production-ready.
+
+## Verified merged-branch binary | 30 October 2026
+
+- Active branch push CI **41021671168**, source merge **`d8b19490347b643fe8258b6506c3f682f3f385fa`**, **success**. Artifact ID **12962235866**: `LIKAS-0.27.3-rc46-field-layout-hierarchy-preview-code106-debug`.
+- Downloaded signed artifact and extracted exact `app-debug.apk` as `LIKAS-v0.27.3-RC46-field-layout-hierarchy-debug.apk` to the active conversation. Verified APK ZIP structure and entries, **9,779,564 bytes**, SHA-256 **`2750403b608ae9118c706c1cd5b0f3fbbfc5bda0fa1d7e8c64978631f983e479`**.
+- Independently verified APK Signature Scheme v2 signature and its signed-content digest, with unchanged original signing-certificate SHA-256 **`f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`**. Parsed compiled Android manifest: **`org.phwildlife.survey.beta08`**, **versionCode 106**, **versionName `0.27.3-rc46-field-layout-hierarchy-preview`**.
+- APK includes **18** approved icon PNGs, **58** offline JPGs and the bundled mammal reference JSON. CI checks the source art hash locks; independent APK check confirms package presence, not a new scientific/photo-license review.
+- **Still unverified:** emulator/physical-device execution, font-scale screenshots, keyboard viewport on actual devices, GNSS receiver behavior, backup-restore failure recovery, real installation over RC45, TalkBack and field acceptance. Neither this signing check nor unit tests establishes these results.

@@ -27,24 +27,25 @@ public final class LikasLibraryActivity extends Activity {
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
         lp.bottomMargin=dp(12);p.addView(card,lp);
     }
-    private boolean largeText(){
-        return getResources().getConfiguration().fontScale>=1.60f;
+    private boolean stackPortalPairs(){
+        android.content.res.Configuration config=getResources().getConfiguration();
+        return FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale);
     }
     private void toolPair(LinearLayout parent,String first,String firstDetail,
             String firstIcon,Class<?> firstTarget,String second,String secondDetail,
             String secondIcon,Class<?> secondTarget){
         LinearLayout row=new LinearLayout(this);
-        row.setOrientation(largeText()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        row.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         View a=LikasPortalUi.mini(this,first,firstDetail,firstIcon,
             ()->startActivity(new Intent(this,firstTarget)));
         View b=LikasPortalUi.mini(this,second,secondDetail,secondIcon,
             ()->startActivity(new Intent(this,secondTarget)));
         LinearLayout.LayoutParams aLp=new LinearLayout.LayoutParams(
-            largeText()?-1:0,-2,1);
+            stackPortalPairs()?-1:0,-2,1);
         aLp.bottomMargin=dp(9);row.addView(a,aLp);
         LinearLayout.LayoutParams bLp=new LinearLayout.LayoutParams(
-            largeText()?-1:0,-2,1);
-        if(!largeText())bLp.leftMargin=dp(10);
+            stackPortalPairs()?-1:0,-2,1);
+        if(!stackPortalPairs())bLp.leftMargin=dp(10);
         bLp.bottomMargin=dp(9);row.addView(b,bLp);
         parent.addView(row);
     }

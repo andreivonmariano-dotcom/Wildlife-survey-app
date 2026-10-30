@@ -89,7 +89,8 @@ public final class Rc56RecorderUiInstrumentedTest {
                 assertNotNull(description(root,"Choose an unidentified taxon label"));
                 assertNotNull(description(root,"Show optional haptic interval alert"));
                 assertNotNull(description(root,"Mark sighting time"));
-                assertNotNull(description(root,"Open GPS details"));
+                assertNotNull("GPS indicator should have a spoken fix state",
+                    description(root,"GPS"));
                 if(profile.equals("Herpetofauna")){
                     View selected=description(root,"Reptiles observation group, selected");
                     assertNotNull(selected);

@@ -213,25 +213,30 @@ public class MainActivity extends Activity implements LocationListener {
     private void draw(){
         inputKeyboardVisible=false;
         LinearLayout root=vertical();root.setBackgroundColor(BACK);
-        root.setPadding(dp(LikasDesignSystem.SPACE_MD),dp(5),
-            dp(LikasDesignSystem.SPACE_MD),dp(7));
+        root.setPadding(dp(LikasDesignSystem.SPACE_MD),dp(LikasDesignSystem.SPACE_SM),
+            dp(LikasDesignSystem.SPACE_MD),dp(LikasDesignSystem.SPACE_SM));
         // At large system font, keep the fixed survey dock fully in frame.
         // The complete status card remains reachable at the start of the field scroll.
         boolean largeText=getResources().getConfiguration().fontScale>=1.60f;
         int touchDp=FieldLayoutPolicy.actionHeightDp(
             getResources().getConfiguration().fontScale);
+        // Match the compact LIKAS navigation pattern; preserve the two destinations.
         LinearLayout top=horizontal();
-        Button home=UiKit.button(this,largeText?"‹":"‹ Home","secondary");
+        Button home=UiKit.button(this,"‹","quiet");
         home.setContentDescription("Back to Home");
-        home.setTextSize(largeText?20:13);
-        top.addView(home,new LinearLayout.LayoutParams(dp(78),dp(largeText?64:49)));
+        home.setTextSize(18);
+        top.addView(home,new LinearLayout.LayoutParams(dp(48),dp(48)));
         home.setOnClickListener(v->navigateHome());
-        TextView title=label(profile+" Survey",19,true);title.setGravity(Gravity.CENTER);
+        TextView title=label(profile+" Survey",largeText?17:19,true);
+        title.setGravity(Gravity.CENTER_VERTICAL);
+        title.setMaxLines(2);
+        title.setPadding(dp(LikasDesignSystem.SPACE_MD),0,dp(LikasDesignSystem.SPACE_SM),0);
+        title.setContentDescription(profile+" Survey");
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
         Button export=UiKit.button(this,largeText?"ZIP":"Export","secondary");
         export.setContentDescription("Export research ZIP");
-        export.setTextSize(largeText?14:13);
-        top.addView(export,new LinearLayout.LayoutParams(dp(84),dp(largeText?64:49)));export.setOnClickListener(v->exportZip());
+        top.addView(export,new LinearLayout.LayoutParams(dp(largeText?65:82),dp(48)));
+        export.setOnClickListener(v->exportZip());
         root.addView(top);
         // Fixed status HUD: short, high-contrast survey state, always visible.
         LinearLayout hud=vertical();
@@ -273,12 +278,23 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(methodRow);
         // Avoid splitting the method name and bearing input on narrow phones.
         content.addView(lineRow,new LinearLayout.LayoutParams(-1,-2));
+        // Narrow screens need readable whole labels, not two squeezed half-width buttons.
+        boolean stackSessionControls=FieldLayoutPolicy.stackPortalPair(
+            getResources().getConfiguration().screenWidthDp,
+            getResources().getConfiguration().fontScale);
         LinearLayout utilityRow=horizontal();
+        if(stackSessionControls)utilityRow.setOrientation(LinearLayout.VERTICAL);
         pauseButton=UiKit.button(this,"Pause effort","secondary");
-        utilityRow.addView(pauseButton,new LinearLayout.LayoutParams(0,dp(touchDp),1));
+        utilityRow.addView(pauseButton,stackSessionControls?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):
+            new LinearLayout.LayoutParams(0,dp(touchDp),1));
         progressButton=UiKit.button(this,"Station progress","secondary");
-        LinearLayout.LayoutParams progressLp=new LinearLayout.LayoutParams(0,dp(touchDp),1);
-        progressLp.leftMargin=dp(7);utilityRow.addView(progressButton,progressLp);
+        LinearLayout.LayoutParams progressLp=stackSessionControls?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):
+            new LinearLayout.LayoutParams(0,dp(touchDp),1);
+        if(stackSessionControls)progressLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+        else progressLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+        utilityRow.addView(progressButton,progressLp);
         content.addView(utilityRow);
         progressButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
         pauseButton.setOnClickListener(v->togglePause());
@@ -295,10 +311,13 @@ public class MainActivity extends Activity implements LocationListener {
         TextView sessionToggle=label("Haptic alert  ▾",13,true);
         sessionToggle.setTextColor(GREEN);disclosureTarget(sessionToggle);
         sessionToggle.setPadding(dp(6),dp(7),dp(6),dp(8));
+        sessionToggle.setContentDescription("Show optional haptic interval alert");
         sessionToggle.setOnClickListener(v->{
             boolean expanded=sessionSettings.getVisibility()!=View.VISIBLE;
             sessionSettings.setVisibility(expanded?View.VISIBLE:View.GONE);
             sessionToggle.setText(expanded?"Haptic alert  ▴":"Haptic alert  ▾");
+            sessionToggle.setContentDescription(expanded?
+                "Hide optional haptic interval alert":"Show optional haptic interval alert");
         });
         // Optional settings are placed below the observation form.
         pointNextButton=UiKit.button(this,"Finish point · Next station","camera");
@@ -390,6 +409,7 @@ public class MainActivity extends Activity implements LocationListener {
             methodRecords.setOnClickListener(v->openFieldProtocol());
         }
         Button evidenceToggle=UiKit.button(this,"Other evidence tools  ▾","quiet");
+        evidenceToggle.setContentDescription("Show other evidence capture tools");
         LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,
             dp(FieldLayoutPolicy.actionHeightDp(
                 getResources().getConfiguration().fontScale)));
@@ -454,6 +474,7 @@ public class MainActivity extends Activity implements LocationListener {
         markRow.addView(bearingStatusView,weighted(1));
         TextView clear=label("Clear mark",12,true);
         clear.setTextColor(GREEN);
+        clear.setContentDescription("Clear marked detection bearing and observer position");
         clear.setPadding(dp(10),dp(8),dp(6),dp(8));
         clear.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));
         clear.setGravity(Gravity.CENTER_VERTICAL);
@@ -493,6 +514,7 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(speciesRow);
         LinearLayout speciesActions=horizontal();
         Button unknownBtn=UiKit.button(this,"Unidentified","quiet");
+        unknownBtn.setContentDescription("Choose an unidentified taxon label");
         unknownBtn.setTextSize(13);
         LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(0,dp(touchDp),1);
         speciesActions.addView(unknownBtn,unknownLp);
@@ -530,25 +552,49 @@ public class MainActivity extends Activity implements LocationListener {
             method.equals("live_trap_check")||method.equals("bat_acoustic")||
             method.equals("drift_fence_check")?"Individuals / evidence count":"Individuals";
         TextView countLabel=label(countBasis,14,true);countLine.addView(countLabel,weighted(1));
-        Button minus=button("−");countLine.addView(minus,new LinearLayout.LayoutParams(dp(55),dp(touchDp)));
+        Button minus=UiKit.button(this,"−","secondary");
+        minus.setContentDescription("Decrease individuals or evidence count");
+        countLine.addView(minus,new LinearLayout.LayoutParams(dp(52),dp(touchDp)));
         countView=label("1",19,true);countView.setGravity(Gravity.CENTER);
+        countView.setContentDescription("Individuals or evidence count");
         countLine.addView(countView,new LinearLayout.LayoutParams(dp(48),-2));
-        Button plus=button("+");countLine.addView(plus,new LinearLayout.LayoutParams(dp(55),dp(touchDp)));
+        Button plus=UiKit.button(this,"+","secondary");
+        plus.setContentDescription("Increase individuals or evidence count");
+        countLine.addView(plus,new LinearLayout.LayoutParams(dp(52),dp(touchDp)));
         content.addView(countLine);
         LinearLayout confidenceBlock=vertical();
         confidenceBlock.addView(label("Identification confidence",12,true));
         confidenceSpinner=new Spinner(this);
         confidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
             new String[]{"Field-identified (not expert verified)","Probable","Uncertain","Unidentified"}));
+        confidenceSpinner.setContentDescription("Identification confidence, not expert verification");
+        confidenceSpinner.setMinimumHeight(dp(56));
         confidenceBlock.addView(confidenceSpinner);
         minus.setOnClickListener(v->{count=Math.max(1,count-1);countView.setText(""+count);queueDraft();});
         plus.setOnClickListener(v->{count=Math.min(9999,count+1);countView.setText(""+count);queueDraft();});
         LinearLayout row=horizontal();
+        if(stackCaptureActions)row.setOrientation(LinearLayout.VERTICAL);
         distanceEntry=edit("Horizontal distance (m)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        row.addView(distanceEntry,weighted(1.2f));
+        distanceEntry.setContentDescription("Observer-estimated or measured horizontal detection distance in meters");
+        row.addView(distanceEntry,stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
+            new LinearLayout.LayoutParams(0,dp(fieldControlHeight),1.2f));
+        LinearLayout detectionBlock=vertical();
+        TextView detectionLabel=label("Detection type",LikasDesignSystem.TEXT_CONTROL,true);
+        detectionBlock.addView(detectionLabel);
         detectionSpinner=new Spinner(this);
-        detectionSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,new String[]{"Visual","Auditory","Both","Sign","Camera"}));
-        row.addView(detectionSpinner,weighted(0.8f));content.addView(row);
+        detectionSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
+            new String[]{"Visual","Auditory","Both","Sign","Camera"}));
+        detectionSpinner.setContentDescription("Choose observation detection type");
+        detectionSpinner.setMinimumHeight(dp(56));
+        detectionBlock.addView(detectionSpinner,new LinearLayout.LayoutParams(-1,dp(56)));
+        LinearLayout.LayoutParams detectionLp=stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,-2):
+            new LinearLayout.LayoutParams(0,-2,0.8f);
+        if(stackCaptureActions)detectionLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+        else detectionLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+        row.addView(detectionBlock,detectionLp);
+        content.addView(row);
         LinearLayout birdQuick=vertical();
         birdMeasurements=vertical();
         distanceSourceSpinner=new Spinner(this);
@@ -577,10 +623,14 @@ public class MainActivity extends Activity implements LocationListener {
             // Keep the distance sampling quality items accessible in one tap.
             content.addView(birdToggle);
             birdMeasurements.setVisibility(View.GONE);
+            birdToggle.setContentDescription("Show first-detection position and movement fields");
             birdToggle.setOnClickListener(v->{
                 boolean show=birdMeasurements.getVisibility()!=View.VISIBLE;
                 birdMeasurements.setVisibility(show?View.VISIBLE:View.GONE);
                 birdToggle.setText(show?"− Hide first position and movement":"＋ First position and movement");
+                birdToggle.setContentDescription(show?
+                    "Hide first-detection position and movement fields":
+                    "Show first-detection position and movement fields");
             });
         }
         LinearLayout herpQuick=vertical();
@@ -623,10 +673,13 @@ public class MainActivity extends Activity implements LocationListener {
         herpToggle.setTextColor(GREEN);disclosureTarget(herpToggle);
         if(profile.equals("Herpetofauna")){
             content.addView(herpToggle);herpPanel.setVisibility(View.GONE);
+            herpToggle.setContentDescription("Show weather and substrate fields");
             herpToggle.setOnClickListener(v->{
                 boolean open=herpPanel.getVisibility()!=View.VISIBLE;
                 herpPanel.setVisibility(open?View.VISIBLE:View.GONE);
                 herpToggle.setText(open?"− Hide weather and substrate":"＋ Weather and substrate details");
+                herpToggle.setContentDescription(open?
+                    "Hide weather and substrate fields":"Show weather and substrate fields");
             });
         }
         LinearLayout mammalQuick=vertical();
@@ -648,10 +701,13 @@ public class MainActivity extends Activity implements LocationListener {
         mammalToggle.setTextColor(GREEN);disclosureTarget(mammalToggle);
         if(profile.equals("Mammals")){
             content.addView(mammalToggle);mammalPanel.setVisibility(View.GONE);
+            mammalToggle.setContentDescription("Show additional mammal measurements");
             mammalToggle.setOnClickListener(v->{
                 boolean open=mammalPanel.getVisibility()!=View.VISIBLE;
                 mammalPanel.setVisibility(open?View.VISIBLE:View.GONE);
                 mammalToggle.setText(open?"− Hide additional measurements":"＋ Additional mammal measurements");
+                mammalToggle.setContentDescription(open?
+                    "Hide additional mammal measurements":"Show additional mammal measurements");
             });
         }
         LinearLayout photoRow=horizontal();
@@ -703,6 +759,7 @@ public class MainActivity extends Activity implements LocationListener {
             FieldLayoutPolicy.saveHeightDp(getResources().getConfiguration().fontScale))));
         LinearLayout footerOptions=horizontal();
         reviewButton=UiKit.button(this,"Review Records","secondary");
+        reviewButton.setContentDescription("Review saved records from this survey");
         LinearLayout.LayoutParams reviewParams=new LinearLayout.LayoutParams(0,dp(
             FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale)),1);
         footerOptions.addView(reviewButton,reviewParams);
@@ -711,10 +768,10 @@ public class MainActivity extends Activity implements LocationListener {
         endSurveyButton.setContentDescription("End survey. Choose Complete, Incomplete, or Not Counted.");
         LinearLayout.LayoutParams endParams=new LinearLayout.LayoutParams(0,dp(
             FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale)),1);
-        endParams.leftMargin=dp(8);
+        endParams.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         footerOptions.addView(endSurveyButton,endParams);
         LinearLayout.LayoutParams optionsParams=new LinearLayout.LayoutParams(-1,-2);
-        optionsParams.topMargin=dp(6);
+        optionsParams.topMargin=dp(LikasDesignSystem.SPACE_SM);
         footer.addView(footerOptions,optionsParams);
         root.addView(footer);
         endSurveyButton.setEnabled(active);

@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | RC62 Species Discover screen accepted on Android emulator
+
+- **Latest source:** `feature/likas-rc62-species-discover-visual`, draft **PR #59** into draft RC61 PR #58; source/test SHA **`d12ec6040ee6bc50439d02b2e998f7fd73c8d0d8`**, code122 `0.27.3-rc62-species-discover-preview`. Earlier PR stack remains draft; integrated scientific core RC49. Original package `org.phwildlife.survey.beta08`, pinned debug signer and SQLite schema27 unchanged.
+- **Species Discover only:** actual baseline RC58 Android screenshots at 360dp/100%, 412dp/130%, 320dp/200% identified large-font duplicate WILDLIFE/subtitle, hidden sideways group chips and category glyphs that could be mistaken for photos. RC62 retains Species header and counts but hides redundant kicker/subtitle only at >=160% text; adds species-filter fading edge and swipe description; labels placeholder glyph **ILLUSTRATION** behind any asynchronous licensed photograph. Habitats screen, statuses, taxon names, reference records, range and scientific methods unchanged.
+- **QA:** Android 14 workflow **41146066997 success**, **357 Python tests**, signed Android/JVM build, **11 Android instrumentation tests**, nine real PNGs (top, scrolled, scientific search at 3 viewport/font settings). Exact scientific-name search `Pithecophaga jefferyi` returns offline account; invalid token gives neutral "No matches"; RC60 main Library, RC58 Discover and RC51 exact research ZIP tests passed. Screenshot artifact **13021636319**.
+- **Direct signed RC62 APK:** artifact **13021581331**, **9792041 bytes**, SHA256 `dfef5cfd88c8070a99989d19786749d257a78d612f70734c6371e97a8fde5e24`. Independently checked ZIP, Android v2 RSA signature, complete signed-data content digest in 12 chunks and original certificate SHA256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Exact APK and before/after emulator screenshot comparison linked in implementation chat.
+- **Fixed parent RC61:** Screen 1 Library generated icon build initially failed an evidence filename mismatch, not compilation. Corrected at `0ebf16fcfeb174e3d090b90674b34ae86cee9476` and final run **41145603571 success**, 354 Python and 9 Android tests. APK artifact **13021775109** and screenshots **13021760299**, size 9791533 bytes SHA256 `3b62ed0798eb078a4ac40d866c4d9b94e28545b24b18983b3401096eecdfce88`, original signer full v2 verified, direct APK delivered. Original 18 owner-approved PNGs and offline assets preserved.
+- **Still not field-certified:** draft PR stack unmerged; real historical on-device upgrade, physical outdoor/touch/TalkBack/IME, long recording/export and backup/media restoration checks remain open.
+- **Next:** Habitats Discover screen independently. Audit its actual emulator screenshots, filter swipe discoverability, habitat card readability and sourced ecological associations. Do not combine with habitat detail-page changes.
+
+---
+
 ## 31 October 2026 | RC60 main Library: all three visual decisions resolved and emulator verified
 
 - **Current latest preview:** `feature/likas-rc60-library-visual-consistency`, draft PR **#57** on draft RC59 PR #56, exact app-code/test SHA `2803c6e4498266bf1377780cfe62a527dc52e59c`, versionCode **120** (`0.27.3-rc60-library-visual-preview`), same original app ID, signing certificate and SQLite schema **27**. Integrated scientific core remains RC49 and draft PR chain stays unmerged.

@@ -273,7 +273,13 @@ public class MainActivity extends Activity implements LocationListener {
         TextView methodName=label(SurveyMethods.displayLabel(profile,method),14,true);
         methodName.setTextColor(UiKit.FOREST);
         methodRow.addView(methodName,weighted(1f));
-        lineRow=horizontal();lineEntry=edit("Transect magnetic bearing °",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        lineRow=vertical();
+        TextView bearingLabel=label("Transect magnetic bearing (0–359°)",
+            LikasDesignSystem.TEXT_CONTROL,true);
+        lineRow.addView(bearingLabel);
+        lineEntry=edit("Transect magnetic bearing °",
+            InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        lineEntry.setContentDescription("Transect magnetic bearing in degrees, 0 to 359");
         lineRow.addView(lineEntry,new LinearLayout.LayoutParams(-1,-2));
         content.addView(methodRow);
         // Avoid splitting the method name and bearing input on narrow phones.
@@ -570,8 +576,16 @@ public class MainActivity extends Activity implements LocationListener {
         confidenceSpinner.setContentDescription("Identification confidence, not expert verification");
         confidenceSpinner.setMinimumHeight(dp(56));
         confidenceBlock.addView(confidenceSpinner);
-        minus.setOnClickListener(v->{count=Math.max(1,count-1);countView.setText(""+count);queueDraft();});
-        plus.setOnClickListener(v->{count=Math.min(9999,count+1);countView.setText(""+count);queueDraft();});
+        minus.setOnClickListener(v->{
+            count=Math.max(1,count-1);countView.setText(""+count);
+            countView.setContentDescription(count+" individuals or evidence items");
+            queueDraft();
+        });
+        plus.setOnClickListener(v->{
+            count=Math.min(9999,count+1);countView.setText(""+count);
+            countView.setContentDescription(count+" individuals or evidence items");
+            queueDraft();
+        });
         LinearLayout row=horizontal();
         if(stackCaptureActions)row.setOrientation(LinearLayout.VERTICAL);
         distanceEntry=edit("Horizontal distance (m)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -814,11 +828,18 @@ public class MainActivity extends Activity implements LocationListener {
         groupBar.setVisibility(canSwitch?View.VISIBLE:View.GONE);
         if(!canSwitch)return;
         for(String name:new String[]{"Reptiles","Amphibians"}){
-            Button b=button(name);
-            b.setTextSize(14);
-            b.setBackgroundTintList(ColorStateList.valueOf(name.equals(group)?GREEN:MUTED));
-            groupBar.addView(b,new LinearLayout.LayoutParams(0,dp(45),1));
-            b.setOnClickListener(v->{persistDraft();group=name;showGroups();refreshAutocomplete();queueDraft();});
+            boolean selected=name.equals(group);
+            Button b=UiKit.button(this,name,selected?"pond":"secondary");
+            b.setContentDescription(name+" observation group"+(selected?", selected":""));
+            b.setSelected(selected);
+            LinearLayout.LayoutParams groupLp=new LinearLayout.LayoutParams(0,
+                dp(FieldLayoutPolicy.actionHeightDp(
+                    getResources().getConfiguration().fontScale)),1);
+            if(groupBar.getChildCount()>0)groupLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+            groupBar.addView(b,groupLp);
+            b.setOnClickListener(v->{
+                persistDraft();group=name;showGroups();refreshAutocomplete();queueDraft();
+            });
         }
     }
     private void updateMethods(){

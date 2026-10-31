@@ -16,11 +16,22 @@
         <activity android:name=".MainActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:exported="false" />
         <activity android:name=".SitesActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".ImportActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".FieldBackupActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".HabitatRecordsActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".DataManagementActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".AuditActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".DashboardActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".StationProgressActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".CatalogActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".DiagnosticGuideActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Rc8TraitComparisonActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Rc24ConservationDashboardActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Rc8PhotoComparisonActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Rc9DifferentialActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Rc9PhotoAnnotationReviewActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".HabitatSpeciesEvidenceActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".TaxonDetailActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Rc7SpeciesLibraryActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".SpeciesPickerActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".RegionalChecklistActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".HistoryActivity" android:exported="false" android:screenOrientation="portrait" />
@@ -28,6 +39,10 @@
         <activity android:name=".TrapProtocolActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".FieldProtocolsActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".StudyProtocolsActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".LikasDiscoveryActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".LikasHabitatProfileActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".LikasLibraryActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".LikasSettingsActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".WelcomeActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".LikasLaunchActivity" android:screenOrientation="portrait" android:exported="true">
             <intent-filter>

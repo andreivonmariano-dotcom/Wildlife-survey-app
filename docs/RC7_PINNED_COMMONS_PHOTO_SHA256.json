@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1",
+  "source": "Wikimedia Commons source-credited reference JPEGs used in validated RC7C APK",
+  "referenceVersion": "2026-10-28",
+  "policy": "Always package exactly these byte-identical 9 photos; abort a build when required media cannot be verified. Tarsier deferred until fully pinned.",
+  "requiredCount": 9,
+  "items": [
+    {
+      "id": "species_eagle",
+      "offlineAsset": "offline_photos/species_eagle.jpg",
+      "commonsFile": "Pithecophaga jefferyi.jpg",
+      "sha256": "fe44e67b4b46f67a3ce818e4c416268df4d172bd1babb42148bbbe7cbaec992e"
+    },
+    {
+      "id": "species_frog",
+      "offlineAsset": "offline_photos/species_frog.jpg",
+      "commonsFile": "Polypedates leucomystax 290816938.jpg",
+      "sha256": "be20aeccc8d7e32e5f8b4341ad68ec2082e62a3a31ef9cb0fa6673d7925f6aa8"
+    },
+    {
+      "id": "species_kaloula",
+      "offlineAsset": "offline_photos/species_kaloula.jpg",
+      "commonsFile": "Kaloula pulchra 1.jpg",
+      "sha256": "8ddb91f7e1374b8a8e5cee7756ad2f5cd26408860a84f4edb07593b28cef5a7c"
+    },
+    {
+      "id": "habitat_mangrove",
+      "offlineAsset": "offline_photos/habitat_mangrove.jpg",
+      "commonsFile": "Palawan Island, Mangrove trees, Philippines.jpg",
+      "sha256": "05f14b8233d3a871f4d78175c35d73f255eb3f71abc8f17f850f03d48e31c6e1"
+    },
+    {
+      "id": "habitat_mossy",
+      "offlineAsset": "offline_photos/habitat_mossy.jpg",
+      "commonsFile": "Mossy Forest of Dulang-dulang.jpg",
+      "sha256": "aeac17741e4a93ff116728d6432f07ee7091b0c7ac096f92c7cd0af02f631727"
+    },
+    {
+      "id": "habitat_karst",
+      "offlineAsset": "offline_photos/habitat_karst.jpg",
+      "commonsFile": "Forest on limestone karsts, Bacuit Bay, Palawan, Philippines.jpg",
+      "sha256": "a8b6a2de94f125f1a1054efbbcce10ad12b02a1d8d759a6781880e3b4c48b43a"
+    },
+    {
+      "id": "species_pangolin",
+      "offlineAsset": "offline_photos/species_pangolin.jpg",
+      "commonsFile": "Philippine Pangolin Curled-up by Gregg Yan.jpg",
+      "sha256": "7bfc038b2bf0bfa27c8caf7dfcfb0406975a0642b07980e572ad97161248c117"
+    },
+    {
+      "id": "species_warty_pig",
+      "offlineAsset": "offline_photos/species_warty_pig.jpg",
+      "commonsFile": "Visayan Warty Pig.jpg",
+      "sha256": "562b82b6cdc560cbfc46397f249c5018100ba6191ef61db0e2a03f2df8f560a6"
+    },
+    {
+      "id": "species_mindoro_heart",
+      "offlineAsset": "offline_photos/species_mindoro_heart.jpg",
+      "commonsFile": "Mindoro bleeding-heart Smithsonian specimen.jpg",
+      "sha256": "87bd32a0b1d092fb34a669765b27cf729190748c347e7cd497da2215ea1724db"
+    }
+  ]
+}

@@ -1,0 +1,1193 @@
+{
+  "schemaVersion": 1,
+  "compiledDate": "2026-10-28",
+  "reviewLevel": "Source-checked from scientific museum references and a peer-reviewed Philippine field inventory; Philippine taxonomic reviewer approval pending.",
+  "scope": "Ten source-checked Philippine wildlife identification and ecology accounts, with installed source-attributed taxonomic checklists for other species. Not a verified key, automated species identification, site occurrence model or current conservation status registry.",
+  "sourceList": [
+    {
+      "id": "wildalert-eagle",
+      "title": "Philippine eagle species account",
+      "publisher": "DENR WildALERT",
+      "url": "https://www.wildalert.ph/s/15",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "adw-eagle",
+      "title": "Pithecophaga jefferyi species account",
+      "publisher": "University of Michigan Museum of Zoology, Animal Diversity Web",
+      "url": "https://animaldiversity.org/accounts/Pithecophaga_jefferyi/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "denr-serpent",
+      "title": "DENR NCR: Philippine Serpent Eagle",
+      "publisher": "Department of Environment and Natural Resources, Philippines",
+      "url": "https://ncr.denr.gov.ph/news-events/denr-national-capital-region-retrieves-a-philippine-serpent-eagle-in-quezon-city/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "itis-serpent",
+      "title": "ITIS taxonomic report: Spilornis holospilus",
+      "publisher": "Integrated Taxonomic Information System",
+      "url": "https://itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=175508",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "zookeys-agusan-2026",
+      "title": "An updated herpetological inventory of the Agusan Marsh Wildlife Sanctuary, eastern Mindanao Island, Philippines (ZooKeys 1272, DOI 10.3897/zookeys.1272.167304)",
+      "publisher": "Sanguila, Labaja, Bernstein & Brown (ZooKeys 2026)",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12993478/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "nparks-polypedates",
+      "title": "Polypedates leucomystax species description",
+      "publisher": "National Parks Board Singapore Flora & Fauna Web",
+      "url": "https://www.nparks.gov.sg/florafaunaweb/fauna/4/4/446",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "nparks-kaloula",
+      "title": "Kaloula pulchra species description",
+      "publisher": "National Parks Board Singapore Flora & Fauna Web",
+      "url": "https://www.nparks.gov.sg/florafaunaweb/fauna/4/5/455",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "asw-kaloula",
+      "title": "Kaloula pulchra Philippine introduction and taxonomy",
+      "publisher": "American Museum of Natural History, Amphibian Species of the World",
+      "url": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Microhylidae/Microhylinae/Kaloula/Kaloula-pulchra",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "mdd-tarsier",
+      "title": "Carlito syrichta current taxonomy",
+      "publisher": "American Society of Mammalogists, Mammal Diversity Database",
+      "url": "https://www.mammaldiversity.org/taxon/1000915/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "adw-tarsier",
+      "title": "Philippine tarsier physical description (historical name Tarsius syrichta)",
+      "publisher": "University of Michigan Museum of Zoology, Animal Diversity Web",
+      "url": "https://animaldiversity.org/accounts/Tarsius_syrichta/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "field-colugo",
+      "title": "Kagwang natural-history account, Cynocephalus volans",
+      "publisher": "Field Museum, Philippine Mammals",
+      "url": "https://philippines.fieldmuseum.org/natural-history/narrative/4124",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "denr-croc-recovery-2005",
+      "title": "National Recovery Plan for the Philippine Crocodile, second edition, 2005–2008",
+      "publisher": "DENR Protected Areas and Wildlife Bureau / Royal Melbourne Zoological Gardens",
+      "url": "https://www.philchm.ph/wp-content/uploads/National-Recovery-Plan-for-Philippine-Crocodile.pdf",
+      "accessed": "2026-10-28",
+      "sourceYear": "2005"
+    },
+    {
+      "id": "adw-croc",
+      "title": "Crocodylus mindorensis species account",
+      "publisher": "University of Michigan Animal Diversity Web",
+      "url": "https://animaldiversity.org/accounts/Crocodylus_mindorensis/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "philcockatoo-report-2017",
+      "title": "Conservation of the Philippine Cockatoo, progress report Jan–Jun 2017",
+      "publisher": "Philippine Cockatoo Conservation Programme / Katala Foundation",
+      "url": "https://www.philippinecockatoo.org/images/Publications%20and%20articles/Reports/IPPF-PTPR%20Jan-June%202017.pdf",
+      "accessed": "2026-10-28",
+      "sourceYear": "2017"
+    },
+    {
+      "id": "denr-wildalert-cockatoo",
+      "title": "WildALERT Wildlife Guide: Red-vented Cockatoo species description",
+      "publisher": "Philippine Department of Environment and Natural Resources (DENR)",
+      "url": "https://faspselib.denr.gov.ph/uploads/materials/35733d95-8157-413b-9928-d7def4588461/ccd701d2-21ef-45b6-b2f8-702a8abc6208.pdf",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "iucn-psg-pangolin",
+      "title": "Philippine pangolin: distribution, morphology and IUCN status",
+      "publisher": "IUCN SSC Pangolin Specialist Group",
+      "url": "https://pangolinsg.org/portfolio/philippine-pangolin/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "iucn-redlist-pangolin-2019",
+      "title": "Manis culionensis IUCN assessment (2018 assessment, published 2019)",
+      "publisher": "IUCN Red List / Schoppe, Katsis and Lagrada",
+      "url": "https://doi.org/10.2305/IUCN.UK.2019-3.RLTS.T136497A123586862.en",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "iucn-ssc-warty-pig",
+      "title": "Visayan warty pig (Sus cebifrons) detailed species profile",
+      "publisher": "IUCN SSC Wild Pig Specialist Group",
+      "url": "https://www.iucn-wpsg.org/visayan-warty-pig-detailed",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "lostbirds-mindoro-2026",
+      "title": "Mindoro Bleeding-heart rediscovery documented 1 August 2026",
+      "publisher": "Search for Lost Birds / American Bird Conservancy partners",
+      "url": "https://searchforlostbirds.org/birds/mindoro-bleeding-heart",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "birdlife-mindoro-account",
+      "title": "Mindoro bleeding-heart historical distribution, field habitat and threats (Threatened Birds of Asia)",
+      "publisher": "BirdLife International",
+      "url": "https://birdlifedata.blob.core.windows.net/red-data-books/gallplat.pdf",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "birdlife-cebu-2021",
+      "title": "Cebu Flowerpecker factsheet, 2021 assessment and detailed ecology",
+      "publisher": "BirdLife International DataZone",
+      "url": "https://datazone.birdlife.org/species/factsheet/Cebu-Flowerpecker-Dicaeum-quadricolor",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "iucn-cebu-ident",
+      "title": "Dicaeum quadricolor identification and scientific account",
+      "publisher": "IUCN Red List of Threatened Species",
+      "url": "https://doi.org/10.2305/IUCN.UK.2018-2.RLTS.T22717507A134203874.en",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "amnh-gigantes",
+      "title": "Platymantis insulatus taxonomy, type locality and historical habitat",
+      "publisher": "American Museum of Natural History Amphibian Species of the World",
+      "url": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-insulatus",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "asg-gigantes-2020",
+      "title": "Gigantes Limestone Frog: 2020 conservation needs workshop assessment",
+      "publisher": "Amphibian Ark and IUCN SSC Amphibian Specialist Group",
+      "url": "https://www.conservationneeds.org/summaryreport/5388?AspxAutoDetectCookieSupport=1",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "froglog-gigantes",
+      "title": "Decreasing population size of the Philippine limestone frog Platymantis insulatus",
+      "publisher": "Alcala, Bucol, Alcala and Brown, FrogLog 104",
+      "url": "https://www.iucn-amphibians.org/wp-content/uploads/sites/4/2018/12/FrogLog104.pdf",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "iucn-monitor-gray",
+      "title": "Varanus olivaceus Philippine monitor species profile",
+      "publisher": "IUCN SSC Monitor Lizard Specialist Group",
+      "url": "https://iucn-mlsg.org/species/philippine-species/varanus-olivaceus/",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "cites-gray-key",
+      "title": "Varanus olivaceus morphology, diagnostic features and island distribution",
+      "publisher": "CITES identification guide",
+      "url": "https://cites.unia.es/file.php/1/files/ID_Guide_Lizards_BFN.pdf",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "awcs-tamaraw",
+      "title": "Tamaraw species profile and global status",
+      "publisher": "IUCN SSC Asian Wild Cattle Specialist Group",
+      "url": "https://www.asianwildcattle.org/tamaraw.html",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "denr-tamaraw-plan-2025",
+      "title": "Tamaraw conservation action plan, scientific status and monitoring methods",
+      "publisher": "DENR Biodiversity Management Bureau",
+      "url": "https://bmb.gov.ph/wp-content/uploads/2025/08/dao2025-01.pdf",
+      "accessed": "2026-10-28",
+      "sourceYear": "2025"
+    },
+    {
+      "id": "zsl-tamaraw",
+      "title": "Tamaraw natural-history and appearance account",
+      "publisher": "Zoological Society of London",
+      "url": "https://www.zsl.org/what-we-do/species/tamaraw",
+      "accessed": "2026-10-28"
+    },
+    {
+      "id": "mdd-tamaraw",
+      "title": "Bubalus mindorensis accepted mammal taxonomy and Mindoro range",
+      "publisher": "ASM Mammal Diversity Database",
+      "url": "https://www.mammaldiversity.org/taxon/1006271/",
+      "accessed": "2026-10-28"
+    }
+  ],
+  "profiles": [
+    {
+      "scientificName": "Pithecophaga jefferyi",
+      "commonName": "Philippine Eagle",
+      "group": "Birds",
+      "assessment": "External morphology text checked against cited species accounts. No original diagnostic-key review.",
+      "traits": [
+        {
+          "field": "Approximate length",
+          "value": "90–100 cm total length",
+          "sourceIds": [
+            "wildalert-eagle"
+          ]
+        },
+        {
+          "field": "Head and crest",
+          "value": "Long shaggy crest with white and brown feathers",
+          "sourceIds": [
+            "wildalert-eagle"
+          ]
+        },
+        {
+          "field": "Face and bill",
+          "value": "White face, very large bluish-grey hooked bill",
+          "sourceIds": [
+            "wildalert-eagle"
+          ]
+        },
+        {
+          "field": "Body",
+          "value": "Dark brown upperparts with pale edges; white throat and underparts",
+          "sourceIds": [
+            "wildalert-eagle"
+          ]
+        },
+        {
+          "field": "In flight",
+          "value": "Long tail and rounded wings",
+          "sourceIds": [
+            "adw-eagle"
+          ]
+        },
+        {
+          "field": "Habitat context",
+          "value": "Forest-associated raptor; habitat is context, not diagnostic proof",
+          "sourceIds": [
+            "adw-eagle"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "A large forest raptor endemic to the Philippines. Its very large hooked bill, long shaggy crest and contrasting brown upperparts with paler underparts provide a recognizable combination. A confirmed field identification still needs an adequate view and exclusion of other large raptors.",
+        "habitat": "Associated with forested habitats. Record canopy condition, terrain and observed perching or flight behavior at the actual station, rather than using the species as automatic evidence of intact forest.",
+        "behavior": "A forest-associated predator with powerful talons and a broad-winged flight silhouette. Record vocalizations, perch heights and direction of movement separately from the taxon identification.",
+        "fieldNotes": "Use photographs showing head, bill, tail and upper/underwing where available. Record whether the bird was perched, soaring or only briefly glimpsed.",
+        "cautions": "Avoid using distant silhouette or a single crest view as a complete diagnostic key. Do not equate a national conservation listing with a confirmed local sighting.",
+        "sourceIds": [
+          "wildalert-eagle",
+          "adw-eagle"
+        ],
+        "photoId": "species_eagle"
+      }
+    },
+    {
+      "scientificName": "Spilornis holospilus",
+      "commonName": "Philippine Serpent-Eagle",
+      "group": "Birds",
+      "assessment": "External morphology text checked against DENR and ITIS. Do not infer an individual detection from range.",
+      "traits": [
+        {
+          "field": "Approximate length",
+          "value": "Medium-sized raptor; avoid estimating length without a scale",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        },
+        {
+          "field": "Head and crest",
+          "value": "Dark brown head with white speckling",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        },
+        {
+          "field": "Face and bill",
+          "value": "Yellow bare skin between bill and eye",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        },
+        {
+          "field": "Body",
+          "value": "Brown plumage with conspicuous white spots",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        },
+        {
+          "field": "In flight",
+          "value": "Dark terminal band on wings and tail",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        },
+        {
+          "field": "Habitat context",
+          "value": "Forest edges, riparian forest, foothills and wooded agricultural country",
+          "sourceIds": [
+            "denr-serpent"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "A Philippine serpent-eagle, recognizable in favorable views by contrasting yellow bare facial skin, white spotting on dark brown plumage and bold tail/wing markings. These field features are useful but should be compared with age and viewing conditions.",
+        "habitat": "Published records describe forest, woodland edges and wooded country. Log the site habitat independently; forest-edge use cannot be inferred at a GPS point from a species description.",
+        "behavior": "A diurnal raptor often observed perched or in flight. Describe call, flight height and perch type when witnessed.",
+        "fieldNotes": "Photograph head and facial skin, body spotting, wing pattern and tail if visible. Poor-light yellow color perception can mislead.",
+        "cautions": "Do not force a serpent-eagle determination from an unphotographed distant raptor. Confirm using documented sources and locality evidence.",
+        "sourceIds": [
+          "denr-serpent",
+          "itis-serpent"
+        ]
+      }
+    },
+    {
+      "scientificName": "Polypedates leucomystax",
+      "commonName": "Four-lined Tree Frog",
+      "group": "Amphibians",
+      "assessment": "Source-checked morphology and ecology; Philippine specimen variation and identification-key review pending.",
+      "traits": [
+        {
+          "field": "Family and build",
+          "value": "Rhacophoridae; relatively slender, long-legged tree frog",
+          "sourceIds": [
+            "nparks-polypedates"
+          ]
+        },
+        {
+          "field": "Dorsal pattern",
+          "value": "Brown, grey or yellowish back; four thin dark lengthwise stripes may be present",
+          "sourceIds": [
+            "nparks-polypedates"
+          ]
+        },
+        {
+          "field": "Fingers and toes",
+          "value": "Expanded, flattened toe and finger tips aid climbing",
+          "sourceIds": [
+            "nparks-polypedates"
+          ]
+        },
+        {
+          "field": "Habit and habitat",
+          "value": "Nocturnal; vegetation, shrubs and trees; occurs in disturbed forests and settlements",
+          "sourceIds": [
+            "nparks-polypedates"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Dorsal stripes vary; do not assign an uncertain Philippine tree frog from color alone",
+          "sourceIds": [
+            "nparks-polypedates"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "A long-limbed rhacophorid tree frog with expanded finger and toe tips. Dorsal color ranges through browns, greys or yellow tones, sometimes with four thin lengthwise stripes. Pattern variability makes one-color identification unreliable.",
+        "habitat": "Documented from forests, shrubs, grasses and disturbed or settled areas. Habitat context supports recording but is not an identification character by itself.",
+        "behavior": "Primarily nocturnal and insectivorous. The source describes use of shrubs and trees. Separate observed calling activity from visual detection.",
+        "fieldNotes": "Document dorsal pattern, finger/toe discs, tympanum and full body length if possible. At calling sites record recording equipment, call time and water-body context.",
+        "cautions": "Do not identify every four-striped frog as this species. Confirm current Philippine taxonomy and local look-alikes.",
+        "sourceIds": [
+          "nparks-polypedates"
+        ],
+        "photoId": "species_frog"
+      }
+    },
+    {
+      "scientificName": "Kaloula pulchra",
+      "commonName": "Banded Bullfrog / Asian Painted Frog",
+      "group": "Amphibians",
+      "assessment": "Source-checked morphology. Introduced alien species in Philippines, not evidence of any survey-site occurrence.",
+      "traits": [
+        {
+          "field": "Family and build",
+          "value": "Microhylidae; stout, rounded body, relatively small head and short hind limbs",
+          "sourceIds": [
+            "nparks-kaloula"
+          ]
+        },
+        {
+          "field": "Dorsal pattern",
+          "value": "Grey to brown back, flanked by broad pale yellow or orange, dark-edged bands",
+          "sourceIds": [
+            "nparks-kaloula",
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Fingers and toes",
+          "value": "Blunt, expanded digit tips",
+          "sourceIds": [
+            "nparks-kaloula"
+          ]
+        },
+        {
+          "field": "Habit and habitat",
+          "value": "Often near built-up or disturbed areas; calls commonly heard after heavy rain",
+          "sourceIds": [
+            "nparks-kaloula"
+          ]
+        },
+        {
+          "field": "Philippine origin",
+          "value": "Introduced species according to AMNH's taxonomic account; not endemic",
+          "sourceIds": [
+            "asw-kaloula"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Separate morphology and documented locality from uncertain call-only records",
+          "sourceIds": [
+            "nparks-kaloula"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "A stocky microhylid frog with relatively small head, short hind legs and broad pale bands bordered by dark coloration along the sides. Color and body shape together aid recognition.",
+        "habitat": "Frequently described near developed and disturbed areas. The source mentions calls before and after heavy rains and use of tree trunks. A location in built-up habitat is not proof of identity.",
+        "behavior": "Calling is especially noted around heavy rainfall. Record call context, time since rain and acoustic evidence when available.",
+        "fieldNotes": "Photograph lateral bands and dorsal head markings. For calls record frequency and exact time rather than inferring species from rainfall alone.",
+        "cautions": "Taxonomic sources describe introductions in the Philippines; do not label as Philippine endemic. Verify local status from cited checklist evidence.",
+        "sourceIds": [
+          "nparks-kaloula",
+          "asw-kaloula"
+        ],
+        "photoId": "species_kaloula"
+      }
+    },
+    {
+      "scientificName": "Hydrosaurus pustulatus",
+      "commonName": "Philippine Sailfin Lizard",
+      "group": "Reptiles",
+      "assessment": "Morphology checked against 2026 peer-reviewed Philippine herpetofauna inventory; individual stage differences require review.",
+      "traits": [
+        {
+          "field": "Family and build",
+          "value": "Agamidae; large lizard, hind limbs longer than forelimbs",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Dorsal silhouette",
+          "value": "Distinctive laterally flattened, serrated dorsal sail extending from hip region into proximal tail",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Feet and digits",
+          "value": "Greatly expanded scales under the toes documented in identification account",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Ecological context",
+          "value": "Riparian and mangrove corridors; may use overhanging vegetation by rivers",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Sail development and body size differ by age; use characters together",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "A large Philippine sailfin lizard with a distinctive upright flattened crest or sail and an elongated tail. Development of the sail differs across age and sex, so photographs should capture proportions and scales.",
+        "habitat": "Philippine inventory evidence reports riparian and mangrove-associated settings. Record riverbank, overhanging branches and substrate directly.",
+        "behavior": "Often associated with waterways, where individuals may use branches and banks. The source documents habitat association, not behavior at every site.",
+        "fieldNotes": "Document lateral profile, dorsal sail, tail, foot scalation, age stage and microhabitat. Protect exact sensitive nest locations in exports.",
+        "cautions": "A generic sailfin-like lizard silhouette is not a specialist-validated diagnosis. Do not assign species from habitat alone.",
+        "sourceIds": [
+          "zookeys-agusan-2026"
+        ]
+      }
+    },
+    {
+      "scientificName": "Varanus cumingi",
+      "commonName": "Cuming's Water Monitor",
+      "group": "Reptiles",
+      "assessment": "Source-checked identification from 2026 Philippine herpetofauna inventory and monitor-lizard taxonomy. Related Varanus taxa need comparative expert review.",
+      "traits": [
+        {
+          "field": "Family and build",
+          "value": "Varanidae; heavy-built monitor lizard with powerful limbs, claws and muscular neck",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Head pattern",
+          "value": "Conspicuous bright yellow head coloration, with dark contrasting pattern",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Body coloration",
+          "value": "Bright yellow and dark contrast is distinctive in the Varanus salvator complex",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Ecological context",
+          "value": "Reported in Agusan Marsh, Mindanao; a published record is not proof of local station presence",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Related Philippine monitor taxa require scalation and taxonomic comparison; do not rely on yellow alone",
+          "sourceIds": [
+            "zookeys-agusan-2026"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "A monitor lizard in the Philippine water-monitor complex. The published Mindanao inventory describes a conspicuous yellow-and-dark contrast, including the head. Exact determination among related monitors requires anatomical comparison.",
+        "habitat": "Documented in a Mindanao wetland inventory. Wetlands and adjacent vegetation provide context; published park records are not proof of presence at a surveyed site.",
+        "behavior": "Record movement, thermoregulation, water use, tracks or basking only as personally observed events.",
+        "fieldNotes": "Record complete head and body patterns, scale characteristics, tail pattern and a size reference in photographs.",
+        "cautions": "Monitor-lizard taxonomy and island populations need specialist review. Avoid assuming a species from yellow markings alone.",
+        "sourceIds": [
+          "zookeys-agusan-2026"
+        ]
+      }
+    },
+    {
+      "scientificName": "Carlito syrichta",
+      "commonName": "Philippine Tarsier",
+      "group": "Mammals",
+      "assessment": "Current name checked against Mammal Diversity Database; morphology referenced under older combination Tarsius syrichta.",
+      "traits": [
+        {
+          "field": "Taxonomic identification",
+          "value": "Accepted name Carlito syrichta; older references often use Tarsius syrichta",
+          "sourceIds": [
+            "mdd-tarsier"
+          ]
+        },
+        {
+          "field": "Head and eyes",
+          "value": "Very large forward-facing eyes, round face and prominent ears",
+          "sourceIds": [
+            "adw-tarsier"
+          ]
+        },
+        {
+          "field": "Limb and digit structure",
+          "value": "Long hind limbs and slender digits with gripping pads",
+          "sourceIds": [
+            "adw-tarsier"
+          ]
+        },
+        {
+          "field": "Tail",
+          "value": "Long slender tail, tufted near tip",
+          "sourceIds": [
+            "adw-tarsier"
+          ]
+        },
+        {
+          "field": "Ecological context",
+          "value": "Small arboreal nocturnal primate in Philippine forest and secondary growth",
+          "sourceIds": [
+            "adw-tarsier"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Do not infer an exact island record or age/sex from general genus-level appearance",
+          "sourceIds": [
+            "mdd-tarsier"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "A small nocturnal Philippine primate with very large forward-facing eyes, long hind limbs and a tail tufted toward its end. Earlier literature uses the name Tarsius syrichta; the installed profile uses the accepted genus Carlito.",
+        "habitat": "Described in tropical forest, including shrubs, bamboo, understory and second-growth vegetation. Night-time perch substrate and vegetation height are useful site records.",
+        "behavior": "Arboreal and nocturnal, with rapid leaping locomotion. Its diet is largely insects and other small animals; avoid approaching resting animals for photographs.",
+        "fieldNotes": "Record observed eye/head proportions, perch height, canopy level and activity period. Distinguish direct sightings from calls or signs.",
+        "cautions": "Historical names do not imply a new sighting or exact island presence. Keep uncertain observations at higher taxonomic rank.",
+        "sourceIds": [
+          "mdd-tarsier",
+          "adw-tarsier"
+        ],
+        "photoId": "species_tarsier"
+      }
+    },
+    {
+      "scientificName": "Cynocephalus volans",
+      "commonName": "Philippine Colugo / Kagwang",
+      "group": "Mammals",
+      "assessment": "Morphology checked against the Field Museum Philippine mammals account; limited independent diagnosis.",
+      "traits": [
+        {
+          "field": "Taxonomic identification",
+          "value": "Order Dermoptera; the common term flying lemur does not indicate a true lemur",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        },
+        {
+          "field": "Head and eyes",
+          "value": "Broad muzzle, dark eyes and woolly, white-speckled fur",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        },
+        {
+          "field": "Limb and skin structure",
+          "value": "Large furred gliding membrane spanning fore- and hind limbs",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        },
+        {
+          "field": "Tail and locomotion",
+          "value": "Glides between trees using a membrane, not powered flight",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        },
+        {
+          "field": "Ecological context",
+          "value": "Arboreal mammal recorded from southern Philippine island groups",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Visible membrane separates it from tarsiers, but distant/night records can remain unresolved",
+          "sourceIds": [
+            "field-colugo"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Philippine colugo, locally called kagwang, is a nocturnal arboreal mammal with a broad gliding membrane extending between limbs. It is a dermopteran, not a lemur or a flying bat.",
+        "habitat": "The Field Museum account describes use of southern Philippine forests, including regenerating disturbed forest. Record the actual canopy and tree conditions at detection points.",
+        "behavior": "Nocturnal foliage feeder that glides between trees. Observed gliding direction, tree identity, time and height can aid interpreting sightings.",
+        "fieldNotes": "Look for broad membrane outlines, speckled fur and head proportions. Record whether the sighting was a glide, rest or feeding activity.",
+        "cautions": "Do not equate a membrane silhouette with species-level confirmation under difficult light. Record uncertainty and media sources.",
+        "sourceIds": [
+          "field-colugo"
+        ]
+      }
+    },
+    {
+      "scientificName": "Crocodylus mindorensis",
+      "commonName": "Philippine Crocodile",
+      "group": "Reptiles",
+      "assessment": "Introductory morphology and habitat sourced to DENR recovery plan and museum accounts; specialist diagnosis and current legal conservation status review pending.",
+      "traits": [
+        {
+          "field": "Overall form",
+          "value": "A relatively small freshwater crocodile with a broad head, armored dorsal scales and strong tail.",
+          "sourceIds": [
+            "denr-croc-recovery-2005"
+          ]
+        },
+        {
+          "field": "Dorsal coloration",
+          "value": "Dull brown to dark brown above, with darker transverse bands along back and tail; pale underside.",
+          "sourceIds": [
+            "denr-croc-recovery-2005"
+          ]
+        },
+        {
+          "field": "Nuchal / neck scales",
+          "value": "The nuchal-scale cluster and post-occipital scutes aid separation from C. porosus in trained, safe examination.",
+          "sourceIds": [
+            "denr-croc-recovery-2005"
+          ]
+        },
+        {
+          "field": "Habitat",
+          "value": "Freshwater rivers, marshes, ponds and lakes have been reported; disturbance and current local status vary.",
+          "sourceIds": [
+            "denr-croc-recovery-2005",
+            "adw-croc"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Never approach or handle a crocodile for scalation counts. Record distant photographic evidence and unresolved identification.",
+          "sourceIds": [
+            "denr-croc-recovery-2005"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Philippine Crocodile is an endemic freshwater crocodilian. Historical DENR accounts describe a fairly small-bodied species with a dark-banded back and tail, armored scales and a paler belly. Exact identification requires more than a distant silhouette.",
+        "habitat": "Historic Philippine recovery literature reports the species in freshwater wetlands, slow channels, rivers, swamps, pools and lakes. Habitat references do not establish presence at a particular station.",
+        "behavior": "Like other crocodilians it may bask at water margins and use aquatic cover. Note the actual observed behavior, water depth, current and surrounding disturbance rather than assuming habitat preference from one sighting.",
+        "fieldNotes": "From a safe distance, document body outline, head, neck and tail patterns, position on water or bank, GPS accuracy and camera direction. Do not approach, provoke or handle crocodiles for photographs.",
+        "cautions": "The DENR recovery plan is dated 2005, so its distribution and recovery status cannot represent a current population estimate. Keep age and exact locality claims separate from morphology. A remote crocodile sighting can remain Crocodylus sp.",
+        "sourceIds": [
+          "denr-croc-recovery-2005",
+          "adw-croc"
+        ]
+      }
+    },
+    {
+      "scientificName": "Cacatua haematuropygia",
+      "commonName": "Red-vented Cockatoo / Philippine Cockatoo",
+      "group": "Birds",
+      "assessment": "Introductory morphology sourced to DENR WildALERT guide and Philippine conservation program reports. Independent ornithological key review pending.",
+      "traits": [
+        {
+          "field": "Overall plumage",
+          "value": "Predominantly white bird with a short erectile crest and pale grey bill.",
+          "sourceIds": [
+            "denr-wildalert-cockatoo"
+          ]
+        },
+        {
+          "field": "Tail underside",
+          "value": "Red undertail coverts and yellowish underside of the tail help separate this species in a good view.",
+          "sourceIds": [
+            "denr-wildalert-cockatoo"
+          ]
+        },
+        {
+          "field": "Size",
+          "value": "About 30–31 cm total length in a DENR description, variable by measurement and individual.",
+          "sourceIds": [
+            "denr-wildalert-cockatoo"
+          ]
+        },
+        {
+          "field": "Habitat",
+          "value": "Historically associated with Philippine lowland forest and mangrove habitats.",
+          "sourceIds": [
+            "philcockatoo-report-2017"
+          ]
+        },
+        {
+          "field": "Identification caution",
+          "value": "Check the vent and tail in a clear view; avoid assigning escaped or captive white cockatoos from overall color.",
+          "sourceIds": [
+            "denr-wildalert-cockatoo",
+            "philcockatoo-report-2017"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Philippine or Red-vented Cockatoo is an endemic, mostly white parrot. A short pale crest, pinkish facial tones, red undertail coverts and yellowish underside to the tail distinguish the source-described plumage.",
+        "habitat": "Conservation records emphasize lowland forest and mangrove settings, especially trees used for nesting and foraging. Habitat association does not confirm occurrence at a chosen survey site.",
+        "behavior": "Reports document foraging, nesting and roosting site monitoring. A field record should distinguish flyovers, vocal contacts, feeding observations and nest activity.",
+        "fieldNotes": "Record bill and crest, underside of tail, visible red vent, number of birds, flight direction and any clear photographs or sounds. Avoid publishing sensitive nesting coordinates in shared exports.",
+        "cautions": "Some white cockatoos observed near settlements can be captive or escaped birds. Record uncertainty and distinguish wild population evidence from pet observations. Published older range figures should not be treated as current occupancy.",
+        "sourceIds": [
+          "denr-wildalert-cockatoo",
+          "philcockatoo-report-2017"
+        ]
+      }
+    },
+    {
+      "scientificName": "Manis culionensis",
+      "commonName": "Philippine Pangolin / Palawan Pangolin",
+      "group": "Mammals",
+      "assessment": "Introductory specialist-group synthesis; global IUCN category is not DENR national legal status. Independent field-key review pending.",
+      "traits": [
+        {
+          "field": "Body covering",
+          "value": "Overlapping keratin scales cover the body and tail; the long narrow snout differs from the head shape of most mammals.",
+          "sourceIds": [
+            "iucn-psg-pangolin"
+          ]
+        },
+        {
+          "field": "Asian pangolin comparison",
+          "value": "The specialist group describes more dorsal scale rows and smaller scales than the Sunda pangolin.",
+          "sourceIds": [
+            "iucn-psg-pangolin"
+          ]
+        },
+        {
+          "field": "Geographic evidence",
+          "value": "Endemic to the Palawan faunal region, with the specialist account naming Palawan and Culion among recorded islands; this is not a site occurrence claim.",
+          "sourceIds": [
+            "iucn-psg-pangolin"
+          ]
+        },
+        {
+          "field": "Global assessment",
+          "value": "IUCN lists Critically Endangered in its 2018 assessment, published in 2019; reassess for current official changes.",
+          "sourceIds": [
+            "iucn-redlist-pangolin-2019"
+          ]
+        },
+        {
+          "field": "Evidence caution",
+          "value": "Tracks, feeding signs and unverified camera-trap silhouettes alone need careful independent review.",
+          "sourceIds": [
+            "iucn-psg-pangolin"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Philippine pangolin is a scaled mammal endemic to the Palawan island group. Its overlapping scales, pointed muzzle, strong forefeet and long tail distinguish its body plan. Specialist descriptions distinguish it from the Sunda pangolin by scale features, not by locality alone.",
+        "habitat": "The specialist account reports Philippine distribution and limited published natural history. Record actual forest cover, substrate, feeding signs and microhabitat independently rather than inferring a particular habitat at a survey station.",
+        "behavior": "Pangolins curl into a protective ball when threatened. Avoid broad claims about activity, diet or reproductive rates beyond the cited specialist sources.",
+        "fieldNotes": "Record nonintrusive camera-trap photos, body-scale arrangement and observer effort. Restrict public export of precise locations for sensitive detections.",
+        "cautions": "Its worldwide IUCN Red List category is Critically Endangered in the cited 2018 assessment. This is not a DENR national legal category or proof of population presence at a specific site. Avoid handling or disturbing individuals.",
+        "sourceIds": [
+          "iucn-psg-pangolin",
+          "iucn-redlist-pangolin-2019"
+        ],
+        "photoId": "species_pangolin"
+      }
+    },
+    {
+      "scientificName": "Sus cebifrons",
+      "commonName": "Visayan Warty Pig",
+      "group": "Mammals",
+      "assessment": "Source-based field overview from IUCN SSC Wild Pig Specialist Group; wild-versus-hybrid confirmation requires specialist review.",
+      "traits": [
+        {
+          "field": "Adult coat",
+          "value": "Adult males can develop a long dark mane that extends over the forehead and back.",
+          "sourceIds": [
+            "iucn-ssc-warty-pig"
+          ]
+        },
+        {
+          "field": "Snout and facial marks",
+          "value": "The specialist account notes a distinctive snout band and relatively small facial warts.",
+          "sourceIds": [
+            "iucn-ssc-warty-pig"
+          ]
+        },
+        {
+          "field": "Young animals",
+          "value": "Juveniles can have dark and orange-brown longitudinal stripes that fade with age.",
+          "sourceIds": [
+            "iucn-ssc-warty-pig"
+          ]
+        },
+        {
+          "field": "Range evidence",
+          "value": "Surviving wild populations are documented on Negros and Panay; older island mentions do not confirm modern presence.",
+          "sourceIds": [
+            "iucn-ssc-warty-pig"
+          ]
+        },
+        {
+          "field": "Conservation interpretation",
+          "value": "IUCN SSC specialist source calls this species Critically Endangered and identifies habitat loss, hunting and hybridization as threats.",
+          "sourceIds": [
+            "iucn-ssc-warty-pig"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "An endemic Philippine wild pig of the western Visayas. The specialist description notes a long mane in mature males, a diagnostic snout band and small facial warts. Juveniles differ markedly from adults.",
+        "habitat": "Historical primary and secondary forest records include lower elevations, but remaining documented populations mainly occupy forest refuges in Negros and Panay. Some dense secondary cover is used. Do not infer occupancy from elevation or island alone.",
+        "behavior": "The specialist account describes small social groups, diet evidence from feeding signs and increased nocturnal activity in disturbed or hunted areas. Record behavior directly instead of assuming every pig sign belongs to this species.",
+        "fieldNotes": "For camera traps, document snout, mane, ears, body shape, stripe pattern and scale reference. Record camera effort and retain unresolved Sus sp. records where identification or hybrid status is uncertain.",
+        "cautions": "Feral domestic pigs and hybrids can resemble wild pigs. Evidence of damage, rooting or tracks is not sufficient for a confident identification. The IUCN threat category is separate from DENR national regulation.",
+        "sourceIds": [
+          "iucn-ssc-warty-pig"
+        ],
+        "photoId": "species_warty_pig"
+      }
+    },
+    {
+      "scientificName": "Gallicolumba platenae",
+      "commonName": "Mindoro Bleeding-heart",
+      "group": "Birds",
+      "assessment": "Historical BirdLife account plus documented 2026 rediscovery; not a current distribution map or definitive plumage key.",
+      "traits": [
+        {
+          "field": "Family and form",
+          "value": "A ground-dwelling pigeon in Columbidae, often difficult to detect in forest understory.",
+          "sourceIds": [
+            "birdlife-mindoro-account"
+          ]
+        },
+        {
+          "field": "Breast mark",
+          "value": "A distinct reddish breast patch is the named bleeding-heart character; obtain clear images rather than identifying from a brief flush.",
+          "sourceIds": [
+            "lostbirds-mindoro-2026"
+          ]
+        },
+        {
+          "field": "Island evidence",
+          "value": "Endemic to Mindoro. Records from other islands do not establish this species.",
+          "sourceIds": [
+            "birdlife-mindoro-account"
+          ]
+        },
+        {
+          "field": "2026 confirmed evidence",
+          "value": "A camera trap photographed one individual on Mindoro on 1 August 2026 after approximately 20 years without a confirmed photograph.",
+          "sourceIds": [
+            "lostbirds-mindoro-2026"
+          ]
+        },
+        {
+          "field": "Altitude interpretation",
+          "value": "The 2026 camera-trap location was reported above 900 m, so older low-elevation summaries cannot be used as hard altitude limits.",
+          "sourceIds": [
+            "lostbirds-mindoro-2026"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Mindoro bleeding-heart is a secretive forest ground-dove with a red breast mark. Historical sources describe difficult field detection. A conservation-led camera-trap project documented the species again in August 2026.",
+        "habitat": "BirdLife's historical account records forest-floor observations in lowland and closed-canopy settings. A confirmed 2026 camera-trap record at higher elevation shows that historical elevation descriptions must not become automatic absence rules.",
+        "behavior": "The historical account describes birds walking through forest-floor cover and remaining difficult to observe. Camera trapping is valuable, but the recent photograph alone does not estimate population size.",
+        "fieldNotes": "Document breast patch, whole body, camera-trap effort, date and uncertainty. Do not publish precise rediscovery or nest coordinates. Record uncertain ground-dove detections without forcing a species assignment.",
+        "cautions": "One 2026 detection confirms survival, not island-wide occupancy or recovery. The cited conservation status is a global designation, separate from national legal classifications. The attached reference photograph depicts a museum specimen, not a living wild individual.",
+        "sourceIds": [
+          "lostbirds-mindoro-2026",
+          "birdlife-mindoro-account"
+        ],
+        "photoId": "species_mindoro_heart"
+      }
+    },
+    {
+      "scientificName": "Dicaeum quadricolor",
+      "commonName": "Cebu Flowerpecker",
+      "group": "Birds",
+      "assessment": "IUCN/BirdLife descriptive account; global CR status from 2021 assessment, not a verified survey-site record.",
+      "traits": [
+        {
+          "field": "General build",
+          "value": "Small (about 11–12 cm), relatively stocky flowerpecker with a short, stout bill.",
+          "sourceIds": [
+            "iucn-cebu-ident"
+          ]
+        },
+        {
+          "field": "Adult male",
+          "value": "Blackish head, bright red mantle/back, yellow-green rump, dark wings and grey-white lower parts.",
+          "sourceIds": [
+            "iucn-cebu-ident"
+          ]
+        },
+        {
+          "field": "Female plumage",
+          "value": "Duller dark greyish upperparts and brownish-grey underparts. Female identification needs specialist comparison.",
+          "sourceIds": [
+            "iucn-cebu-ident"
+          ]
+        },
+        {
+          "field": "Historical distribution",
+          "value": "Endemic to Cebu, recorded in fragmented forest patches. An island name is not confirmation at an individual point.",
+          "sourceIds": [
+            "birdlife-cebu-2021"
+          ]
+        },
+        {
+          "field": "Global conservation",
+          "value": "BirdLife cites Critically Endangered in its 2021 assessment. The population estimate shown there traces to 2005.",
+          "sourceIds": [
+            "birdlife-cebu-2021"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The Cebu Flowerpecker is a tiny endemic passerine with contrasting male plumage. The published identification description emphasizes a red male mantle, yellow-green rump, dark head, and short stout bill. Females are less distinctive.",
+        "habitat": "BirdLife documents remaining Cebu forest fragments, including karst-associated canopy and secondary forest beside native vegetation. Historic patch use must not become a prediction of present presence at a station.",
+        "behavior": "The cited factsheet documents foraging on fruits and flowering plants. Field records should distinguish direct feeding observations from a generic fruiting-tree association.",
+        "fieldNotes": "Record sex, back and rump plumage, bill form, vocalization, canopy height, camera direction and observer effort. Avoid publishing precise breeding locations and keep uncertain flowerpeckers unidentified.",
+        "cautions": "The global CR category is from the 2021 BirdLife assessment. Do not present the 2005 population estimate as a 2026 count or as a DENR national legal designation. No source confirms this bird at a particular LIKAS survey site.",
+        "sourceIds": [
+          "birdlife-cebu-2021",
+          "iucn-cebu-ident"
+        ]
+      }
+    },
+    {
+      "scientificName": "Platymantis insulatus",
+      "commonName": "Gigantes Limestone Frog",
+      "group": "Amphibians",
+      "assessment": "Source-backed island and limestone microhabitat summary; no specialist-validated individual morphological key.",
+      "traits": [
+        {
+          "field": "Family and taxonomy",
+          "value": "Ceratobatrachidae, genus Platymantis; formerly cited as the spelling Platymantis insulata in some publications.",
+          "sourceIds": [
+            "amnh-gigantes"
+          ]
+        },
+        {
+          "field": "Type locality",
+          "value": "South Gigante Island in Iloilo, Philippines; the original type locality is not the full present-day occurrence range.",
+          "sourceIds": [
+            "amnh-gigantes"
+          ]
+        },
+        {
+          "field": "Microhabitat",
+          "value": "Limestone crevices, cave mouths and rock fissures in surveys reported by Alcala and colleagues.",
+          "sourceIds": [
+            "froglog-gigantes"
+          ]
+        },
+        {
+          "field": "Published range",
+          "value": "American Museum of Natural History describes limestone outcrops in primary and secondary forest on South Gigante Island.",
+          "sourceIds": [
+            "amnh-gigantes"
+          ]
+        },
+        {
+          "field": "Global status",
+          "value": "2020 amphibian conservation needs summary reports the IUCN category Critically Endangered; no national category is assigned in that summary.",
+          "sourceIds": [
+            "asg-gigantes-2020"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "A Philippine endemic frog documented from limestone habitats of the Gigantes island group. Older literature uses the alternate spelling Platymantis insulata. Its diagnostic characters need independent morphological review beyond the source-based habitat and locality descriptions.",
+        "habitat": "Published field records associate this frog with cracks, caves, fissures, and humid limestone outcrops. Note karst substrate, shelter type, rainfall, temperature and direct observation separately.",
+        "behavior": "The cited limestone field research focused on counts under changing weather and rainfall conditions. Those sampling results should not be generalized into fixed daily activity or breeding rules.",
+        "fieldNotes": "Photograph lateral, dorsal, hands and feet where visible without disturbing crevices. Log encounter position and actual search time. A rock-associated frog elsewhere in the Philippines is not automatically this species.",
+        "cautions": "The source assessment labels global Critically Endangered and leaves national assessment separate. South Gigante type locality does not establish occupancy at any new island or station. Retain Platymantis sp. for uncertain records.",
+        "sourceIds": [
+          "amnh-gigantes",
+          "asg-gigantes-2020",
+          "froglog-gigantes"
+        ]
+      }
+    },
+    {
+      "scientificName": "Varanus olivaceus",
+      "commonName": "Gray’s Monitor / Butaan",
+      "group": "Reptiles",
+      "assessment": "Source-checked ecological and morphology summary from IUCN SSC specialist group and CITES field identification guide.",
+      "traits": [
+        {
+          "field": "General form",
+          "value": "Large monitor with muscular limbs, a strong compressed tail and a prominently rounded snout.",
+          "sourceIds": [
+            "cites-gray-key"
+          ]
+        },
+        {
+          "field": "Adult snout",
+          "value": "Identification guide notes slit-like nostrils placed closer to snout tip than the eye.",
+          "sourceIds": [
+            "cites-gray-key"
+          ]
+        },
+        {
+          "field": "Ecological habit",
+          "value": "Specialist source describes arboreal forest use and pressure from deforestation and forest fragmentation.",
+          "sourceIds": [
+            "iucn-monitor-gray"
+          ]
+        },
+        {
+          "field": "Historical range",
+          "value": "Published Philippine sources discuss southern Luzon, Polillo, Catanduanes and other nearby islands, with local evidence gaps.",
+          "sourceIds": [
+            "iucn-monitor-gray",
+            "cites-gray-key"
+          ]
+        },
+        {
+          "field": "Global status",
+          "value": "IUCN SSC Monitor Lizard Specialist Group lists global Vulnerable, with assessment date 2021.",
+          "sourceIds": [
+            "iucn-monitor-gray"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "Gray’s monitor, or Butaan, is a large endemic Philippine monitor lizard with a strong laterally compressed tail and rounded snout. Specialist descriptions compare morphology with other Philippine monitors; a large dark lizard alone is not enough for identification.",
+        "habitat": "The specialist profile describes the species in forests and notes pressure from habitat fragmentation. Forest characteristics and historical range descriptions are not proof of occurrence at any individual survey station.",
+        "behavior": "Published accounts associate this monitor with climbing and forest use. Record observed substrate and behavior without assigning an exact feeding event or habitat score from the literature alone.",
+        "fieldNotes": "Record snout shape, dorsal scales, tail cross-section, approximate length only where measured safely, tree position and high-quality photographs. Keep ambiguous monitor encounters at genus level.",
+        "cautions": "A 2021 global Vulnerable category differs from DENR national classification. The IUCN specialist source highlights uncertainty for some geographic records. Do not infer natural occurrence from released or captive individuals.",
+        "sourceIds": [
+          "iucn-monitor-gray",
+          "cites-gray-key"
+        ]
+      }
+    },
+    {
+      "scientificName": "Bubalus mindorensis",
+      "commonName": "Tamaraw / Mindoro Dwarf Buffalo",
+      "group": "Mammals",
+      "assessment": "DENR 2025 conservation planning, IUCN SSC and zoological source synthesis. Not a current island-wide population census or validated key.",
+      "traits": [
+        {
+          "field": "Body form",
+          "value": "A compact, dark brown to greyish wild buffalo with sturdy legs and a relatively short body compared with domestic water buffalo.",
+          "sourceIds": [
+            "zsl-tamaraw"
+          ]
+        },
+        {
+          "field": "Horns",
+          "value": "Adults have backward-pointing horns. Combine horn shape with body, markings and locality evidence before field identification.",
+          "sourceIds": [
+            "zsl-tamaraw"
+          ]
+        },
+        {
+          "field": "Calves",
+          "value": "Calves are described as reddish-brown, with coats becoming darker as they mature.",
+          "sourceIds": [
+            "zsl-tamaraw"
+          ]
+        },
+        {
+          "field": "Endemicity",
+          "value": "The accepted species is endemic to Mindoro, according to the American Society of Mammalogists taxonomy.",
+          "sourceIds": [
+            "mdd-tamaraw"
+          ]
+        },
+        {
+          "field": "Conservation categories",
+          "value": "DENR's 2025 action-plan summary and IUCN SSC sources identify the tamaraw as Critically Endangered. National rules and global assessments remain separate.",
+          "sourceIds": [
+            "denr-tamaraw-plan-2025",
+            "awcs-tamaraw"
+          ]
+        }
+      ],
+      "account": {
+        "overview": "The tamaraw is a compact endemic wild buffalo of Mindoro and one of the Philippines' best-known endangered large mammals. It differs from domestic water buffalo in body size and horn form. Photographs from several views aid identification.",
+        "habitat": "Published descriptions include forest, grassland, glades and secondary forest. The DENR conservation plan describes geographically distinct monitored populations. Island-level occurrence does not confirm habitat occupancy at a particular station.",
+        "behavior": "Accounts describe grazing, browsing and activity patterns affected by human disturbance. Record direct movement, feeding, group size and disturbance evidence rather than assuming all individuals follow a single schedule.",
+        "fieldNotes": "Record horn orientation, body form, calf age stage, number of individuals, sighting direction and sampling effort from a safe distance. Keep exact coordinates of sensitive herds or calves controlled in field exports.",
+        "cautions": "DENR and IUCN source descriptions support separate Philippine conservation planning and global threatened-status interpretation. Do not extrapolate a park-specific population count to all Mindoro. A dark bovine seen at distance needs documented exclusion of domestic buffalo.",
+        "sourceIds": [
+          "awcs-tamaraw",
+          "denr-tamaraw-plan-2025",
+          "zsl-tamaraw",
+          "mdd-tamaraw"
+        ]
+      }
+    }
+  ]
+}

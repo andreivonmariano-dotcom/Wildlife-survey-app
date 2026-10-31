@@ -20,13 +20,15 @@ class ReleaseScreenAndPerfQA(unittest.TestCase):
         recorder=read("MainActivity.java")
         kit=read("UiKit.java")
         policy=read("FieldLayoutPolicy.java")
-        self.assertIn("FieldLayoutPolicy.stackSurveyTiles",home)
-        self.assertIn("second.setOrientation(first.getOrientation())",home)
+        self.assertIn("LikasPortalUi.mini(this,title,detail,art,tap)",home)
+        self.assertIn("second.setOrientation(stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL)",home)
         self.assertIn("FieldLayoutPolicy.stackSpeciesEntry",recorder)
         self.assertIn("FieldLayoutPolicy.saveHeightDp",recorder)
         self.assertIn("FieldLayoutPolicy.actionHeightDp",recorder)
         self.assertIn("b.setMaxLines(3)",kit)
-        self.assertIn("availableWidthDp<390",policy)
+        self.assertIn("LikasDesignSystem.useSingleColumn(availableWidthDp,fontScale)",policy)
+        self.assertIn("screenWidthDp<390",
+            (ROOT/"app/src/main/java/org/phwildlife/survey/LikasDesignSystem.java").read_text().replace("availableWidthDp","screenWidthDp"))
         for label in ('"Save Observation"','"End Survey"'):
             self.assertIn(label,recorder)
     def test_hud_db_polling_is_off_main_thread_and_bounded(self):

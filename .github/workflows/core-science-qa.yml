@@ -1,0 +1,130 @@
+name: LIKAS Scientific Core QA
+
+on:
+  push:
+    branches:
+      - feature/likas-core-fieldwork-post-rc4
+      - feature/likas-approved-green-icons-no-custom-survey
+      - feature/likas-rc44-ui-harmony
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - '.gitignore'
+  pull_request:
+    branches:
+      - feature/v0.27.3-startup-living-forest
+      - feature/likas-core-fieldwork-post-rc4
+  workflow_dispatch:
+
+# Only the latest source revision needs a scientific-core build.
+concurrency:
+  group: likas-science-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  core-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require current RC4 lineage and scientific package identity
+        run: |
+          git merge-base --is-ancestor 458e786827ba73bebabf5c373e2080015c5fd38c HEAD
+          grep -F "applicationId 'org.phwildlife.survey.beta08'" app/build.gradle
+          python3 -c 'import re; text=open("app/build.gradle").read(); match=re.search(r"versionCode\s+(\d+)",text); assert match and int(match.group(1))>=49, "RC4 versionCode downgrade"'
+          grep -F "super(context,NAME,null,27)" app/src/main/java/org/phwildlife/survey/FieldDb.java
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+      - name: Install Android SDK
+        run: sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0' 'platform-tools'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - name: Python source tests, science evidence tests and migration checks
+        run: python3 -m unittest discover -s scripts -p 'test_*.py'
+      - uses: actions/cache@v4
+        with:
+          path: .taxonomy-cache/mdd-v2.5.csv
+          key: mdd-v2.5-533e662fd5b8f66a5f56c191e7efac44
+      - name: Prepare checksum-pinned MDD taxonomy
+        run: python3 scripts/prepare_mdd_mammals.py
+      - uses: actions/cache/restore@v4
+        with:
+          path: .signing/wildlife-beta08.keystore
+          key: wildlife-v08-beta-debug-signing-v1
+      - name: Require existing release-candidate signing identity
+        run: |
+          test -s .signing/wildlife-beta08.keystore
+          keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/likas-rc4-certificate.der
+          echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/likas-rc4-certificate.der' | sha256sum -c -
+      - name: Package licensed wildlife and habitat photos for fully offline use
+        run: python3 scripts/prepare_offline_photos.py
+      - name: Confirm offline photos are in build assets
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path("app/src/main/assets/offline_photos").glob("*.jpg"))
+          print("Bundled reference photos:",len(files))
+          assert len(files)>=3
+          assert all(p.read_bytes().startswith(bytes([255,216,255])) for p in files)
+          PY
+      - name: Install only SHA-pinned, reviewed iNaturalist images for private use
+        run: python3 scripts/audit_inaturalist_photos.py --install-approved
+      - name: Require all 49 checksum-reviewed CC and owner-authorized photographs
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,"scripts")
+          from audit_inaturalist_photos import load_approval_lock
+          lock=load_approval_lock()["items"]
+          manifest=json.loads(Path("app/src/main/assets/offline_inaturalist_manifest_v1.json").read_text())["items"]
+          assert len(lock)==49 and len(manifest)==49,(len(lock),len(manifest))
+          index={x["photoId"]:x for x in manifest}
+          for row in lock:
+            item=index[row["photoId"]]
+            img=Path("app/src/main/assets")/item["offlineAsset"]
+            assert img.is_file()
+            assert hashlib.sha256(img.read_bytes()).hexdigest()==row["sha256"]
+            assert item["author"]==row["photoAttribution"]
+            assert item["license"].lower()==row["photoLicense"] if row["photoLicense"]!="all_rights_reserved" else "all rights reserved" in item["license"].lower()
+          print("Verified 49 attributed CC-licensed or owner-authorized photos for RC7D")
+          PY
+      - name: Run JVM unit tests and compile Android preview
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Verify assembly artifact exists (not published)
+        run: test -s app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Label APK artifact with its actual Gradle version
+        run: |
+          python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+          gradle=Path("app/build.gradle").read_text()
+          name=re.search(r"versionName\s+'([^']+)'",gradle)
+          code=re.search(r"versionCode\s+(\d+)",gradle)
+          assert name and code, "Missing Gradle version metadata"
+          label=f"LIKAS-{name.group(1)}-code{code.group(1)}-debug"
+          with open(os.environ["GITHUB_ENV"],"a") as env:
+              env.write(f"LIKAS_ARTIFACT={label}\n")
+          print(label)
+          PY
+      - name: Attach verified development APK for direct chat delivery
+        if: |
+          (github.event_name == 'push' && (github.ref == 'refs/heads/feature/likas-core-fieldwork-post-rc4' || github.ref == 'refs/heads/feature/likas-approved-green-icons-no-custom-survey' || github.ref == 'refs/heads/feature/likas-rc44-ui-harmony')) ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && (github.event.pull_request.head.ref == 'feature/likas-approved-green-icons-no-custom-survey' || github.event.pull_request.head.ref == 'feature/likas-rc44-ui-harmony'))
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.LIKAS_ARTIFACT }}
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 5

@@ -1,0 +1,31 @@
+name: LIKAS owner-authored iNaturalist photo review
+on:
+  push:
+    branches: [feature/likas-core-fieldwork-post-rc4]
+    paths:
+      - scripts/collect_owner_dreidrei_photos.py
+      - .github/workflows/rc7-owner-photo-review.yml
+permissions:
+  contents: read
+jobs:
+  owner-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install image review helper
+        run: pip install Pillow
+      - name: Collect owner-authored research photo candidates
+        run: python3 scripts/collect_owner_dreidrei_photos.py --pages 46
+      - name: Store temporary human review pack
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LIKAS-dreidrei-owner-photo-review
+          path: |
+            rc7_owner_review/
+            rc7_owner_photo_candidates.json
+          if-no-files-found: warn
+          retention-days: 7

@@ -1,0 +1,36 @@
+name: LIKAS RC7 iNaturalist photo rights review
+
+on:
+  push:
+    branches:
+      - feature/likas-core-fieldwork-post-rc4
+    paths:
+      - scripts/audit_inaturalist_photos.py
+      - app/src/main/assets/rc7a_field_cards_v1.json
+      - .github/workflows/rc7-inat-photo-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-photo-licenses:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Audit dreidrei photo licensing; do not auto-package images
+        run: |
+          python3 scripts/audit_inaturalist_photos.py --audit \
+            --observer dreidrei --pages 12 \
+            --output rc7_inat_dreidrei_candidates.json
+      - name: Publish candidate metadata for manual attribution and identification check
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LIKAS-RC7A-dreidrei-license-audit
+          path: rc7_inat_dreidrei_candidates.json
+          if-no-files-found: warn
+          retention-days: 14

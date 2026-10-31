@@ -24,13 +24,13 @@ public class ImportActivity extends Activity {
         super.onCreate(b);helper=new FieldDb(this);
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(25,25,25,25);root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.title(this,"Import v0.7 backup"));
+        root.addView(UiKit.navigationHeader(this,"Legacy v0.7 importer","Home",this::finish));
         status=new TextView(this);status.setTextSize(15);status.setTextColor(UiKit.INK);
         status.setText("Import a ZIP exported by Wildlife Survey Beta v0.7. The import runs only on an empty v0.8 database and is all-or-nothing. Keep the previous app and its export until you have reviewed the imported survey history.");
         status.setPadding(10,20,10,28);root.addView(status);
         Button select=UiKit.button(this,"Choose backup ZIP","primary");
         root.addView(select);select.setOnClickListener(v->choose());
-        Button back=UiKit.button(this,"‹ Home","secondary");root.addView(back);back.setOnClickListener(v->finish());
+        
         setContentView(root);
     }
     @Override protected void onDestroy(){super.onDestroy();helper.close();}

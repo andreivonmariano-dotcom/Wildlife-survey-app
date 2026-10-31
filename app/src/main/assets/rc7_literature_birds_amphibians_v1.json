@@ -1,0 +1,449 @@
+{
+  "version": "rc7b-literature-birds-amphibians-1",
+  "edition": "2026-10-28",
+  "scope": "reference-only",
+  "status": "literature_synthesis_pending_specialist_review",
+  "records": [
+    {
+      "scientificName": "Rhabdotorrhinus waldeni",
+      "sourceUrl": "https://datazone.birdlife.org/species/factsheet/rufous-headed-hornbill-rhabdotorrhinus-waldeni",
+      "sourceTitle": "BirdLife International, Rufous-headed Hornbill, 2025 assessment",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "A Western Visayas endemic historically found on Panay, Negros and Guimaras. BirdLife's 2025 account considers the surviving population concentrated in the Central Panay Mountain Range.",
+          "sourceUrl": "https://datazone.birdlife.org/species/factsheet/rufous-headed-hornbill-rhabdotorrhinus-waldeni"
+        },
+        {
+          "field": "Habitat and feeding",
+          "value": "Reported mainly in closed-canopy lowland and mid-elevation forest. It feeds in the canopy on figs and other fruits, and nests in large trees.",
+          "sourceUrl": "https://datazone.birdlife.org/species/factsheet/rufous-headed-hornbill-rhabdotorrhinus-waldeni"
+        },
+        {
+          "field": "Global conservation reference",
+          "value": "BirdLife's 2025 IUCN assessment lists Endangered. Older specialist-group accounts list Critically Endangered from 2018. Show the assessment year, not an undated category.",
+          "sourceUrl": "https://datazone.birdlife.org/species/factsheet/rufous-headed-hornbill-rhabdotorrhinus-waldeni"
+        }
+      ],
+      "caution": "Historic Negros or Guimaras records are not current site presence. Avoid disclosing precise nest locations."
+    },
+    {
+      "scientificName": "Anthracoceros montani",
+      "sourceUrl": "https://iucnhornbills.org/sulu-hornbill-2/",
+      "sourceTitle": "IUCN SSC Hornbill Specialist Group, Sulu Hornbill species account",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Diagnostic characters",
+          "value": "A medium-sized, predominantly black hornbill with a white tail. Males have a pale iris; females show a smaller bill and casque and a darker eye.",
+          "sourceUrl": "https://iucnhornbills.org/sulu-hornbill-2/"
+        },
+        {
+          "field": "Habitat",
+          "value": "Associated with primary lowland and mountain rainforest. Large cavity-bearing trees are necessary for nesting; fruit is a major food item.",
+          "sourceUrl": "https://iucnhornbills.org/sulu-hornbill-2/"
+        },
+        {
+          "field": "Distribution",
+          "value": "Endemic to the Sulu archipelago; recent verified persistence is concentrated on Tawi-Tawi rather than all historic islands.",
+          "sourceUrl": "https://iucnhornbills.org/sulu-hornbill-2/"
+        }
+      ],
+      "caution": "Retain uncertainty around older island records and population estimates; photograph safely without disturbing active nest trees."
+    },
+    {
+      "scientificName": "Gallicolumba menagei",
+      "sourceUrl": "https://birdlifedata.blob.core.windows.net/red-data-books/gallmena.pdf",
+      "sourceTitle": "BirdLife International, Threatened Birds of Asia, Sulu Bleeding-heart historical species account",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Historical range",
+          "value": "A Philippine Sulu-archipelago endemic known with certainty from historical Tawi-Tawi specimens in the cited account.",
+          "sourceUrl": "https://birdlifedata.blob.core.windows.net/red-data-books/gallmena.pdf"
+        },
+        {
+          "field": "Evidence quality",
+          "value": "Reported records from other Sulu islands were not confirmed in the historical review. Museum evidence should not be treated as proof of modern wild occurrence.",
+          "sourceUrl": "https://birdlifedata.blob.core.windows.net/red-data-books/gallmena.pdf"
+        }
+      ],
+      "caution": "Modern abundance, field characters, activity and habitat suitability remain insufficiently documented for a reliable phone identification key."
+    },
+    {
+      "scientificName": "Gallicolumba keayi",
+      "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2018-2.RLTS.T22690988A130328535.en",
+      "sourceTitle": "IUCN Red List, Negros Bleeding-heart assessment, 2018",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Appearance",
+          "value": "A short-tailed ground dove with an iridescent green head and mantle, a narrow red breast patch on a pale chest, and contrasting pale wing markings.",
+          "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2018-2.RLTS.T22690988A130328535.en"
+        },
+        {
+          "field": "Habitat",
+          "value": "The account describes dense forest understorey and forest-floor foraging, including some secondary and logged forest on Panay.",
+          "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2018-2.RLTS.T22690988A130328535.en"
+        },
+        {
+          "field": "Distribution",
+          "value": "Endemic to Panay and Negros. Historical island records do not establish a current occupied site.",
+          "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2018-2.RLTS.T22690988A130328535.en"
+        }
+      ],
+      "caution": "The cited global conservation assessment is dated 2018. Similar bleeding-heart species and age variation require field photographs and comparison."
+    },
+    {
+      "scientificName": "Penelopides panini",
+      "sourceUrl": "https://iucnhornbills.org/visayan-hornbill/",
+      "sourceTitle": "IUCN SSC Hornbill Specialist Group, Visayan Hornbill",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Appearance",
+          "value": "A relatively small hornbill with markedly different male and female plumage. Males show pale yellowish-white areas with dark upperparts; females are much darker.",
+          "sourceUrl": "https://iucnhornbills.org/visayan-hornbill/"
+        },
+        {
+          "field": "Habitat and behavior",
+          "value": "Reported in lowland primary and secondary rainforests, visiting fruiting trees. Fruit forms the majority of its documented diet.",
+          "sourceUrl": "https://iucnhornbills.org/visayan-hornbill/"
+        },
+        {
+          "field": "Sound",
+          "value": "The specialist description notes a rapid, noisy series of calls; store original audio rather than guessing a species from an unreviewed recording.",
+          "sourceUrl": "https://iucnhornbills.org/visayan-hornbill/"
+        }
+      ],
+      "caution": "Keep male, female and juvenile plumage distinct. A tarictic-hornbill label alone is not a diagnostic identification."
+    },
+    {
+      "scientificName": "Sarcophanops samarensis",
+      "sourceUrl": "https://www.inaturalist.org/taxa/1289558-Sarcophanops-samarensis",
+      "sourceTitle": "iNaturalist taxon summary, Visayan Broadbill, drawing on published taxonomy",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "The source lists Samar, Leyte and Bohol as endemic island range, not nationwide occurrence.",
+          "sourceUrl": "https://www.inaturalist.org/taxa/1289558-Sarcophanops-samarensis"
+        },
+        {
+          "field": "Habitat",
+          "value": "Summarized as a bird of tropical moist lowland forest; no specific site or current elevation is inferred.",
+          "sourceUrl": "https://www.inaturalist.org/taxa/1289558-Sarcophanops-samarensis"
+        },
+        {
+          "field": "Taxonomic history",
+          "value": "Formerly treated within a wider broadbill concept and now recognized separately from the wattled broadbill.",
+          "sourceUrl": "https://www.inaturalist.org/taxa/1289558-Sarcophanops-samarensis"
+        }
+      ],
+      "caution": "An iNaturalist taxon summary is a secondary overview. Detailed plumage keys and current national threat category still need original literature."
+    },
+    {
+      "scientificName": "Erythropitta kochi",
+      "sourceUrl": "https://www.oiseaux.net/en/oiseaux/whiskered.pitta.html",
+      "sourceTitle": "Oiseaux.net, Whiskered Pitta ecology and regional account",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Range and habitat",
+          "value": "A Luzon endemic associated with mountain forest, commonly at elevations near or above 1,000 m in published accounts.",
+          "sourceUrl": "https://www.oiseaux.net/en/oiseaux/whiskered.pitta.html"
+        },
+        {
+          "field": "Ecology",
+          "value": "A mainly terrestrial, day-active invertebrate-foraging pitta; the cited reference describes feeding in forest ground vegetation.",
+          "sourceUrl": "https://www.oiseaux.net/en/oiseaux/whiskered.pitta.html"
+        },
+        {
+          "field": "Field detection",
+          "value": "Aural detections should retain sound recordings and conditions. A ground bird glimpsed briefly is not sufficient for species-level ID.",
+          "sourceUrl": "https://www.oiseaux.net/en/oiseaux/whiskered.pitta.html"
+        }
+      ],
+      "caution": "Distinguish this taxon from other Philippine pittas using specialist characters, not the presence of montane forest alone."
+    },
+    {
+      "scientificName": "Dicaeum haematostictum",
+      "sourceUrl": "https://doi.org/10.2305%2FIUCN.UK.2022-1.RLTS.T22717510A210180058.en",
+      "sourceTitle": "IUCN Red List, Black-belted/Visayan Flowerpecker, 2022 assessment",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Identification",
+          "value": "A small, canopy-feeding flowerpecker. The described male has glossy dark upperparts, pale underparts, a black breast bar and a red central belly streak.",
+          "sourceUrl": "https://doi.org/10.2305%2FIUCN.UK.2022-1.RLTS.T22717510A210180058.en"
+        },
+        {
+          "field": "Distribution",
+          "value": "Endemic to Western Visayas, with records chiefly from Panay and Negros; former Guimaras occurrence remains uncertain.",
+          "sourceUrl": "https://doi.org/10.2305%2FIUCN.UK.2022-1.RLTS.T22717510A210180058.en"
+        },
+        {
+          "field": "Habitat",
+          "value": "Primary, secondary and degraded forest near taller forest are included in the assessment's lowland and hill habitat summary.",
+          "sourceUrl": "https://doi.org/10.2305%2FIUCN.UK.2022-1.RLTS.T22717510A210180058.en"
+        }
+      ],
+      "caution": "Separate this species from Dicaeum australe using the breast bar and the appropriate sex/age; do not extrapolate a current IUCN category from an old source snapshot."
+    },
+    {
+      "scientificName": "Barbourula busuangensis",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bombinatoridae/Barbourula/Barbourula-busuangensis",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Barbourula busuangensis",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "Known from Palawan, Busuanga, Culion and Balabac according to the museum taxonomy account; no Philippine-wide range should be assumed.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bombinatoridae/Barbourula/Barbourula-busuangensis"
+        },
+        {
+          "field": "Historical habitat evidence",
+          "value": "The original type locality was a small stream on Busuanga. The museum account references a later study of vocalizations.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bombinatoridae/Barbourula/Barbourula-busuangensis"
+        },
+        {
+          "field": "Taxonomy",
+          "value": "A member of Bombinatoridae, not an ordinary rainforest tree frog.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bombinatoridae/Barbourula/Barbourula-busuangensis"
+        }
+      ],
+      "caution": "Water habitat is historical locality evidence, not a validated species-wide microhabitat model or local detection."
+    },
+    {
+      "scientificName": "Platymantis spelaeus",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-spelaeus",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Platymantis spelaeus",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Range",
+          "value": "The source describes limestone karst areas of southern Negros, with published records in roughly 20–400 m elevations.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-spelaeus"
+        },
+        {
+          "field": "Historical locality",
+          "value": "The type locality is a limestone cave in southern Negros Oriental.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-spelaeus"
+        },
+        {
+          "field": "Taxonomy",
+          "value": "The form Platymantis spelaea is recorded as an incorrect later spelling; retain the checklist's accepted name.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-spelaeus"
+        }
+      ],
+      "caution": "Karst habitat does not identify a frog by itself. A species-level diagnosis needs call and comparative morphological evidence."
+    },
+    {
+      "scientificName": "Platymantis paengi",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-paengi",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Platymantis paengi",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Range",
+          "value": "Originally described from northwestern Panay, with a subsequently published Sibuyan Island report requiring geographic and taxonomic context.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-paengi"
+        },
+        {
+          "field": "Reference evidence",
+          "value": "The original 2007 description documents morphology, advertisement calls and natural history; a 2022 source discusses population differences.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-paengi"
+        },
+        {
+          "field": "Taxonomic caution",
+          "value": "The common name Panay Limestone Frog names the type-associated population; it is not a general identification for any karst frog.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-paengi"
+        }
+      ],
+      "caution": "Published Sibuyan records and vocal differences require specialist comparison; do not generalize a single call or locality."
+    },
+    {
+      "scientificName": "Platymantis hazelae",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-hazelae",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Platymantis hazelae",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Range and habitat",
+          "value": "Reported from mountainous Negros and Masbate forests, including elevations in the 600–1,700 m band in the cited summary.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-hazelae"
+        },
+        {
+          "field": "Taxonomic history",
+          "value": "The AMNH account notes an older Philautus combination and provisional earlier synonym questions.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-hazelae"
+        }
+      ],
+      "caution": "Mountain elevation or a 'forest frog' appearance does not demonstrate identification; retain photographs, calls and taxon uncertainty."
+    },
+    {
+      "scientificName": "Platymantis rabori",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-rabori",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Platymantis rabori",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "Published rainforest records on Bohol, Leyte, Samar and Mindanao, approximately 300–1,400 m in the museum account.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-rabori"
+        },
+        {
+          "field": "Taxonomic comparison",
+          "value": "The taxon was confused with Platymantis guentheri prior to its description; the original literature placed it in that comparison group.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ceratobatrachidae/Ceratobatrachinae/Platymantis/Platymantis-rabori"
+        }
+      ],
+      "caution": "Older records under other Platymantis names need expert name reconciliation; do not assign rabori from region or elevation alone."
+    },
+    {
+      "scientificName": "Leptobrachium lumadorum",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Megophryidae/Leptobrachiinae/Leptobrachium/Leptobrachium-lumadorum",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Leptobrachium lumadorum",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "The source describes south and central Mindanao, with later regional material from Basilan and Samar.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Megophryidae/Leptobrachiinae/Leptobrachium/Leptobrachium-lumadorum"
+        },
+        {
+          "field": "Historical naming",
+          "value": "Earlier authors confused these Philippine litter frogs with Leptobrachium hasseltii before formal description.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Megophryidae/Leptobrachiinae/Leptobrachium/Leptobrachium-lumadorum"
+        },
+        {
+          "field": "Ecological literature",
+          "value": "The museum account cites recent field habitat work in the Mount Gutom and Agusan regions.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Megophryidae/Leptobrachiinae/Leptobrachium/Leptobrachium-lumadorum"
+        }
+      ],
+      "caution": "Taxonomic complexes can contain difficult lookalikes. Verify the study's locality and identification method before interpreting any new record."
+    },
+    {
+      "scientificName": "Leptobrachium mangyanorum",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Megophryidae/Leptobrachiinae/Leptobrachium/Leptobrachium-mangyanorum",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Leptobrachium mangyanorum",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "Documented from Mindoro with a possible neighboring Semirara report flagged by the museum source.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Megophryidae/Leptobrachiinae/Leptobrachium/Leptobrachium-mangyanorum"
+        },
+        {
+          "field": "Type evidence",
+          "value": "Originally described from a river locality on Mindoro, and formerly grouped with Leptobrachium hasseltii.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Megophryidae/Leptobrachiinae/Leptobrachium/Leptobrachium-mangyanorum"
+        },
+        {
+          "field": "Systematic context",
+          "value": "The source places this taxon within a Leptobrachium montanum species complex needing comparative identification.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Megophryidae/Leptobrachiinae/Leptobrachium/Leptobrachium-mangyanorum"
+        }
+      ],
+      "caution": "Possible Semirara distribution is not confirmed station occurrence. Avoid extending it to other islands without an explicit paper."
+    },
+    {
+      "scientificName": "Limnonectes magnus",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Dicroglossidae/Dicroglossinae/Limnonectes/Limnonectes-magnus",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Limnonectes magnus",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Range",
+          "value": "The taxonomic account includes published records across the Mindanao faunal region, with later reports requiring post-2021 systematic review.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Dicroglossidae/Dicroglossinae/Limnonectes/Limnonectes-magnus"
+        },
+        {
+          "field": "Taxonomic caution",
+          "value": "Recent research reinterpreted the original Mount Apo type locality and the application of the name to lowland Mindanao populations.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Dicroglossidae/Dicroglossinae/Limnonectes/Limnonectes-magnus"
+        },
+        {
+          "field": "Habitat evidence",
+          "value": "Philippine field publications cited in the account document stream and river-associated encounters across eastern and western Mindanao.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Dicroglossidae/Dicroglossinae/Limnonectes/Limnonectes-magnus"
+        }
+      ],
+      "caution": "Older records grouped under Rana macrodon or historic Limnonectes species concepts cannot be equated automatically with this name."
+    },
+    {
+      "scientificName": "Ansonia mcgregori",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bufonidae/Ansonia/Ansonia-mcgregori",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Ansonia mcgregori",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Range",
+          "value": "The museum account places this endemic toad in the mountains of central and western Mindanao.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bufonidae/Ansonia/Ansonia-mcgregori"
+        },
+        {
+          "field": "Taxonomic history",
+          "value": "Once synonymized with Ansonia muelleri and later reinstated; molecular work found possible unnamed western Mindanao lineages.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bufonidae/Ansonia/Ansonia-mcgregori"
+        },
+        {
+          "field": "Acoustic evidence",
+          "value": "Published geographic-call research notes variation that may include undescribed diversity.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bufonidae/Ansonia/Ansonia-mcgregori"
+        }
+      ],
+      "caution": "Do not assign the species from skin pattern or a single call without geographic and specialist cross-checks."
+    },
+    {
+      "scientificName": "Pelophryne lighti",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bufonidae/Pelophryne/Pelophryne-lighti",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Pelophryne lighti",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Range",
+          "value": "Reported in Philippine lowland and montane riverine forests, including Mindanao, Samar, Leyte and Bohol.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bufonidae/Pelophryne/Pelophryne-lighti"
+        },
+        {
+          "field": "Historical name",
+          "value": "Originally described as Nectophryne lighti from the Mindanao region in 1920.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bufonidae/Pelophryne/Pelophryne-lighti"
+        },
+        {
+          "field": "Recent literature",
+          "value": "The museum source cites regional accounts in Samar and Agusan Marsh from 2026.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Bufonidae/Pelophryne/Pelophryne-lighti"
+        }
+      ],
+      "caution": "Published locality references require their collection methods and date; calling activity and exact microhabitat remain unassessed for this card."
+    },
+    {
+      "scientificName": "Sanguirana everetti",
+      "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ranidae/Sanguirana/Sanguirana-everetti",
+      "sourceTitle": "AMNH, Amphibian Species of the World, Sanguirana everetti",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Type evidence",
+          "value": "Described from the Zamboanga region on Mindanao, with a long taxonomic history under Rana and other combinations.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ranidae/Sanguirana/Sanguirana-everetti"
+        },
+        {
+          "field": "Range",
+          "value": "The current museum summary recognizes a more limited southwestern Mindanao faunal scope, with some neighboring-island records uncertain.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ranidae/Sanguirana/Sanguirana-everetti"
+        },
+        {
+          "field": "Taxonomic boundary",
+          "value": "The source explicitly notes transfer of historical Visayan populations to Sanguirana acai.",
+          "sourceUrl": "https://amphibiansoftheworld.amnh.org/Amphibia/Anura/Ranidae/Sanguirana/Sanguirana-everetti"
+        }
+      ],
+      "caution": "Avoid converting earlier records for the Sanguirana everetti complex into verified present-day everetti determinations."
+    }
+  ]
+}

@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -46,7 +47,9 @@ public final class SpeciesPickerActivity extends Activity {
     private final Handler ui=new Handler(Looper.getMainLooper());
     private final ExecutorService worker=Executors.newSingleThreadExecutor();
     private final Runnable delayed=this::refresh;
-    private EditText search;
+    private AutoCompleteTextView search;
+    private SpeciesReferenceSuggestionAdapter nameSuggestions;
+    private FieldDb suggestionDb;
     private Spinner groups,views;
     private Button sortButton;
     private LinearLayout cards;
@@ -114,10 +117,9 @@ public final class SpeciesPickerActivity extends Activity {
     private String pref(String suffix){return preferencePrefix+suffix;}
     private String visitPref(String suffix){return preferencePrefix+"visit_"+visitId+"_"+suffix;}
     private void restorePickerSettings(){
-        sortMode=checked(surveyOptions.getInt(pref("sort"),0),
-            SpeciesSortPolicy.SORT_LABELS.length);
-        statusFilter=checked(surveyOptions.getInt(pref("filter"),0),
-            SpeciesSortPolicy.FILTER_LABELS.length);
+        // Legacy probability-like score sorts/filters are no longer shown.
+        sortMode=checked(surveyOptions.getInt(pref("sort"),0),3);
+        statusFilter=0;
         savedGroupIndex=checked(surveyOptions.getInt(pref("group"),0),availableGroups.length);
         savedViewIndex=checked(surveyOptions.getInt(pref("view"),0),VIEWS.length);
         habitatCode=surveyOptions.getString(pref("habitat"),habitatCode);
@@ -169,29 +171,49 @@ public final class SpeciesPickerActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(16),dp(8),dp(16),dp(12));
-        LinearLayout header=new LinearLayout(this);
-        header.setGravity(Gravity.CENTER_VERTICAL);
-        TextView title=UiKit.title(this,"Identify species");
-        header.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-        Button back=UiKit.button(this,"Back","quiet");
-        header.addView(back,new LinearLayout.LayoutParams(dp(82),dp(48)));
-        back.setOnClickListener(v->finish());
-        root.addView(header);
+        root.addView(UiKit.navigationHeader(this,"Identify species","Survey",this::finish));
 
-        search=new EditText(this);
+        search=new AutoCompleteTextView(this){
+            @Override public boolean enoughToFilter(){return true;}
+        };
         search.setSingleLine(true);search.setTextSize(16);
-        search.setHint("Common or scientific name");
+        search.setThreshold(1);
+        search.setHint("Search common, scientific or former name");
+        search.setContentDescription("Search offline species by common, scientific or former name");
+        suggestionDb=new FieldDb(this);
+        nameSuggestions=new SpeciesReferenceSuggestionAdapter(this,
+            suggestionDb,availableGroups[Math.max(0,savedGroupIndex)]);
+        search.setAdapter(nameSuggestions);
+        search.setDropDownHeight(dp(300));
+        search.setOnItemClickListener((parent,view,pos,id)->{
+            String label=parent.getItemAtPosition(pos).toString();
+            int separator=label.lastIndexOf(" · ");
+            search.setText(separator<0?label:label.substring(separator+3));
+            search.setSelection(search.length());
+        });
         LinearLayout searchRow=new LinearLayout(this);
         searchRow.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams searchParams=new LinearLayout.LayoutParams(0,dp(54),1f);
         searchRow.addView(search,searchParams);
+        Button dropdown=UiKit.button(this,"▾","quiet");
+        dropdown.setContentDescription("Show species name suggestions");
+        dropdown.setOnClickListener(v->{
+            search.requestFocus();
+            nameSuggestions.getFilter().filter(search.getText().toString(),
+                count->{if(count>0)search.showDropDown();});
+        });
+        searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(54)));
+        root.addView(searchRow);
+        // Keep unidentified records visible without taking width from species search.
+        LinearLayout unidentifiedRow=new LinearLayout(this);
+        unidentifiedRow.setGravity(Gravity.END);
         Button unknown=UiKit.button(this,"Unidentified","secondary");
         unknown.setTextSize(12);
         unknown.setContentDescription("Record an unidentified species");
-        LinearLayout.LayoutParams unknownSpace=new LinearLayout.LayoutParams(dp(122),dp(54));
-        unknownSpace.leftMargin=dp(7);
-        searchRow.addView(unknown,unknownSpace);
-        root.addView(searchRow);
+        LinearLayout.LayoutParams unknownSpace=new LinearLayout.LayoutParams(-2,dp(48));
+        unknownSpace.topMargin=dp(6);
+        unidentifiedRow.addView(unknown,unknownSpace);
+        root.addView(unidentifiedRow);
         unknown.setOnClickListener(v->{
             String[] unknowns=Taxa.unknownLabels(currentGroup());
             new AlertDialog.Builder(this).setTitle("Unidentified observation")
@@ -281,7 +303,13 @@ public final class SpeciesPickerActivity extends Activity {
             }
             @Override public void onNothingSelected(AdapterView<?> parent){}
         };
-        groups.setOnItemSelectedListener(chosen);
+        groups.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override public void onItemSelected(AdapterView<?> parent,View view,int pos,long id){
+                if(nameSuggestions!=null)nameSuggestions.setGroup(currentGroup());
+                refresh();
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent){}
+        });
         views.setOnItemSelectedListener(chosen);
         refresh();
     }
@@ -307,30 +335,25 @@ public final class SpeciesPickerActivity extends Activity {
         LinearLayout panel=new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(18),dp(8),dp(18),dp(8));
-        panel.addView(text("Order by",14,true));
+        panel.addView(text("Order species references by",14,true));
         Spinner order=new Spinner(this);
+        final String[] alphabeticSorts={
+            "Name · A to Z","Family · A to Z","Genus · A to Z"};
         order.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,SpeciesSortPolicy.SORT_LABELS));
-        order.setSelection(sortMode);
+            android.R.layout.simple_spinner_dropdown_item,alphabeticSorts));
+        order.setSelection(Math.max(0,Math.min(2,sortMode)));
         panel.addView(order);
-        TextView filterLabel=text("Show likelihood status",14,true);
-        filterLabel.setPadding(0,dp(15),0,0);
-        panel.addView(filterLabel);
-        Spinner byStatus=new Spinner(this);
-        byStatus.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,SpeciesSortPolicy.FILTER_LABELS));
-        byStatus.setSelection(statusFilter);
-        panel.addView(byStatus);
-        TextView note=text("Percentage sorts use a source-based habitat match index. "+
-            "Scores with missing evidence appear last.",12,false);
+        TextView note=text("Regional source records, habitat and elevation references "+
+            "appear separately on each card. They are not probabilities "+
+            "and do not filter out unassessed species.",12,false);
         note.setTextColor(UiKit.MUTED);note.setPadding(0,dp(14),0,0);
         panel.addView(note);
-        new AlertDialog.Builder(this).setTitle("Sort & Filter")
+        new AlertDialog.Builder(this).setTitle("Sort species references")
             .setView(panel)
             .setPositiveButton("Apply",(dialog,which)->{
                 sortMode=order.getSelectedItemPosition();
-                statusFilter=byStatus.getSelectedItemPosition();
-                sortButton.setText("Sort · "+SpeciesSortPolicy.SORT_LABELS[sortMode]);
+                statusFilter=0;
+                sortButton.setText("Sort · "+alphabeticSorts[sortMode]);
                 savePickerSettings();
                 refresh();
             })
@@ -490,11 +513,13 @@ public final class SpeciesPickerActivity extends Activity {
         List<Species> list=new ArrayList<>();
         String island=island(geographicRegion);
         String provinceMatch="EXISTS(SELECT 1 FROM taxon_occurrence_evidence e "+
-            "WHERE e.taxon_key=c.taxon_key AND e.area_type='province' "+
+            "WHERE e.taxon_key=c.taxon_key AND e.review_status='source_listed' AND e.area_type='province' "+
             "AND LOWER(e.area_label)=LOWER(?))";
         String islandMatch="EXISTS(SELECT 1 FROM taxon_occurrence_evidence e "+
-            "WHERE e.taxon_key=c.taxon_key AND e.area_type='island' "+
+            "WHERE e.taxon_key=c.taxon_key AND e.review_status='source_listed' AND e.area_type='island' "+
             "AND LOWER(e.area_label)=LOWER(?))";
+        // Only reviewed source listings confer geographic evidence rank.
+        // Imported unreviewed records remain visible on source detail pages.
         String evidence="CASE WHEN "+provinceMatch+" THEN 2 WHEN "+islandMatch+
             " THEN 1 ELSE 0 END";
         StringBuilder sql=new StringBuilder(
@@ -572,6 +597,12 @@ public final class SpeciesPickerActivity extends Activity {
         final Double altitude=effectiveElevation(),uncertainty=effectiveUncertainty();
         offset=0;loaded=new ArrayList<>();truncated=false;
         cards.removeAllViews();
+        if(onlyLocal&&province.trim().isEmpty()&&island(geographicRegion).isEmpty()){
+            status.setText("Select an island or province in survey setup to filter local source records.");
+            cards.addView(text("No local area is selected. This does not mean species are absent. "+
+                "Use All species or set the geographic survey area.",14,false));
+            return;
+        }
         status.setText("Finding "+group+"…");
         worker.execute(()->{
             try{
@@ -660,32 +691,21 @@ public final class SpeciesPickerActivity extends Activity {
             TextView meta=text(identifiers.toString(),12,false);
             meta.setTextColor(UiKit.MUTED);card.addView(meta);
         }
-        String label=item.screening.scorePercent==null?
-            "Insufficient Data · not scored":
-            item.screening.scorePercent+"% screening index · "+item.screening.label;
-        int indicator="Unlikely".equals(item.screening.label)?
-            Color.rgb(167,64,56):"Likely".equals(item.screening.label)?
-            Color.rgb(36,112,74):Color.rgb(123,94,31);
-        if(item.screening.scorePercent==null)indicator=UiKit.MUTED;
-        TextView likelihood=text(label,14,true);
-        likelihood.setTextColor(indicator);
-        likelihood.setPadding(0,dp(5),0,dp(2));
-        card.addView(likelihood);
-        // Text preserves the score without suggesting a measured probability.
-        likelihood.setContentDescription(label+
-            ". Tap for the documented basis of this screening assessment.");
-        likelihood.setOnClickListener(v->new AlertDialog.Builder(this)
-            .setTitle("Preliminary field-screening score")
-            .setMessage(item.screening.explanation+
-                "\n\nThis percentage is a weighted screening index, not the "+
-                "statistical chance the species occurs here.")
-            .setPositiveButton("Close",null).show());
-        TextView range=text(OccurrenceEvidencePolicy.title(item.evidence),13,true);
-        range.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
-        range.setPadding(0,dp(2),0,dp(3));card.addView(range);
+        // Evidence is presented as separate source statements, never a probability.
+        TextView geographic=text("Geographic source: "+
+            OccurrenceEvidencePolicy.title(item.evidence),13,true);
+        geographic.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
+        geographic.setPadding(0,dp(6),0,dp(3));
+        card.addView(geographic);
+        TextView habitat=text(item.screening.habitatStatus,13,false);
+        habitat.setTextColor(UiKit.MUTED);
+        card.addView(habitat);
+        TextView elevation=text(item.screening.elevationStatus,13,false);
+        elevation.setTextColor(UiKit.MUTED);
+        card.addView(elevation);
         // Source, ecological references and profile detail are available under Details.
         LinearLayout buttons=new LinearLayout(this);
-        Button details=UiKit.button(this,"Details","secondary");
+        Button details=UiKit.button(this,"View sources","secondary");
         buttons.addView(details,new LinearLayout.LayoutParams(0,dp(48),1f));
         Button select=UiKit.button(this,"Use species","primary");
         LinearLayout.LayoutParams selectLp=new LinearLayout.LayoutParams(0,dp(48),1.5f);
@@ -720,6 +740,7 @@ public final class SpeciesPickerActivity extends Activity {
         generation++;
         ui.removeCallbacksAndMessages(null);
         worker.shutdownNow();
+        if(suggestionDb!=null)suggestionDb.close();
         super.onDestroy();
     }
 }

@@ -16,23 +16,43 @@ public final class CatalogActivity extends Activity {
     private static final int PICK=891,PICK_MDD=892,PICK_SYNONYMS=893,PICK_EVIDENCE=894,PICK_ALL=895,MAX=25*1024*1024;
     private FieldDb db;private TextView info;
     private volatile boolean importing=false;
+    private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
     @Override public void onCreate(Bundle b){
         super.onCreate(b);db=new FieldDb(this);
         LinearLayout layout=new LinearLayout(this);layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(22,22,22,22);layout.setBackgroundColor(UiKit.BG);
-        layout.addView(UiKit.title(this,"Species checklists"));
-        info=new TextView(this);info.setTextSize(15);info.setTextColor(UiKit.INK);layout.addView(info);
-        Button species=UiKit.button(this,"Find species information","primary");
+        layout.addView(UiKit.navigationHeader(this,"Species Library","Home",this::finish));
+        TextView introduction=new TextView(this);
+        introduction.setText("Offline species accounts with accepted names, former names, "+
+            "regional source listings and available ecology references.");
+        introduction.setTextSize(14);
+        introduction.setTextColor(UiKit.MUTED);
+        introduction.setPadding(0,dp(5),0,dp(12));
+        layout.addView(introduction);
+        Button species=UiKit.button(this,"Search species & former names","primary");
         layout.addView(species);
         species.setOnClickListener(v->startActivity(
-            new Intent(this,TaxonDetailActivity.class)));
-        Button regions=UiKit.button(this,"Mindanao & Davao species references","secondary");
+            new Intent(this,Rc7SpeciesLibraryActivity.class)));
+        Button regions=UiKit.button(this,"Browse regional source records","secondary");
         layout.addView(regions);
         regions.setOnClickListener(v->startActivity(
             new Intent(this,RegionalChecklistActivity.class)));
+        Button compare=UiKit.button(this,"Compare reference characters","secondary");
+        layout.addView(compare);
+        compare.setOnClickListener(v->startActivity(
+            new Intent(this,DiagnosticGuideActivity.class)));
+        LinearLayout sourceHeading=FieldVisuals.section(this,
+            "Installed scientific references","Source edition and coverage");
+        layout.addView(sourceHeading);
+        info=new TextView(this);
+        info.setTextSize(14);
+        info.setTextColor(UiKit.INK);
+        info.setPadding(0,dp(3),0,dp(9));
+        layout.addView(info);
         Button sources=UiKit.button(this,"Catalog sources and versions","secondary");
-        layout.addView(sources);sources.setOnClickListener(v->showCatalogSources());
-        Button back=UiKit.button(this,"‹ Home","secondary");layout.addView(back);back.setOnClickListener(v->finish());
+        layout.addView(sources);
+        sources.setOnClickListener(v->showCatalogSources());
+
         ScrollView scroll=new ScrollView(this);
         scroll.addView(layout);
         setContentView(scroll);refresh();
@@ -48,12 +68,17 @@ public final class CatalogActivity extends Activity {
             while(c.moveToNext())
                 counts.put(c.getString(0),new int[]{c.getInt(1),c.getInt(2),c.getInt(3)});
         }
-        StringBuilder result=new StringBuilder("Available offline · ready for field use");
+        StringBuilder result=new StringBuilder();
+        int attributedTotal=0;
+        boolean allGroupsInstalled=true;
         for(String group:new String[]{"Birds","Amphibians","Reptiles","Mammals"}){
             int[] data=counts.get(group);
             int sourced=data==null?0:data[2];
-            result.append("\\n").append(group).append(": ").append(sourced);
-            if(sourced==0)result.append(" (catalog missing)");
+            attributedTotal+=sourced;
+            if(sourced==0)allGroupsInstalled=false;
+            result.append("\n").append(group).append(": ").append(sourced)
+                .append(" source-attributed names");
+            if(sourced==0)result.append(" (source pack missing)");
         }
         int reviewedProfiles=0;
         try(Cursor ecology=db.getReadableDatabase().rawQuery(
@@ -61,11 +86,17 @@ public final class CatalogActivity extends Activity {
                 "WHERE review_status='reviewed'",null)){
             if(ecology.moveToFirst())reviewedProfiles=ecology.getInt(0);
         }
-        result.append("\\nHabitat profiles with checked references: ")
-            .append(reviewedProfiles).append(" / 1503 catalog entries");
-        result.append("\\nUnassessed habitat/elevation fields are left blank.");
-        result.append("\\nSource records include national candidates. Local presence is not verified.");
-        info.setText(result.toString().replace("\\\\n","\\n"));
+        result.insert(0,allGroupsInstalled?
+            "Installed offline references":"Incomplete offline references");
+        int[] libraryCounts=OfflineFieldLibrary.availableCounts(this);
+        result.append("\nDetailed wildlife accounts: ").append(libraryCounts[0])
+            .append(" (source-checked; specialist review pending)");
+        result.append("\nPhilippine habitat field guides: ").append(libraryCounts[1]);
+        result.append("\nReviewed habitat profiles: ").append(reviewedProfiles)
+            .append(" / ").append(attributedTotal).append(" attributed names");
+        result.append("\nUnassessed habitat and elevation data remain unknown.");
+        result.append("\nA checklist source is not proof of presence at a station.");
+        info.setText(result.toString());
     }
     private void showCatalogSources(){
         StringBuilder sources=new StringBuilder();

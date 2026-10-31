@@ -1,0 +1,25 @@
+name: LIKAS additional owner-photo visual audit
+on:
+  push:
+    branches: [feature/likas-core-fieldwork-post-rc4]
+    paths:
+      - scripts/review_owner_extra_photos.py
+      - .github/workflows/rc7-extra-owner-photo-review.yml
+permissions:
+  contents: read
+jobs:
+  extra-photos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install Pillow
+      - run: python3 scripts/review_owner_extra_photos.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: LIKAS-dreidrei-extra-photo-review
+          path: rc7_owner_extra_review/
+          retention-days: 7

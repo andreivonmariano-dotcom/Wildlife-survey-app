@@ -85,6 +85,7 @@ public class MainActivity extends Activity implements LocationListener {
     private Button endSurveyButton,markButton,saveButton,reviewButton,pointNextButton;
     private LinearLayout groupBar,advancedPanel,lineRow,birdMeasurements,herpPanel,mammalPanel;
     private ScrollView fieldScroll;
+    private boolean inputKeyboardVisible=false;
     private boolean returnToHome=false;
     private final String[] groups=Taxa.GROUPS;
     private String samplingUnitId=null;
@@ -192,7 +193,8 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private EditText edit(String hint,int type){
         EditText e=new EditText(this);e.setHint(hint);e.setTextColor(INK);
-        e.setTextSize(16);e.setInputType(type);e.setSingleLine(true);return e;
+        e.setTextSize(16);e.setInputType(type);e.setSingleLine(true);
+        UiKit.fieldInput(this,e);return e;
     }
     private LinearLayout vertical(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;}
     private LinearLayout horizontal(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.HORIZONTAL);c.setGravity(Gravity.CENTER_VERTICAL);return c;}
@@ -204,20 +206,32 @@ public class MainActivity extends Activity implements LocationListener {
         return t;
     }
     private void disclosureTarget(TextView view){
-        view.setMinHeight(dp(46));
+        view.setMinHeight(dp(48));
         view.setGravity(Gravity.CENTER_VERTICAL);
         view.setFocusable(true);
     }
     private void draw(){
-        LinearLayout root=vertical();root.setBackgroundColor(BACK);root.setPadding(dp(12),dp(5),dp(12),dp(7));
+        inputKeyboardVisible=false;
+        LinearLayout root=vertical();root.setBackgroundColor(BACK);
+        root.setPadding(dp(LikasDesignSystem.SPACE_MD),dp(5),
+            dp(LikasDesignSystem.SPACE_MD),dp(7));
+        // At large system font, keep the fixed survey dock fully in frame.
+        // The complete status card remains reachable at the start of the field scroll.
+        boolean largeText=getResources().getConfiguration().fontScale>=1.60f;
+        int touchDp=FieldLayoutPolicy.actionHeightDp(
+            getResources().getConfiguration().fontScale);
         LinearLayout top=horizontal();
-        Button home=UiKit.button(this,"‹ Home","secondary");
-        home.setTextSize(13);top.addView(home,new LinearLayout.LayoutParams(dp(78),dp(49)));
+        Button home=UiKit.button(this,largeText?"‹":"‹ Home","secondary");
+        home.setContentDescription("Back to Home");
+        home.setTextSize(largeText?20:13);
+        top.addView(home,new LinearLayout.LayoutParams(dp(78),dp(largeText?64:49)));
         home.setOnClickListener(v->navigateHome());
         TextView title=label(profile+" Survey",19,true);title.setGravity(Gravity.CENTER);
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-        Button export=UiKit.button(this,"Export","secondary");export.setTextSize(13);
-        top.addView(export,new LinearLayout.LayoutParams(dp(84),dp(49)));export.setOnClickListener(v->exportZip());
+        Button export=UiKit.button(this,largeText?"ZIP":"Export","secondary");
+        export.setContentDescription("Export research ZIP");
+        export.setTextSize(largeText?14:13);
+        top.addView(export,new LinearLayout.LayoutParams(dp(84),dp(largeText?64:49)));export.setOnClickListener(v->exportZip());
         root.addView(top);
         // Fixed status HUD: short, high-contrast survey state, always visible.
         LinearLayout hud=vertical();
@@ -235,18 +249,19 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView=label("GPS searching · details",12,true);
         gpsView.setTextColor(UiKit.AMBER);
         gpsView.setOnClickListener(v->showGpsDetail());
-        gpsView.setMinHeight(dp(44));
+        gpsView.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));
         gpsView.setGravity(Gravity.CENTER_VERTICAL);
         gpsView.setFocusable(true);
-        gpsView.setContentDescription("Current GPS status. Open GPS details");
+        gpsView.setContentDescription("GPS searching. Open GPS details");
         hud.addView(gpsView);
         startGpsBanner=label("Initial GPS missing · location unverified",12,true);
         startGpsBanner.setTextColor(UiKit.AMBER);
         hud.addView(startGpsBanner);
         refreshStartGpsBanner();
-        root.addView(hud,hudLp);
+        if(!largeText)root.addView(hud,hudLp);
         fieldScroll=new ScrollView(this);fieldScroll.setFillViewport(false);fieldScroll.setVerticalScrollBarEnabled(false);
         LinearLayout content=vertical();content.setPadding(dp(1),0,dp(1),dp(12));
+        if(largeText)content.addView(hud,hudLp);
         groupBar=horizontal();content.addView(groupBar);showGroups();
         LinearLayout methodRow=horizontal();
         // The method was already chosen in survey setup. Do not offer a second, disabled selector.
@@ -260,9 +275,9 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(lineRow,new LinearLayout.LayoutParams(-1,-2));
         LinearLayout utilityRow=horizontal();
         pauseButton=UiKit.button(this,"Pause effort","secondary");
-        utilityRow.addView(pauseButton,new LinearLayout.LayoutParams(0,dp(47),1));
+        utilityRow.addView(pauseButton,new LinearLayout.LayoutParams(0,dp(touchDp),1));
         progressButton=UiKit.button(this,"Station progress","secondary");
-        LinearLayout.LayoutParams progressLp=new LinearLayout.LayoutParams(0,dp(47),1);
+        LinearLayout.LayoutParams progressLp=new LinearLayout.LayoutParams(0,dp(touchDp),1);
         progressLp.leftMargin=dp(7);utilityRow.addView(progressButton,progressLp);
         content.addView(utilityRow);
         progressButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
@@ -287,7 +302,7 @@ public class MainActivity extends Activity implements LocationListener {
         });
         // Optional settings are placed below the observation form.
         pointNextButton=UiKit.button(this,"Finish point · Next station","camera");
-        content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,dp(53)));
+        content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,dp(touchDp)));
         pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
         pointNextButton.setOnClickListener(v->{if(method.equals("point_count"))nextPoint();else nextSamplingUnit();});
         trackingView=label("Track: awaiting GPS",12,true);
@@ -295,34 +310,142 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(trackingView);
         trackingView.setVisibility(method.equals("line_transect")||method.equals("ves_transect")?View.VISIBLE:View.GONE);
 
+        // Stack both actions at phone widths and enlarged text to avoid clipped labels.
+        boolean stackCaptureActions=FieldLayoutPolicy.stackPortalPair(
+            getResources().getConfiguration().screenWidthDp,
+            getResources().getConfiguration().fontScale);
         LinearLayout detectRow=horizontal();
-        Button markTime=UiKit.button(this,"Mark now","secondary");
-        detectRow.addView(markTime,weighted(0.9f));
+        if(stackCaptureActions)detectRow.setOrientation(LinearLayout.VERTICAL);
+        Button markTime=UiKit.button(this,"Mark detection","secondary");
+        markTime.setContentDescription("Mark sighting time and available fresh observer GPS without saving an observation");
+        detectRow.addView(markTime,stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):weighted(0.9f));
         markButton=UiKit.button(this,"Measure bearing","secondary");
         markButton.setContentDescription("Open sighting camera to capture detection bearing and pitch");
-        detectRow.addView(markButton,weighted(1.1f));
+        LinearLayout.LayoutParams bearingLp=stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):weighted(1.1f);
+        if(stackCaptureActions)bearingLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+        else bearingLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+        detectRow.addView(markButton,bearingLp);
         content.addView(detectRow);
         markTime.setOnClickListener(v->markDetection());
         markButton.setOnClickListener(v->openCamera());
+        // Saved preferences are scoped to the method, never a particular observation.
+        android.content.SharedPreferences quickPrefs=getSharedPreferences(
+            "likas_method_quick_actions",MODE_PRIVATE);
+        String quickKey=FieldQuickActions.preferenceKey(profile,method);
+        FieldQuickActions.Kind[] chosen={FieldQuickActions.resolve(profile,method,
+            quickPrefs.getString(quickKey,null))};
+        FieldQuickActions.Kind[] available=FieldQuickActions.choices(profile,method);
+        LinearLayout captureRow=horizontal();
+        if(stackCaptureActions)captureRow.setOrientation(LinearLayout.VERTICAL);
+        Button quickCapture=UiKit.button(this,FieldQuickActions.label(chosen[0]),"pond");
+        captureRow.addView(quickCapture,stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):
+            new LinearLayout.LayoutParams(0,dp(touchDp),1));
+        Button changeQuick=UiKit.button(this,"Change","secondary");
+        LinearLayout.LayoutParams changeLp=stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):
+            new LinearLayout.LayoutParams(dp(105),dp(touchDp));
+        if(stackCaptureActions)changeLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+        else changeLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+        captureRow.addView(changeQuick,changeLp);
+        LinearLayout.LayoutParams captureLp=new LinearLayout.LayoutParams(-1,-2);
+        captureLp.topMargin=dp(7);
+        content.addView(captureRow,captureLp);
+        quickCapture.setOnClickListener(v->{
+            switch(chosen[0]){
+                case CALLS:openCallLibrary();break;
+                case PHOTO:pickPhoto();break;
+                case DEVICES:openTrapProtocol();break;
+                case METHOD_EVIDENCE:openFieldProtocol();break;
+                default:break;
+            }
+        });
+
+        // Other tools stay in one expandable group without repeated actions.
+        LinearLayout evidenceTools=vertical();
+        evidenceTools.setVisibility(View.GONE);
+        Button[] optionalCalls={null},optionalDevices={null},optionalMethod={null};
         if(FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile)){
-            Button sound=UiKit.button(this,"♪ Record / Review Calls","secondary");
-            sound.setContentDescription("Record, view spectrogram and label bird or amphibian calls");
-            LinearLayout.LayoutParams soundLp=new LinearLayout.LayoutParams(-1,dp(52));
-            soundLp.topMargin=dp(7);content.addView(sound,soundLp);
+            Button sound=UiKit.button(this,"Record / review calls","secondary");
+            sound.setContentDescription("Open calls, spectrogram and time labels");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
+            lp.topMargin=dp(7);evidenceTools.addView(sound,lp);
+            optionalCalls[0]=sound;
             sound.setOnClickListener(v->openCallLibrary());
         }
         if(TrapProtocolPolicy.supported(method)){
-            Button devices=UiKit.button(this,"▣ Devices, Checks & Captures","secondary");
-            LinearLayout.LayoutParams deviceLp=new LinearLayout.LayoutParams(-1,dp(52));
-            deviceLp.topMargin=dp(7);content.addView(devices,deviceLp);
+            Button devices=UiKit.button(this,"Devices, checks & captures","secondary");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
+            lp.topMargin=dp(7);evidenceTools.addView(devices,lp);
+            optionalDevices[0]=devices;
             devices.setOnClickListener(v->openTrapProtocol());
         }
         if(FieldProtocolPolicy.supported(method)){
-            Button methodRecords=UiKit.button(this,"▣ Method Effort & Evidence","secondary");
-            LinearLayout.LayoutParams methodLp=new LinearLayout.LayoutParams(-1,dp(52));
-            methodLp.topMargin=dp(7);content.addView(methodRecords,methodLp);
+            Button methodRecords=UiKit.button(this,"Method effort & evidence","secondary");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
+            lp.topMargin=dp(7);evidenceTools.addView(methodRecords,lp);
+            optionalMethod[0]=methodRecords;
             methodRecords.setOnClickListener(v->openFieldProtocol());
         }
+        Button evidenceToggle=UiKit.button(this,"Other evidence tools  ▾","quiet");
+        LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,
+            dp(FieldLayoutPolicy.actionHeightDp(
+                getResources().getConfiguration().fontScale)));
+        evidenceLp.topMargin=dp(7);
+        content.addView(evidenceToggle,evidenceLp);
+        content.addView(evidenceTools);
+        evidenceToggle.setOnClickListener(v->{
+            boolean open=evidenceTools.getVisibility()!=View.VISIBLE;
+            evidenceTools.setVisibility(open?View.VISIBLE:View.GONE);
+            evidenceToggle.setText(open?"Other evidence tools  ▴":
+                "Other evidence tools  ▾");
+            evidenceToggle.setContentDescription(open?
+                "Hide other evidence capture tools":"Show other evidence capture tools");
+        });
+        Runnable reflectQuick=()->{
+            quickCapture.setText(FieldQuickActions.label(chosen[0]));
+            quickCapture.setContentDescription("Quick capture: "+
+                FieldQuickActions.label(chosen[0]));
+            quickCapture.setVisibility(chosen[0]==FieldQuickActions.Kind.NONE?
+                View.GONE:View.VISIBLE);
+            if(optionalCalls[0]!=null)
+                optionalCalls[0].setVisibility(chosen[0]==FieldQuickActions.Kind.CALLS?
+                    View.GONE:View.VISIBLE);
+            if(optionalDevices[0]!=null)
+                optionalDevices[0].setVisibility(chosen[0]==FieldQuickActions.Kind.DEVICES?
+                    View.GONE:View.VISIBLE);
+            if(optionalMethod[0]!=null)
+                optionalMethod[0].setVisibility(chosen[0]==FieldQuickActions.Kind.METHOD_EVIDENCE?
+                    View.GONE:View.VISIBLE);
+            int visible=0;
+            for(int n=0;n<evidenceTools.getChildCount();n++)
+                if(evidenceTools.getChildAt(n).getVisibility()==View.VISIBLE)visible++;
+            evidenceToggle.setVisibility(visible>0?View.VISIBLE:View.GONE);
+            if(visible==0)evidenceTools.setVisibility(View.GONE);
+        };
+        reflectQuick.run();
+        changeQuick.setOnClickListener(v->{
+            String[] labels=new String[available.length+1];
+            labels[0]="Method default · "+
+                FieldQuickActions.label(FieldQuickActions.forSurvey(profile,method));
+            for(int n=0;n<available.length;n++)
+                labels[n+1]=FieldQuickActions.label(available[n]);
+            new AlertDialog.Builder(this)
+                .setTitle("Quick action for "+SurveyMethods.displayLabel(profile,method))
+                .setItems(labels,(dialog,selection)->{
+                    if(selection==0){
+                        quickPrefs.edit().remove(quickKey).apply();
+                        chosen[0]=FieldQuickActions.forSurvey(profile,method);
+                    }else{
+                        chosen[0]=available[selection-1];
+                        quickPrefs.edit().putString(quickKey,chosen[0].name()).apply();
+                    }
+                    reflectQuick.run();
+                })
+                .setNegativeButton("Cancel",null).show();
+        });
         LinearLayout markRow=horizontal();
         markRowView=markRow;
         markRow.setVisibility(View.GONE);
@@ -332,21 +455,27 @@ public class MainActivity extends Activity implements LocationListener {
         TextView clear=label("Clear mark",12,true);
         clear.setTextColor(GREEN);
         clear.setPadding(dp(10),dp(8),dp(6),dp(8));
+        clear.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));
+        clear.setGravity(Gravity.CENTER_VERTICAL);
+        clear.setFocusable(true);
         clear.setOnClickListener(v->clearMark());
         markRow.addView(clear);
         content.addView(markRow);
+        content.addView(FieldVisuals.section(this,"Record observation",
+            "Species, number of individuals and encounter details"));
         // One row combines direct entry and the complete offline checklist.
         // Complete species selection now lives on its own page.
         // Retain direct text entry for novel/unidentified field observations.
         boolean stackSpecies=FieldLayoutPolicy.stackSpeciesEntry(
             getResources().getConfiguration().screenWidthDp,
             getResources().getConfiguration().fontScale);
-        int fieldControlHeight=FieldLayoutPolicy.actionHeightDp(
-            getResources().getConfiguration().fontScale);
+        int fieldControlHeight=Math.max(56,FieldLayoutPolicy.actionHeightDp(
+            getResources().getConfiguration().fontScale));
         LinearLayout speciesRow=horizontal();
         if(stackSpecies)speciesRow.setOrientation(LinearLayout.VERTICAL);
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
+        UiKit.fieldInput(this,taxonEntry);
         taxonEntry.setThreshold(100);taxonEntry.setHint("Species or field ID");
         taxonEntry.setSelectAllOnFocus(true);
         speciesRow.addView(taxonEntry,stackSpecies?
@@ -365,11 +494,11 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout speciesActions=horizontal();
         Button unknownBtn=UiKit.button(this,"Unidentified","quiet");
         unknownBtn.setTextSize(13);
-        LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(0,dp(46),1);
+        LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(0,dp(touchDp),1);
         speciesActions.addView(unknownBtn,unknownLp);
         favoriteButton=UiKit.button(this,"☆","quiet");
         favoriteButton.setTextSize(22);
-        LinearLayout.LayoutParams starP=new LinearLayout.LayoutParams(dp(52),dp(46));
+        LinearLayout.LayoutParams starP=new LinearLayout.LayoutParams(dp(52),dp(touchDp));
         starP.leftMargin=dp(6);speciesActions.addView(favoriteButton,starP);
         favoriteButton.setContentDescription("Add or remove favorite species");
         favoriteButton.setOnClickListener(v->toggleFavorite());
@@ -401,10 +530,10 @@ public class MainActivity extends Activity implements LocationListener {
             method.equals("live_trap_check")||method.equals("bat_acoustic")||
             method.equals("drift_fence_check")?"Individuals / evidence count":"Individuals";
         TextView countLabel=label(countBasis,14,true);countLine.addView(countLabel,weighted(1));
-        Button minus=button("−");countLine.addView(minus,new LinearLayout.LayoutParams(dp(55),dp(46)));
+        Button minus=button("−");countLine.addView(minus,new LinearLayout.LayoutParams(dp(55),dp(touchDp)));
         countView=label("1",19,true);countView.setGravity(Gravity.CENTER);
         countLine.addView(countView,new LinearLayout.LayoutParams(dp(48),-2));
-        Button plus=button("+");countLine.addView(plus,new LinearLayout.LayoutParams(dp(55),dp(46)));
+        Button plus=button("+");countLine.addView(plus,new LinearLayout.LayoutParams(dp(55),dp(touchDp)));
         content.addView(countLine);
         LinearLayout confidenceBlock=vertical();
         confidenceBlock.addView(label("Identification confidence",12,true));
@@ -527,7 +656,7 @@ public class MainActivity extends Activity implements LocationListener {
         }
         LinearLayout photoRow=horizontal();
         Button photoButton=UiKit.button(this,"Add photo","secondary");
-        photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(49),2));
+        photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(touchDp),2));
         photoStatus=label("",12,false);
         photoStatus.setVisibility(View.GONE);
         photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));
@@ -538,7 +667,9 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
         detailToggle=label("＋ More observation details",14,true);
-        detailToggle.setTextColor(GREEN);disclosureTarget(detailToggle);content.addView(detailToggle);
+        detailToggle.setTextColor(GREEN);disclosureTarget(detailToggle);
+        detailToggle.setContentDescription("Show optional identification confidence, habitat, behavior and observation notes");
+        content.addView(detailToggle);
         advancedPanel=vertical();
         habitatEntry=edit("Habitat / microhabitat",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         behaviorEntry=edit("Behavior / reproductive evidence",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -550,8 +681,15 @@ public class MainActivity extends Activity implements LocationListener {
         advancedPanel.addView(identificationNote);
         advancedPanel.addView(habitatEntry);advancedPanel.addView(behaviorEntry);advancedPanel.addView(notesEntry);
         advancedPanel.setVisibility(View.GONE);content.addView(advancedPanel);
-        detailToggle.setOnClickListener(v->{detailShown=!detailShown;advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);queueDraft();
-            detailToggle.setText(detailShown?"− Hide observation details":"＋ More observation details");});
+        detailToggle.setOnClickListener(v->{
+            detailShown=!detailShown;
+            advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);
+            detailToggle.setText(detailShown?"− Hide observation details":"＋ More observation details");
+            detailToggle.setContentDescription(detailShown?
+                "Hide optional identification, habitat, behavior and observation notes":
+                "Show optional identification confidence, habitat, behavior and observation notes");
+            queueDraft();
+        });
         content.addView(sessionToggle);
         content.addView(sessionSettings);
         // The field form stays focused on observations. Method tips live in Help.
@@ -570,6 +708,7 @@ public class MainActivity extends Activity implements LocationListener {
         footerOptions.addView(reviewButton,reviewParams);
         // Ending a survey remains accessible even with the keyboard open.
         endSurveyButton=UiKit.button(this,"End Survey","outline-danger");
+        endSurveyButton.setContentDescription("End survey. Choose Complete, Incomplete, or Not Counted.");
         LinearLayout.LayoutParams endParams=new LinearLayout.LayoutParams(0,dp(
             FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale)),1);
         endParams.leftMargin=dp(8);
@@ -593,6 +732,21 @@ public class MainActivity extends Activity implements LocationListener {
             startActivity(new Intent(this,HistoryActivity.class).putExtra("event_id",eventId));
         });
         setContentView(root);
+        // adjustResize keeps the Save/Review/End dock on screen. When the keyboard
+        // occupies the viewport, reclaim the noncritical top navigation row and
+        // progress detail rather than moving or hiding survey completion controls.
+        final android.graphics.Rect visibleFrame=new android.graphics.Rect();
+        root.getViewTreeObserver().addOnGlobalLayoutListener(()->{
+            if(!root.isAttachedToWindow())return;
+            root.getWindowVisibleDisplayFrame(visibleFrame);
+            int obscured=getResources().getDisplayMetrics().heightPixels-visibleFrame.bottom;
+            boolean keyboardShown=obscured>dp(160);
+            if(inputKeyboardVisible==keyboardShown)return;
+            inputKeyboardVisible=keyboardShown;
+            top.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
+            progressView.setVisibility(keyboardShown||
+                progressView.getText().length()==0?View.GONE:View.VISIBLE);
+        });
         updateMethods();refreshAutocomplete();status();
         watchDraftFields();
 
@@ -850,10 +1004,13 @@ public class MainActivity extends Activity implements LocationListener {
             stationId="";
         active=true;
         if(endSurveyButton!=null)endSurveyButton.setEnabled(true);
-        if(gpsView!=null)gpsView.setText(withoutGps?
-            "GPS pending · no initial survey position":
-            String.format(Locale.US,"Survey-start GPS: %.6f, %.6f · ±%.1f m",
-                startLatitude,startLongitude,startAccuracy));
+        if(gpsView!=null){
+            gpsView.setText(withoutGps?
+                "GPS pending · no initial survey position":
+                String.format(Locale.US,"Survey-start GPS: %.6f, %.6f · ±%.1f m",
+                    startLatitude,startLongitude,startAccuracy));
+            gpsView.setContentDescription(gpsView.getText()+". Open GPS details");
+        }
         refreshStartGpsBanner();
         saveButton.setEnabled(!hasStationUnits());
         if(hasStationUnits()&&pointNextButton!=null){
@@ -1942,7 +2099,11 @@ public class MainActivity extends Activity implements LocationListener {
         boolean overdue=left!=Long.MAX_VALUE&&left<=0;
         eventView.setTextColor(surveyPaused?UiKit.AMBER:
             near||overdue?Color.rgb(185,39,39):MUTED);
-        eventView.setAlpha(!surveyPaused&&near?(now/650%2==0?1f:0.45f):1f);
+        boolean reducedMotion=getSharedPreferences("likas_ui",MODE_PRIVATE)
+            .getBoolean("reduced_motion",false)||
+            !android.animation.ValueAnimator.areAnimatorsEnabled();
+        eventView.setAlpha(!reducedMotion&&!surveyPaused&&near?
+            (now/650%2==0?1f:0.45f):1f);
         if(!surveyPaused&&near&&!nearEndNotified){
             nearEndNotified=true;toast("30 seconds remaining");vibrateIfEnabled(160);
         }
@@ -1959,7 +2120,8 @@ public class MainActivity extends Activity implements LocationListener {
                     if(!active||!result.eventId.equals(eventId))return;
                     if(progressView!=null){
                         progressView.setText(result.progress);
-                        progressView.setVisibility(result.progress.isEmpty()?View.GONE:View.VISIBLE);
+                        progressView.setVisibility(inputKeyboardVisible||result.progress.isEmpty()?
+            View.GONE:View.VISIBLE);
                     }
                     if(trackingView!=null&&!result.track.isEmpty())
                         trackingView.setText(result.track);
@@ -2289,6 +2451,9 @@ public class MainActivity extends Activity implements LocationListener {
             detailShown=d.optBoolean("details",false);
             advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);
             detailToggle.setText(detailShown?"− Hide observation details":"＋ More observation details");
+            detailToggle.setContentDescription(detailShown?
+                "Hide optional identification, habitat, behavior and observation notes":
+                "Show optional identification confidence, habitat, behavior and observation notes");
             markedAt=d.optLong("markedTime",0);
             markedObserverFix=null;
             if(markedAt>0&&d.has("markedGpsLat")&&d.has("markedGpsLon")&&
@@ -2370,6 +2535,7 @@ public class MainActivity extends Activity implements LocationListener {
             gpsView.setText(TrackService.wasStopped(this)?"GPS stopped · restart":
                 "GPS searching · details");
             gpsView.setTextColor(UiKit.AMBER);
+            gpsView.setContentDescription(gpsView.getText()+". Open GPS details");
             return;
         }
         long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
@@ -2378,6 +2544,7 @@ public class MainActivity extends Activity implements LocationListener {
         gpsView.setText(String.format(Locale.US,"GPS ±%.1f m · %s · details",
             fix.getAccuracy(),qualified?"ready":"low quality"));
         gpsView.setTextColor(qualified?UiKit.FOREST:UiKit.AMBER);
+        gpsView.setContentDescription(gpsView.getText()+". Open GPS details");
     }
     private void showGpsDetail(){
         Location fix=TrackService.currentFix();

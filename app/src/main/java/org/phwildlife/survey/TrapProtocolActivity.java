@@ -83,10 +83,7 @@ public final class TrapProtocolActivity extends Activity {
     private void draw(){
         LinearLayout screen=column();screen.setPadding(dp(14),dp(9),dp(14),dp(12));
         screen.setBackgroundColor(UiKit.BG);
-        Button back=UiKit.button(this,"‹ Back","secondary");
-        back.setOnClickListener(v->finish());
-        screen.addView(back,new LinearLayout.LayoutParams(dp(112),dp(48)));
-        screen.addView(label("Trap and camera records",22));
+        screen.addView(UiKit.navigationHeader(this,"Trap and camera records","Back",this::finish));
         ScrollView scroll=new ScrollView(this);
         rows=column();scroll.addView(rows);
         screen.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));

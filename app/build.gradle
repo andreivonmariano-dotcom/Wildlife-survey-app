@@ -41,7 +41,10 @@ tasks.register('prepareRc65LibraryIcons', Exec) {
     outputs.dir(file("${buildDir}/generated/rc65/res"))
 }
 tasks.configureEach { task ->
-    if (task.name.startsWith('merge') && task.name.endsWith('Resources')) {
+    // AGP's resource producers/readers all see this added source directory.
+    // Explicit dependencies are required by Gradle 8.11, not just mergeResources.
+    if (task.name != 'prepareRc65LibraryIcons' &&
+        (task.name.contains('Resources') || task.name.endsWith('SourceSetPaths'))) {
         task.dependsOn tasks.named('prepareRc65LibraryIcons')
     }
 }

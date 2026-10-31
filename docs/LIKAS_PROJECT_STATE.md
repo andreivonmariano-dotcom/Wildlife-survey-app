@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Greater Mindanao PAIC ecological spatial QA v0.2 completed, GIS raster evidence still pending
+
+- **Scope:** Following owner's instruction to proceed with evidence-informed species ecology, locally processed both private PAIC workbooks (v3.8.0 + reviewed v3.8.1) and all three private iNaturalist CSV ZIP exports. Source totals: 725 species candidates; 12,811 exported rows; 11,746 RG, 1,065 Needs ID; 11,591 linked RG records and 155 unresolved RG records held. Public unobscured name-linked observation rows: 9,067.
+- **Fresh source-coordinate screen:** 3,487 name-linked RG records meet the positive reported public coordinate accuracy <=100 m screen. The older owner's v3.8.0 source-reviewed prepolygon count is 3,428. Discrepancy: **59 candidate rows across 26 taxa**, likely reflecting prior additional locality review; cause not established at observation-ID level. Block affected taxa from trusted model-based species summaries until row-level reconciliation.
+- **Privacy:** all uploaded exact observational coordinates remain in the private conversation's local processing files. A private 725-row QA workbook and separate compressed package containing a *private public-coordinate candidate CSV* (no private_lat/long fields), reproducible script, metadata template, species readiness CSV and test suite were directly created and verified in the originating chat. Do not infer or reuse chat sandbox paths in later conversations. No individual coordinates were committed to GitHub.
+- **Tests:** 9 synthetic local tests passed, checking public/obscured coordinate handling, missing positional uncertainty, separate geographic polygons, border-uncertainty, out-of-region, metadata gate, and NoData/valid/outside sample behavior. This tests code mechanics, not ecological validity or actual GIS source rasters.
+- **Current scientific blockers:** No reviewed CORE_PAIC/CAMIGUIN_SUR polygons or DEM/DSM/land-cover rasters were obtained for local extraction; 0 valid regional memberships, 0 elevation pixels and 0 land-cover pixels were assigned. Neither habitat preference nor range-wide elevation tolerance can be inferred. Source data have not been expert reviewed for all taxa.
+- **Durable public-safe methodology:** See `docs/LIKAS_PAIC_ECOLOGICAL_EVIDENCE_PROTOCOL_v0_1.md` and `docs/LIKAS_PAIC_SPATIAL_QA_v0_2.md`. Source references: official Copernicus DEM GLO-30 and ESA WorldCover 2021 v200, and Field Museum PAIC faunal context.
+- **App status:** documentation-only; app remains RC55 preview lineage. No Android source, schema 27, app identity, signing, owner survey data, app features or APK changed. Continue next RC55 Live Recorder UI work independently. Next PAIC science action is to obtain source-traceable polygon/raster files and reconcile the 59 prior-locality QA exclusions before extracting species summaries.
+
+
+
 ## 31 October 2026 | Greater Mindanao PAIC species ecology evidence methodology adopted for staging
 
 - **Owner goal:** Develop an evidence-informed ecological field guide for each reviewed Greater Mindanao PAIC species, combining locality-screened iNaturalist observations, carefully identified DSM/DEM raster elevations, and literature habitat/collection evidence. Report documented occurrences and inferred context, never absolute elevational tolerances or habitat preferences from presence-only records.

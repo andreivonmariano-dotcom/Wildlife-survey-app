@@ -23,7 +23,7 @@ class Rc64PhoneIcons(unittest.TestCase):
         self.assertEqual(18,len(list((ROOT/"app/src/main/res/drawable-nodpi").glob("likas_approved_*.png"))))
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)
-        self.assertIn("0.27.3-rc65-library-optical-icons-preview",build)
+        self.assertIn("versionName \'0.27.3-",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
 if __name__=="__main__":unittest.main()

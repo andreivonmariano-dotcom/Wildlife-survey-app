@@ -72,5 +72,18 @@
     "mammal_location_records_approved": 0,
     "rows_promoted_to_app": 0,
     "public_audit_document": "docs/LIKAS_GREATER_MINDANAO_PAIC_DEEP_PROVINCIAL_AUDIT_2026_10_31.md"
+  },
+  "literature_review_2026_10_31": {
+    "status": "curated_initial_literature_register_not_exhaustive",
+    "bibliographic_sources": 46,
+    "source_taxon_locality_or_qualifier_links": 105,
+    "explicit_rejected_samar_historic_taxa_rows": 9,
+    "legacy_taxon_keys_with_exact_name_positive_or_historical_literature_match": 46,
+    "legacy_taxon_keys_total": 399,
+    "province_coverage_roster": 32,
+    "mobios_raw_archive_retrieved": false,
+    "external_source_reuse_cleared": false,
+    "app_occurrence_rows_promoted": 0,
+    "public_methodology_doc": "docs/LIKAS_GREATER_MINDANAO_LITERATURE_EVIDENCE_REVIEW_2026_10_31.md"
   }
 }

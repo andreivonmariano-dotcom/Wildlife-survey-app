@@ -85,5 +85,16 @@
     "external_source_reuse_cleared": false,
     "app_occurrence_rows_promoted": 0,
     "public_methodology_doc": "docs/LIKAS_GREATER_MINDANAO_LITERATURE_EVIDENCE_REVIEW_2026_10_31.md"
+  },
+  "product_geographic_checklist_policy": {
+    "decision_date": "2026-10-31",
+    "current_scope": "PAIC_AND_SEPARATELY_DEFINED_BIOGEOGRAPHIC_ISLAND_GROUP_CHECKLISTS_ONLY",
+    "provincial_checklist_product": "cancelled_owner_direction",
+    "provincial_species_richness_exports": "out_of_scope",
+    "locality_and_province_mentions": "retain_as_source_evidence_not_published_province_lists",
+    "prior_provincial_audit": "archival_source_review_only",
+    "next_work": "greater_mindanao_paic_species_and_mammal_evidence_adjudication",
+    "map_filter": "PAIC_geographic_unit_only",
+    "user_decision_supersedes_prior_provincial_roadmap": true
   }
 }

@@ -81,9 +81,11 @@ public final class Rc63SpeciesChecklistInstrumentedTest {
     private static void capture(Activity activity,String filename){
         View decor=activity.getWindow().getDecorView();
         assertTrue(decor.getWidth()>0&&decor.getHeight()>0);
-        Bitmap bitmap=Bitmap.createBitmap(decor.getWidth(),decor.getHeight(),
-            Bitmap.Config.ARGB_8888);
-        decor.draw(new Canvas(bitmap));
+        // UiAutomation captures the real OS screen, including the IME window.
+        // Drawing Activity decor alone leaves the keyboard area misleadingly blank.
+        Bitmap bitmap=InstrumentationRegistry.getInstrumentation()
+            .getUiAutomation().takeScreenshot();
+        assertNotNull("System screenshot including keyboard window",bitmap);
         ContentValues row=new ContentValues();
         row.put(MediaStore.Images.Media.DISPLAY_NAME,filename);
         row.put(MediaStore.Images.Media.MIME_TYPE,"image/png");
@@ -131,6 +133,14 @@ public final class Rc63SpeciesChecklistInstrumentedTest {
                 if(large){
                     assertEquals("Short search hint at 200%", "Search taxon or family",
                         String.valueOf(search.getHint()));
+                    View disclosure=described(root,
+                        "Show wildlife group and reference coverage filters");
+                    assertNotNull("Collapsed filters remain discoverable",disclosure);
+                    assertFalse("Filters initially collapsed",group.isShown());
+                    disclosure.performClick();
+                    assertTrue("Filter panel expands",group.isShown());
+                    disclosure.performClick();
+                    assertFalse("Filter panel can collapse",group.isShown());
                 }
                 View first=described(root,"Open species reference:");
                 assertNotNull("Checklist row accessible",first);

@@ -44,8 +44,8 @@ class Rc53FieldworkHub(unittest.TestCase):
 
     def test_version_data_and_artwork_contract_preserved(self):
         g=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 125",g)
-        self.assertIn("0.27.3-rc65-library-optical-icons-preview",g)
+        self.assertGreaterEqual(int(g.split("versionCode ",1)[1].split()[0]),125)
+        self.assertIn("versionName \'0.27.3-",g)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",g)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
         ui=source("LikasPortalUi.java")

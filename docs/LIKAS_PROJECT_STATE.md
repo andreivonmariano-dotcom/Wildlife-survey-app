@@ -1,3 +1,10 @@
+## 31 October 2026 | Ecological guide species accounts v0.7 exported
+
+- Direct downloadable conversation artifact `LIKAS_Greater_Mindanao_Ecological_Guide_Checklist_v0.7_2026-10-31.xlsx` verified at 479,819 bytes and preserving all 725 species from v0.6. Download is chat-local; workbook is not a repo asset or an installed Android app feature.
+- Research enriched 42 species-linked entries (26 amphibians, 8 mammals, 7 reptiles, 1 bird). The new references provide 33 species-habitat descriptions, 29 reported elevation/locality descriptions, and 42 geographic notes. Added an account-by-account research sheet and evidence-scope columns AB–AI; preserved a full 'Guide v0.6 archived' tab and earlier raster evidence.
+- Taxonomic and geographic caveat: 2026 revision of the `Platymantis dorsalis` complex means `P. habagatan`, `P. laticeps`, and `P. jagorii` need distinct distribution handling. Some Greater Mindanao candidate taxa are recorded from Samar, Leyte, Bohol, Dinagat or Siargao and are not thereby confirmed on Mindanao. A type locality is not a species-wide elevation limit. Broad numerical Q–R ranges remain explicit ecological hypotheses.
+- Documentation-only GitHub change: decision log and state updated. **No APK or Android source change** and no on-device survey tests. For future continuation, start from conversation-attached v0.7 workbook or a verified materialization rather than inventing an accessible repository binary. Reviewed source URLs and row-level cautions are saved in the workbook.
+
 ## 31 October 2026 | Ecological guide checklist v0.6 exported in current conversation
 
 - Owner approved a broad, scientifically informed hypothesis for species with no direct ecological details, based on reviewed literature, citizen-science observations and transparent family/genus/guild analogies. It is not a habitat-selection or species-wide elevation-limit estimate. Previous 'provisional' approval gate is not required for this descriptive guide.

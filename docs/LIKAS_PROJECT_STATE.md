@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | PAIC raster v0.4 repository-side inventory utility prepared; real extraction blocked
+
+- **Active isolated scientific branch:** `feature/likas-paic-raster-archive-qa-v04` derived from RC55 draft head `6108244738f35179582e5f2ae13587fa3cb1a90f`. Startup/Android workstream untouched; no app code, SQLite, signing or APK changed.
+- **Private source file verification in current chat:** Project Files service confirmed 4 supplied TerraScope/Copernicus ZIP/TAR archives with byte sizes 67,734,369; 267,666,850; 132,469,974; 471,008,818. Only the 67.7 MB ZIP successfully materialized to `/mnt/data/likas_rasters/terrascope_download_20261031_201913.zip`; the other three hit the 100 MiB copy limit. Existing uploaded source assets must be preserved.
+- **Execution blocker unchanged:** shell and both Python runtimes return `ClientError` even for trivial commands. Neither ZIP contents nor raster geospatial metadata could be examined. **0 raster pixels sampled, 0 species elevation/land-cover records generated**. There is no new private spreadsheet or downloadable result.
+- **New executable source (not locally tested):** `scripts/likas_paic_raster_archive_inventory.py` safely indexes ZIP/TAR members and optionally stages an individual raster to obtain Rasterio CRS, WGS84 footprint, nodata, source tags, band/pixel details. No environmental inference from filenames. Synthetic tests in `scripts/test_likas_paic_raster_archive_inventory.py`; workflow `.github/workflows/paic-raster-inventory-qa.yml`. Source committed to isolated branch. **No CI pass is yet verified.**
+- **Method/usage:** `docs/LIKAS_PAIC_RASTER_ARCHIVE_QA_v0_4.md`; original ecological extraction v0.2 and provisional island boundaries v0.3 remain separate, unverified. Do not export precise sensitive observation points or commit owner private files to public GitHub. Earlier 59-observation discrepancy / 26 affected taxa and 155 unresolved taxon links remain held.
+- **Next:** when working execution is available, inventory the actual archive members and verify raster spatial overlap, CRS/datum/year/legend, then run **private** raster sampling against eligible PAIC observation coordinates, labeling all results provisional until original occurrence and regional boundary QA.
+
+
+
 ## 31 October 2026 | Copernicus/Terrascope raster files discovered in Project sources; extraction blocked by execution environment
 
 - Confirmed **four uploaded Project source archives**: Terrascope `terrascope_download_20261031_201913.zip` (67,734,369 bytes), `terrascope_download_20261031_201741.zip` (267,666,850 bytes), Copernicus `rasters_COP30.tar_2.gz` (132,469,974 bytes), and `rasters_COP30.tar.gz` (471,008,818 bytes).

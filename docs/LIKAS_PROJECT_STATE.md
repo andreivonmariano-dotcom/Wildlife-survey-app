@@ -1,3 +1,10 @@
+## 31 October 2026 | Ecological guide v0.8
+
+- Conversation-local deliverable `LIKAS_Greater_Mindanao_Ecological_Guide_Checklist_v0.8_2026-10-31.xlsx`: 699,851 bytes, directly exported and verified in current chat. Do not reuse its session download link without local re-verification. Contains 725 candidate taxa and v0.7 archived guide plus preserved v0.4-v0.6 source sheets.
+- This batch: 29 species-linked literature/source accounts (7 birds, 7 amphibians, 7 reptiles, 8 mammals). Twelve new published elevation or specimen-locality descriptions appear in main guide column F, and 23 newly sourced habitat/setting accounts in column H. Detailed fields AJ–AT and a separate `New species accounts v0.8` worksheet preserve citation, URL, study area, method/evidence type, scope, limitations and preferred field-guide display. Internal formula error scan found zero matches, and 725 stable taxon identifiers were verified.
+- Research includes BirdLife/IUCN species accounts; Sanguila et al. 2016 northeastern Mindanao herpetofauna; 2024 Tinuy-an Falls frog natural history; and 2022/2024 Journal of Mammalogy Mindanao montane small mammal voucher descriptions. Bibliographic detail and limitations are in workbook. These do NOT prove habitat selection or a taxon's full vertical range. Co-occurrence, other-island records and taxonomic changes remain separate.
+- Status: spreadsheet updated and delivered only, **not uploaded to repo or bundled in an APK**. No app, schema or signing change. Next research should fill remaining species using source-dated individually verified accounts while preserving the existing guide and continuity rules.
+
 ## 31 October 2026 | Ecological guide species accounts v0.7 exported
 
 - Direct downloadable conversation artifact `LIKAS_Greater_Mindanao_Ecological_Guide_Checklist_v0.7_2026-10-31.xlsx` verified at 479,819 bytes and preserving all 725 species from v0.6. Download is chat-local; workbook is not a repo asset or an installed Android app feature.

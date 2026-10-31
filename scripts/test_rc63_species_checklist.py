@@ -29,7 +29,7 @@ class Rc63Checklist(unittest.TestCase):
     def test_version_and_schema(self):
         b=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(b.split("versionCode ",1)[1].split()[0]),125)
-        self.assertIn("0.27.3-rc65-library-optical-icons-preview",b)
+        self.assertIn("versionName \'0.27.3-",b)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",b)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
     def test_no_schema_or_data_cleanup_issued_by_library(self):

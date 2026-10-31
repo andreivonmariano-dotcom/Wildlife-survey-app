@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -31,6 +32,7 @@ public final class TaxonDetailActivity extends Activity {
     private AutoCompleteTextView search;
     private LinearLayout searchRow;
     private Button groupFilter;
+    private Button conservation;
     private TextView screenCaption;
     private String searchGroup="";
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
@@ -54,6 +56,8 @@ public final class TaxonDetailActivity extends Activity {
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN |
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         db=new FieldDb(this);
         LinearLayout root=new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -100,16 +104,34 @@ public final class TaxonDetailActivity extends Activity {
         Button find=UiKit.button(this,"Find","secondary");
         find.setOnClickListener(v->lookup(search.getText().toString()));
         searchRow.addView(find,new LinearLayout.LayoutParams(dp(80),dp(52)));
+        // At narrow widths and enlarged system fonts, keep Search fully usable.
+        // Reuse the same controls and listeners without truncating the query field.
+        float widthDp=getResources().getDisplayMetrics().widthPixels/
+            getResources().getDisplayMetrics().density;
+        boolean stackedSearch=widthDp<350f||
+            getResources().getConfiguration().fontScale>=1.60f;
+        if(stackedSearch){
+            searchRow.removeAllViews();
+            searchRow.setOrientation(LinearLayout.VERTICAL);
+            searchRow.addView(search,new LinearLayout.LayoutParams(-1,dp(64)));
+            LinearLayout searchActions=new LinearLayout(this);
+            searchActions.setOrientation(LinearLayout.HORIZONTAL);
+            searchActions.addView(dropdown,new LinearLayout.LayoutParams(dp(60),dp(58)));
+            searchActions.addView(find,new LinearLayout.LayoutParams(0,dp(58),1f));
+            searchRow.addView(searchActions,new LinearLayout.LayoutParams(-1,-2));
+        }
         root.addView(searchRow);
         final String[] groupNames={"All groups","Birds","Amphibians","Reptiles","Mammals"};
         groupFilter=UiKit.button(this,"All wildlife groups  ▾","quiet");
         groupFilter.setContentDescription("Filter species by wildlife group");
-        LinearLayout.LayoutParams groupLp=new LinearLayout.LayoutParams(-1,dp(48));
+        LinearLayout.LayoutParams groupLp=new LinearLayout.LayoutParams(-1,-2);
+        groupFilter.setMinimumHeight(dp(stackedSearch?64:48));
         groupLp.topMargin=dp(6);
         root.addView(groupFilter,groupLp);
-        Button conservation=UiKit.button(this,"Conservation research · 96 species","secondary");
+        conservation=UiKit.button(this,"Conservation research · 96 species","secondary");
         conservation.setContentDescription("Explore dated global assessments, national conservation records and research threats");
-        LinearLayout.LayoutParams conservationLp=new LinearLayout.LayoutParams(-1,dp(52));
+        LinearLayout.LayoutParams conservationLp=new LinearLayout.LayoutParams(-1,-2);
+        conservation.setMinimumHeight(dp(stackedSearch?64:52));
         conservationLp.topMargin=dp(5);
         root.addView(conservation,conservationLp);
         conservation.setOnClickListener(v->startActivity(
@@ -233,6 +255,7 @@ public final class TaxonDetailActivity extends Activity {
     private void showSearchControls(){
         if(searchRow!=null)searchRow.setVisibility(View.VISIBLE);
         if(groupFilter!=null)groupFilter.setVisibility(View.VISIBLE);
+        if(conservation!=null)conservation.setVisibility(View.VISIBLE);
         if(screenCaption!=null)screenCaption.setVisibility(View.VISIBLE);
     }
     private void showMessage(String message){
@@ -249,10 +272,12 @@ public final class TaxonDetailActivity extends Activity {
             content.removeAllViews();
             searchRow.setVisibility(View.GONE);
             groupFilter.setVisibility(View.GONE);
+            conservation.setVisibility(View.GONE);
             screenCaption.setVisibility(View.GONE);
             Button searchAnother=UiKit.button(this,"⌕  Search another species","quiet");
             searchAnother.setContentDescription("Search another wildlife species");
-            LinearLayout.LayoutParams searchLp=new LinearLayout.LayoutParams(-1,dp(45));
+            LinearLayout.LayoutParams searchLp=new LinearLayout.LayoutParams(-1,-2);
+            searchAnother.setMinimumHeight(dp(stackedSearch?64:48));
             searchLp.bottomMargin=dp(9);
             content.addView(searchAnother,searchLp);
             searchAnother.setOnClickListener(v->{

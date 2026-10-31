@@ -1,3 +1,10 @@
+## 31 October 2026 | Ecological guide checklist v0.6 exported in current conversation
+
+- Owner approved a broad, scientifically informed hypothesis for species with no direct ecological details, based on reviewed literature, citizen-science observations and transparent family/genus/guild analogies. It is not a habitat-selection or species-wide elevation-limit estimate. Previous 'provisional' approval gate is not required for this descriptive guide.
+- Verified conversation-local file: `LIKAS_Greater_Mindanao_Ecological_Guide_Checklist_v0.6_2026-10-31.xlsx` (297,473 bytes as exported; 725 candidate taxa). Working habitat descriptions 725/725; terrestrial elevation hypothesis bands 691; 34 marine taxa correctly have no terrestrial elevation. Source sheets and v0.5 ecological guide remain in workbook. 46 reference-supported ecological analogue rules and 25 literature-informed entries are documented. A group-level source must never be misrepresented as a species-specific account.
+- Source scope: original v0.4 raster evidence, owner-supplied WBCP 2025 and Sy 2025-1/2026-1 checklists, and additional inspected Mindanao-relevant literature (e.g. Sanguila et al. 2016, Field Museum mammals, Heaney 2001, Mt Hamiguitan bird gradient and recent taxon accounts). Numeric working envelopes are deliberately broad, heuristic rather than statistical; no local species occurrence or preference is confirmed by this inference.
+- File is **not committed to the repository** and direct-download path is session-local; fetch or recreate from a future chat attachment before claiming availability. No LIKAS Android app code, schema, APK or startup assets changed. Source limitations and redistribution licensing remain. See `docs/LIKAS_DECISION_LOG.md` for durable owner decision.
+
 # LIKAS: Current Project State and Next-Chat Handoff
 
 ## 31 October 2026 | Greater Mindanao ecological guide checklist v0.5 generated; no Android code change

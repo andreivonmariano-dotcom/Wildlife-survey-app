@@ -173,5 +173,28 @@
     "sqlite_schema_modified": false,
     "provincial_checklists_cancelled": true,
     "lock_doc": "docs/LIKAS_GMND_PAIC_FINAL_LOCK_V2_2026_10_31.md"
+  },
+  "paic_taxonomic_addendum_v21_2026_10_31": {
+    "status": "curated_private_revised_reference",
+    "supersedes_release_of_baseline": false,
+    "baseline_v2_locked_unchanged": true,
+    "named_vertebrate_candidates": 640,
+    "group_counts": {
+      "Birds": 349,
+      "Mammals": 83,
+      "Amphibians": 53,
+      "Reptiles": 155
+    },
+    "source_likely": 463,
+    "source_possible": 177,
+    "genus_level_operational_identifications": 4,
+    "genus_vouchered_published_study_units": 3,
+    "legacy_genus_only_not_voucher_validated": 1,
+    "other_fauna_named_discoveries": 9,
+    "private_workbook_sha256": "adf82db8bf1f438598fbe8c7a059393858cb07acaa7e2cea7d364f1be7dc2a6a",
+    "private_zip_sha256": "e31b0b1e93d048dcb10fe8d14d7bf80cd8babce1f2d2b0e56146a2bc8be25a96",
+    "public_doc": "docs/LIKAS_GMND_PAIC_TAXONOMIC_UPDATE_V21_2026_10_31.md",
+    "android_implementation": false,
+    "source_rights_reviewed_for_distribution": false
   }
 }

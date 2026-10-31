@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | PAIC archive inventory synthetic CI passed, PR #66 draft
+
+- The new isolated scientific source/tests in `feature/likas-paic-raster-archive-qa-v04` are reviewed under **draft PR #66** targeting the RC55 branch (not merged).
+- **Verified CI:** GitHub Actions PAIC Raster Archive Inventory QA, run `41208739238`, completed **success** at PR head application-independent source SHA `351d54812198eb380284268177d4a2c8fe1dfdd7`. Run step details confirm Python source compilation and synthetic ZIP/TAR unit test success. No actual project archive or geospatial raster values were accessible in that runner.
+- The local conversation environment remains unable to execute shell or Python, despite successful staging of the 67,734,369-byte TerraScope ZIP. The 3 remaining Project archives exceed the Files tool materialization limit, and mounted accessibility is unresolved.
+- **0 actual DEM/DSM heights, 0 classified land-cover pixels, 0 validated species ecological summaries.** Do not claim elevation/landcover extraction was completed or that the private original raster members were inspected.
+- Script and tests are not Android application changes, hence no new APK is available or required. Next scientific step: open real archives in healthy local execution, verify metadata/coverage, and run privacy-preserving raster sampling. Do not publish owner source coordinates.
+
+
+
 ## 31 October 2026 | PAIC raster v0.4 repository-side inventory utility prepared; real extraction blocked
 
 - **Active isolated scientific branch:** `feature/likas-paic-raster-archive-qa-v04` derived from RC55 draft head `6108244738f35179582e5f2ae13587fa3cb1a90f`. Startup/Android workstream untouched; no app code, SQLite, signing or APK changed.

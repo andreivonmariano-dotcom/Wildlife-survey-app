@@ -74,12 +74,18 @@ public final class LikasPortalUi {
                 ((android.graphics.drawable.BitmapDrawable)drawable).setFilterBitmap(false);
             }
             image.setImageDrawable(drawable);
-            // Library-only optical insets prevent full-bleed Photos/Sources source PNGs
-            // appearing cut off. The approved bitmap bytes never change.
-            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            // CENTER_INSIDE never enlarges 64px generated icons on high-density
+            // phones. Library-only FIT_CENTER fills the same 50dp plate without crop;
+            // setFilterBitmap(false) above preserves source pixel edges. The approved
+            // 512px images remain byte-identical, including Photos and Sources.
+            boolean libraryArt="library-conservation".equals(symbol) ||
+                "library-habitat-links".equals(symbol) ||
+                "library-photo".equals(symbol) ||
+                "library-sources".equals(symbol);
+            image.setScaleType(libraryArt?
+                ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_INSIDE);
             image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            art=image;size=("library-photo".equals(symbol) ||
-                "library-sources".equals(symbol))?Math.min(approvedDp,40):approvedDp;
+            art=image;size=approvedDp;
         }else{
             art=new Glyph(a,symbol,glyphColor);size=fallbackDp;
         }

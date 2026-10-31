@@ -1,0 +1,28 @@
+# LIKAS RC64 | Main Library: real-phone icon scale correction
+
+**Date:** 31 October 2026 (Asia/Manila). **Scope:** Main Library icon renderer only. **Status:** Implementation complete; actual Android 14 density acceptance pending. **Parent:** RC63 signed code123, PR #60. Original master spec file was not present at documented repository path; project instructions and current state/QA were consulted.
+
+## Physical screenshot evidence and confirmed cause
+The owner supplied an actual phone screenshot `6280406454061699480_121.jpg` (576x1280). Library card layout and text hierarchy were coherent, but Conservation/Habitat links were unusually tiny in pale-green plates while Photos/Sources had a conspicuous pale border, unlike Species/Similar.
+The signed RC63 APK contains generated Conservation/Habitat links **64x64 PNGs**, each with ~4px transparent margin; approved Photos/Sources are full-bleed **512x512 PNGs**. `LikasPortalUi.addApprovedIcon` used `CENTER_INSIDE`, which does not upscale an image smaller than the view's physical pixels, causing 64px to display tiny at high density. Photos/Sources were explicitly shrunk to **40dp** within a **50dp** plate. These are renderer faults, not justification for further asset regeneration.
+
+## Correction
+Use `FIT_CENTER` solely for `library-conservation`, `library-habitat-links`, `library-photo`, and `library-sources`, with a uniform **50dp image inside the 50dp rounded plate**. No crop. Existing bitmap nearest-neighbor flag retained. Other symbols continue `CENTER_INSIDE`; unrelated icons/screens untouched. All 18 original approved PNGs, two recently generated PNGs and reference records remain unchanged. Survey data and SQLite 27 untouched.
+
+## Acceptance gate
+- Android14 actual screen captures at 360dp/160dpi, 360dp/**440dpi** and 320dp/440dpi at **200%** font, top and bottom. This closes the prior emulator-only-160dpi blind spot. Measured drawn bitmap alpha must cover >=75% of 50dp image for each of four affected icons; their intrinsic image sizes must remain 64 or 512px, respectively. Check all 7 clickable routes and scroll-reachability, and rerun RC60 main Library and RC51 research ZIP exact export tests.
+- Full Python scientific regressions, signed original certificate and APK package/version checks. Do not claim outdoor sunlight, physical device installed build, TalkBack spoken order or older-schema migration verification from an AVD.
+- Advance to versionCode **124**, `0.27.3-rc64-library-phone-icons-preview`, original app ID, signing identity and DB 27.
+
+**Next:** Owner review of high-density screenshot versus provided real phone image; then individual Species account screens if accepted.
+
+## Actual Android acceptance and signed preview | 31 October 2026
+
+- **Exact tested code:** `ae11ac6d0f71ca82d7b56b551c17bd6f0a7f3bca` on draft PR **#61**, base RC63 draft PR #60. Workflow **41151533878 SUCCESS**: **363 Python scientific and source tests**, signed Android/JVM build and Android 14 instrumentation with direct 50dp view/layout plus alpha-image artwork measured at 360dp/160dpi, 360dp/**440dpi**, and 320dp/440dpi at **200%** text. All seven Library destinations remained focusable/clickable and scroll-accessible. Previously existing RC60 main Library and RC51 exact research ZIP Android regressions passed. All tests were run on disposable emulator (no owner's survey data).
+- **Native screenshots:** six real Android 14 top/bottom PNGs at all three display configurations, in artifact **13023023584**. Visual inspection of 440dpi bottom screenshot confirms Conservation/Habitat links now scale to a visually full badge rather than a tiny stamp. Photos/Sources original artwork occupies a matching 50dp image. At 200% font, long captions wrap naturally and last Habitat links action is fully scroll-reachable. Main Library text, card surfaces, navigation routes and section hierarchy unchanged.
+- **Physical input:** owner-provided 576×1280 real-device screenshot from RC63 remains authoritative *before* evidence. Technical comparison PNG juxtaposes original physical screenshot and two labeled RC64 **emulator** captures. This does not prove a new on-phone installation or device-specific hardware rendering after patch.
+- **Exact directly attached signed APK:** `LIKAS-v0.27.3-RC64-main-library-phone-icons-preview-debug.apk`, artifact **13023048341**, **9,793,585 bytes**, SHA256 `9fa4d49524fec9ffebeefcbe08efd1599d88817c5d6abd378dffe2a2d33f441b`. Independently verified APK ZIP CRC, Android Signature Scheme v2 RSA PKCS1 SHA-256 signedData signature, complete 12-chunk signed-content digest and **original** certificate SHA256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Parsed binary AndroidManifest and confirmed package `org.phwildlife.survey.beta08`, versionCode **124**, versionName `0.27.3-rc64-library-phone-icons-preview`. All **79** checked packaged artwork/offline resources were byte-identical to signed RC63 APK, including 18 approved 512px original icon PNGs, 2 generated 64px Library PNGs and offline JPEGs. Only layout/renderer and tests/version/documents changed.
+- **Deliverables:** same-chat direct APK download, high-density emulator evidence ZIP and phone-vs-emulator comparison PNG. All paths are chat-local and must be reverified in any new chat.
+- **Remaining gates:** install and visually confirm RC64 on the owner's actual phone, phone-specific density/touch/open-in-sunlight, true TalkBack speech and gestures, older-schema upgrades and backups. RC64 is a development draft and is not field certified.
+
+**Next:** owner reviews new phone-installed screenshot if available. Keep focus on main Library only until approved; then resume species individual-account audit as previously requested.

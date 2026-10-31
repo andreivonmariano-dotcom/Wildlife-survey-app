@@ -1,5 +1,17 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | RC64 real-phone Library icon scale defect corrected and 440dpi emulator tested
+
+- **Owner-provided physical screenshot:** real phone Library 576×1280 shows generated Conservation and Habitat links icons tiny in pale plates, with Photos/Sources visibly inset. Root-cause audit of signed RC63 APK: 2 generated PNGs are **64×64** with transparent margins, 18 original approved PNGs are **512×512**. Native `CENTER_INSIDE` refuses to upscale 64px on high-density phone, while Photos/Sources were constrained to 40dp art in 50dp icon plates. Previous 160dpi emulator had missed the density-dependent bug.
+- **Current working branch:** `feature/likas-rc64-library-phone-icon-scale`, draft PR **#61** targeting draft RC63 #60, tested source SHA **`ae11ac6d0f71ca82d7b56b551c17bd6f0a7f3bca`**, code124 `0.27.3-rc64-library-phone-icons-preview`. Stack unmerged; RC49 remains integrated scientific core.
+- **Fix:** only four main Library symbols use `FIT_CENTER` and matching **50dp image/50dp plate**, with nearest-neighbor pixel art and rounded holder clipping. Other symbols keep `CENTER_INSIDE`. No icon assets recreated or touched, and no survey/SQLite/scientific data changed.
+- **Verified Android QA:** Actions run **41151533878 SUCCESS**, **363 Python tests**, signed Android/JVM compile; three actual Android14 density layouts **360dp/160dpi**, **360dp/440dpi** and **320dp/440dpi at 200% font**, six real top/bottom PNGs. Instrumentation measured generated 64px and approved 512px intrinsic sizes, 50dp plate sizes and >75% alpha footprint on all four changed icons, plus all seven visible routes, accessible touch targets, last action scroll reachability. RC60 Library and RC51 exact research ZIP regressions passed. Evidence artifact **13023023584**.
+- **Direct signed RC64 APK:** artifact **13023048341**, **9,793,585 bytes**, SHA256 `9fa4d49524fec9ffebeefcbe08efd1599d88817c5d6abd378dffe2a2d33f441b`, independently validated ZIP, original RSA v2 signed data and full 12-chunk content digest, pinned certificate `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, binary manifest package `org.phwildlife.survey.beta08`, code124 and versionName. Original 79 checked artwork/reference media assets byte-identical to signed RC63. Direct APK, actual emulator screenshots and labeled physical-before vs emulator-after PNG delivered in current chat.
+- **Open:** RC64 untested as an *installed update on the user's physical phone*; outdoor glare, real TalkBack speech/swipe, older schema upgrades, historical personal records and backup recovery not certified. No real phone-after screenshot is claimed. Keep PR draft.
+- **Next priority:** owner review of RC64 on actual handset, then further main Library polish if needed; resume individual species-account screen audit only after main Library visuals are accepted.
+
+---
+
 ## 31 October 2026 | RC63 Full Philippine species checklist: actual IME, accessibility semantics and historical upgrade passed
 
 - **Latest verified code:** `feature/likas-rc63-species-checklist-accessibility`, draft **PR #60** targeting RC62 draft #59, exact tested code/QA source SHA `b6af00f4501fd7a1a55e53bae00e18f539124bdb`, `0.27.3-rc63-species-checklist-preview`, **versionCode123**. Original package `org.phwildlife.survey.beta08`, Android v2 debug signer `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` and SQLite schema27 preserved; integrated core remains RC49, draft stack unmerged.

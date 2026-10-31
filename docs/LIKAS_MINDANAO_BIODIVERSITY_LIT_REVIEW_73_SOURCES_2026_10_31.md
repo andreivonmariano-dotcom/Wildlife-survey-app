@@ -18,7 +18,7 @@
 - Venturina et al. (2023) Mt Capistrano herpetofauna (32 named species plus putative unresolved Platymantis), DOI 10.56899/152.6A.01
 - Plaza et al. (2025) Tinuy-an Falls, 20 new **protected-area** amphibian/reptile records, DOI 10.3724/ahr.2095-0357.2024.0025
 - Maglangit et al. (2022) Mt Agad-Agad herpetofauna (37 taxa including unresolved lizard), DOI 10.17161/randa.v29i1.18130
-- Gamalo et al. (2023) Hijo Forest, Tagum: direct survey groups 12 mammals,16 reptiles,10 amphibians,67 birds; combined 125 also includes seven local-report taxa, DOI 10.13057/biodiv/d240250
+- Gamalo et al. (2023) Hijo Forest, Tagum: field-survey group subtotal 105 (12 mammals,16 reptiles,10 amphibians,67 birds); combined 125 includes past fieldwork and seven local-report taxa, leaving 13 additional entries not explained by abstract breakdown. Full original species table still needs audit, DOI 10.13057/biodiv/d240250
 - Diesmos et al. (2026) Samar Island Natural Park: 79 park taxa and 104 island taxa; site/PAIC boundary distinction, https://pubmed.ncbi.nlm.nih.gov/41757372/
 - de Guia et al. (2025) Del Carmen Siargao mammals, journal metadata, https://researchjournal.nrcp.dost.gov.ph/client/ejournal/article/143
 
@@ -27,7 +27,7 @@ The four-group PAIC checklist remains Birds/Reptiles/Amphibians/Mammals. Wider t
 
 ## Outputs and unchanged products
 Files created directly for the owner in chat (not uploaded to the public GitHub repository):
-- `LIKAS_Mindanao_Expanded_Biodiversity_Literature_Register_2026-10-31.csv` (73 annotated source records). SHA-256: `5defd5bbc7446cc0f2b476ab4635cd343c24a1ca3bfb2476ebac706a124d97cc`.
-- `LIKAS_Mindanao_Expanded_Biodiversity_Literature_Review_2026-10-31.md`. SHA-256: `66aec8182aede91d67bdd38a17e5e20efc433a7ebc5ee39530a1f22ac26dcfd0`.
+- `LIKAS_Mindanao_Expanded_Biodiversity_Literature_Register_2026-10-31.csv` (73 annotated source records). SHA-256: `6d2e5b4b4a7ced1c2c850d86f5953ccee738ad2e636d96bf600ed8cbea6861ae`.
+- `LIKAS_Mindanao_Expanded_Biodiversity_Literature_Review_2026-10-31.md`. SHA-256: `8f39b1f92f1429f8df105f46854084b6ef0112b53589ef25efe6a923c2a99ef9`.
 - `LIKAS_Mindanao_Expanded_Biodiversity_Literature_QA_2026-10-31.md` and a zipped package; ZIP CRC verified.
 - No taxon-level additions were verified in this specific literature-search deliverable. Prior 101-name standalone mammal research workbook, four-group master, Android app and APK remain unchanged. Original MDD v2.5 CSV full crosswalk remains pending.

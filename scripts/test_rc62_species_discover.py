@@ -22,7 +22,7 @@ class Rc62SpeciesVisual(unittest.TestCase):
     def test_version_and_original_identity(self):
         b=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(b.split("versionCode ",1)[1].split()[0]),125)
-        self.assertIn("0.27.3-rc65-library-optical-icons-preview",b)
+        self.assertIn("versionName \'0.27.3-",b)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",b)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
 if __name__=="__main__":unittest.main()

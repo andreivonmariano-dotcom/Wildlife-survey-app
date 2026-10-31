@@ -1,3 +1,12 @@
+## 31 October 2026 | Private Greater Mindanao mammal literature v3.5.0 (100 named candidates)
+
+- **Source count correction:** The v3.4.0 master already contains `Acerodon jubatus` and `Alionoctula javanica` among its 99 mammals; do not duplicate them. Original Dinagat 2017–19 captures support adding exactly **one** missing named mammal, `Desmalopex leucoptera`, for **100 named source-based PAIC mammal candidates** in a private separate mammal reference workbook. Full all-vertebrate v3.4 remains unchanged.
+- Species-name crosswalk: original study `Desmalopex leucopterus`, original DAO `Pteropus leucopterus`, MDD v2.5 accepted `Desmalopex leucoptera` (Pteropodidae). Original IUCN assessment dated 19 July 2020 **VU A2cd**; national DENR DAO 2019-09 **VU**. DAO also lists `Acerodon jubatus` **CR**; MDD secondary IUCN shows **EN**. MDD displays NE for `D. leucoptera`, so latest Red List 2026-1 taxon-concept reconciliation unresolved.
+- Separate private workbook `LIKAS_Greater_Mindanao_PAIC_Mammals_Literature_Review_v3.5.0_PRIVATE.xlsx` (4 sheets, 100 unique names, SHA-256 `dada02fb808b678d81720ab678dec60ed6993348e11d665e77058ac94fa3330f`). 97 preexisting mammal family matches remain genus-level provisional, 3 exact MDD profiles checked. Full v2.5 100-mammal crosswalk outstanding.
+- **No Android source, SQLite, signing, field records or APK changed.** Private data not publicly committed; no direct APK for this research-only change. Public methodology: `docs/LIKAS_GMND_PAIC_MAMMAL_LITERATURE_V35_2026_10_31.md`.
+
+---
+
 ## 31 October 2026 | Private PAIC v3.3.0 source-correction edition and sole-personal APK use
 
 - Owner clarifies that the APK is for **sole personal, noncommercial use** and **will not be redistributed**; do not publish owner-supplied compiled source data to the public repository or public CI artifacts. No general open-license grant is asserted.

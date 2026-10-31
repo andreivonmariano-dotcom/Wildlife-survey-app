@@ -1,3 +1,13 @@
+## 31 October 2026 | Private PAIC v3.3.0 source-correction edition and sole-personal APK use
+
+- Owner clarifies that the APK is for **sole personal, noncommercial use** and **will not be redistributed**; do not publish owner-supplied compiled source data to the public repository or public CI artifacts. No general open-license grant is asserted.
+- Completed a private v3.3.0 XLSX plus offline staging JSON/CSVs and QA. 721 included named taxa (birds 413; reptiles 156; amphibians 53; mammals 99), one excluded, zero regional review queue; 1,327 taxon-island evidence records, 880 source assertion records. v3.2.0 preserved unchanged. Revised workbook SHA-256 `964a6a6b6fa1ba282bff3cf788062a360a9db04603d7b3b5e6e8a2f6a92d11a3`.
+- Fixed false Mindanao/Avibase attribution for *Pseudorabdion mcnamarae* (Biliran per Sy), qualified *Gekko mindorensis* as associated Camiguin Sur *cf.*-complex candidate and removed unsupported mainland record, and replaced Bohol Island conflation for *Brachymeles libayani* with five named Bohol Province satellites.
+- Source-level crosscheck reclassified 19 subspecies-level entries, one former combination, three later *Platymantis* names, one unmatched 2026 reptile combination, one unmatched WBCP bird, 99 unassessed mammals lacking original MDD file; 597 exact matches. Four bird and ten mammal status blanks now explicitly unassessed. Earlier geographic tier labels removed from biological occurrence fields. Publisher CC BY-NC 4.0 licence for Sumilhig (2024) noted alongside PDF conflict.
+- Private payload is **NOT compatible** with legacy `ChecklistPackImporter`; no code, SQLite, signed APK, handset test or on-device dataset import in this step. Next: safe, user-selected offline PAIC reference importer, automated validation, and physical upgrade test. Public-safe details in `docs/LIKAS_GMND_PAIC_V33_PRIVATE_SOURCE_CORRECTIONS_2026_10_31.md`.
+
+---
+
 # LIKAS: Current Project State and Next-Chat Handoff
 
 ## 31 October 2026 | Greater Mindanao v3.2.0 owner-local source pack and licensing checkpoint

@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Copernicus/Terrascope raster files discovered in Project sources; extraction blocked by execution environment
+
+- Confirmed **four uploaded Project source archives**: Terrascope `terrascope_download_20261031_201913.zip` (67,734,369 bytes), `terrascope_download_20261031_201741.zip` (267,666,850 bytes), Copernicus `rasters_COP30.tar_2.gz` (132,469,974 bytes), and `rasters_COP30.tar.gz` (471,008,818 bytes).
+- The 67.7 MB Terrascope ZIP was successfully materialized to the current conversation's `/mnt/data`. The Project materialization service refused the remaining three (>100 MiB per file); this does not exclude their possible direct mounted availability in a healthy runtime.
+- **Processing blocker:** shell, Python and visible Python container tools repeatedly returned `ClientError` even on trivial calls. Could not inspect archive members, georeferencing, pixel coverage, land-cover legend/year, DSM vertical reference or perform a single raster lookup. No environmental elevations, cover values or species summaries were produced. Do not infer content from archive filenames.
+- Public-safe reproducibility and recovery notes: `docs/LIKAS_PAIC_RASTER_UPLOAD_HANDOFF_20261031.md`. Preserve provisional island polygon review, source coordinate privacy, the 59-row original-source discrepancy and unlinked taxa. Retry mounted-file inspection when container execution returns; if the big files are absent, obtain source ZIP/TAR contents in manageable spatial tile packages.
+- **No Android code or APK changed.** Previous draft RC55 startup/recorder lineages and scientific review gates remain unchanged.
+
+
+
 ## 31 October 2026 | Draft present-day PAIC shore polygons generated v0.3, environmental sampling still blocked
 
 - In response to the owner request, locally produced GSHHG intermediate-resolution **present-day island** polygon vectors for Mindanao, Samar, Leyte, Bohol, Basilan, Dinagat, Siargao (CORE_PAIC) plus isolated Camiguin Sur (CAMIGUIN_SUR). Scientific principal island membership grounded in Hosner et al. (2014) and Field Museum. Geometries from Basemap v2.0.0, **not** copied/traced from Google Earth. No claim of -120m Pleistocene connected shorelines. Small satellite islands are excluded pending island-by-island review. File outputs include GeoJSON/GPKG/KML/PNG/ZIP and no individual coordinates in map or public repository.

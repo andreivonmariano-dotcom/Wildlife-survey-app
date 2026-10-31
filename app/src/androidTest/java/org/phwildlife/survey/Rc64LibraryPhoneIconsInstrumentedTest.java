@@ -112,10 +112,10 @@ public final class Rc64LibraryPhoneIconsInstrumentedTest {
                 visibleArtworkExtent(image)>=Math.round(50*density*.75f));
         }
         if(label.equals("Conservation")||label.equals("Habitat links"))
-            assertEquals("Generated asset remains 64 native pixels",64,
+            assertEquals("Display derivative is 256 pixels",256,
                 image.getDrawable().getIntrinsicWidth());
         if(label.equals("Photos")||label.equals("Sources"))
-            assertEquals("Approved asset remains 512 native pixels",512,
+            assertEquals("Library display derivative is 256 pixels",256,
                 image.getDrawable().getIntrinsicWidth());
     }
     @Test public void allSevenIconsRenderAtPhoneDensitiesWithoutCrop(){

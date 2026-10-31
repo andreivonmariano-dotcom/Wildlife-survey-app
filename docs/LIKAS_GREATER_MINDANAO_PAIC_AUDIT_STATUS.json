@@ -96,5 +96,23 @@
     "next_work": "greater_mindanao_paic_species_and_mammal_evidence_adjudication",
     "map_filter": "PAIC_geographic_unit_only",
     "user_decision_supersedes_prior_provincial_roadmap": true
+  },
+  "paic_v03_2026_10_31": {
+    "scope": "GMND PAIC ONLY",
+    "status": "candidate_register_updated_not_final_comprehensive",
+    "previous_candidate_keys": 399,
+    "literature_supported_mammal_taxa": 11,
+    "working_taxon_keys": 410,
+    "source_taxon_evidence_links": 111,
+    "total_source_registry": 55,
+    "primary_mammal_type_specimen_records": 4,
+    "legacy_taxon_keys_with_any_link": 52,
+    "original_mindanao_scope_mismatch_rows": 34,
+    "production_approved": false,
+    "sqlite_changes": 0,
+    "app_changes": 0,
+    "release_apk_built": false,
+    "workbook_sha256": "5bdbf2680f79f5a9847bac2325ae3eb5906d612d973fc36d599220f38c0eb3f3",
+    "public_research_note": "docs/LIKAS_GREATER_MINDANAO_PAIC_V03_RESEARCH_CHECKPOINT.md"
   }
 }

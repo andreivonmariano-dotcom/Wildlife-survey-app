@@ -53,7 +53,8 @@ class Rc65OpticalArt(unittest.TestCase):
         self.assertIn("0.27.3-rc65-library-optical-icons-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("prepareRc65LibraryIcons",build)
-        self.assertIn("endsWith('Resources')",build)
+        self.assertIn("task.name.contains('Resources')",build)
+        self.assertIn("task.name.endsWith('SourceSetPaths')",build)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
 
 if __name__=="__main__":unittest.main()

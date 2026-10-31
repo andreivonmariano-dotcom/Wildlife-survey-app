@@ -394,7 +394,8 @@ public final class Rc11PrioritySpeciesView {
         Glyph glyph=new Glyph(a,icon);
         head.addView(glyph,new LinearLayout.LayoutParams(dp(a,36),dp(a,36)));
         TextView title=text(a,area,17,true,UiKit.INK);
-        LinearLayout.LayoutParams titleLp=new LinearLayout.LayoutParams(-1,-2);
+        // Consume the remaining row width; MATCH_PARENT overflowed beside the glyph.
+        LinearLayout.LayoutParams titleLp=new LinearLayout.LayoutParams(0,-2,1f);
         titleLp.leftMargin=dp(a,11);head.addView(title,titleLp);
         card.addView(head);
         LinearLayout details=new LinearLayout(a);
@@ -410,7 +411,7 @@ public final class Rc11PrioritySpeciesView {
             for(int i=shown;i<available.size();i++)addFact(a,more,available.get(i),references);
             Button toggle=UiKit.button(a,"Read "+(available.size()-shown)+" more","quiet");
             toggle.setContentDescription("Expand "+area.toLowerCase(Locale.ROOT)+" research notes");
-            card.addView(toggle,new LinearLayout.LayoutParams(-1,dp(a,45)));
+            card.addView(toggle,new LinearLayout.LayoutParams(-1,-2));
             card.addView(more);
             toggle.setOnClickListener(v->{
                 boolean open=more.getVisibility()!=View.VISIBLE;
@@ -483,7 +484,7 @@ public final class Rc11PrioritySpeciesView {
         }
         Button toggle=UiKit.button(a,"References  ▾","secondary");
         toggle.setContentDescription("Open cited sources and study details");
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,50));
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
         lp.topMargin=dp(a,4);parent.addView(toggle,lp);
         parent.addView(references);
         toggle.setOnClickListener(v->{
@@ -534,6 +535,9 @@ public final class Rc11PrioritySpeciesView {
             navigation.addView(label);
             HorizontalScrollView rail=new HorizontalScrollView(a);
             rail.setHorizontalScrollBarEnabled(false);
+            rail.setHorizontalFadingEdgeEnabled(true);
+            rail.setFadingEdgeLength(dp(a,18));
+            rail.setContentDescription("Swipe horizontally to jump between documented research sections");
             LinearLayout links=new LinearLayout(a);
             links.setOrientation(LinearLayout.HORIZONTAL);
             for(Map.Entry<String,View> entry:sections.entrySet()){
@@ -542,7 +546,7 @@ public final class Rc11PrioritySpeciesView {
                 Button jump=UiKit.button(a,area,"quiet");
                 jump.setContentDescription("Jump to "+area+" research section");
                 jump.setMinHeight(dp(a,48));
-                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,dp(a,52));
+                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);
                 lp.rightMargin=dp(a,7);
                 links.addView(jump,lp);
                 jump.setOnClickListener(v->{
@@ -555,7 +559,7 @@ public final class Rc11PrioritySpeciesView {
                 });
             }
             rail.addView(links);
-            navigation.addView(rail,new LinearLayout.LayoutParams(-1,dp(a,56)));
+            navigation.addView(rail,new LinearLayout.LayoutParams(-1,-2));
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
             lp.bottomMargin=dp(a,12);
             parent.addView(navigation,navigationIndex,lp);

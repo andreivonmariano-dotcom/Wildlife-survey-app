@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | GMND PAIC possible+likely species FINAL v2.0 frozen (PRIVATE research reference)
+
+- **Owner-approved product result:** Final locked *possible/likely Greater Mindanao PAIC candidate list*, **638 named binomials** (**349 birds, 83 mammals, 51 amphibians, 155 reptiles**). **461 likely** are source-named region/member-island candidates, **177 possible** from source statements of widespread Philippine range or a genuinely questioned regional mention. These words do NOT claim site presence, numeric likelihood, extant native richness or an exhaustive census. Genus/unidentified placeholders excluded.
+- **Expansion on finalized v1.0 400-name reference:** Added 162 explicitly widespread Philippine bird names from WBCP original private source; one questioned named bird kept possible; 72 Field Museum guide named Mindanao mammals; and three named Samar research herps. Preserve original literature, taxonomic synonyms, historical/marine/migrant/introduced qualifiers and source links. Total was validated against CSV and JSON with no duplicate IDs.
+- **Freeze and direct deliverables:** `LIKAS_Greater_Mindanao_PAIC_FINAL_Possible_Likely_Checklist_v2.0_2026-10-31.xlsx` (5 sheets, SHA256 **00df680b32ff566fd289be67f39a847deaae56017f59aecb3a9fe973047e3e0c**), `..._Offline_Data.json` SHA256 **142788ca452e654b25212dc80a13b9e7a44d91536e878e04b136862f3e9a74c0**, private ZIP SHA256 **d9c66e80824df617dfdfa7dd79fc08d5c6663962a9a885df1584791a380b8fa0**, CSV and methods included. Package includes reproducible build script and manifest. Verified XLSX/ZIP CRC, five sheet XML, 638 names, URLs, group/tier counts and unique IDs. Attachments distributed privately via this chat.
+- **Durable public metadata:** `docs/LIKAS_GMND_PAIC_FINAL_LOCK_V2_2026_10_31.md` contains scientific source, category logic and hashes; master PAIC policy includes versioned freeze amendment. Earlier v1.0 is preserved as historical source reference, superseded as browsing dataset. All provincial-checklist products remain cancelled.
+- **No app change:** RC66 debug remains last tested Android build, code126, SQLite27, original signer and field data intact. This locks the source dataset only; does NOT install it in Android, authorize public redistribution of private WBCP/Sy compiled sources, publish map polygons, or certify a field release. Future corrections require new version.
+
+---
+
+
 ## 31 October 2026 | Owner finalizes Greater Mindanao v1.0 POSSIBLE-species checklist; no independent occurrence-proof requirement
 
 - **Accepted scope change:** Owner clarified LIKAS PAIC checklists are *possible species for the PAIC*, not verified occurrence/current-resident lists. Individual independent locality verification is **not** a prerequisite for inclusion if the available source actually indicates plausible PAIC or member-island membership. Preserve sources, flags and conflicting/negative evidence; don't invent regional presence from a country checklist. Province-by-province checklist product remains cancelled.

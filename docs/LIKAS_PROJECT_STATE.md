@@ -1,3 +1,13 @@
+## 31 October 2026 | All three iNaturalist project exports: RG spatial and taxonomy staging
+
+- Completed private processing of birds, herpetofauna and mammal iNaturalist Greater Mindanao exports: **12,811** project observations; **11,746 Research Grade** and **1,065 Needs ID**. Herp and mammal source exports were `quality_grade=any`; fixed in analytical filter.
+- RG source names **406**; against independent private v3.4 622 nonmammal + private v3.6 101 mammal analytical reference, **362 exact species; eight tentative bird synonym matches; 35 nonmatching binomials; one genus-only label**, no approved additions. 370 of 723 LIKAS included names have exact-or-tentative RG reference evidence.
+- **2,539 obscured RG locations fully redacted**; 45 user-provided original rows have private-coordinate fields never copied; **9,207 open public RG coordinate pairs**. Quality-screened **3,478** <=100m terrain candidates and **2,493** <=30m land-cover candidates (not PAIC polygon-validated); 25/13 respectively preliminarily marine/aquatic for separate analysis.
+- Private source-to-species evidence CSV, four-tab+ methods XLSX staging (723 LIKAS species), group cleaned exports, combined RG CSV/GeoJSON and QA in owner direct-delivery ZIP SHA256 `e03e1453ca75774e3a9c249df74285f1a6916c5bb6deafde539eb4ad910d8b9b`. Offline DEM/WorldCover sampler passed **synthetic-only** test; no actual regional DEM, landcover, species-specific habitat preferences, original habitat-use model or elevation ranges computed. Owner-approved PAIC polygons and raster tiles needed.
+- **No APK, application code, field observation database, private source tables on GitHub, new candidate approval, or conservation status update.** Method and current blockers: `docs/LIKAS_THREE_INAT_PROJECTS_RG_HABITAT_STAGING_2026_10_31.md`.
+
+---
+
 ## 31 October 2026 | Private iNaturalist Birds of Greater Mindanao RG coordinate QA
 
 - The owner uploaded original Birds of Greater Mindanao Research Grade CSV ZIP (7,710 observations; 275 iNaturalist names). Completed private coordinate cleaning with re-runnable standard-library script. All **1,061 deliberately obscured public positions were redacted** and **33 source private-coordinate rows were not copied**; 6,649 unobscured WGS84 records retained. No usernames/place guesses/original free text transferred.

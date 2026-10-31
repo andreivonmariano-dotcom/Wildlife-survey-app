@@ -1,3 +1,13 @@
+## 2026-10-31 | Working modern Greater Mindanao PAIC polygons and uploaded original MDD reconciliation
+
+- Built **working contemporary shoreline polygons** from locally available GSHHS intermediate coastline: eight named core PAIC large islands; oceanic associated Camiguin Sur separately; QGIS GeoPackage and GeoJSON validated EPSG:4326. **Not a minus-120-m historical landbridge reconstruction; small satellites still unclassified.**
+- Mapped 11,746 Research Grade records: 7,431 inside core polygons, 118 Camiguin Sur, 1,658 outside selected major island polygons **undetermined**; 2,539 obscured/unlocated. Among 3,478 reported ≤100m candidates, 2,928 public points had uncertainty fully contained by selected modern dry-land boundaries (2,866 core/62 Camiguin), seven intersected shore, 543 were outside selected polygons. No raster sampled.
+- User-provided **MDD.zip** original 6,904-species v2.5 CSV validated against official MD5 `533e662fd5b8f66a5f56c191e7efac44`. 102 mammal concepts crosswalked to MDD: 101 exact accepted matches, one *Chaerephon plicata* -> *Mops plicatus* synonym, all 102 families agree. Eight species have MDD country field omitting Philippines; evidence conflict flagged. MDD iucnStatus is secondary and does not establish current IUCN assessment.
+- Owner received **private geospatial + MDD package**, geographic source-classification CSV without coordinates, point uncertainty QA, 725-taxonomy-evidence summary, and GIS script. Source private positions and row tables are not public GitHub files. Research method reference: `docs/LIKAS_PAIC_GSHHS_WORKING_POLYGONS_MDD25_SOURCE_AUDIT_2026_10_31.md`.
+- **No app, APK, SQLite, survey, accepted checklist count or original v3.8.1 source workbook modified**. Remaining: satellite islands, palaeocoast geology, raster tiles, 33 iNat IDs, original IUCN/legal status verification, private app importer.
+
+---
+
 ## 2026-10-31 | Private PAIC v3.8.1 taxonomic / spatial source audit
 
 - Consolidated **owner-private** v3.8.1 review workbook and ZIP without altering the 725 accepted names (414 birds, 156 reptiles, 53 amphibians, 102 mammals) or any Android table, APK or survey history. Two published taxonomic relationships clarified: *Lycodon dumerilii* is synonymized with *Stegonotus muelleri* in Bernstein et al. 2026, and old broad *Fejervarya limnocharis* source names should not be used uncritically for Philippine *F. vittigera*. iNaturalist photographic IDs **not** automatically reassigned.

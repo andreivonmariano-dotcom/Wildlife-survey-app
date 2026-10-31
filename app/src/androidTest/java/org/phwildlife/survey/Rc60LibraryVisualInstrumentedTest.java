@@ -117,7 +117,7 @@ public final class Rc60LibraryVisualInstrumentedTest {
         assertTrue("Image fits its optical safe area: "+label,
             image.getWidth()<=Math.round(expectedSizeDp*density)+1);
         assertEquals("Non-cropping scale type: "+label,
-            ImageView.ScaleType.CENTER_INSIDE,image.getScaleType());
+            ImageView.ScaleType.FIT_CENTER,image.getScaleType());
         assertTrue("Image remains on-screen: "+label,
             image.getHeight()>=Math.round((expectedSizeDp-1)*density));
     }
@@ -202,8 +202,8 @@ public final class Rc60LibraryVisualInstrumentedTest {
                 assertNotNull(conservation);
                 verifyLibraryImage(root,"Conservation",50);
                 verifyLibraryImage(root,"Habitat links",50);
-                verifyLibraryImage(root,"Photos",40);
-                verifyLibraryImage(root,"Sources",40);
+                verifyLibraryImage(root,"Photos",50);
+                verifyLibraryImage(root,"Sources",50);
 
                 verifyNoEllipsizedText(root);
                 capture(a,"rc61-"+preset()+"-top.png");

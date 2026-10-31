@@ -1,3 +1,12 @@
+## 31 October 2026 | Expanded Mindanao biodiversity literature checkpoint (29 references)
+
+- Scanned publisher/original source pages, taxonomic revisions and GBIF/Zenodo metadata for **29** Mindanao-focused vertebrate, synthesis and habitat references (13 mammal or mixed mammal/bird, 8 herp, 3 bird, 5 synthesis/ecosystem). Private 29-row annotated markdown and CSV register were delivered directly in the owner's chat; sandbox URLs need fresh verification in future chats.
+- **New source-backed mammal candidate:** *Podogymnura minima* (Erinaceidae), recognized in Balete et al. (2023) separately from historical *P. truei minima*, with Mt Kitanglad specimen evidence and MDD recognized taxon. **Missing from existing v3.3/v3.5 lists**. Previous v3.5 names = 100. Potential future edition 101 named mammals, **not yet added or approved as installed app list**. IUCN/DENR entries unresolved; no automated status inheritance.
+- Mt Kampalili 2025 bat paper, 2023 Mt Apo camera traps, 2026 Agusan Marsh herps, 2026 Hilong-Hilong and 2026 *Platymantis* revisions offer evidence/taxonomic crosswalks. Site-specific 'new records' must not inflate PAIC-wide species counts. MOBIOS+ has 12,813 **multi-taxon** literature occurrences, not 12,813 vertebrate species; raw archive and new Oct-2026 Kampalili mammal supplement were not retrieved.
+- Public-safe bibliography checkpoint: `docs/LIKAS_MINDANAO_BIODIVERSITY_LITERATURE_EXPANDED_2026_10_31.md`. **No data source original tables committed**, no private workbook edits, no Android/SQLite/APK changes. Next: source tables and full MDD reconciliation, then owner-private versioned checklist update if justified.
+
+---
+
 ## 31 October 2026 | Private Greater Mindanao mammal literature v3.5.0 (100 named candidates)
 
 - **Source count correction:** The v3.4.0 master already contains `Acerodon jubatus` and `Alionoctula javanica` among its 99 mammals; do not duplicate them. Original Dinagat 2017–19 captures support adding exactly **one** missing named mammal, `Desmalopex leucoptera`, for **100 named source-based PAIC mammal candidates** in a private separate mammal reference workbook. Full all-vertebrate v3.4 remains unchanged.

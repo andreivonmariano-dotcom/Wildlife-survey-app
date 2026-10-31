@@ -4,6 +4,11 @@ on:
     branches:
       - feature/likas-paic-raster-archive-qa-v04
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/likas_paic_raster_archive_inventory.py'
+      - 'scripts/test_likas_paic_raster_archive_inventory.py'
+      - '.github/workflows/paic-raster-inventory-qa.yml'
 permissions:
   contents: read
 jobs:

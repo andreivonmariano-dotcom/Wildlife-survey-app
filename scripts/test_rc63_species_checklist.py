@@ -28,8 +28,8 @@ class Rc63Checklist(unittest.TestCase):
             self.assertIn(token,s)
     def test_version_and_schema(self):
         b=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 123",b)
-        self.assertIn("0.27.3-rc63-species-checklist-preview",b)
+        self.assertIn("versionCode 124",b)
+        self.assertIn("0.27.3-rc64-library-phone-icons-preview",b)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",b)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
     def test_no_schema_or_data_cleanup_issued_by_library(self):

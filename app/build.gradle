@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 123
-        versionName '0.27.3-rc63-species-checklist-preview'
+        versionCode 124
+        versionName '0.27.3-rc64-library-phone-icons-preview'
     }
     signingConfigs {
         debug {

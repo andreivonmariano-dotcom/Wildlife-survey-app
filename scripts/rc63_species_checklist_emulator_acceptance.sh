@@ -61,7 +61,7 @@ cp .taxonomy-cache/mdd-v2.5.csv /tmp/likas-rc62-before/.taxonomy-cache/
 ) > emulator-qa/rc62-legacy-build.txt 2>&1 || {
   tail -n 100 emulator-qa/rc62-legacy-build.txt; exit 1;
 }
-adb uninstall "$PKG" >/dev/null
+adb uninstall "$PKG" >/dev/null 2>&1 || true
 adb uninstall "$PKG.test" >/dev/null || true
 adb install /tmp/likas-rc62-before/app/build/outputs/apk/debug/app-debug.apk
 adb install /tmp/likas-rc62-before/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk

@@ -59,8 +59,8 @@ class Rc50Reliability(unittest.TestCase):
 
     def test_version_identity_and_schema_unchanged(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 124",gradle)
-        self.assertIn("0.27.3-rc64-library-phone-icons-preview",gradle)
+        self.assertIn("versionCode 125",gradle)
+        self.assertIn("0.27.3-rc65-library-optical-icons-preview",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",contents("FieldDb.java"))
 

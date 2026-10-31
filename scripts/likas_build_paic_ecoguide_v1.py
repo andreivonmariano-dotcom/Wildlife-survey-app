@@ -34,7 +34,8 @@ LITERATURE_FIELDS = (
 WRITE_FIELDS = (
     "taxon_id", "group", "scientific_name", "habitat_guide",
     "elevation_guide", "mapped_land_cover_2020", "evidence_basis",
-    "published_habitat_citation", "published_elevation_citation",
+    "published_habitat_citation", "published_habitat_url",
+    "published_elevation_citation", "published_elevation_url",
     "records_n", "distinct_locations_n", "map_class_records_n",
     "source_note", "evidence_policy",
 )
@@ -131,7 +132,8 @@ def compile_guide(summary: list[dict], literature: list[dict] | None = None,
         if not (unique_n <= inside_n and n <= inside_n and land_n <= inside_n):
             raise ValueError(f"Inconsistent occurrence counts for {taxon}")
         # Protect against presenting pre-existing source discrepancies as regional summaries.
-        use_raster = n > 0 and not is_held
+        suspicious_negative_surface = n > 0 and bool(src.get("dsm_min_m")) and float(src["dsm_min_m"]) < 0
+        use_raster = n > 0 and not is_held and not suspicious_negative_surface
         use_map = land_n > 0 and not is_held
         species_with_map += int(use_map)
         species_with_literature += int(bool(habitat or published_elev))
@@ -175,6 +177,8 @@ def compile_guide(summary: list[dict], literature: list[dict] | None = None,
         note = []
         if is_held:
             note.append("Source count discrepancy retained. Raster-based regional summary withheld until row reconciliation.")
+        if suspicious_negative_surface:
+            note.append("Negative raster height detected; automatic elevation guide withheld pending source-value check.")
         if use_raster:
             note.append("Surface model vertical datum not verified; heights do not establish species elevation tolerance.")
         if use_map:
@@ -189,7 +193,9 @@ def compile_guide(summary: list[dict], literature: list[dict] | None = None,
             "mapped_land_cover_2020": src["worldcover2020_classes_observed"] if use_map else "",
             "evidence_basis": " + ".join(basis) if basis else "none supplied",
             "published_habitat_citation": lit.get("habitat_citation", ""),
+            "published_habitat_url": lit.get("habitat_reference_url", ""),
             "published_elevation_citation": lit.get("published_elevation_citation", ""),
+            "published_elevation_url": lit.get("published_elevation_reference_url", ""),
             "records_n": str(n if use_raster else 0),
             "distinct_locations_n": str(unique_n if use_raster else 0),
             "map_class_records_n": str(land_n if use_map else 0),

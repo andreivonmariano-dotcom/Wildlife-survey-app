@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Owner finalizes Greater Mindanao v1.0 POSSIBLE-species checklist; no independent occurrence-proof requirement
+
+- **Accepted scope change:** Owner clarified LIKAS PAIC checklists are *possible species for the PAIC*, not verified occurrence/current-resident lists. Individual independent locality verification is **not** a prerequisite for inclusion if the available source actually indicates plausible PAIC or member-island membership. Preserve sources, flags and conflicting/negative evidence; don't invent regional presence from a country checklist. Province-by-province checklist product remains cancelled.
+- **Finalized private research artifact:** seven-sheet `LIKAS_Greater_Mindanao_PAIC_Possible_Species_Checklist_v1.0_2026-10-31.xlsx`, CSV/JSON/private ZIP. **400 candidate binomial display names** (186 birds, 50 amphibians, 153 reptiles, 11 mammals) derived from 402 of the existing 410 v0.3 source taxon keys. **Seven** negative/partial-exclusion/questioned source cases withheld, **one** genus-only `Ophiophagus` kept unresolved; two subspecies-pair duplicate display names folded to binomials while retaining all source key/name rows. Includes all **111** earlier literature/qualifier statements and **55** bibliography entries, with explicit caveat that some citations are negative or historical. No one is claiming 400 actual species-level *verified current PAIC occurrences* or complete richness.
+- **Artifacts verified:** ZIP CRC, Excel seven sheet/range inspection including 400 names, source-audit 410, withheld eight, literature 111 and bibliography 55; no spreadsheet error cells. Source-derived CSV, JSON and ZIP SHA256 pinned in policy `docs/LIKAS_PAIC_POSSIBLE_SPECIES_CHECKLIST_POLICY_2026_10_31.md`. Direct actual files delivered in this conversation; private WBCP/Sy source-derived rows deliberately NOT published on GitHub.
+- **Project stage:** Greater Mindanao **v1.0 possible-species reference complete and accepted by clarified criterion**; public app integration, license assessment and interactive map later work. Research branch PR #65 remains draft; latest signed tested Android still RC66 versionCode126, SQLite27. No Android, SQLite, historic field records, app image assets or APK changed.
+
+---
+
+
 ## 31 October 2026 | GMND PAIC v0.3 cited evidence consolidation; checklist still not final
 
 - **Owner active direction:** PAIC-only species checklists; abandoned province-checklist product remains cancelled. Current research branch `research/likas-greater-mindanao-paic-audit` continues PR #65; Android latest tested RC66 versionCode126, SQLite27, source package, field data and app binaries untouched.

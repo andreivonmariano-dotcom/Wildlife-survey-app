@@ -196,5 +196,44 @@
     "public_doc": "docs/LIKAS_GMND_PAIC_TAXONOMIC_UPDATE_V21_2026_10_31.md",
     "android_implementation": false,
     "source_rights_reviewed_for_distribution": false
+  },
+  "current_paic_scope_groups": [
+    "Birds",
+    "Reptiles",
+    "Amphibians",
+    "Mammals"
+  ],
+  "excluded_from_paic_checklists": [
+    "Fish",
+    "Insects",
+    "Other invertebrates",
+    "Other fauna"
+  ],
+  "paic_four_group_revision_v211_2026_10_31": {
+    "status": "owner_scope_locked_private_research_reference",
+    "version": "2.1.1",
+    "reason": "Scope-only, exclude noncore discoveries",
+    "named_candidates": 640,
+    "group_counts": {
+      "Birds": 349,
+      "Reptiles": 155,
+      "Amphibians": 53,
+      "Mammals": 83
+    },
+    "tiers": {
+      "LIKELY": 463,
+      "POSSIBLE": 177
+    },
+    "genus_level_records": 4,
+    "taxonomic_changes_retained": 8,
+    "other_fauna_discoveries_included": 0,
+    "in_scope_bibliography_records": 8,
+    "workbook_sha256": "538dfecd1980f694c73af49c0d7c8ec0a702b491b40c7d199ad949c6b96a81e1",
+    "prior_v20_frozen_unchanged": true,
+    "prior_v21_historical": true,
+    "app_modified": false,
+    "sqlite_modified": false,
+    "apk_built": false,
+    "public_redistribution_rights_cleared": false
   }
 }

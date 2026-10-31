@@ -1,0 +1,25 @@
+name: LIKAS PAIC Ecological Guide Policy QA
+on:
+  push:
+    branches:
+      - feature/likas-paic-ecology-evidence-lock-v1
+  pull_request:
+    paths:
+      - 'scripts/likas_build_paic_ecoguide_v1.py'
+      - 'scripts/test_likas_build_paic_ecoguide_v1.py'
+      - '.github/workflows/paic-ecoguide-policy-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  policy-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile reference compiler and synthetic tests
+        run: python -m py_compile scripts/likas_build_paic_ecoguide_v1.py scripts/test_likas_build_paic_ecoguide_v1.py
+      - name: Run evidence-policy tests without private datasets
+        run: python -m unittest discover -s scripts -p 'test_likas_build_paic_ecoguide_v1.py' -v

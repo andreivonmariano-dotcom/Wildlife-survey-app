@@ -35,6 +35,7 @@ public final class TaxonDetailActivity extends Activity {
     private Button conservation;
     private TextView screenCaption;
     private String searchGroup="";
+    private boolean stackedSearch;
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size,boolean bold){
         TextView v=new TextView(this);
@@ -108,7 +109,7 @@ public final class TaxonDetailActivity extends Activity {
         // Reuse the same controls and listeners without truncating the query field.
         float widthDp=getResources().getDisplayMetrics().widthPixels/
             getResources().getDisplayMetrics().density;
-        boolean stackedSearch=widthDp<350f||
+        stackedSearch=widthDp<350f||
             getResources().getConfiguration().fontScale>=1.60f;
         if(stackedSearch){
             searchRow.removeAllViews();

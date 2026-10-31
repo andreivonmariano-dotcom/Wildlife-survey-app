@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 125
-        versionName '0.27.3-rc65-library-optical-icons-preview'
+        versionCode 126
+        versionName '0.27.3-rc66-species-account-preview'
     }
     signingConfigs {
         debug {

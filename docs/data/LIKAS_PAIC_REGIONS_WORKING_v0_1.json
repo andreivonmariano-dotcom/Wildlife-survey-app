@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "paic-working-v0.1",
+  "date": "2026-10-31",
+  "status": "WORKING_GEOGRAPHY_NOT_APPROVED_SPECIES_MEMBERSHIP_OR_MAP",
+  "description": "Five major PAICs plus Romblon and Sulu distinct island groups for source-audited terrestrial vertebrate library browsing. Association does not establish historical land bridge or confirmed taxon occurrence.",
+  "sourceUrls": [
+    "https://www.cambridge.org/core/journals/environmental-conservation/article/gaps-and-biases-in-vertebrate-wildlife-genetics-from-a-global-biodiversity-hotspot/77AF0A3084B2C16799390BADA15BF2EE",
+    "https://doi.org/10.3897/zookeys.1190.109586",
+    "https://doi.org/10.1371/journal.pone.0134284"
+  ],
+  "regions": [
+    {
+      "id": "GLUZ",
+      "name": "Greater Luzon",
+      "kind": "major_PAIC",
+      "examplePresentIslands": [
+        "Luzon",
+        "Catanduanes",
+        "Polillo",
+        "Marinduque"
+      ]
+    },
+    {
+      "id": "GMND",
+      "name": "Greater Mindanao",
+      "kind": "major_PAIC",
+      "examplePresentIslands": [
+        "Mindanao",
+        "Samar",
+        "Leyte",
+        "Bohol",
+        "Basilan",
+        "Dinagat",
+        "Siargao"
+      ]
+    },
+    {
+      "id": "GPAL",
+      "name": "Greater Palawan",
+      "kind": "major_PAIC",
+      "examplePresentIslands": [
+        "Palawan",
+        "Busuanga",
+        "Coron",
+        "Culion",
+        "Balabac",
+        "Dumaran"
+      ]
+    },
+    {
+      "id": "GNPY",
+      "name": "West Visayas (Negros–Panay)",
+      "kind": "major_PAIC",
+      "examplePresentIslands": [
+        "Negros",
+        "Panay",
+        "Cebu",
+        "Masbate",
+        "Ticao"
+      ]
+    },
+    {
+      "id": "GMDR",
+      "name": "Greater Mindoro",
+      "kind": "major_PAIC",
+      "examplePresentIslands": [
+        "Mindoro"
+      ]
+    },
+    {
+      "id": "SIG",
+      "name": "Sulu Island Group",
+      "kind": "distinct_island_group",
+      "examplePresentIslands": [
+        "Jolo",
+        "Tawi-Tawi",
+        "Bongao",
+        "Siasi",
+        "Simunul"
+      ]
+    },
+    {
+      "id": "RIG",
+      "name": "Romblon Island Group",
+      "kind": "distinct_island_group",
+      "examplePresentIslands": [
+        "Romblon",
+        "Tablas",
+        "Sibuyan"
+      ]
+    }
+  ],
+  "peripheralStudyDependent": [
+    {
+      "name": "Babuyan Group",
+      "note": "Pitogo 2025 associates with Luzon, Meneses 2024 treats separately"
+    },
+    {
+      "name": "Batanes",
+      "note": "distinct northern oceanic group"
+    },
+    {
+      "name": "Camiguin Sur",
+      "note": "separate island near Mindanao; not Camiguin Norte"
+    },
+    {
+      "name": "Siquijor",
+      "note": "separate island near West Visayas"
+    },
+    {
+      "name": "Lubang",
+      "note": "sometimes associated with Mindoro; connection not presumed"
+    },
+    {
+      "name": "Semirara",
+      "note": "sometimes associated with Mindoro; connection not presumed"
+    },
+    {
+      "name": "Cuyo",
+      "note": "standalone pending evidence"
+    },
+    {
+      "name": "Cagayan de Sulu",
+      "note": "standalone pending evidence"
+    },
+    {
+      "name": "Maestre de Campo",
+      "note": "standalone pending evidence"
+    },
+    {
+      "name": "Calayan",
+      "note": "Babuyan subgroup pending scheme choice"
+    }
+  ],
+  "speciesRecordPolicy": {
+    "acceptedOnlyWith": "source-listed island/locality and exact source reference and review metadata",
+    "neverInfer": "PAIC-wide species presence from national checklist or occurrence elsewhere in same PAIC",
+    "missingNot": "absence",
+    "mapGeometry": "not supplied or approved"
+  }
+}

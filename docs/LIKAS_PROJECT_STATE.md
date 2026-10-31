@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Greater Mindanao PAIC species ecology evidence methodology adopted for staging
+
+- **Owner goal:** Develop an evidence-informed ecological field guide for each reviewed Greater Mindanao PAIC species, combining locality-screened iNaturalist observations, carefully identified DSM/DEM raster elevations, and literature habitat/collection evidence. Report documented occurrences and inferred context, never absolute elevational tolerances or habitat preferences from presence-only records.
+- **Private source audit completed locally:** two owner-supplied PAIC checklists (v3.8.0 harmonized, v3.8.1 taxonomy/spatial REVIEW) and three iNaturalist CSV ZIP exports inspected; 725 candidate taxa (414 birds, 156 reptiles, 53 amphibians, 102 mammals). Source includes 11,746 Research Grade observations, 9,207 with unobscured public coordinates; 6,703 distinct coordinate pairs globally. The existing 33 unresolved source-name cases/155 observation rows were not reassigned. Review of 3 cited literature site elevations supports examples, not complete ranges.
+- **Science gate:** No authorized PAIC/Camiguin Sur polygons, geospatial DEM/DSM tiles, or land-cover tiles were sampled. No iNaturalist-based elevation ranges, model-based land-cover associations, or habitat-selection claims have been created. Copernicus GLO-30 is a DSM and ESA WorldCover is a dated land-cover snapshot, not proof of habitat preference. Dataset is PRIVATE and was not uploaded to GitHub.
+- **Local-only outputs:** private 725-species ecological staging workbook and separate protocol document were generated in the current user conversation, not bundled in source or APK. Their session download paths must not be guessed/reused in later chats.
+- **Repository protocol:** `docs/LIKAS_PAIC_ECOLOGICAL_EVIDENCE_PROTOCOL_v0_1.md` records public-safe analytical gates and privacy restrictions. Do not alter original species concept or source occurrence data, and do not add exact sensitive coordinates to app or repository.
+- **App/version status:** documentation-only update on RC55 draft lineage. No Android code, migration, signing, or APK build happened. Continue Screen 5 Live Recorder work separately. Next ecology task: obtain/approve geographic boundary geometry and versioned elevation/cover layers; run screened spatial extraction with uncertainty QA before any species preference text is displayed.
+
+
+
 ## 30 October 2026 | RC55 GPS preflight automated acceptance verified, preview APK delivered
 
 - **Latest audited RC55 app code:** `f86a7f62fd59155cfc1ef50b2404f1bcc486fb8d`, draft PR #52 on `feature/likas-rc55-gps-preflight-screen4`, stacked on RC54 PR #51. Package `org.phwildlife.survey.beta08`, versionName `0.27.3-rc55-gps-preflight-preview`, versionCode **115**, SQLite schema **27** and original signing identity preserved.

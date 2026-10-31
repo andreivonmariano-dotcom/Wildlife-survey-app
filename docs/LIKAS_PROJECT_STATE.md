@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Greater Mindanao v3.2.0 owner-local source pack and licensing checkpoint
+
+- **Latest provided research source:** Owner-uploaded `LIKAS_Greater_Mindanao_PAIC_Vertebrate_Master_Checklist_v3.2.0_2026-10-31.xlsx`, SHA-256 `ae66c2278ef9da8d96ff6e05a65d69802b0eaf592ef6517d569049b7446220fc`. Compared with preceding private v2.2.2, this superseding *research workbook* includes 721 named species (413 birds, 156 reptiles, 53 amphibians, 99 mammals), one excluded bird retained historically, zero remaining named regional-review entries, 1,323 source-to-island evidence rows and 880 source assertions.
+- **Completed structural QA:** 722 unique master names/IDs, matching 721 included records; no included species without cited island evidence, source assertions or source URL, and no orphan island evidence foreign IDs. Of the v3.2 regional review changes, 81 relied on secondary Avibase compiled regional records and three on other case-specific sources; these are **regional candidates**, not individual voucher/site-level verifications or verified completeness.
+- **Owner declared noncommercial personal/scientific app use.** WBCP explicitly permits personal/scientific download and requires citation and commercial-use permission; whether substantial redistribution inside a publicly distributed APK is authorized remains unresolved. Sy checklist redistribution terms remain unverified. Do not commit owner-provided full source tables to public GitHub. A prior private bundle remains in public repo history and needs separate review.
+- **Private package generated, checked and directly delivered within current conversation:** 21-entry ZIP (original workbook, 14 CSVs, offline staging JSON, rights/readme, QA, SHA-256 manifest, reproducible exporter), SHA-256 `17d558084e900124e55025b578a4210bc5f00bcb2d7b663028f623eeef6ade76`; verified ZIP CRC and file hashes. Direct sandbox URL is session-local; never reuse without rechecking. Generic public metadata: `docs/LIKAS_GMND_PAIC_V320_PRIVATE_IMPORT_AND_RIGHTS_2026_10_31.md`.
+- **No Android change:** app source, schema 27, versionCode 126, signing, survey data and APK unchanged by this milestone. Existing exact-hash four-CSV importer cannot ingest this PAIC snapshot. **Next work:** create a safe versioned owner-local user-selected PAIC import and PAIC island/group browser, CI/private-device migration/backup tests and source-rights-specific public build controls before any APK release.
+
+---
+
+
 ## 31 October 2026 | Deeper Greater Mindanao published taxon research: PRIVATE v2.2.2
 
 - **Scientific candidate source update:** from v2.2.1's 644 named rows, add 2 specimen-backed 2025 Mindanao bats `Murina alvarezi` and `Murina philippinensis`, replace region display name `Bronchocela cristatella` with reinstated 2026 `B. philippina` retaining source original, and fold `Limnonectes leitensis` into AMNH-accepted `L. leytensis` as spelling duplicate. Thus 645 DISTINCT named possible/likely candidates: birds350, reptiles155, amphibians53, mammals87, with 467 LIKELY, 178 POSSIBLE; 6 original genus-level IDs unchanged.

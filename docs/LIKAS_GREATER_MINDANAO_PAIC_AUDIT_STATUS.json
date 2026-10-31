@@ -1,0 +1,59 @@
+{
+  "id": "LIKAS-GMND-REVIEW-2026-10-31",
+  "status": "research_review_not_production_approved",
+  "source_branch": "research/likas-greater-mindanao-paic-audit",
+  "parent_branch": "research/likas-paic-checklist-audit",
+  "source_apk_version_code": 126,
+  "private_catalog_payload_sha256": "7845ceadc4b6d6226781478c72281364c876a4c1ad47b80d21b7d176ab7dc4c6",
+  "regional_taxon_keys_in_review": 399,
+  "taxon_group_counts": {
+    "Birds": 193,
+    "Amphibians": 50,
+    "Reptiles": 156,
+    "Mammals": 0
+  },
+  "legacy_import_rows_labeled_Mindanao_island": 352,
+  "legacy_statement_geography": {
+    "explicit_Mindanao_name": 318,
+    "Greater_Mindanao_phrase_only": 26,
+    "member_island_or_Eastern_Visayas_only": 7,
+    "offshore_historical": 1
+  },
+  "legacy_island_scope_discrepancies": 34,
+  "additional_candidate_records": 47,
+  "additional_statement_classification": {
+    "literal_named_island_positive_pending_verification": 32,
+    "negative_exclusion": 5,
+    "nonresident_transient": 5,
+    "marine_coastal": 2,
+    "introduced": 1,
+    "historical": 1,
+    "questioned": 1
+  },
+  "geographic_core": [
+    "Mindanao",
+    "Samar",
+    "Leyte",
+    "Bohol",
+    "Basilan",
+    "Dinagat",
+    "Siargao"
+  ],
+  "smaller_member_islands_require_separate_review": [
+    "Biliran",
+    "Bucas Grande"
+  ],
+  "peripheral_not_automatically_included": [
+    "Camiguin Sur"
+  ],
+  "production_species_occurrence_rows_promoted": 0,
+  "app_files_changed": 0,
+  "limitations": [
+    "No mammal island membership accepted",
+    "No claims of current native/resident richness",
+    "Legacy rows not edited",
+    "Original WBCP/Sy private text excluded from public repository",
+    "All 399 rows require original source-level adjudication before production use"
+  ],
+  "public_doc": "docs/LIKAS_GREATER_MINDANAO_PAIC_SOURCE_SCOPE_AUDIT_2026_10_31.md"
+}

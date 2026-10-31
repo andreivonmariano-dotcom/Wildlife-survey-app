@@ -38,9 +38,13 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
     private static final String[] GROUPS={"All groups","Birds","Amphibians","Reptiles","Mammals"};
     private static final String[] FILTERS={"All species","Published research",
         "Offline photos"};
+    private static final String SOURCE_METADATA=
+        "Source-linked offline taxonomy · WBCP 2025 · Sy 2025/2026 · MDD 2.5";
     private FieldDb db;
     private EditText search;
     private Spinner group,scope;
+    private LinearLayout filterControls;
+    private Button filterToggle;
     private LinearLayout results;
     private TextView status;
     private Button more;
@@ -98,7 +102,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         root.setBackgroundColor(UiKit.BG);
         root.addView(UiKit.navigationHeader(this,
             largeText?"Species":"Philippine species checklist","Library",this::finish));
-        String fullSourceLine="Source-linked offline taxonomy · WBCP 2025 · Sy 2025/2026 · MDD 2.5";
+        String fullSourceLine=SOURCE_METADATA;
         TextView sourceBanner=label("Search Philippine wildlife references",13,false);
         sourceBanner.setContentDescription(fullSourceLine);
         if(!largeText)root.addView(sourceBanner);
@@ -144,6 +148,22 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             right.leftMargin=dp(8);filters.addView(scopeField,right);
         }
         // Secondary filter controls always scroll; a visible IME must not collapse results.
+        filterControls=filters;
+        if(largeText){
+            filterToggle=UiKit.button(this,"Filters · All groups · All species ▾",
+                "secondary");
+            filterToggle.setTextSize(13);
+            filterToggle.setAllCaps(false);
+            filterToggle.setMaxLines(2);
+            filterToggle.setContentDescription(
+                "Show wildlife group and reference coverage filters");
+            filters.setVisibility(View.GONE);
+            filterToggle.setOnClickListener(v->{
+                boolean expand=filters.getVisibility()!=View.VISIBLE;
+                filters.setVisibility(expand?View.VISIBLE:View.GONE);
+                updateFilterDisclosure();
+            });
+        }
         Button researchToggle=UiKit.button(this,largeText?
             "Research tools  ▾":"Research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand research comparisons, photographic evidence and regional sources");
@@ -200,13 +220,24 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         ScrollView scroll=new ScrollView(this);
         LinearLayout scrollBody=new LinearLayout(this);
         scrollBody.setOrientation(LinearLayout.VERTICAL);
-        if(largeText)scrollBody.addView(sourceBanner);
-        scrollBody.addView(filters);
-        scrollBody.addView(researchToggle,
-            new LinearLayout.LayoutParams(-1,dp(largeText?58:48)));
-        scrollBody.addView(researchPanel);
+        if(largeText){
+            // Source metadata remains in the evidence limits disclosure.
+            // The 200%-font page starts with source rows rather than two tall menus.
+            scrollBody.addView(filterToggle,new LinearLayout.LayoutParams(-1,dp(76)));
+            scrollBody.addView(filters);
+        }else{
+            scrollBody.addView(filters);
+            scrollBody.addView(researchToggle,
+                new LinearLayout.LayoutParams(-1,dp(48)));
+            scrollBody.addView(researchPanel);
+        }
         results=new LinearLayout(this);results.setOrientation(LinearLayout.VERTICAL);
         scrollBody.addView(results);
+        if(largeText){
+            scrollBody.addView(researchToggle,
+                new LinearLayout.LayoutParams(-1,dp(58)));
+            scrollBody.addView(researchPanel);
+        }
         scroll.addView(scrollBody);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1f));
         more=UiKit.button(this,largeText?"More species":"Show more species","secondary");
@@ -231,6 +262,19 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         });
         scope.setSelection(0);
         refresh();
+    }
+    private void updateFilterDisclosure(){
+        if(filterToggle==null)return;
+        String groupName=group.getSelectedItem()==null?"All groups":
+            String.valueOf(group.getSelectedItem());
+        String coverage=scope.getSelectedItem()==null?"All species":
+            String.valueOf(scope.getSelectedItem());
+        boolean expanded=filterControls.getVisibility()==View.VISIBLE;
+        filterToggle.setText((expanded?"Hide filters":"Filters")+" · "+
+            groupName+" · "+coverage+(expanded?" ▴":" ▾"));
+        filterToggle.setContentDescription(
+            (expanded?"Hide":"Show")+" wildlife group and reference coverage filters. "+
+            "Current group: "+groupName+". Coverage: "+coverage);
     }
     private void refresh(){
         if(db==null||results==null)return;
@@ -267,11 +311,13 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             results.removeAllViews();more.setVisibility(View.GONE);
             return;
         }
+        updateFilterDisclosure();
         rendered=0;results.removeAllViews();
         String evidenceStatus=selected.size()+" names · source checklists are not complete species accounts. "+
             "IUCN and DENR status must be reviewed separately. Unverified is not Least Concern.";
         status.setText(selected.size()+" source records · Evidence limits ›");
-        status.setContentDescription(evidenceStatus+" Tap for evidence limits.");
+        status.setContentDescription(evidenceStatus+" "+SOURCE_METADATA+
+            ". Tap for evidence limits.");
         appendPage();
     }
     private void appendPage(){

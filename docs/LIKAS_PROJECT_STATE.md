@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Deeper Greater Mindanao published taxon research: PRIVATE v2.2.2
+
+- **Scientific candidate source update:** from v2.2.1's 644 named rows, add 2 specimen-backed 2025 Mindanao bats `Murina alvarezi` and `Murina philippinensis`, replace region display name `Bronchocela cristatella` with reinstated 2026 `B. philippina` retaining source original, and fold `Limnonectes leitensis` into AMNH-accepted `L. leytensis` as spelling duplicate. Thus 645 DISTINCT named possible/likely candidates: birds350, reptiles155, amphibians53, mammals87, with 467 LIKELY, 178 POSSIBLE; 6 original genus-level IDs unchanged.
+- **Important correction:** early preliminary search said `Eutropis alcalai` was absent. Exact comparison showed that `E. alcalai` and `E. islamaliit` were both already in v2.2.1; neither counted as new. No unwarranted new `Murina baletei` or `Gonocephalus` split added.
+- **New private deliverables:** six-sheet `LIKAS_Greater_Mindanao_PAIC_Deep_Search_v2.2.2_2026-10-31.xlsx`, 645-name CSV, offline JSON, source/crosswalk CSV, methods and ZIP; workbook SHA256 `8526ec102cfbb4dbea562684b9e05f0b97f4305f03a15726b9231622e371ad25`, ZIP SHA256 `7d59cec3fe45794beb706f92938f9a01804e862b613a56ba07fd82ddc3ab5ffe`; verified distinct names/IDs, ZIP/XLSX CRC and workbook formula scan. Full source-derived rows private; public-safe summary `docs/LIKAS_GMND_PAIC_DEEPER_TAXONOMY_V222_2026_10_31.md`.
+- **Owner scope unchanged:** only four vertebrate groups, include migrant, vagrant, introduced and resident source candidates, no provincial checklist products. Original v2.0 freeze and v2.2.1 intact; no app, SQLite, survey records, assets, APK or public license clearance.
+
+---
+
+
 ## 31 October 2026 | Greater Mindanao PAIC status-inclusive v2.2.1 PRIVATE reference
 
 - Owner decision: resident, migrant, vagrant, accidental and introduced taxa all remain eligible for a possible PAIC checklist. These are overlapping source-described classes, independent of the regional LIKELY/POSSIBLE tier. National codes do not guarantee residency on every PAIC island; unsupported labels remain unset.

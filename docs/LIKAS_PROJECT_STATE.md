@@ -1,4 +1,254 @@
+## 31 Oct 2026 | Owner uploaded two COP30 TAR archives — processing runtime blocked
+
+- The owner supplied `rasters_COP30.tar.gz` (471,008,818 B) and `rasters_COP30.tar_2.gz` (132,469,974 B). Verified upload metadata only. All container/Python commands failed with backend ClientError, including trivial commands; no archive inspection, coverage QA or elevation sampling was actually done. **Do not claim DEM-derived heights or new elevation preferences.**
+- Wrote public-safe owner-private DEM stream inventory and strict research-grade/modern-PAIC polygon/100m positional-uncertainty sampling utility in `scripts/likas_cop30_owner_private_elevation.py`; source committed but no real-file or syntactic runtime test this turn. Workflow and execution limitations: `docs/LIKAS_COP30_UPLOADED_RASTER_EXECUTION_CHECKPOINT_2026_10_31.md`. No private raster bytes/coordinates committed.
+- Outstanding unchanged: ESA WorldCover tiles absent; iNat review names + MDD country-distribution conflicts; direct IUCN latest status requires API credentials; island satellites and paleoshoreline model pending. No checklist count, Android app, SQLite, survey data or APK changed.
+
+---
+
+## 2026-10-31 | Working modern Greater Mindanao PAIC polygons and uploaded original MDD reconciliation
+
+- Built **working contemporary shoreline polygons** from locally available GSHHS intermediate coastline: eight named core PAIC large islands; oceanic associated Camiguin Sur separately; QGIS GeoPackage and GeoJSON validated EPSG:4326. **Not a minus-120-m historical landbridge reconstruction; small satellites still unclassified.**
+- Mapped 11,746 Research Grade records: 7,431 inside core polygons, 118 Camiguin Sur, 1,658 outside selected major island polygons **undetermined**; 2,539 obscured/unlocated. Among 3,478 reported ≤100m candidates, 2,928 public points had uncertainty fully contained by selected modern dry-land boundaries (2,866 core/62 Camiguin), seven intersected shore, 543 were outside selected polygons. No raster sampled.
+- User-provided **MDD.zip** original 6,904-species v2.5 CSV validated against official MD5 `533e662fd5b8f66a5f56c191e7efac44`. 102 mammal concepts crosswalked to MDD: 101 exact accepted matches, one *Chaerephon plicata* -> *Mops plicatus* synonym, all 102 families agree. Eight species have MDD country field omitting Philippines; evidence conflict flagged. MDD iucnStatus is secondary and does not establish current IUCN assessment.
+- Owner received **private geospatial + MDD package**, geographic source-classification CSV without coordinates, point uncertainty QA, 725-taxonomy-evidence summary, and GIS script. Source private positions and row tables are not public GitHub files. Research method reference: `docs/LIKAS_PAIC_GSHHS_WORKING_POLYGONS_MDD25_SOURCE_AUDIT_2026_10_31.md`.
+- **No app, APK, SQLite, survey, accepted checklist count or original v3.8.1 source workbook modified**. Remaining: satellite islands, palaeocoast geology, raster tiles, 33 iNat IDs, original IUCN/legal status verification, private app importer.
+
+---
+
+## 2026-10-31 | Private PAIC v3.8.1 taxonomic / spatial source audit
+
+- Consolidated **owner-private** v3.8.1 review workbook and ZIP without altering the 725 accepted names (414 birds, 156 reptiles, 53 amphibians, 102 mammals) or any Android table, APK or survey history. Two published taxonomic relationships clarified: *Lycodon dumerilii* is synonymized with *Stegonotus muelleri* in Bernstein et al. 2026, and old broad *Fejervarya limnocharis* source names should not be used uncritically for Philippine *F. vittigera*. iNaturalist photographic IDs **not** automatically reassigned.
+- Recovered **historical Mindanao *Philautus surdus* voucher series** from Sanguila et al. 2016. This conflicts with narrower Sy 2025-1 current checklist and is kept in an unapproved taxon-concept review register, not inflated in accepted counts.
+- **33 unmatched names / 155 RG rows** still separated for identification and island/shoreline review. 11,746 RG rows include 9,207 public unobscured points at 6,703 distinct exact coordinates, with 3,102 records at repeated coordinate pairs (max 71), significant sampling clustering risk.
+- Created tested private offline polygon/coordinate-uncertainty/optional raster extractor (4 synthetic tests), but original PAIC polygons, raster tiles and 102-row MDD original CSV absent in runtime. **No real geography/elevation/landcover/habitat-selection estimates computed**. Current IUCN original assessments cannot be bulk verified without authorized v4 access.
+- Full public-safe source reasoning and hashes: `docs/LIKAS_GMND_PAIC_V381_TAXONOMIC_AND_SPATIAL_QA_2026_10_31.md`. Owner-private workbook SHA256 `266086b35be6b35bea85e9af8f429bc08b406407a846c745612d007bf6c092cd`; ZIP SHA256 `42df969a1897c11e409d864898a4dad586d73958e34b7996a488d1b74c748c3e`. Do not commit private source-derived row-level or user-coordinate data into public branch.
+
+---
+
+## 31 October 2026 | Private Greater Mindanao PAIC v3.8.0, iNaturalist harmonized
+
+- Completed private **v3.8.0** XLSX/data/QA package; 725 source-supported named vertebrate candidates (birds **414**, amphibians **53**, reptiles **156**, mammals **102**). Adds *Sterrhoptilus nigrocapitatus* from WBCP/eBird Samar-Leyte-Bohol original range and *Petinomys mindanensis* from original Gingoog syntypes/MDD. Prior v3.7 723 species remains unmodified.
+- Merged 3 owner-supplied iNaturalist projects' **11,746** Research Grade observation IDs/406 source names: 362 exact source-name mappings, 8 genus combinations, 1 orthographic *Otosaurus* link, 2 independently grounded additions; **11,591** RG observation records linked to **373** accepted LIKAS taxa. **33 source names and 155 RG rows** retained unresolved. Six *Lycodon dumerilii* NOT reidentified as *Stegonotus muelleri* without taxon-concept/photo review.
+- Owner-private outputs verified: `LIKAS_Greater_Mindanao_PAIC_Harmonized_Checklist_v3.8.0_PRIVATE.xlsx` SHA256 `29e6bbbb75cd57153939e430e6d8a742123c1e0749f85af15899aaade7f959b4`, nine workbook sheets; private combined pack SHA256 `511118e98a15ab25f611c5043f34677456a576a067104771088d0c4c254e542f`, 10 entries with CRC, provenance and 725-reference offline staging JSON. Owner-original sources not changed; datasets **not** published to GitHub.
+- Research limits: 2,539 deliberately obscured positions redacted and original private coords omitted. **No PAIC island polygons** or DEM/landcover sampling; prepolygon source flags only. 266 global and 272 Philippine source-reported conservation categories (not independently current). 102-species MDD original CSV crosswalk and 33 source-name reviews pending; habitat *preference* cannot be asserted from presence-only RG records.
+- **No Android code, SQLite, signing, survey data, APK or installation changed.** Existing `ChecklistPackImporter` cannot import new v3.8 research JSON as-is; next task is safe on-device user-selected private overlay with validation and rollbacks, then emulator and physical upgrade QA. Complete public-safe methodological handoff: `docs/LIKAS_GMND_PAIC_V38_HARMONIZED_RESEARCH_2026_10_31.md`.
+
+---
+
+## 31 Oct 2026 | Private v3.7 723-taxon comprehensive reference assembled
+- Created 723 unique named candidates (413 birds, 156 reptiles, 53 amphibians, 101 mammals), all with family, separate dated IUCN/DENR source fields; 265 explicit global and 272 national category codes. No assumption these represent current live assessments.
+- iNaturalist integration in offline private evidence workbook and ZIP: 11,746 Research Grade observations, 406 source names, 362 exact/8 provisional name links, 44 review names, 3,478 <=100m and 2,493 <=30m unvalidated point candidates. Deliberately obscured and source-private coordinates omitted. No species automatically added.
+- Only three voucher/site-based mammal elevation entries and two source-reported forest contexts; no sampled raster elevation or landcover; habitat preference is not inferred. 723 accepted-row ecological evidence sheets are structured but incomplete for quantitative environmental results.
+- Workbook SHA-256 72f1c10db8ed9f32c355836159749de551f334a7293276cf4ef95f8ed4f19f6a; private ZIP SHA-256 8ddb1e6821fc11e6dc2d44a6fa383e61a58710180888b1c6436b67b7ae3720c6.
+- Public-safe methods and limitations: docs/LIKAS_GMND_PAIC_PRIVATE_INTEGRATED_CHECKLIST_V37_2026_10_31.md. No Android/app/SQLite/APK or public release updated. Need GIS and direct taxonomic/conservation checks.
+
+---
+
+## 31 October 2026 | All three iNaturalist project exports: RG spatial and taxonomy staging
+
+- Completed private processing of birds, herpetofauna and mammal iNaturalist Greater Mindanao exports: **12,811** project observations; **11,746 Research Grade** and **1,065 Needs ID**. Herp and mammal source exports were `quality_grade=any`; fixed in analytical filter.
+- RG source names **406**; against independent private v3.4 622 nonmammal + private v3.6 101 mammal analytical reference, **362 exact species; eight tentative bird synonym matches; 35 nonmatching binomials; one genus-only label**, no approved additions. 370 of 723 LIKAS included names have exact-or-tentative RG reference evidence.
+- **2,539 obscured RG locations fully redacted**; 45 user-provided original rows have private-coordinate fields never copied; **9,207 open public RG coordinate pairs**. Quality-screened **3,478** <=100m terrain candidates and **2,493** <=30m land-cover candidates (not PAIC polygon-validated); 25/13 respectively preliminarily marine/aquatic for separate analysis.
+- Private source-to-species evidence CSV, four-tab+ methods XLSX staging (723 LIKAS species), group cleaned exports, combined RG CSV/GeoJSON and QA in owner direct-delivery ZIP SHA256 `e03e1453ca75774e3a9c249df74285f1a6916c5bb6deafde539eb4ad910d8b9b`. Offline DEM/WorldCover sampler passed **synthetic-only** test; no actual regional DEM, landcover, species-specific habitat preferences, original habitat-use model or elevation ranges computed. Owner-approved PAIC polygons and raster tiles needed.
+- **No APK, application code, field observation database, private source tables on GitHub, new candidate approval, or conservation status update.** Method and current blockers: `docs/LIKAS_THREE_INAT_PROJECTS_RG_HABITAT_STAGING_2026_10_31.md`.
+
+---
+
+## 31 October 2026 | Private iNaturalist Birds of Greater Mindanao RG coordinate QA
+
+- The owner uploaded original Birds of Greater Mindanao Research Grade CSV ZIP (7,710 observations; 275 iNaturalist names). Completed private coordinate cleaning with re-runnable standard-library script. All **1,061 deliberately obscured public positions were redacted** and **33 source private-coordinate rows were not copied**; 6,649 unobscured WGS84 records retained. No usernames/place guesses/original free text transferred.
+- Unobscured reported horizontal uncertainty: 1,946 ≤30 m; 747 >30–100 m; 931 >100–250 m; 614 >250–1,000 m; 1,372 >1,000 m; 1,039 unknown. Initial name-only out-of-PAIC locality screen flagged 105 records. **2,655** open ≤100 m terrain candidates (185 iNaturalist taxa) and **1,917** ≤30 m higher-precision candidates remain **NOT PAIC polygon-validated**.
+- Owner-private downloads: full cleaned CSV, open coordinates, ≤100m terrain candidates CSV & valid EPSG:4326 GeoJSON, ≤30m landcover candidates, species coverage, QA, script & ZIP. ZIP SHA256 `7ea1e9ec9e92ed3a26d0b3eddc55a36f33d8079e5e95ddaab245e71fe943cafc`; verify exact download availability in any later chat.
+- No DEM elevations/landcover samples computed or claims made; source uncertainty and chronology require polygon join, DEM/landcover rasters, buffer sensitivity, and current-versus-historical landcover caution. User coordinates never published to public GitHub. Public metadata and methodology: `docs/LIKAS_BIRDS_INATURALIST_RG_COORDINATE_QA_2026_10_31.md`.
+- **No checklist counts, app code, SQLite, signed APK or phone data modified.**
+
+---
+
+## 31 October 2026 | Original-paper species tables (142 rows) and 3 Greater Mindanao iNaturalist projects
+
+- Reviewed full accessible primary Hijo Forest PDF **122** named table entries (17 mammals, 11 amphibians, 22 reptiles, 72 birds), not the inconsistent website abstract **125**; field/2010 historic/locally reported categories must remain distinct. University of the Philippines Mindanao DBSES wildlife collection holds collected specimens, but individual institutional accession IDs not in Table 1.
+- Retrieved all **20** Tinuy-an Falls 2022 species and **18** original JLP field catalog/image-number entries; two field IDs remain unextracted. Compared combined 142 entries against private full v3.4 + independent 101-mammal v3.6: **115 exact, 1 old-name crosswalk, 4 manual crosswalk, 5 cf./sp. unresolved, 17 not exact**, zero additions approved. Owner private XLSX, CSV, QA and original-source links delivered as download ZIP.
+- Verified all three user-provided iNaturalist Greater Mindanao projects are indexed on Davao Region place site. **No live research-grade observations extracted** because projects/API inaccessible from current tool network. Wrote and mock-tested a network-ready Python 3 stdlib API exporter to retrieve research-grade record IDs, taxon names and provenance safely without sensitive coordinates; needs actual network run before real observation audit.
+- Public-safe detailed research checkpoint: `docs/LIKAS_PRIMARY_PAPERS_AND_INAT_PROJECTS_AUDIT_2026_10_31.md`. No app/DB/APK, signing, original species checklist, on-device observation or private dataset changes.
+
+---
+
+## 31 October 2026 | Expanded Mindanao biodiversity literature search (73 unique sources)
+
+- Completed a broader source search retaining previous 29 literature entries and adding **44 distinct reference leads** (29 four-group vertebrate-relevant, 15 broader habitat/ecology/research). Source URLs, year, named locality, source-reported claim, DOI where available, evidence-access level and LIKAS disposition are recorded in the owner-delivered 73-row CSV, accompanying markdown and QA ZIP. ZIP CRC checked; no formal exhaustive/PRISMA completion claim.
+- Particularly high-value new study leads: Mt Kitanglad 2008 bird inventory, Mt Busa 2021 bird and herpetofauna inventories, Lake Mainit birds, Tagum Hijo forest four-group baseline with seven local-report-only taxa, Surigao del Norte 2026 bird survey (2023 observations), Mt Capistrano karst amphibians/reptiles, Tinuy-an 2025 protected-area distribution additions, 2026 Samar Island herpetofauna (historical PAIC member) and Del Carmen Siargao mammals. **No new species names added** based only on abstracts.
+- **No app, APK, private mammal (101 candidates), full vertebrate master or conservation status changed.** Original species tables and MDD full crosswalk still need extraction; high-priority publisher abstracts are not direct voucher review. Metadata reference and file checksums in `docs/LIKAS_MINDANAO_BIODIVERSITY_LIT_REVIEW_73_SOURCES_2026_10_31.md`.
+
+---
+
+## 31 October 2026 | Private mammal candidate and source-evidence register v3.6.0
+
+- Latest **independent private mammal research reference**: **101 named included candidate species**, +1 *Podogymnura minima* (2023 Balete et al. taxonomic elevation of historical *P. truei minima*; original Kitanglad voucher ZMUC 1311 and source-published specimen series). Previous v3.5 mammal register (100 species) remains immutable, as does full four-group v3.4.0; no APK merge occurred.
+- Built and validated owner-private XLSX, offline research-staging JSON, candidate/evidence/crosswalk CSVs, 29-reference literature register, QA and ZIP. **305 source-linked assertions**: 101 master summaries, 100 original island assertions, 99 original source assertions, 5 primary named field/specimen sources. These are not independent wildlife detections.
+- Four individual mammal MDD v2.5 web profiles checked, **97 inherited names/family assignments still lack exact species-row matching**. Original official MDD v2.5 CSV download failed; not falsely reported as verified. *P. minima* IUCN and Philippine DENR categories explicitly unverified, no inheritance from *P. truei*.
+- No field survey, DB, code, signed APK or installed checklist updated. Owner private source-derived data are off public GitHub. Public-safe citations, artifact hashes and remaining checklist work: `docs/LIKAS_GMND_MAMMAL_SOURCE_EVIDENCE_REGISTER_V360_2026_10_31.md`.
+
+---
+
+## 31 October 2026 | Expanded Mindanao biodiversity literature checkpoint (29 references)
+
+- Scanned publisher/original source pages, taxonomic revisions and GBIF/Zenodo metadata for **29** Mindanao-focused vertebrate, synthesis and habitat references (13 mammal or mixed mammal/bird, 8 herp, 3 bird, 5 synthesis/ecosystem). Private 29-row annotated markdown and CSV register were delivered directly in the owner's chat; sandbox URLs need fresh verification in future chats.
+- **New source-backed mammal candidate:** *Podogymnura minima* (Erinaceidae), recognized in Balete et al. (2023) separately from historical *P. truei minima*, with Mt Kitanglad specimen evidence and MDD recognized taxon. **Missing from existing v3.3/v3.5 lists**. Previous v3.5 names = 100. Potential future edition 101 named mammals, **not yet added or approved as installed app list**. IUCN/DENR entries unresolved; no automated status inheritance.
+- Mt Kampalili 2025 bat paper, 2023 Mt Apo camera traps, 2026 Agusan Marsh herps, 2026 Hilong-Hilong and 2026 *Platymantis* revisions offer evidence/taxonomic crosswalks. Site-specific 'new records' must not inflate PAIC-wide species counts. MOBIOS+ has 12,813 **multi-taxon** literature occurrences, not 12,813 vertebrate species; raw archive and new Oct-2026 Kampalili mammal supplement were not retrieved.
+- Public-safe bibliography checkpoint: `docs/LIKAS_MINDANAO_BIODIVERSITY_LITERATURE_EXPANDED_2026_10_31.md`. **No data source original tables committed**, no private workbook edits, no Android/SQLite/APK changes. Next: source tables and full MDD reconciliation, then owner-private versioned checklist update if justified.
+
+---
+
+## 31 October 2026 | Private Greater Mindanao mammal literature v3.5.0 (100 named candidates)
+
+- **Source count correction:** The v3.4.0 master already contains `Acerodon jubatus` and `Alionoctula javanica` among its 99 mammals; do not duplicate them. Original Dinagat 2017–19 captures support adding exactly **one** missing named mammal, `Desmalopex leucoptera`, for **100 named source-based PAIC mammal candidates** in a private separate mammal reference workbook. Full all-vertebrate v3.4 remains unchanged.
+- Species-name crosswalk: original study `Desmalopex leucopterus`, original DAO `Pteropus leucopterus`, MDD v2.5 accepted `Desmalopex leucoptera` (Pteropodidae). Original IUCN assessment dated 19 July 2020 **VU A2cd**; national DENR DAO 2019-09 **VU**. DAO also lists `Acerodon jubatus` **CR**; MDD secondary IUCN shows **EN**. MDD displays NE for `D. leucoptera`, so latest Red List 2026-1 taxon-concept reconciliation unresolved.
+- Separate private workbook `LIKAS_Greater_Mindanao_PAIC_Mammals_Literature_Review_v3.5.0_PRIVATE.xlsx` (4 sheets, 100 unique names, SHA-256 `dada02fb808b678d81720ab678dec60ed6993348e11d665e77058ac94fa3330f`). 97 preexisting mammal family matches remain genus-level provisional, 3 exact MDD profiles checked. Full v2.5 100-mammal crosswalk outstanding.
+- **No Android source, SQLite, signing, field records or APK changed.** Private data not publicly committed; no direct APK for this research-only change. Public methodology: `docs/LIKAS_GMND_PAIC_MAMMAL_LITERATURE_V35_2026_10_31.md`.
+
+---
+
+## 31 October 2026 | Private PAIC v3.3.0 source-correction edition and sole-personal APK use
+
+- Owner clarifies that the APK is for **sole personal, noncommercial use** and **will not be redistributed**; do not publish owner-supplied compiled source data to the public repository or public CI artifacts. No general open-license grant is asserted.
+- Completed a private v3.3.0 XLSX plus offline staging JSON/CSVs and QA. 721 included named taxa (birds 413; reptiles 156; amphibians 53; mammals 99), one excluded, zero regional review queue; 1,327 taxon-island evidence records, 880 source assertion records. v3.2.0 preserved unchanged. Revised workbook SHA-256 `964a6a6b6fa1ba282bff3cf788062a360a9db04603d7b3b5e6e8a2f6a92d11a3`.
+- Fixed false Mindanao/Avibase attribution for *Pseudorabdion mcnamarae* (Biliran per Sy), qualified *Gekko mindorensis* as associated Camiguin Sur *cf.*-complex candidate and removed unsupported mainland record, and replaced Bohol Island conflation for *Brachymeles libayani* with five named Bohol Province satellites.
+- Source-level crosscheck reclassified 19 subspecies-level entries, one former combination, three later *Platymantis* names, one unmatched 2026 reptile combination, one unmatched WBCP bird, 99 unassessed mammals lacking original MDD file; 597 exact matches. Four bird and ten mammal status blanks now explicitly unassessed. Earlier geographic tier labels removed from biological occurrence fields. Publisher CC BY-NC 4.0 licence for Sumilhig (2024) noted alongside PDF conflict.
+- Private payload is **NOT compatible** with legacy `ChecklistPackImporter`; no code, SQLite, signed APK, handset test or on-device dataset import in this step. Next: safe, user-selected offline PAIC reference importer, automated validation, and physical upgrade test. Public-safe details in `docs/LIKAS_GMND_PAIC_V33_PRIVATE_SOURCE_CORRECTIONS_2026_10_31.md`.
+
+---
+
 # LIKAS: Current Project State and Next-Chat Handoff
+
+## 31 October 2026 | Greater Mindanao v3.2.0 owner-local source pack and licensing checkpoint
+
+- **Latest provided research source:** Owner-uploaded `LIKAS_Greater_Mindanao_PAIC_Vertebrate_Master_Checklist_v3.2.0_2026-10-31.xlsx`, SHA-256 `ae66c2278ef9da8d96ff6e05a65d69802b0eaf592ef6517d569049b7446220fc`. Compared with preceding private v2.2.2, this superseding *research workbook* includes 721 named species (413 birds, 156 reptiles, 53 amphibians, 99 mammals), one excluded bird retained historically, zero remaining named regional-review entries, 1,323 source-to-island evidence rows and 880 source assertions.
+- **Completed structural QA:** 722 unique master names/IDs, matching 721 included records; no included species without cited island evidence, source assertions or source URL, and no orphan island evidence foreign IDs. Of the v3.2 regional review changes, 81 relied on secondary Avibase compiled regional records and three on other case-specific sources; these are **regional candidates**, not individual voucher/site-level verifications or verified completeness.
+- **Owner declared noncommercial personal/scientific app use.** WBCP explicitly permits personal/scientific download and requires citation and commercial-use permission; whether substantial redistribution inside a publicly distributed APK is authorized remains unresolved. Sy checklist redistribution terms remain unverified. Do not commit owner-provided full source tables to public GitHub. A prior private bundle remains in public repo history and needs separate review.
+- **Private package generated, checked and directly delivered within current conversation:** 21-entry ZIP (original workbook, 14 CSVs, offline staging JSON, rights/readme, QA, SHA-256 manifest, reproducible exporter), SHA-256 `17d558084e900124e55025b578a4210bc5f00bcb2d7b663028f623eeef6ade76`; verified ZIP CRC and file hashes. Direct sandbox URL is session-local; never reuse without rechecking. Generic public metadata: `docs/LIKAS_GMND_PAIC_V320_PRIVATE_IMPORT_AND_RIGHTS_2026_10_31.md`.
+- **No Android change:** app source, schema 27, versionCode 126, signing, survey data and APK unchanged by this milestone. Existing exact-hash four-CSV importer cannot ingest this PAIC snapshot. **Next work:** create a safe versioned owner-local user-selected PAIC import and PAIC island/group browser, CI/private-device migration/backup tests and source-rights-specific public build controls before any APK release.
+
+---
+
+
+## 31 October 2026 | Deeper Greater Mindanao published taxon research: PRIVATE v2.2.2
+
+- **Scientific candidate source update:** from v2.2.1's 644 named rows, add 2 specimen-backed 2025 Mindanao bats `Murina alvarezi` and `Murina philippinensis`, replace region display name `Bronchocela cristatella` with reinstated 2026 `B. philippina` retaining source original, and fold `Limnonectes leitensis` into AMNH-accepted `L. leytensis` as spelling duplicate. Thus 645 DISTINCT named possible/likely candidates: birds350, reptiles155, amphibians53, mammals87, with 467 LIKELY, 178 POSSIBLE; 6 original genus-level IDs unchanged.
+- **Important correction:** early preliminary search said `Eutropis alcalai` was absent. Exact comparison showed that `E. alcalai` and `E. islamaliit` were both already in v2.2.1; neither counted as new. No unwarranted new `Murina baletei` or `Gonocephalus` split added.
+- **New private deliverables:** six-sheet `LIKAS_Greater_Mindanao_PAIC_Deep_Search_v2.2.2_2026-10-31.xlsx`, 645-name CSV, offline JSON, source/crosswalk CSV, methods and ZIP; workbook SHA256 `8526ec102cfbb4dbea562684b9e05f0b97f4305f03a15726b9231622e371ad25`, ZIP SHA256 `7d59cec3fe45794beb706f92938f9a01804e862b613a56ba07fd82ddc3ab5ffe`; verified distinct names/IDs, ZIP/XLSX CRC and workbook formula scan. Full source-derived rows private; public-safe summary `docs/LIKAS_GMND_PAIC_DEEPER_TAXONOMY_V222_2026_10_31.md`.
+- **Owner scope unchanged:** only four vertebrate groups, include migrant, vagrant, introduced and resident source candidates, no provincial checklist products. Original v2.0 freeze and v2.2.1 intact; no app, SQLite, survey records, assets, APK or public license clearance.
+
+---
+
+
+## 31 October 2026 | Greater Mindanao PAIC status-inclusive v2.2.1 PRIVATE reference
+
+- Owner decision: resident, migrant, vagrant, accidental and introduced taxa all remain eligible for a possible PAIC checklist. These are overlapping source-described classes, independent of the regional LIKELY/POSSIBLE tier. National codes do not guarantee residency on every PAIC island; unsupported labels remain unset.
+- A new private v2.2.1 was exported from the locally saved v2.2 research edition: 644 existing named taxa unchanged (350 birds, 155 reptiles, 54 amphibians, 85 mammals), six genus-level IDs unchanged. Explicit source tags (non-exclusive): resident 266, migrant/seasonal 110, vagrant 53, accidental 22, introduced 18, historical 14, marine/coastal 2. 278 taxa lack these tags but remain included. Six-sheet workbook, CSV, JSON, methods and ZIP passed unique-ID, error and CRC checks.
+- Public-safe science method: docs/LIKAS_GMND_PAIC_STATUS_INCLUSION_V221_2026_10_31.md. Private owner-provided WBCP/Sy derivative rows deliberately not published. XLSX SHA256 304de7c3be2ecd290f39bb0657ab12c60d014ee9d99852406e712c309172a9b8. No Android/SQLite/survey/UI/assets/APK changes; no province checklists or fish/insects.
+
+---
+
+
+## 31 October 2026 | Owner narrows PAIC species-library scope to Birds, Reptiles, Amphibians and Mammals only
+
+- **Authoritative product decision:** LIKAS PAIC checklists and their planned map browsing are restricted to birds, reptiles, amphibians and mammals. No fish, insects, invertebrates, or other wildlife groups in PAIC species-checklist products or future PAIC discovery-feed sections. This governs all PAICs, not just Greater Mindanao. No provincial checklist products (earlier cancellation unchanged).
+- **Versioned scope-only revision:** Derived private **v2.1.1** reference directly from v2.1; retained all **640 named vertebrate candidates** (349 birds, 155 reptiles, 53 amphibians, 83 mammals; 463 LIKELY, 177 POSSIBLE), **four** genus-level operational records (three documented `Platymantis` and one legacy genus-only `Ophiophagus`), and all eight taxonomic change records with original source names/URLs. Genus records do not add to named species count.
+- **Removed from active artifact:** Entire nine-entry unrelated fauna discovery section, separate appendix/table/JSON array, plus five source registry entries used only by that section. Result: six-sheet XLSX (Overview, Named vertebrates, Genus level, Taxonomic changes, Sources, Revision history), named CSV, genus CSV, taxonomy CSV, offline JSON, methods, SHA256 manifest, private ZIP. Eight current-scope source references remain. No change to 640 taxon rows or genus records. Private workbook SHA256 `538dfecd1980f69452f5b2b4e7ecab07b680e153e4e621f5692a1466b3565c0c`; ZIP checksum available in local manifest.
+- **Provenance preserved:** Locked v2.0 unchanged, prior v2.1 archived as history, v2.1.1 is now the current four-group source delivery. Full private WBCP/Sy-derived candidate data remain uncommitted to public GitHub pending permission review; app/SQLite 27/survey records/assets/signing/APK unchanged.
+- **Continuity:** Current research branch `research/likas-greater-mindanao-paic-audit`, draft PR #65. Governed by `docs/LIKAS_PAIC_POSSIBLE_SPECIES_CHECKLIST_POLICY_2026_10_31.md` and the four-group amendment. Latest Android-tested preview still RC66 versionCode126; revised workbook does not imply the app was updated.
+
+---
+
+
+## 31 October 2026 | GMND v2.1 genus-level and latest taxonomy research
+
+- Owner requested source-backed genus-level entries and current 2026 taxonomy/discovery search. Original immutable v2.0 638 named species file and hashes remain unchanged.
+- Separate privately exported v2.1: 640 unique named vertebrate candidates (349 birds, 83 mammals, 53 amphibians, 155 reptiles), descriptive 463 LIKELY and 177 POSSIBLE. September 2026 Platymantis revision replaces southern misapplied P. dorsalis candidate with P. jagorii, P. laticeps, P. habagatan without assigning historical specimens; AviList October 2026 Apus nipalensis -> Apus affinis with original names preserved.
+- Four separate genus-level reference rows: three published Platymantis operational study IDs (Mt Capistrano and two Samar distinct voucher/call records), and one *legacy*, not independently voucher-verified, genus-only Ophiophagus. They are not four additional species. Nine named 2025/2026 beetle/fish discoveries tracked separately, not counted in 640.
+- Reviewed October 2026 Gonocephalus reassessment, WBCP 2026 preliminary report, excluded Mindoro Apomys from Mindanao. Seven-sheet private XLSX, CSVs, JSON, research Markdown and ZIP passed unique-name/ID/count and CRC checks. Original frozen v2.0 source preserved, updated workbook SHA256 adf82db8bf1f438598fbe8c7a059393858cb07acaa7e2cea7d364f1be7dc2a6a. Public source summary at docs/LIKAS_GMND_PAIC_TAXONOMIC_UPDATE_V21_2026_10_31.md.
+- No app schema/data, approved media, survey, APK or signed update. Restricted WBCP/Sy source-derived full rows remain private; release rights still unresolved; PAIC-only scope and cancelled provincial checklists remain.
+
+---
+
+
+## 31 October 2026 | GMND PAIC possible+likely species FINAL v2.0 frozen (PRIVATE research reference)
+
+- **Owner-approved product result:** Final locked *possible/likely Greater Mindanao PAIC candidate list*, **638 named binomials** (**349 birds, 83 mammals, 51 amphibians, 155 reptiles**). **461 likely** are source-named region/member-island candidates, **177 possible** from source statements of widespread Philippine range or a genuinely questioned regional mention. These words do NOT claim site presence, numeric likelihood, extant native richness or an exhaustive census. Genus/unidentified placeholders excluded.
+- **Expansion on finalized v1.0 400-name reference:** Added 162 explicitly widespread Philippine bird names from WBCP original private source; one questioned named bird kept possible; 72 Field Museum guide named Mindanao mammals; and three named Samar research herps. Preserve original literature, taxonomic synonyms, historical/marine/migrant/introduced qualifiers and source links. Total was validated against CSV and JSON with no duplicate IDs.
+- **Freeze and direct deliverables:** `LIKAS_Greater_Mindanao_PAIC_FINAL_Possible_Likely_Checklist_v2.0_2026-10-31.xlsx` (5 sheets, SHA256 **00df680b32ff566fd289be67f39a847deaae56017f59aecb3a9fe973047e3e0c**), `..._Offline_Data.json` SHA256 **142788ca452e654b25212dc80a13b9e7a44d91536e878e04b136862f3e9a74c0**, private ZIP SHA256 **d9c66e80824df617dfdfa7dd79fc08d5c6663962a9a885df1584791a380b8fa0**, CSV and methods included. Package includes reproducible build script and manifest. Verified XLSX/ZIP CRC, five sheet XML, 638 names, URLs, group/tier counts and unique IDs. Attachments distributed privately via this chat.
+- **Durable public metadata:** `docs/LIKAS_GMND_PAIC_FINAL_LOCK_V2_2026_10_31.md` contains scientific source, category logic and hashes; master PAIC policy includes versioned freeze amendment. Earlier v1.0 is preserved as historical source reference, superseded as browsing dataset. All provincial-checklist products remain cancelled.
+- **No app change:** RC66 debug remains last tested Android build, code126, SQLite27, original signer and field data intact. This locks the source dataset only; does NOT install it in Android, authorize public redistribution of private WBCP/Sy compiled sources, publish map polygons, or certify a field release. Future corrections require new version.
+
+---
+
+
+## 31 October 2026 | Owner finalizes Greater Mindanao v1.0 POSSIBLE-species checklist; no independent occurrence-proof requirement
+
+- **Accepted scope change:** Owner clarified LIKAS PAIC checklists are *possible species for the PAIC*, not verified occurrence/current-resident lists. Individual independent locality verification is **not** a prerequisite for inclusion if the available source actually indicates plausible PAIC or member-island membership. Preserve sources, flags and conflicting/negative evidence; don't invent regional presence from a country checklist. Province-by-province checklist product remains cancelled.
+- **Finalized private research artifact:** seven-sheet `LIKAS_Greater_Mindanao_PAIC_Possible_Species_Checklist_v1.0_2026-10-31.xlsx`, CSV/JSON/private ZIP. **400 candidate binomial display names** (186 birds, 50 amphibians, 153 reptiles, 11 mammals) derived from 402 of the existing 410 v0.3 source taxon keys. **Seven** negative/partial-exclusion/questioned source cases withheld, **one** genus-only `Ophiophagus` kept unresolved; two subspecies-pair duplicate display names folded to binomials while retaining all source key/name rows. Includes all **111** earlier literature/qualifier statements and **55** bibliography entries, with explicit caveat that some citations are negative or historical. No one is claiming 400 actual species-level *verified current PAIC occurrences* or complete richness.
+- **Artifacts verified:** ZIP CRC, Excel seven sheet/range inspection including 400 names, source-audit 410, withheld eight, literature 111 and bibliography 55; no spreadsheet error cells. Source-derived CSV, JSON and ZIP SHA256 pinned in policy `docs/LIKAS_PAIC_POSSIBLE_SPECIES_CHECKLIST_POLICY_2026_10_31.md`. Direct actual files delivered in this conversation; private WBCP/Sy source-derived rows deliberately NOT published on GitHub.
+- **Project stage:** Greater Mindanao **v1.0 possible-species reference complete and accepted by clarified criterion**; public app integration, license assessment and interactive map later work. Research branch PR #65 remains draft; latest signed tested Android still RC66 versionCode126, SQLite27. No Android, SQLite, historic field records, app image assets or APK changed.
+
+---
+
+
+## 31 October 2026 | GMND PAIC v0.3 cited evidence consolidation; checklist still not final
+
+- **Owner active direction:** PAIC-only species checklists; abandoned province-checklist product remains cancelled. Current research branch `research/likas-greater-mindanao-paic-audit` continues PR #65; Android latest tested RC66 versionCode126, SQLite27, source package, field data and app binaries untouched.
+- **Locally generated review edition:** `LIKAS_Greater_Mindanao_PAIC_Consolidated_Evidence_Checklist_v0.3_2026-10-31.xlsx` has five sheets: Overview, PAIC taxon register, Literature links, Bibliography, and PAIC evidence rules. It contains **410 distinct source taxon keys UNDER REVIEW**: 399 birds/amphibians/reptiles already audited plus **11 published-locality mammal entries**, four with checked primary species-description type specimens. Do not treat as completed richness or resident species count. **111** source–taxon–locality, historical or exclusion links (105 previous + four mammal specimen links + two independent *Sarcophanops* research links); **55** bibliography/data/taxonomy citations (46 prior + nine added). **52** of the original 399 candidate keys have an exact-name literature link, not necessarily accepted occurrence or current residence.
+- **Four specimen-based mammal records:** `Baletemys kampalili` (Rowsey et al 2022; FMNH 208788), `Tarsomys orientalis` (Rickart et al 2024; FMNH 194803), `Murina hilonghilong` (Eger et al 2025; FMNH 190118) and `Batomys hamiguitan` (Balete et al 2008; FMNH 190163). Existing cited `Podogymnura intermedia`, four Dinagat bat locality records, `Tupaia everetti` and Leyte tarsier added with source scope. 2026 Leyte paper uses `Tarsius syrichta`; MDD accepted name `Carlito syrichta` preserved as linked synonym, not duplicated. Source specifics in the public research document.
+- **PAIC source dispositions:** 248 source-checklist candidates needing primary review, 71 special ecological/temporal qualifier entries, 42 existing catalog taxa with nonexcluded literature links but unresolved concept verification, 25 PAIC-only broad claims, seven withheld ambiguous/negative, six island-geography mismatches, seven paper-linked mammals and four type-specimen-backed mammals. Original 34 flagged legacy Mindanao labels are not silently altered. Negative/historical evidence remains negative/historical, not presence.
+- **Independent verification:** XLSX ZIP CRC and five sheets passed, CSV row structures 410/111/55 correct, no formula errors, SHA256 XLSX `5bdbf2680f79f5a9847bac2325ae3eb5906d612d973fc36d599220f38c0eb3f3`. Five-sheet workbook/three CSVs/1,170-word report directly downloadable in implementing chat; prior private WBCP/Sy range text is not redistributed to public GitHub.
+- **Important limitation:** Review edition is NOT production accepted or exhaustive: original studies not fully cross-checked for all 399, 11 mammals not complete regional mammal list, MOBIOS+ DwC-A dataset retrieval failed, taxonomic/introductory/historical/rights review remains outstanding, no actual all-species database migration, map or APK. The Bohol 2025 herp study is site-scoped (42 observed, 54 synthesized); Agusan Marsh 2024 avifauna paper site-scoped (150 incl. 35 migrants), no PAIC-wide extrapolation. Source methods: `docs/LIKAS_GREATER_MINDANAO_PAIC_V03_RESEARCH_CHECKPOINT.md`.
+
+---
+
+
+## 31 October 2026 | Owner decision: PAIC checklists only; provincial checklists cancelled
+
+- **Current product scope supersedes prior checklist plans:** Species Library geographic checklist deliverables are **PAIC/biogeographic-region checklists only**. Do not create, complete, expose, export, or schedule *province-by-province species checklists* unless the owner explicitly reverses this decision.
+- **Keep primary evidence, not a provincial checklist product:** Provincial administrative names, exact study sites, islands, voucher localities, historical records and other precise places remain stored as traceable source evidence for PAIC inclusion and source-checking. Never flatten an ambiguous locality into a province or extend a local occurrence to the full PAIC. Existing provincial research workbooks and PSA code roster are archived research context only, not a deliverable roadmap, checklist data approved for LIKAS, or a commitment to geographic administration filters.
+- **Active work:** Finish defensible **Greater Mindanao PAIC** taxon evidence with island-level and locality provenance, synonyms, resident/vagrant/introduced/historical qualifiers, mammal crosswalk, source assessment, licensing and explicit reviewed/unreviewed flags. Then proceed to other PAIC or separately named island-group checklists. The eventual interactive Philippines map selects PAICs, not administrative provinces.
+- **Baseline unchanged:** Research branch `research/likas-greater-mindanao-paic-audit` and draft PR #65; last emulator-tested Android app RC66 code126, SQLite27. No app, DB, historic field records, source datasets, APK or UI changed by this decision. Previous 399-taxonomic-key pool and 46-source literature research remain partial and not a certified PAIC species inventory.
+
+---
+
+
+## 31 October 2026 | Greater Mindanao indexed biodiversity literature review: 46 works, 105 evidence statements, research gate remains
+
+- **Owner directive:** scour Greater Mindanao PAIC/provincial biodiversity literature, analyze sources and attach citations to checklist while keeping scientific certainty. Current research branch `research/likas-greater-mindanao-paic-audit`, draft PR #65; app code/test baseline still RC66 (code126), SQLite27 unchanged.
+- **Research deliverables directly attached:** 8-tab `LIKAS_Greater_Mindanao_PAIC_Provincial_Literature_Evidence_2026-10-31.xlsx` (46 bibliography records; 105 source–taxon–geography/qualifier lines, including nine explicit Samar exclusions; 399 private candidate-taxonomy exact-name crosswalk, of which **46** have at least one positive or historical literature citation match; 32 province coverage rows; study summaries; search log), full Markdown report with all 46 URLs and bibliography/links/crosswalk CSVs. Workbook ZIP CRC valid, eight sheets/ranges checked, formula scan clear. No original WBCP/Sy restricted source quotations committed publicly.
+- **Scientific evidence:** Sanguila et al 2016 northeast Mindanao coded H/N province/island herps; Diesmos et al 2026 Samar 79 surveyed vs 104 island compiled and rejects nine older claims; Sanguila et al 2026 Agusan Marsh distinguishes PS/FS vs historic and invasive; Dinagat mammal field records, Leyte, Sarangani, Bukidnon and freshwater fish, plants, lichens included. Source metadata/title/DOI/age and scope retained; not all full article texts audited.
+- **Verification boundary:** targeted search across publishers and repositories, **not exhaustive systematic/PRISMA review** of all papers; no raw MOBIOS+ DwC-A archive ingested (CC BY-NC 4.0 metadata); historical/negative and uncertain rank never promoted into modern occurrence or province. No conclusive 399-taxon or 32-province species checklist or richness tally. No data/app/SQLite/schema/UI/assets/exports/signing or APK changes. Continue priority original source validation and missing provinces. Public methods report: `docs/LIKAS_GREATER_MINDANAO_LITERATURE_EVIDENCE_REVIEW_2026_10_31.md`.
+
+---
+
+
+## 31 October 2026 | Greater Mindanao deep research and 32-province geographic audit; complete triage, NOT certified species checklist
+
+- **Owner request:** research the entire Greater Mindanao taxon pool, then work toward provincial checklists. Continued on `research/likas-greater-mindanao-paic-audit` draft PR #65. No Android source/SQLite27/assets/signer/field records changed; no new APK built.
+- **Private independently exported evidence:** nine-sheet `LIKAS_Greater_Mindanao_Deep_Species_Provincial_Evidence_Audit_2026-10-31.xlsx`, 399-key source audit with citations/qualifiers, 32 modern PSGC province IDs, 502 raw province-name tokens from 225 taxa (NOT approved occurrences), exact 11 existing province rows, source-verified exemplar cases. Files direct-attached in implementing conversation; external license-restricted source excerpts not committed publicly.
+- **Legacy 11 Davao area records corrected:** seven binomial source-text matches, one trinomial `Trachemys scripta elegans` requiring species resolution, three genus-only `Ophiophagus` records ineligible as species. Initial code review claimed `Hoplobatrachus chinensis` lacked Davao del Sur in its text; full asset inspection **corrects this**: its range does name the province. Source-text support alone remains below independent verification.
+- **Independent references:** Sarcophanops PAIC-separated species; Platymantis bayani Eastern Samar; Levitonius mirus Eastern Samar/Leyte; Cyrtodactylus mamanwa Dinagat/Unib (Siargao not corroborated by cited 2016/2021 study); Platymantis navjoti Samar; Ophiophagus 2024 revision. No PAIC-wide projection of specimen records. Province register has 25 current Mindanao-admin provinces plus six in Eastern Visayas and Bohol; Camiguin, Sulu and Tawi-Tawi excluded or peripheral, with explicit island/province ambiguity. Source: PSA PSGC 2026.
+- **Research gate:** 399 source keys remain a *candidate pool*, not finalized native richness; 34 prior legacy regional source-scope errors unresolved in database, 47 additions not fully independently vetted. No mammal PAIC localities verified; MDD taxonomy only, MOBIOS+ metadata reviewed but underlying CC-BY-NC 4.0 DwC-A could not be retrieved. Geographic registry and conservative triage accepted as working audit, not final product species checklist. See `docs/LIKAS_GREATER_MINDANAO_PAIC_DEEP_PROVINCIAL_AUDIT_2026_10_31.md`.
+
+---
+
+
+## 31 October 2026 | Greater Mindanao PAIC: corrected legacy geographic scope; source triage staged
+
+- **Owner's active decision:** PAIC-linked species checklist before interactive map, beginning with Greater Mindanao. New research-only branch `research/likas-greater-mindanao-paic-audit` stacked on research PAIC framework draft PR #64 (itself based on emulator-tested RC66 draft PR #63). No Android, SQLite27, existing data, app assets, signing, or APK changes. This is **not** an accepted production species checklist.
+- **Original private data:** pinned RC66 WBCP 2025/Sy amphibians 2025-1/reptiles 2026-1 source bundle SHA256 `7845ceadc4b6d6226781478c72281364c876a4c1ad47b80d21b7d176ab7dc4c6`. Reviewed **399 source taxon keys** (193 birds, 50 amphibians, 156 reptiles), comprising 352 imported Mindanao locality labels and 47 newly recognized source-text island candidates. This is **not** an inventory of 399 validated/current/resident species, and mammals remain **0 accepted PAIC records**.
+- **Critical correction to prior state:** of 352 rows labeled `area_type=island; area_label=Mindanao`, only **318** explicitly name Mindanao in the original narrative. **26** refer only to `Greater Mindanao`, **7** name only Eastern Visayas/member islands, and **1** describes historical/extirpated offshore islands. These **34 import scope mismatches** need review. Do not retain the previous claim that all 352 are supported mainland/island Mindanao occurrences. Old SQLite rows were **not changed**. Some of the 318 directly named entries are nonresident, introduced, or historical and must not be called present-day native richness.
+- **47 additional semantic review:** **32** direct positive named-island phrases pending independent verification; **5** negatives/exclusions; **5** vagrant/migrant/winter-visitor; **2** marine/coastal; **1** introduced; **1** historical/former; **1** questioned locality. No candidate promoted into an app occurrence record. Camiguin Sur stays peripheral; Biliran and Bucas Grande are separately tracked within reference geography.
+- **Private deliverables in implementing chat:** 8-sheet `LIKAS_Mindanao_PAIC_Checklist_Review_2026-10-31.xlsx`, full 399-row and scoped 47/34 review CSVs, aggregate JSON. Exact downloadable paths are session-specific; verify fresh paths in future chats. Embedded source integrity, counts, unique keys, workbook key cells, and ZIP CRC passed. Restricted WBCP/Sy source statements are **not uploaded to the public GitHub repo**.
+- **Public documentation:** `docs/LIKAS_GREATER_MINDANAO_PAIC_SOURCE_SCOPE_AUDIT_2026_10_31.md` and `docs/LIKAS_GREATER_MINDANAO_PAIC_AUDIT_STATUS.json` (aggregate findings only). Major documented geographical units: Mindanao, Samar, Leyte, Bohol, Basilan, Dinagat, Siargao, with separately reviewed Biliran, Bucas Grande and Camiguin Sur treatment.
+- **Outstanding research gates:** verify each 47 positive/negative island statement against originals and independent locality records, correct 34 legacy scope mismatches with an auditable migration plan (not silent rewrite), validate mammals including potential MOBIOS+ occurrences and reuse rights, resolve taxon ranks/splits, vet WBCP/Sy licenses, approve versioned PAIC geometry and individual island taxon provenance. Do not interpret missing evidence as absence. Keep PR draft; no newly built APK.
+- **Next:** continue human source adjudication of the 34 scope mismatches and 32 positive new named-island candidates, then assess per-island known-record coverage and mammals. No map implementation before a reviewed evidence layer.
+
+---
 
 ## 31 October 2026 | PAIC Species Library source checklist audit: geography working draft, membership NOT finalized
 

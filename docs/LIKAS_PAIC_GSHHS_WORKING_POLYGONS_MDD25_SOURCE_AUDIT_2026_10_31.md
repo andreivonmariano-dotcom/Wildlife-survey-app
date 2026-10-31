@@ -1,0 +1,27 @@
+# LIKAS Greater Mindanao PAIC | Working island boundary + original MDD 2.5 reconciliation
+
+**Research date:** 2026-10-31. **Not an APK release.** All owner-private observation coordinates and derived site data remain outside the public repository.
+
+## Working geospatial boundary (created, validated)
+- Working contemporary island shorelines created using the locally installed **GSHHS intermediate resolution** data via Basemap, source https://www.ngdc.noaa.gov/mgg/shorelines/shorelines.html, LGPL. Exact edition bundled with Basemap has not been established. Output GPKG and GeoJSON in EPSG:4326, nine named valid island polygons and an eight-island dissolved multi-polygon. Polygon validity and GPKG readback checked.
+- The eight large **core** islands are Mindanao, Samar, Leyte, Bohol, Basilan, Dinagat, Siargao, and Biliran. Selection is by manually inspected coastline polygons containing unambiguous island interior points. **Camiguin Sur remains oceanic associated-only, not a historically landbridge-connected PAIC member**. Geologic context Hosner et al. (2014), DOI https://doi.org/10.1111/evo.12459 and Sanguila et al. (2016) https://doi.org/10.3897/zookeys.624.9814.
+- **These polygons show modern dry land, not an ice-age paleoshoreline.** They omit numerous small satellite islands and some nearshore areas. They cannot be used to rule out all other PAIC locations.
+- Of 11,746 owner-provided Research Grade observations, 2,539 coordinate-obscured/no public point remained unlocated. A modern point-in-polygon check classified 7,431 public points on eight core islands, 118 on associated Camiguin Sur, and 1,658 outside the nine declared polygons (held for review, **not automatically excluded from the historical PAIC**). Among 3,478 reported ≤100-m accuracy candidate points, a conservative whole-error-to-shoreline screen gave 2,928 point locations contained in named modern land polygons (2,866 core, 62 associated), seven shoreline-uncertain, and 543 outside the selection. **No elevation or land-cover raster was obtained or sampled.**
+- Original source-observation coordinates/observer metadata **not committed**. Owner received private GeoJSON/GPKG, vector-map QA preview, source taxon observations classification and scripts.
+
+## MDD v2.5 uploaded ZIP: original primary source verification
+- User uploaded `MDD.zip`; checked internal `MDD/MDD_v2.5_6904species.csv` MD5 `533e662fd5b8f66a5f56c191e7efac44`, identical to official MDD v2.5 on Zenodo (28 July 2026), https://zenodo.org/records/21654811. Source includes 6,904 species.
+- **102/102** LIKAS mammal candidates checked against original accepted species plus full original synonym CSV; **101 exact accepted names** and the remaining ***Chaerephon plicata* maps to currently accepted *Mops plicatus*** by MDD synonym data. MDD families agree for all 102 mammal concepts. This closes the previously outstanding **MDD v2.5 species-level family/source check**, though app master combination has not been renamed.
+- MDD `countryDistribution` does not explicitly list Philippines for eight checklist mammal names; retain as source-distribution conflict requiring region-specific specimen/survey review, not proof of actual absence. MDD 246 wild/non-domestic country Philippines mentions are national candidates, not Greater Mindanao PAIC fauna.
+- MDD `iucnStatus` entries differ from earlier secondary-display interpretation: *Alionoctula javanica* LC (as *Pipistrellus javanicus*), *Desmalopex leucoptera* VU (as *Desmalopex leucopterus*), *Podogymnura minima* NE. These are **MDD's attributed codes**, not independently checked most-recent IUCN original assessments.
+- All files in the owner's standalone research ZIP remained private; no full MDD source tables uploaded to public repository.
+
+## Remaining valid tasks
+1. Improve modern coast geometries for satellite islands using a known-version licensed high-resolution GSHHS or other source, and crosscheck island memberships and coastline positional uncertainty. Historic Pleistocene landbridge reconstruction **requires bathymetry and explicit sea-level methodology**, not union of modern land boundaries.
+2. Obtain suitable DEM/DTM/DSM tiles, vertical datum and 2020/2021 or time-matched land-cover maps. After polygon validation, sample only non-obscured public points with uncertainty fully on suitable land. ESA 2021 WorldCover https://esa-worldcover.org/en/data-access is not historical habitat for 1980 observations. Copernicus public DSM is not ground height beneath forest canopies.
+3. Resolve 33 unmatched iNaturalist source names/identifications; track original observations and taxon-concept decisions. Do not auto-promote uncertain observations or count provisional names as extra species.
+4. Compare current IUCN species-level assessments/years/criteria with original DENR DAO 2019-09 and any amendments; preserve distinction between national legal category and global Red List.
+5. Design availability-aware habitat selection study if requesting true **preference**. iNaturalist records can support observed elevational/land-cover **association** and evidence coverage, not preference without resource/effort availability.
+6. Implement user-selected private on-device import in Android separately, preserving historical survey data, application ID and signing continuity.
+
+**Source document is public-safe methodology only. No APK, Android source, database or original checklist counts changed.**

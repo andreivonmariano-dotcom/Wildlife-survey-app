@@ -1,0 +1,302 @@
+{
+  "id": "LIKAS-GMND-REVIEW-2026-10-31",
+  "status": "GMND_POSSIBLE_LIKELY_V2_LOCKED_PRIVATE_RESEARCH_REFERENCE",
+  "source_branch": "research/likas-greater-mindanao-paic-audit",
+  "parent_branch": "research/likas-paic-checklist-audit",
+  "source_apk_version_code": 126,
+  "private_catalog_payload_sha256": "7845ceadc4b6d6226781478c72281364c876a4c1ad47b80d21b7d176ab7dc4c6",
+  "regional_taxon_keys_in_review": 399,
+  "taxon_group_counts": {
+    "Birds": 193,
+    "Amphibians": 50,
+    "Reptiles": 156,
+    "Mammals": 0
+  },
+  "legacy_import_rows_labeled_Mindanao_island": 352,
+  "legacy_statement_geography": {
+    "explicit_Mindanao_name": 318,
+    "Greater_Mindanao_phrase_only": 26,
+    "member_island_or_Eastern_Visayas_only": 7,
+    "offshore_historical": 1
+  },
+  "legacy_island_scope_discrepancies": 34,
+  "additional_candidate_records": 47,
+  "additional_statement_classification": {
+    "literal_named_island_positive_pending_verification": 32,
+    "negative_exclusion": 5,
+    "nonresident_transient": 5,
+    "marine_coastal": 2,
+    "introduced": 1,
+    "historical": 1,
+    "questioned": 1
+  },
+  "geographic_core": [
+    "Mindanao",
+    "Samar",
+    "Leyte",
+    "Bohol",
+    "Basilan",
+    "Dinagat",
+    "Siargao"
+  ],
+  "smaller_member_islands_require_separate_review": [
+    "Biliran",
+    "Bucas Grande"
+  ],
+  "peripheral_not_automatically_included": [
+    "Camiguin Sur"
+  ],
+  "production_species_occurrence_rows_promoted": 0,
+  "app_files_changed": 0,
+  "limitations": [
+    "No mammal island membership accepted",
+    "No claims of current native/resident richness",
+    "Legacy rows not edited",
+    "Original WBCP/Sy private text excluded from public repository",
+    "All 399 rows require original source-level adjudication before production use"
+  ],
+  "public_doc": "docs/LIKAS_GREATER_MINDANAO_PAIC_SOURCE_SCOPE_AUDIT_2026_10_31.md",
+  "deep_research_2026_10_31": {
+    "status": "scientific_review_queue_complete_not_fully_verified",
+    "province_psgc_codes_count": 32,
+    "national_checklist_province_name_tokens_unreviewed": 502,
+    "unique_taxa_with_tokens": 225,
+    "legacy_province_row_triage": {
+      "binomial_source_phrase_mentions": 7,
+      "subspecies_needs_species_reconciliation": 1,
+      "unresolved_genus_Ophiophagus": 3
+    },
+    "correction": "Hoplobatrachus chinensis original text does list Davao del Sur",
+    "independent_species_cases_referenced": 5,
+    "mobios_archive_retrieved": false,
+    "mammal_location_records_approved": 0,
+    "rows_promoted_to_app": 0,
+    "public_audit_document": "docs/LIKAS_GREATER_MINDANAO_PAIC_DEEP_PROVINCIAL_AUDIT_2026_10_31.md"
+  },
+  "literature_review_2026_10_31": {
+    "status": "curated_initial_literature_register_not_exhaustive",
+    "bibliographic_sources": 46,
+    "source_taxon_locality_or_qualifier_links": 105,
+    "explicit_rejected_samar_historic_taxa_rows": 9,
+    "legacy_taxon_keys_with_exact_name_positive_or_historical_literature_match": 46,
+    "legacy_taxon_keys_total": 399,
+    "province_coverage_roster": 32,
+    "mobios_raw_archive_retrieved": false,
+    "external_source_reuse_cleared": false,
+    "app_occurrence_rows_promoted": 0,
+    "public_methodology_doc": "docs/LIKAS_GREATER_MINDANAO_LITERATURE_EVIDENCE_REVIEW_2026_10_31.md"
+  },
+  "product_geographic_checklist_policy": {
+    "decision_date": "2026-10-31",
+    "current_scope": "PAIC_AND_SEPARATELY_DEFINED_BIOGEOGRAPHIC_ISLAND_GROUP_CHECKLISTS_ONLY",
+    "provincial_checklist_product": "cancelled_owner_direction",
+    "provincial_species_richness_exports": "out_of_scope",
+    "locality_and_province_mentions": "retain_as_source_evidence_not_published_province_lists",
+    "prior_provincial_audit": "archival_source_review_only",
+    "next_work": "greater_mindanao_paic_species_and_mammal_evidence_adjudication",
+    "map_filter": "PAIC_geographic_unit_only",
+    "user_decision_supersedes_prior_provincial_roadmap": true
+  },
+  "paic_v03_2026_10_31": {
+    "scope": "GMND PAIC ONLY",
+    "status": "candidate_register_updated_not_final_comprehensive",
+    "previous_candidate_keys": 399,
+    "literature_supported_mammal_taxa": 11,
+    "working_taxon_keys": 410,
+    "source_taxon_evidence_links": 111,
+    "total_source_registry": 55,
+    "primary_mammal_type_specimen_records": 4,
+    "legacy_taxon_keys_with_any_link": 52,
+    "original_mindanao_scope_mismatch_rows": 34,
+    "production_approved": false,
+    "sqlite_changes": 0,
+    "app_changes": 0,
+    "release_apk_built": false,
+    "workbook_sha256": "5bdbf2680f79f5a9847bac2325ae3eb5906d612d973fc36d599220f38c0eb3f3",
+    "public_research_note": "docs/LIKAS_GREATER_MINDANAO_PAIC_V03_RESEARCH_CHECKPOINT.md"
+  },
+  "current_scope": "Greater Mindanao PAIC final version-locked possible/likely reference v2.0",
+  "paic_possible_species_v10_2026_10_31": {
+    "accepted": true,
+    "purpose": "possible species, not verified occurrence or inventory",
+    "candidate_binomial_display_names": 400,
+    "groups": {
+      "Birds": 186,
+      "Amphibians": 50,
+      "Reptiles": 153,
+      "Mammals": 11
+    },
+    "underlying_included_source_taxon_keys": 402,
+    "original_review_source_keys": 410,
+    "deferred_ambiguous_or_excluded": 7,
+    "deferred_unresolved_genus": 1,
+    "display_duplicates_collapsed": 2,
+    "literature_and_qualifier_links": 111,
+    "bibliography_sources": 55,
+    "private_xlsx_sha256": "b0d1829a365e4f3dcef914108e50b1371750496fa08f87cf15ea7b8a6e9fdb66",
+    "private_json_sha256": "bc033f6adab4a7789ed686adfb37e8818d3d91993693e29cb1d19a97959499e6",
+    "private_zip_sha256": "7763ea6b32c4ca36bc7b3787b73a4bcda7a29d52429013559b45633bc0e9db3c",
+    "public_source_rows_committed": false,
+    "app_data_migrated": false,
+    "apk_built": false,
+    "rights_cleared_for_public_release": false,
+    "governing_policy": "docs/LIKAS_PAIC_POSSIBLE_SPECIES_CHECKLIST_POLICY_2026_10_31.md"
+  },
+  "final_locked_possible_likely_v2_2026_10_31": {
+    "locked_version": "2.0.0",
+    "id": "LIKAS-GMND-PAIC-POSSIBLE-LIKELY-2026-10-31-LOCK-2.0",
+    "named_binomials": 638,
+    "group_counts": {
+      "Birds": 349,
+      "Mammals": 83,
+      "Amphibians": 51,
+      "Reptiles": 155
+    },
+    "tier_counts": {
+      "likely": 461,
+      "possible": 177
+    },
+    "added_from_v1": {
+      "widespread_WBCP_birds": 162,
+      "questioned_region_bird": 1,
+      "mammals_from_Field_Museum": 72,
+      "Samar_2026_herps": 3
+    },
+    "source_registry_entries": 60,
+    "final_xlsx_sha256": "00df680b32ff566fd289be67f39a847deaae56017f59aecb3a9fe973047e3e0c",
+    "final_csv_sha256": "20a45cf58d36baf3e1c4b9de4202c1b33ceab0dbc65c41e01a82501acc590e08",
+    "final_json_sha256": "142788ca452e654b25212dc80a13b9e7a44d91536e878e04b136862f3e9a74c0",
+    "final_private_zip_sha256": "d9c66e80824df617dfdfa7dd79fc08d5c6663962a9a885df1584791a380b8fa0",
+    "full_private_dataset_uploaded_public_repository": false,
+    "public_release_reuse_cleared": false,
+    "Android_apk_built": false,
+    "sqlite_schema_modified": false,
+    "provincial_checklists_cancelled": true,
+    "lock_doc": "docs/LIKAS_GMND_PAIC_FINAL_LOCK_V2_2026_10_31.md"
+  },
+  "paic_taxonomic_addendum_v21_2026_10_31": {
+    "status": "curated_private_revised_reference",
+    "supersedes_release_of_baseline": false,
+    "baseline_v2_locked_unchanged": true,
+    "named_vertebrate_candidates": 640,
+    "group_counts": {
+      "Birds": 349,
+      "Mammals": 83,
+      "Amphibians": 53,
+      "Reptiles": 155
+    },
+    "source_likely": 463,
+    "source_possible": 177,
+    "genus_level_operational_identifications": 4,
+    "genus_vouchered_published_study_units": 3,
+    "legacy_genus_only_not_voucher_validated": 1,
+    "other_fauna_named_discoveries": 9,
+    "private_workbook_sha256": "adf82db8bf1f438598fbe8c7a059393858cb07acaa7e2cea7d364f1be7dc2a6a",
+    "private_zip_sha256": "e31b0b1e93d048dcb10fe8d14d7bf80cd8babce1f2d2b0e56146a2bc8be25a96",
+    "public_doc": "docs/LIKAS_GMND_PAIC_TAXONOMIC_UPDATE_V21_2026_10_31.md",
+    "android_implementation": false,
+    "source_rights_reviewed_for_distribution": false
+  },
+  "current_paic_scope_groups": [
+    "Birds",
+    "Reptiles",
+    "Amphibians",
+    "Mammals"
+  ],
+  "excluded_from_paic_checklists": [
+    "Fish",
+    "Insects",
+    "Other invertebrates",
+    "Other fauna"
+  ],
+  "paic_four_group_revision_v211_2026_10_31": {
+    "status": "owner_scope_locked_private_research_reference",
+    "version": "2.1.1",
+    "reason": "Scope-only, exclude noncore discoveries",
+    "named_candidates": 640,
+    "group_counts": {
+      "Birds": 349,
+      "Reptiles": 155,
+      "Amphibians": 53,
+      "Mammals": 83
+    },
+    "tiers": {
+      "LIKELY": 463,
+      "POSSIBLE": 177
+    },
+    "genus_level_records": 4,
+    "taxonomic_changes_retained": 8,
+    "other_fauna_discoveries_included": 0,
+    "in_scope_bibliography_records": 8,
+    "workbook_sha256": "538dfecd1980f69452f5b2b4e7ecab07b680e153e4e621f5692a1466b3565c0c",
+    "prior_v20_frozen_unchanged": true,
+    "prior_v21_historical": true,
+    "app_modified": false,
+    "sqlite_modified": false,
+    "apk_built": false,
+    "public_redistribution_rights_cleared": false
+  },
+  "paic_status_inclusion_v221_2026_10_31": {
+    "accepted": true,
+    "reference_scope": "private_research_not_app_installed",
+    "parent": "local v2.2",
+    "version": "2.2.1",
+    "named_candidates_unchanged": 644,
+    "counts": {
+      "Birds": 350,
+      "Reptiles": 155,
+      "Amphibians": 54,
+      "Mammals": 85
+    },
+    "genus_operational_ids": 6,
+    "tags_are_nonexclusive": true,
+    "tagged": {
+      "resident": 266,
+      "migrant": 110,
+      "vagrant": 53,
+      "accidental": 22,
+      "introduced": 18,
+      "historical": 14,
+      "marine_coastal": 2
+    },
+    "without_any_explicit_tag": 278,
+    "source_data_private": true,
+    "android_modified": false,
+    "xlsx_sha256": "304de7c3be2ecd290f39bb0657ab12c60d014ee9d99852406e712c309172a9b8",
+    "research_report": "docs/LIKAS_GMND_PAIC_STATUS_INCLUSION_V221_2026_10_31.md"
+  },
+  "paic_deeper_v222_2026_10_31": {
+    "date": "2026-10-31",
+    "edition": "2.2.2",
+    "status": "private_candidate_reference_updated_not_integrated",
+    "parent": "2.2.1",
+    "named_species": 645,
+    "group_counts": {
+      "Birds": 350,
+      "Reptiles": 155,
+      "Amphibians": 53,
+      "Mammals": 87
+    },
+    "tiers": {
+      "LIKELY": 467,
+      "POSSIBLE": 178
+    },
+    "separate_genus_records": 6,
+    "added_species": [
+      "Murina alvarezi",
+      "Murina philippinensis"
+    ],
+    "taxon_display_replacement": "Bronchocela cristatella -> Bronchocela philippina",
+    "duplicate_merge": "Limnonectes leitensis -> Limnonectes leytensis",
+    "already_present": [
+      "Eutropis alcalai",
+      "Eutropis islamaliit"
+    ],
+    "xlsx_sha256": "8526ec102cfbb4dbea562684b9e05f0b97f4305f03a15726b9231622e371ad25",
+    "private_zip_sha256": "7d59cec3fe45794beb706f92938f9a01804e862b613a56ba07fd82ddc3ab5ffe",
+    "public_summary": "docs/LIKAS_GMND_PAIC_DEEPER_TAXONOMY_V222_2026_10_31.md",
+    "app_modified": false,
+    "sqlite_modified": false,
+    "apk_built": false
+  }
+}

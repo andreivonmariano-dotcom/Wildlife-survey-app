@@ -235,5 +235,34 @@
     "sqlite_modified": false,
     "apk_built": false,
     "public_redistribution_rights_cleared": false
+  },
+  "paic_status_inclusion_v221_2026_10_31": {
+    "accepted": true,
+    "reference_scope": "private_research_not_app_installed",
+    "parent": "local v2.2",
+    "version": "2.2.1",
+    "named_candidates_unchanged": 644,
+    "counts": {
+      "Birds": 350,
+      "Reptiles": 155,
+      "Amphibians": 54,
+      "Mammals": 85
+    },
+    "genus_operational_ids": 6,
+    "tags_are_nonexclusive": true,
+    "tagged": {
+      "resident": 266,
+      "migrant": 110,
+      "vagrant": 53,
+      "accidental": 22,
+      "introduced": 18,
+      "historical": 14,
+      "marine_coastal": 2
+    },
+    "without_any_explicit_tag": 278,
+    "source_data_private": true,
+    "android_modified": false,
+    "xlsx_sha256": "304de7c3be2ecd290f39bb0657ab12c60d014ee9d99852406e712c309172a9b8",
+    "research_report": "docs/LIKAS_GMND_PAIC_STATUS_INCLUSION_V221_2026_10_31.md"
   }
 }

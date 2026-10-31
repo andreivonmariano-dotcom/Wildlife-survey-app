@@ -1,3 +1,12 @@
+## 31 October 2026 | Original-paper species tables (142 rows) and 3 Greater Mindanao iNaturalist projects
+
+- Reviewed full accessible primary Hijo Forest PDF **122** named table entries (17 mammals, 11 amphibians, 22 reptiles, 72 birds), not the inconsistent website abstract **125**; field/2010 historic/locally reported categories must remain distinct. University of the Philippines Mindanao DBSES wildlife collection holds collected specimens, but individual institutional accession IDs not in Table 1.
+- Retrieved all **20** Tinuy-an Falls 2022 species and **18** original JLP field catalog/image-number entries; two field IDs remain unextracted. Compared combined 142 entries against private full v3.4 + independent 101-mammal v3.6: **115 exact, 1 old-name crosswalk, 4 manual crosswalk, 5 cf./sp. unresolved, 17 not exact**, zero additions approved. Owner private XLSX, CSV, QA and original-source links delivered as download ZIP.
+- Verified all three user-provided iNaturalist Greater Mindanao projects are indexed on Davao Region place site. **No live research-grade observations extracted** because projects/API inaccessible from current tool network. Wrote and mock-tested a network-ready Python 3 stdlib API exporter to retrieve research-grade record IDs, taxon names and provenance safely without sensitive coordinates; needs actual network run before real observation audit.
+- Public-safe detailed research checkpoint: `docs/LIKAS_PRIMARY_PAPERS_AND_INAT_PROJECTS_AUDIT_2026_10_31.md`. No app/DB/APK, signing, original species checklist, on-device observation or private dataset changes.
+
+---
+
 ## 31 October 2026 | Expanded Mindanao biodiversity literature search (73 unique sources)
 
 - Completed a broader source search retaining previous 29 literature entries and adding **44 distinct reference leads** (29 four-group vertebrate-relevant, 15 broader habitat/ecology/research). Source URLs, year, named locality, source-reported claim, DOI where available, evidence-access level and LIKAS disposition are recorded in the owner-delivered 73-row CSV, accompanying markdown and QA ZIP. ZIP CRC checked; no formal exhaustive/PRISMA completion claim.

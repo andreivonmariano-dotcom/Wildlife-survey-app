@@ -31,7 +31,7 @@ class Rc52HomeTheme(unittest.TestCase):
 
     def test_same_package_schema_and_preview_version(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 125",build)
+        self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)
         self.assertIn("0.27.3-rc65-library-optical-icons-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))

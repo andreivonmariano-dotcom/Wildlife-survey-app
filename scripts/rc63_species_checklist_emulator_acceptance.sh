@@ -4,6 +4,8 @@ mkdir -p emulator-qa
 PKG=org.phwildlife.survey.beta08
 adb shell wm density 160
 adb shell settings put secure show_ime_with_hard_keyboard 1 || true
+adb shell ime list -s > emulator-qa/available-imes.txt 2>&1 || true
+adb shell settings get secure default_input_method > emulator-qa/default-ime.txt 2>&1 || true
 adb install -r app/build/outputs/apk/debug/app-debug.apk > emulator-qa/install-current.txt 2>&1
 capture(){
   local filename="$1"
@@ -23,9 +25,12 @@ for cfg in "p360f100 360x800 1.0" "p412f130 412x892 1.3" "p320f200 320x720 2.0";
     "-Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.Rc63SpeciesChecklistInstrumentedTest" \
     "-Pandroid.testInstrumentationRunnerArguments.preset=$preset" \
     > "emulator-qa/rc63-$preset-checklist.txt" 2>&1 || {
+      adb pull "/sdcard/Pictures/LIKAS_RC63/rc63-$preset-ime-attempt.png" \
+        "emulator-qa/rc63-$preset-ime-attempt.png" >/dev/null 2>&1 || true
+      adb shell dumpsys input_method > "emulator-qa/rc63-$preset-ime-on-failure.txt" || true
       tail -n 130 "emulator-qa/rc63-$preset-checklist.txt"; exit 1;
     }
-  for kind in checklist-top checklist-scrolled keyboard-open; do
+  for kind in checklist-top checklist-scrolled ime-attempt keyboard-open; do
     capture "rc63-$preset-$kind.png"
   done
 done

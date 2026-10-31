@@ -1,5 +1,14 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Greater Mindanao PAIC status-inclusive v2.2.1 PRIVATE reference
+
+- Owner decision: resident, migrant, vagrant, accidental and introduced taxa all remain eligible for a possible PAIC checklist. These are overlapping source-described classes, independent of the regional LIKELY/POSSIBLE tier. National codes do not guarantee residency on every PAIC island; unsupported labels remain unset.
+- A new private v2.2.1 was exported from the locally saved v2.2 research edition: 644 existing named taxa unchanged (350 birds, 155 reptiles, 54 amphibians, 85 mammals), six genus-level IDs unchanged. Explicit source tags (non-exclusive): resident 266, migrant/seasonal 110, vagrant 53, accidental 22, introduced 18, historical 14, marine/coastal 2. 278 taxa lack these tags but remain included. Six-sheet workbook, CSV, JSON, methods and ZIP passed unique-ID, error and CRC checks.
+- Public-safe science method: docs/LIKAS_GMND_PAIC_STATUS_INCLUSION_V221_2026_10_31.md. Private owner-provided WBCP/Sy derivative rows deliberately not published. XLSX SHA256 304de7c3be2ecd290f39bb0657ab12c60d014ee9d99852406e712c309172a9b8. No Android/SQLite/survey/UI/assets/APK changes; no province checklists or fish/insects.
+
+---
+
+
 ## 31 October 2026 | Owner narrows PAIC species-library scope to Birds, Reptiles, Amphibians and Mammals only
 
 - **Authoritative product decision:** LIKAS PAIC checklists and their planned map browsing are restricted to birds, reptiles, amphibians and mammals. No fish, insects, invertebrates, or other wildlife groups in PAIC species-checklist products or future PAIC discovery-feed sections. This governs all PAICs, not just Greater Mindanao. No provincial checklist products (earlier cancellation unchanged).

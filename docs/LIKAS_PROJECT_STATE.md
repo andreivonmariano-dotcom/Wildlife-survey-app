@@ -1,3 +1,13 @@
+## 31 October 2026 | Private iNaturalist Birds of Greater Mindanao RG coordinate QA
+
+- The owner uploaded original Birds of Greater Mindanao Research Grade CSV ZIP (7,710 observations; 275 iNaturalist names). Completed private coordinate cleaning with re-runnable standard-library script. All **1,061 deliberately obscured public positions were redacted** and **33 source private-coordinate rows were not copied**; 6,649 unobscured WGS84 records retained. No usernames/place guesses/original free text transferred.
+- Unobscured reported horizontal uncertainty: 1,946 ≤30 m; 747 >30–100 m; 931 >100–250 m; 614 >250–1,000 m; 1,372 >1,000 m; 1,039 unknown. Initial name-only out-of-PAIC locality screen flagged 105 records. **2,655** open ≤100 m terrain candidates (185 iNaturalist taxa) and **1,917** ≤30 m higher-precision candidates remain **NOT PAIC polygon-validated**.
+- Owner-private downloads: full cleaned CSV, open coordinates, ≤100m terrain candidates CSV & valid EPSG:4326 GeoJSON, ≤30m landcover candidates, species coverage, QA, script & ZIP. ZIP SHA256 `7ea1e9ec9e92ed3a26d0b3eddc55a36f33d8079e5e95ddaab245e71fe943cafc`; verify exact download availability in any later chat.
+- No DEM elevations/landcover samples computed or claims made; source uncertainty and chronology require polygon join, DEM/landcover rasters, buffer sensitivity, and current-versus-historical landcover caution. User coordinates never published to public GitHub. Public metadata and methodology: `docs/LIKAS_BIRDS_INATURALIST_RG_COORDINATE_QA_2026_10_31.md`.
+- **No checklist counts, app code, SQLite, signed APK or phone data modified.**
+
+---
+
 ## 31 October 2026 | Original-paper species tables (142 rows) and 3 Greater Mindanao iNaturalist projects
 
 - Reviewed full accessible primary Hijo Forest PDF **122** named table entries (17 mammals, 11 amphibians, 22 reptiles, 72 birds), not the inconsistent website abstract **125**; field/2010 historic/locally reported categories must remain distinct. University of the Philippines Mindanao DBSES wildlife collection holds collected specimens, but individual institutional accession IDs not in Table 1.

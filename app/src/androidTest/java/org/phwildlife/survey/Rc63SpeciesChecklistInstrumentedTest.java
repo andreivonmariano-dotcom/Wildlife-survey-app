@@ -184,14 +184,21 @@ public final class Rc63SpeciesChecklistInstrumentedTest {
                 View root=a.getWindow().getDecorView();
                 EditText input=(EditText)described(root,"Search Philippine taxon catalog");
                 assertNotNull(input);
+                input.setShowSoftInputOnFocus(true);
                 input.requestFocus();
+                input.performClick();
+                a.getWindow().setSoftInputMode(
+                    android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE |
+                    android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                 InputMethodManager imm=(InputMethodManager)a.getSystemService(Context.INPUT_METHOD_SERVICE);
                 assertNotNull(imm);
-                imm.showSoftInput(input,InputMethodManager.SHOW_IMPLICIT);
+                input.post(()->imm.showSoftInput(input,InputMethodManager.SHOW_FORCED));
             });
             settle();
+            try{Thread.sleep(1100);}catch(InterruptedException e){Thread.currentThread().interrupt();}
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
+                capture(a,"rc63-"+preset()+"-ime-attempt.png");
                 WindowInsets insets=root.getRootWindowInsets();
                 assertNotNull("Android window insets",insets);
                 assertTrue("Actual IME must be visible in acceptance screenshot",

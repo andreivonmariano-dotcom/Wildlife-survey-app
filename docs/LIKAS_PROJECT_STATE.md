@@ -1,3 +1,11 @@
+## 31 Oct 2026 | Owner uploaded two COP30 TAR archives — processing runtime blocked
+
+- The owner supplied `rasters_COP30.tar.gz` (471,008,818 B) and `rasters_COP30.tar_2.gz` (132,469,974 B). Verified upload metadata only. All container/Python commands failed with backend ClientError, including trivial commands; no archive inspection, coverage QA or elevation sampling was actually done. **Do not claim DEM-derived heights or new elevation preferences.**
+- Wrote public-safe owner-private DEM stream inventory and strict research-grade/modern-PAIC polygon/100m positional-uncertainty sampling utility in `scripts/likas_cop30_owner_private_elevation.py`; source committed but no real-file or syntactic runtime test this turn. Workflow and execution limitations: `docs/LIKAS_COP30_UPLOADED_RASTER_EXECUTION_CHECKPOINT_2026_10_31.md`. No private raster bytes/coordinates committed.
+- Outstanding unchanged: ESA WorldCover tiles absent; iNat review names + MDD country-distribution conflicts; direct IUCN latest status requires API credentials; island satellites and paleoshoreline model pending. No checklist count, Android app, SQLite, survey data or APK changed.
+
+---
+
 ## 2026-10-31 | Working modern Greater Mindanao PAIC polygons and uploaded original MDD reconciliation
 
 - Built **working contemporary shoreline polygons** from locally available GSHHS intermediate coastline: eight named core PAIC large islands; oceanic associated Camiguin Sur separately; QGIS GeoPackage and GeoJSON validated EPSG:4326. **Not a minus-120-m historical landbridge reconstruction; small satellites still unclassified.**

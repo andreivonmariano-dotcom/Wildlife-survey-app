@@ -1,3 +1,12 @@
+## 31 October 2026 | Private mammal candidate and source-evidence register v3.6.0
+
+- Latest **independent private mammal research reference**: **101 named included candidate species**, +1 *Podogymnura minima* (2023 Balete et al. taxonomic elevation of historical *P. truei minima*; original Kitanglad voucher ZMUC 1311 and source-published specimen series). Previous v3.5 mammal register (100 species) remains immutable, as does full four-group v3.4.0; no APK merge occurred.
+- Built and validated owner-private XLSX, offline research-staging JSON, candidate/evidence/crosswalk CSVs, 29-reference literature register, QA and ZIP. **305 source-linked assertions**: 101 master summaries, 100 original island assertions, 99 original source assertions, 5 primary named field/specimen sources. These are not independent wildlife detections.
+- Four individual mammal MDD v2.5 web profiles checked, **97 inherited names/family assignments still lack exact species-row matching**. Original official MDD v2.5 CSV download failed; not falsely reported as verified. *P. minima* IUCN and Philippine DENR categories explicitly unverified, no inheritance from *P. truei*.
+- No field survey, DB, code, signed APK or installed checklist updated. Owner private source-derived data are off public GitHub. Public-safe citations, artifact hashes and remaining checklist work: `docs/LIKAS_GMND_MAMMAL_SOURCE_EVIDENCE_REGISTER_V360_2026_10_31.md`.
+
+---
+
 ## 31 October 2026 | Expanded Mindanao biodiversity literature checkpoint (29 references)
 
 - Scanned publisher/original source pages, taxonomic revisions and GBIF/Zenodo metadata for **29** Mindanao-focused vertebrate, synthesis and habitat references (13 mammal or mixed mammal/bird, 8 herp, 3 bird, 5 synthesis/ecosystem). Private 29-row annotated markdown and CSV register were delivered directly in the owner's chat; sandbox URLs need fresh verification in future chats.

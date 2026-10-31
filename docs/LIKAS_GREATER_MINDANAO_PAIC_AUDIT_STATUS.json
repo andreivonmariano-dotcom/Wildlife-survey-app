@@ -1,6 +1,6 @@
 {
   "id": "LIKAS-GMND-REVIEW-2026-10-31",
-  "status": "candidate_checklist_v1_final_for_private_possible_species_purpose",
+  "status": "GMND_POSSIBLE_LIKELY_V2_LOCKED_PRIVATE_RESEARCH_REFERENCE",
   "source_branch": "research/likas-greater-mindanao-paic-audit",
   "parent_branch": "research/likas-paic-checklist-audit",
   "source_apk_version_code": 126,
@@ -115,7 +115,7 @@
     "workbook_sha256": "5bdbf2680f79f5a9847bac2325ae3eb5906d612d973fc36d599220f38c0eb3f3",
     "public_research_note": "docs/LIKAS_GREATER_MINDANAO_PAIC_V03_RESEARCH_CHECKPOINT.md"
   },
-  "current_scope": "Greater Mindanao PAIC possible-species reference finalized v1.0",
+  "current_scope": "Greater Mindanao PAIC final version-locked possible/likely reference v2.0",
   "paic_possible_species_v10_2026_10_31": {
     "accepted": true,
     "purpose": "possible species, not verified occurrence or inventory",
@@ -141,5 +141,37 @@
     "apk_built": false,
     "rights_cleared_for_public_release": false,
     "governing_policy": "docs/LIKAS_PAIC_POSSIBLE_SPECIES_CHECKLIST_POLICY_2026_10_31.md"
+  },
+  "final_locked_possible_likely_v2_2026_10_31": {
+    "locked_version": "2.0.0",
+    "id": "LIKAS-GMND-PAIC-POSSIBLE-LIKELY-2026-10-31-LOCK-2.0",
+    "named_binomials": 638,
+    "group_counts": {
+      "Birds": 349,
+      "Mammals": 83,
+      "Amphibians": 51,
+      "Reptiles": 155
+    },
+    "tier_counts": {
+      "likely": 461,
+      "possible": 177
+    },
+    "added_from_v1": {
+      "widespread_WBCP_birds": 162,
+      "questioned_region_bird": 1,
+      "mammals_from_Field_Museum": 72,
+      "Samar_2026_herps": 3
+    },
+    "source_registry_entries": 60,
+    "final_xlsx_sha256": "00df680b32ff566fd289be67f39a847deaae56017f59aecb3a9fe973047e3e0c",
+    "final_csv_sha256": "20a45cf58d36baf3e1c4b9de4202c1b33ceab0dbc65c41e01a82501acc590e08",
+    "final_json_sha256": "142788ca452e654b25212dc80a13b9e7a44d91536e878e04b136862f3e9a74c0",
+    "final_private_zip_sha256": "d9c66e80824df617dfdfa7dd79fc08d5c6663962a9a885df1584791a380b8fa0",
+    "full_private_dataset_uploaded_public_repository": false,
+    "public_release_reuse_cleared": false,
+    "Android_apk_built": false,
+    "sqlite_schema_modified": false,
+    "provincial_checklists_cancelled": true,
+    "lock_doc": "docs/LIKAS_GMND_PAIC_FINAL_LOCK_V2_2026_10_31.md"
   }
 }

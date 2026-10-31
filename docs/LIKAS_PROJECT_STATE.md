@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Greater Mindanao indexed biodiversity literature review: 46 works, 105 evidence statements, research gate remains
+
+- **Owner directive:** scour Greater Mindanao PAIC/provincial biodiversity literature, analyze sources and attach citations to checklist while keeping scientific certainty. Current research branch `research/likas-greater-mindanao-paic-audit`, draft PR #65; app code/test baseline still RC66 (code126), SQLite27 unchanged.
+- **Research deliverables directly attached:** 8-tab `LIKAS_Greater_Mindanao_PAIC_Provincial_Literature_Evidence_2026-10-31.xlsx` (46 bibliography records; 105 source–taxon–geography/qualifier lines, including nine explicit Samar exclusions; 399 private candidate-taxonomy exact-name crosswalk, of which **46** have at least one positive or historical literature citation match; 32 province coverage rows; study summaries; search log), full Markdown report with all 46 URLs and bibliography/links/crosswalk CSVs. Workbook ZIP CRC valid, eight sheets/ranges checked, formula scan clear. No original WBCP/Sy restricted source quotations committed publicly.
+- **Scientific evidence:** Sanguila et al 2016 northeast Mindanao coded H/N province/island herps; Diesmos et al 2026 Samar 79 surveyed vs 104 island compiled and rejects nine older claims; Sanguila et al 2026 Agusan Marsh distinguishes PS/FS vs historic and invasive; Dinagat mammal field records, Leyte, Sarangani, Bukidnon and freshwater fish, plants, lichens included. Source metadata/title/DOI/age and scope retained; not all full article texts audited.
+- **Verification boundary:** targeted search across publishers and repositories, **not exhaustive systematic/PRISMA review** of all papers; no raw MOBIOS+ DwC-A archive ingested (CC BY-NC 4.0 metadata); historical/negative and uncertain rank never promoted into modern occurrence or province. No conclusive 399-taxon or 32-province species checklist or richness tally. No data/app/SQLite/schema/UI/assets/exports/signing or APK changes. Continue priority original source validation and missing provinces. Public methods report: `docs/LIKAS_GREATER_MINDANAO_LITERATURE_EVIDENCE_REVIEW_2026_10_31.md`.
+
+---
+
+
 ## 31 October 2026 | Greater Mindanao deep research and 32-province geographic audit; complete triage, NOT certified species checklist
 
 - **Owner request:** research the entire Greater Mindanao taxon pool, then work toward provincial checklists. Continued on `research/likas-greater-mindanao-paic-audit` draft PR #65. No Android source/SQLite27/assets/signer/field records changed; no new APK built.

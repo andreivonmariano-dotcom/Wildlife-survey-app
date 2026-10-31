@@ -12,6 +12,7 @@ class Rc66SpeciesAccountUi(unittest.TestCase):
     def test_large_text_search_reuses_original_controls(self):
         page = source("TaxonDetailActivity.java")
         self.assertIn("SOFT_INPUT_ADJUST_RESIZE", page)
+        self.assertIn('search.setHint("Search species")', page)
         self.assertIn("stackedSearch=widthDp<350f||", page)
         self.assertIn("getResources().getConfiguration().fontScale>=1.60f", page)
         self.assertIn("searchRow.removeAllViews()", page)

@@ -1,5 +1,38 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | PAIC split raster recovery and actual sampling succeeded, scientific interpretation provisional
+
+- **Earlier runtime blocker resolved in this chat:** The shell/container became available after the owner's split-archive uploads. Reassembled three original archives from raw .001-005/.001-002/.001-003 chunks with exact byte totals and matching prefix checks: COP30 TARs 471,008,818 and 132,469,974 bytes; TerraScope ZIP 267,666,850 bytes. The original smaller TerraScope ZIP (67,734,369 bytes) was also read. ZIP CRC and decompression passed.
+- **Verified raster identities:** Two cropped `output_hh.tif` COP30-labeled surface-height grids, EPSG:4326, 1/3600° cells, **no embedded vertical datum or explicit NoData**. The overlapping samples at 86 observation positions were identical. TerraScope exports are **ESA WorldCover 2020 v100** classification layers, not 2021 v200; 16 unique 10-m class-map tiles, metadata includes legend/CC BY4. InputQuality rasters were not confused with land-cover map classes.
+- **New user-private scientific output (v0.4):** Sampled 3,487 previously curated public, unobscured <=100m accuracy iNaturalist candidates; 2,853 are inside draft v0.3 principal-island shoreline polygons; 22 boundary-uncertain and 612 outside main island footprint excluded from raster extraction. All 2,853 inside polygon candidates yielded numeric height (3 negative -0.5m flagged; datum unverified). 2,076 points with <=30m reported positional accuracy yielded a WorldCover 2020 map class. No direct habitat field verification.
+- **Species coverage:** 221/725 species have provisional surface-associated height samples; 205/725 have 2020 mapped cover classes. Of assigned WorldCover classes 1,960 observations postdate 2020, 52 predate, only 64 are from 2020. Recorded 59-observation/26-taxon source discrepancy remains unresolved (925 sampled inside points for affected taxa on hold), plus 155 unresolved source-name RG records excluded as before. Do not present these values as ecological preference, complete elevation limits, geodetic field measurements, or verified PAIC occurrences.
+- **Executed checks:** 3,487 unique observation IDs, species and point totals reconciled, 12 independent original raster pixel samples exactly matched output CSV (after rounding), 86 overlapping-grid height samples agreed, workbook exported/inspected and private ZIP CRC passed. Source archive SHA-256 hashes and raster bounds in private JSON manifest. No source files modified.
+- **Deliverables in originating conversation:** `LIKAS_PAIC_Ecological_Raster_Evidence_v0.4_PRIVATE.xlsx` (725 taxa, no coordinates), `LIKAS_PAIC_Raster_Integration_v0.4_PRIVATE_PACKAGE.zip` (summary plus **PRIVATE** observation-level point coordinates, metadata and executable research scripts). Direct links are session-local; **do not republish the private ZIP publicly or guess a later sandbox URL**.
+- **Public-safe durable science record:** `docs/LIKAS_PAIC_ACTUAL_RASTER_SAMPLING_v0_4.md` in this isolated scientific PR #66 branch. No APK/Android app code/schema/signing changes. Next ecological work: specialist-review region membership, 59-row reconciliations, vertical datum and source integrity, land-cover temporal/accuracy limits; only then permit a reviewed species library import.
+
+
+
+## 31 October 2026 | PAIC archive inventory synthetic CI passed, PR #66 draft
+
+- The new isolated scientific source/tests in `feature/likas-paic-raster-archive-qa-v04` are reviewed under **draft PR #66** targeting the RC55 branch (not merged).
+- **Verified CI:** GitHub Actions PAIC Raster Archive Inventory QA, run `41208739238`, completed **success** at PR head application-independent source SHA `351d54812198eb380284268177d4a2c8fe1dfdd7`. Run step details confirm Python source compilation and synthetic ZIP/TAR unit test success. No actual project archive or geospatial raster values were accessible in that runner.
+- The local conversation environment remains unable to execute shell or Python, despite successful staging of the 67,734,369-byte TerraScope ZIP. The 3 remaining Project archives exceed the Files tool materialization limit, and mounted accessibility is unresolved.
+- **0 actual DEM/DSM heights, 0 classified land-cover pixels, 0 validated species ecological summaries.** Do not claim elevation/landcover extraction was completed or that the private original raster members were inspected.
+- Script and tests are not Android application changes, hence no new APK is available or required. Next scientific step: open real archives in healthy local execution, verify metadata/coverage, and run privacy-preserving raster sampling. Do not publish owner source coordinates.
+
+
+
+## 31 October 2026 | PAIC raster v0.4 repository-side inventory utility prepared; real extraction blocked
+
+- **Active isolated scientific branch:** `feature/likas-paic-raster-archive-qa-v04` derived from RC55 draft head `6108244738f35179582e5f2ae13587fa3cb1a90f`. Startup/Android workstream untouched; no app code, SQLite, signing or APK changed.
+- **Private source file verification in current chat:** Project Files service confirmed 4 supplied TerraScope/Copernicus ZIP/TAR archives with byte sizes 67,734,369; 267,666,850; 132,469,974; 471,008,818. Only the 67.7 MB ZIP successfully materialized to `/mnt/data/likas_rasters/terrascope_download_20261031_201913.zip`; the other three hit the 100 MiB copy limit. Existing uploaded source assets must be preserved.
+- **Execution blocker unchanged:** shell and both Python runtimes return `ClientError` even for trivial commands. Neither ZIP contents nor raster geospatial metadata could be examined. **0 raster pixels sampled, 0 species elevation/land-cover records generated**. There is no new private spreadsheet or downloadable result.
+- **New executable source (not locally tested):** `scripts/likas_paic_raster_archive_inventory.py` safely indexes ZIP/TAR members and optionally stages an individual raster to obtain Rasterio CRS, WGS84 footprint, nodata, source tags, band/pixel details. No environmental inference from filenames. Synthetic tests in `scripts/test_likas_paic_raster_archive_inventory.py`; workflow `.github/workflows/paic-raster-inventory-qa.yml`. Source committed to isolated branch. **No CI pass is yet verified.**
+- **Method/usage:** `docs/LIKAS_PAIC_RASTER_ARCHIVE_QA_v0_4.md`; original ecological extraction v0.2 and provisional island boundaries v0.3 remain separate, unverified. Do not export precise sensitive observation points or commit owner private files to public GitHub. Earlier 59-observation discrepancy / 26 affected taxa and 155 unresolved taxon links remain held.
+- **Next:** when working execution is available, inventory the actual archive members and verify raster spatial overlap, CRS/datum/year/legend, then run **private** raster sampling against eligible PAIC observation coordinates, labeling all results provisional until original occurrence and regional boundary QA.
+
+
+
 ## 31 October 2026 | Copernicus/Terrascope raster files discovered in Project sources; extraction blocked by execution environment
 
 - Confirmed **four uploaded Project source archives**: Terrascope `terrascope_download_20261031_201913.zip` (67,734,369 bytes), `terrascope_download_20261031_201741.zip` (267,666,850 bytes), Copernicus `rasters_COP30.tar_2.gz` (132,469,974 bytes), and `rasters_COP30.tar.gz` (471,008,818 bytes).

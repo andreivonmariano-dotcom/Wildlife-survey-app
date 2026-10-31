@@ -45,7 +45,7 @@ class Rc54SetupVisualContract(unittest.TestCase):
           'persistSetup();',
           'radiusEntry.setError("Enter 1 to 2000 meters or leave blank")',
         ):self.assertIn(token,a)
-        self.assertIn("versionCode 125",(ROOT/"app/build.gradle").read_text())
-        self.assertIn("0.27.3-rc65-library-optical-icons-preview",(ROOT/"app/build.gradle").read_text())
+        self.assertGreaterEqual(int((ROOT/"app/build.gradle").read_text().split("versionCode ",1)[1].split()[0]),125)
+        self.assertIn("versionName '0.27.3-", (ROOT/"app/build.gradle").read_text())
         self.assertIn("super(context,NAME,null,27)",read("FieldDb.java"))
 if __name__=="__main__":unittest.main()

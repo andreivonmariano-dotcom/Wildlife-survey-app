@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Draft present-day PAIC shore polygons generated v0.3, environmental sampling still blocked
+
+- In response to the owner request, locally produced GSHHG intermediate-resolution **present-day island** polygon vectors for Mindanao, Samar, Leyte, Bohol, Basilan, Dinagat, Siargao (CORE_PAIC) plus isolated Camiguin Sur (CAMIGUIN_SUR). Scientific principal island membership grounded in Hosner et al. (2014) and Field Museum. Geometries from Basemap v2.0.0, **not** copied/traced from Google Earth. No claim of -120m Pleistocene connected shorelines. Small satellite islands are excluded pending island-by-island review. File outputs include GeoJSON/GPKG/KML/PNG/ZIP and no individual coordinates in map or public repository.
+- Provisional private coordinate screening of 3,487 previously accepted-linked, unobscured, <=100m candidate observations: **2,853 inside principal island footprints (62 Camiguin Sur), 22 shoreline uncertain, 118 on other landmasses, 494 off mapped selected land**. This is a coastline screening audit, not verified ecological data or absence. Preserve the original 59-row/26-taxon discrepancy and the 155 unresolved taxon-link records.
+- Actual input land-cover GeoTIFFs, DEM/DSM tiles and reviewed smaller satellite island affiliations were **not accessible** for processing. No terrain elevation or habitat class derived; do not infer them from Google Earth imagery or publish permanent Google Elevation API-derived data contrary to provider policy. Prefer licensed/versioned Copernicus GLO-30 plus dated land-cover data with source metadata, geoid and pixel uncertainty.
+- Eight selected island polygons were valid and disjoint across the two regions; 9-item package ZIP CRC verified, and private QA counts sum to 3,487. Public-safe source/method record: `docs/LIKAS_PAIC_PRESENT_DAY_ISLAND_POLYGONS_v0_3.md`. The draft vector files remain local conversation deliverables; they were not committed to the repository and must not be assumed downloadable in a future chat.
+- This was **not an Android code update**. No changes to schema, survey records, taxonomy, signed APK or RC55 release status. Next ecology task: source valid GIS raster inputs and review polygon geometry/membership, then run actual raster sampling with privacy, raster temporal/vertical datum and source QA. Screen 5 Android recorder remains separate.
+
+
+
 ## 31 October 2026 | Greater Mindanao PAIC ecological spatial QA v0.2 completed, GIS raster evidence still pending
 
 - **Scope:** Following owner's instruction to proceed with evidence-informed species ecology, locally processed both private PAIC workbooks (v3.8.0 + reviewed v3.8.1) and all three private iNaturalist CSV ZIP exports. Source totals: 725 species candidates; 12,811 exported rows; 11,746 RG, 1,065 Needs ID; 11,591 linked RG records and 155 unresolved RG records held. Public unobscured name-linked observation rows: 9,067.

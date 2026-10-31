@@ -73,7 +73,7 @@ Every accepted `taxon_key × biogeographic_unit` link must preserve:
 ## References for the geographic model
 
 - Pitogo, K. M. (2025). *Gaps and biases in vertebrate wildlife genetics from a global biodiversity hotspot*. Environmental Conservation. https://www.cambridge.org/core/journals/environmental-conservation/article/gaps-and-biases-in-vertebrate-wildlife-genetics-from-a-global-biodiversity-hotspot/77AF0A3084B2C16799390BADA15BF2EE
-- Meneses, C. G., et al. (2024). *The state of Philippine herpetology*. ZooKeys, 1190, 213–257. https://doi.org/10.3897/zookeys.1190.109586
+- Meneses, C. G., et al. (2024). *Philippine herpetology (Amphibia, Reptilia), 20 years on: two decades of progress towards an increasingly collaborative, equitable, and inclusive approach to the study of the archipelago’s amphibians and reptiles*. ZooKeys, 1190, 213–257. https://doi.org/10.3897/zookeys.1190.109586
 - Sánchez-González, L. A., Hosner, P. A., Moyle, R. G. (2015). *Genetic differentiation in insular lowland rainforests: Insights from historical demographic patterns in Philippine birds*. PLOS ONE. https://doi.org/10.1371/journal.pone.0134284
 - Heaney's historical PAIC concept is discussed in the papers above; do not cite a secondary summary as if the original 1985 paper had been directly reviewed.
 

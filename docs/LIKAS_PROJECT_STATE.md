@@ -1,3 +1,12 @@
+## 31 Oct 2026 | Private v3.7 723-taxon comprehensive reference assembled
+- Created 723 unique named candidates (413 birds, 156 reptiles, 53 amphibians, 101 mammals), all with family, separate dated IUCN/DENR source fields; 265 explicit global and 272 national category codes. No assumption these represent current live assessments.
+- iNaturalist integration in offline private evidence workbook and ZIP: 11,746 Research Grade observations, 406 source names, 362 exact/8 provisional name links, 44 review names, 3,478 <=100m and 2,493 <=30m unvalidated point candidates. Deliberately obscured and source-private coordinates omitted. No species automatically added.
+- Only three voucher/site-based mammal elevation entries and two source-reported forest contexts; no sampled raster elevation or landcover; habitat preference is not inferred. 723 accepted-row ecological evidence sheets are structured but incomplete for quantitative environmental results.
+- Workbook SHA-256 72f1c10db8ed9f32c355836159749de551f334a7293276cf4ef95f8ed4f19f6a; private ZIP SHA-256 8ddb1e6821fc11e6dc2d44a6fa383e61a58710180888b1c6436b67b7ae3720c6.
+- Public-safe methods and limitations: docs/LIKAS_GMND_PAIC_PRIVATE_INTEGRATED_CHECKLIST_V37_2026_10_31.md. No Android/app/SQLite/APK or public release updated. Need GIS and direct taxonomic/conservation checks.
+
+---
+
 ## 31 October 2026 | All three iNaturalist project exports: RG spatial and taxonomy staging
 
 - Completed private processing of birds, herpetofauna and mammal iNaturalist Greater Mindanao exports: **12,811** project observations; **11,746 Research Grade** and **1,065 Needs ID**. Herp and mammal source exports were `quality_grade=any`; fixed in analytical filter.

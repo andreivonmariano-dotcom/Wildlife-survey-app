@@ -21,8 +21,8 @@ class Rc62SpeciesVisual(unittest.TestCase):
         self.assertIn('"IUCN ":"DENR "',s)
     def test_version_and_original_identity(self):
         b=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 122",b)
-        self.assertIn("0.27.3-rc62-species-discover-preview",b)
+        self.assertIn("versionCode 123",b)
+        self.assertIn("0.27.3-rc63-species-checklist-preview",b)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",b)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
 if __name__=="__main__":unittest.main()

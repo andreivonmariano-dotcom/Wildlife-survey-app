@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Greater Mindanao ecological guide checklist v0.5 generated; no Android code change
+
+- **Latest owner decision:** display descriptive *likely habitat and elevation occurrence* based on citizen-science records and published accounts, not strict habitat selection/preferences. No specialist approval, provisional-display gate, or fabricated species range values; retain cited sources, raw QA and missingness. Decision appended to the project decision log.
+- **Conversation-local downloadable workbook:** `LIKAS_Greater_Mindanao_Ecological_Guide_Checklist_v0.5_2026-10-31.xlsx` (143,167 bytes). Created from attached `LIKAS_PAIC_Ecological_Raster_Evidence_v0.4_PRIVATE.xlsx` and attached WBCP 2025, Sy amphibian 2025-1, Sy reptile 2026-1 checklists. Contains **725 candidate taxa**, **214 rows with a species-level published or mapped land-cover habitat context**, **227 rows with a published or observation-associated elevation descriptor**, and **12 directly checked published species accounts**. Original four v0.4 evidence sheets were retained, plus new Ecological guide, Published accounts, Guide notes. These counts do not imply coverage for all 725 taxa; unknown entries remain explicit. The workbook is not in the GitHub repository and must be reattached/verified in any later chat.
+- **Scientific limitations:** COP30 values measure sampled land surface at observed coordinates, with unknown embedded vertical reference; ESA WorldCover 2020 classes are mapped settings, not vegetation surveys or habitat choice. The source has unresolved reconciliation discrepancies and temporally mismatched cover assignments. Published account elevations are labeled account/site observations. Some bird names remain historically broad; do not propagate taxonomic mismatches.
+- **QA done:** workbook saved with the artifact_tool library, opened at guide range, column mapping corrected for WBCP common names, basic formula error scan returned zero matches, path and nonempty bytes checked. This is a source workbook handoff, **not** app ingestion, an APK, a device test or a signed release. No survey data, app ID, SQLite schema, or startup assets changed.
+- **Next ecological task:** source more species-level published accounts and citizen-science observations for the currently unsupported taxa, then safely map the guide into the app only under a separately requested implementation task; keep source licensing checks for distributed checklist material.
+
+---
+
+
 ## 30 October 2026 | RC55 Screen 4 GPS preflight actual UI revision, Android QA pending
 
 - **User direction:** Continue actual Android screen-by-screen audit after emulator-verified RC54 Survey Setup; focus now on Screen 4 GPS preflight. This is a scientific provenance-sensitive screen. Do not edit actual historical survey position data.

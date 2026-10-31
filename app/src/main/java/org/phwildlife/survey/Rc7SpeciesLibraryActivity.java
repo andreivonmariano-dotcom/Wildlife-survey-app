@@ -143,13 +143,11 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             LinearLayout.LayoutParams right=new LinearLayout.LayoutParams(0,-2,1);
             right.leftMargin=dp(8);filters.addView(scopeField,right);
         }
-        // At 200% font, keeping both filters fixed hid the entire results list.
-        if(!largeText)root.addView(filters);
+        // Secondary filter controls always scroll; a visible IME must not collapse results.
         Button researchToggle=UiKit.button(this,largeText?
             "Research tools  ▾":"Research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand research comparisons, photographic evidence and regional sources");
-        if(!largeText)root.addView(researchToggle,
-            new LinearLayout.LayoutParams(-1,dp(48)));
+        // Research tools remain reachable in the scroll body, not fixed above results.
         LinearLayout researchPanel=new LinearLayout(this);
         researchPanel.setOrientation(LinearLayout.VERTICAL);
         researchPanel.setVisibility(View.GONE);
@@ -202,11 +200,10 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         ScrollView scroll=new ScrollView(this);
         LinearLayout scrollBody=new LinearLayout(this);
         scrollBody.setOrientation(LinearLayout.VERTICAL);
-        if(largeText){
-            scrollBody.addView(sourceBanner);
-            scrollBody.addView(filters);
-            scrollBody.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(58)));
-        }
+        if(largeText)scrollBody.addView(sourceBanner);
+        scrollBody.addView(filters);
+        scrollBody.addView(researchToggle,
+            new LinearLayout.LayoutParams(-1,dp(largeText?58:48)));
         scrollBody.addView(researchPanel);
         results=new LinearLayout(this);results.setOrientation(LinearLayout.VERTICAL);
         scrollBody.addView(results);
@@ -273,7 +270,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         rendered=0;results.removeAllViews();
         String evidenceStatus=selected.size()+" names · source checklists are not complete species accounts. "+
             "IUCN and DENR status must be reviewed separately. Unverified is not Least Concern.";
-        status.setText(largeText?selected.size()+" source records · Evidence limits ›":evidenceStatus);
+        status.setText(selected.size()+" source records · Evidence limits ›");
         status.setContentDescription(evidenceStatus+" Tap for evidence limits.");
         appendPage();
     }

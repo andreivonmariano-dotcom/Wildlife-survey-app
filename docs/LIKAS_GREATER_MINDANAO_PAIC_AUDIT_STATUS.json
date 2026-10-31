@@ -55,5 +55,22 @@
     "Original WBCP/Sy private text excluded from public repository",
     "All 399 rows require original source-level adjudication before production use"
   ],
-  "public_doc": "docs/LIKAS_GREATER_MINDANAO_PAIC_SOURCE_SCOPE_AUDIT_2026_10_31.md"
+  "public_doc": "docs/LIKAS_GREATER_MINDANAO_PAIC_SOURCE_SCOPE_AUDIT_2026_10_31.md",
+  "deep_research_2026_10_31": {
+    "status": "scientific_review_queue_complete_not_fully_verified",
+    "province_psgc_codes_count": 32,
+    "national_checklist_province_name_tokens_unreviewed": 502,
+    "unique_taxa_with_tokens": 225,
+    "legacy_province_row_triage": {
+      "binomial_source_phrase_mentions": 7,
+      "subspecies_needs_species_reconciliation": 1,
+      "unresolved_genus_Ophiophagus": 3
+    },
+    "correction": "Hoplobatrachus chinensis original text does list Davao del Sur",
+    "independent_species_cases_referenced": 5,
+    "mobios_archive_retrieved": false,
+    "mammal_location_records_approved": 0,
+    "rows_promoted_to_app": 0,
+    "public_audit_document": "docs/LIKAS_GREATER_MINDANAO_PAIC_DEEP_PROVINCIAL_AUDIT_2026_10_31.md"
+  }
 }

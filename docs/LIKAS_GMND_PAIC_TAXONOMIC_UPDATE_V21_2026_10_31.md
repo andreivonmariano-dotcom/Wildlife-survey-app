@@ -1,3 +1,5 @@
+> **Current scope amendment, 31 October 2026:** Owner has removed fish, insects and all other fauna from PAIC checklists. The historical nine-entry noncore-discovery section below is **superseded and excluded** from the current six-sheet **v2.1.1 four-group reference**. Only birds, reptiles, amphibians and mammals are permitted in the active checklist or its discovery appendices. Original v2.1 remains as a historical research artifact, and its four-group scientific/taxonomic findings remain unchanged. See PAIC policy and current project state.
+
 # LIKAS Greater Mindanao: genus-level and 2026 taxonomy evidence v2.1
 Date: 31 October 2026. PAIC-only private research reference; no Android or source-rights approval.
 

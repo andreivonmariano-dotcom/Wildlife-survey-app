@@ -124,13 +124,13 @@ public final class Rc63SpeciesChecklistInstrumentedTest {
                 assertNotNull("Visible group label",text(root,"Wildlife group"));
                 assertNotNull("Visible coverage label",text(root,"Reference coverage"));
                 boolean large=a.getResources().getConfiguration().fontScale>=1.60f;
+                assertTrue("Group filter scrolls instead of obscuring the IME viewport",
+                    inside(list,group));
+                assertTrue("Coverage filter scrolls instead of obscuring results",
+                    inside(list,coverage));
                 if(large){
-                    assertTrue("Large-text filters scroll rather than obscure results",inside(list,group));
-                    assertTrue("Large-text coverage filter scrolls",inside(list,coverage));
                     assertEquals("Short search hint at 200%", "Search taxon or family",
                         String.valueOf(search.getHint()));
-                }else{
-                    assertFalse("Normal-font group filter remains above list",inside(list,group));
                 }
                 View first=described(root,"Open species reference:");
                 assertNotNull("Checklist row accessible",first);

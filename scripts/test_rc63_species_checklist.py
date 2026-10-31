@@ -9,7 +9,7 @@ class Rc63Checklist(unittest.TestCase):
         for token in ("SOFT_INPUT_ADJUST_RESIZE","IME_ACTION_SEARCH",
             'largeText?"Search taxon or family"', "groupLabel.setLabelFor(group.getId())",
             "scopeLabel.setLabelFor(scope.getId())",
-            "if(!largeText)root.addView(filters)",
+            "scrollBody.addView(filters)",
             "if(largeText){\n            scrollBody.addView(sourceBanner)",
             "scrollBody.addView(researchPanel)",
             "AccessibilityNodeInfo info","info.setClassName(Button.class.getName())",

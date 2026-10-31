@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Greater Mindanao deep research and 32-province geographic audit; complete triage, NOT certified species checklist
+
+- **Owner request:** research the entire Greater Mindanao taxon pool, then work toward provincial checklists. Continued on `research/likas-greater-mindanao-paic-audit` draft PR #65. No Android source/SQLite27/assets/signer/field records changed; no new APK built.
+- **Private independently exported evidence:** nine-sheet `LIKAS_Greater_Mindanao_Deep_Species_Provincial_Evidence_Audit_2026-10-31.xlsx`, 399-key source audit with citations/qualifiers, 32 modern PSGC province IDs, 502 raw province-name tokens from 225 taxa (NOT approved occurrences), exact 11 existing province rows, source-verified exemplar cases. Files direct-attached in implementing conversation; external license-restricted source excerpts not committed publicly.
+- **Legacy 11 Davao area records corrected:** seven binomial source-text matches, one trinomial `Trachemys scripta elegans` requiring species resolution, three genus-only `Ophiophagus` records ineligible as species. Initial code review claimed `Hoplobatrachus chinensis` lacked Davao del Sur in its text; full asset inspection **corrects this**: its range does name the province. Source-text support alone remains below independent verification.
+- **Independent references:** Sarcophanops PAIC-separated species; Platymantis bayani Eastern Samar; Levitonius mirus Eastern Samar/Leyte; Cyrtodactylus mamanwa Dinagat/Unib (Siargao not corroborated by cited 2016/2021 study); Platymantis navjoti Samar; Ophiophagus 2024 revision. No PAIC-wide projection of specimen records. Province register has 25 current Mindanao-admin provinces plus six in Eastern Visayas and Bohol; Camiguin, Sulu and Tawi-Tawi excluded or peripheral, with explicit island/province ambiguity. Source: PSA PSGC 2026.
+- **Research gate:** 399 source keys remain a *candidate pool*, not finalized native richness; 34 prior legacy regional source-scope errors unresolved in database, 47 additions not fully independently vetted. No mammal PAIC localities verified; MDD taxonomy only, MOBIOS+ metadata reviewed but underlying CC-BY-NC 4.0 DwC-A could not be retrieved. Geographic registry and conservative triage accepted as working audit, not final product species checklist. See `docs/LIKAS_GREATER_MINDANAO_PAIC_DEEP_PROVINCIAL_AUDIT_2026_10_31.md`.
+
+---
+
+
 ## 31 October 2026 | Greater Mindanao PAIC: corrected legacy geographic scope; source triage staged
 
 - **Owner's active decision:** PAIC-linked species checklist before interactive map, beginning with Greater Mindanao. New research-only branch `research/likas-greater-mindanao-paic-audit` stacked on research PAIC framework draft PR #64 (itself based on emulator-tested RC66 draft PR #63). No Android, SQLite27, existing data, app assets, signing, or APK changes. This is **not** an accepted production species checklist.

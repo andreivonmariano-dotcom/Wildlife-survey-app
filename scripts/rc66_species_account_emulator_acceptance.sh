@@ -36,7 +36,7 @@ for tag in ("p360d160f100","p360d440f100","p320d440f200"):
     for kind in ("account-top","account-bottom","search"):
         path=root/f"rc66-{tag}-{kind}.png"
         raw=path.read_bytes()
-        assert raw[:8]==b"\\x89PNG\\r\\n\\x1a\\n" and len(raw)>5000,path
+        assert raw[:8].hex()=="89504e470d0a1a0a" and len(raw)>5000,path
         shots[kind]=sha256(raw).digest()
     assert shots["account-top"]!=shots["account-bottom"],tag
 print("RC66 account screenshots, search and scroll: PASS")

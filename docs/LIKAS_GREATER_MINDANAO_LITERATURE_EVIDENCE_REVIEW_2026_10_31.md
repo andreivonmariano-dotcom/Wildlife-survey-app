@@ -1,4 +1,7 @@
 # LIKAS | Greater Mindanao biodiversity literature: source-based evidence review
+
+> **Superseded scope (31 October 2026):** The owner has cancelled provincial species checklists. This historical literature review remains valid *only as locality-level evidence supporting PAIC species checklists*. The province roster, historical research priorities and file names below are archived methodological context, not upcoming provincial checklist deliverables. See the current project state and decision log. No verified source statement is discarded.
+
 **Research audit: 31 October 2026, Asia/Manila. Status: selected literature review, not exhaustive or final species/province checklist.**
 
 ## Reviewed material and outputs

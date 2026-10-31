@@ -1,3 +1,11 @@
+## 31 October 2026 | Expanded Mindanao biodiversity literature search (73 unique sources)
+
+- Completed a broader source search retaining previous 29 literature entries and adding **44 distinct reference leads** (29 four-group vertebrate-relevant, 15 broader habitat/ecology/research). Source URLs, year, named locality, source-reported claim, DOI where available, evidence-access level and LIKAS disposition are recorded in the owner-delivered 73-row CSV, accompanying markdown and QA ZIP. ZIP CRC checked; no formal exhaustive/PRISMA completion claim.
+- Particularly high-value new study leads: Mt Kitanglad 2008 bird inventory, Mt Busa 2021 bird and herpetofauna inventories, Lake Mainit birds, Tagum Hijo forest four-group baseline with seven local-report-only taxa, Surigao del Norte 2026 bird survey (2023 observations), Mt Capistrano karst amphibians/reptiles, Tinuy-an 2025 protected-area distribution additions, 2026 Samar Island herpetofauna (historical PAIC member) and Del Carmen Siargao mammals. **No new species names added** based only on abstracts.
+- **No app, APK, private mammal (101 candidates), full vertebrate master or conservation status changed.** Original species tables and MDD full crosswalk still need extraction; high-priority publisher abstracts are not direct voucher review. Metadata reference and file checksums in `docs/LIKAS_MINDANAO_BIODIVERSITY_LIT_REVIEW_73_SOURCES_2026_10_31.md`.
+
+---
+
 ## 31 October 2026 | Private mammal candidate and source-evidence register v3.6.0
 
 - Latest **independent private mammal research reference**: **101 named included candidate species**, +1 *Podogymnura minima* (2023 Balete et al. taxonomic elevation of historical *P. truei minima*; original Kitanglad voucher ZMUC 1311 and source-published specimen series). Previous v3.5 mammal register (100 species) remains immutable, as does full four-group v3.4.0; no APK merge occurred.

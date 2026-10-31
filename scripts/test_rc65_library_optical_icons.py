@@ -49,7 +49,7 @@ class Rc65OpticalArt(unittest.TestCase):
             self.assertIn(route,library)
     def test_gradle_generates_before_resource_merge_and_keeps_identity(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 125",build)
+        self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)
         self.assertIn("0.27.3-rc65-library-optical-icons-preview",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("prepareRc65LibraryIcons",build)

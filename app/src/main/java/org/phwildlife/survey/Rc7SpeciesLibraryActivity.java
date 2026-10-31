@@ -11,6 +11,9 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -84,7 +87,8 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         // Do not open the search keyboard before the researcher selects Search.
-        getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN |
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         db=new FieldDb(this);
         largeText=getResources().getConfiguration().fontScale>=1.60f;
         loadGuides();
@@ -97,37 +101,55 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         String fullSourceLine="Source-linked offline taxonomy · WBCP 2025 · Sy 2025/2026 · MDD 2.5";
         TextView sourceBanner=label("Search Philippine wildlife references",13,false);
         sourceBanner.setContentDescription(fullSourceLine);
-        root.addView(sourceBanner);
+        if(!largeText)root.addView(sourceBanner);
         search=new EditText(this);
         search.setSingleLine(true);
-        search.setTextSize(16);
-        search.setHint("Species, family or former name");
+        search.setTextSize(largeText?15:16);
+        search.setHint(largeText?"Search taxon or family":"Species, family or former name");
+        search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         search.setContentDescription("Search Philippine taxon catalog");
-        root.addView(search,new LinearLayout.LayoutParams(-1,dp(54)));
-        LinearLayout filters=new LinearLayout(this);filters.setOrientation(LinearLayout.HORIZONTAL);
+        root.addView(search,new LinearLayout.LayoutParams(-1,dp(largeText?68:54)));
+        LinearLayout filters=new LinearLayout(this);
+        filters.setOrientation(LinearLayout.HORIZONTAL);
         group=new Spinner(this);scope=new Spinner(this);
+        group.setId(View.generateViewId());scope.setId(View.generateViewId());
         group.setContentDescription("Wildlife group");
         scope.setContentDescription("Species library content filter");
         group.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,GROUPS));
         scope.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,FILTERS));
+        // Visible labels distinguish taxonomic groups from content/evidence coverage.
+        LinearLayout groupField=new LinearLayout(this);
+        groupField.setOrientation(LinearLayout.VERTICAL);
+        TextView groupLabel=label("Wildlife group",12,true);
+        groupLabel.setLabelFor(group.getId());
+        groupField.addView(groupLabel);
+        groupField.addView(group,new LinearLayout.LayoutParams(-1,dp(largeText?64:48)));
+        LinearLayout scopeField=new LinearLayout(this);
+        scopeField.setOrientation(LinearLayout.VERTICAL);
+        TextView scopeLabel=label("Reference coverage",12,true);
+        scopeLabel.setLabelFor(scope.getId());
+        scopeField.addView(scopeLabel);
+        scopeField.addView(scope,new LinearLayout.LayoutParams(-1,dp(largeText?64:48)));
         float screenDp=getResources().getDisplayMetrics().widthPixels/
             getResources().getDisplayMetrics().density;
         if(screenDp<385f||largeText){
             filters.setOrientation(LinearLayout.VERTICAL);
-            filters.addView(group,new LinearLayout.LayoutParams(-1,dp(largeText?72:48)));
-            filters.addView(scope,new LinearLayout.LayoutParams(-1,dp(largeText?72:48)));
+            filters.addView(groupField,new LinearLayout.LayoutParams(-1,-2));
+            filters.addView(scopeField,new LinearLayout.LayoutParams(-1,-2));
         }else{
-            filters.addView(group,new LinearLayout.LayoutParams(0,dp(50),1));
-            LinearLayout.LayoutParams right=new LinearLayout.LayoutParams(0,dp(50),1);
-            right.leftMargin=dp(8);filters.addView(scope,right);
+            filters.addView(groupField,new LinearLayout.LayoutParams(0,-2,1));
+            LinearLayout.LayoutParams right=new LinearLayout.LayoutParams(0,-2,1);
+            right.leftMargin=dp(8);filters.addView(scopeField,right);
         }
-        root.addView(filters);
+        // At 200% font, keeping both filters fixed hid the entire results list.
+        if(!largeText)root.addView(filters);
         Button researchToggle=UiKit.button(this,largeText?
             "Research tools  ▾":"Research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand research comparisons, photographic evidence and regional sources");
-        root.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(largeText?58:48)));
+        if(!largeText)root.addView(researchToggle,
+            new LinearLayout.LayoutParams(-1,dp(48)));
         LinearLayout researchPanel=new LinearLayout(this);
         researchPanel.setOrientation(LinearLayout.VERTICAL);
         researchPanel.setVisibility(View.GONE);
@@ -165,6 +187,14 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         researchPanel.addView(differences,new LinearLayout.LayoutParams(-1,dp(45)));
         status=label("",13,false);root.addView(status);
         status.setFocusable(true);
+        status.setClickable(true);
+        status.setAccessibilityDelegate(new View.AccessibilityDelegate(){
+            @Override public void onInitializeAccessibilityNodeInfo(View host,
+                    AccessibilityNodeInfo info){
+                super.onInitializeAccessibilityNodeInfo(host,info);
+                info.setClassName(Button.class.getName());
+            }
+        });
         status.setOnClickListener(v->new android.app.AlertDialog.Builder(this)
             .setTitle("Species evidence limits")
             .setMessage(status.getContentDescription())
@@ -172,6 +202,11 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         ScrollView scroll=new ScrollView(this);
         LinearLayout scrollBody=new LinearLayout(this);
         scrollBody.setOrientation(LinearLayout.VERTICAL);
+        if(largeText){
+            scrollBody.addView(sourceBanner);
+            scrollBody.addView(filters);
+            scrollBody.addView(researchToggle,new LinearLayout.LayoutParams(-1,dp(58)));
+        }
         scrollBody.addView(researchPanel);
         results=new LinearLayout(this);results.setOrientation(LinearLayout.VERTICAL);
         scrollBody.addView(results);
@@ -238,7 +273,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         rendered=0;results.removeAllViews();
         String evidenceStatus=selected.size()+" names · source checklists are not complete species accounts. "+
             "IUCN and DENR status must be reviewed separately. Unverified is not Least Concern.";
-        status.setText(largeText?selected.size()+" source records · tap for limits":evidenceStatus);
+        status.setText(largeText?selected.size()+" source records · Evidence limits ›":evidenceStatus);
         status.setContentDescription(evidenceStatus+" Tap for evidence limits.");
         appendPage();
     }
@@ -250,9 +285,10 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             card.setOrientation(LinearLayout.HORIZONTAL);
             card.setGravity(android.view.Gravity.CENTER_VERTICAL);
             card.setPadding(dp(10),dp(8),dp(10),dp(8));
+            card.setMinimumHeight(dp(largeText?104:90));
             card.setBackground(UiKit.surface(this));
             card.setContentDescription("Open species reference: "+
-                (item.common.isEmpty()?item.name:item.common)+", "+item.name);
+                (item.common.isEmpty()?item.name:item.common+", "+item.name));
             card.setClickable(true);
             card.setFocusable(true);
             android.widget.ImageView photo=OfflinePhotoEvidence.thumbnailForTaxon(
@@ -282,6 +318,9 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             TextView meta=label(description,12,false);
             labels.addView(meta);
             card.addView(labels,new LinearLayout.LayoutParams(0,-2,1f));
+            TextView arrow=label("›",18,true);
+            arrow.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            card.addView(arrow,new LinearLayout.LayoutParams(dp(21),-2));
             card.setOnClickListener(v->startActivity(
                 new Intent(this,TaxonDetailActivity.class)
                     .putExtra("taxon_key",item.key)));

@@ -1,3 +1,13 @@
+## 2026-10-31 | Private PAIC v3.8.1 taxonomic / spatial source audit
+
+- Consolidated **owner-private** v3.8.1 review workbook and ZIP without altering the 725 accepted names (414 birds, 156 reptiles, 53 amphibians, 102 mammals) or any Android table, APK or survey history. Two published taxonomic relationships clarified: *Lycodon dumerilii* is synonymized with *Stegonotus muelleri* in Bernstein et al. 2026, and old broad *Fejervarya limnocharis* source names should not be used uncritically for Philippine *F. vittigera*. iNaturalist photographic IDs **not** automatically reassigned.
+- Recovered **historical Mindanao *Philautus surdus* voucher series** from Sanguila et al. 2016. This conflicts with narrower Sy 2025-1 current checklist and is kept in an unapproved taxon-concept review register, not inflated in accepted counts.
+- **33 unmatched names / 155 RG rows** still separated for identification and island/shoreline review. 11,746 RG rows include 9,207 public unobscured points at 6,703 distinct exact coordinates, with 3,102 records at repeated coordinate pairs (max 71), significant sampling clustering risk.
+- Created tested private offline polygon/coordinate-uncertainty/optional raster extractor (4 synthetic tests), but original PAIC polygons, raster tiles and 102-row MDD original CSV absent in runtime. **No real geography/elevation/landcover/habitat-selection estimates computed**. Current IUCN original assessments cannot be bulk verified without authorized v4 access.
+- Full public-safe source reasoning and hashes: `docs/LIKAS_GMND_PAIC_V381_TAXONOMIC_AND_SPATIAL_QA_2026_10_31.md`. Owner-private workbook SHA256 `266086b35be6b35bea85e9af8f429bc08b406407a846c745612d007bf6c092cd`; ZIP SHA256 `42df969a1897c11e409d864898a4dad586d73958e34b7996a488d1b74c748c3e`. Do not commit private source-derived row-level or user-coordinate data into public branch.
+
+---
+
 ## 31 October 2026 | Private Greater Mindanao PAIC v3.8.0, iNaturalist harmonized
 
 - Completed private **v3.8.0** XLSX/data/QA package; 725 source-supported named vertebrate candidates (birds **414**, amphibians **53**, reptiles **156**, mammals **102**). Adds *Sterrhoptilus nigrocapitatus* from WBCP/eBird Samar-Leyte-Bohol original range and *Petinomys mindanensis* from original Gingoog syntypes/MDD. Prior v3.7 723 species remains unmodified.

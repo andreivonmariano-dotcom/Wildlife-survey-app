@@ -83,6 +83,9 @@ def reference_valid(url: str) -> bool:
 def assert_literature(row: dict) -> None:
     habitat = (row.get("habitat_description") or "").strip()
     elev = (row.get("published_site_elevations_m") or "").strip()
+    if (habitat or elev) and (not (row.get("source_taxon_name") or "").strip() or
+                            not (row.get("reported_locality_scope") or "").strip()):
+        raise ValueError(f"Literature concept/scope required: {row.get('taxon_id')}")
     if habitat and (not row.get("habitat_citation") or not reference_valid(row.get("habitat_reference_url", ""))):
         raise ValueError(f"Unattributed habitat description: {row.get('taxon_id')}")
     if elev and (not row.get("published_elevation_citation") or

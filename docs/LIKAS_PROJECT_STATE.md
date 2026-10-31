@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | Owner decision: PAIC checklists only; provincial checklists cancelled
+
+- **Current product scope supersedes prior checklist plans:** Species Library geographic checklist deliverables are **PAIC/biogeographic-region checklists only**. Do not create, complete, expose, export, or schedule *province-by-province species checklists* unless the owner explicitly reverses this decision.
+- **Keep primary evidence, not a provincial checklist product:** Provincial administrative names, exact study sites, islands, voucher localities, historical records and other precise places remain stored as traceable source evidence for PAIC inclusion and source-checking. Never flatten an ambiguous locality into a province or extend a local occurrence to the full PAIC. Existing provincial research workbooks and PSA code roster are archived research context only, not a deliverable roadmap, checklist data approved for LIKAS, or a commitment to geographic administration filters.
+- **Active work:** Finish defensible **Greater Mindanao PAIC** taxon evidence with island-level and locality provenance, synonyms, resident/vagrant/introduced/historical qualifiers, mammal crosswalk, source assessment, licensing and explicit reviewed/unreviewed flags. Then proceed to other PAIC or separately named island-group checklists. The eventual interactive Philippines map selects PAICs, not administrative provinces.
+- **Baseline unchanged:** Research branch `research/likas-greater-mindanao-paic-audit` and draft PR #65; last emulator-tested Android app RC66 code126, SQLite27. No app, DB, historic field records, source datasets, APK or UI changed by this decision. Previous 399-taxonomic-key pool and 46-source literature research remain partial and not a certified PAIC species inventory.
+
+---
+
+
 ## 31 October 2026 | Greater Mindanao indexed biodiversity literature review: 46 works, 105 evidence statements, research gate remains
 
 - **Owner directive:** scour Greater Mindanao PAIC/provincial biodiversity literature, analyze sources and attach citations to checklist while keeping scientific certainty. Current research branch `research/likas-greater-mindanao-paic-audit`, draft PR #65; app code/test baseline still RC66 (code126), SQLite27 unchanged.

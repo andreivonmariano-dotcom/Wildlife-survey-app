@@ -303,7 +303,8 @@ def write_results(output_dir, points, hits, source_info, archives, failures):
         wr = csv.DictWriter(f, fieldnames=point_headers)
         wr.writeheader()
         for p in sorted(hits.values(), key=lambda a:a["observation_id"]):
-            wr.writerow({**p, "interpretation": "COP30 DSM at observation; NOT preference"})
+            row = {**p, "interpretation": "COP30 DSM at observation; NOT preference"}
+            wr.writerow({key: row.get(key, "") for key in point_headers})
     summary_file = output_dir / "LIKAS_PRIVATE_COP30_SPECIES_OBSERVED_ELEVATION_SUMMARY.csv"
     grouped = defaultdict(list)
     for p in hits.values():

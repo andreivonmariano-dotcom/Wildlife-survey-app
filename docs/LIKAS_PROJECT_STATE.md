@@ -1,5 +1,16 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 31 October 2026 | GMND v2.1 genus-level and latest taxonomy research
+
+- Owner requested source-backed genus-level entries and current 2026 taxonomy/discovery search. Original immutable v2.0 638 named species file and hashes remain unchanged.
+- Separate privately exported v2.1: 640 unique named vertebrate candidates (349 birds, 83 mammals, 53 amphibians, 155 reptiles), descriptive 463 LIKELY and 177 POSSIBLE. September 2026 Platymantis revision replaces southern misapplied P. dorsalis candidate with P. jagorii, P. laticeps, P. habagatan without assigning historical specimens; AviList October 2026 Apus nipalensis -> Apus affinis with original names preserved.
+- Four separate genus-level reference rows: three published Platymantis operational study IDs (Mt Capistrano and two Samar distinct voucher/call records), and one *legacy*, not independently voucher-verified, genus-only Ophiophagus. They are not four additional species. Nine named 2025/2026 beetle/fish discoveries tracked separately, not counted in 640.
+- Reviewed October 2026 Gonocephalus reassessment, WBCP 2026 preliminary report, excluded Mindoro Apomys from Mindanao. Seven-sheet private XLSX, CSVs, JSON, research Markdown and ZIP passed unique-name/ID/count and CRC checks. Original frozen v2.0 source preserved, updated workbook SHA256 adf82db8bf1f438598fbe8c7a059393858cb07acaa7e2cea7d364f1be7dc2a6a. Public source summary at docs/LIKAS_GMND_PAIC_TAXONOMIC_UPDATE_V21_2026_10_31.md.
+- No app schema/data, approved media, survey, APK or signed update. Restricted WBCP/Sy source-derived full rows remain private; release rights still unresolved; PAIC-only scope and cancelled provincial checklists remain.
+
+---
+
+
 ## 31 October 2026 | GMND PAIC possible+likely species FINAL v2.0 frozen (PRIVATE research reference)
 
 - **Owner-approved product result:** Final locked *possible/likely Greater Mindanao PAIC candidate list*, **638 named binomials** (**349 birds, 83 mammals, 51 amphibians, 155 reptiles**). **461 likely** are source-named region/member-island candidates, **177 possible** from source statements of widespread Philippine range or a genuinely questioned regional mention. These words do NOT claim site presence, numeric likelihood, extant native richness or an exhaustive census. Genus/unidentified placeholders excluded.

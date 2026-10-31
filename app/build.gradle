@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 114
-        versionName '0.27.3-rc54-survey-setup-preview'
+        versionCode 115
+        versionName '0.27.3-rc55-gps-preflight-preview'
     }
     signingConfigs {
         debug {

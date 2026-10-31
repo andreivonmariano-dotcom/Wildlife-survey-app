@@ -10,7 +10,7 @@ class Rc63Checklist(unittest.TestCase):
             'largeText?"Search taxon or family"', "groupLabel.setLabelFor(group.getId())",
             "scopeLabel.setLabelFor(scope.getId())",
             "scrollBody.addView(filters)",
-            "if(largeText){\n            scrollBody.addView(sourceBanner)",
+            "if(largeText)scrollBody.addView(sourceBanner)",
             "scrollBody.addView(researchPanel)",
             "AccessibilityNodeInfo info","info.setClassName(Button.class.getName())",
             "card.setMinimumHeight(dp(largeText?104:90))"):

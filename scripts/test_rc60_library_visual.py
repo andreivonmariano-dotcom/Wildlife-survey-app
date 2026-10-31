@@ -7,8 +7,8 @@ class Rc60VisualDecisions(unittest.TestCase):
     def test_new_generated_icons_and_locked_approved_set_stay_separate(self):
         portal=(JAVA/"LikasPortalUi.java").read_text()
         library=(JAVA/"LikasLibraryActivity.java").read_text()
-        self.assertIn("R.drawable.likas_generated_conservation",portal)
-        self.assertIn("R.drawable.likas_generated_habitat_links",portal)
+        self.assertIn("R.drawable.likas_library_conservation_display",portal)
+        self.assertIn("R.drawable.likas_library_habitat_links_display",portal)
         self.assertIn('"Conservation","Dated assessments","library-conservation"',library)
         self.assertIn('"Habitat links","Cited associations","library-habitat-links"',library)
         self.assertNotIn("class PixelShield",portal)

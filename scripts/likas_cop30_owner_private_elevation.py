@@ -27,17 +27,17 @@ import zipfile
 
 FIELD_NAMES = {
     "id": ("observation_id", "id", "inat_observation_id", "observation_uuid"),
-    "lat": ("public_latitude", "latitude", "lat", "decimalLatitude"),
-    "lon": ("public_longitude", "longitude", "lon", "decimalLongitude"),
-    "accuracy": ("public_positional_accuracy_m", "positional_accuracy",
+    "lat": ("public_latitude_wgs84", "public_latitude", "latitude", "lat", "decimalLatitude"),
+    "lon": ("public_longitude_wgs84", "public_longitude", "longitude", "lon", "decimalLongitude"),
+    "accuracy": ("public_uncertainty_m", "public_positional_accuracy_m", "positional_accuracy",
                  "coordinate_uncertainty_m", "coordinate_uncertainty_in_meters",
                  "coordinateUncertaintyInMeters"),
-    "name": ("likas_accepted_name", "likas_name", "scientific_name",
+    "name": ("original_scientific_name", "likas_accepted_name", "likas_name", "scientific_name",
              "inat_scientific_name", "taxon_name"),
     "taxon": ("likas_taxon_id", "taxon_id", "taxon_key"),
     "date": ("observed_on", "observed_date", "date"),
-    "quality": ("quality_grade", "quality", "grade"),
-    "geo": ("geoprivacy", "observed_on_geoprivacy", "coordinates_obscured"),
+    "quality": ("source_quality_grade", "quality_grade", "quality", "grade"),
+    "geo": ("geo_quality", "geoprivacy", "observed_on_geoprivacy", "coordinates_obscured_source", "coordinates_obscured"),
 }
 TIF_SUFFIXES = (".tif", ".tiff")
 
@@ -51,8 +51,9 @@ def is_private(row):
     # Only the public latitude/longitude fields are eligible. Private-coordinate
     # fields are deliberately not read, even if the public point is blank.
     geo = " ".join(str(row.get(k, "")).lower()
-                   for k in ("geoprivacy", "taxon_geoprivacy",
-                             "observed_on_geoprivacy", "coordinates_obscured"))
+                   for k in ("geoprivacy", "taxon_geoprivacy", "geo_quality",
+                             "observed_on_geoprivacy", "coordinates_obscured",
+                             "coordinates_obscured_source"))
     return ("obscured" in geo or "private" in geo or
             geo.strip() in {"true", "1"})
 

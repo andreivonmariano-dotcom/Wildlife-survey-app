@@ -43,19 +43,19 @@ public final class LikasPortalUi {
             case "mammal":case "mammals":return R.drawable.likas_approved_mammals_rusa_marianna;
             case "habitat":case "habitats":return R.drawable.likas_approved_habitats;
             // New generated art stays separate from the 18 immutable owner-approved assets.
-            case "library-conservation":return R.drawable.likas_generated_conservation;
-            case "library-habitat-links":return R.drawable.likas_generated_habitat_links;
+            case "library-conservation":return R.drawable.likas_library_conservation_display;
+            case "library-habitat-links":return R.drawable.likas_library_habitat_links_display;
             case "research":return R.drawable.likas_approved_research;
             case "news":return R.drawable.likas_approved_news;
             case "history":return R.drawable.likas_approved_history;
             case "chart":case "analysis":return R.drawable.likas_approved_analysis;
             case "backup":return R.drawable.likas_approved_backup;
-            case "photo":case "camera":case "trap":case "library-photo":
-                return R.drawable.likas_approved_camera;
+            case "library-photo":return R.drawable.likas_library_photos_display;
+            case "photo":case "camera":case "trap":return R.drawable.likas_approved_camera;
             case "gps":return R.drawable.likas_approved_gps;
             case "map":case "project":case "projects":return R.drawable.likas_approved_projects;
-            case "protocol":case "report":case "reports":case "library-sources":
-                return R.drawable.likas_approved_reports;
+            case "library-sources":return R.drawable.likas_library_sources_display;
+            case "protocol":case "report":case "reports":return R.drawable.likas_approved_reports;
             case "offline":return R.drawable.likas_approved_offline;
             case "help":return R.drawable.likas_approved_help;
             default:return 0; // The approved set has no audio/conservation glyph.
@@ -74,10 +74,10 @@ public final class LikasPortalUi {
                 ((android.graphics.drawable.BitmapDrawable)drawable).setFilterBitmap(false);
             }
             image.setImageDrawable(drawable);
-            // CENTER_INSIDE never enlarges 64px generated icons on high-density
-            // phones. Library-only FIT_CENTER fills the same 50dp plate without crop;
+            // Library-only cropped 256px PNGs share the same optical framing on high-density
+            // phones. FIT_CENTER fills the same 50dp plate without crop;
             // setFilterBitmap(false) above preserves source pixel edges. The approved
-            // 512px images remain byte-identical, including Photos and Sources.
+            // 512px approved source images remain byte-identical, including Photos and Sources.
             boolean libraryArt="library-conservation".equals(symbol) ||
                 "library-habitat-links".equals(symbol) ||
                 "library-photo".equals(symbol) ||

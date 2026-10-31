@@ -43,8 +43,8 @@ class ResearchZipIntegrity(unittest.TestCase):
 
     def test_version_and_schema_stay_upgrade_compatible(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 124",gradle)
-        self.assertIn("0.27.3-rc64-library-phone-icons-preview",gradle)
+        self.assertIn("versionCode 125",gradle)
+        self.assertIn("0.27.3-rc65-library-optical-icons-preview",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
 if __name__=="__main__":

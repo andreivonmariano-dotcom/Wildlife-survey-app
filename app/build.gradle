@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 124
-        versionName '0.27.3-rc64-library-phone-icons-preview'
+        versionCode 125
+        versionName '0.27.3-rc65-library-optical-icons-preview'
     }
     signingConfigs {
         debug {
@@ -22,6 +22,34 @@ android {
         debug { signingConfig signingConfigs.debug }
     }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
+
+/**
+ * Library-specific optical display crops are derived from the existing approved/
+ * generated PNG source files. These are build outputs, never replacement masters.
+ * Python stdlib only: reproducible for local and CI Gradle builds.
+ */
+android.sourceSets.main.res.srcDirs += ["${buildDir}/generated/rc65/res"]
+tasks.register('prepareRc65LibraryIcons', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'python3', 'scripts/prepare_rc65_library_icons.py'
+    inputs.files(
+        file('src/main/res/drawable-nodpi/likas_generated_conservation.png'),
+        file('src/main/res/drawable-nodpi/likas_generated_habitat_links.png'),
+        file('src/main/res/drawable-nodpi/likas_approved_camera.png'),
+        file('src/main/res/drawable-nodpi/likas_approved_reports.png'))
+    outputs.dir(file("${buildDir}/generated/rc65/res"))
+}
+tasks.configureEach { task ->
+    // AGP's resource producers/readers all see this added source directory.
+    // Explicit dependencies are required by Gradle 8.11, not just mergeResources.
+    if (task.name != 'prepareRc65LibraryIcons' &&
+        (task.name.contains('Resources') ||
+         task.name.endsWith('SourceSetPaths') ||
+         task.name.startsWith('extractDeepLinks') ||
+         task.name.contains('Debug') || task.name.contains('Release'))) {
+        task.dependsOn tasks.named('prepareRc65LibraryIcons')
+    }
 }
 
 dependencies {

@@ -1,6 +1,5 @@
 """RC54 Screen 3 source contracts: method cards are readable without changed protocols."""
 from pathlib import Path
-import re
 import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -32,7 +31,7 @@ class Rc54SurveyMethodChooser(unittest.TestCase):
         self.assertIn("versionCode 114", GRADLE)
         self.assertIn("0.27.3-rc54-survey-chooser-preview", GRADLE)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'", GRADLE)
-        assert len(re.findall(r'new Method\\("',METHODS))>=17
+        self.assertGreaterEqual(METHODS.count("new Method("),17)
 
 if __name__=="__main__":
     unittest.main()

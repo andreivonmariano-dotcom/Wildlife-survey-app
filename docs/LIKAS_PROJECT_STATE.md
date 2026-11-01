@@ -1,5 +1,13 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 2 November 2026 | APO borderless startup emblem: approved direction, draft source updated
+
+- **Latest request:** Make the startup logo blend with the full-screen green background without a visible rounded-square or square frame. **Do not modify the hard-locked launcher icon** `forest_green_mountain_ribbon_icon.png` (1254px RGB, SHA-256 `6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7`). Apply this background removal only to a **startup-specific transparent derivative**.
+- **Created and inspected in current conversation:** `APO_Startup_Blended_Preview.png` and `APO_Startup_Borderless_Assets.zip`; transparent mountain `apo_mountain_ribbon_transparent.png` SHA-256 `5f183a0c05e43fde8ecc9b15e4bdbc777d9418c7c3d1f77b31e5ed1c472ac382`; 1000px-wide splash asset `apo_mountain_splash_1000.png` SHA-256 `a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc`. These are generated from original image pixels, not a redrawn mountain. Current chat sandbox links are session-scoped.
+- **Android source draft on `feature/apo-startup-screen-v1-design`:** updated `LikasLaunchActivity.java` to render the new borderless mountain at proportional responsive size (up to 276dp wide), a separate accessible APO wordmark, native forest vertical gradient, existing reduced-motion handling and offline reference bootstrapping. The Gradle and Python source-contract checks now require the borderless PNG SHA, while the original launcher foreground SHA and original master SHA remain unchanged. See `docs/APO_STARTUP_SCREEN_V1_DESIGN.md`.
+- **Release status:** Updated source and verified local PNGs only. PNG binaries have not been committed to GitHub or compiled in a signed Android APK. No physical Android upgrade, screenshot, reference bootstrapping or persisted survey data verification performed. Continue to gate actual APK delivery on complete binary resource import, build, signing and testing.
+
+
 
 
 

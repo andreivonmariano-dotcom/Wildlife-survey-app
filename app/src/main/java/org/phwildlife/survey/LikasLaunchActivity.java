@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -35,6 +36,7 @@ public final class LikasLaunchActivity extends Activity {
     private LinearLayout identity;
     private ImageView mark;
     private TextView status;
+    private TextView wordmark;
     private FrameLayout root;
 
     private int dp(float n) {
@@ -72,12 +74,26 @@ public final class LikasLaunchActivity extends Activity {
         root.addView(identity,identityParams);
 
         mark=new ImageView(this);
-        // The selected artwork already includes APO lettering. No duplicate text.
+        // This locked artwork contains only the mountain emblem.
+        // The brand wordmark must be a separate accessible TextView.
         mark.setImageResource(R.drawable.apo_splash_mark);
         mark.setScaleType(ImageView.ScaleType.FIT_CENTER);
         LinearLayout.LayoutParams markParams=new LinearLayout.LayoutParams(
             dp(232),dp(232));
         identity.addView(mark,markParams);
+
+        wordmark=new TextView(this);
+        wordmark.setText("APO");
+        wordmark.setTextColor(IVORY);
+        wordmark.setTextSize(getResources().getConfiguration().fontScale>1.5f ? 34f : 43f);
+        wordmark.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));
+        wordmark.setLetterSpacing(.12f);
+        wordmark.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams wordParams=new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT);
+        wordParams.topMargin=dp(4);
+        identity.addView(wordmark,wordParams);
 
         status=new TextView(this);
         status.setText("Preparing offline references");
@@ -95,6 +111,7 @@ public final class LikasLaunchActivity extends Activity {
         statusParams.bottomMargin=dp(32);
         root.addView(status,statusParams);
 
+        mark.setContentDescription("APO mountain emblem");
         root.setContentDescription("Apo biodiversity tools");
         setContentView(root);
         startReferenceBootstrap();
@@ -105,15 +122,21 @@ public final class LikasLaunchActivity extends Activity {
         } else {
             mark.setAlpha(0f);
             mark.setTranslationY(dp(9));
-            mark.animate().alpha(1f).translationY(0f)
-                .setDuration(300).withEndAction(()->{
+            wordmark.setAlpha(0f);
+            wordmark.setTranslationY(dp(5));
+            mark.animate().alpha(1f).translationY(0f).setDuration(260).start();
+            wordmark.animate().alpha(1f).translationY(0f)
+                .setStartDelay(60).setDuration(230).withEndAction(()->{
                     animationDone=true;
                     maybeEnterHome();
                 }).start();
             root.setOnClickListener(v->{
                 mark.animate().cancel();
+                wordmark.animate().cancel();
                 mark.setAlpha(1f);
+                wordmark.setAlpha(1f);
                 mark.setTranslationY(0f);
+                wordmark.setTranslationY(0f);
                 animationDone=true;
                 maybeEnterHome();
             });
@@ -185,6 +208,7 @@ public final class LikasLaunchActivity extends Activity {
         handler.removeCallbacksAndMessages(null);
         if(identity!=null) identity.animate().cancel();
         if(mark!=null) mark.animate().cancel();
+        if(wordmark!=null) wordmark.animate().cancel();
         super.onDestroy();
     }
 }

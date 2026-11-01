@@ -62,3 +62,7 @@ The owner replaced previous mandatory animated forest splash with a minimal LIKA
 
 ### 2026-10-28 | Screen-shot-based UX and source-checked species expansion | Preview delivered
 The owner selected Q1/Q2/Q3 after providing phone screenshots. RC4 scientific core adds concise species dropdown/filter/search, ten detailed offline accounts including the Philippine Crocodile and Philippine Cockatoo, habitat guide/site tabs with group filtering and one-open-card reading, readable credited photos and a 230ms Home header transition following the minimal splash. Seven true CC JPEGs packaged. CI 40669068454 passed on code 97a05898... and direct 1.90MB APK was delivered with verified RC4 signer. Old forest-startup gate still fails so PR #38 stays draft. See screenshot review documentation on core branch.
+
+
+### 2026-11-01 | Source-qualified Greater Mindanao PAIC distribution | Research dataset decision
+Owner directed proceeding with a seven-core-island distribution layer for the 725-species reference. Maintain separate national/endemicity status, dated source-reported island mentions, infraspecific island names, historical mammal type localities and primary-verified contemporary occurrence. Camiguin and other adjacent islands remain individually tagged rather than silently assigned to the seven-island PAIC core. Release status is **research-only**. The 725-taxon workbook and audit statistics are recorded in `docs/LIKAS_PROJECT_STATE.md`; no app code, APK, SQLite schema or release changed.

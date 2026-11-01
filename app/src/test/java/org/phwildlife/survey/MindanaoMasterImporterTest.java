@@ -13,7 +13,7 @@ public final class MindanaoMasterImporterTest {
     private List<Map<String,String>> fixture(){
         ArrayList<Map<String,String>> entries=new ArrayList<>();
         String[] groups={"Birds","Amphibians","Reptiles","Mammals"};
-        int[] counts={414,53,156,102};
+        int[] counts={408,53,154,99};
         int id=0;
         for(int g=0;g<groups.length;g++){
             for(int n=0;n<counts[g];n++){
@@ -27,14 +27,14 @@ public final class MindanaoMasterImporterTest {
                 row.put("family","Testidae");
                 row.put("order_name","Testiformes");
                 row.put("source","Private LIKAS reference");
-                row.put("source_version","v3.6_2026-11-01");
+                row.put("source_version","PAIC714_2026-11-01");
                 row.put("review_status","unreviewed");
                 row.put("habitat_text","Forest");
                 row.put("elevation_text","0–100 m");
                 entries.add(row);
             }
         }
-        assertEquals(725,entries.size());
+        assertEquals(714,entries.size());
         return entries;
     }
 
@@ -65,6 +65,18 @@ public final class MindanaoMasterImporterTest {
     @Test public void rejectsIncorrectWildlifeGroupCount(){
         List<Map<String,String>> data=fixture();
         data.get(0).put("taxon_group","Reptiles");
+        rejects(data);
+    }
+    @Test public void rejectsUnapprovedRosterEvenWithCorrectGroupTotals(){
+        try{
+            MindanaoMasterImporter.validateApprovedRoster(fixture());
+            fail("A synthetic roster cannot activate as the owner master");
+        }catch(IllegalArgumentException expected){ }
+    }
+    @Test public void rejectsAnyOfTheElevenOmissions(){
+        List<Map<String,String>> data=fixture();
+        data.get(0).put("scientific_name","Apus affinis");
+        data.get(0).put("taxon_key","LIKAS725:apus_affinis");
         rejects(data);
     }
     private static void rejects(List<Map<String,String>> rows){

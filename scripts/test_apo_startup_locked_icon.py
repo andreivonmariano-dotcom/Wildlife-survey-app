@@ -35,6 +35,18 @@ class ApoStartupSourceContract(unittest.TestCase):
         self.assertIn("int markWidthDp", launch)
         self.assertIn("dp(markWidthDp*0.55f)", launch)
         self.assertIn("GradientDrawable.Orientation.TOP_BOTTOM", launch)
+        self.assertIn("private static final int FOREST=Color.rgb(11,75,57)", launch)
+        self.assertIn("private static final int DARK_FOREST=Color.rgb(2,25,24)", launch)
+        self.assertIn("new int[]{FOREST,DARK_FOREST}", launch)
+        self.assertIn("getWindow().setNavigationBarColor(DARK_FOREST)", launch)
+        self.assertIn("root.setBackground(backdrop)", launch)
+        # The startup background consists exclusively of the native two-stop
+        # green gradient, with no landscape, tree, forest or scenery layer.
+        self.assertEqual(launch.count("new GradientDrawable("), 1)
+        self.assertNotIn("root.setBackgroundResource(", launch)
+        self.assertNotIn("root.setBackgroundDrawable(", launch)
+        self.assertNotIn("R.drawable.forest_", launch)
+        self.assertNotIn("LikasForestView", launch)
         self.assertIn("Preparing offline references", launch)
         self.assertIn("BundledPrivateReferences.ensureInstalled", launch)
         self.assertIn('getBoolean("reduced_motion",false)', launch)

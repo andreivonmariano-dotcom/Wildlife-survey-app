@@ -1,5 +1,13 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 2 November 2026 | APO v132 draft PR #74 and signed APK gate staged
+
+- **Draft PR:** `#74` `feature/apo-startup-screen-v1-design` into `feature/apo-minimal-brand-design-lock`. Owner's locked icon + gradient-only startup and smooth staged Home transition have been implemented in Java source and Python source assertions, **not compiled yet**.
+- **Dedicated CI workflow:** `.github/workflows/apo-startup-v132-android.yml` now checks original signing certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, app ID, versionCode132, schema28, exact 714-species and WorldCover reference hashes, original icon and both derived resource hashes, then builds and verifies signed APK and uploads an artifact only if every gate succeeds.
+- **Direct handoff built and SHA verified:** `APO_v132_Locked_Icon_Animated_Startup_Build_Handoff.zip` (1,499,499 bytes, SHA-256 `1eebf91314a3ead7038da98866f21c7582ffcfcf4f8da3f3c20e1d2723a69dfa`). It contains 3 exact PNGs under Android resource paths, static preview and a safe signer-checking local build script. It is **not an APK**.
+- **Release blocker:** GitHub source branch does not contain the 3 PNG binary assets; Gradle `verifyApoArtwork` will deliberately reject an incomplete build. The runtime has no Android SDK or Gradle and cannot reach the private repo from its local container. No signed APK, Android CI success, or handset upgrade was produced. Never offer an earlier RC71 or unrelated APK as APO v132. To finish, commit exact ZIP assets, execute signed CI and direct-attach verified APK in the active conversation.
+
+
 ## 2 November 2026 | APO icon and gradient startup locked; entrance and Home transition coded
 
 - **Final owner decision:** Lock the **exact** icon `forest_green_mountain_ribbon_icon.png` (1254×1254 RGB, SHA-256 `6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7`) and gradient-only startup (top `#0B4B39`, bottom `#021918`, transparent derived ivory-and-jade ribbon, native separate `APO` text). No scenery or redesigned emblem.

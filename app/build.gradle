@@ -8,7 +8,7 @@ android {
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         versionCode 132
-        versionName '0.27.3-apo-startup-source-stage'
+        versionName '0.27.3-apo-startup-locked-ribbon-preview'
     }
     signingConfigs {
         debug {
@@ -89,14 +89,14 @@ tasks.named("preBuild") { dependsOn("verifyBundledPaicReferences") }
 
 
 /**
- * The updated owner-selected mountain/APO icon has not yet been transferred
+ * The locked owner-selected mountain ribbon PNG has not yet been transferred
  * to GitHub binary source. Refuse to produce an APK with missing or swapped art.
- * Expected file is the exact 1254px transparent-corner PNG generated 2026-11-02.
+ * Expected file is the exact 1254px locked PNG (unaltered bytes).
  */
 tasks.register("verifyApoArtwork") {
     doLast {
         def master = file("src/main/assets/apo_official_master.png")
-        def expectedSha = "6b576763069bebdab87cb0676a028875a18518e655c127881f89e8faf51bfa46"
+        def expectedSha = "6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7"
         if(!master.isFile())
             throw new GradleException("APO owner-selected icon PNG missing; APK build blocked")
         def digest = java.security.MessageDigest.getInstance("SHA-256")

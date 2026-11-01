@@ -105,12 +105,21 @@ tasks.register("verifyApoArtwork") {
             }.join("")
         if(digest != expectedSha)
             throw new GradleException("APO owner-selected icon checksum mismatch")
-        [
-            "src/main/res/drawable-nodpi/apo_splash_mark.png",
-            "src/main/res/drawable-nodpi/apo_launcher_foreground.png"
-        ].each { path ->
-            if(!file(path).isFile())
-                throw new GradleException("APO drawable missing: "+path)
+        def derivatives = [
+            (file("src/main/res/drawable-nodpi/apo_splash_mark.png")):
+                "57c03faf976f11d8e251940bb623d647a1a4ab5ff52680c35ae16d5e4bceec8a",
+            (file("src/main/res/drawable-nodpi/apo_launcher_foreground.png")):
+                "2a60cc5cda8dba006c1c713f15d565c4599ad5ec1bcaebadc7690cb66445af00"
+        ]
+        derivatives.each { source, approved ->
+            if(!source.isFile())
+                throw new GradleException("APO drawable missing: "+source.name)
+            def artifactSha = java.security.MessageDigest.getInstance("SHA-256")
+                .digest(source.bytes).collect {
+                    String.format("%02x", it & 0xff)
+                }.join("")
+            if(artifactSha != approved)
+                throw new GradleException("APO drawable digest mismatch: "+source.name)
         }
     }
 }

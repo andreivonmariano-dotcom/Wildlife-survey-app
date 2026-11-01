@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 130
-        versionName '0.27.3-rc70-private-offline-references-preview'
+        versionCode 131
+        versionName '0.27.3-rc71-preloaded-paic714-worldcover'
     }
     signingConfigs {
         debug {
@@ -60,36 +60,29 @@ dependencies {
 }
 
 /**
- * The standard public CI build deliberately has no owner-private reference
- * files. For a personal APK, place BOTH owner-approved files in the ignored
- * app/private-assets/ directory. They are packaged by Gradle only on that
- * private machine and verified before compilation. Never commit these assets.
+ * The owner has authorized release of the original 714-species checklist, and
+ * the ESA WorldCover derivative is CC BY 4.0 with source attribution.
+ * Both files are public app assets and must pass exact byte checksums at build.
+ * There is no manual reference download, private Gradle input or fallback build.
  */
-android.sourceSets.main.assets.srcDirs += [file("private-assets")]
-tasks.register("verifyPrivateReferenceAssets") {
+tasks.register("verifyBundledPaicReferences") {
     doLast {
-        def dir = file("private-assets")
-        def csv = new File(dir,"paic714_master.csv")
-        def map = new File(dir,"paic_worldcover2020_500m.txt")
-        if (!csv.exists() && !map.exists()) {
-            logger.lifecycle("Public build: private reference files not embedded")
-            return
-        }
-        if (!csv.isFile() || !map.isFile()) {
-            throw new GradleException("Private bundle needs both approved references")
-        }
         def expected = [
-            (csv):"1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959",
-            (map):"e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089"
+            (file("src/main/assets/paic714_master.csv")):
+                "1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959",
+            (file("src/main/assets/paic_worldcover2020_500m.txt")):
+                "e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089"
         ]
         expected.each { source, approved ->
+            if (!source.isFile())
+                throw new GradleException("Public reference missing: "+source.name)
             def digest = java.security.MessageDigest.getInstance("SHA-256")
                 .digest(source.bytes)
                 .collect { String.format("%02x", it & 0xff) }.join("")
-            if(digest!=approved)
-                throw new GradleException("Private asset checksum differs: "+source.name)
+            if(digest != approved)
+                throw new GradleException("Incorrect public reference: "+source.name)
         }
-        logger.lifecycle("Verified both owner-private reference assets for this local build")
+        logger.lifecycle("Verified public 714-species catalog and ESA WorldCover map")
     }
 }
-tasks.named("preBuild") { dependsOn("verifyPrivateReferenceAssets") }
+tasks.named("preBuild") { dependsOn("verifyBundledPaicReferences") }

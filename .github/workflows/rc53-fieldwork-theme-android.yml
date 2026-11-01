@@ -1,8 +1,8 @@
-name: LIKAS RC53 screen 2 Fieldwork visual and research regression
+name: LIKAS RC54 screen 3 survey method chooser and research regression
 on:
   push:
     branches:
-      - feature/likas-rc53-fieldwork-screen2-theme
+      - feature/likas-rc54-survey-method-chooser-screen3
   workflow_dispatch:
 permissions:
   contents: read
@@ -46,7 +46,7 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Android 14 Fieldwork, active Resume, and research ZIP acceptance
+      - name: Android 14 survey method chooser, Fieldwork and research ZIP acceptance
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -58,12 +58,12 @@ jobs:
           heap-size: 512M
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
-          script: bash scripts/rc53_fieldwork_emulator_acceptance.sh
-      - name: Publish signed RC53 preview APK
+          script: bash scripts/rc54_survey_chooser_emulator_acceptance.sh
+      - name: Publish signed RC54 survey chooser preview APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-v0.27.3-RC53-code113-debug
+          name: LIKAS-v0.27.3-RC54-code114-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 5
@@ -71,7 +71,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC53-screen2-fieldwork-emulator-evidence
+          name: LIKAS-RC54-screen3-survey-chooser-emulator-evidence
           path: |
             emulator-qa/
             app/build/reports/androidTests/

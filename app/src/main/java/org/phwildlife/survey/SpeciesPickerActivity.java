@@ -262,8 +262,11 @@ public final class SpeciesPickerActivity extends Activity {
         if(paicCatalogActive&&surveyPreparation!=null&&
             "suggested".equals(surveyPreparation.mode)&&
             (!PaicHabitatPolicy.decode(surveyPreparation.habitats).isEmpty()||
-                GpsElevation.read(TrackService.currentFix()).usableForHabitat)){
-            views.setSelection(savedViewIndex==0?1:savedViewIndex);
+                GpsElevation.read(TrackService.currentFix()).usableForHabitat)&&
+            !surveyOptions.contains(pref("view"))){
+            // Default to suggestions only on first use; preserve later explicit
+            // observer choice to browse the complete master catalog.
+            views.setSelection(1);
         }else views.setSelection(savedViewIndex);
 
         Location fix=TrackService.currentFix();
@@ -659,7 +662,7 @@ public final class SpeciesPickerActivity extends Activity {
                         filtered.add(species);
                 Collections.sort(filtered,(a,b)->{
                     if(paicCatalogActive&&surveyPreparation!=null&&
-                            (siteSuggestions||sorting==SpeciesSortPolicy.ALPHABETICAL)){
+                            "suggested".equals(surveyPreparation.mode)&&siteSuggestions){
                         int rank=Integer.compare(b.paicRank,a.paicRank);
                         if(rank!=0)return rank;
                     }

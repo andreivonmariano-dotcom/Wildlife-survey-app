@@ -8,7 +8,7 @@ android {
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         versionCode 132
-        versionName '0.27.3-apo-startup-locked-ribbon-preview'
+        versionName '0.27.3-rc72-apo-gradient-startup'
     }
     signingConfigs {
         debug {

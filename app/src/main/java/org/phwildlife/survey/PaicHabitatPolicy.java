@@ -65,11 +65,10 @@ public final class PaicHabitatPolicy {
                 double high=Double.parseDouble(range.group(2).replace(",",""));
                 return mslMeters>=low&&mslMeters<=high;
             }
+            // A single elevation (especially marine "0 m") is not a
+            // species range. Do not manufacture a +/-100 m ecological band.
             Matcher point=POINT.matcher(value);
-            if(point.matches()){
-                double listed=Double.parseDouble(point.group(1).replace(",",""));
-                return Math.abs(mslMeters-listed)<=100d;
-            }
+            if(point.matches())return null;
         }catch(NumberFormatException ignored){}
         return null;
     }

@@ -14,7 +14,7 @@ See [RC71 reference packaging and QA](docs/LIKAS_RC71_PUBLIC_REFERENCE_EMBED_QA.
 ## What LIKAS currently provides
 
 - **Fieldwork:** birds, amphibians/reptiles and mammals, project and station records, GPS/elevation, observations, effort, survey history and analysis. A survey can end as **Complete**, **Incomplete**, or **Not Counted**.
-- **Library:** the full offline Philippine species checklist plus **96** curated illustrated research accounts, **15** habitat profiles, cited species/ecology references and approved offline photographs. Global IUCN and Philippine DENR statuses appear only when independently reviewed and dated. Unreviewed statuses stay neutral.
+- **Library:** the owner-authorized offline **714-species Mindanao PAIC** master catalog activates automatically (408 birds, 53 amphibians, 154 reptiles, 99 mammals) with the supplied habitat and elevation guides. Legacy illustrated references, cited habitat profiles and approved photos remain separate reference assets, not proof of a local species record. Global IUCN and Philippine DENR fields remain distinct; missing or unverified statuses are not automatically certified.
 - **Settings:** backup/recovery, storage, import, integrity checks and Less motion.
 
 The research/news feed and comprehensive ecological atlas remain planned features. Reference associations never create field observations.

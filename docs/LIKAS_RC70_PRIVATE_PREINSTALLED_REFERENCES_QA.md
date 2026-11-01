@@ -31,3 +31,8 @@ The bundled map is preinstalled via existing `PaicLandCoverPack.install`; the ma
 - Outstanding before a distributable private APK: assemble and sign a private build with original key and both ignored overlay files, inspect APK assets/checksums and v2 signature; on Android emulator/real phone test 27→28 upgrade with historic records, startup and backup consistency, exact 714 rows, no omitted species, 16 land-cover tiles, map suggestions versus observer confirmations, return to survey flow, and 200%-font layout.
 
 **Affected project requirements:** G-01/02/03/04/05/09/10/11/12, T (taxonomic provenance), H (habitat provenance), S (survey lifecycle), L (GNSS and elevation), D (export/backup), E (release checks).
+
+## Verified public fallback source build (2026-11-01)
+- **Exact last app+test code SHA:** `d141c763b38bcc0216df2a9a87bd074e5a8f653e`.
+- **CI `41322121870` SUCCESS**: 374 Python tests, full JVM unit-test task, Android package compilation, AndroidTest APK compilation, signer certificate check and versionCode130 check. Original fixture quoting failure corrected. CI log explicitly states **"Public build: private reference files not embedded"**. This success **does not** test the private preloaded asset APK.
+- Public fallback artifact ID `13089424569` intentionally not presented as an owner-ready asset-embedded APK. Private signed build, install/bootstrap verification and real-world acceptance remain blocked as described above.

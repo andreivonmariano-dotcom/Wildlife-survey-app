@@ -1,51 +1,51 @@
-# APO | Startup screen v1: implementation-ready design proposal
+# APO startup screen | locked mountain-ribbon identity
 
-> **2 November 2026 revision following owner-supplied image:** The owner now supplied a detailed Mount Apo rainforest / APO lettering icon and requested high-quality regeneration without white outer edges. The earlier textless ribbon-icon lock in this document is **superseded for the current candidate**. A refined 1254×1254 RGBA PNG was produced in the owner chat at `APO_Icon_Refined_Transparent_Edges_1254px.png`, SHA-256 `6b576763069bebdab87cb0676a028875a18518e655c127881f89e8faf51bfa46`. The derived 512×512 file is `APO_Icon_Android_512px.png`, SHA-256 `d26f245bc85f2aeb2f0f43b00d283cef384dacfc0cbf27259a54ae7f3dd99723`. The raster image includes the text **APO**: the startup should use a single centered icon without a second text wordmark. Source and launcher metadata have been staged in a protected draft branch, but image binaries have **not** been transferred to GitHub and no Android APK can yet be compiled or delivered. Remaining sections below describe the preceding proposal and should be treated as superseded wherever they conflict with this dated amendment.
+**Updated:** 2 November 2026, Asia/Manila  
+**Status:** Android source staged as a draft. No signed APK released or hardware QA completed.  
+**Branch:** `feature/apo-startup-screen-v1-design` (derived from RC71 reference-packaged Android lineage).  
+**Preview:** `APO_Startup_Screen_Concept.png` generated in the active owner chat. The preview is a static composition, not an emulator capture.
 
+## Governing owner decision
 
-**Prepared:** 2 November 2026, Asia/Manila  
-**Status:** Design proposal for owner review. No Android code, approved icon binary, APK, or launcher metadata has been changed by this document.  
-**Source branch:** `feature/apo-startup-screen-v1-design`, derived from the owner-approved APO branding lock `feature/apo-minimal-brand-design-lock` at `1e1bcaa976ab0333e087719b590259513567438f`.  
-**Relevant rules:** G-07, U-03, U-04, U-06, E-01, CC-01, DL-01. Use the latest master requirement wording at implementation time.  
+The user explicitly locked **`forest_green_mountain_ribbon_icon.png`** in the immediately preceding chat turn. This supersedes the interim detailed rainforest/photographic mountain logo with embedded APO typography. The locked icon is a dark forest-green rounded-square canvas with a single flowing ivory mountain ribbon and a jade-green inner fold, **without lettering**.
 
-## Design intent
+- **Exact original file:** `forest_green_mountain_ribbon_icon.png`, 1254×1254 px, RGB.
+- **Locked original SHA-256:** `6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7`.
+- **Immutable APK master file name:** `app/src/main/assets/apo_official_master.png` must be a byte-identical copy of that source.
+- **Permitted technical derivatives only:** proportional resizing, Android-safe margins and alpha removal of pale *external canvas corners* for display. No change to the mountain shape, palette, fold, style, logo text, or composition. Keep the locked source unedited.
+- **Current draft derivatives from this exact file:** `apo_splash_mark.png` (512×512, SHA-256 `57c03faf976f11d8e251940bb623d647a1a4ab5ff52680c35ae16d5e4bceec8a`) and `apo_launcher_foreground.png` (432×432, SHA-256 `2a60cc5cda8dba006c1c713f15d565c4599ad5ec1bcaebadc7690cb66445af00`).
+- **Chat-only asset handoff:** `APO_Startup_Implementation_Assets.zip` contains the untouched original master, display derivatives and source note. These files have **not yet been committed to the GitHub repository** through the available connector.
 
-The opening is a short, calm transition into an offline biodiversity tool for Philippine biologists, not a separate landing page. The approved name is **Apo**, represented as uppercase **APO** in the wordmark. Do not print a subtitle that reduces the platform to fieldwork. Do not bring back the old frog, retro forest plate, waterfall, fireflies, pixel art, or attention-heavy animations.
+The two previously recorded APO icon directions are historical and superseded:
+(1) the earlier **textless mountain ribbon** lock from a different PNG hash and
+(2) the subsequent **detailed rainforest mountain + APO wordmark** candidate with a new generated PNG.
+The present original file and SHA take priority. Do not infer which PNG is approved from the old file basename alone.
 
-The **exact** approved textless mountain icon is locked in `docs/APO_OFFICIAL_MOUNTAIN_ICON_LOCK_2026_11_02.md`, original source `a_clean_modern_minimalist_logo_app_icon_on_a_rou.png`, 1254 x 1254 RGB PNG, SHA-256 `eae6582c90ff8bbe394a795763aacb68da40ca9a81acc79ec587b2c227e9c284`. The original binary has **not** been found in the current GitHub branch or current chat's attached assets. Do not replace it with a merely similar generated logo. Hold icon-bearing APK implementation until the actual master is available and hash-checked.
+## Screen composition and behavior
 
-## Proposed startup composition
+- Full-screen near-black forest-green background with subtle tonal variation, unobtrusive Android status/navigation bars, and no animated forest environment.
+- Icon centered in the upper half of the screen's middle composition at about 208–232 dp square. It may retain its existing rounded-square background as a *locked feature* of the artwork.
+- Native `APO` wordmark as a separate warm-ivory accessible TextView beneath the icon, **not baked into the PNG**. No subtitle, version chip, launch button, splash menu or onboarding at this stage.
+- One-time 260 ms icon fade/translate overlapping a 230 ms wordmark fade. No looping motion. With Android animations disabled or in-app reduced-motion flag, present a static identity and navigate immediately when reference initialization permits. Tap-to-skip shortens cosmetic animation only, not data initialization.
+- Automatically transition to `WelcomeActivity` Home, with its existing unfinished-survey Resume route intact. No start-screen GPS or network request.
+- If checksum-verified offline installation is taking longer, reveal a small readable `Preparing offline references` status separately. On reference failure, preserve the explicit warning/continue path. Missing data is never represented as zero biodiversity or erased survey records.
 
-- A full-screen near-black forest-green field with subtle tonal depth. Sample production colors from the approved original image, not from an invented palette. Avoid an animated background, fake light shafts, gradient banding and particles.
-- Center one vertical identity unit slightly above the viewport midpoint: the approved mountain mark at approximately 112–128 dp visual container width, followed by a 16–22 dp breathing gap and standalone **APO** wordmark. Preserve the mountain silhouette's negative space and Android adaptive-icon safe margins. Do not crop the rounded artwork into a new shape without inspecting the original.
-- Wordmark: warm-ivory text, native sans-serif with restrained tracking, approximately 38–44 sp at normal type scale. Do not bitmap-render text into the image; use an accessible TextView. Allow scaling/clamping on 320 dp phones and in landscape rather than clipping or forcing small text.
-- No version number, slogan, launch button, onboarding carousel, GPS prompt or feature tiles. Android opens Home directly. Home continues to own Resume Survey.
-- Only when first-launch reference installation actually delays entry: show **Preparing offline references** as separate, small, readable, live-status text near the bottom safe area. Do not show a fake percentage or indefinite looping spinner. Avoid animating the APO wordmark into a status message.
+## Source implementation status
 
-## Motion and launch timing
+- `LikasLaunchActivity.java`: updated to render `R.drawable.apo_splash_mark` and one native `APO` TextView. Background, loading-status, reduced-motion, startup navigation, worker-thread bootstrap and failure handling retained.
+- `AndroidManifest.xml`: drafts Android display label `Apo`, icon names `@mipmap/apo_launcher` and `@mipmap/apo_launcher_round` while preserving Android application ID.
+- `app/build.gradle`: draft versionCode **132**, `0.27.3-apo-startup-locked-ribbon-preview`, checks master and derivative SHA-256 values. A build with missing/unapproved icon files must fail instead of falling back to an older picture.
+- XML adaptive icons and `scripts/test_apo_startup_locked_icon.py` are staged in the same branch.
+- Inherited parent: RC71 `org.phwildlife.survey.beta08`, preinstalled Mindanao PAIC 714 reference plus ESA WorldCover, and SQLite **28** migration path. No survey data schema or sampling semantics changed by the startup edits.
 
-- Normal device animation settings: a single understated mountain-opacity/translation reveal over roughly 220–300 ms, then a wordmark fade/translate of roughly 180–220 ms, with visual overlap. Use hardware-accelerated property animation. Any optional outline/trim-path effect may be added only if it faithfully derives from the approved art instead of drawing a new mountain.
-- Navigate to Home as soon as essential offline initialization permits, with a short crossfade. No minimum splash timer and no decorative wait. If loading is already complete, do not hold the user to finish an animation. Tap-to-skip can complete the transition, but cannot bypass required reference-state reporting.
-- Honor `ValueAnimator.areAnimatorsEnabled()`, Android animator scale, and the existing in-app `reduced_motion` preference. With motion reduced, show the static identity and continue as soon as references are ready.
-- Do not start GPS, network fetching, audio, survey capture, or animation loops during startup. Stop pending animation callbacks on Activity teardown.
+## Required final integration and validation
 
-## Truthful initialization, safety and failures
+Place the exact PNGs from the handoff ZIP at:
+`app/src/main/assets/apo_official_master.png`,
+`app/src/main/res/drawable-nodpi/apo_splash_mark.png`,
+`app/src/main/res/drawable-nodpi/apo_launcher_foreground.png`.
+Check SHA fingerprints before committing.
 
-The current `LikasLaunchActivity.java` starts `BundledPrivateReferences.ensureInstalled` on a worker if a packaged reference bundle is present. Preserve its no-main-thread-install behavior, preinstalled PAIC 714/WorldCover checksum gates, survey history, and explicit reference failure dialog. Change the foreground screen only, not the database schema, observation ownership or survey outcomes.
+Then run the full Python/JVM/Android build pipeline on the RC71-derived branch, including reference checksum gates, package/version/signature checks and Android 14 small-display/large-font/reduced-motion checks. Confirm adaptive masks do not crop the ribbon. Verify startup loading/failure/reopen paths and install-upgrade behavior on an actual device with historical survey records. Only after verifying a current APK should a direct in-chat downloadable APK be provided.
 
-- First launch with reference work unfinished: identity remains visible and the status appears after a brief delay, or at the moment the normal reveal ends, whichever prevents flicker.
-- On success: dismiss the status and proceed to `WelcomeActivity`, preserving Home/Resume.
-- On failure: state that references were not installed and offer the existing explicit **Continue** route so pre-existing surveys remain accessible. Do not imply missing references equal no recorded wildlife or no survey records.
-- On process recreation/back/rapid reopen: avoid double navigation, stale callbacks or duplicate installation UI.
-
-## Integration plan after exact source recovery
-
-1. Hash-check original icon; preserve master immutable. Generate traceable Android derivatives under `apo_` names, inspect small launcher masks, and update adaptive foreground/round icon plus accessible app label **Apo** without changing `applicationId org.phwildlife.survey.beta08` or the pinned signer.
-2. Replace the existing `LikasLaunchActivity` LIKAS typography with the two-layer approved mark + APO TextView layout, implementing the launch states above. Reuse launch/bootstrapping behavior rather than creating another Android splash activity.
-3. Advance versionCode strictly above RC71's **131**, retain the already established SQLite **28** migration path, and keep the owner-authorized public 714 checklist and ESA WorldCover bundled references unchanged.
-4. Add source/JVM and Android tests for initial load, instant reopen, delayed bootstrap, reduced motion, missing/failing references, safe-area/font scaling and exact icon/packaged-reference SHA checks. Test 320/360/412 dp at 100%, 130% and 200% type sizes, launcher squircle/round masking and physical-phone upgrade with historical survey data.
-5. Build and verify exact APK package, versionCode, embedded approved artwork, reference checksums and original signing certificate. Deliver a **direct in-chat APK file** per DL-01. A GitHub Actions page is not the deliverable.
-
-## Current baseline and nonclaims
-
-On 2 November 2026, GitHub default `main` HEAD was `44f3c5a76455c6532a74c1c6e5b5c2d7218f908f`, but it is an obsolete v0.15 Android baseline. The APO branding draft is based on RC71 `feature/likas-rc71-public-preloaded-paic-references`, versionCode **131**. In that draft's current source `LikasLaunchActivity`, the splash still renders a centered **LIKAS** wordmark with an animation and handles reference bootstrapping. Its `AndroidManifest.xml` label still says **LIKAS** and launcher icon still resolves to `@mipmap/ic_launcher`. The new APO icon and startup have **not** shipped. No build, signing, emulator or physical-phone test has been run for this design document.
+**Current blockers:** binary PNG transfer to GitHub and signed build/artifact retrieval have not occurred in this chat. The container does not expose an Android SDK/Gradle executable or a network Git clone. There is no verified APK for this source stage. This document is a precise record of the source/design state, not proof of a field-ready release.

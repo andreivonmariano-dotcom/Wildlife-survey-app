@@ -1,5 +1,14 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 2 November 2026 | APO v132 signed Android APK successfully built and direct-delivered
+
+- **Release candidate:** `0.27.3-rc72-apo-gradient-startup`, `versionCode 132`, existing Android appId `org.phwildlife.survey.beta08`, SQLite28, original certificate fingerprint `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Source commit **`4ce953bbea100c1c6a90231434591ffb6f99f788`** on `feature/apo-startup-screen-v1-design` (draft PR #74).
+- **Signed CI:** run `41332798258` **SUCCESS**, after exact owner artwork was safely transferred as a binary ZIP blob (`app/locked/apo_v132_assets.zip`, Git blob `bf1a62c52decc265d0b1c5db4f0c2cf9ad943ad3`). CI unpacked exact three PNGs before compilation and passed original-signing, app/package/version, 714-species and WorldCover checks, 380 Python regressions, JVM tests and Android/AndroidTest builds. Historical identity tests were updated for the owner-approved APO branding, without weakening checklist assertions.
+- **Verified APK direct-delivered in active chat:** `APO-v0.27.3-RC72-gradient-startup-code132.apk`; **11,741,864 bytes**; SHA-256 **`4a4210ff77aa40cf8c3f7c0741ddad5baeabe17d54ac93dbfaa62810e78cdfeb`**. The ZIP APK was independently read and checked: original locked icon, exact transparent splash image and adaptive launcher foreground plus public PAIC 714 and WorldCover embedded assets all match approved SHA-256 values. No older APK was substituted.
+- **Design lock:** Unchanged rounded-square ivory/jade launcher mountain, borderless startup mountain, pure `#0B4B39`→`#021918` gradient with native `APO`, eased logo/title entrance and Home exit, reduced-motion fallback, no scenic art or forced wait.
+- **Remaining QA before stable release:** Physical phone installation over RC71 with archived surveys and media, GPS/field workflow regression, TalkBack, reduced motion/large text and screenshot validation. Signing continuity is verified by CI, but preservation of real user data during an in-place upgrade has **not** been physically tested. See `docs/APO_V132_SIGNED_APK_RELEASE_QA_2026_11_02.md`.
+
+
 ## 2 November 2026 | APO v132 draft PR #74 and signed APK gate staged
 
 - **Draft PR:** `#74` `feature/apo-startup-screen-v1-design` into `feature/apo-minimal-brand-design-lock`. Owner's locked icon + gradient-only startup and smooth staged Home transition have been implemented in Java source and Python source assertions, **not compiled yet**.

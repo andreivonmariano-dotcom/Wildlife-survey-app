@@ -2,12 +2,14 @@
 
 LIKAS is an offline-first Android biodiversity fieldwork and reference tool for Philippine wildlife surveys.
 
-**Active development branch:** `feature/likas-core-fieldwork-post-rc4`  
-**Current development preview:** `0.27.3-rc49-history-review-preview` (versionCode **109**)  
-**Application ID:** `org.phwildlife.survey.beta08`  
-**SQLite schema:** **27**
+**Active development branch:** `feature/likas-rc71-public-preloaded-paic-references`  
+**Current signed development APK:** `0.27.3-rc71-preloaded-paic714-worldcover` (versionCode **131**)  
+**Application ID:** `org.phwildlife.survey.beta08` (original signer retained)  
+**SQLite schema:** **28** (upgrade from v27; no survey-record deletion)
 
-**Build status (30 October 2026):** RC49 History/observation review merged in PR #46 at `c35426e3a820c2cc4658c022fe7b626a5cc0b3ca`. PR Scientific Core QA **41028714285** passed **316 Python tests**, JVM tests, app and AndroidTest APK compilation. Merged-branch push CI **41028923966** passed with signed APK artifact **12964408568**. The independently inspected code109 APK is **9,781,724 bytes**, SHA-256 `270e18bc2efd3207cd6f1779bc377be11f39a1841402f7e6df781267ff79fcb9`, with correct package/version and a valid APK v2 signature/digest under the original certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Development preview only: installed upgrade and real-device accessibility checks are not complete.
+**Current signed build status (1 November 2026):** The owner authorized distributing their harmonized 714-species Mindanao PAIC checklist publicly in the LIKAS repository and APK. The 16-tile derived ESA WorldCover 2020 land-cover reference is shipped under CC BY 4.0 with full attribution and modification notice. Both source files are committed in `app/src/main/assets/` and activate automatically at first launch, with no manual import step. RC71 CI **41322915705** passed 377 Python source/science tests, JVM tests, Android APK + AndroidTest builds, signer verification, and independent SHA256 checks of the exact files *inside the signed APK*. Direct owner APK: `LIKAS-v0.27.3-RC71-PAIC714-WorldCover-code131.apk`, SHA256 `76620a2ae6d102012fc7e08740049e2e562f262e01f462bf63dd46e023ccbe6d`. This is a **development preview** until physical-phone startup, historical migration, GPS and UI acceptance are verified. Public source is staged in draft PR #72, inheriting PRs #70–71. The old trusted PR lineage gate requires literal SQLite27 and must be reviewed for current schema28.
+
+See [RC71 reference packaging and QA](docs/LIKAS_RC71_PUBLIC_REFERENCE_EMBED_QA.md) and [latest project state](docs/LIKAS_PROJECT_STATE.md).
 
 ## What LIKAS currently provides
 

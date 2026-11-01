@@ -23,7 +23,7 @@ import android.widget.TextView;
  * not buildable without the exact approved APO artwork and derivatives.
  */
 public final class LikasLaunchActivity extends Activity {
-    private static final int FOREST=Color.rgb(8,32,26);
+    private static final int FOREST=Color.rgb(7,42,34);
     private static final int IVORY=Color.rgb(245,240,226);
     private static final int SAGE=Color.rgb(176,199,184);
     private final Handler handler=new Handler(Looper.getMainLooper());
@@ -56,8 +56,8 @@ public final class LikasLaunchActivity extends Activity {
 
         root=new FrameLayout(this);
         GradientDrawable backdrop=new GradientDrawable(
-            GradientDrawable.Orientation.TL_BR,
-            new int[]{Color.rgb(10,38,29),Color.rgb(5,25,22)});
+            GradientDrawable.Orientation.TOP_BOTTOM,
+            new int[]{Color.rgb(7,42,34),Color.rgb(2,29,27)});
         root.setBackground(backdrop);
 
         identity=new LinearLayout(this);
@@ -70,16 +70,19 @@ public final class LikasLaunchActivity extends Activity {
             Gravity.CENTER);
         identityParams.leftMargin=dp(12);
         identityParams.rightMargin=dp(12);
-        identityParams.bottomMargin=dp(38);
+        identityParams.topMargin=dp(80);
         root.addView(identity,identityParams);
 
         mark=new ImageView(this);
-        // This locked artwork contains only the mountain emblem.
-        // The brand wordmark must be a separate accessible TextView.
+        // Borderless transparent ribbon derivative from the unchanged locked master.
+        // The dark rounded-square launcher tile does not belong on the splash.
         mark.setImageResource(R.drawable.apo_splash_mark);
         mark.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        int availableDp=Math.round(getResources().getDisplayMetrics().widthPixels /
+            getResources().getDisplayMetrics().density);
+        int markWidthDp=Math.min(276,Math.max(180,availableDp-88));
         LinearLayout.LayoutParams markParams=new LinearLayout.LayoutParams(
-            dp(232),dp(232));
+            dp(markWidthDp),dp(markWidthDp*0.55f));
         identity.addView(mark,markParams);
 
         wordmark=new TextView(this);
@@ -92,7 +95,7 @@ public final class LikasLaunchActivity extends Activity {
         LinearLayout.LayoutParams wordParams=new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT);
-        wordParams.topMargin=dp(4);
+        wordParams.topMargin=dp(16);
         identity.addView(wordmark,wordParams);
 
         status=new TextView(this);

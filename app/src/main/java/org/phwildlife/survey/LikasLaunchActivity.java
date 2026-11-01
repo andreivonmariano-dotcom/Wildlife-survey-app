@@ -96,7 +96,7 @@ public final class LikasLaunchActivity extends Activity {
         if(entered||isFinishing()||isDestroyed())return;
         if(loadingReferences){
             continueRequested=true;
-            brand.setText("LIKAS\\nPreparing offline references");
+            brand.setText("LIKAS\nPreparing offline references");
             brand.setTextSize(24);
             return;
         }

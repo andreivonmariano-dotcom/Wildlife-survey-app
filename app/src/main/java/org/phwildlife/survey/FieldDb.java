@@ -91,6 +91,10 @@ public final class FieldDb extends SQLiteOpenHelper {
     /** Survey-level preparatory context, independent of visit observations. */
     private void upgradeTwentyEight(SQLiteDatabase d){
         SurveyHabitatSetup.create(d);
+        // Legacy source packs may not yet have owner-private master attributes.
+        d.execSQL("CREATE TABLE IF NOT EXISTS likas_master_attributes("+
+            "taxon_key TEXT PRIMARY KEY,habitat_text TEXT NOT NULL,"+
+            "elevation_text TEXT NOT NULL,source_version TEXT NOT NULL)");
     }
     /**
      * Pre-v27 templates had no wildlife profile. Preserve those template IDs and

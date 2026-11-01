@@ -3,3 +3,27 @@ build/
 app/build/
 local.properties
 *.iml
+
+# Generated Android packages and signing material
+*.apk
+*.apks
+*.aab
+*.keystore
+*.jks
+.signing/
+.taxonomy-cache/
+
+# Local IDE, temporary emulator and photo-review outputs
+.idea/
+.cxx/
+emulator-qa/
+rc7_photo_review/
+rc7_owner_review/
+rc7_owner_extra_review/
+rc7_photo_api_diagnostic.json
+rc7_inat_dreidrei_candidates.json
+rc7_inat_licensed_candidates.json
+rc7_owner_photo_candidates.json
+*.log
+.DS_Store
+Thumbs.db

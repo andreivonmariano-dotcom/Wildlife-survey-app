@@ -30,10 +30,13 @@ public final class HabitatLikelihood {
         /** A 0-100 screening index, never a measured probability. Null = unassessed. */
         public final Integer scorePercent;
         public final boolean habitatConflict,elevationConflict;
+        /** Plain evidence statuses; do not display scorePercent as site probability. */
+        public final String habitatStatus,elevationStatus;
         private Result(String label,int points,Integer percentage,
-                boolean h,boolean e,String reason){
+                boolean h,boolean e,String reason,String habitatText,String elevationText){
             this.label=label;this.points=points;this.scorePercent=percentage;
             habitatConflict=h;elevationConflict=e;explanation=reason;
+            habitatStatus=habitatText;elevationStatus=elevationText;
         }
     }
     public static Result assess(int evidenceRank,String siteHabitat,Double siteElevation,
@@ -97,6 +100,18 @@ public final class HabitatLikelihood {
             ((matchHabitat&&matchElev)||(conflictHabitat&&conflictElev)))?
             Math.max(0,Math.min(100,value)):null;
         why.append(". Screening index, not a calibrated occurrence probability.");
-        return new Result(label,points,score,conflictHabitat,conflictElev,why.toString());
+        boolean habitatReviewed=profileReviewed&&!habitat.isEmpty()&&!codes.isEmpty();
+        boolean elevationReviewed=profileReviewed&&siteElevation!=null&&
+            Double.isFinite(siteElevation)&&(minElevation!=null||maxElevation!=null);
+        String habitatText=!habitatReviewed?"Habitat: not assessed at this site":
+            matchHabitat?"Habitat: matches reviewed reference":
+            conflictHabitat?"Habitat: conflicts with strict reference":
+            "Habitat: match uncertain";
+        String elevationText=!elevationReviewed?"Elevation: not assessed at this site":
+            matchElev?"Elevation: within reviewed reference":
+            conflictElev?"Elevation: outside reviewed reference":
+            "Elevation: uncertain near reference range";
+        return new Result(label,points,score,conflictHabitat,conflictElev,
+            why.toString(),habitatText,elevationText);
     }
 }

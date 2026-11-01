@@ -1,0 +1,592 @@
+package org.phwildlife.survey;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Typeface;
+import android.database.Cursor;
+import android.net.Uri;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Locale;
+
+/**
+ * One readable, cited species-account layout for the full 96-priority registry.
+ * Scientific review status stays in the reference drawer; nothing is reclassified.
+ */
+public final class Rc11PrioritySpeciesView {
+    private Rc11PrioritySpeciesView(){}
+    private static final String[] PACKS={
+        "rc10_research_batch1_v1.json","rc10_research_batch2_v1.json",
+        "rc10_research_batch3_v1.json"
+    };
+    private static final String[] AREAS={"Identification","Habitat","Range",
+        "Natural history","Conservation"};
+    private static final String[] ICONS={"search","leaf","pin","tracks","shield"};
+    private static JSONObject matrix;
+    private static JSONObject primary;
+    private static JSONObject peerReviewed;
+    private static JSONObject recent;
+    private static JSONObject newStudies;
+    private static JSONObject nextStudies;
+    private static JSONObject originalComparisons;
+    private static JSONObject unifiedCorpus;
+    private static final JSONObject[] packs=new JSONObject[PACKS.length];
+    private static int dp(Activity a,float n){
+        return Math.round(a.getResources().getDisplayMetrics().density*n);
+    }
+    private static JSONObject asset(Activity a,String name,int maximum){
+        try(InputStream in=a.getAssets().open(name);
+            ByteArrayOutputStream out=new ByteArrayOutputStream()){
+            byte[] buf=new byte[8192];int count;
+            while((count=in.read(buf))!=-1){
+                if(out.size()+count>maximum)throw new IllegalStateException("Reference oversized");
+                out.write(buf,0,count);
+            }
+            return new JSONObject(out.toString("UTF-8"));
+        }catch(Exception ignored){return new JSONObject();}
+    }
+    private static synchronized void load(Activity a){
+        if(matrix==null)matrix=asset(a,"rc8_evidence_comparisons_v1.json",450000);
+        if(primary==null)primary=asset(a,"rc12_primary_diagnoses_v1.json",55000);
+        if(peerReviewed==null)peerReviewed=asset(a,"rc13_peer_reviewed_batch1_v1.json",40000);
+        if(recent==null)recent=asset(a,"rc14_recent_peer_reviewed_2025_2026_v1.json",40000);
+        if(newStudies==null)newStudies=asset(a,"rc15_publication_batch_v1.json",40000);
+        if(nextStudies==null)nextStudies=asset(a,"rc16_publication_batch_v1.json",40000);
+        if(originalComparisons==null)originalComparisons=asset(a,"rc17_verified_research_v1.json",40000);
+        if(unifiedCorpus==null)unifiedCorpus=Rc30SpeciesEvidence.merge(a,
+            asset(a,"rc18_unified_96_priority_accounts_v1.json",620000));
+        for(int i=0;i<PACKS.length;i++)
+            if(packs[i]==null)packs[i]=asset(a,PACKS[i],65000);
+    }
+    private static String column(Cursor row,String key){
+        int index=row.getColumnIndex(key);
+        return index<0||row.isNull(index)?"":row.getString(index).trim();
+    }
+    private static TextView text(Activity a,String text,int size,boolean bold,int color){
+        TextView v=new TextView(a);
+        v.setText(text);v.setTextSize(size);v.setTextColor(color);
+        if(bold)v.setTypeface(null,Typeface.BOLD);
+        v.setTextIsSelectable(true);
+        return v;
+    }
+    private static String area(String category){
+        if("Identification".equals(category)||"Measurements".equals(category)||
+            "Differential".equals(category))return "Identification";
+        if("Habitat & ecology".equals(category))return "Habitat";
+        if("Range".equals(category))return "Range";
+        if("Behavior & sound".equals(category)||"Ecology".equals(category)||
+            "Behavior".equals(category)||"Life stage".equals(category)||
+            "Reproduction".equals(category))return "Natural history";
+        if("Conservation".equals(category))return "Conservation";
+        return null;
+    }
+    private static final class Fact {
+        final String area,label,value,source,url,limitation,publication,review;
+        final int sourceYear;
+        Fact(String area,String label,String value,String source,String url,
+             String limitation,String publication,String review,int sourceYear){
+            this.area=area;this.label=label;this.value=value;this.source=source;
+            this.url=url;this.limitation=limitation;
+            this.publication=publication;this.review=review;this.sourceYear=sourceYear;
+        }
+    }
+    private static ArrayList<Fact> facts(Activity a,String scientific){
+        load(a);
+        ArrayList<Fact> list=new ArrayList<>();
+        // RC18 gives all 96 accounts the same compiled, non-redundant reference model.
+        JSONArray accountRows=unifiedCorpus.optJSONArray("accounts");
+        if(accountRows!=null&&unifiedCorpus.optInt("prioritySpeciesCount")==96){
+            for(int i=0;i<accountRows.length();i++){
+                JSONObject account=accountRows.optJSONObject(i);
+                if(account==null||!scientific.equalsIgnoreCase(
+                    account.optString("scientificName")))continue;
+                JSONObject categories=account.optJSONObject("sections");
+                if(categories==null)break;
+                HashSet<String> unique=new HashSet<>();
+                for(String key:AREAS){
+                    JSONArray claims=categories.optJSONArray(
+                        "Range".equals(key)?"Distribution":key);
+                    if(claims==null)continue;
+                    for(int j=0;j<claims.length();j++){
+                        JSONObject item=claims.optJSONObject(j);
+                        if(item==null)continue;
+                        add(list,unique,key,item.optString("label"),
+                            item.optString("text"),item.optString("source"),
+                            item.optString("url"),
+                            item.isNull("studyScope")?"":item.optString("studyScope"),
+                            item.isNull("sourceLocation")?"":item.optString("sourceLocation"),
+                            "",item.optInt("sourceYear",0));
+                    }
+                }
+                if(!list.isEmpty())return list;
+                break;
+            }
+        }
+        // Preserve the original source-pack reader as fallback for older snapshots.
+        HashSet<String> seen=new HashSet<>();
+        // Original diagnoses and recent measured field studies.
+        JSONArray recentClaims=originalComparisons.optJSONArray("records");
+        if(recentClaims!=null)for(int i=0;i<recentClaims.length();i++){
+            JSONObject species=recentClaims.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("scopeLimit"),item.optString("sourceLocation"),
+                    "publication_source");
+            }
+        }
+        JSONArray nextClaims=nextStudies.optJSONArray("records");
+        if(nextClaims!=null)for(int i=0;i<nextClaims.length();i++){
+            JSONObject species=nextClaims.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("scopeLimit"),item.optString("sourceLocation"),
+                    "publication_source");
+            }
+        }
+        JSONArray newestClaims=newStudies.optJSONArray("records");
+        if(newestClaims!=null)for(int i=0;i<newestClaims.length();i++){
+            JSONObject species=newestClaims.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("scopeLimit"),item.optString("sourceLocation"),
+                    item.optString("reviewState"));
+            }
+        }
+        // Earlier recent studies and the archive of published diagnoses.
+        JSONArray newest=recent.optJSONArray("records");
+        if(newest!=null)for(int i=0;i<newest.length();i++){
+            JSONObject species=newest.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("scopeLimit"),
+                    item.optString("publicationYear")+" · "+item.optString("sourceLocation"),
+                    item.optString("reviewState"));
+            }
+        }
+        JSONArray newStudies=peerReviewed.optJSONArray("records");
+        if(newStudies!=null)for(int i=0;i<newStudies.length();i++){
+            JSONObject species=newStudies.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("scopeLimit"),item.optString("sourceLocation"),
+                    item.optString("reviewState"));
+            }
+        }
+        JSONArray original=primary.optJSONArray("records");
+        if(original!=null)for(int i=0;i<original.length();i++){
+            JSONObject species=original.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray items=species.optJSONArray("items");
+            if(items==null)break;
+            for(int j=0;j<items.length();j++){
+                JSONObject item=items.optJSONObject(j);
+                if(item==null)continue;
+                add(list,seen,area(item.optString("category")),
+                    item.optString("label"),item.optString("statement"),
+                    item.optString("source"),item.optString("url"),
+                    item.optString("limitation"),item.optString("sourceLocation"),
+                    item.optString("reviewState"));
+            }
+        }
+        // Later species-specific summaries and category-matched evidence.
+        for(JSONObject pack:packs){
+            JSONArray rows=pack.optJSONArray("records");
+            if(rows==null)continue;
+            for(int i=0;i<rows.length();i++){
+                JSONObject species=rows.optJSONObject(i);
+                if(species==null||!scientific.equalsIgnoreCase(
+                    species.optString("scientificName")))continue;
+                JSONArray items=species.optJSONArray("items");
+                if(items==null)break;
+                for(int j=0;j<items.length();j++){
+                    JSONObject item=items.optJSONObject(j);
+                    if(item==null)continue;
+                    String category=area(item.optString("category"));
+                    add(list,seen,category,item.optString("label"),
+                        item.optString("statement"),item.optString("source"),
+                        item.optString("url"),item.optString("limitation"),
+                        item.isNull("publicationYear")?"Date not stated":
+                            String.valueOf(item.optInt("publicationYear")),
+                        item.optString("reviewState"));
+                }
+            }
+        }
+        JSONArray entries=matrix.optJSONArray("species");
+        if(entries!=null)for(int i=0;i<entries.length();i++){
+            JSONObject species=entries.optJSONObject(i);
+            if(species==null||!scientific.equalsIgnoreCase(
+                species.optString("scientificName")))continue;
+            JSONArray traits=species.optJSONArray("traits");
+            if(traits!=null)for(int j=0;j<traits.length();j++){
+                JSONObject claim=traits.optJSONObject(j);
+                if(claim==null)continue;
+                add(list,seen,area(claim.optString("category")),
+                    claim.optString("label"),claim.optString("value"),
+                    claim.optString("source"),claim.optString("url"),"",
+                    "Source edition",claim.optString("review"));
+            }
+            break;
+        }
+        return list;
+    }
+    private static void add(ArrayList<Fact> list,HashSet<String> seen,
+            String area,String label,String value,String source,String url,
+            String limitation,String publication,String review){
+        add(list,seen,area,label,value,source,url,limitation,publication,review,0);
+    }
+    private static void add(ArrayList<Fact> list,HashSet<String> seen,
+            String area,String label,String value,String source,String url,
+            String limitation,String publication,String review,int sourceYear){
+        if(area==null||label.trim().isEmpty()||value.trim().isEmpty()||
+            source.trim().isEmpty()||!url.startsWith("https://"))return;
+        String key=area+"|"+value.trim().toLowerCase(Locale.ROOT);
+        if(!seen.add(key))return;
+        list.add(new Fact(area,label,Rc13FieldGuideCopy.fieldText(value),
+            source,url,limitation,publication,review,sourceYear));
+    }
+    private static final class Glyph extends View {
+        final String type;
+        final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
+        Glyph(Activity a,String type){super(a);this.type=type;
+            setContentDescription(type+" icon");setImportantForAccessibility(
+                View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        @Override protected void onDraw(Canvas canvas){
+            super.onDraw(canvas);
+            float unit=Math.min(getWidth(),getHeight())/32f;
+            canvas.save();
+            canvas.translate((getWidth()-32*unit)/2f,(getHeight()-32*unit)/2f);
+            canvas.scale(unit,unit);
+            paint.setColor(Color.rgb(235,244,235));
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawRoundRect(0,0,32,32,11,11,paint);
+            paint.setColor(UiKit.FOREST);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(1.9f);
+            paint.setStrokeCap(Paint.Cap.ROUND);
+            paint.setStrokeJoin(Paint.Join.ROUND);
+            switch(type){
+                case "search":
+                    canvas.drawCircle(14,14,6,paint);
+                    canvas.drawLine(18.8f,18.8f,24,24,paint);break;
+                case "leaf":
+                    Path leaf=new Path();
+                    leaf.moveTo(8,22);leaf.cubicTo(5,12,14,7,25,7);
+                    leaf.cubicTo(25,20,18,27,8,22);
+                    canvas.drawPath(leaf,paint);
+                    canvas.drawLine(9,22,21,12,paint);break;
+                case "pin":
+                    Path pin=new Path();
+                    pin.moveTo(16,27);pin.cubicTo(11,20,7,17,9,11);
+                    pin.cubicTo(12,2,23,4,24,12);
+                    pin.cubicTo(24,17,20,23,16,27);
+                    canvas.drawPath(pin,paint);canvas.drawCircle(16,13,3,paint);break;
+                case "tracks":
+                    canvas.drawOval(10,16,19,24,paint);
+                    canvas.drawCircle(9,13,1.8f,paint);
+                    canvas.drawCircle(14,10,1.8f,paint);
+                    canvas.drawCircle(19,11,1.8f,paint);
+                    canvas.drawCircle(23,15,1.8f,paint);break;
+                case "shield":
+                    Path shield=new Path();shield.moveTo(16,5);
+                    shield.lineTo(25,9);shield.lineTo(23,20);
+                    shield.quadTo(20,25,16,27);shield.quadTo(9,24,8,20);
+                    shield.lineTo(7,9);shield.close();canvas.drawPath(shield,paint);
+                    canvas.drawLine(12,16,15,19,paint);
+                    canvas.drawLine(15,19,21,12,paint);break;
+                default:
+                    canvas.drawRoundRect(7,7,25,25,3,3,paint);
+                    canvas.drawLine(11,12,21,12,paint);
+                    canvas.drawLine(11,17,21,17,paint);
+                    canvas.drawLine(11,22,18,22,paint);
+            }
+            canvas.restore();
+        }
+    }
+    private static void addFact(Activity a,LinearLayout list,Fact item,
+            ArrayList<Fact> referenced){
+        LinearLayout block=new LinearLayout(a);block.setOrientation(LinearLayout.VERTICAL);
+        block.setPadding(dp(a,3),dp(a,7),dp(a,3),dp(a,8));
+        TextView heading=text(a,item.label,13,true,UiKit.FOREST);
+        block.addView(heading);
+        // APA-style parenthetical citation belongs beside the actual claim.
+        // The complete source record appears only once in the reference drawer.
+        TextView description=text(a,ResearchCitationFormatter.citeClaim(
+            item.value,item.source,item.sourceYear,item.url),15,false,UiKit.INK);
+        description.setLineSpacing(dp(a,3),1.05f);
+        description.setContentDescription(item.label+". "+description.getText());
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.topMargin=dp(a,3);block.addView(description,lp);
+        list.addView(block);
+        referenced.add(item);
+    }
+    private static View section(Activity a,LinearLayout parent,String area,
+            String icon,ArrayList<Fact> all,ArrayList<Fact> references){
+        ArrayList<Fact> available=new ArrayList<>();
+        for(Fact item:all)if(area.equals(item.area))available.add(item);
+        if(available.isEmpty())return null;
+        LinearLayout card=new LinearLayout(a);card.setOrientation(LinearLayout.VERTICAL);
+        card.setPadding(dp(a,13),dp(a,13),dp(a,13),dp(a,12));
+        card.setBackground(UiKit.surface(a));
+        LinearLayout head=new LinearLayout(a);head.setOrientation(LinearLayout.HORIZONTAL);
+        head.setGravity(Gravity.CENTER_VERTICAL);
+        Glyph glyph=new Glyph(a,icon);
+        head.addView(glyph,new LinearLayout.LayoutParams(dp(a,36),dp(a,36)));
+        TextView title=text(a,area,17,true,UiKit.INK);
+        LinearLayout.LayoutParams titleLp=new LinearLayout.LayoutParams(-1,-2);
+        titleLp.leftMargin=dp(a,11);head.addView(title,titleLp);
+        card.addView(head);
+        LinearLayout details=new LinearLayout(a);
+        details.setOrientation(LinearLayout.VERTICAL);
+        int shown=Math.min("Identification".equals(area)?2:1,available.size());
+        for(int i=0;i<shown;i++)
+            addFact(a,details,available.get(i),references);
+        card.addView(details);
+        if(available.size()>shown){
+            LinearLayout more=new LinearLayout(a);
+            more.setOrientation(LinearLayout.VERTICAL);
+            more.setVisibility(View.GONE);
+            for(int i=shown;i<available.size();i++)addFact(a,more,available.get(i),references);
+            Button toggle=UiKit.button(a,"Read "+(available.size()-shown)+" more","quiet");
+            toggle.setContentDescription("Expand "+area.toLowerCase(Locale.ROOT)+" research notes");
+            card.addView(toggle,new LinearLayout.LayoutParams(-1,dp(a,45)));
+            card.addView(more);
+            toggle.setOnClickListener(v->{
+                boolean open=more.getVisibility()!=View.VISIBLE;
+                if(open)UiMotion.reveal(a,more);
+                else UiMotion.hide(more);
+                toggle.setText(open?"Show less":"Read "+(available.size()-shown)+" more");
+                toggle.setContentDescription((open?"Collapse ":"Expand ")+area.toLowerCase(Locale.ROOT)+" research notes");
+            });
+        }
+        LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
+        cardLp.bottomMargin=dp(a,11);parent.addView(card,cardLp);
+        return card;
+    }
+    private static void sourceDrawer(Activity a,LinearLayout parent,String scientific,
+            String citation,String sourceUrl,String sourceKey,ArrayList<Fact> facts){
+        LinearLayout references=new LinearLayout(a);
+        references.setOrientation(LinearLayout.VERTICAL);
+        references.setVisibility(View.GONE);
+        references.setPadding(dp(a,9),dp(a,6),dp(a,9),dp(a,12));
+        references.addView(text(a,"References",16,true,UiKit.FOREST));
+        LinkedHashMap<String,Fact> unique=new LinkedHashMap<>();
+        for(Fact fact:facts)if(!unique.containsKey(fact.url))unique.put(fact.url,fact);
+        ArrayList<Fact> entries=new ArrayList<>(unique.values());
+        Collections.sort(entries,(left,right)->
+            ResearchCitationFormatter.authorLabel(left.source).compareToIgnoreCase(
+                ResearchCitationFormatter.authorLabel(right.source)));
+        for(Fact fact:entries){
+            TextView entry=text(a,ResearchCitationFormatter.sourceRecord(
+                fact.source,fact.sourceYear,fact.url),13,false,UiKit.INK);
+            entry.setPadding(dp(a,5),dp(a,9),dp(a,3),dp(a,7));
+            entry.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
+            entry.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+            String journal=VerifiedApaCatalog.journal(fact.url);
+            if(journal!=null){
+                android.text.SpannableString rich=new android.text.SpannableString(
+                    entry.getText());
+                int at=rich.toString().indexOf(journal);
+                if(at>=0){
+                    rich.setSpan(new android.text.style.StyleSpan(Typeface.ITALIC),
+                        at,at+journal.length(),
+                        android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    entry.setText(rich);
+                }
+            }
+            references.addView(entry);
+        }
+        references.addView(text(a,"Further reading and review notes",
+            13,true,UiKit.FOREST));
+        Rc14Bibliography.add(a,references,scientific,
+            new HashSet<String>(unique.keySet()));
+        Rc12ScientificReview.add(a,references,scientific);
+        if(!sourceKey.isEmpty()){
+            TextView provenance=text(a,"Catalog record: "+sourceKey,11,false,UiKit.MUTED);
+            LinearLayout.LayoutParams mp=new LinearLayout.LayoutParams(-1,-2);
+            mp.topMargin=dp(a,15);references.addView(provenance,mp);
+        }
+        if(!facts.isEmpty()){
+            TextView notes=text(a,"Study details",13,true,UiKit.FOREST);
+            LinearLayout.LayoutParams np=new LinearLayout.LayoutParams(-1,-2);
+            np.topMargin=dp(a,15);references.addView(notes,np);
+            for(Fact fact:facts){
+                if(fact.limitation.isEmpty()&&fact.review.isEmpty())continue;
+                String text=fact.label+" · "+fact.publication;
+                if(!fact.limitation.isEmpty())text+="\n"+fact.limitation;
+
+                TextView detail=text(a,text,12,false,UiKit.MUTED);
+                LinearLayout.LayoutParams d=new LinearLayout.LayoutParams(-1,-2);
+                d.topMargin=dp(a,10);references.addView(detail,d);
+            }
+        }
+        Button toggle=UiKit.button(a,"References  ▾","secondary");
+        toggle.setContentDescription("Open cited sources and study details");
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,50));
+        lp.topMargin=dp(a,4);parent.addView(toggle,lp);
+        parent.addView(references);
+        toggle.setOnClickListener(v->{
+            boolean open=references.getVisibility()!=View.VISIBLE;
+            if(open)UiMotion.reveal(a,references);
+            else UiMotion.hide(references);
+            toggle.setText(open?"Hide references  ▴":"References  ▾");
+            toggle.setContentDescription(open?"Close cited sources and study details":
+                "Open cited sources and study details");
+        });
+    }
+    private static void link(Activity a,LinearLayout parent,String label,String url){
+        Button button=UiKit.button(a,label,"quiet");
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,44));
+        lp.topMargin=dp(a,4);parent.addView(button,lp);
+        button.setOnClickListener(v->a.startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url))));
+    }
+    public static void add(Activity a,LinearLayout parent,Cursor taxon,String scientific){
+        String group=column(taxon,"taxon_group");
+        String family=column(taxon,"family");
+        String subtitle=group+(family.isEmpty()?"":" · "+family);
+        TextView meta=text(a,subtitle,13,false,UiKit.MUTED);
+        LinearLayout.LayoutParams metaLp=new LinearLayout.LayoutParams(-1,-2);
+        metaLp.bottomMargin=dp(a,11);parent.addView(meta,metaLp);
+        ArrayList<Fact> facts=facts(a,scientific);
+        HashSet<String> topics=new HashSet<>();
+        for(Fact item:facts)topics.add(item.area);
+        String coverageText="Research coverage: "+topics.size()+" of 5 topics";
+        TextView evidenceCoverage=text(a,coverageText,12,false,UiKit.MUTED);
+        evidenceCoverage.setContentDescription("Evidence coverage: "+coverageText);
+        LinearLayout.LayoutParams coverageLp=new LinearLayout.LayoutParams(-1,-2);
+        coverageLp.bottomMargin=dp(a,9);
+        parent.addView(evidenceCoverage,coverageLp);
+        OfflinePhotoEvidence.addCompactForTaxon(a,parent,scientific);
+        // Jump links only target sections with documented research facts.
+        int navigationIndex=parent.getChildCount();
+        ArrayList<Fact> displayed=new ArrayList<>();
+        LinkedHashMap<String,View> sections=new LinkedHashMap<>();
+        for(int i=0;i<AREAS.length;i++){
+            View card=section(a,parent,AREAS[i],ICONS[i],facts,displayed);
+            if(card!=null)sections.put(AREAS[i],card);
+        }
+        if(sections.size()>1){
+            LinearLayout navigation=new LinearLayout(a);
+            navigation.setOrientation(LinearLayout.VERTICAL);
+            TextView label=text(a,"Jump to section",12,true,UiKit.FOREST);
+            label.setPadding(dp(a,2),dp(a,2),0,dp(a,6));
+            navigation.addView(label);
+            HorizontalScrollView rail=new HorizontalScrollView(a);
+            rail.setHorizontalScrollBarEnabled(false);
+            LinearLayout links=new LinearLayout(a);
+            links.setOrientation(LinearLayout.HORIZONTAL);
+            for(Map.Entry<String,View> entry:sections.entrySet()){
+                String area=entry.getKey();
+                View target=entry.getValue();
+                Button jump=UiKit.button(a,area,"quiet");
+                jump.setContentDescription("Jump to "+area+" research section");
+                jump.setMinHeight(dp(a,48));
+                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,dp(a,52));
+                lp.rightMargin=dp(a,7);
+                links.addView(jump,lp);
+                jump.setOnClickListener(v->{
+                    if(parent.getParent() instanceof ScrollView){
+                        ScrollView page=(ScrollView)parent.getParent();
+                        // Immediate jumps remain usable with Less motion enabled.
+                        page.post(()->page.scrollTo(0,
+                            Math.max(0,target.getTop()-dp(a,8))));
+                    }
+                });
+            }
+            rail.addView(links);
+            navigation.addView(rail,new LinearLayout.LayoutParams(-1,dp(a,56)));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+            lp.bottomMargin=dp(a,12);
+            parent.addView(navigation,navigationIndex,lp);
+        }
+        sourceDrawer(a,parent,scientific,
+            column(taxon,"source")+" · "+column(taxon,"source_version"),
+            column(taxon,"source_url"),column(taxon,"taxon_key"),facts);
+        LinearLayout utilities=new LinearLayout(a);
+        utilities.setOrientation(LinearLayout.VERTICAL);
+        utilities.setPadding(0,dp(a,8),0,0);
+        if(Rc9DifferentialActivity.hasPair(a,scientific)){
+            Button differential=UiKit.button(a,"Similar species","secondary");
+            utilities.addView(differential,new LinearLayout.LayoutParams(-1,dp(a,48)));
+            differential.setOnClickListener(v->a.startActivity(
+                new Intent(a,Rc9DifferentialActivity.class)
+                    .putExtra("scientific_name",scientific)));
+        }
+        Button compare=UiKit.button(a,"Compare traits","quiet");
+        compare.setContentDescription("Compare current cited species traits. This is not an automatic identification");
+        utilities.addView(compare,new LinearLayout.LayoutParams(-1,dp(a,48)));
+        compare.setOnClickListener(v->a.startActivity(
+            new Intent(a,Rc8TraitComparisonActivity.class)
+                .putExtra("scientific_name",scientific)));
+        if(OfflinePhotoEvidence.hasOfflineTaxon(a,scientific)){
+            Button photos=UiKit.button(a,"Compare photos","quiet");
+            LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,dp(a,48));
+            p.topMargin=dp(a,5);utilities.addView(photos,p);
+            photos.setOnClickListener(v->a.startActivity(
+                new Intent(a,Rc8PhotoComparisonActivity.class)
+                    .putExtra("scientific_name",scientific)));
+        }
+        parent.addView(utilities);
+    }
+}

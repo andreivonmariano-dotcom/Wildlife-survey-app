@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "1",
+  "edition": "2026-10-28",
+  "priorityObserver": "dreidrei",
+  "items": [],
+  "instructions": "Populate this lock only after reviewing iNaturalist observation URL, photo ID, license, attribution, species identification, sensitive locality, HTTPS photo URL and exact SHA-256 of cached JPEG. Never auto-approve an image based on user login."
+}

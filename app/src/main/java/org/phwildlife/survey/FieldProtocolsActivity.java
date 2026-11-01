@@ -193,14 +193,12 @@ public final class FieldProtocolsActivity extends Activity {
     private void draw(){
         LinearLayout root=col();root.setPadding(dp(14),dp(9),dp(14),dp(10));
         root.setBackgroundColor(UiKit.BG);
-        Button back=UiKit.button(this,"‹ Back","secondary");
-        root.addView(back,new LinearLayout.LayoutParams(dp(110),dp(48)));
-        back.setOnClickListener(v->{
-            if(eventId!=null&&getIntent().getStringExtra("event_id")==null){
-                eventId=null;method="";draw();
-            }else finish();
-        });
-        root.addView(text("Field protocol records",22));
+        root.addView(UiKit.navigationHeader(this,"Field protocol records",
+            eventId==null?"Back":"All records",()->{
+                if(eventId!=null&&getIntent().getStringExtra("event_id")==null){
+                    eventId=null;method="";draw();
+                }else finish();
+            }));
         ScrollView sc=new ScrollView(this);records=col();
         records.setPadding(0,dp(3),0,dp(20));sc.addView(records);
         root.addView(sc,new LinearLayout.LayoutParams(-1,0,1));

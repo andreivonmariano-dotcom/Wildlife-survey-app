@@ -43,21 +43,23 @@ class FieldLayoutContractTest(unittest.TestCase):
         self.assertIn('surveyTile(first,"Birds"',text)
         self.assertIn('surveyTile(first,"Herpetofauna"',text)
         self.assertIn('surveyTile(second,"Mammals"',text)
-        self.assertIn('surveyTile(second,"Custom"',text)
-        self.assertIn("tile.setMinimumHeight(dp(104))",text)
+        self.assertNotIn('surveyTile(second,"Custom"',text)
+        self.assertIn("LikasPortalUi.mini(this,title,detail,art,tap)",text)
         self.assertIn('Button resume=UiKit.button(this,"Resume Survey","primary")',text)
         self.assertIn('String unfinished=activeSurvey()',text)
-        self.assertIn('tools.setVisibility(View.GONE)',text)
+        self.assertIn('LikasLibraryActivity.class',text)
 
     def test_four_part_setup_preserves_real_field_inputs(self):
         text=self.home
         for heading in ('step("01","Survey method")','step("02","Project and location")',
-                        'step("03","Observer and effort")','step("04","Begin survey")'):
+                        'step("03","Sampling effort")','step("04","Begin survey")'):
             self.assertIn(heading,text)
         for entry in ('projectChoice','geographicChoice','spacingChoice','routeLengthEntry',
                       'durationEntry','observerEntry','regionEntry','areaEntry'):
             self.assertIn(entry,text)
-        self.assertIn('start.setOnClickListener(v->startSelected())',text)
+        self.assertIn('setupStartButton.setOnClickListener(v->startSelected())',text)
+        self.assertIn('setupFooter.setVisibility(View.VISIBLE)',text)
+        self.assertIn('extraDetails.addView(observerEntry)',text)
 
     def test_gps_skip_and_exports_are_unchanged(self):
         self.assertIn('"Start without GPS · mark start missing"',self.gps)
@@ -67,8 +69,8 @@ class FieldLayoutContractTest(unittest.TestCase):
 
     def test_unified_palette_and_action_colors(self):
         text=self.styles
-        for token in ("BG=Color.rgb(245,247,240)","FOREST=Color.rgb(35,100,71)",
-                      "POND=Color.rgb(51,126,115)","case \"outline-danger\""):
+        for token in ("BG=Color.rgb(247,248,242)","FOREST=Color.rgb(33,83,53)",
+                      "POND=Color.rgb(46,105,65)","case \"outline-danger\""):
             self.assertIn(token,text)
 
 

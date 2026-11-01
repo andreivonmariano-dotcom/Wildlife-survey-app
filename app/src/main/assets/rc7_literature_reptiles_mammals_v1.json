@@ -1,0 +1,368 @@
+{
+  "version": "rc7b-literature-reptiles-mammals-1",
+  "edition": "2026-10-28",
+  "scope": "reference-only",
+  "status": "literature_synthesis_pending_specialist_review",
+  "records": [
+    {
+      "scientificName": "Varanus mabitang",
+      "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/mabitang",
+      "sourceTitle": "The Reptile Database, Varanus mabitang, Gaulke & Curio 2001",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Range",
+          "value": "A Panay Island endemic described from northwest Panay. Published records should not be extended automatically to other Visayan islands.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/mabitang"
+        },
+        {
+          "field": "Diagnostic evidence",
+          "value": "The Reptile Database quotes the original comparison with Varanus olivaceus. Mabitang has a dark dorsal surface dotted with small yellow marks, unlike the contrasting grey-green pattern described for Gray's monitor.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/mabitang"
+        },
+        {
+          "field": "Taxonomic context",
+          "value": "The species belongs to the Philippine monitor group often discussed under Varanus (Philippinosaurus).",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/mabitang"
+        }
+      ],
+      "caution": "An arboreal monitor photo needs close comparison, viewing angle and locality evidence. Coloration alone is not a validated identification."
+    },
+    {
+      "scientificName": "Varanus bitatawa",
+      "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/bitatawa",
+      "sourceTitle": "The Reptile Database, Varanus bitatawa, Welton et al. 2010",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "The Sierra Madre forest monitor is a Philippine species described from the northeastern Luzon area.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/bitatawa"
+        },
+        {
+          "field": "Identification",
+          "value": "The original description cited a large, robust body and contrasting black and yellow dorsal pattern, with other scalation and anatomical characters distinguishing it from Varanus olivaceus.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/bitatawa"
+        },
+        {
+          "field": "Feeding",
+          "value": "The Reptile Database indicates that the species is largely fruit-eating in published accounts.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/bitatawa"
+        }
+      ],
+      "caution": "Photographed large arboreal lizards need specialist comparison. Keep non-invasive observations and do not identify from fruit feeding alone."
+    },
+    {
+      "scientificName": "Varanus nuchalis",
+      "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/nuchalis",
+      "sourceTitle": "The Reptile Database, Varanus nuchalis",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "The Reptile Database lists Cebu, Ticao, Negros, Panay and Masbate for the species; exact local evidence needs source verification.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/nuchalis"
+        },
+        {
+          "field": "Diagnostic clue",
+          "value": "The database describes noticeably enlarged raised nuchal scales on the neck as a central characteristic.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/nuchalis"
+        },
+        {
+          "field": "Taxonomic history",
+          "value": "Earlier names placed the species under Varanus salvator, which can cause confusion in old literature.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Varanus/nuchalis"
+        }
+      ],
+      "caution": "Do not infer occurrence from the historical name 'water monitor' or reuse a Varanus salvator identification without review."
+    },
+    {
+      "scientificName": "Cuora philippinensis",
+      "sourceUrl": "https://reptile-database.reptarium.cz/Cuora/philippinensis",
+      "sourceTitle": "The Reptile Database, Cuora philippinensis, Blanck et al. 2023",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Taxonomic context",
+          "value": "The Philippine box turtle was separated from older Cuora amboinensis concepts in the 2023 published taxonomy used by the database.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Cuora/philippinensis"
+        },
+        {
+          "field": "Distribution",
+          "value": "The account lists multiple Philippine islands, including the Visayas, Luzon and Mindanao; occurrence records under the older complex require reconciliation.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Cuora/philippinensis"
+        },
+        {
+          "field": "Reference characters",
+          "value": "Species identification should rely on the original taxonomic diagnosis rather than the general presence of a hinged turtle shell.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Cuora/philippinensis"
+        }
+      ],
+      "caution": "Past observations labeled Cuora amboinensis are not silently reidentified as Cuora philippinensis."
+    },
+    {
+      "scientificName": "Siebenrockiella leytensis",
+      "sourceUrl": "https://reptile-database.reptarium.cz/Siebenrockiella/leytensis",
+      "sourceTitle": "The Reptile Database, Siebenrockiella leytensis",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Taxonomic identity",
+          "value": "A Philippine forest turtle with historical combinations under Heosemys. It is not interchangeable with the black marsh turtle Siebenrockiella crassicollis.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Siebenrockiella/leytensis"
+        },
+        {
+          "field": "Range caution",
+          "value": "The original type was reported from southern Leyte, but the taxonomic account discusses Palawan and a complicated collection history. The name is not proof of current occurrence on Leyte.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Siebenrockiella/leytensis"
+        },
+        {
+          "field": "Habitat",
+          "value": "The database describes freshwater river and swamp habitats.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Siebenrockiella/leytensis"
+        }
+      ],
+      "caution": "Use verified contemporary records when describing actual island range; a historically reported type locality must be distinguished from verified present-day distribution."
+    },
+    {
+      "scientificName": "Pelochelys cantorii",
+      "sourceUrl": "https://reptile-database.reptarium.cz/Pelochelys/cantorii",
+      "sourceTitle": "The Reptile Database, Pelochelys cantorii",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Range",
+          "value": "The Asian giant softshell turtle has a broad Asian distribution, with Philippines among the cited countries.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Pelochelys/cantorii"
+        },
+        {
+          "field": "Habitat",
+          "value": "Described as inhabiting freshwater rivers and tributaries, with occasional entry into brackish waters.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Pelochelys/cantorii"
+        },
+        {
+          "field": "Taxonomic caution",
+          "value": "Historic names under Pelochelys bibroni or Pelochelys cantoris can require reconciliation with modern taxonomy.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Pelochelys/cantorii"
+        }
+      ],
+      "caution": "Distinguish exact taxon and geographic records from other softshell turtles. Do not infer breeding or feeding from an isolated photograph."
+    },
+    {
+      "scientificName": "Trimeresurus mcgregori",
+      "sourceUrl": "https://reptile-database.reptarium.cz/Trimeresurus/mcgregori",
+      "sourceTitle": "The Reptile Database, Trimeresurus mcgregori",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "This pit viper is documented from Batan Island in the Batanes group, not across the entire Philippine archipelago.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Trimeresurus/mcgregori"
+        },
+        {
+          "field": "Taxonomy",
+          "value": "The species has been listed under Trimeresurus flavomaculatus mcgregori in older literature and later reinstated as a species.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Trimeresurus/mcgregori"
+        },
+        {
+          "field": "Habitat",
+          "value": "The source cites a fully arboreal habit in comparative viper ecology work.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Trimeresurus/mcgregori"
+        }
+      ],
+      "caution": "Venomous species. Observe from a safe distance and never prompt handling or close-up scale counts for casual users."
+    },
+    {
+      "scientificName": "Ophiophagus salvatana",
+      "sourceUrl": "https://reptile-database.reptarium.cz/Ophiophagus/salvatana",
+      "sourceTitle": "The Reptile Database, Ophiophagus salvatana, Das et al. 2024",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "A Luzon king cobra identified as a distinct Philippine species in a 2024 revision of the Ophiophagus hannah complex.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Ophiophagus/salvatana"
+        },
+        {
+          "field": "Identification",
+          "value": "The taxonomic diagnosis includes adult band pattern differences and more angular pale body bands in juveniles than in some congeners.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Ophiophagus/salvatana"
+        },
+        {
+          "field": "Taxonomic history",
+          "value": "Older 'king cobra' records may refer to a broader species complex and cannot be automatically mapped to this taxon.",
+          "sourceUrl": "https://reptile-database.reptarium.cz/Ophiophagus/salvatana"
+        }
+      ],
+      "caution": "Highly venomous. No handling, approach, capture or intrusive photography. Retain an uncertain Ophiophagus identification unless a qualified review supports species attribution."
+    },
+    {
+      "scientificName": "Rusa alfredi",
+      "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2016-2.RLTS.T4273A22168782.en",
+      "sourceTitle": "IUCN Red List, Rusa alfredi, 2016 global assessment",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Conservation reference",
+          "value": "The IUCN's 2016 global assessment lists the Philippine spotted deer as Endangered, with a decreasing trend. This is not an undated current estimate.",
+          "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2016-2.RLTS.T4273A22168782.en"
+        },
+        {
+          "field": "Habitat",
+          "value": "The assessment lists forest, shrubland and grassland environments and identifies hunting and habitat degradation as threats.",
+          "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2016-2.RLTS.T4273A22168782.en"
+        },
+        {
+          "field": "Distribution",
+          "value": "A Philippine endemic deer of the Western Visayas; the regional reference must not be used as a survey-site occurrence.",
+          "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2016-2.RLTS.T4273A22168782.en"
+        }
+      ],
+      "caution": "Camera detections need diagnostic pelage and body views, camera identity, deployment nights and avoidance of duplicated individuals."
+    },
+    {
+      "scientificName": "Acerodon jubatus",
+      "sourceUrl": "https://www.batcon.org/bat/acerodon-jubatus/",
+      "sourceTitle": "Bat Conservation International, Giant Golden-crowned Flying Fox",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Appearance",
+          "value": "A very large fruit bat with golden fur on the head, contrasting with its darker body; identification depends on visible characters and size context.",
+          "sourceUrl": "https://www.batcon.org/bat/acerodon-jubatus/"
+        },
+        {
+          "field": "Habitat and diet",
+          "value": "The species feeds heavily on fig fruit in mature lowland forests and roosts in trees, sometimes with Pteropus bats.",
+          "sourceUrl": "https://www.batcon.org/bat/acerodon-jubatus/"
+        },
+        {
+          "field": "Conservation threats",
+          "value": "The Bat Conservation International account notes forest loss, hunting and roost disturbance as central concerns.",
+          "sourceUrl": "https://www.batcon.org/bat/acerodon-jubatus/"
+        }
+      ],
+      "caution": "Do not confuse this large flying fox with Pteropus species from silhouettes alone. Record roost flights without disturbing colonies."
+    },
+    {
+      "scientificName": "Crateromys australis",
+      "sourceUrl": "https://www.threatenedtaxa.org/index.php/JoTT/article/view/2110",
+      "sourceTitle": "Journal of Threatened Taxa, Rediscovery of the Dinagat Bushy-tailed Cloud Rat",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "An endemic cloud rat documented from Dinagat Island. Published rediscovery work follows the original 1975 specimen.",
+          "sourceUrl": "https://www.threatenedtaxa.org/index.php/JoTT/article/view/2110"
+        },
+        {
+          "field": "Ecology",
+          "value": "The journal describes this group of rodents as arboreal, leaf-feeding and nocturnal; confirmed species-specific behaviors remain sparse.",
+          "sourceUrl": "https://www.threatenedtaxa.org/index.php/JoTT/article/view/2110"
+        },
+        {
+          "field": "Evidence caution",
+          "value": "The rediscovery study distinguishes actual encounters from unconfirmed local reports.",
+          "sourceUrl": "https://www.threatenedtaxa.org/index.php/JoTT/article/view/2110"
+        }
+      ],
+      "caution": "The known records are sparse. Do not assume an arboreal rodent sighting elsewhere is this species or publish exact sensitive locations."
+    },
+    {
+      "scientificName": "Crateromys heaneyi",
+      "sourceUrl": "https://www.mammaldiversity.org/taxon/1003431/",
+      "sourceTitle": "American Society of Mammalogists Mammal Diversity Database, Crateromys heaneyi",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "A cloud rat endemic to Panay and associated with lowland primary and secondary evergreen rainforest in the source summary.",
+          "sourceUrl": "https://www.mammaldiversity.org/taxon/1003431/"
+        },
+        {
+          "field": "Taxonomic identity",
+          "value": "The database records the original description by Gonzales and Kennedy in 1996 and accepts the species in the genus Crateromys.",
+          "sourceUrl": "https://www.mammaldiversity.org/taxon/1003431/"
+        },
+        {
+          "field": "Conservation reference",
+          "value": "The MDD account displays Endangered as its cited global status, not a DENR national assessment.",
+          "sourceUrl": "https://www.mammaldiversity.org/taxon/1003431/"
+        }
+      ],
+      "caution": "Specialist photographs or specimens are needed to distinguish similar cloud rats. Do not treat captive behavior studies as verified wild behavior."
+    },
+    {
+      "scientificName": "Sus oliveri",
+      "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2016-2.RLTS.T136340A44142784.en",
+      "sourceTitle": "IUCN Red List, Sus oliveri, 2016 global assessment",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Distribution",
+          "value": "Oliver's warty pig is endemic to Mindoro; records occur mainly near forested parts of its central and northwestern mountain ranges in the cited assessment.",
+          "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2016-2.RLTS.T136340A44142784.en"
+        },
+        {
+          "field": "Threats",
+          "value": "Habitat degradation, hunting and hybridization with domestic pigs are named concerns.",
+          "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2016-2.RLTS.T136340A44142784.en"
+        },
+        {
+          "field": "Conservation reference",
+          "value": "The 2016 IUCN assessment lists Vulnerable and flags the account as needing a future update.",
+          "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2016-2.RLTS.T136340A44142784.en"
+        }
+      ],
+      "caution": "The species' exact habitat preference and behavior are poorly known. Older specialist reports use a different IUCN assessment category; preserve dates and sources."
+    },
+    {
+      "scientificName": "Dobsonia chapmani",
+      "sourceUrl": "https://philippines.fieldmuseum.org/natural-history/narrative/4129",
+      "sourceTitle": "Field Museum, Philippine bare-backed fruit bat natural-history account",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Diagnostic appearance",
+          "value": "The membrane of the wings attaches unusually close to the back's midline, producing the bare-backed appearance despite underlying fur.",
+          "sourceUrl": "https://philippines.fieldmuseum.org/natural-history/narrative/4129"
+        },
+        {
+          "field": "Habitat and roost",
+          "value": "Historical accounts describe colonies in coastal or lowland limestone caves on Negros and evening travel to fruiting forest habitats.",
+          "sourceUrl": "https://philippines.fieldmuseum.org/natural-history/narrative/4129"
+        },
+        {
+          "field": "Breeding reference",
+          "value": "The Field Museum describes seasonal reproductive colonies at known historic cave roosts. These records do not show breeding at other sites.",
+          "sourceUrl": "https://philippines.fieldmuseum.org/natural-history/narrative/4129"
+        }
+      ],
+      "caution": "Never disturb cave maternity roosts. Photographing a bare-backed bat should not involve entering roost chambers solely for identification."
+    },
+    {
+      "scientificName": "Pteropus pumilus",
+      "sourceUrl": "https://animaldiversity.org/accounts/Pteropus_pumilus/",
+      "sourceTitle": "Animal Diversity Web, Little golden-mantled flying fox",
+      "reviewStatus": "literature_synthesis_pending_specialist_review",
+      "facts": [
+        {
+          "field": "Range",
+          "value": "A small flying fox recorded from several Philippine faunal regions; records on individual islands still require confirmation.",
+          "sourceUrl": "https://animaldiversity.org/accounts/Pteropus_pumilus/"
+        },
+        {
+          "field": "Habitat",
+          "value": "The account describes tropical lowland forest as a principal environment.",
+          "sourceUrl": "https://animaldiversity.org/accounts/Pteropus_pumilus/"
+        },
+        {
+          "field": "Taxonomic caution",
+          "value": "Identify the species using proportion and facial/fur characters against related Pteropus taxa; a small golden-colored bat alone is not diagnostic.",
+          "sourceUrl": "https://animaldiversity.org/accounts/Pteropus_pumilus/"
+        }
+      ],
+      "caution": "Flight-only sightings of small fruit bats are rarely sufficient for species-level records. Include photo context and estimate uncertainty."
+    }
+  ]
+}

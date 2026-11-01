@@ -28,6 +28,8 @@ public final class PaicHabitatPolicyTest {
         assertNull(PaicHabitatPolicy.elevationWithin("0–2,000 m",null));
         assertEquals(Boolean.TRUE,PaicHabitatPolicy.elevationWithin("0–2,000 m",900d));
         assertEquals(Boolean.FALSE,PaicHabitatPolicy.elevationWithin("0–2,000 m",3000d));
+        assertNull(PaicHabitatPolicy.elevationWithin("0 m",35d));
+        assertNull(PaicHabitatPolicy.elevationWithin("1,000 m",1000d));
     }
     @Test public void bareLandAndOpenWaterDoNotBecomeHabitats(){
         assertEquals("",PaicHabitatPolicy.landCoverSuggestion(60));

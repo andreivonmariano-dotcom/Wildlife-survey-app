@@ -99,9 +99,14 @@ public final class CatalogActivity extends Activity {
         result.insert(0,mindanaoActive==725?
             "Mindanao working catalog v3.6 · 725 species":
             (allGroupsInstalled?"Installed offline references":"Incomplete offline references"));
-        int[] libraryCounts=OfflineFieldLibrary.availableCounts(this);
-        result.append("\nDetailed wildlife accounts: ").append(libraryCounts[0])
-            .append(" (source-checked; specialist review pending)");
+        if(mindanaoActive==725){
+            result.append("\nAll species entries come from the v3.6 working "+
+                "checklist. Detailed diagnostic accounts are not part of this import.");
+        }else{
+            int[] libraryCounts=OfflineFieldLibrary.availableCounts(this);
+            result.append("\nDetailed wildlife accounts: ").append(libraryCounts[0])
+                .append(" (source-checked; specialist review pending)");
+        }
         result.append("\nPhilippine habitat field guides: ").append(libraryCounts[1]);
         result.append("\nReviewed habitat profiles: ").append(reviewedProfiles)
             .append(" / ").append(attributedTotal).append(" attributed names");
@@ -167,7 +172,7 @@ public final class CatalogActivity extends Activity {
                                     runOnUiThread(()->{
                                         if(isFinishing()||isDestroyed())return;
                                         refresh();
-                                        info.append("\\nMindanao v3.6 installed: 725 active species. "+
+                                        info.append("\nMindanao v3.6 installed: 725 active species. "+
                                             "Unreviewed regional presence is not confirmed.");
                                     });
                                 }catch(Exception error){

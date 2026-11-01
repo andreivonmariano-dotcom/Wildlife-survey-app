@@ -1,0 +1,74 @@
+name: APO locked-icon startup v132 signed APK
+on:
+  push:
+    branches:
+      - feature/apo-startup-screen-v1-design
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+      - run: sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0' 'platform-tools'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - uses: actions/cache@v4
+        with:
+          path: .taxonomy-cache/mdd-v2.5.csv
+          key: mdd-v2.5-533e662fd5b8f66a5f56c191e7efac44
+      - uses: actions/cache/restore@v4
+        with:
+          path: .signing/wildlife-beta08.keystore
+          key: wildlife-v08-beta-debug-signing-v1
+      - name: Verify original signer, APK identity and scientific references
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s .signing/wildlife-beta08.keystore
+          keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/apo-original-cert.der
+          echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/apo-original-cert.der' | sha256sum -c -
+          grep -F 'versionCode 132' app/build.gradle
+          grep -F "applicationId 'org.phwildlife.survey.beta08'" app/build.gradle
+          grep -F 'super(context,NAME,null,28)' app/src/main/java/org/phwildlife/survey/FieldDb.java
+          echo '1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959  app/src/main/assets/paic714_master.csv' | sha256sum -c -
+          echo 'e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089  app/src/main/assets/paic_worldcover2020_500m.txt' | sha256sum -c -
+          echo '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7  app/src/main/assets/apo_official_master.png' | sha256sum -c -
+          echo 'a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc  app/src/main/res/drawable-nodpi/apo_splash_mark.png' | sha256sum -c -
+          echo '2a60cc5cda8dba006c1c713f15d565c4599ad5ec1bcaebadc7690cb66445af00  app/src/main/res/drawable-nodpi/apo_launcher_foreground.png' | sha256sum -c -
+      - name: Source and scientific regression tests
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_*.py'
+          python3 scripts/prepare_mdd_mammals.py
+          python3 scripts/prepare_offline_photos.py
+          python3 scripts/audit_inaturalist_photos.py --install-approved
+      - name: Build and unit test Android APK with retained signing key
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Verify signed APK package, contents and pinned signing identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          unzip -t "$APK" | tail -n 1
+          unzip -p "$APK" assets/paic714_master.csv | sha256sum | grep -F '1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959'
+          unzip -p "$APK" assets/paic_worldcover2020_500m.txt | sha256sum | grep -F 'e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089'
+          unzip -p "$APK" assets/apo_official_master.png | sha256sum | grep -F '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7'
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08' versionCode='132'"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
+      - name: Upload verified APO startup APK for direct in-chat export
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: APO-v132-gradient-startup-signed
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7

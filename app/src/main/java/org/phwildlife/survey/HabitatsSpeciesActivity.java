@@ -206,7 +206,7 @@ public final class HabitatsSpeciesActivity extends Activity {
             new String[]{"Amphibians","Reptiles"}:new String[]{profile};
         GpsElevation.Sample sample=GpsElevation.read(TrackService.currentFix());
         Double altitude=sample.usableForHabitat?sample.mslMeters:null;
-        int total=0,match=0;
+        int total=0,match=0,installed=0;
         try(FieldDb helper=new FieldDb(this)){
             SQLiteDatabase d=helper.getReadableDatabase();
             // The master attributes are installed privately, separately from the app APK.

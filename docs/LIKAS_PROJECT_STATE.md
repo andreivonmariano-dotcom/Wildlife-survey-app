@@ -1,5 +1,12 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+
+## 2026-11-02 | APO official icon design locked; minimalist startup redesign next
+- **Owner-approved replacement name:** APO, referencing Mount Apo, covering fieldwork, species library, ecology, research and future biology tools. Avoid "fieldwork-only" descriptions.
+- **Hard-locked official emblem:** approved generated PNG `a_clean_modern_minimalist_logo_app_icon_on_a_rou.png`, 1254×1254 RGB, SHA256 `eae6582c90ff8bbe394a795763aacb68da40ca9a81acc79ec587b2c227e9c284`. Ivory asymmetrical folded mountain ribbon with a smaller second summit, muted jade interior, deep forest-green rounded-square background; no text. See `docs/APO_OFFICIAL_MOUNTAIN_ICON_LOCK_2026_11_02.md`. Supersedes older frog launcher locks only.
+- **Status:** design decision committed on `feature/apo-minimal-brand-design-lock`; **NOT YET INSTALLED IN APK**. Last signed public APK still RC71 code131 with prior LIKAS branding. Do not claim icon was shipped or provide a new APK without verified app build. Splash redesign has not been implemented; next step is minimal launch mark with separate APO wordmark, short restrained motion, reduced-motion and truthful offline reference startup status.
+- **Safety:** keep `org.phwildlife.survey.beta08`, certificate, SQLite28, survey/observation history and GPS/fieldwork lifecycle behavior intact across rebrand.
+
 ## 2026-11-01 | RC71 owner-approved public preinstalled PAIC714+WorldCover references | Signed APK verified
 - **Latest owner decision:** The 714-species harmonized Mindanao PAIC master checklist was assembled by the owner and is authorized for **public GitHub source and public downloadable APK** distribution. The lightweight ESA WorldCover 2020 v100-derived 16-tile habitat map is also embedded with verified **CC BY 4.0 attribution**. This supersedes RC70's restriction to ignored private build inputs.
 - **Source:** `feature/likas-rc71-public-preloaded-paic-references`, draft PR #72 based on RC70. Exact passing binary input/test SHA `b5690095ddf8035a35aca21fd9db3c019a0f775c`. Android build `0.27.3-rc71-preloaded-paic714-worldcover`, **versionCode 131**, original app ID `org.phwildlife.survey.beta08`, schema **28**. The approved checklist SHA-256 is `1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959`, the map SHA-256 is `e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089`. Both source files are now tracked in `app/src/main/assets/`; no private reference imports are needed.

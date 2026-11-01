@@ -1,6 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
 
+
+## 2 November 2026 | APO startup-screen design handoff (design-only)
+
+- **Current owner direction:** Continue the name/icon/layout overhaul at the **startup screen**. New public identity is **Apo / APO** with the exact approved textless mountain icon from `docs/APO_OFFICIAL_MOUNTAIN_ICON_LOCK_2026_11_02.md`. This supersedes older LIKAS/frog/animated-forest startup directions for this screen.
+- **Source:** isolated `feature/apo-startup-screen-v1-design`, based on the latest APO identity design branch `feature/apo-minimal-brand-design-lock` (base head `1e1bcaa976ab0333e087719b590259513567438f`). Implementation-ready proposed layout and QA contract at `docs/APO_STARTUP_SCREEN_V1_DESIGN.md`. This is a draft, **not** owner-approved animation timing or screen layout.
+- **Actual app baseline:** Parent RC71 packages PAIC 714 + ESA WorldCover in app, versionCode **131**, application ID `org.phwildlife.survey.beta08`, SQLite **28**. The current launcher Activity still says LIKAS and does not include the APO approved PNG. Do not change package/signing identity.
+- **Verification and blocker:** Approved icon is recorded as `a_clean_modern_minimalist_logo_app_icon_on_a_rou.png` (1254x1254; SHA-256 `eae6582c90ff8bbe394a795763aacb68da40ca9a81acc79ec587b2c227e9c284`), but binary is not attached here or committed in GitHub. No Android code, APK, compiled test or handset app was updated in this conversation. Do not generate a replacement logo or pretend startup is shipped.
+- **Next task:** Bring in exact approved source master under traceable `apo_` asset names, implement the short motion-light wordmark and bootstrap-status states on this RC71-derived branch, advance versionCode >131, verify resource hashes/Android builds/signing and direct-deliver the exact APK. Owner visual review then real-device accessibility and historical-data upgrade verification.
+
 ## 2026-11-02 | APO official icon design locked; minimalist startup redesign next
 - **Owner-approved replacement name:** APO, referencing Mount Apo, covering fieldwork, species library, ecology, research and future biology tools. Avoid "fieldwork-only" descriptions.
 - **Hard-locked official emblem:** approved generated PNG `a_clean_modern_minimalist_logo_app_icon_on_a_rou.png`, 1254×1254 RGB, SHA256 `eae6582c90ff8bbe394a795763aacb68da40ca9a81acc79ec587b2c227e9c284`. Ivory asymmetrical folded mountain ribbon with a smaller second summit, muted jade interior, deep forest-green rounded-square background; no text. See `docs/APO_OFFICIAL_MOUNTAIN_ICON_LOCK_2026_11_02.md`. Supersedes older frog launcher locks only.

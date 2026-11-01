@@ -34,7 +34,7 @@ class PublicBundledReferencesTest(unittest.TestCase):
     def test_worldcover_16_tile_map_and_attribution(self):
         raw=MAP.read_bytes()
         self.assertEqual(MAP_SHA,hashlib.sha256(raw).hexdigest())
-        self.assertTrue(raw.startswith(b"LIKAS_WORLDCOVER_2020_500M_V1\\n"))
+        self.assertTrue(raw.startswith(b"LIKAS_WORLDCOVER_2020_500M_V1\n"))
         import base64
         tiles=[line for line in raw.decode("ascii").splitlines()
                if line and not line.startswith("#") and "|" in line]

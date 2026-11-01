@@ -19,7 +19,7 @@ class Rc57Home(unittest.TestCase):
         self.assertIn("versionName \'0.27.3-",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         db=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
-        self.assertIn("super(context,NAME,null,27)",db)
+        self.assertIn("super(context,NAME,null,28)",db)
     def test_no_home_actions_removed(self):
         source=(ROOT/"app/src/main/java/org/phwildlife/survey/WelcomeActivity.java").read_text()
         home=source.split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]

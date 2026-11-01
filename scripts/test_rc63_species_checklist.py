@@ -31,7 +31,7 @@ class Rc63Checklist(unittest.TestCase):
         self.assertGreaterEqual(int(b.split("versionCode ",1)[1].split()[0]),125)
         self.assertIn("versionName \'0.27.3-",b)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",b)
-        self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
+        self.assertIn("super(context,NAME,null,28)",(JAVA/"FieldDb.java").read_text())
     def test_no_schema_or_data_cleanup_issued_by_library(self):
         s=(JAVA/"Rc7SpeciesLibraryActivity.java").read_text().lower()
         self.assertNotIn("drop table",s)

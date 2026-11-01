@@ -39,7 +39,7 @@ class LibraryNavigationContract(unittest.TestCase):
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",gradle).group(1)),109)
         self.assertIn("0.27.3-rc",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
-        self.assertIn("super(context,NAME,null,27)",
+        self.assertIn("super(context,NAME,null,28)",
                       (JAVA/"FieldDb.java").read_text())
 
 if __name__=="__main__":

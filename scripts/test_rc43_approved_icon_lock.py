@@ -78,7 +78,7 @@ class Rc43ApprovedIconLock(unittest.TestCase):
         self.assertIn("versionName '0.27.3-rc",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         field=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
-        self.assertIn("super(context,NAME,null,27)",field)
+        self.assertIn("super(context,NAME,null,28)",field)
 
 if __name__=="__main__":
     unittest.main()

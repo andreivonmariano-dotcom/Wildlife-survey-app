@@ -78,7 +78,7 @@ class FieldGuideStudioQA(unittest.TestCase):
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",gradle).group(1)),109)
         self.assertIn("versionName '0.27.3-rc",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
-        self.assertIn("super(context,NAME,null,27)",read("FieldDb.java"))
+        self.assertIn("super(context,NAME,null,28)",read("FieldDb.java"))
         self.assertIn('rc34_conservation_card_status_v1.json',read("LikasDiscoveryActivity.java"))
         self.assertIn('rc18_unified_96_priority_accounts_v1.json',read("LikasDiscoveryActivity.java"))
 

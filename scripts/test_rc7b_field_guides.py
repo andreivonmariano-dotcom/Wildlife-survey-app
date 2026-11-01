@@ -76,6 +76,6 @@ class Rc7bFieldGuideTests(unittest.TestCase):
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",gradle).group(1)),59)
         self.assertRegex(gradle, r"versionName '0[.][0-9]+[.][0-9]+-rc[0-9]+[^']*'")
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
-        self.assertIn("super(context,NAME,null,27)",database)
+        self.assertIn("super(context,NAME,null,28)",database)
 
 if __name__=="__main__":unittest.main()

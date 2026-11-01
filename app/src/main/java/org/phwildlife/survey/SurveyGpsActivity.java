@@ -179,7 +179,10 @@ public final class SurveyGpsActivity extends Activity {
                 skipConfirmationOpen=true;
                 new AlertDialog.Builder(this)
                     .setTitle("Start this survey without GPS?")
-                    .setMessage("Survey time and observations will be recorded now. "+
+                    .setMessage((getIntent().getBooleanExtra("prepare_field_checklist",false)?
+                        "Habitat preparation comes first. Survey effort does not "+
+                        "begin until you choose Begin survey. ":
+                        "Survey time and observations will be recorded now. ")+
                         "The starting coordinates stay blank and are flagged in the export. "+
                         "A later GPS fix cannot replace the missing starting position. "+
                         "GPS tracking and station readings can begin when available.")
@@ -287,7 +290,9 @@ public final class SurveyGpsActivity extends Activity {
         qualifiedFix=good?new Location(current):null;
         startButton.setEnabled(good);
         if(good&&acquisitionVisible&&!launchCommitted&&!skipConfirmationOpen&&!isFinishing()){
-            setStatus("GPS verified · starting "+(stationMode?"station":"survey")+"…");
+            setStatus("GPS verified · continuing to "+(stationMode?"station":
+                getIntent().getBooleanExtra("prepare_field_checklist",false)?
+                "habitats and species":"survey")+"…");
             launchWithFix();
             return;
         }
@@ -331,7 +336,9 @@ public final class SurveyGpsActivity extends Activity {
         }
         launchCommitted=true;
         if(stationMode){finishStation(fix);return;}
-        Intent launch=new Intent(this,MainActivity.class);
+        Intent launch=new Intent(this,getIntent().getBooleanExtra(
+            "prepare_field_checklist",false)?
+            HabitatsSpeciesActivity.class:MainActivity.class);
         if(getIntent().getExtras()!=null)launch.putExtras(getIntent().getExtras());
         launch.putExtra("start_gps_latitude",fix.getLatitude());
         launch.putExtra("start_gps_longitude",fix.getLongitude());
@@ -350,7 +357,9 @@ public final class SurveyGpsActivity extends Activity {
     private void launchWithoutFix(){
         if(stationMode||launchCommitted||!acquisitionVisible||isFinishing())return;
         launchCommitted=true;
-        Intent launch=new Intent(this,MainActivity.class);
+        Intent launch=new Intent(this,getIntent().getBooleanExtra(
+            "prepare_field_checklist",false)?
+            HabitatsSpeciesActivity.class:MainActivity.class);
         if(getIntent().getExtras()!=null)launch.putExtras(getIntent().getExtras());
         launch.removeExtra("start_gps_latitude");
         launch.removeExtra("start_gps_longitude");

@@ -41,7 +41,7 @@ public class WelcomeActivity extends Activity {
     private Spinner spacingChoice,templateChoice;
     private final ArrayList<String> templateIds=new ArrayList<>();
     private EditText templateName;
-    private CheckBox saveTemplateChoice;
+    private CheckBox saveTemplateChoice,prepareFieldChecklist;
     private TextView templateHint;
     private boolean updatingRouteChoices=false;
     private TextView stationCountPreview,routeHeader,spacingHeader,repeatHeader;
@@ -660,6 +660,19 @@ public class WelcomeActivity extends Activity {
             }
         });
         refreshStudyChoices();
+        // The optional habitat-and-species step follows survey GPS, not setup.
+        prepareFieldChecklist=new CheckBox(this);
+        prepareFieldChecklist.setText("Prepare habitats & species after GPS (optional)");
+        prepareFieldChecklist.setTextSize(LikasDesignSystem.TEXT_BODY);
+        prepareFieldChecklist.setTextColor(UiKit.INK);
+        prepareFieldChecklist.setMinHeight(dp(56));
+        prepareFieldChecklist.setChecked(getPreferences(MODE_PRIVATE)
+            .getBoolean("prepare_field_checklist",true));
+        main.addView(prepareFieldChecklist);
+        TextView prepHint=text("Confirm multiple site habitats and review optional "+
+            "2020 land-cover suggestions before recording. Turn off to go directly "+
+            "from GPS into the recorder.",12,false);
+        prepHint.setTextColor(UiKit.MUTED);main.addView(prepHint);
         // The only Continue to GPS action is pinned beneath the scroll area.
         UiMotion.enter(this,main);
     }
@@ -1032,6 +1045,8 @@ public class WelcomeActivity extends Activity {
         Intent i=new Intent(this,SurveyGpsActivity.class);
         i.putExtra("transect_bearing",lineBearingEntry.getText().toString().trim());
         i.putExtra("create_new",true);
+        i.putExtra("prepare_field_checklist",
+            prepareFieldChecklist!=null&&prepareFieldChecklist.isChecked());
         i.putExtra("survey_profile",profile);
         i.putExtra("project_id",projectId());
         i.putExtra("geographic_region_id",GeoRegions.idAt(geographicChoice.getSelectedItemPosition()));
@@ -1084,13 +1099,17 @@ public class WelcomeActivity extends Activity {
              .putInt("projectChoice",projectChoice.getSelectedItemPosition())
              .putInt("geographicChoice",geographicChoice.getSelectedItemPosition())
              .putString("geographicMethod",geographicMethod)
-             .putString("studyTemplateId",selectedStudyId());
+             .putString("studyTemplateId",selectedStudyId())
+             .putBoolean("prepare_field_checklist",
+                 prepareFieldChecklist!=null&&prepareFieldChecklist.isChecked());
         }
         e.commit();
     }
     private void restoreSetup(){
         android.content.SharedPreferences p=getPreferences(MODE_PRIVATE);
         if(methodChoices==null)return;
+        if(prepareFieldChecklist!=null)prepareFieldChecklist.setChecked(
+            p.getBoolean("prepare_field_checklist",true));
         int choice=p.getInt("methodChoice",0);
         if(choice>=0&&choice<choices.length)methodChoices.check(1000+choice);
         observerEntry.setText(p.getString("observer",""));

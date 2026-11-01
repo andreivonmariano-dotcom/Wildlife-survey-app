@@ -659,7 +659,7 @@ public final class SpeciesPickerActivity extends Activity {
                         filtered.add(species);
                 Collections.sort(filtered,(a,b)->{
                     if(paicCatalogActive&&surveyPreparation!=null&&
-                            (siteSuggestions||sorting==SpeciesSortPolicy.DEFAULT)){
+                            (siteSuggestions||sorting==SpeciesSortPolicy.ALPHABETICAL)){
                         int rank=Integer.compare(b.paicRank,a.paicRank);
                         if(rank!=0)return rank;
                     }

@@ -5,6 +5,10 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,9 +24,12 @@ import java.util.Map;
  * media, favorites and recorded identifications are never changed.
  */
 public final class MindanaoMasterImporter {
-    public static final String VERSION="v3.6_2026-11-01";
+    public static final String VERSION="PAIC714_2026-11-01";
     private static final String PREFIX="LIKAS725:";
-    private static final int COUNT=725;
+    private static final int COUNT=714;
+    // Stable LIKAS725 taxon keys are retained from the earlier draft to avoid breaking historic references.
+    private static final String APPROVED_ROSTER_SHA256=
+        "a666cb283265131d53591a782e3e4a0a8a3661521266e30f6d58d0dbcba1552c";
     private static final String[] COLUMN_NAMES={
         "taxon_key","taxon_group","common_name","scientific_name","family",
         "source","source_version","region_codes","review_status","order_name",
@@ -34,7 +41,7 @@ public final class MindanaoMasterImporter {
 
     public static void validate(List<Map<String,String>> rows){
         if(rows==null||rows.size()!=COUNT)
-            throw new IllegalArgumentException("Expected exactly 725 checklist species");
+            throw new IllegalArgumentException("Expected exactly 714 checklist species");
         HashSet<String> keys=new HashSet<>();
         HashSet<String> names=new HashSet<>();
         HashMap<String,Integer> groups=new HashMap<>();
@@ -59,12 +66,43 @@ public final class MindanaoMasterImporter {
             groups.put(group,groups.containsKey(group)?groups.get(group)+1:1);
         }
         for(String group:Arrays.asList("Birds","Amphibians","Reptiles","Mammals")){
-            int expected="Birds".equals(group)?414:"Amphibians".equals(group)?53:
-                "Reptiles".equals(group)?156:102;
+            int expected="Birds".equals(group)?408:"Amphibians".equals(group)?53:
+                "Reptiles".equals(group)?154:99;
             if(groups.getOrDefault(group,0)!=expected)
                 throw new IllegalArgumentException("Unexpected count for "+group);
         }
         if(groups.size()!=4)throw new IllegalArgumentException("Unrecognized wildlife group");
+        for(String omitted:Arrays.asList("Apomys camiguinensis","Apus affinis",
+                "Brachymeles vulcani","Bullimus gamay","Hypsipetes catarmanensis",
+                "Loriculus camiguinensis","Miniopterus fuliginosus",
+                "Ninox leventisi","Pseudorabdion mcnamarae",
+                "Sturnus vulgaris","Zosterops nigrorum")){
+            if(names.contains(omitted.toLowerCase(java.util.Locale.ROOT)))
+                throw new IllegalArgumentException("Omitted taxon reintroduced: "+omitted);
+        }
+    }
+
+    /** Confirms the exact user-approved 714-name roster, without embedding private checklist data. */
+    static void validateApprovedRoster(List<Map<String,String>> rows){
+        ArrayList<String> names=new ArrayList<>();
+        for(Map<String,String> row:rows)
+            names.add(field(row,"scientific_name").toLowerCase(java.util.Locale.ROOT));
+        Collections.sort(names);
+        StringBuilder joined=new StringBuilder();
+        for(String name:names){
+            if(joined.length()>0)joined.append('\n');
+            joined.append(name);
+        }
+        try{
+            byte[] hash=MessageDigest.getInstance("SHA-256").digest(
+                joined.toString().getBytes(StandardCharsets.UTF_8));
+            StringBuilder digest=new StringBuilder();
+            for(byte b:hash)digest.append(String.format(java.util.Locale.ROOT,"%02x",b&255));
+            if(!APPROVED_ROSTER_SHA256.equals(digest.toString()))
+                throw new IllegalArgumentException("Not the approved 714-species roster");
+        }catch(java.security.NoSuchAlgorithmException ex){
+            throw new IllegalStateException("SHA-256 unavailable",ex);
+        }
     }
 
     private static String field(Map<String,String> row,String key){
@@ -74,6 +112,7 @@ public final class MindanaoMasterImporter {
 
     public static void install(Context context,List<Map<String,String>> rows)throws Exception{
         validate(rows);
+        validateApprovedRoster(rows);
         try(FieldDb helper=new FieldDb(context)){
             SQLiteDatabase d=helper.getWritableDatabase();
             d.beginTransaction();
@@ -144,6 +183,7 @@ public final class MindanaoMasterImporter {
     private static void archive(SQLiteDatabase d,String active,String archived){
         d.execSQL("CREATE TABLE IF NOT EXISTS "+archived+
             " AS SELECT * FROM "+active+" WHERE 0");
-        d.execSQL("INSERT INTO "+archived+" SELECT * FROM "+active);
+        d.execSQL("INSERT INTO "+archived+" SELECT * FROM "+active+
+            " WHERE NOT EXISTS (SELECT 1 FROM "+archived+" LIMIT 1)");
     }
 }

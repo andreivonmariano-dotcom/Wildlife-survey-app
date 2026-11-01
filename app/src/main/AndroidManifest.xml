@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
-    <application android:label="LIKAS" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
+    <application android:label="Apo" android:icon="@mipmap/apo_launcher" android:roundIcon="@mipmap/apo_launcher_round" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
         <service android:name=".TrackService" android:exported="false" android:foregroundServiceType="location" />
         <activity android:name=".HabitatsSpeciesActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".SurveyGpsActivity" android:screenOrientation="portrait" android:exported="false" />

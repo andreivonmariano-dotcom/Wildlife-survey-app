@@ -1,5 +1,13 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 2 November 2026 | APO icon and gradient startup locked; entrance and Home transition coded
+
+- **Final owner decision:** Lock the **exact** icon `forest_green_mountain_ribbon_icon.png` (1254×1254 RGB, SHA-256 `6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7`) and gradient-only startup (top `#0B4B39`, bottom `#021918`, transparent derived ivory-and-jade ribbon, native separate `APO` text). No scenery or redesigned emblem.
+- **Motion implemented in source:** `LikasLaunchActivity.java` on `feature/apo-startup-screen-v1-design` now eases the mountain into view over 380 ms and the native wordmark over 320 ms starting 90 ms later, then eases both out in 190 ms and Android-fades into `WelcomeActivity`. No arbitrary launch hold; reduced-motion disables both entrance and activity transitions. Keeps explicit offline-reference bootstrap status and failure/continue routing; original app ID, schema28 and field data unchanged.
+- **Tests staged, not executed as Android:** `scripts/test_apo_startup_locked_icon.py` asserts the specified transitions, unchanged icon/resource checksums, non-scenic gradient and survey/history-relevant navigation behavior. GitHub source edits and test content inspected; no Android build or device run claimed.
+- **APK blocked:** PNGs are in the current conversation's verified overlay ZIP but **not committed to the repository**, so Gradle's mandatory artwork hash check would fail. Local container lacks Android SDK, Gradle and network route to private GitHub. No new signed APK/upgrade test. **Next:** transfer exact 3 PNGs from `APO_Gradient_Only_Android_Asset_Overlay.zip` into specified `app/src/main/` paths, run signed original-key CI, inspect appId/code132, artwork and scientific reference SHA, then direct-attach APK in active chat. No provisional binary substitutions. See `docs/APO_STARTUP_SCREEN_V1_DESIGN.md`.
+
+
 ## 2 November 2026 | APO startup now gradient-only (latest visual acceptance)
 
 - **Latest user direction:** Remove forest and mountain silhouettes, leaving a simple full-screen **vertical green gradient**. Keep the exact locked mountain-ribbon **launcher** artwork and borderless **startup-only mountain** derivative, plus native separate APO wordmark. No landscapes, clouds, trees, texture or animated decorative layers.

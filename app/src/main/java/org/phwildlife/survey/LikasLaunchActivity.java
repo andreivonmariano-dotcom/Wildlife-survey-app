@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,7 +34,6 @@ public final class LikasLaunchActivity extends Activity {
     private String referenceFailure=null;
     private LinearLayout identity;
     private ImageView mark;
-    private TextView wordmark;
     private TextView status;
     private FrameLayout root;
 
@@ -64,7 +62,6 @@ public final class LikasLaunchActivity extends Activity {
         identity.setGravity(Gravity.CENTER);
         identity.setOrientation(LinearLayout.VERTICAL);
         identity.setPadding(dp(20),dp(8),dp(20),dp(8));
-        identity.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         FrameLayout.LayoutParams identityParams=new FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
             FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -75,26 +72,12 @@ public final class LikasLaunchActivity extends Activity {
         root.addView(identity,identityParams);
 
         mark=new ImageView(this);
-        // The drawable must be a verified, traceable derivative of the exact
-        // hard-locked owner PNG; do NOT fall back to the retired frog.
+        // The selected artwork already includes APO lettering. No duplicate text.
         mark.setImageResource(R.drawable.apo_splash_mark);
         mark.setScaleType(ImageView.ScaleType.FIT_CENTER);
         LinearLayout.LayoutParams markParams=new LinearLayout.LayoutParams(
-            dp(128),dp(128));
-        markParams.bottomMargin=dp(16);
+            dp(232),dp(232));
         identity.addView(mark,markParams);
-
-        wordmark=new TextView(this);
-        wordmark.setText("APO");
-        wordmark.setTextColor(IVORY);
-        wordmark.setGravity(Gravity.CENTER);
-        wordmark.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));
-        wordmark.setLetterSpacing(.19f);
-        wordmark.setTextSize(
-            getResources().getConfiguration().fontScale>1.5f ? 32f : 40f);
-        identity.addView(wordmark,new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT));
 
         status=new TextView(this);
         status.setText("Preparing offline references");
@@ -122,24 +105,15 @@ public final class LikasLaunchActivity extends Activity {
         } else {
             mark.setAlpha(0f);
             mark.setTranslationY(dp(9));
-            wordmark.setAlpha(0f);
-            wordmark.setTranslationY(dp(5));
-            mark.animate()
-                .alpha(1f).translationY(0f).setDuration(280).start();
-            wordmark.animate()
-                .alpha(1f).translationY(0f).setStartDelay(90)
-                .setDuration(220)
-                .withEndAction(()->{
+            mark.animate().alpha(1f).translationY(0f)
+                .setDuration(300).withEndAction(()->{
                     animationDone=true;
                     maybeEnterHome();
                 }).start();
             root.setOnClickListener(v->{
                 mark.animate().cancel();
-                wordmark.animate().cancel();
                 mark.setAlpha(1f);
-                wordmark.setAlpha(1f);
                 mark.setTranslationY(0f);
-                wordmark.setTranslationY(0f);
                 animationDone=true;
                 maybeEnterHome();
             });
@@ -211,7 +185,6 @@ public final class LikasLaunchActivity extends Activity {
         handler.removeCallbacksAndMessages(null);
         if(identity!=null) identity.animate().cancel();
         if(mark!=null) mark.animate().cancel();
-        if(wordmark!=null) wordmark.animate().cancel();
         super.onDestroy();
     }
 }

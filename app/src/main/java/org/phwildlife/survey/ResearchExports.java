@@ -19,7 +19,30 @@ public final class ResearchExports {
         z.write((s+"\n").getBytes(StandardCharsets.UTF_8));
     }
     public static void write(ZipOutputStream z,SQLiteDatabase d)throws Exception{
-        stationEnvironment(z,d);surveyVisits(z,d);sdm(z,d);herps(z,d);mammals(z,d);deploymentEffort(z,d);callingHistory(z,d);geojson(z,d);
+        stationEnvironment(z,d);surveyHabitatPreparation(z,d);surveyVisits(z,d);sdm(z,d);herps(z,d);mammals(z,d);deploymentEffort(z,d);callingHistory(z,d);geojson(z,d);
+    }
+    /** Survey habitat decisions are not station measurements or observed occurrences. */
+    private static void surveyHabitatPreparation(ZipOutputStream z,
+            SQLiteDatabase db)throws Exception{
+        z.putNextEntry(new ZipEntry("survey_habitat_preparation.csv"));
+        row(z,"survey_id","survey_outcome","confirmed_habitats",
+            "checklist_mode","unconfirmed_map_suggestions","landcover_source",
+            "preparation_latitude","preparation_longitude","gps_accuracy_m",
+            "gps_fix_time_unix_ms","elevation_msl_m","vertical_uncertainty_m",
+            "prepared_utc");
+        try(Cursor c=db.rawQuery("SELECT h.event_id,("+SurveyOutcomeSql.RESOLVED+"),"+
+                "h.confirmed_habitats,h.checklist_mode,h.map_suggestions,"+
+                "h.landcover_source,h.latitude,h.longitude,h.gps_accuracy_m,"+
+                "h.gps_fix_time_ms,h.elevation_msl_m,h.vertical_uncertainty_m,"+
+                "h.prepared_utc FROM survey_habitat_setup h "+
+                "LEFT JOIN surveys s ON s.id=h.event_id ORDER BY h.event_id",null)){
+            while(c.moveToNext()){
+                String[] values=new String[13];
+                for(int i=0;i<values.length;i++)values[i]=num(c,i);
+                row(z,values);
+            }
+        }
+        z.closeEntry();
     }
     /** Source-labeled site metadata, including incomplete/cancelled visits. */
     private static void stationEnvironment(ZipOutputStream z,SQLiteDatabase d)throws Exception{

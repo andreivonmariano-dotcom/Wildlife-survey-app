@@ -1,0 +1,23 @@
+# LIKAS RC69 | Habitats & Species preflight, scientific scope and QA
+
+**Date:** 2026-11-01 (Asia/Manila). **Branch:** `feature/likas-rc69-habitats-species-preflight`, draft PR #70 against RC68. **Build intent:** `0.27.3-rc69-habitats-species-preview`, code129, unchanged package `org.phwildlife.survey.beta08` and required signing certificate SHA256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. SQLite schema 28.
+
+## Owner decision and implemented flow
+
+**Survey setup → GPS preflight → optional Habitats & Species → Live Recorder.** The independent optional toggle is stored as a setup preference. On the new screen researchers can select any number of the 16 exact, normalized habitat terms in the supplied final 714-species Mindanao PAIC checklist. The 16 terms are: Forest; Freshwater wetlands; Agricultural areas; Coastal and intertidal areas; Rivers and streams; Grassland and open country; Shrubland; Urban and disturbed areas; Caves and karst; Marine waters; Riverbanks and shorelines; Montane habitats; Forest edge; Woodland; Cliffs and rocky areas; Trees and roost sites.
+
+The owner-imported offline **ESA WorldCover 2020 v100** derived map is optional, **not embedded in the public source/APK**. This particular 149,412-byte text pack (`LIKAS_PAIC_WorldCover2020_500m_Offline_Map_2026-11-01.txt`, SHA256 `e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089`) has 16 individually compressed 600×600 grids, 0.005° angular grid spacing (~500 m near PAIC). Map-derived classes are candidates, not observer-confirmed habitats. A 5×5-cell neighborhood provides contextual *nearby* suggestions, not a surveyed transect footprint, and cannot detect caves/karst, riverbank microhabitats, or reliably resolve ecological forest types. Historic land cover may differ from current vegetation. Map importer validates tile count and decoded size before replacing the old private map. No map, missing initial GPS or unrecognized pixels → manual selection remains available.
+
+The app preserves user-selected habitats, unconfirmed mapped suggestions and original GPS/elevation metadata in a **survey-level** `survey_habitat_setup` table, independent from each station's observed habitat. SQLite migration 27→28 preserves existing surveys, original identifications, records, photos, route measurements and outcome semantics. Research ZIP includes `survey_habitat_preparation.csv`. Backup accepts previous v27 images, and new v28 is the output schema. A fresh, qualified GNSS fix is reacquired immediately before beginning the actual survey; if unavailable the observer must deliberately confirm a missing starting GPS value, never silently reuse a stale fix.
+
+The Species Picker uses 714 owner-private master habitat/elevation attributes for advisory site ranking when available, and offers a full-list view that does not rank or hide taxa by habitat. The exact 714-species master CSV is **not** embedded in APK; users privately activate it from Species Library. Habitat association and altitude guide matches never constitute verified site presence or exclusion. Single-point guide elevation (including `0 m`) no longer receives invented ±100 m coverage.
+
+## Tests, data QA and open acceptance gates
+
+- Inspected supplied 714-species Excel master via spreadsheet artifact tooling: 714 species; 87 distinct *combinations*, **16 controlled habitat terms**. Species-habitat associations are guide level.
+- Checked the supplied standalone land-cover pack's exact header, 16 compressed tile IDs, and 360,000 decoded bytes each; verified example 5×5 neighborhoods around Digos, Davao, Siargao and Bohol; no claim of ground truth.
+- RC69 workflow initially passed on source SHA `2a45908b9ab77332ed5ca7102781fece562031d0`, run `41320193768`: Java/JVM tests, scientific Python regressions, debug APK and AndroidTest compilation. Source tweaks thereafter address preservation of explicit full-list mode, observer view choice, and one-point elevation heuristic; confirm a **new** run passes before claiming those fixes were built.
+- No Android emulator screen-capture/instrumentation, real phone GPS, actual private map import, 200%-font TalkBack check, historical on-device upgrade or export round trip yet. Do not merge or call field certified on compilation alone.
+- The optional satellite map and private master roster are separate owner-supplied files; do not commit these private source files into the public repository without an explicit licensing/redistribution decision.
+
+**Affected charter IDs:** G-01/02/03/04/05/06/08/09/10/11/12, S (survey lifecycle), L (GPS/elevation), T (taxonomy), H (habitat), D (export), U (field UX), C (continuity), E (release gates).

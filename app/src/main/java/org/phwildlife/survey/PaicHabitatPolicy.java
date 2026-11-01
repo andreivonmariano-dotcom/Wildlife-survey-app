@@ -46,9 +46,12 @@ public final class PaicHabitatPolicy {
     }
     public static int habitatMatches(String sourceText,Set<String> chosen){
         if(sourceText==null||chosen==null||chosen.isEmpty())return 0;
-        HashSet<String> reference=new HashSet<>(Arrays.asList(sourceText.split(",\\s*")));
+        HashSet<String> reference=new HashSet<>();
+        for(String part:sourceText.split(",\\s*"))
+            reference.add(part.trim().toLowerCase(Locale.ROOT));
         int matches=0;
-        for(String item:chosen)if(reference.contains(item))matches++;
+        for(String item:chosen)
+            if(reference.contains(item.toLowerCase(Locale.ROOT)))matches++;
         return matches;
     }
     /** Unknown ranges return null. Coordinates are not used to invent an elevation. */

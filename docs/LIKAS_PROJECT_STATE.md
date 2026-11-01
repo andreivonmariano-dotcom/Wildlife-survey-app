@@ -1,5 +1,11 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 2026-11-01 | RC68 Species Library technical build passes | Signed preview delivered
+- **Code:** `feature/likas-rc68-mindanao-paic714-species-library` (draft PR #69 targeting RC67); code128 `0.27.3-rc68-paic714-library-preview`, unchanged `org.phwildlife.survey.beta08`, SQLite27. Exact app code/test SHA `8d33f6595df0e9299279175a72aeb7a396ab3dbd`, followed by documentation-only commits; full CI on `04a84056e0ae89a028b243df7ea6e93ffb0b2658` run `41316073414` **SUCCESS** (370 Python tests, JVM unit tests, signed Android APK and AndroidTest compilation). Source tests were corrected for the PAIC-aware header.
+- **APK verified and delivered directly:** `LIKAS-v0.27.3-RC68-PAIC714-code128-preview.apk` size 9,812,843 bytes SHA256 `694f3c69b573842815ae785d475eb5173fd2aa51baf766ffa49cab3c95b85737`, complete ZIP integrity, original pinned signer certificate `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, Android v2 RSA signature and signed content digest verified. Direct CSV also supplied, with 714 species and 11 omissions validated.
+- **Remaining gates:** Actual owner CSV activation on emulator and real handset, old survey and media/export preservation, large-text visual acceptance, process death, backup/restore and field GPS. This remains **signed development preview**, not field-certified. The APK does not bundle the private roster; activate CSV through Library. Next screen only after this screen review: survey setup GPS/elevation-based checklist.
+
+
 ## 2026-11-01 | RC68 screen 1: Harmonized 714-species Mindanao PAIC library | Source staged
 - **Owner instruction:** Resume the LIKAS app overhaul screen-by-screen, using the latest uploaded final Mindanao PAIC 714-species checklist. Start with Species Library catalog; survey setup GPS/elevation-driven checklist is the next screen, not part of RC68.
 - **Research data verified from attachment:** master contains 714 unique scientific names, group split 408 birds, 53 amphibians, 154 reptiles, 99 mammals. All 11 previously omitted taxa absent. Private CSV `LIKAS_Mindanao_PAIC_714_Private_Import_2026-11-01.csv`, size 230291 bytes, SHA-256 `1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959`. It is in the chat, not committed to public GitHub.

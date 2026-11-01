@@ -9,7 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 MASTER_SHA = "6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7"
-SPLASH_SHA = "57c03faf976f11d8e251940bb623d647a1a4ab5ff52680c35ae16d5e4bceec8a"
+SPLASH_SHA = "a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc"
 FOREGROUND_SHA = "2a60cc5cda8dba006c1c713f15d565c4599ad5ec1bcaebadc7690cb66445af00"
 
 
@@ -32,6 +32,9 @@ class ApoStartupSourceContract(unittest.TestCase):
         self.assertIn('wordmark.setText("APO")', launch)
         self.assertEqual(launch.count('wordmark.setText("APO")'), 1)
         self.assertIn("R.drawable.apo_splash_mark", launch)
+        self.assertIn("int markWidthDp", launch)
+        self.assertIn("dp(markWidthDp*0.55f)", launch)
+        self.assertIn("GradientDrawable.Orientation.TOP_BOTTOM", launch)
         self.assertIn("Preparing offline references", launch)
         self.assertIn("BundledPrivateReferences.ensureInstalled", launch)
         self.assertIn('getBoolean("reduced_motion",false)', launch)

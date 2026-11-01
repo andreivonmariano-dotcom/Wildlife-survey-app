@@ -90,7 +90,8 @@ tasks.named("preBuild") { dependsOn("verifyBundledPaicReferences") }
 
 /**
  * The locked owner-selected mountain ribbon PNG has not yet been transferred
- * to GitHub binary source. Refuse to produce an APK with missing or swapped art.
+ * to GitHub binary source. The splash uses only a transparent mountain-derived
+ * PNG; retain original launcher tile. Reject missing or swapped art.
  * Expected file is the exact 1254px locked PNG (unaltered bytes).
  */
 tasks.register("verifyApoArtwork") {
@@ -107,7 +108,7 @@ tasks.register("verifyApoArtwork") {
             throw new GradleException("APO owner-selected icon checksum mismatch")
         def derivatives = [
             (file("src/main/res/drawable-nodpi/apo_splash_mark.png")):
-                "57c03faf976f11d8e251940bb623d647a1a4ab5ff52680c35ae16d5e4bceec8a",
+                "a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc",
             (file("src/main/res/drawable-nodpi/apo_launcher_foreground.png")):
                 "2a60cc5cda8dba006c1c713f15d565c4599ad5ec1bcaebadc7690cb66445af00"
         ]

@@ -71,8 +71,8 @@ class Rc43ApprovedIconLock(unittest.TestCase):
 
     def test_launcher_identity_is_not_replaced(self):
         manifest=(ROOT/"app/src/main/AndroidManifest.xml").read_text()
-        self.assertIn('android:icon="@mipmap/ic_launcher"',manifest)
-        self.assertIn('android:roundIcon="@mipmap/ic_launcher"',manifest)
+        self.assertIn('android:icon="@mipmap/apo_launcher"',manifest)
+        self.assertIn('android:roundIcon="@mipmap/apo_launcher_round"',manifest)
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",gradle).group(1)),109)
         self.assertIn("versionName '0.27.3-rc",gradle)

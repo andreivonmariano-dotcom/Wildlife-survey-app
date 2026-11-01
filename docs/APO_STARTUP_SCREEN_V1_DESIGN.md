@@ -3,7 +3,7 @@
 **Updated:** 2 November 2026, Asia/Manila  
 **Status:** Android source staged as a draft. No signed APK released or hardware QA completed.  
 **Branch:** `feature/apo-startup-screen-v1-design` (derived from RC71 reference-packaged Android lineage).  
-**Preview:** `APO_Startup_Screen_Concept.png` generated in the active owner chat. The preview is a static composition, not an emulator capture.
+**Preview:** `APO_Startup_Blended_Preview.png` generated from a pixel-preserving extraction of the locked icon in the active owner chat. The preview is a static composition, not an emulator capture.
 
 ## Governing owner decision
 
@@ -13,8 +13,8 @@ The user explicitly locked **`forest_green_mountain_ribbon_icon.png`** in the im
 - **Locked original SHA-256:** `6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7`.
 - **Immutable APK master file name:** `app/src/main/assets/apo_official_master.png` must be a byte-identical copy of that source.
 - **Permitted technical derivatives only:** proportional resizing, Android-safe margins and alpha removal of pale *external canvas corners* for display. No change to the mountain shape, palette, fold, style, logo text, or composition. Keep the locked source unedited.
-- **Current draft derivatives from this exact file:** `apo_splash_mark.png` (512×512, SHA-256 `57c03faf976f11d8e251940bb623d647a1a4ab5ff52680c35ae16d5e4bceec8a`) and `apo_launcher_foreground.png` (432×432, SHA-256 `2a60cc5cda8dba006c1c713f15d565c4599ad5ec1bcaebadc7690cb66445af00`).
-- **Chat-only asset handoff:** `APO_Startup_Implementation_Assets.zip` contains the untouched original master, display derivatives and source note. These files have **not yet been committed to the GitHub repository** through the available connector.
+- **Current draft derivatives from this exact file:** `apo_splash_mark.png` (borderless mountain only, 1000px wide, SHA-256 `a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc`) and `apo_launcher_foreground.png` (432×432, SHA-256 `2a60cc5cda8dba006c1c713f15d565c4599ad5ec1bcaebadc7690cb66445af00`).
+- **Chat-only asset handoff:** `APO_Startup_Borderless_Assets.zip` contains the borderless startup mountain and README. The unchanged approved original master is independently preserved as `forest_green_mountain_ribbon_icon.png`; `APO_Startup_Implementation_Assets.zip` is an earlier superseded border-retaining export. These files have **not yet been committed to the GitHub repository** through the available connector.
 
 The two previously recorded APO icon directions are historical and superseded:
 (1) the earlier **textless mountain ribbon** lock from a different PNG hash and
@@ -24,7 +24,7 @@ The present original file and SHA take priority. Do not infer which PNG is appro
 ## Screen composition and behavior
 
 - Full-screen near-black forest-green background with subtle tonal variation, unobtrusive Android status/navigation bars, and no animated forest environment.
-- Icon centered in the upper half of the screen's middle composition at about 208–232 dp square. It may retain its existing rounded-square background as a *locked feature* of the artwork.
+- Startup emblem is only the mountain ribbon with a transparent field, sized proportionally at 180–276 dp width (roughly 0.55 height/width), so the logo flows into the forest-green screen without a tile, square or visible border. The **separate home-screen launcher icon** remains the exact locked rounded-square artwork.
 - Native `APO` wordmark as a separate warm-ivory accessible TextView beneath the icon, **not baked into the PNG**. No subtitle, version chip, launch button, splash menu or onboarding at this stage.
 - One-time 260 ms icon fade/translate overlapping a 230 ms wordmark fade. No looping motion. With Android animations disabled or in-app reduced-motion flag, present a static identity and navigate immediately when reference initialization permits. Tap-to-skip shortens cosmetic animation only, not data initialization.
 - Automatically transition to `WelcomeActivity` Home, with its existing unfinished-survey Resume route intact. No start-screen GPS or network request.
@@ -32,7 +32,7 @@ The present original file and SHA take priority. Do not infer which PNG is appro
 
 ## Source implementation status
 
-- `LikasLaunchActivity.java`: updated to render `R.drawable.apo_splash_mark` and one native `APO` TextView. Background, loading-status, reduced-motion, startup navigation, worker-thread bootstrap and failure handling retained.
+- `LikasLaunchActivity.java`: updated to render the **borderless** `R.drawable.apo_splash_mark` at responsive proportional dimensions, one native `APO` TextView and a native top-to-bottom forest gradient. Loading-status, reduced-motion, startup navigation, worker-thread bootstrap and failure handling retained.
 - `AndroidManifest.xml`: drafts Android display label `Apo`, icon names `@mipmap/apo_launcher` and `@mipmap/apo_launcher_round` while preserving Android application ID.
 - `app/build.gradle`: draft versionCode **132**, `0.27.3-apo-startup-locked-ribbon-preview`, checks master and derivative SHA-256 values. A build with missing/unapproved icon files must fail instead of falling back to an older picture.
 - XML adaptive icons and `scripts/test_apo_startup_locked_icon.py` are staged in the same branch.
@@ -49,3 +49,10 @@ Check SHA fingerprints before committing.
 Then run the full Python/JVM/Android build pipeline on the RC71-derived branch, including reference checksum gates, package/version/signature checks and Android 14 small-display/large-font/reduced-motion checks. Confirm adaptive masks do not crop the ribbon. Verify startup loading/failure/reopen paths and install-upgrade behavior on an actual device with historical survey records. Only after verifying a current APK should a direct in-chat downloadable APK be provided.
 
 **Current blockers:** binary PNG transfer to GitHub and signed build/artifact retrieval have not occurred in this chat. The container does not expose an Android SDK/Gradle executable or a network Git clone. There is no verified APK for this source stage. This document is a precise record of the source/design state, not proof of a field-ready release.
+
+## 2 November 2026 | Accepted borderless blending update
+
+- The owner requested removing the square icon border and matching the mountain emblem to the startup background. The **locked launcher master remains unchanged** (SHA-256 `6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7`).
+- Pixel-source extraction took the original cream-and-jade mountain image and masked its surrounding dark green tile. The foreground RGB values are retained from the locked source, with a small edge antialias. A standalone transparent mountain derivative is `apo_mountain_ribbon_transparent.png` (SHA-256 `5f183a0c05e43fde8ecc9b15e4bdbc777d9418c7c3d1f77b31e5ed1c472ac382`).
+- Android resource delivery: rename the exact byte content of `apo_mountain_splash_1000.png` (SHA-256 `a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc`) to `app/src/main/res/drawable-nodpi/apo_splash_mark.png`. The Gradle SHA gate and the Python contract now expect this hash. The unchanged launcher foreground derivative remains independently checksum-gated.
+- `APO_Startup_Blended_Preview.png` illustrates the new composition and `APO_Startup_Borderless_Assets.zip` contains the prepared launch images and notes. This is a static mockup, **not** an Android screenshot or signed APK. Files are chat-attached only; binary transfer and CI signing remain pending.

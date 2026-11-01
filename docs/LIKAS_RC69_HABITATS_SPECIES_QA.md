@@ -21,3 +21,8 @@ The Species Picker uses 714 owner-private master habitat/elevation attributes fo
 - The optional satellite map and private master roster are separate owner-supplied files; do not commit these private source files into the public repository without an explicit licensing/redistribution decision.
 
 **Affected charter IDs:** G-01/02/03/04/05/06/08/09/10/11/12, S (survey lifecycle), L (GPS/elevation), T (taxonomy), H (habitat), D (export), U (field UX), C (continuity), E (release gates).
+
+## Latest signed preview verification (2026-11-01)
+- **Exact source SHA:** `9cce67914e922172c414b6848dbb2e5fa0c14ae3`. Dedicated RC69 GitHub workflow **41320846423** completed SUCCESS after the two last behavioral fixes; source/SQLite regression, Java tests and signed Android plus AndroidTest compilation passed.
+- **Direct owner handoff:** `LIKAS-v0.27.3-RC69-Habitats-Species-code129-preview.apk`, 9,825,619 bytes, SHA256 `e9b6d17c65f81aed7aabcc15d87b007325ae13bb472e77dc822a1762a2215aca`. ZIP CRC and required Android manifest/dex tested locally. APK signing block contains original signer SHA256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, cryptographic SHA256-RSA signed-data proof and full 12-chunk content digest validated.
+- **PR #70 open, draft.** The trusted older `pull_request_target` check fails only on intentional 27→28 schema migration because `scripts/check_pr_against_rc4.py` uses exact string `super(context,NAME,null,27)`. Correct via a reviewed trusted-gate change; never add a false v27 constructor marker to evade it. Other device and historical-data acceptance remains pending.

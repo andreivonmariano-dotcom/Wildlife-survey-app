@@ -1,5 +1,13 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 2 November 2026 | APO startup now gradient-only (latest visual acceptance)
+
+- **Latest user direction:** Remove forest and mountain silhouettes, leaving a simple full-screen **vertical green gradient**. Keep the exact locked mountain-ribbon **launcher** artwork and borderless **startup-only mountain** derivative, plus native separate APO wordmark. No landscapes, clouds, trees, texture or animated decorative layers.
+- **Source updated:** `feature/apo-startup-screen-v1-design`, `LikasLaunchActivity.java` uses top `#0B4B39` and bottom `#021918` in `GradientDrawable.Orientation.TOP_BOTTOM`; status/navigation bars match corresponding ends. The gradient was adjusted to the existing approved `APO_Startup_Pure_Gradient_Preview.png` colors. `scripts/test_apo_startup_locked_icon.py` asserts those exact stops and excludes scenery backgrounds.
+- **Local evidence:** Preview pixel sampling found equal left/right backdrop colors and exact RGB-linear interpolation in uncovered rows, maximum deviation 0 levels. Locked master SHA-256 `6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7` and startup mountain derivative SHA-256 `a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc` checked in current container. `APO_Gradient_Only_Android_Asset_Overlay.zip` (1,498,310 bytes, SHA-256 `a3d8a3d915c5a249206692f8447af924a9b0c09e38b72472cc4852b6c859f01d`) assembled and byte-verified with exact Android paths. This ZIP is not an APK.
+- **Unresolved release gate:** PNG binaries are still conversation-local, not uploaded to GitHub. No Android SDK/Gradle build, original signer validation, APK, emulator screenshots, or physical handset preservation test was possible here. Current staged versionCode 132 is **not a release**. APK direct download link cannot be claimed until built and verified. See `docs/APO_STARTUP_SCREEN_V1_DESIGN.md`.
+
+
 ## 2 November 2026 | APO borderless startup emblem: approved direction, draft source updated
 
 - **Latest request:** Make the startup logo blend with the full-screen green background without a visible rounded-square or square frame. **Do not modify the hard-locked launcher icon** `forest_green_mountain_ribbon_icon.png` (1254px RGB, SHA-256 `6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7`). Apply this background removal only to a **startup-specific transparent derivative**.

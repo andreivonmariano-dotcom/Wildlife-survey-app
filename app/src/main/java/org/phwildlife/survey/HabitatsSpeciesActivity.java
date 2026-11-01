@@ -209,6 +209,16 @@ public final class HabitatsSpeciesActivity extends Activity {
         int total=0,match=0,installed=0;
         try(FieldDb helper=new FieldDb(this)){
             SQLiteDatabase d=helper.getReadableDatabase();
+            try(Cursor master=d.rawQuery(
+                "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_key LIKE 'LIKAS725:%'",null)){
+                if(master.moveToFirst())installed=master.getInt(0);
+            }
+            if(installed!=714){
+                speciesSummary.setText("Activate the private 714-species Mindanao PAIC "+
+                    "catalog in Species Library to enable site-matched suggestions. "+
+                    "You can continue without it.");
+                return;
+            }
             // The master attributes are installed privately, separately from the app APK.
             for(String group:groups){
                 try(Cursor c=d.rawQuery("SELECT a.habitat_text,a.elevation_text "+

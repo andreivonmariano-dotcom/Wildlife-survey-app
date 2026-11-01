@@ -2,6 +2,15 @@
 
 
 
+
+## 2 November 2026 | Owner-supplied APO icon revised; startup source staged, APK blocked
+
+- **Current direction:** User supplied a new illustrated Mount Apo / rainforest / `APO` icon and asked for high-quality regeneration and removal of light outer edges. This is newer than the previous textless ribbon-mountain icon direction. Do not silently revert to the frog or prior mountain icon. The selected candidate includes its own APO lettering, so startup must not draw another wordmark over or underneath it.
+- **Current conversation files:** `APO_Icon_Refined_Transparent_Edges_1254px.png` (1254×1254 RGBA, SHA-256 `6b576763069bebdab87cb0676a028875a18518e655c127881f89e8faf51bfa46`); Android-sized 512×512 version `APO_Icon_Android_512px.png` (SHA-256 `d26f245bc85f2aeb2f0f43b00d283cef384dacfc0cbf27259a54ae7f3dd99723`). Actual files were generated and verified in chat. **These are not yet GitHub binaries.** Revalidate SHA when transferred; user-chat paths are not durable repo assets.
+- **Staged source-only updates:** `feature/apo-startup-screen-v1-design` now contains a single-image APO launch UI with 300ms optional fade, proper reduced-motion and reference-bootstrap handling, an `Apo` launcher label, `apo_launcher` XML icon resources, and guarded preview `versionCode 132`, preserving original package `org.phwildlife.survey.beta08` and inherited SQLite28 / PAIC714 / ESA reference assets. The Gradle preBuild gate refuses any icon except exact revised SHA and requires missing PNG drawable files.
+- **Blocking remaining steps:** Actual PNG files `app/src/main/assets/apo_official_master.png`, `drawable-nodpi/apo_splash_mark.png`, `drawable-nodpi/apo_launcher_foreground.png` are not committed. Android SDK and internet access are unavailable in this chat's container, and GitHub connector cannot presently transfer the local PNG as binary into the branch. No APK build, signing, emulator, hardware installation, reference checksum, or historic-survey upgrade verification has occurred. Do not present versionCode 132 as a released APK.
+- **Next task:** Transfer verified new PNG and derivative assets, inspect adaptive icon masks at multiple densities, run signed Android APK CI and export actual APK into the active ChatGPT conversation as a direct download. Keep this branch draft until those checks pass.
+
 ## 2 November 2026 | APO startup-screen design handoff (design-only)
 
 - **Current owner direction:** Continue the name/icon/layout overhaul at the **startup screen**. New public identity is **Apo / APO** with the exact approved textless mountain icon from `docs/APO_OFFICIAL_MOUNTAIN_ICON_LOCK_2026_11_02.md`. This supersedes older LIKAS/frog/animated-forest startup directions for this screen.

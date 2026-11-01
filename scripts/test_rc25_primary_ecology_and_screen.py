@@ -69,7 +69,7 @@ class Rc25PrimaryEcologyAccessibility(unittest.TestCase):
             "Rc10LibraryScreensInstrumentedTest.java").read_text()
         runner=(ROOT/"scripts/run_emulator_rc7_qa.sh").read_text()
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn('largeText?"Species":"Philippine species checklist"',library)
+        self.assertIn('largeText?"Species":(paicActive?"Mindanao PAIC species":"Philippine species checklist")',library)
         self.assertIn('"Library",this::finish',library)
         self.assertIn("scrollBody.addView(researchPanel)",library)
         self.assertIn("status.setContentDescription(evidenceStatus",library)

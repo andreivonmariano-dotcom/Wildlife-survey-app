@@ -1,5 +1,15 @@
 # LIKAS: Current Project State and Next-Chat Handoff
 
+## 2026-11-01 | Finalize the 40 flagged Mindanao PAIC species decisions | Research workbook completed
+- **Owner direction:** Make binary KEEP/OMIT decisions on the 40 records with absent or exclusively non-core distribution labels, without provisional or specialist-review categories. No Android import or code change authorized.
+- **Result:** 29 KEEP, 11 OMIT. Master v3.6 725 entries -> final research checklist **714** unique species. All 685 unflagged rows remain byte-for-byte equivalent in their nine display fields; 29 kept flagged species have evidence-driven distribution text updates; 11 omitted taxa are absent from the 714-species output. Separate sheets identify all 40 decisions and supporting source URLs.
+- **Artifact:** `LIKAS_Mindanao_PAIC_Final_Checklist_714_Species_2026-11-01.xlsx`, SHA-256 `6724f66679d7ab39055b4ead4d503b2adfbde9529b4ec34e7570af44d0b07ac6`; direct user-chat attachment, not stored in public GitHub or bundled in the application. Original 725 workbook remains unchanged.
+- **Scientific scope:** This resolves *only* the 40 flagged records. The other 685 include **241 records still described only as Philippines-level**; retention here is not independent proof of seven-island PAIC occurrence. Excluded taxa are omitted for this geographic checklist scope, not proven absent. Core seven islands remain Mindanao, Samar, Leyte, Bohol, Dinagat, Siargao and Basilan; Camiguin Sur is not included.
+- **Sources notable for updated decisions:** Supsup et al. (2026) `https://doi.org/10.1655/HERPMONOGRAPHS-D-24-00003` supports Bronchocela philippina; Sanguila et al. (2026) `https://doi.org/10.3897/zookeys.1272.167304` and Samar paper support Gonocephalus semperi; current Avibase Mindanao species lists support several birds; The Reptile Database includes Mindanao for Gekko mindorensis. Full row-specific source URLs are in the Excel artifact.
+- **QA actually completed:** Reimported exported workbook; checked 714 unique names, 29 edited species distributions, 685 unchanged other rows, 11 exact omissions, Excel ZIP integrity, and separate 29/11 decision sheets.
+- **Application state:** RC67 source-stage importer remains untested on an Android handset; no new signed APK or database was produced. The v3.6-based private CSV constructed earlier is now outdated and must not be imported as the final 714 checklist.
+
+
 ## 31 October 2026 | RC66 individual species account: emulator accepted, signed direct APK delivered
 
 - **Latest verified code:** `bbc9b24be05bb55b365cae22a052a23b59da3057` on `feature/likas-rc66-species-account-screen`, draft PR **#63** targeting RC65 draft PR #62. Current RC66 preview **versionCode126** `0.27.3-rc66-species-account-preview`; original `org.phwildlife.survey.beta08`, pinned signer and SQLite **27** retained. Integrated core remains RC49, entire preview stack draft/unmerged.

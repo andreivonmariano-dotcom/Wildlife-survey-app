@@ -59,6 +59,8 @@ public final class SpeciesPickerActivity extends Activity {
     private Double siteElevation=null,elevationUncertainty=null;
     private int elevationMode=0; // 0 GPS MSL, 1 manual MSL, 2 unassessed
     private String visitId="",stationId="",surveyId="";
+    private SurveyHabitatSetup.State surveyPreparation;
+    private boolean paicCatalogActive=false;
     private boolean gpsAutoTracking=false;
     private String lastGpsElevationKey="";
     private Double lastScoredGpsMeters=null;
@@ -158,6 +160,15 @@ public final class SpeciesPickerActivity extends Activity {
         habitatCode=guessHabitat(habitat);
         String surveyId=request.getStringExtra("survey_id");
         this.surveyId=surveyId==null?"":surveyId;
+        try(FieldDb helper=new FieldDb(this)){
+            SQLiteDatabase sql=helper.getReadableDatabase();
+            surveyPreparation=SurveyHabitatSetup.load(sql,this.surveyId);
+            try(Cursor count=sql.rawQuery(
+                    "SELECT COUNT(*) FROM taxon_catalog WHERE "+
+                    "taxon_key LIKE 'LIKAS725:%'",null)){
+                paicCatalogActive=count.moveToFirst()&&count.getInt(0)==714;
+            }
+        }catch(Exception ignored){}
         visitId=request.getStringExtra("visit_id");
         if(visitId==null||visitId.isEmpty())visitId="SURVEY-"+this.surveyId;
         stationId=request.getStringExtra("station_id");
@@ -242,12 +253,18 @@ public final class SpeciesPickerActivity extends Activity {
         controls.addView(groups,new LinearLayout.LayoutParams(0,dp(48),1f));
         views=new Spinner(this);
         views.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,VIEWS));
+            android.R.layout.simple_spinner_dropdown_item,
+            paicCatalogActive?new String[]{"All species","Suggested for site"}:VIEWS));
         controls.addView(views,new LinearLayout.LayoutParams(0,dp(48),1f));
         root.addView(controls);
         groups.setSelection(savedGroupIndex);
         groups.setVisibility(availableGroups.length>1?View.VISIBLE:View.GONE);
-        views.setSelection(savedViewIndex);
+        if(paicCatalogActive&&surveyPreparation!=null&&
+            "suggested".equals(surveyPreparation.mode)&&
+            (!PaicHabitatPolicy.decode(surveyPreparation.habitats).isEmpty()||
+                GpsElevation.read(TrackService.currentFix()).usableForHabitat)){
+            views.setSelection(savedViewIndex==0?1:savedViewIndex);
+        }else views.setSelection(savedViewIndex);
 
         Location fix=TrackService.currentFix();
         String gps="GPS unavailable";
@@ -395,6 +412,11 @@ public final class SpeciesPickerActivity extends Activity {
         if(siteSummary==null)return;
         String habitatName=HabitatLikelihood.HABITATS[
             HabitatLikelihood.habitatIndex(habitatCode)];
+        if(paicCatalogActive&&surveyPreparation!=null){
+            String chosen=surveyPreparation.habitats.replace("|",", ");
+            if(!chosen.isEmpty())habitatName="Survey habitats: "+chosen+
+                " · station habitat: "+habitatName;
+        }
         String reading;
         if(elevationMode==2)reading="elevation unassessed";
         else if(elevationMode==1)
@@ -505,6 +527,8 @@ public final class SpeciesPickerActivity extends Activity {
     private static final class Species {
         String key,group,common,scientific,family,origin,iucn,ph,source,version;
         String reviewedHabitats="",reviewedElevation="";
+        String paicHabitat="",paicElevation="";
+        int paicRank=0;
         int evidence;
         HabitatLikelihood.Result screening;
     }
@@ -527,9 +551,11 @@ public final class SpeciesPickerActivity extends Activity {
             "c.family,c.distribution_status,c.iucn_red_list,c.ph_red_list,"+
             "c.source,c.source_version,"+evidence+" AS evidence_rank,"+
             "p.habitat_codes,p.strict_habitat,p.elevation_min_m,"+
-            "p.elevation_max_m,p.review_status "+
+            "p.elevation_max_m,p.review_status,ma.habitat_text,ma.elevation_text "+
             "FROM taxon_catalog c LEFT JOIN taxon_habitat_profiles p "+
-            "ON p.taxon_key=c.taxon_key WHERE c.taxon_group=? "+
+            "ON p.taxon_key=c.taxon_key "+
+            "LEFT JOIN likas_master_attributes ma ON ma.taxon_key=c.taxon_key "+
+            "WHERE c.taxon_group=? "+
             "AND (c.taxon_key NOT LIKE 'STARTER:%' OR NOT EXISTS "+
             "(SELECT 1 FROM taxon_catalog newer WHERE newer.taxon_group=c.taxon_group "+
             "AND LOWER(newer.scientific_name)=LOWER(c.scientific_name) "+
@@ -579,6 +605,12 @@ public final class SpeciesPickerActivity extends Activity {
                     item.screening=HabitatLikelihood.assess(item.evidence,
                         siteCode,altitude,uncertainty,
                         profileHabitats,strict,min,max,reviewed);
+                    item.paicHabitat=string(c,16);
+                    item.paicElevation=string(c,17);
+                    if(paicCatalogActive&&surveyPreparation!=null)
+                        item.paicRank=PaicHabitatPolicy.ranking(item.paicHabitat,
+                            item.paicElevation,PaicHabitatPolicy.decode(
+                                surveyPreparation.habitats),altitude);
                     list.add(item);
                 }
             }
@@ -591,7 +623,10 @@ public final class SpeciesPickerActivity extends Activity {
         final int ticket=++generation;
         final String term=search.getText().toString().trim();
         final String group=currentGroup();
-        final boolean onlyLocal=views.getSelectedItemPosition()==1;
+        final boolean siteSuggestions=paicCatalogActive&&
+            views.getSelectedItemPosition()==1;
+        final boolean onlyLocal=!paicCatalogActive&&
+            views.getSelectedItemPosition()==1;
         final int sorting=sortMode,filter=statusFilter;
         final String siteCode=habitatCode;
         final Double altitude=effectiveElevation(),uncertainty=effectiveUncertainty();
@@ -619,11 +654,19 @@ public final class SpeciesPickerActivity extends Activity {
                 if(capped)results=results.subList(0,MAX_QUERY_ROWS);
                 List<Species> filtered=new ArrayList<>();
                 for(Species species:results)
-                    if(SpeciesSortPolicy.keep(filter,species.screening.label))
+                    if((!siteSuggestions||species.paicRank>0)&&
+                        SpeciesSortPolicy.keep(filter,species.screening.label))
                         filtered.add(species);
-                Collections.sort(filtered,(a,b)->SpeciesSortPolicy.compare(sorting,
-                    a.common,a.scientific,a.family,a.screening.scorePercent,
-                    b.common,b.scientific,b.family,b.screening.scorePercent));
+                Collections.sort(filtered,(a,b)->{
+                    if(paicCatalogActive&&surveyPreparation!=null&&
+                            (siteSuggestions||sorting==SpeciesSortPolicy.DEFAULT)){
+                        int rank=Integer.compare(b.paicRank,a.paicRank);
+                        if(rank!=0)return rank;
+                    }
+                    return SpeciesSortPolicy.compare(sorting,
+                        a.common,a.scientific,a.family,a.screening.scorePercent,
+                        b.common,b.scientific,b.family,b.screening.scorePercent);
+                });
                 ui.post(()->{
                     if(isFinishing()||isDestroyed()||ticket!=generation)return;
                     loaded=filtered;truncated=capped;
@@ -692,15 +735,24 @@ public final class SpeciesPickerActivity extends Activity {
             meta.setTextColor(UiKit.MUTED);card.addView(meta);
         }
         // Evidence is presented as separate source statements, never a probability.
-        TextView geographic=text("Geographic source: "+
-            OccurrenceEvidencePolicy.title(item.evidence),13,true);
+        TextView geographic=text(paicCatalogActive?
+            "Mindanao PAIC checklist reference · not proof of site presence":
+            "Geographic source: "+OccurrenceEvidencePolicy.title(item.evidence),13,true);
         geographic.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
         geographic.setPadding(0,dp(6),0,dp(3));
         card.addView(geographic);
-        TextView habitat=text(item.screening.habitatStatus,13,false);
+        TextView habitat=text(paicCatalogActive?
+            "Habitat guide: "+(item.paicHabitat.isEmpty()?"Unreported":item.paicHabitat)+
+                (surveyPreparation!=null?" · selected habitat matches: "+
+                PaicHabitatPolicy.habitatMatches(item.paicHabitat,
+                    PaicHabitatPolicy.decode(surveyPreparation.habitats)):""):
+            item.screening.habitatStatus,13,false);
         habitat.setTextColor(UiKit.MUTED);
         card.addView(habitat);
-        TextView elevation=text(item.screening.elevationStatus,13,false);
+        TextView elevation=text(paicCatalogActive?
+            "Elevation guide: "+(item.paicElevation.isEmpty()?"Unreported":
+                item.paicElevation)+" · site compatibility is advisory":
+            item.screening.elevationStatus,13,false);
         elevation.setTextColor(UiKit.MUTED);
         card.addView(elevation);
         // Source, ecological references and profile detail are available under Details.

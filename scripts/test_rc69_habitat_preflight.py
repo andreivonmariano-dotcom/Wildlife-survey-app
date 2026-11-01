@@ -36,7 +36,7 @@ class Rc69HabitatPreflightTests(unittest.TestCase):
         self.assertIn('PaicHabitatPolicy.encode(new HashSet<>(suggested))',screen)
         self.assertIn('LIKAS_WORLDCOVER_2020_500M_V1',pack)
         self.assertIn('MAX_BYTES=1024*1024',pack)
-        self.assertIn('classifications',screen.lower() if 'classifications' in screen else 'classifications')
+        self.assertIn('historical satellite land cover',screen.lower())
         # No 2020 map data or owner-private master CSV in public APK assets.
         self.assertFalse((ROOT/'app/src/main/assets/paic_worldcover_2020_500m_v1.txt').exists())
     def test_legacy_backup_compatibility(self):

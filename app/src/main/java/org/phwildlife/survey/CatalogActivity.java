@@ -13,7 +13,7 @@ import java.util.*;
 
 /** Local versioned wildlife reference catalog, preinstalled with the application. */
 public final class CatalogActivity extends Activity {
-    private static final int PICK=891,PICK_MDD=892,PICK_SYNONYMS=893,PICK_EVIDENCE=894,PICK_ALL=895,MAX=25*1024*1024;
+    private static final int PICK=891,PICK_MDD=892,PICK_SYNONYMS=893,PICK_EVIDENCE=894,PICK_ALL=895,PICK_MINDANAO=896,MAX=25*1024*1024;
     private FieldDb db;private TextView info;
     private volatile boolean importing=false;
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
@@ -52,6 +52,12 @@ public final class CatalogActivity extends Activity {
         Button sources=UiKit.button(this,"Catalog sources and versions","secondary");
         layout.addView(sources);
         sources.setOnClickListener(v->showCatalogSources());
+        Button mindanao=UiKit.button(this,
+            "Install Mindanao master checklist (private CSV)","secondary");
+        layout.addView(mindanao);
+        mindanao.setContentDescription("Replace the active species reference with "+
+            "725 Mindanao working-checklist entries from your local CSV");
+        mindanao.setOnClickListener(v->pickMindanaoMaster());
 
         ScrollView scroll=new ScrollView(this);
         scroll.addView(layout);
@@ -86,8 +92,13 @@ public final class CatalogActivity extends Activity {
                 "WHERE review_status='reviewed'",null)){
             if(ecology.moveToFirst())reviewedProfiles=ecology.getInt(0);
         }
-        result.insert(0,allGroupsInstalled?
-            "Installed offline references":"Incomplete offline references");
+        int mindanaoActive=0;
+        try(Cursor active=db.getReadableDatabase().rawQuery(
+            "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_key LIKE 'LIKAS725:%'",
+            null)){if(active.moveToFirst())mindanaoActive=active.getInt(0);}
+        result.insert(0,mindanaoActive==725?
+            "Mindanao working catalog v3.6 · 725 species":
+            (allGroupsInstalled?"Installed offline references":"Incomplete offline references"));
         int[] libraryCounts=OfflineFieldLibrary.availableCounts(this);
         result.append("\nDetailed wildlife accounts: ").append(libraryCounts[0])
             .append(" (source-checked; specialist review pending)");
@@ -118,6 +129,66 @@ public final class CatalogActivity extends Activity {
                 "Only legacy starter names are installed.":
                 sources.toString()+"\n\nSource membership is not proof of local occurrence.")
             .setPositiveButton("Close",null).show();
+    }
+    private void pickMindanaoMaster(){
+        if(importing){info.setText("Another checklist installation is running");return;}
+        Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{
+            "text/csv","text/plain","application/octet-stream"});
+        startActivityForResult(intent,PICK_MINDANAO);
+    }
+    private void installMindanaoMaster(Uri uri){
+        if(importing){info.setText("Another checklist installation is running");return;}
+        importing=true;
+        info.setText("Validating private Mindanao master CSV…");
+        new Thread(()->{
+            try{
+                List<Map<String,String>> records=validateChecklist(uri);
+                MindanaoMasterImporter.validate(records);
+                runOnUiThread(()->{
+                    if(isFinishing()||isDestroyed()){importing=false;return;}
+                    new AlertDialog.Builder(this)
+                        .setTitle("Activate 725-species Mindanao reference?")
+                        .setMessage("Use these 725 names in the Live Recorder and Species "+
+                            "Library. The earlier catalogs, aliases, regional evidence "+
+                            "and habitat profiles will be archived locally, not erased. "+
+                            "Existing surveys, observations and photos will not change. "+
+                            "This working list does not prove local presence; original "+
+                            "source redistribution rights remain under review.")
+                        .setNegativeButton("Cancel",(dialog,which)->importing=false)
+                        .setOnCancelListener(dialog->importing=false)
+                        .setPositiveButton("Activate",(dialog,which)->{
+                            info.setText("Archiving older references and activating Mindanao…");
+                            new Thread(()->{
+                                try{
+                                    MindanaoMasterImporter.install(getApplicationContext(),records);
+                                    runOnUiThread(()->{
+                                        if(isFinishing()||isDestroyed())return;
+                                        refresh();
+                                        info.append("\\nMindanao v3.6 installed: 725 active species. "+
+                                            "Unreviewed regional presence is not confirmed.");
+                                    });
+                                }catch(Exception error){
+                                    runOnUiThread(()->{
+                                        if(!isFinishing()&&!isDestroyed())
+                                            info.setText("No catalog change: "+
+                                                error.getMessage());
+                                    });
+                                }finally{importing=false;}
+                            },"LIKAS-Mindanao-Activate").start();
+                        }).show();
+                });
+            }catch(Exception error){
+                importing=false;
+                runOnUiThread(()->{
+                    if(!isFinishing()&&!isDestroyed())
+                        info.setText("Mindanao CSV validation failed: "+
+                            error.getMessage());
+                });
+            }
+        },"LIKAS-Mindanao-Validate").start();
     }
     private void pickAllChecklists(){
         if(importing){info.setText("Checklist installation in progress");return;}
@@ -472,9 +543,10 @@ public final class CatalogActivity extends Activity {
     @Override protected void onActivityResult(int req,int outcome,Intent data){
         super.onActivityResult(req,outcome,data);
         if((req!=PICK&&req!=PICK_MDD&&req!=PICK_SYNONYMS&&
-            req!=PICK_EVIDENCE&&req!=PICK_ALL)||
+            req!=PICK_EVIDENCE&&req!=PICK_ALL&&req!=PICK_MINDANAO)||
             outcome!=RESULT_OK||data==null)return;
         Uri uri=data.getData();if(uri==null)return;
+        if(req==PICK_MINDANAO){installMindanaoMaster(uri);return;}
         if(req==PICK_ALL){installAllChecklists(uri);return;}
         if(req==PICK_MDD){importMdd(uri);return;}
         if(req==PICK_SYNONYMS){importSynonyms(uri);return;}

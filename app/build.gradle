@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 131
-        versionName '0.27.3-rc71-preloaded-paic714-worldcover'
+        versionCode 132
+        versionName '0.27.3-apo-startup-source-stage'
     }
     signingConfigs {
         debug {
@@ -86,3 +86,32 @@ tasks.register("verifyBundledPaicReferences") {
     }
 }
 tasks.named("preBuild") { dependsOn("verifyBundledPaicReferences") }
+
+
+/**
+ * The updated owner-selected mountain/APO icon has not yet been transferred
+ * to GitHub binary source. Refuse to produce an APK with missing or swapped art.
+ * Expected file is the exact 1254px transparent-corner PNG generated 2026-11-02.
+ */
+tasks.register("verifyApoArtwork") {
+    doLast {
+        def master = file("src/main/assets/apo_official_master.png")
+        def expectedSha = "6b576763069bebdab87cb0676a028875a18518e655c127881f89e8faf51bfa46"
+        if(!master.isFile())
+            throw new GradleException("APO owner-selected icon PNG missing; APK build blocked")
+        def digest = java.security.MessageDigest.getInstance("SHA-256")
+            .digest(master.bytes).collect {
+                String.format("%02x", it & 0xff)
+            }.join("")
+        if(digest != expectedSha)
+            throw new GradleException("APO owner-selected icon checksum mismatch")
+        [
+            "src/main/res/drawable-nodpi/apo_splash_mark.png",
+            "src/main/res/drawable-nodpi/apo_launcher_foreground.png"
+        ].each { path ->
+            if(!file(path).isFile())
+                throw new GradleException("APO drawable missing: "+path)
+        }
+    }
+}
+tasks.named("preBuild") { dependsOn("verifyApoArtwork") }

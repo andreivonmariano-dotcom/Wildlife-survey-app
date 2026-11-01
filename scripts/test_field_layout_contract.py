@@ -51,7 +51,7 @@ class FieldLayoutContractTest(unittest.TestCase):
 
     def test_four_part_setup_preserves_real_field_inputs(self):
         text=self.home
-        for heading in ('step("01","Survey method")','step("02","Project and location")',
+        for heading in ('step("01","Choose a survey method")','step("02","Project and location")',
                         'step("03","Sampling effort")','step("04","Begin survey")'):
             self.assertIn(heading,text)
         for entry in ('projectChoice','geographicChoice','spacingChoice','routeLengthEntry',

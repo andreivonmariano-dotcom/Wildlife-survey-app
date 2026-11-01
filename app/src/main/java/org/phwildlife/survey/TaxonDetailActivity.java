@@ -265,10 +265,10 @@ public final class TaxonDetailActivity extends Activity {
         content.addView(text(message,15,false));
     }
 
-    /** Source-level v3.6 attributes. Do not mix old priority account facts into a new concept. */
+    /** Harmonized PAIC714 source attributes, without mixing retired catalog profiles. */
     private void showMindanaoMasterRecord(SQLiteDatabase database,Cursor c,String key){
         content.addView(FieldVisuals.section(this,
-            "Mindanao working checklist · v3.6","Source-reported reference"));
+            "Mindanao PAIC checklist · 714 species","Offline species reference"));
         paragraph("Order and family",col(c,"order_name")+" · "+col(c,"family"));
         paragraph("Distribution statement",checked(col(c,"distribution_text")));
         paragraph("IUCN global category (source snapshot)",
@@ -289,11 +289,9 @@ public final class TaxonDetailActivity extends Activity {
             paragraph("Habitat and elevation","Reference attributes unavailable");
         }
         paragraph("Source edition",col(c,"source")+" · "+col(c,"source_version"));
-        paragraph("Evidence limits","The v3.6 checklist is a display derivative. "+
-            "A listed species is not a verified occurrence at this site or "+
-            "necessarily confirmed on Mindanao. Taxonomic concepts, current "+
-            "IUCN/DENR legal status and guide-level habitat/elevation require "+
-            "checking against the underlying records.");
+        paragraph("About this record","Distribution and elevation are checklist "+
+            "references, not a detection at the observer\'s GPS position. "+
+            "IUCN and DENR fields are separate source snapshots.");
         if(OfflinePhotoEvidence.hasOfflineTaxon(this,col(c,"scientific_name")))
             OfflinePhotoEvidence.addForTaxon(this,content,col(c,"scientific_name"));
     }

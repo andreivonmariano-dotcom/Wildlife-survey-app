@@ -40,6 +40,8 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         "Offline photos"};
     private static final String SOURCE_METADATA=
         "Source-linked offline taxonomy · WBCP 2025 · Sy 2025/2026 · MDD 2.5";
+    private static final String[] PAIC_FILTERS={"All species","Offline photos"};
+    private boolean paicActive=false;
     private FieldDb db;
     private EditText search;
     private Spinner group,scope;
@@ -94,6 +96,11 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN |
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         db=new FieldDb(this);
+        try(android.database.Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_key LIKE 'LIKAS725:%' "+
+            "AND source_version='PAIC714_2026-11-01'",null)){
+            paicActive=c.moveToFirst()&&c.getInt(0)==714;
+        }
         largeText=getResources().getConfiguration().fontScale>=1.60f;
         loadGuides();
         LinearLayout root=new LinearLayout(this);
@@ -101,9 +108,13 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         root.setPadding(dp(15),dp(11),dp(15),dp(12));
         root.setBackgroundColor(UiKit.BG);
         root.addView(UiKit.navigationHeader(this,
-            largeText?"Species":"Philippine species checklist","Library",this::finish));
-        String fullSourceLine=SOURCE_METADATA;
-        TextView sourceBanner=label("Search Philippine wildlife references",13,false);
+            largeText?"Species":(paicActive?"Mindanao PAIC species":"Philippine species checklist"),
+            "Library",this::finish));
+        String fullSourceLine=paicActive?
+            "Harmonized Mindanao PAIC checklist · 714 species · private offline reference":
+            SOURCE_METADATA;
+        TextView sourceBanner=label(paicActive?
+            "Mindanao PAIC · 714 species":"Search Philippine wildlife references",13,false);
         sourceBanner.setContentDescription(fullSourceLine);
         if(!largeText)root.addView(sourceBanner);
         search=new EditText(this);
@@ -111,7 +122,8 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         search.setTextSize(largeText?15:16);
         search.setHint(largeText?"Search taxon or family":"Species, family or former name");
         search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-        search.setContentDescription("Search Philippine taxon catalog");
+        search.setContentDescription(paicActive?
+            "Search Mindanao PAIC species catalog":"Search Philippine taxon catalog");
         root.addView(search,new LinearLayout.LayoutParams(-1,dp(largeText?68:54)));
         LinearLayout filters=new LinearLayout(this);
         filters.setOrientation(LinearLayout.HORIZONTAL);
@@ -122,7 +134,7 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         group.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,GROUPS));
         scope.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,FILTERS));
+            android.R.layout.simple_spinner_dropdown_item,paicActive?PAIC_FILTERS:FILTERS));
         // Visible labels distinguish taxonomic groups from content/evidence coverage.
         LinearLayout groupField=new LinearLayout(this);
         groupField.setOrientation(LinearLayout.VERTICAL);
@@ -227,13 +239,15 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
             scrollBody.addView(filters);
         }else{
             scrollBody.addView(filters);
-            scrollBody.addView(researchToggle,
-                new LinearLayout.LayoutParams(-1,dp(48)));
-            scrollBody.addView(researchPanel);
+            if(!paicActive){
+                scrollBody.addView(researchToggle,
+                    new LinearLayout.LayoutParams(-1,dp(48)));
+                scrollBody.addView(researchPanel);
+            }
         }
         results=new LinearLayout(this);results.setOrientation(LinearLayout.VERTICAL);
         scrollBody.addView(results);
-        if(largeText){
+        if(largeText&&!paicActive){
             scrollBody.addView(researchToggle,
                 new LinearLayout.LayoutParams(-1,dp(58)));
             scrollBody.addView(researchPanel);
@@ -241,7 +255,8 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         scroll.addView(scrollBody);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1f));
         more=UiKit.button(this,largeText?"More species":"Show more species","secondary");
-        more.setContentDescription("Show next 24 Philippine species source records");
+        more.setContentDescription(paicActive?
+            "Show next 24 Mindanao PAIC species":"Show next 24 Philippine species source records");
         root.addView(more,new LinearLayout.LayoutParams(-1,dp(largeText?58:51)));
         more.setOnClickListener(v->appendPage());
         setContentView(root);
@@ -302,8 +317,12 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
                 Summary item=new Summary(field(c,0),field(c,1),field(c,2),
                     field(c,3),field(c,4),field(c,5));
                 if(!seen.add(item.name.toLowerCase(Locale.ROOT)))continue;
-                if(filter==1&&!Rc7LiteratureNotes.available(this,item.name))continue;
-                if(filter==2&&!OfflinePhotoEvidence.hasOfflineTaxon(this,item.name))continue;
+                if(paicActive){
+                    if(filter==1&&!OfflinePhotoEvidence.hasOfflineTaxon(this,item.name))continue;
+                }else{
+                    if(filter==1&&!Rc7LiteratureNotes.available(this,item.name))continue;
+                    if(filter==2&&!OfflinePhotoEvidence.hasOfflineTaxon(this,item.name))continue;
+                }
                 selected.add(item);
             }
         }catch(Exception e){
@@ -313,10 +332,16 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
         }
         updateFilterDisclosure();
         rendered=0;results.removeAllViews();
-        String evidenceStatus=selected.size()+" names · source checklists are not complete species accounts. "+
-            "IUCN and DENR status must be reviewed separately. Unverified is not Least Concern.";
-        status.setText(selected.size()+" source records · Evidence limits ›");
-        status.setContentDescription(evidenceStatus+" "+SOURCE_METADATA+
+        String evidenceStatus=paicActive?
+            selected.size()+" matching Mindanao PAIC species. This is a reference list, "+
+                "not a set of detections at the observer location. IUCN and DENR categories "+
+                "are separate source snapshots.":
+            selected.size()+" names · source checklists are not complete species accounts. "+
+                "IUCN and DENR status must be reviewed separately. Unverified is not Least Concern.";
+        status.setText(paicActive?selected.size()+" PAIC species · About ›":
+            selected.size()+" source records · Evidence limits ›");
+        status.setContentDescription(evidenceStatus+" "+(paicActive?
+            "Harmonized Mindanao PAIC 714-species edition":SOURCE_METADATA)+
             ". Tap for evidence limits.");
         appendPage();
     }
@@ -352,7 +377,9 @@ public final class Rc7SpeciesLibraryActivity extends Activity {
                 labels.addView(scientific);
             }
             String description=item.group+" · "+item.family;
-            if(guides.contains(item.name.toLowerCase(Locale.ROOT)))
+            if(paicActive){
+                description+=" · PAIC checklist";
+            }else if(guides.contains(item.name.toLowerCase(Locale.ROOT)))
                 description+=" · Introductory morphology";
             else if(Rc7LiteratureNotes.available(this,item.name))
                 description+=" · Research summary";

@@ -53,10 +53,10 @@ public final class CatalogActivity extends Activity {
         layout.addView(sources);
         sources.setOnClickListener(v->showCatalogSources());
         Button mindanao=UiKit.button(this,
-            "Install Mindanao master checklist (private CSV)","secondary");
+            "Install Mindanao PAIC checklist (714-species CSV)","secondary");
         layout.addView(mindanao);
         mindanao.setContentDescription("Replace the active species reference with "+
-            "725 Mindanao working-checklist entries from your local CSV");
+            "the approved 714-species Mindanao PAIC checklist from your local CSV");
         mindanao.setOnClickListener(v->pickMindanaoMaster());
 
         ScrollView scroll=new ScrollView(this);
@@ -92,18 +92,19 @@ public final class CatalogActivity extends Activity {
                 "WHERE review_status='reviewed'",null)){
             if(ecology.moveToFirst())reviewedProfiles=ecology.getInt(0);
         }
+        int[] libraryCounts=OfflineFieldLibrary.availableCounts(this);
         int mindanaoActive=0;
         try(Cursor active=db.getReadableDatabase().rawQuery(
-            "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_key LIKE 'LIKAS725:%'",
+            "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_key LIKE 'LIKAS725:%' "+
+            "AND source_version='PAIC714_2026-11-01'",
             null)){if(active.moveToFirst())mindanaoActive=active.getInt(0);}
-        result.insert(0,mindanaoActive==725?
-            "Mindanao working catalog v3.6 · 725 species":
+        result.insert(0,mindanaoActive==714?
+            "Mindanao PAIC checklist · 714 species":
             (allGroupsInstalled?"Installed offline references":"Incomplete offline references"));
-        if(mindanaoActive==725){
-            result.append("\nAll species entries come from the v3.6 working "+
-                "checklist. Detailed diagnostic accounts are not part of this import.");
+        if(mindanaoActive==714){
+            result.append("\nAll active species entries come from the harmonized "+
+                "714-species Mindanao PAIC checklist.");
         }else{
-            int[] libraryCounts=OfflineFieldLibrary.availableCounts(this);
             result.append("\nDetailed wildlife accounts: ").append(libraryCounts[0])
                 .append(" (source-checked; specialist review pending)");
         }
@@ -152,15 +153,16 @@ public final class CatalogActivity extends Activity {
             try{
                 List<Map<String,String>> records=validateChecklist(uri);
                 MindanaoMasterImporter.validate(records);
+                MindanaoMasterImporter.validateApprovedRoster(records);
                 runOnUiThread(()->{
                     if(isFinishing()||isDestroyed()){importing=false;return;}
                     new AlertDialog.Builder(this)
-                        .setTitle("Activate 725-species Mindanao reference?")
-                        .setMessage("Use these 725 names in the Live Recorder and Species "+
+                        .setTitle("Activate 714-species Mindanao PAIC checklist?")
+                        .setMessage("Use these 714 species in the Live Recorder and Species "+
                             "Library. The earlier catalogs, aliases, regional evidence "+
                             "and habitat profiles will be archived locally, not erased. "+
                             "Existing surveys, observations and photos will not change. "+
-                            "This working list does not prove local presence; original "+
+                            "Checklist inclusion is not a site detection; original "+
                             "source redistribution rights remain under review.")
                         .setNegativeButton("Cancel",(dialog,which)->importing=false)
                         .setOnCancelListener(dialog->importing=false)
@@ -172,8 +174,7 @@ public final class CatalogActivity extends Activity {
                                     runOnUiThread(()->{
                                         if(isFinishing()||isDestroyed())return;
                                         refresh();
-                                        info.append("\nMindanao v3.6 installed: 725 active species. "+
-                                            "Unreviewed regional presence is not confirmed.");
+                                        info.append("\nMindanao PAIC checklist installed: 714 active species.");
                                     });
                                 }catch(Exception error){
                                     runOnUiThread(()->{

@@ -1,5 +1,8 @@
 # APO | Startup screen v1: implementation-ready design proposal
 
+> **2 November 2026 revision following owner-supplied image:** The owner now supplied a detailed Mount Apo rainforest / APO lettering icon and requested high-quality regeneration without white outer edges. The earlier textless ribbon-icon lock in this document is **superseded for the current candidate**. A refined 1254×1254 RGBA PNG was produced in the owner chat at `APO_Icon_Refined_Transparent_Edges_1254px.png`, SHA-256 `6b576763069bebdab87cb0676a028875a18518e655c127881f89e8faf51bfa46`. The derived 512×512 file is `APO_Icon_Android_512px.png`, SHA-256 `d26f245bc85f2aeb2f0f43b00d283cef384dacfc0cbf27259a54ae7f3dd99723`. The raster image includes the text **APO**: the startup should use a single centered icon without a second text wordmark. Source and launcher metadata have been staged in a protected draft branch, but image binaries have **not** been transferred to GitHub and no Android APK can yet be compiled or delivered. Remaining sections below describe the preceding proposal and should be treated as superseded wherever they conflict with this dated amendment.
+
+
 **Prepared:** 2 November 2026, Asia/Manila  
 **Status:** Design proposal for owner review. No Android code, approved icon binary, APK, or launcher metadata has been changed by this document.  
 **Source branch:** `feature/apo-startup-screen-v1-design`, derived from the owner-approved APO branding lock `feature/apo-minimal-brand-design-lock` at `1e1bcaa976ab0333e087719b590259513567438f`.  

@@ -28,7 +28,7 @@ public final class BundledPrivateReferencesTest {
             row[8]="unreviewed";
             row[9]="Passeriformes";
             row[24]="Forest";
-            row[25]="0–2,000 m";
+            row[25]="\"0–2,000 m\"";
             csv.append(String.join(",",row)).append("\r\n");
         }
         List<Map<String,String>> records=BundledPrivateReferences.parse(csv.toString());

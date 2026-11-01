@@ -11,6 +11,7 @@
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
     <application android:label="LIKAS" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
         <service android:name=".TrackService" android:exported="false" android:foregroundServiceType="location" />
+        <activity android:name=".HabitatsSpeciesActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".SurveyGpsActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".CameraActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".MainActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:exported="false" />

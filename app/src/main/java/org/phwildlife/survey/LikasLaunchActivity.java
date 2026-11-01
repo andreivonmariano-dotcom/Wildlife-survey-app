@@ -23,7 +23,8 @@ import android.widget.TextView;
  * not buildable without the exact approved APO artwork and derivatives.
  */
 public final class LikasLaunchActivity extends Activity {
-    private static final int FOREST=Color.rgb(7,42,34);
+    private static final int FOREST=Color.rgb(11,75,57);
+    private static final int DARK_FOREST=Color.rgb(2,25,24);
     private static final int IVORY=Color.rgb(245,240,226);
     private static final int SAGE=Color.rgb(176,199,184);
     private final Handler handler=new Handler(Looper.getMainLooper());
@@ -52,12 +53,12 @@ public final class LikasLaunchActivity extends Activity {
     @Override public void onCreate(Bundle saved) {
         super.onCreate(saved);
         getWindow().setStatusBarColor(FOREST);
-        getWindow().setNavigationBarColor(FOREST);
+        getWindow().setNavigationBarColor(DARK_FOREST);
 
         root=new FrameLayout(this);
         GradientDrawable backdrop=new GradientDrawable(
             GradientDrawable.Orientation.TOP_BOTTOM,
-            new int[]{Color.rgb(7,42,34),Color.rgb(2,29,27)});
+            new int[]{FOREST,DARK_FOREST});
         root.setBackground(backdrop);
 
         identity=new LinearLayout(this);

@@ -345,7 +345,11 @@ public class WelcomeActivity extends Activity {
             bg.setColor(selected?UiKit.LEAF_LIGHT:Color.WHITE);
             bg.setStroke(dp(selected?2:1),selected?UiKit.POND:UiKit.CONTROL_BORDER);
             bg.setCornerRadius(dp(LikasDesignSystem.RADIUS_BUTTON));
-            item.setBackground(bg);
+            // Keep the native radio button and its checked-state accessibility.
+            android.graphics.drawable.RippleDrawable ripple=
+                new android.graphics.drawable.RippleDrawable(
+                    ColorStateList.valueOf(Color.argb(24,46,105,65)),bg,null);
+            item.setBackground(ripple);
             item.setSelected(selected);
         }
     }
@@ -361,31 +365,35 @@ public class WelcomeActivity extends Activity {
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){
             SurveyMethods.Method m=choices[i];
-            String label=m.label+(m.basicLog?" · basic log":"");
+            // Each option explains its own protocol. Keep the RadioGroup's direct
+            // native RadioButton children for one-choice selection and restoration.
+            String title=m.label+(m.basicLog?" · Basic log":"");
+            android.text.SpannableStringBuilder label=
+                new android.text.SpannableStringBuilder(title+"\n"+m.description);
+            int detailStart=title.length()+1;
+            label.setSpan(new android.text.style.StyleSpan(Typeface.BOLD),
+                0,title.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            label.setSpan(new android.text.style.RelativeSizeSpan(.86f),
+                detailStart,label.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            label.setSpan(new android.text.style.ForegroundColorSpan(UiKit.MUTED),
+                detailStart,label.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             RadioButton rb=new RadioButton(this);
             rb.setId(1000+i);rb.setText(label);
-            rb.setTextSize(LikasDesignSystem.TEXT_BODY);rb.setTextColor(INK);
+            rb.setContentDescription(title+". "+m.description);
+            rb.setTextSize(LikasDesignSystem.TEXT_CARD);rb.setTextColor(INK);
+            rb.setLineSpacing(dp(3),1f);
+            rb.setGravity(Gravity.CENTER_VERTICAL);
             rb.setButtonTintList(ColorStateList.valueOf(UiKit.POND));
-            rb.setMinHeight(dp(54));
-            rb.setPadding(dp(12),dp(10),dp(12),dp(10));
-            rb.setBackground(UiKit.surface(this));
+            rb.setMinHeight(dp(80));
+            rb.setPadding(dp(16),dp(12),dp(14),dp(12));
             LinearLayout.LayoutParams methodLp=new LinearLayout.LayoutParams(-1,-2);
             methodLp.bottomMargin=dp(8);
             methodChoices.addView(rb,methodLp);
-
         }
         methodChoices.check(1000);
         methodChoices.setOnCheckedChangeListener((group,checked)->refreshStudyChoices());
-        main.addView(step("01","Survey method"));
-        LinearLayout methodsCard=vertical();
-        methodsCard.setPadding(dp(12),dp(6),dp(10),dp(6));
-        methodsCard.setBackground(UiKit.surface(this));
-        methodsCard.addView(methodChoices);
-        TextView methodHint=LikasPortalUi.text(this,choices[0].description,13,
-            UiKit.MUTED,false);
-        methodHint.setPadding(dp(8),dp(4),dp(8),dp(10));
-        methodsCard.addView(methodHint);
-        main.addView(methodsCard);
+        main.addView(step("01","Choose a survey method"));
+        main.addView(methodChoices);
         updateMethodSelection(1000);
         main.addView(step("02","Project and location"));
         projectChoice=new Spinner(this);
@@ -535,7 +543,6 @@ public class WelcomeActivity extends Activity {
         methodChoices.setOnCheckedChangeListener((group,checked)->{
             updateMethodSelection(checked);
             int choice=checked-1000;
-            if(choice>=0&&choice<choices.length)methodHint.setText(choices[choice].description);
             refreshStudyChoices();
             if(choice>=0&&choice<choices.length){
                 durationLabel.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);

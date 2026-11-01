@@ -47,7 +47,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         self.assertIn("styleSetupInput(entry)",setup)
         self.assertIn("UiKit.CONTROL_BORDER",welcome)
         self.assertIn("methodChoices.check(1000)",setup)
-        self.assertIn('step("01","Survey method")',setup)
+        self.assertIn('step("01","Choose a survey method")',setup)
         self.assertIn('step("02","Project and location")',setup)
         self.assertIn('step("04","Begin survey")',setup)
         self.assertIn("setupFooter.setVisibility(View.VISIBLE)",setup)

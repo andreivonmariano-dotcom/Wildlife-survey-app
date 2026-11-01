@@ -66,6 +66,10 @@ public final class HabitatsSpeciesActivity extends Activity {
         Button importMap=UiKit.button(this,PaicLandCoverPack.installed(this)?
             "Replace offline land-cover file":"Import offline land-cover file","secondary");
         importMap.setOnClickListener(v->pickMap());
+        // Personal build loads the map before leaving the startup screen.
+        if(BundledPrivateReferences.hasBundledMap(this)&&
+                PaicLandCoverPack.installed(this))
+            importMap.setVisibility(View.GONE);
         body.addView(importMap,new LinearLayout.LayoutParams(-1,dp(52)));
         TextView intro=label("Select every habitat actually encountered. Suggested "+
             "habitats are not preselected. Other habitats can always be added.",13,false);

@@ -240,7 +240,9 @@ public final class HabitatsSpeciesActivity extends Activity {
         boolean deliberatelyMissing=getIntent().getBooleanExtra("start_without_gps",false);
         if(!deliberatelyMissing){
             Location live=TrackService.currentFix();
-            if(live==null||!GpsFixPolicy.acceptableElapsed(
+            if(live==null||!live.hasAccuracy()||
+                    !"gps".equals(live.getProvider())||
+                    !GpsFixPolicy.acceptableElapsed(
                     live.getLatitude(),live.getLongitude(),live.getAccuracy(),
                     (SystemClock.elapsedRealtimeNanos()-live.getElapsedRealtimeNanos())/1000000L,
                     live.isFromMockProvider())){

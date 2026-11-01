@@ -264,6 +264,44 @@ public final class TaxonDetailActivity extends Activity {
         content.removeAllViews();
         content.addView(text(message,15,false));
     }
+
+    /** Source-level v3.6 attributes. Do not mix old priority account facts into a new concept. */
+    private void showMindanaoMasterRecord(SQLiteDatabase database,Cursor c,String key){
+        content.addView(FieldVisuals.section(this,
+            "Mindanao working checklist · v3.6","Source-reported reference"));
+        paragraph("Order and family",col(c,"order_name")+" · "+col(c,"family"));
+        paragraph("Distribution statement",checked(col(c,"distribution_text")));
+        paragraph("IUCN global category (source snapshot)",
+            checked(col(c,"iucn_red_list")));
+        paragraph("Philippine DENR category (source snapshot)",
+            checked(col(c,"ph_red_list")));
+        try(Cursor attrs=database.rawQuery(
+            "SELECT habitat_text,elevation_text,source_version "+
+            "FROM likas_master_attributes WHERE taxon_key=? LIMIT 1",
+            new String[]{key})){
+            if(attrs.moveToFirst()){
+                paragraph("Habitat guide",checked(attrs.getString(0)));
+                paragraph("Elevation guide",checked(attrs.getString(1)));
+            }else{
+                paragraph("Habitat and elevation","Unverified in this installation");
+            }
+        }catch(Exception error){
+            paragraph("Habitat and elevation","Reference attributes unavailable");
+        }
+        paragraph("Source edition",col(c,"source")+" · "+col(c,"source_version"));
+        paragraph("Evidence limits","The v3.6 checklist is a display derivative. "+
+            "A listed species is not a verified occurrence at this site or "+
+            "necessarily confirmed on Mindanao. Taxonomic concepts, current "+
+            "IUCN/DENR legal status and guide-level habitat/elevation require "+
+            "checking against the underlying records.");
+        if(OfflinePhotoEvidence.hasOfflineTaxon(this,col(c,"scientific_name")))
+            OfflinePhotoEvidence.addForTaxon(this,content,col(c,"scientific_name"));
+    }
+    private static String checked(String value){
+        return value==null||value.trim().isEmpty()||value.equals("—")?
+            "Unverified / not supplied":value;
+    }
+
     private void loadKey(String key){
         SQLiteDatabase database=db.getReadableDatabase();
         try(Cursor c=database.rawQuery(
@@ -294,6 +332,12 @@ public final class TaxonDetailActivity extends Activity {
             latin.setTypeface(null,Typeface.BOLD_ITALIC);
             latin.setPadding(0,dp(3),0,dp(3));
             content.addView(latin);
+            // A privately installed Mindanao checklist replaces the legacy
+            // reference profile, not the historical identification record.
+            if(key.startsWith("LIKAS725:")){
+                showMindanaoMasterRecord(database,c,key);
+                return;
+            }
             // All 96 prioritized taxa share one concise, citation-backed account.
             // Preserve the complete legacy catalog for the remaining source names.
             if(Rc7FieldAccounts.priority(this,scientific)){

@@ -96,7 +96,7 @@ class Rc7cOwnerLibraryTests(unittest.TestCase):
         self.assertIn("OfflinePhotoEvidence.hasOfflineTaxon",browser)
         self.assertIn("taxon_synonyms",browser)
         db=(CODE/"FieldDb.java").read_text()
-        self.assertIn("super(context,NAME,null,27)",db)
+        self.assertIn("super(context,NAME,null,28)",db)
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",gradle).group(1)),59)
         self.assertRegex(gradle, r"versionName '0[.][0-9]+[.][0-9]+-rc[0-9]+[^']*'")

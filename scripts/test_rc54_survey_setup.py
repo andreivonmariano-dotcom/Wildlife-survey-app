@@ -47,5 +47,5 @@ class Rc54SetupVisualContract(unittest.TestCase):
         ):self.assertIn(token,a)
         self.assertGreaterEqual(int((ROOT/"app/build.gradle").read_text().split("versionCode ",1)[1].split()[0]),125)
         self.assertIn("versionName '0.27.3-", (ROOT/"app/build.gradle").read_text())
-        self.assertIn("super(context,NAME,null,27)",read("FieldDb.java"))
+        self.assertIn("super(context,NAME,null,28)",read("FieldDb.java"))
 if __name__=="__main__":unittest.main()

@@ -66,7 +66,7 @@ class Rc46FieldLayoutHierarchy(unittest.TestCase):
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",gradle).group(1)),109)
         self.assertIn("0.27.3-rc",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
-        self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
+        self.assertIn("super(context,NAME,null,28)",source("FieldDb.java"))
         self.assertIn("frame.setClipToOutline(true)",source("LikasPortalUi.java"))
 
 if __name__=="__main__":

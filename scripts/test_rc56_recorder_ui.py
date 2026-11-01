@@ -59,5 +59,5 @@ class Rc56RecorderLayout(unittest.TestCase):
         self.assertIn('countView.setContentDescription(count+" individuals or evidence items")',a)
         self.assertGreaterEqual(int((ROOT/"app/build.gradle").read_text().split("versionCode ",1)[1].split()[0]),125)
         self.assertIn("versionName '0.27.3-", (ROOT/"app/build.gradle").read_text())
-        self.assertIn("super(context,NAME,null,27)",src("FieldDb.java"))
+        self.assertIn("super(context,NAME,null,28)",src("FieldDb.java"))
 if __name__=="__main__":unittest.main()

@@ -76,7 +76,7 @@ class Rc22OriginalStudies(unittest.TestCase):
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertRegex(build,r"versionCode\s+(?:9[6-9]|[1-9]\d{2,})\b")
         self.assertIn("0.27.3-rc",build)
-        self.assertIn("super(context,NAME,null,27)",db)
+        self.assertIn("super(context,NAME,null,28)",db)
 
 if __name__=="__main__":
     unittest.main()

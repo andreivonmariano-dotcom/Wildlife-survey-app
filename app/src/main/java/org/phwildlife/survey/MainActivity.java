@@ -1058,6 +1058,23 @@ public class MainActivity extends Activity implements LocationListener {
                 withoutGps?null:startLatitude,withoutGps?null:startLongitude,
                 withoutGps?null:(double)startAccuracy,withoutGps?null:iso(startGpsTime),
                 startGpsStatus});
+            // Keep survey-wide habitat confirmations separate from station observations.
+            if(getIntent().hasExtra("prep_checklist_mode")){
+                Intent prep=getIntent();
+                Double lat=withoutGps?null:startLatitude;
+                Double lon=withoutGps?null:startLongitude;
+                Double accuracy=withoutGps?null:(double)startAccuracy;
+                Double msl=prep.hasExtra("prep_msl_elevation_m")?
+                    prep.getDoubleExtra("prep_msl_elevation_m",Double.NaN):null;
+                Double vertical=prep.hasExtra("prep_msl_uncertainty_m")?
+                    prep.getDoubleExtra("prep_msl_uncertainty_m",Double.NaN):null;
+                SurveyHabitatSetup.save(database,eventId,
+                    prep.getStringExtra("prep_confirmed_habitats"),
+                    prep.getStringExtra("prep_checklist_mode"),
+                    prep.getStringExtra("prep_map_suggestions"),
+                    prep.getStringExtra("prep_map_source"),
+                    lat,lon,accuracy,withoutGps?0:startGpsTime,msl,vertical);
+            }
             if(method.equals("point_count")&&plannedStationCount>0){
                 int created=routeTemplateId.isEmpty()?
                     RoutePlan.create(database,eventId,projectId,plannedRouteMeters,plannedSpacingMeters,startedAt):

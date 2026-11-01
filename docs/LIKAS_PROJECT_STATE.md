@@ -3,6 +3,14 @@
 
 
 
+
+## 2 November 2026 | Current startup design follows final locked ribbon icon (source draft)
+
+- **Latest user decision:** The icon locked in the previous turn is `forest_green_mountain_ribbon_icon.png` (1254x1254 RGB, exact SHA-256 `6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7`). Preserve the mountain-ribbon artwork, original colors, geometry and no-text design. The previous rainforest mountain + APO lettering icon is **superseded** and must not be used. Technical PNG derivatives may remove only external white corners or resize/margin for Android.
+- **Startup design:** Full-screen forest-green field, original rounded-square mountain icon above separately rendered ivory APO wordmark, short one-time animation with reduced-motion fallback, automatic transition to Home, real offline-reference status if delayed, explicit error recovery and untouched Resume Survey behavior. No GPS/network on launch. Static conceptual preview and checked assets are directly attached in the owner chat as `APO_Startup_Screen_Concept.png` and `APO_Startup_Implementation_Assets.zip`.
+- **Draft code:** Active branch `feature/apo-startup-screen-v1-design`, based on RC71 (application ID `org.phwildlife.survey.beta08`, preinstalled PAIC714 + ESA WorldCover, SQLite28). Source now has separate native wordmark, `apo_*` adaptive resources, versionCode **132**, mandatory original-and-derivative SHA gate, and source contract `scripts/test_apo_startup_locked_icon.py`. Governing screen implementation specification: `docs/APO_STARTUP_SCREEN_V1_DESIGN.md`.
+- **Status and blocker:** New binary art is present only in the owner chat local files, not yet in GitHub. The Android SDK/Gradle executable is unavailable in the current container and the connector accepts only text file changes. No compilation, emulator, signature, data-upgrade test or newly built APK was performed. Source branch remains a draft, not a downloadable update. **Next:** transfer exact checked icon binary to the specified resource paths, build CI APK on source branch, compare signing identity and reference assets, direct-deliver verified APK in-chat. Do not claim source code alone has shipped.
+
 ## 2 November 2026 | Owner-supplied APO icon revised; startup source staged, APK blocked
 
 - **Current direction:** User supplied a new illustrated Mount Apo / rainforest / `APO` icon and asked for high-quality regeneration and removal of light outer edges. This is newer than the previous textless ribbon-mountain icon direction. Do not silently revert to the frog or prior mountain icon. The selected candidate includes its own APO lettering, so startup must not draw another wordmark over or underneath it.

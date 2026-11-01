@@ -63,6 +63,18 @@ public final class HabitatsSpeciesActivity extends Activity {
         body.addView(FieldVisuals.section(this,"Suggested habitats nearby",
             "ESA WorldCover 2020 · generalized land-cover map · observer confirmation required"));
         mapSummary=label("",13,false);body.addView(mapSummary);
+        Button mapCredit=UiKit.button(this,"Land-cover source and license","quiet");
+        mapCredit.setContentDescription("About ESA WorldCover 2020 source and Creative Commons license");
+        mapCredit.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("ESA WorldCover 2020 · source")
+            .setMessage("© ESA WorldCover project 2020 / Contains modified "+
+                "Copernicus Sentinel data (2020) processed by ESA WorldCover consortium.\\n\\n"+
+                "Source: Zanaga et al. (2021), ESA WorldCover 10 m 2020 v100. "+
+                "DOI: 10.5281/zenodo.5571936. License: CC BY 4.0.\\n\\n"+
+                "LIKAS aggregates land cover to approximately 500 m; these are "+
+                "historical mapped suggestions, not verified current habitats.")
+            .setPositiveButton("OK",null).show());
+        body.addView(mapCredit);
         Button importMap=UiKit.button(this,PaicLandCoverPack.installed(this)?
             "Replace offline land-cover file":"Import offline land-cover file","secondary");
         importMap.setOnClickListener(v->pickMap());

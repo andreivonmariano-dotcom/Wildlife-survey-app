@@ -58,6 +58,15 @@ public final class CatalogActivity extends Activity {
         mindanao.setContentDescription("Replace the active species reference with "+
             "the approved 714-species Mindanao PAIC checklist from your local CSV");
         mindanao.setOnClickListener(v->pickMindanaoMaster());
+        // Personal build: already installed at startup. Hide redundant import.
+        if(BundledPrivateReferences.hasBundledCatalog(this)){
+            try(Cursor count=db.getReadableDatabase().rawQuery(
+                    "SELECT COUNT(*) FROM taxon_catalog WHERE taxon_key LIKE 'LIKAS725:%'",
+                    null)){
+                if(count.moveToFirst()&&count.getInt(0)==714)
+                    mindanao.setVisibility(android.view.View.GONE);
+            }
+        }
 
         ScrollView scroll=new ScrollView(this);
         scroll.addView(layout);

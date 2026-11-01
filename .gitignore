@@ -27,3 +27,6 @@ rc7_owner_photo_candidates.json
 *.log
 .DS_Store
 Thumbs.db
+
+# Private reference assets for owner-only APKs (not licensed for public source redistribution)
+app/private-assets/

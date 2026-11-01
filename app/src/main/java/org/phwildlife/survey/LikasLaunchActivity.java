@@ -1,5 +1,6 @@
 package org.phwildlife.survey;
 
+import android.app.AlertDialog;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -21,6 +22,10 @@ public final class LikasLaunchActivity extends Activity {
     private static final int CREAM=Color.rgb(245,247,235);
     private final Handler handler=new Handler(Looper.getMainLooper());
     private boolean entered=false;
+    private boolean loadingReferences=false;
+    private boolean continueRequested=false;
+    private boolean referenceErrorShown=false;
+    private String referenceFailure=null;
     private TextView brand;
     private FrameLayout root;
     private int dp(float n){
@@ -44,6 +49,7 @@ public final class LikasLaunchActivity extends Activity {
         lp.leftMargin=dp(18);lp.rightMargin=dp(18);
         root.addView(brand,lp);
         setContentView(root);
+        startPrivateReferenceBootstrap();
 
         // Android accessibility and device settings determine whether motion runs.
         if(!ValueAnimator.areAnimatorsEnabled()||
@@ -66,8 +72,49 @@ public final class LikasLaunchActivity extends Activity {
         brand.animate().alpha(0f).translationY(-dp(16))
             .setDuration(210).withEndAction(this::enterHome).start();
     }
+    private void startPrivateReferenceBootstrap(){
+        if(!BundledPrivateReferences.packaged(this))return;
+        loadingReferences=true;
+        new Thread(()->{
+            String failure=null;
+            try{
+                BundledPrivateReferences.ensureInstalled(getApplicationContext());
+            }catch(Exception error){
+                failure=error.getMessage()==null?error.getClass().getSimpleName():
+                    error.getMessage();
+            }
+            final String status=failure;
+            runOnUiThread(()->{
+                if(isFinishing()||isDestroyed())return;
+                loadingReferences=false;
+                referenceFailure=status;
+                if(continueRequested)enterHome();
+            });
+        },"LIKAS-Owner-Reference-Startup").start();
+    }
     private void enterHome(){
         if(entered||isFinishing()||isDestroyed())return;
+        if(loadingReferences){
+            continueRequested=true;
+            brand.animate().cancel();
+            brand.setAlpha(1f);
+            brand.setTranslationY(0f);
+            brand.setText("LIKAS\nPreparing offline references");
+            brand.setTextSize(24);
+            return;
+        }
+        if(referenceFailure!=null&&!referenceErrorShown){
+            referenceErrorShown=true;
+            new AlertDialog.Builder(this)
+                .setTitle("Offline references not installed")
+                .setMessage("The private reference package could not be installed: "+
+                    referenceFailure+". Existing surveys remain available. "+
+                    "Continue without the new references?")
+                .setCancelable(false)
+                .setPositiveButton("Continue",(dialog,which)->enterHome())
+                .show();
+            return;
+        }
         entered=true;
         Intent home=new Intent(this,WelcomeActivity.class);
         home.putExtra("show_menu",true);

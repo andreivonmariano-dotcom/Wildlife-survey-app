@@ -1,6 +1,8 @@
 package org.phwildlife.survey;
 
 import android.animation.ValueAnimator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -8,8 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -27,7 +27,6 @@ public final class LikasLaunchActivity extends Activity {
     private static final int DARK_FOREST=Color.rgb(2,25,24);
     private static final int IVORY=Color.rgb(245,240,226);
     private static final int SAGE=Color.rgb(176,199,184);
-    private final Handler handler=new Handler(Looper.getMainLooper());
     private boolean entered=false;
     private boolean loadingReferences=false;
     private boolean animationDone=false;
@@ -116,7 +115,9 @@ public final class LikasLaunchActivity extends Activity {
         root.addView(status,statusParams);
 
         mark.setContentDescription("APO mountain emblem");
-        root.setContentDescription("Apo biodiversity tools");
+        // Keep the mountain and wordmark individually available to TalkBack.
+        // An ancestor description would mask their separate accessibility names.
+        wordmark.setContentDescription("Apo");
         setContentView(root);
         startReferenceBootstrap();
 
@@ -128,9 +129,12 @@ public final class LikasLaunchActivity extends Activity {
             mark.setTranslationY(dp(9));
             wordmark.setAlpha(0f);
             wordmark.setTranslationY(dp(5));
-            mark.animate().alpha(1f).translationY(0f).setDuration(260).start();
+            mark.animate().alpha(1f).translationY(0f)
+                .setInterpolator(new DecelerateInterpolator(1.5f))
+                .setDuration(380).start();
             wordmark.animate().alpha(1f).translationY(0f)
-                .setStartDelay(60).setDuration(230).withEndAction(()->{
+                .setInterpolator(new DecelerateInterpolator(1.4f))
+                .setStartDelay(90).setDuration(320).withEndAction(()->{
                     animationDone=true;
                     maybeEnterHome();
                 }).start();
@@ -193,8 +197,11 @@ public final class LikasLaunchActivity extends Activity {
         if(reducedMotion()) {
             enterHome();
         } else {
-            identity.animate().alpha(0f).translationY(-dp(8))
-                .setDuration(150).withEndAction(this::enterHome).start();
+            // Keep the gradient visible while the identity gently clears;
+            // Android then cross-fades the outgoing splash to Home.
+            identity.animate().alpha(0f).translationY(-dp(6))
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setDuration(190).withEndAction(this::enterHome).start();
         }
     }
 
@@ -204,12 +211,15 @@ public final class LikasLaunchActivity extends Activity {
         Intent home=new Intent(this,WelcomeActivity.class);
         home.putExtra("show_menu",true);
         startActivity(home);
-        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+        if(reducedMotion()) {
+            overridePendingTransition(0,0);
+        } else {
+            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+        }
         finish();
     }
 
     @Override protected void onDestroy() {
-        handler.removeCallbacksAndMessages(null);
         if(identity!=null) identity.animate().cancel();
         if(mark!=null) mark.animate().cancel();
         if(wordmark!=null) wordmark.animate().cancel();

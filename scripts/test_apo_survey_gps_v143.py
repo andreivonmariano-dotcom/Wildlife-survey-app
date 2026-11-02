@@ -14,7 +14,7 @@ class GpsRC83(unittest.TestCase):
                       '"GPS troubleshooting","quiet"',
                       'UiKit.button(this,"Retry GPS acquisition","secondary")',
                       'UiKit.button(this,"Android location settings","secondary")',
-                      '"Ellipsoidal altitude (device; not terrain elevation): "',
+                      'Ellipsoidal altitude (device; not terrain elevation): ',
                       'current.hasVerticalAccuracy()','"Mock device position rejected"'):
             self.assertIn(token,s)
         self.assertIn('setQuality("Accuracy "+accuracy+" · Age "+',s)
@@ -41,7 +41,7 @@ class GpsRC83(unittest.TestCase):
         for t in ('versionCode=\'143\'','versionName=\'0.27.3-rc83-apo-survey-gps\'',
                   'GpsCompactUiEmulatorTest','Rc55GpsPreflightInstrumentedTest',
                   'font_scale 1.6','font_scale 2.0','wm size 960x2160',
-                  'apo_gps_survey_160.png','apo_gps_station_200.png',
+                  'apo_gps_','gps_\${mode}_160.png','gps_\${mode}_200.png',
                   'len(files)==4'):
             self.assertIn(t,wf)
         gradle=read("app/build.gradle")

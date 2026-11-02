@@ -2,6 +2,8 @@
 
 ## Authoritative development baseline (2 November 2026)
 
+**RC82 CURRENT SURVEY-SETUP WORKSTREAM:** `feature/apo-survey-setup-v142` (on signed RC81). The page after Birds/Herpetofauna/Mammals choice is `WelcomeActivity.setup`. Code142 hides the long native radio method list behind a compact synchronized native spinner and optional comparison; moves GPS checklist-area assistance and optional point-route template management behind disclosures, retains required effort/GPS/project inputs and disables implicit route saving. See `docs/APO_RC82_SURVEY_SETUP_QA_2026_11_02.md`. **No code142 release until signed workflow and direct APK verified.**
+
 **RC81 SIGNED DEVELOPMENT PREVIEW VERIFIED (2 Nov 2026):** `feature/apo-survey-compact-320-v141`, code141, signed app/test SHA `719c45ea79b68a5912ae60180d6cf54ba7cf4ffb`, run `41388167462` SUCCESS. 426 Python tests, Android JVM app+test compilation and two 160% / 200%-320dp Android14 emulator UI tests passed. Direct attached APK `APO-v0.27.3-RC81-Survey-Compact-code141.apk`, 11,756,772 bytes, SHA-256 `3d42823bfe59cfd2c631fac294a68b8edff23bc3699c32e1da9dec85c72900a8`. Preserve package/signing/SQLite28/reference identity. Still draft/unmerged, field/data-upgrade checks outstanding. See `docs/APO_RC81_COMPACT_320_QA_2026_11_02.md`. Chat file paths are session-local.
 
 **RC81 CURRENT ACTIVE SURVEY WORKSTREAM:** `feature/apo-survey-compact-320-v141` derives from signed RC80 and corrects independently captured 200%/320dp screenshot crowding with compact status, concise review action, and two-column secondary dock. Code141 not yet a signed/downloadable release. See `docs/APO_RC81_COMPACT_320_QA_2026_11_02.md`. Original package/signing/schema28/references and all research records remain protected.

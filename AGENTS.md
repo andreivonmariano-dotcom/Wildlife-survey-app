@@ -2,11 +2,11 @@
 
 ## Authoritative development baseline (2 November 2026)
 
-The public-facing identity is **APO**. **Use `feature/apo-biotools-v134` as the latest Android development source**, verifying HEAD at every new task. The branch is a child of RC73 `feature/apo-text-home-v133` and is proposed in draft PR #76. Old `main` and historical LIKAS RC branches are not the current baseline.
+**APO** is the public name of the offline-first Philippine biodiversity app. **Current Android development branch: `feature/apo-biotools-destinations-v135`**, verify HEAD before every new task. This branches from RC74 `feature/apo-biotools-v134`, draft PR #77, not merged to legacy `main`.
 
-Latest verified signed preview: **`0.27.3-rc74-apo-biotools`**, versionCode **134**, app/test source `f4f948c6533bb34ef55245aa2994c1ac5faf23a3`. Signed CI run `41375198786` passed **390 Python tests**, JVM/Android compilation, signature/package/artwork/scientific reference checks. Downloaded APK SHA-256 `09c96752003bda20660199a439485ba356558e740b59a37cffda0a2887ff0132`. AppId `org.phwildlife.survey.beta08`, original signer and SQLite **28** remain unchanged. This is a **development preview**, not a certified field-stable version. Details: `docs/APO_RC74_BIOTOOLS_SIGNED_QA_2026_11_02.md`.
+**Latest verified signed and directly delivered APK:** `0.27.3-rc75-apo-biotools-destinations`, code **135**, built app source `55e2864d4508bc512eafbdd9eb78eac4093030cc`, CI run `41376495935` (**SUCCESS**, 397 Python regression tests and JVM/Android build). Exact APK `APO-v0.27.3-RC75-BioTools-Destinations-code135.apk`, 11,751,480 bytes, SHA-256 `2083c18d98c2588c0d0382e7d6aaf0aa2885c890df91e78483c4ea710219263d`. AppId `org.phwildlife.survey.beta08`, original signer SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, SQLite schema **28** unchanged. Details: `docs/APO_RC75_BIOTOOLS_DESTINATIONS_SIGNED_QA_2026_11_02.md`. The binary is **not field-certified**; upgrade with existing records, GNSS, 320dp/200% font layout, TalkBack and ZIP contents remain unverified on physical phones.
 
-Current Home modules are BioTools, PHLibrary, PHMaps, BioDiscover, plus text Settings and contextual Resume. BioTools has five text-only menus: Surveys, Projects & Stations, Field Records, Analysis & Exports, Field Utilities. Independent `ResearchExportActivity` calls the established ZIP archive writer but still requires on-device export review. PHMaps atlas and BioDiscover live feed remain incomplete.
+Home has BioTools, PHLibrary, PHMaps and BioDiscover, with text-only Settings and contextual Resume. BioTools has Surveys, Projects & Stations, Field Records, Analysis & Exports, and Field Utilities. RC75 improves all five destinations using compact text-first rows, station search/coordinate validation, outcome summaries, careful scientific metric labels, and scoped utility explanations. Independent research export reuses the existing writer. PHMaps full atlas and BioDiscover research feed remain unimplemented.
 
 ## Preserve and verify
 
@@ -20,4 +20,4 @@ Current Home modules are BioTools, PHLibrary, PHMaps, BioDiscover, plus text Set
 
 ## Current state
 
-Signed CI run `41375198786` passed for APO RC74 (build code134). Physical device upgrade with archived surveys, research ZIP content, live GPS, field workflow and TalkBack remain unverified. Documentation updates alone do not constitute a newer APK.
+Signed CI run `41376495935` passed for APO RC75 (code135). Physical-device installation/upgrade with archived surveys, station edits, ZIP contents, GPS, fieldwork and TalkBack remain unverified. Documentation-only commits do not create a newer APK.

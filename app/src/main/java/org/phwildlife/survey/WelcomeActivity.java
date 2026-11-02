@@ -258,7 +258,11 @@ public class WelcomeActivity extends Activity {
         lastHomeActiveSurvey=activeSurvey();
         main.addView(UiKit.navigationHeader(this,"BioTools","Home",this::home));
         main.addView(ApoHomeUi.section(this,"Scientific workspace",
-            "Fieldwork, records, analysis and supporting research tools."));
+            "Select a field task, review saved evidence, or work with research data."));
+        if(lastHomeActiveSurvey!=null){
+            main.addView(ApoHomeUi.note(this,
+                "A survey is in progress. Resume it from Surveys or the APO Home shortcut."));
+        }
         main.addView(FieldVisuals.section(this,"FIELDWORK",null));
         main.addView(ApoHomeUi.module(this,"01","Surveys",
             "Start, resume and manage wildlife surveys",this::fieldworkHub));
@@ -315,6 +319,9 @@ public class WelcomeActivity extends Activity {
             surveyTile(main,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna"));
             surveyTile(main,"Mammals","Signs · Stations",()->setup("Mammals"));
         }
+        main.addView(ApoHomeUi.note(this,
+            "Survey completion follows the selected method. End Incomplete retains partial " +
+            "effort; Not Counted remains excluded from default analytical summaries."));
         UiMotion.enter(this,main);
     }
 
@@ -324,11 +331,12 @@ public class WelcomeActivity extends Activity {
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         main.addView(UiKit.navigationHeader(this,"Field Records","BioTools",this::bioToolsHub));
         main.addView(ApoHomeUi.section(this,"Recorded field data",
-            "Review saved surveys, observations and field habitat records."));
-        main.addView(ApoHomeUi.module(this,"01","Survey history",
+            "Search survey records and inspect documented site habitat evidence."));
+        main.addView(ApoHomeUi.note(this,savedRecordCounts()));
+        main.addView(ApoHomeUi.tool(this,"01","Survey history",
             "Browse surveys and recorded observations",()->
                 startActivity(new Intent(this,HistoryActivity.class))));
-        main.addView(ApoHomeUi.module(this,"02","Site habitat records",
+        main.addView(ApoHomeUi.tool(this,"02","Site habitat records",
             "Review and record site-level habitat information",()->
                 startActivity(new Intent(this,HabitatRecordsActivity.class))));
         UiMotion.enter(this,main);
@@ -341,14 +349,17 @@ public class WelcomeActivity extends Activity {
         main.addView(UiKit.navigationHeader(this,"Analysis & Exports","BioTools",
             this::bioToolsHub));
         main.addView(ApoHomeUi.section(this,"Research data",
-            "Review survey summaries and create portable research outputs."));
-        main.addView(ApoHomeUi.module(this,"01","Survey analysis",
+            "Descriptive summaries, review flags and portable source records."));
+        main.addView(ApoHomeUi.note(this,
+            "Summary counts use completed surveys unless labeled otherwise. " +
+            "They are not population or habitat-selection estimates."));
+        main.addView(ApoHomeUi.tool(this,"01","Survey analysis",
             "Counts, sampling units and survey outcomes",()->
                 startActivity(new Intent(this,DashboardActivity.class))));
-        main.addView(ApoHomeUi.module(this,"02","Research ZIP export",
+        main.addView(ApoHomeUi.tool(this,"02","Research ZIP export",
             "Export recorded effort, observations and evidence",()->
                 startActivity(new Intent(this,ResearchExportActivity.class))));
-        main.addView(ApoHomeUi.module(this,"03","Data quality review",
+        main.addView(ApoHomeUi.tool(this,"03","Data quality review",
             "Review records and scientific integrity flags",()->
                 startActivity(new Intent(this,AuditActivity.class))));
         UiMotion.enter(this,main);
@@ -361,21 +372,42 @@ public class WelcomeActivity extends Activity {
         main.addView(UiKit.navigationHeader(this,"Field Utilities","BioTools",
             this::bioToolsHub));
         main.addView(ApoHomeUi.section(this,"Field support",
-            "Offline resources and tools for documenting field methods."));
-        main.addView(ApoHomeUi.module(this,"01","Audio",
-            "Field sound recordings",()->
+            "Tools for recording evidence and managing repeatable field methods."));
+        main.addView(FieldVisuals.section(this,"RECORDINGS & DEVICES",null));
+        main.addView(ApoHomeUi.tool(this,"01","Sound recordings",
+            "Review saved audio; recording requires an active survey",()->
                 startActivity(new Intent(this,CallLibraryActivity.class))));
-        main.addView(ApoHomeUi.module(this,"02","Camera traps",
-            "Camera-trap protocols and deployments",()->
+        main.addView(ApoHomeUi.tool(this,"02","Trap & camera records",
+            "Deployments and checks tied to supported survey methods",()->
                 startActivity(new Intent(this,TrapProtocolActivity.class))));
-        main.addView(ApoHomeUi.module(this,"03","Protocols",
-            "Field method records and guidance",()->
+        main.addView(FieldVisuals.section(this,"METHODS & PLANNING",null));
+        main.addView(ApoHomeUi.tool(this,"03","Field protocols",
+            "Coverboard, area search, spotlight, and track/sign evidence",()->
                 startActivity(new Intent(this,FieldProtocolsActivity.class))));
-        main.addView(ApoHomeUi.module(this,"04","Study plans",
-            "Reusable research study protocols",()->
+        main.addView(ApoHomeUi.tool(this,"04","Study templates",
+            "Set effort rules for future surveys without altering past data",()->
                 startActivity(new Intent(this,StudyProtocolsActivity.class))));
         UiMotion.enter(this,main);
     }
+    /** Includes all survey outcomes; distinguishes saved evidence from detections. */
+    private String savedRecordCounts(){
+        try(FieldDb db=new FieldDb(this)){
+            int surveys=0,observations=0;
+            try(Cursor a=db.getReadableDatabase().rawQuery(
+                    "SELECT COUNT(*) FROM surveys",null)){
+                if(a.moveToFirst())surveys=a.getInt(0);
+            }
+            try(Cursor b=db.getReadableDatabase().rawQuery(
+                    "SELECT COUNT(*) FROM field_records WHERE deleted_at IS NULL",null)){
+                if(b.moveToFirst())observations=b.getInt(0);
+            }
+            return surveys+" saved surveys (all outcomes) · "+observations+
+                " observations (excluding deleted records)";
+        }catch(Exception error){
+            return "Saved record counts unavailable. Survey history remains accessible.";
+        }
+    }
+
     /** Short status caption for the single History destination. */
     private String recentSurveySummary(){
         try(FieldDb d=new FieldDb(this);

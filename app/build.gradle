@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 134
-        versionName '0.27.3-rc74-apo-biotools'
+        versionCode 135
+        versionName '0.27.3-rc75-apo-biotools-destinations'
     }
     signingConfigs {
         debug {

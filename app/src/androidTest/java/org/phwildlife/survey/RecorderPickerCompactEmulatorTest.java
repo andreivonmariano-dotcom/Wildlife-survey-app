@@ -77,17 +77,30 @@ public final class RecorderPickerCompactEmulatorTest {
                 assertNotNull("Search input present",description(root,"Search offline species by"));
                 assertNotNull("Species header",text(root,"Species"));
                 assertNotNull("Unknown ID path",description(root,"Record an unidentified species"));
-                assertNotNull("Sort control",description(root,"Sort species by"));
+                assertNotNull("Readable ordering control",text(root,"Order"));
                 assertNotNull("Site conditions control",text(root,"Site"));
             });
-            try{Thread.sleep(900);}catch(InterruptedException e){Thread.currentThread().interrupt();}
+            // The native card query runs asynchronously; do not capture a loading page.
+            boolean loaded=false;
+            for(int attempt=0;attempt<30&&!loaded;attempt++){
+                InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+                final boolean[] ready={false};
+                scenario.onActivity(a->ready[0]=text(a.getWindow().getDecorView(),
+                    "Select")!=null);
+                loaded=ready[0];
+                if(!loaded)try{Thread.sleep(300);}catch(InterruptedException e){
+                    Thread.currentThread().interrupt();break;
+                }
+            }
+            assertTrue("Species cards must finish loading",loaded);
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
                 View list=text(root,"species");
                 assertNotNull("Results count shown",list);
                 View choose=text(root,"Select");
-                if(choose!=null)assertTrue("Loaded species can be selected",choose.isClickable());
+                assertNotNull("Loaded species card",choose);
+                assertTrue("Loaded species can be selected",choose.isClickable());
                 String scale=a.getResources().getConfiguration().fontScale>=1.9f?"200":"160";
                 screenshot(a,"apo_picker_"+group.toLowerCase(java.util.Locale.US)+"_"+scale+".png");
             });

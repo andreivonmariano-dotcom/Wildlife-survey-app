@@ -8,7 +8,7 @@ class Rc62SpeciesVisual(unittest.TestCase):
         s=(JAVA/"LikasDiscoveryActivity.java").read_text()
         self.assertIn('if(!largeText())content.addView(LikasPortalUi.kicker(this,"WILDLIFE"))',s)
         self.assertIn('note("Species",largeText()?23:27,UiKit.INK,true)',s)
-        self.assertIn('if(!largeText()){\n                TextView sub=note("Offline species guides"',s)
+        self.assertIn('if(!largeText()){\n                TextView sub=note("Selected illustrated accounts · not the full checklist"',s)
         self.assertIn("Species group filters. Swipe horizontally for more groups.",s)
         self.assertIn("rail.setFadingEdgeLength(dp(22))",s)
     def test_illustration_not_confused_with_evidence_photo(self):

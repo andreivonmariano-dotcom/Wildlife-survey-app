@@ -103,7 +103,7 @@ public final class BioToolsLifecycleInstrumentedTest {
             assertTrue("No synthetic start latitude",c.isNull(4));
             assertTrue("No synthetic start longitude",c.isNull(5));
             assertTrue("No synthetic start GPS accuracy",c.isNull(6));
-            assertEquals("Explicit missing GPS flag","missing_start_gps_explicit",c.getString(7));
+            assertEquals("Explicit missing GPS flag",SurveyStartGpsPolicy.MISSING,c.getString(7));
         }
         try(FieldDb db=new FieldDb(APP);
             Cursor c=db.getReadableDatabase().rawQuery(

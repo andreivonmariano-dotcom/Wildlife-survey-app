@@ -3,6 +3,10 @@
 **Purpose:** Append-only record of accepted project-owner decisions and governing rules. This file is not proof that an item has been implemented or tested.
 
 ## Entries
+
+### 2026-11-02 | Owner-directed RC87 habitat-correct shortlist and recorder interactivity | Source implemented, QA pending
+Owner reported Aleutian Tern remaining in a species list after choosing observed montane forest. The coarse PAIC714 source lists that species in coastal/intertidal and marine habitats. Default site-context shortlist will now restrict reference candidates to named compatible source habitat guide labels, show broad `Forest` as broad rather than confirmed montane, and retain an explicit all-species fallback. Missing/not listed is never an absence assertion. Owner also requested more interactive and enjoyable live-recorder/species workflows: add recent saved-name quick picks without replaying measurements, legible catalog scope, and a nontruncated large-text ZIP control. Branch `feature/apo-rc87-habitat-shortlist-recorder-v147`, code147, draft and not released until signed build/device checks. Protected: PAIC data, GNSS, survey outcomes, historical records, original signing and art. See RC87 QA.
+
 ### 2026-11-02 | RC86 interactive recorder/picker signed Android development preview | Verified, draft
 
 Source `acc8506e85e5cf6a474d89187252e4619af02b1c` passed GitHub Actions run `41414607542`: 445 Python regression tests, Android/JVM+AndroidTest compilation, package/signer and immutable PAIC714/WorldCover checks, six Android14 emulator recorder/species-picker screens at 160% and 200%/320dp. Code146 signed APK 11,759,916 bytes SHA-256 `124340ea6a66a5dd8948073baa1b746d3cb9f48e7bd88b0765d68ba676c9ab4f` was extracted and direct-delivered in the owner's 2026-11-02 chat. Do not infer physical-handset acceptance. One visible defect is 200% font truncation of checklist scope and recorder's All data header. Next interactive suggestions are recent/favorite species shortcuts and audited Undo, after in-place archive, real GNSS and export tests. PR #88 remains draft. See RC86 implementation QA and current project state.

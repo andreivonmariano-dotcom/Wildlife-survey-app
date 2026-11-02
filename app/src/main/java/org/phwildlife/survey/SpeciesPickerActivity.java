@@ -235,7 +235,8 @@ public final class SpeciesPickerActivity extends Activity {
         LinearLayout quick=new LinearLayout(this);
         quick.setGravity(Gravity.CENTER_VERTICAL);
         sortButton=UiKit.button(this,
-            "Sort: "+SpeciesSortPolicy.SORT_LABELS[sortMode],"secondary");
+            "Sort","secondary");
+        sortButton.setContentDescription("Sort species by name, family or genus");
         sortButton.setOnClickListener(v->openSortFilter());
         quick.addView(sortButton,new LinearLayout.LayoutParams(0,dp(52),1.25f));
         Button conditions=UiKit.button(this,"Site","secondary");
@@ -269,26 +270,6 @@ public final class SpeciesPickerActivity extends Activity {
             views.setSelection(1);
         }else views.setSelection(savedViewIndex);
 
-        Location fix=TrackService.currentFix();
-        String gps="GPS unavailable";
-        if(fix!=null&&fix.hasAccuracy()){
-            long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
-            if(age>=0&&age<=10000L)
-                gps=String.format(Locale.US,"GPS ±%.1f m",fix.getAccuracy());
-        }
-        String scope=island(geographicRegion);
-        TextView context=text((scope.isEmpty()?"Philippines":scope)+
-            (province.isEmpty()?"":" · "+province)+" · "+gps,12,false);
-        context.setTextColor(UiKit.FOREST);
-        context.setMinHeight(dp(32));
-        context.setGravity(Gravity.CENTER_VERTICAL);
-        context.setFocusable(true);
-        context.setContentDescription("Checklist context and species screening information");
-        context.setOnClickListener(v->new AlertDialog.Builder(this)
-            .setTitle("Checklist context")
-            .setMessage((siteSummary==null?"":siteSummary.getText().toString()))
-            .setPositiveButton("Close",null).show());
-        root.addView(context);
         siteSummary=text("",12,false);
         siteSummary.setTextColor(UiKit.FOREST);
         siteSummary.setPadding(0,0,0,dp(4));
@@ -296,6 +277,12 @@ public final class SpeciesPickerActivity extends Activity {
         updateSiteSummary();
         status=text("Loading offline species…",12,false);
         status.setTextColor(UiKit.MUTED);status.setPadding(0,dp(9),0,dp(7));
+        status.setContentDescription("Species results and checklist region. Tap for site context");
+        status.setMinHeight(dp(40));
+        status.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Site")
+            .setMessage(siteSummary==null?"":siteSummary.getText().toString())
+            .setPositiveButton("Close",null).show());
         root.addView(status);
 
         ScrollView scroller=new ScrollView(this);
@@ -365,13 +352,13 @@ public final class SpeciesPickerActivity extends Activity {
             .setPositiveButton("Apply",(dialog,which)->{
                 sortMode=order.getSelectedItemPosition();
                 statusFilter=0;
-                sortButton.setText("Sort: "+alphabeticSorts[sortMode]);
+                sortButton.setText("Sort");
                 savePickerSettings();
                 refresh();
             })
             .setNeutralButton("Reset",(dialog,which)->{
                 sortMode=0;statusFilter=0;
-                sortButton.setText("Sort: A–Z");
+                sortButton.setText("Sort");
                 savePickerSettings();
                 refresh();
             })
@@ -688,8 +675,10 @@ public final class SpeciesPickerActivity extends Activity {
             addSpecies(item);
         }
         offset=stop;
+        String region=island(geographicRegion);
         status.setText(offset+" / "+loaded.size()+" species"+
-            (truncated?" · refine search":"" )+
+            (region.isEmpty()?"":" · "+region)+
+            (truncated?" · refine search":"")+
             (paicCatalogActive&&views.getSelectedItemPosition()==1?
                 " · habitat first":""));
         if(offset<loaded.size()){

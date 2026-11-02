@@ -1299,7 +1299,11 @@ public class MainActivity extends Activity implements LocationListener {
             filled(habitatEntry)||filled(behaviorEntry)||filled(identificationNote)||
             pendingPhoto!=null||markedAt>0||count!=1||
             (confidenceSpinner!=null&&confidenceSpinner.getSelectedItemPosition()>0)||
-            (evidenceSpinner!=null&&evidenceSpinner.getSelectedItemPosition()>0);
+            (evidenceSpinner!=null&&evidenceSpinner.getSelectedItemPosition()>0)||
+            (lifeStageSpinner!=null&&lifeStageSpinner.getSelectedItemPosition()>0)||
+            (distanceSourceSpinner!=null&&distanceSourceSpinner.getSelectedItemPosition()>0)||
+            (firstPositionSpinner!=null&&firstPositionSpinner.getSelectedItemPosition()>0)||
+            (movementSpinner!=null&&movementSpinner.getSelectedItemPosition()>0);
     }
     private void discardUnfinishedObservation(){
         for(EditText entry:new EditText[]{taxonEntry,distanceEntry,notesEntry,
@@ -1310,6 +1314,10 @@ public class MainActivity extends Activity implements LocationListener {
         if(countView!=null)countView.setText("1");
         if(confidenceSpinner!=null)confidenceSpinner.setSelection(0);
         if(evidenceSpinner!=null)evidenceSpinner.setSelection(0);
+        if(lifeStageSpinner!=null)lifeStageSpinner.setSelection(0);
+        if(distanceSourceSpinner!=null)distanceSourceSpinner.setSelection(0);
+        if(firstPositionSpinner!=null)firstPositionSpinner.setSelection(0);
+        if(movementSpinner!=null)movementSpinner.setSelection(0);
         pendingPhoto=null;
         showPendingPhoto();
         clearMark();
@@ -1337,9 +1345,16 @@ public class MainActivity extends Activity implements LocationListener {
             lp.bottomMargin=dp(10);
             actions.addView(button,lp);
         }
-        TextView details=label("Complete: requirements met. Incomplete: save partial work. "+
-            "Not Counted: exclude from analysis.",12,false);
+        TextView details=label("Complete saves protocol-qualified effort. "+
+            "Incomplete preserves partial fieldwork. Not Counted archives the event "+
+            "but excludes it from default analysis.",12,false);
         details.setTextColor(MUTED);actions.addView(details);
+        String readiness=completionChecklist();
+        if(!readiness.trim().isEmpty()){
+            TextView required=label("Method completion check\n"+readiness,12,false);
+            required.setTextColor(UiKit.INK);
+            actions.addView(required);
+        }
         ScrollView endScroll=new ScrollView(this);
         endScroll.addView(actions);
         AlertDialog dialog=new AlertDialog.Builder(this)

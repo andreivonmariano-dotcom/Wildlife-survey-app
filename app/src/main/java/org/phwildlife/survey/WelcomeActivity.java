@@ -44,7 +44,8 @@ public class WelcomeActivity extends Activity {
     private CheckBox saveTemplateChoice,prepareFieldChecklist;
     private TextView templateHint;
     private boolean updatingRouteChoices=false;
-    private TextView stationCountPreview,routeHeader,spacingHeader,repeatHeader;
+    private TextView stationCountPreview,routeHeader,spacingHeader,repeatHeader,routeOptionsToggle;
+    private LinearLayout routeOptions;
     private Spinner projectChoice, geographicChoice,studyChoice;
     private TextView studyToggle;
     private LinearLayout studyOptions;
@@ -627,20 +628,38 @@ public class WelcomeActivity extends Activity {
         customSpacingEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         customSpacingEntry.setVisibility(View.GONE);main.addView(customSpacingEntry);
         stationCountPreview=text("",13,true);stationCountPreview.setTextColor(GREEN);main.addView(stationCountPreview);
-        repeatHeader=setupLabel("Repeat monitoring route");main.addView(repeatHeader);
+        routeOptions=vertical();
+        repeatHeader=setupLabel("Repeat monitoring route");
+        routeOptions.addView(repeatHeader);
         templateChoice=new Spinner(this);
-        main.addView(templateChoice);
+        routeOptions.addView(templateChoice);
         setupSpinner(templateChoice,"Choose a repeat monitoring route");
         templateHint=text("Saved routes reuse permanent stations.",12,false);
-        templateHint.setTextColor(MUTED);main.addView(templateHint);
+        templateHint.setTextColor(MUTED);routeOptions.addView(templateHint);
         saveTemplateChoice=new CheckBox(this);
         saveTemplateChoice.setText("Save this route for future monitoring");
-        saveTemplateChoice.setChecked(true);main.addView(saveTemplateChoice);
+        saveTemplateChoice.setChecked(false);routeOptions.addView(saveTemplateChoice);
         templateName=new EditText(this);
         templateName.setTextSize(16);templateName.setSingleLine(true);
         templateName.setHint("Reusable route name");
         templateName.setText("Bird route "+new java.text.SimpleDateFormat("yyyyMMdd-HHmm",Locale.US).format(new java.util.Date()));
-        main.addView(templateName);
+        routeOptions.addView(templateName);
+        routeOptions.setVisibility(View.GONE);
+        routeOptionsToggle=text("Reuse or save a route (optional)",13,true);
+        routeOptionsToggle.setTextColor(GREEN);
+        routeOptionsToggle.setMinHeight(dp(48));
+        routeOptionsToggle.setGravity(Gravity.CENTER_VERTICAL);
+        routeOptionsToggle.setFocusable(true);routeOptionsToggle.setClickable(true);
+        routeOptionsToggle.setContentDescription("Show repeat route options");
+        routeOptionsToggle.setOnClickListener(v->{
+            boolean show=routeOptions.getVisibility()!=View.VISIBLE;
+            routeOptions.setVisibility(show?View.VISIBLE:View.GONE);
+            routeOptionsToggle.setText(show?"Hide repeat route options":"Reuse or save a route (optional)");
+            routeOptionsToggle.setContentDescription(show?
+                "Hide repeat route options":"Show repeat route options");
+        });
+        main.addView(routeOptionsToggle);
+        main.addView(routeOptions);
         saveTemplateChoice.setOnCheckedChangeListener((button,checked)->
             templateName.setVisibility(checked?View.VISIBLE:View.GONE));
         templateChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
@@ -960,7 +979,7 @@ public class WelcomeActivity extends Activity {
         }
         if(gpsLookupButton!=null){
             gpsLookupButton.setEnabled(true);
-            gpsLookupButton.setText("Choose checklist area by GPS");
+            gpsLookupButton.setText("Suggest checklist area using GPS");
         }
     }
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){
@@ -988,6 +1007,11 @@ public class WelcomeActivity extends Activity {
         boolean route=supportsRoute(method);
         routeHeader.setVisibility(route?View.VISIBLE:View.GONE);
         boolean points=FieldUiPolicy.pointStationSetup(method);
+        if(routeOptionsToggle!=null)
+            routeOptionsToggle.setVisibility(points?View.VISIBLE:View.GONE);
+        if(routeOptions!=null&&!points)routeOptions.setVisibility(View.GONE);
+        if(points&&routeOptionsToggle!=null&&routeOptions.getVisibility()!=View.VISIBLE)
+            routeOptionsToggle.setText("Reuse or save a route (optional)");
         repeatHeader.setVisibility(points?View.VISIBLE:View.GONE);
         spacingHeader.setVisibility(points?View.VISIBLE:View.GONE);
         routeLengthEntry.setVisibility(route?View.VISIBLE:View.GONE);

@@ -41,7 +41,7 @@ class TimelineContracts(unittest.TestCase):
                      'writable.beginTransaction()','writable.setTransactionSuccessful()'):
             self.assertIn(part,h)
         assert h.index('writable.update("field_records"')<h.index('auditWrite(writable,id,"edit"')
-        self.assertIn('CREATE TABLE IF NOT EXISTS record_edits(',read("FieldDb.java"))
+        self.assertIn('CREATE TABLE record_edits(',read("FieldDb.java"))
         self.assertIn('super(context,NAME,null,29)',read("FieldDb.java"))
     def test_existing_identity_and_survey_dispositions(self):
         g=(ROOT/"app/build.gradle").read_text()

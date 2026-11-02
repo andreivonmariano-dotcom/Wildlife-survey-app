@@ -157,7 +157,8 @@ public class SitesActivity extends Activity {
         EditText name=edit("Project name (required)","");
         form.addView(name);
         form.addView(label("Name the project. The ID stays unchanged so observations and stations keep their original links.",12));
-        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("New project").setView(form)
+        ScrollView projectForm=new ScrollView(this);projectForm.addView(form);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("New project").setView(projectForm)
             .setNegativeButton("Cancel",null).setPositiveButton("Create project",null).create();
         dialog.setOnShowListener(w->dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
             String n=name.getText().toString().trim();

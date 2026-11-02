@@ -16,7 +16,8 @@ import java.util.Locale;
 public final class HabitatRecordsActivity extends Activity {
     private FieldDb helper;
     private LinearLayout items;
-    private Button guideTab,recordsTab;
+    private Button guideTab,recordsTab,researchToggle;
+    private LinearLayout researchTools;
     private int selectedTab=0;
     private boolean largeText;
     private String habitatGroup="All habitats";
@@ -36,12 +37,14 @@ public final class HabitatRecordsActivity extends Activity {
         getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         helper=new FieldDb(this);
         largeText=getResources().getConfiguration().fontScale>=1.60f;
+        selectedTab="records".equals(getIntent().getStringExtra("initial_tab"))?1:0;
         LinearLayout root=new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(16),dp(12),dp(16),dp(12));
         root.addView(UiKit.navigationHeader(this,
-            largeText?"Habitats":"Habitat & Ecology","Home",this::finish));
+            selectedTab==1?"Site habitat records":largeText?"Habitats":"Habitat & Ecology",
+            selectedTab==1?"Field Records":"PHLibrary",this::finish));
         String fullHabitatNote="Offline reference guide and separately recorded field evidence.";
         TextView note=label(largeText?"Reference guide · measured field records":fullHabitatNote,13);
         note.setContentDescription(fullHabitatNote);
@@ -62,11 +65,11 @@ public final class HabitatRecordsActivity extends Activity {
         other.leftMargin=dp(8);
         tabs.addView(recordsTab,other);
         root.addView(tabs,new LinearLayout.LayoutParams(-1,dp(tabHeight)));
-        Button researchToggle=UiKit.button(this,largeText?
+        researchToggle=UiKit.button(this,largeText?
             "Research tools  ▾":"Habitat research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand source-linked habitat comparisons and species associations");
         // The research disclosure moves into the scrolling area with its content.
-        LinearLayout researchTools=new LinearLayout(this);
+        researchTools=new LinearLayout(this);
         researchTools.setOrientation(LinearLayout.VERTICAL);
         researchTools.setVisibility(android.view.View.GONE);
         // Research controls scroll with the habitat cards, not as a fixed tall header.
@@ -97,6 +100,7 @@ public final class HabitatRecordsActivity extends Activity {
         LinearLayout scrollBody=new LinearLayout(this);
         scrollBody.setOrientation(LinearLayout.VERTICAL);
         scrollBody.addView(note);
+        // Reference-only research links belong to the guide tab, not field records.
         scrollBody.addView(researchToggle,new LinearLayout.LayoutParams(-1,-2));
         scrollBody.addView(researchTools);
         items=new LinearLayout(this);
@@ -110,6 +114,23 @@ public final class HabitatRecordsActivity extends Activity {
         render();
     }
     @Override protected void onResume(){super.onResume();if(items!=null)render();}
+    private String recordSummary(){
+        try{
+            SQLiteDatabase database=helper.getReadableDatabase();
+            int stations=0,visits=0;
+            try(Cursor c=database.rawQuery("SELECT COUNT(*) FROM sites",null)){
+                if(c.moveToFirst())stations=c.getInt(0);
+            }
+            try(Cursor c=database.rawQuery(
+                    "SELECT COUNT(*) FROM station_environment",null)){
+                if(c.moveToFirst())visits=c.getInt(0);
+            }
+            return stations+" registered sampling stations · "+
+                visits+" environmental visit records";
+        }catch(Exception error){
+            return "Site totals unavailable; recorded entries can still be reviewed.";
+        }
+    }
     private String value(Cursor c,int index,String fallback){
         return c.isNull(index)||c.getString(index).trim().isEmpty()?
             fallback:c.getString(index);
@@ -117,6 +138,15 @@ public final class HabitatRecordsActivity extends Activity {
     private void render(){
         if(items==null)return;
         items.removeAllViews();
+        researchToggle.setVisibility(selectedTab==0?
+            android.view.View.VISIBLE:android.view.View.GONE);
+        if(selectedTab!=0)researchTools.setVisibility(android.view.View.GONE);
+        guideTab.setSelected(selectedTab==0);
+        recordsTab.setSelected(selectedTab==1);
+        guideTab.setContentDescription(selectedTab==0?
+            "Habitat guide tab, selected":"Open habitat guide tab");
+        recordsTab.setContentDescription(selectedTab==1?
+            "My recorded site habitats tab, selected":"Open recorded site habitats tab");
         guideTab.setText(largeText?
             (selectedTab==0?"Guide  ●":"Guide"):
             (selectedTab==0?"Habitat guide  ●":"Habitat guide"));
@@ -144,6 +174,10 @@ public final class HabitatRecordsActivity extends Activity {
                 "measurements belong to your sampling stations."));
             return;
         }
+        items.addView(ApoHomeUi.section(this,"Recorded site evidence",
+            "Descriptions entered during fieldwork and environmental sampling. " +
+            "Unknown values remain unreported, never inferred."));
+        items.addView(ApoHomeUi.note(this,recordSummary()));
         Button stations=UiKit.button(this,"Manage projects & sampling stations","secondary");
         stations.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
         items.addView(stations,new LinearLayout.LayoutParams(-1,dp(52)));
@@ -159,7 +193,8 @@ public final class HabitatRecordsActivity extends Activity {
                     "\nProject: "+value(c,3,"Unassigned")));
                 seen++;
             }
-            if(seen==0)items.addView(label("No sampling stations recorded yet.",15));
+            if(seen==0)items.addView(ApoHomeUi.note(this,
+                "No sampling stations recorded yet. Create a project or survey to begin.".replace("\\n","")));
         }catch(Exception ignored){items.addView(label("Site register unavailable.",15));}
         items.addView(FieldVisuals.section(this,"Recorded environmental visits",
             "Up to 35 recent sampling units; missing is never zero"));

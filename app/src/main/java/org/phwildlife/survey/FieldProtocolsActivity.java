@@ -40,6 +40,9 @@ public final class FieldProtocolsActivity extends Activity {
     private long pendingTargetId=0;
 
     private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
+    private ScrollView scrollForm(LinearLayout form){
+        ScrollView scroll=new ScrollView(this);scroll.addView(form);return scroll;
+    }
     private LinearLayout col(){LinearLayout l=new LinearLayout(this);
         l.setOrientation(LinearLayout.VERTICAL);return l;}
     private TextView text(String s,int size){
@@ -50,11 +53,13 @@ public final class FieldProtocolsActivity extends Activity {
         EditText e=new EditText(this);e.setHint(hint);e.setTextSize(15);
         if(number)e.setInputType(InputType.TYPE_CLASS_NUMBER|
             InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        UiKit.fieldInput(this,e);
         return e;
     }
     private Button action(String title,LinearLayout target,boolean primary){
         Button b=UiKit.button(this,title,primary?"primary":"secondary");
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(50));
+        b.setMinHeight(dp(50));
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
         lp.bottomMargin=dp(8);target.addView(b,lp);return b;
     }
     private void toast(String s){android.widget.Toast.makeText(this,s,android.widget.Toast.LENGTH_LONG).show();}
@@ -215,27 +220,45 @@ public final class FieldProtocolsActivity extends Activity {
             "area_search".equals(method)?
             "Area search · timed search passes and repeated coverage":
             "Mammal track and sign · measured routes and sign encounters";
-        records.addView(text(description,16));
-        if(!active())records.addView(text("Read only · start an active sampling visit to add effort",13));
+        records.addView(ApoHomeUi.section(this,"Recorded field method",
+            description));
+        records.addView(ApoHomeUi.note(this,
+            "Recorded protocol effort is separate from species detections. " +
+            "Zero-detection inspections remain valid sampling records."));
+        if(!active())records.addView(ApoHomeUi.note(this,
+            "Read only. Open this method within an active sampling visit to add " +
+            "new effort or evidence."));
         if("coverboard_search".equals(method))showBoards();
         else if("area_search".equals(method))showAreas();
         else if("spotlight".equals(method))showSpotlight();
         else showSignEffort();
     }
+    @Override public void onBackPressed(){
+        if(eventId!=null&&getIntent().getStringExtra("event_id")==null){
+            eventId=null;
+            method="";
+            draw();
+        }else super.onBackPressed();
+    }
     private void showSurveys(){
         records.addView(ApoHomeUi.section(this,"Recorded methods",
             "Review method-specific field evidence. New effort records require " +
             "a supported active survey."));
+        records.addView(UiKit.sectionTitle(this,"Recorded surveys"));
         try(Cursor c=db.getReadableDatabase().rawQuery(
             "SELECT id,method,started,COALESCE(outcome,'active') FROM surveys "+
             "WHERE method IN ('coverboard_search','area_search','track_sign','spotlight') "+
             "ORDER BY started DESC LIMIT 200",null)){
-            if(c.getCount()==0)records.addView(text("No matching surveys yet.",14));
+            if(c.getCount()==0)records.addView(ApoHomeUi.note(this,
+                "No saved coverboard, area-search, spotlight or track-and-sign surveys."));
+            int index=0;
             while(c.moveToNext()){
                 String id=c.getString(0),met=c.getString(1);
-                Button open=action(met.replace('_',' ')+" · "+c.getString(2)+
-                    "\n"+c.getString(3),records,false);
-                open.setOnClickListener(v->{eventId=id;resolveSurvey();draw();});
+                records.addView(ApoHomeUi.tool(this,
+                    String.format(Locale.US,"%02d",++index),
+                    met.replace('_',' '),
+                    "Survey "+id+" · "+c.getString(2)+" · "+c.getString(3),
+                    ()->{eventId=id;resolveSurvey();draw();}));
             }
         }
     }
@@ -300,7 +323,7 @@ public final class FieldProtocolsActivity extends Activity {
         EditText notes=field("Setup notes",false);
         for(EditText e:new EditText[]{code,installed,material,habitat,notes})form.addView(e);
         AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Register coverboard")
-            .setView(form).setNegativeButton("Back",null)
+            .setView(scrollForm(form)).setNegativeButton("Back",null)
             .setPositiveButton("Register",null).create();
         dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(w->{

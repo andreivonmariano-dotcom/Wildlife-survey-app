@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 136
-        versionName '0.27.3-rc76-apo-biotools-screen-refinement'
+        versionCode 137
+        versionName '0.27.3-rc77-apo-biotools-all-screens'
     }
     signingConfigs {
         debug {

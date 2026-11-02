@@ -236,7 +236,8 @@ public class WelcomeActivity extends Activity {
                 startActivity(new Intent(this,SitesActivity.class))));
         main.addView(ApoHomeUi.module(this,"02","Site habitats",
             "Recorded site habitat details",()->
-                startActivity(new Intent(this,HabitatRecordsActivity.class))));
+                startActivity(new Intent(this,HabitatRecordsActivity.class)
+                    .putExtra("initial_tab","records"))));
         UiMotion.enter(this,main);
     }
     /** Sourced news is not represented as live until its feed actually exists. */

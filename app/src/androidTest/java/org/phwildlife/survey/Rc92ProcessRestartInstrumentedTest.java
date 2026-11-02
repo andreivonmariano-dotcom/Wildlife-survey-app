@@ -61,11 +61,22 @@ public final class Rc92ProcessRestartInstrumentedTest {
                 assertNotNull("Recorder can resume after process death",end);
                 assertTrue(end.isShown()&&end.isEnabled());
                 end.performClick();
+                android.app.AlertDialog choices=a.activeEndSurveyDialogForQa();
+                assertNotNull("Real End Survey modal is shown",choices);
+                assertTrue(choices.isShowing());
+                Button incomplete=find(choices.getWindow().getDecorView(),
+                    "End Incomplete");
+                assertNotNull("Incomplete is an available end state",incomplete);
+                incomplete.performClick();
+                android.app.AlertDialog confirmation=a.activeFinalizationDialogForQa();
+                assertNotNull("Real incomplete confirmation modal is shown",confirmation);
+                assertTrue(confirmation.isShowing());
+                Button save=confirmation.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                assertNotNull("Save incomplete confirmation",save);
+                assertEquals("Save incomplete",save.getText().toString());
+                save.performClick();
             });
-            // The app deliberately blocks full backup while a survey is active.
-            // End through its REAL UI before checking that the WAV is archived.
-            onView(withText("End Incomplete")).perform(click());
-            onView(withText("Save incomplete")).perform(click());
+            // Completion remains driven by the app's own UI and SurveyClosePolicy.
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         }
         try(FieldDb db=new FieldDb(ctx);

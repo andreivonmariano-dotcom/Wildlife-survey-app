@@ -99,7 +99,7 @@ public final class TaxonDetailActivity extends Activity {
                 return;
             }
             search.requestFocus();
-            autocomplete.getFilter().filter(search.getText().toString(),
+            detailSuggestions.getFilter().filter(search.getText().toString(),
                 count->{if(count>0)search.showDropDown();});
         });
         searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(52)));
@@ -143,7 +143,7 @@ public final class TaxonDetailActivity extends Activity {
             .setItems(groupNames,(dialog,which)->{
                 String group=which==0?null:groupNames[which];
                 searchGroup=group==null?"":group;
-                autocomplete.setGroup(group);
+                detailSuggestions.setGroup(group);
                 groupFilter.setText(groupNames[which]+"  ▾");
                 search.setText("");
                 showMessage("Search "+(group==null?

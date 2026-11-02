@@ -30,7 +30,8 @@ public final class HabitatsSpeciesActivity extends Activity {
     private final Set<String> confirmed=new HashSet<>();
     private List<String> suggested=new ArrayList<>();
     private LinearLayout body,checks;
-    private TextView mapSummary,speciesSummary,siteSummary;
+    private TextView mapSummary,speciesSummary,siteSummary,selectedSummary;
+    private Button checklistButton;
     private RadioGroup checklistMode;
     private boolean othersVisible=false;
     private boolean preparing=false;
@@ -56,57 +57,103 @@ public final class HabitatsSpeciesActivity extends Activity {
         }
         body=new LinearLayout(this);
         body.setOrientation(LinearLayout.VERTICAL);
-        body.addView(FieldVisuals.section(this,"Site context",
-            "GPS coordinates describe the survey starting point, not an entire transect."));
-        siteSummary=label("",13,false);body.addView(siteSummary);
+        // Essentials first. Source details stay one tap away.
+        siteSummary=label("",13,true);
+        body.addView(siteSummary);
+        LinearLayout siteDetails=new LinearLayout(this);
+        siteDetails.setOrientation(LinearLayout.VERTICAL);
+        siteDetails.addView(label("Start GPS is one point, not the whole survey area. "+
+            "Device elevation is only a screening input.",12,false));
+        siteDetails.setVisibility(View.GONE);
+        Button siteToggle=UiKit.button(this,"GPS & elevation details","quiet");
+        siteToggle.setContentDescription("Show GPS and elevation context");
+        siteToggle.setOnClickListener(v->{
+            boolean open=siteDetails.getVisibility()!=View.VISIBLE;
+            siteDetails.setVisibility(open?View.VISIBLE:View.GONE);
+            siteToggle.setText(open?"Hide GPS & elevation details":"GPS & elevation details");
+            siteToggle.setContentDescription(open?
+                "Hide GPS and elevation context":"Show GPS and elevation context");
+        });
+        body.addView(siteToggle);
+        body.addView(siteDetails);
         refreshSite();
-        body.addView(FieldVisuals.section(this,"Suggested habitats nearby",
-            "ESA WorldCover 2020 · generalized land-cover map · observer confirmation required"));
-        mapSummary=label("",13,false);body.addView(mapSummary);
-        Button mapCredit=UiKit.button(this,"Land-cover source and license","quiet");
-        mapCredit.setContentDescription("About ESA WorldCover 2020 source and Creative Commons license");
-        mapCredit.setOnClickListener(v->new AlertDialog.Builder(this)
-            .setTitle("ESA WorldCover 2020 · source")
-            .setMessage("© ESA WorldCover project 2020 / Contains modified "+
-                "Copernicus Sentinel data (2020) processed by ESA WorldCover consortium.\\n\\n"+
-                "Source: Zanaga et al. (2021), ESA WorldCover 10 m 2020 v100. "+
-                "DOI: 10.5281/zenodo.5571936. License: CC BY 4.0.\\n\\n"+
-                "LIKAS aggregates land cover to approximately 500 m; these are "+
-                "historical mapped suggestions, not verified current habitats.")
-            .setPositiveButton("OK",null).show());
-        body.addView(mapCredit);
-        Button importMap=UiKit.button(this,PaicLandCoverPack.installed(this)?
-            "Replace offline land-cover file":"Import offline land-cover file","secondary");
-        importMap.setOnClickListener(v->pickMap());
-        // Personal build loads the map before leaving the startup screen.
-        if(BundledPrivateReferences.hasBundledMap(this)&&
-                PaicLandCoverPack.installed(this))
-            importMap.setVisibility(View.GONE);
-        body.addView(importMap,new LinearLayout.LayoutParams(-1,-2));
-        TextView intro=label("Select every habitat actually encountered. Suggested "+
-            "habitats are not preselected. Other habitats can always be added.",13,false);
-        body.addView(intro);
+
+        body.addView(FieldVisuals.section(this,"Habitats",null));
+        body.addView(label("Select observed habitats",14,true));
+        mapSummary=label("",12,false);
+        body.addView(mapSummary);
+        selectedSummary=label("No habitats confirmed",12,true);
+        body.addView(selectedSummary);
         checks=new LinearLayout(this);
         checks.setOrientation(LinearLayout.VERTICAL);
         body.addView(checks);
-        body.addView(FieldVisuals.section(this,"Species checklist",
-            "Site-based ordering is advisory. Every species remains searchable."));
+
+        LinearLayout mapOptions=new LinearLayout(this);
+        mapOptions.setOrientation(LinearLayout.VERTICAL);
+        Button mapCredit=UiKit.button(this,"Source & license","quiet");
+        mapCredit.setContentDescription("ESA WorldCover 2020 citation and CC BY 4.0 license");
+        mapCredit.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("ESA WorldCover 2020 · source")
+            .setMessage("© ESA WorldCover project 2020 / Contains modified "+
+                "Copernicus Sentinel data (2020) processed by ESA WorldCover consortium.\n\n"+
+                "Source: Zanaga et al. (2021), ESA WorldCover 10 m 2020 v100. "+
+                "DOI: 10.5281/zenodo.5571936. License: CC BY 4.0.\n\n"+
+                "APO aggregates land cover to approximately 500 m; these are "+
+                "historical mapped suggestions, not verified current habitats.")
+            .setPositiveButton("OK",null).show());
+        mapOptions.addView(mapCredit);
+        Button importMap=UiKit.button(this,PaicLandCoverPack.installed(this)?
+            "Replace offline map":"Import offline map","secondary");
+        importMap.setOnClickListener(v->pickMap());
+        if(BundledPrivateReferences.hasBundledMap(this)&&
+                PaicLandCoverPack.installed(this))
+            importMap.setVisibility(View.GONE);
+        mapOptions.addView(importMap,new LinearLayout.LayoutParams(-1,-2));
+        mapOptions.setVisibility(View.GONE);
+        Button mapToggle=UiKit.button(this,"Map source & files","quiet");
+        mapToggle.setContentDescription("Show land-cover source, license and file management");
+        mapToggle.setOnClickListener(v->{
+            boolean open=mapOptions.getVisibility()!=View.VISIBLE;
+            mapOptions.setVisibility(open?View.VISIBLE:View.GONE);
+            mapToggle.setText(open?"Hide map options":"Map source & files");
+            mapToggle.setContentDescription(open?
+                "Hide land-cover source and file management":
+                "Show land-cover source, license and file management");
+        });
+        body.addView(mapToggle);
+        body.addView(mapOptions);
+
+        body.addView(FieldVisuals.section(this,"Species checklist",null));
         checklistMode=new RadioGroup(this);
         checklistMode.setOrientation(RadioGroup.VERTICAL);
         RadioButton ranked=new RadioButton(this);
         ranked.setId(3001);ranked.setText("Suggested species first");
-        ranked.setMinHeight(dp(52));ranked.setTextSize(15);
-        ranked.setTextColor(UiKit.INK);
         checklistMode.addView(ranked);
         RadioButton full=new RadioButton(this);
         full.setId(3002);full.setText("Full checklist · no site ranking");
-        full.setMinHeight(dp(52));full.setTextSize(15);
-        full.setTextColor(UiKit.INK);
         checklistMode.addView(full);
         checklistMode.check(saved==null||saved.getBoolean("ranked",true)?3001:3002);
-        checklistMode.setOnCheckedChangeListener((g,id)->refreshSpecies());
+        // Keep exported mode unchanged while hiding the two permanent radio rows.
+        checklistMode.setVisibility(View.GONE);
+        checklistMode.setOnCheckedChangeListener((g,id)->{
+            updateChecklistButton();
+            refreshSpecies();
+        });
         body.addView(checklistMode);
-        speciesSummary=label("",13,false);body.addView(speciesSummary);
+        checklistButton=UiKit.button(this,"Checklist: Suggested first","secondary");
+        checklistButton.setContentDescription("Choose suggested-first or full species checklist");
+        checklistButton.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Species checklist")
+            .setSingleChoiceItems(new String[]{"Suggested first","Full checklist"},
+                checklistMode.getCheckedRadioButtonId()==3001?0:1,
+                (dialog,choice)->{
+                    checklistMode.check(choice==0?3001:3002);
+                    dialog.dismiss();
+                })
+            .setNegativeButton("Cancel",null).show());
+        body.addView(checklistButton,new LinearLayout.LayoutParams(-1,-2));
+        speciesSummary=label("",12,false);body.addView(speciesSummary);
+        body.addView(label("Reference only · not a species occurrence record",12,false));
         LinearLayout page=UiKit.page(this,"Habitats & Species",
             "Survey GPS",this::finish,body);
         LinearLayout footer=new LinearLayout(this);

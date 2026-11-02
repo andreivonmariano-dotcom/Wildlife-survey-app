@@ -86,6 +86,11 @@ public class MainActivity extends Activity implements LocationListener {
     private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry;
     private Button endSurveyButton,markButton,saveButton,reviewButton,pointNextButton;
     private TextView saveEligibilityView;
+    // Saved and unsaved states must stay separate.
+    private TextView timelineToggle,timelineDraft;
+    private LinearLayout timelineRows;
+    private boolean timelineOpen=false;
+    private int timelineSavedCount=0;
     private LinearLayout groupBar,advancedPanel,lineRow,birdMeasurements,herpPanel,mammalPanel;
     private ScrollView fieldScroll;
     private boolean inputKeyboardVisible=false;
@@ -751,6 +756,24 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setAdjustViewBounds(true);
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
+        // Collapsed by default to protect primary recording controls at 200%.
+        timelineToggle=label("Saved timeline · 0  ▾",14,true);
+        timelineToggle.setTextColor(UiKit.FOREST);
+        disclosureTarget(timelineToggle);
+        timelineToggle.setPadding(dp(5),dp(7),dp(5),dp(7));
+        timelineToggle.setContentDescription("Expand recent saved observations from this survey");
+        timelineToggle.setOnClickListener(v->{
+            timelineOpen=!timelineOpen;
+            refreshTimeline();
+        });
+        content.addView(timelineToggle);
+        timelineDraft=label("Draft · No unsaved observation",12,false);
+        timelineDraft.setTextColor(UiKit.MUTED);
+        timelineDraft.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        content.addView(timelineDraft);
+        timelineRows=vertical();
+        timelineRows.setVisibility(View.GONE);
+        content.addView(timelineRows);
         if(toolsDisclosure[0]!=null)content.addView(toolsDisclosure[0]);
         content.addView(recorderTools);
         LinearLayout birdQuick=vertical();
@@ -942,10 +965,7 @@ public class MainActivity extends Activity implements LocationListener {
             pointNextButton.setText("Start next station");
         if(requiresGenericUnit()&&samplingUnitId==null)saveButton.setEnabled(false);
         saveButton.setOnClickListener(v->save());
-        reviewButton.setOnClickListener(v->{
-            persistDraft();
-            startActivity(new Intent(this,HistoryActivity.class).putExtra("event_id",eventId));
-        });
+        reviewButton.setOnClickListener(v->openSurveyReview(-1));
         setContentView(root);
         // adjustResize keeps the Save/Review/End dock on screen. When the keyboard
         // occupies the viewport, reclaim the noncritical top navigation row and
@@ -966,6 +986,7 @@ public class MainActivity extends Activity implements LocationListener {
         });
         updateMethods();refreshAutocomplete();status();
         watchDraftFields();
+        refreshTimeline();
 
     }
     private void showGroups(){
@@ -2510,7 +2531,79 @@ public class MainActivity extends Activity implements LocationListener {
         distanceSourceSpinner.setSelection(0);firstPositionSpinner.setSelection(0);movementSpinner.setSelection(0);
         refreshAutocomplete();
         persistDraft();
+        refreshTimeline();
         toast(distance==null?"Observation saved · distance not recorded":"Saved offline");
+    }
+    /** The existing History screen owns corrections and their before/after audits. */
+    private void openSurveyReview(long focusedRecordId){
+        if(eventId==null)return;
+        persistDraft();
+        Intent review=new Intent(this,HistoryActivity.class)
+            .putExtra("event_id",eventId);
+        if(focusedRecordId>0)review.putExtra("focus_record_id",focusedRecordId);
+        startActivity(review);
+    }
+    /** A marked/typed unsaved draft does not add a detection to the timeline. */
+    private void updateTimelineDraftLabel(){
+        if(timelineDraft==null||taxonEntry==null)return;
+        boolean unfinished=hasUnsavedObservation();
+        timelineDraft.setText(unfinished?
+            "Unsaved draft · Not counted in timeline":
+            "Draft · No unsaved observation");
+        timelineDraft.setContentDescription(unfinished?
+            "An unsaved observation is in progress and is not included in the saved count":
+            "No unsaved observation is in progress");
+    }
+    private void refreshTimeline(){
+        if(db==null||eventId==null||timelineToggle==null)return;
+        try{
+            ObservationTimeline.Snapshot current=ObservationTimeline.load(
+                db.getReadableDatabase(),eventId,4);
+            timelineSavedCount=current.savedCount;
+            timelineToggle.setText("Saved timeline · "+timelineSavedCount+
+                (timelineOpen?"  ▴":"  ▾"));
+            timelineToggle.setContentDescription((timelineOpen?
+                "Collapse":"Expand")+" recent saved observations. "+
+                timelineSavedCount+" saved in this survey");
+            updateTimelineDraftLabel();
+            timelineRows.removeAllViews();
+            timelineRows.setVisibility(timelineOpen?View.VISIBLE:View.GONE);
+            if(!timelineOpen)return;
+            if(current.recent.isEmpty()){
+                TextView empty=label("No saved observations yet",13,false);
+                empty.setTextColor(UiKit.MUTED);timelineRows.addView(empty);
+            }
+            for(ObservationTimeline.Item record:current.recent){
+                String stamp=record.detectedAt.isEmpty()?"Time not recorded":
+                    record.detectedAt.replace('T',' ').replace("Z"," UTC");
+                TextView item=label("Saved #"+record.id+" · "+record.label+
+                    " ×"+record.individuals+"\n"+stamp+
+                    (record.corrected?" · Corrected":""),13,false);
+                item.setBackground(UiKit.surface(this));
+                item.setPadding(dp(12),dp(6),dp(12),dp(6));
+                item.setMinHeight(dp(56));
+                item.setGravity(Gravity.CENTER_VERTICAL);
+                item.setFocusable(true);
+                item.setContentDescription("Saved observation "+record.id+", "+
+                    record.label+", "+record.individuals+" records"+
+                    (record.corrected?", corrected":"")+
+                    ". Open details, photographs and edit audit");
+                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+                lp.bottomMargin=dp(5);
+                timelineRows.addView(item,lp);
+                item.setOnClickListener(v->openSurveyReview(record.id));
+            }
+            if(timelineSavedCount>current.recent.size()){
+                Button older=UiKit.button(this,"All saved records","quiet");
+                timelineRows.addView(older,new LinearLayout.LayoutParams(-1,dp(48)));
+                older.setOnClickListener(v->openSurveyReview(-1));
+            }
+        }catch(Exception error){
+            timelineToggle.setText("Saved timeline · unavailable");
+            timelineToggle.setContentDescription("Timeline unavailable. Review records in survey history");
+            timelineRows.removeAllViews();
+            timelineRows.setVisibility(View.GONE);
+        }
     }
     private static String timeFmt(long sec){
         long seconds=Math.max(0,sec);
@@ -2819,6 +2912,7 @@ public class MainActivity extends Activity implements LocationListener {
 
     private void queueDraft(){
         if(!active)return;
+        updateTimelineDraftLabel();
         handler.removeCallbacks(delayedDraftSave);
         handler.postDelayed(delayedDraftSave,800);
     }
@@ -2993,6 +3087,7 @@ public class MainActivity extends Activity implements LocationListener {
         super.onResume();
         handler.removeCallbacks(visibleTimer);
         status();refreshPauseControls();
+        refreshTimeline(); // Refresh after audited edits in History.
         handler.postDelayed(visibleTimer,1000);
         if(active&&!surveyPaused&&!TrackService.wasStopped(this)&&
             (method.equals("line_transect")||method.equals("ves_transect")))startTracking();

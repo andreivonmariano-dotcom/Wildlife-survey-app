@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 142
-        versionName '0.27.3-rc82-apo-survey-setup'
+        versionCode 143
+        versionName '0.27.3-rc83-apo-survey-gps'
     }
     signingConfigs {
         debug {

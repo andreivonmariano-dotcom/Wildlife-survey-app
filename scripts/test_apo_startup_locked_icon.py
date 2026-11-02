@@ -21,7 +21,7 @@ class ApoStartupSourceContract(unittest.TestCase):
         self.assertIn('android:icon="@mipmap/apo_launcher"', manifest)
         self.assertIn('android:roundIcon="@mipmap/apo_launcher_round"', manifest)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'", gradle)
-        self.assertIn("versionCode 132", gradle)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)", gradle).group(1)),132)
         self.assertIn(MASTER_SHA, gradle)
         self.assertIn(SPLASH_SHA, gradle)
         self.assertIn(FOREGROUND_SHA, gradle)

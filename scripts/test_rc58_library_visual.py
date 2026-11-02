@@ -10,17 +10,17 @@ class Rc58LibraryVisual(unittest.TestCase):
         self.assertIn("header.setOrientation(stackedHeader?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL)",s)
         self.assertIn("controls.addView(previous",s)
         self.assertIn("controls.addView(next",s)
-        self.assertIn('searchInput.setHint(largeText()?"Search":"Find name or habitat")',s)
-        self.assertIn("Search illustrated offline species and habitat accounts",s)
+        self.assertIn('searchInput.setHint(showingHabitat?"Search habitats":"Search species guides")',s)
+        self.assertIn("Search illustrated wildlife guide accounts",s)
     def test_reference_routes_and_provenance_stay_present(self):
         d=(JAVA/"LikasDiscoveryActivity.java").read_text()
         for label in ("Status unverified","OfflinePhotoEvidence.galleryPhotoForTaxon",
             "TaxonDetailActivity.class","LikasHabitatProfileActivity.class",
-            "Full Philippine species checklist","All habitats","statusIndex.get"):
+            "Search complete species checklist","Habitat reference index and site records","statusIndex.get"):
             self.assertIn(label,d)
         hub=(JAVA/"LikasLibraryActivity.java").read_text()
-        for label in ('"Species"','"Habitats"','"Similar species"','"Photos"',
-            '"Conservation"','"Sources"','"Habitat links"'):
+        for label in ('"Wildlife guides"','"Habitat guides"','"Similar species"','"Photo comparisons"',
+            '"Conservation evidence"','"Source checklists"','"Habitat associations"'):
             self.assertIn(label,hub)
     def test_version_and_data_identity(self):
         build=(ROOT/"app/build.gradle").read_text()

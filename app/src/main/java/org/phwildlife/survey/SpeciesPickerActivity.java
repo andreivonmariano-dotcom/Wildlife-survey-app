@@ -267,7 +267,10 @@ public final class SpeciesPickerActivity extends Activity {
             scope.setSelection(savedScopeIndex);
             scope.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
                 @Override public void onItemSelected(AdapterView<?> parent,View view,int pos,long id){
-                    if(nameSuggestions!=null)nameSuggestions.setArchivedCatalog(pos==1);
+                    if(nameSuggestions!=null){
+                        nameSuggestions.setArchivedCatalog(pos==1);
+                        nameSuggestions.getFilter().filter(search.getText().toString());
+                    }
                     refresh();
                 }
                 @Override public void onNothingSelected(AdapterView<?> parent){}
@@ -723,7 +726,7 @@ public final class SpeciesPickerActivity extends Activity {
         // Taxonomy, recorded distribution and published red-list fields.
         StringBuilder taxonomy=new StringBuilder();
         if(!item.family.isEmpty())taxonomy.append(item.family);
-        if(!item.origin.isEmpty()){
+        if(displayValue(item.origin)){
             if(taxonomy.length()>0)taxonomy.append(" · ");
             taxonomy.append(item.origin);
         }
@@ -758,13 +761,13 @@ public final class SpeciesPickerActivity extends Activity {
             item.paicHabitat:item.reviewedHabitats;
         String elevations=paicCatalogActive&&!item.paicElevation.isEmpty()?
             item.paicElevation:item.reviewedElevation;
-        if(!habitats.isEmpty()){
+        if(displayValue(habitats)){
             TextView ecological=text("Habitat: "+habitats,12,false);
             ecological.setMaxLines(2);
             ecological.setEllipsize(android.text.TextUtils.TruncateAt.END);
             card.addView(ecological);
         }
-        if(!elevations.isEmpty()){
+        if(displayValue(elevations)){
             TextView height=text("Elevation: "+elevations,12,false);
             height.setMaxLines(1);
             height.setEllipsize(android.text.TextUtils.TruncateAt.END);

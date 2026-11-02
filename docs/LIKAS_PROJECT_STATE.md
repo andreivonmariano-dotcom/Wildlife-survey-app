@@ -1,5 +1,13 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | RC86 interactive recorder and species picker | source implemented, release gated
+
+- **Owner approved implementation of RC85 audit**, with greater interactivity and fewer duplicate field controls. New draft PR #88, branch `feature/apo-recorder-picker-rc86-interactive-v146`, based directly on RC85, target code146, SQLite29. Legacy package/signature and original PAIC714/WorldCover/art assets were not changed.
+- **Source implementation:** new optional taxon key/source-version columns and raw field-record export; exact catalog matching for entered names; picker returns stable key/version, supports PAIC and archived Philippine catalog scopes, one order selector, full-width labels, read-only Site context first, clean DENR/missing-value cards; recorder has Mark detection and Pause effort readily accessible, bounded inline taxa suggestions, visible neutral confidence, reset observation-only measurements and accurate all-data export labeling; redundant photo quick action removed; explicit herpetofauna group-switch confirmation.
+- **Evidence:** Added RC86 Python contract test; revised picker Android instrumentation to await loaded cards and examine PAIC installation; introduced code146 CI. Checked 48 insert columns, 48 placeholders, 48 bound values directly in live source. **No confirmed signed code146 APK or completed Android emulator run has been obtained for this branch at handoff**. The signed and directly delivered code145 RC85 preview remains the last verified APK until release gates pass.
+- **Next acceptance:** complete CI with original signer/assets; check SQLite28 to29 archival upgrade on a real dataset, selected key/version in exported observations, normal startup->PAIC->survey flow, photo/GNSS/end-state behavior, font 200% and TalkBack. Details: `docs/APO_RC86_INTERACTIVE_RECORDER_SPECIES_IMPLEMENTATION_2026_11_02.md`.
+
+
 ## 2026-11-02 | RC85 recorder/picker and PAIC 714 audit | findings only, no app change
 
 - **Review artifact:** `docs/APO_RC85_RECORDER_SPECIES_PICKER_AUDIT_2026_11_02.md` on RC85 branch, source review of current recorder and picker, six RC85 emulator screenshots, existing RC85 signed APK, and owner-uploaded 714-species workbook.

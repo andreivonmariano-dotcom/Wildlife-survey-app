@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 153
-        versionName '0.27.3-rc93-apo-schema29-backup-qa'
+        versionCode 154
+        versionName '0.27.3-rc94-phlibrary-preview'
     }
     signingConfigs {
         debug {

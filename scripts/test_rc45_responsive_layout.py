@@ -16,7 +16,7 @@ class Rc45LayoutContract(unittest.TestCase):
         for screen in ("WelcomeActivity.java", "LikasLibraryActivity.java",
                        "LikasSettingsActivity.java"):
             text = source(screen)
-            self.assertIn("FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale)",text)
+            self.assertIn("FieldLayoutPolicy.stackPortalPair(" if screen=="LikasLibraryActivity.java" else "FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale)",text)
             if screen=="WelcomeActivity.java":
                 self.assertIn("surveyTile(main,",text)
                 self.assertIn("new LinearLayout.LayoutParams(-1,-2)",text)

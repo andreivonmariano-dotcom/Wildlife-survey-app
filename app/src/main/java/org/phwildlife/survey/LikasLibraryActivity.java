@@ -9,92 +9,116 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-/** Reading space. No survey event, effort or observation is created here. */
+/** Offline Philippine biodiversity reference hub. Never creates a field observation. */
 public final class LikasLibraryActivity extends Activity {
     private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
-    private void add(LinearLayout p,String name,String caption,String icon,
-            Class<?> destination){
-        View action=LikasPortalUi.action(this,name,caption,icon,
-            ()->startActivity(new Intent(this,destination)));
+    private void add(LinearLayout parent,String title,String detail,String icon,
+            Class<?> target){
+        View card=LikasPortalUi.action(this,title,detail,icon,
+            ()->startActivity(new Intent(this,target)));
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);p.addView(action,lp);
+        lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+        parent.addView(card,lp);
     }
-    private void discover(LinearLayout p,String title,String subtitle,String icon,String view){
-        View card=LikasPortalUi.libraryFeature(this,title,subtitle,icon,()->
+    private void discover(LinearLayout parent,String title,String detail,
+            String icon,String view){
+        View card=LikasPortalUi.libraryFeature(this,title,detail,icon,()->
             startActivity(new Intent(this,LikasDiscoveryActivity.class)
                 .putExtra("view",view)));
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.bottomMargin=dp(LikasDesignSystem.SPACE_MD);p.addView(card,lp);
+        lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+        parent.addView(card,lp);
     }
-    /** Local section treatment keeps page title visually dominant at 200% font. */
-    private LinearLayout librarySection(String title,String caption){
-        LinearLayout section=FieldVisuals.section(this,title,caption);
-        TextView heading=(TextView)section.getChildAt(0);
-        heading.setTextSize(14);
-        heading.setLetterSpacing(.06f);
+    private LinearLayout section(String title,String caption){
+        LinearLayout block=FieldVisuals.section(this,title,caption);
+        TextView heading=(TextView)block.getChildAt(0);
+        heading.setTextSize(16);
         heading.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
         heading.setTextColor(UiKit.FOREST);
-        return section;
+        return block;
     }
-    private boolean stackPortalPairs(){
-        android.content.res.Configuration config=getResources().getConfiguration();
-        return FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale);
-    }
-    private void toolPair(LinearLayout parent,String first,String firstDetail,
+    private void referencePair(LinearLayout parent,String first,String firstDetail,
             String firstIcon,Class<?> firstTarget,String second,String secondDetail,
             String secondIcon,Class<?> secondTarget){
+        // Android phones use full-width readable targets. Only wider tablets get pairs.
+        boolean stacked=getResources().getConfiguration().screenWidthDp<600 ||
+            FieldLayoutPolicy.stackPortalPair(
+                getResources().getConfiguration().screenWidthDp,
+                getResources().getConfiguration().fontScale);
         LinearLayout row=new LinearLayout(this);
-        // Phones keep a uniform one-column action list; tablets may retain paired mini cards.
-        boolean stacked=stackPortalPairs() ||
-            getResources().getConfiguration().screenWidthDp<600;
         row.setOrientation(stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        View a=stacked?
-            LikasPortalUi.action(this,first,firstDetail,firstIcon,
-                ()->startActivity(new Intent(this,firstTarget))):
+        View a=stacked?LikasPortalUi.action(this,first,firstDetail,firstIcon,
+            ()->startActivity(new Intent(this,firstTarget))):
             LikasPortalUi.mini(this,first,firstDetail,firstIcon,
-                ()->startActivity(new Intent(this,firstTarget)));
-        View b=stacked?
-            LikasPortalUi.action(this,second,secondDetail,secondIcon,
-                ()->startActivity(new Intent(this,secondTarget))):
+            ()->startActivity(new Intent(this,firstTarget)));
+        View b=stacked?LikasPortalUi.action(this,second,secondDetail,secondIcon,
+            ()->startActivity(new Intent(this,secondTarget))):
             LikasPortalUi.mini(this,second,secondDetail,secondIcon,
-                ()->startActivity(new Intent(this,secondTarget)));
-        LinearLayout.LayoutParams aLp=new LinearLayout.LayoutParams(
-            stacked?-1:0,-2,1);
-        aLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);row.addView(a,aLp);
-        LinearLayout.LayoutParams bLp=new LinearLayout.LayoutParams(
-            stacked?-1:0,-2,1);
-        if(!stacked)bLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
-        bLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);row.addView(b,bLp);
+            ()->startActivity(new Intent(this,secondTarget)));
+        LinearLayout.LayoutParams firstLp=new LinearLayout.LayoutParams(
+            stacked?-1:0,-2,stacked?0:1f);
+        firstLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+        row.addView(a,firstLp);
+        LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(
+            stacked?-1:0,-2,stacked?0:1f);
+        if(!stacked)secondLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+        secondLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+        row.addView(b,secondLp);
         parent.addView(row);
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         getWindow().setStatusBarColor(UiKit.BG);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        getWindow().getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         LinearLayout body=new LinearLayout(this);
         LinearLayout root=UiKit.page(this,"PHLibrary","Home",this::finish,body);
-        // Android 14 font scaling is nonlinear. Use the shared full page-title token
-        // rather than the compact navigation default so sections remain subordinate.
-        LinearLayout navigation=(LinearLayout)root.getChildAt(0);
-        TextView pageTitle=(TextView)navigation.getChildAt(1);
+        LinearLayout nav=(LinearLayout)root.getChildAt(0);
+        TextView pageTitle=(TextView)nav.getChildAt(1);
         pageTitle.setTextSize(LikasDesignSystem.TEXT_PAGE);
-        // Reserve a small strip for the system scroll indicator so it never paints
-        // over a card outline or its arrow. Restrict this to the Library hub.
-        ScrollView libraryScroll=(ScrollView)root.getChildAt(1);
-        libraryScroll.setPadding(0,0,dp(8),0);
-        libraryScroll.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
-        body.addView(librarySection("Species & habitats","Offline field guides"));
-        discover(body,"Species","Illustrated accounts","species","species");
-        discover(body,"Habitats","Habitat profiles","habitat","habitats");
-        body.addView(librarySection("Reference tools",null));
-        toolPair(body,"Similar species","Compare traits","research",
-            Rc9DifferentialActivity.class,"Photos","Offline images","library-photo",
-            Rc8PhotoComparisonActivity.class);
-        toolPair(body,"Conservation","Dated assessments","library-conservation",
-            Rc24ConservationDashboardActivity.class,"Sources","Checklists","library-sources",
-            CatalogActivity.class);
-        add(body,"Habitat links","Cited associations","library-habitat-links",
-            HabitatSpeciesEvidenceActivity.class);
+        ScrollView scroller=(ScrollView)root.getChildAt(1);
+        scroller.setPadding(0,0,dp(8),0);
+        scroller.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
+
+        TextView context=new TextView(this);
+        context.setText("Offline species, habitat and conservation references");
+        context.setTextSize(14);
+        context.setTextColor(UiKit.MUTED);
+        context.setPadding(dp(2),dp(2),dp(2),dp(14));
+        body.addView(context);
+
+        body.addView(section("Species checklist","Start with the source-linked taxon index"));
+        add(body,"Search species checklist",
+            "Greater Mindanao PAIC species · names, sources and coverage",
+            "species",Rc7SpeciesLibraryActivity.class);
+
+        body.addView(section("Illustrated field guides",
+            "Selected accounts with identification and ecological references"));
+        discover(body,"Wildlife guides","Photos and cited species accounts",
+            "species","species");
+        discover(body,"Habitat guides","Ecological profiles and habitat references",
+            "habitat","habitats");
+
+        body.addView(section("Reference tools",null));
+        referencePair(body,"Conservation evidence","IUCN and Philippine assessments",
+            "library-conservation",Rc24ConservationDashboardActivity.class,
+            "Similar species","Compare identification traits",
+            "research",Rc9DifferentialActivity.class);
+        referencePair(body,"Photo comparisons","Offline wildlife photographs",
+            "library-photo",Rc8PhotoComparisonActivity.class,
+            "Source checklists","Taxonomic provenance and imports",
+            "library-sources",CatalogActivity.class);
+        add(body,"Habitat associations","Cited species and habitat links",
+            "library-habitat-links",HabitatSpeciesEvidenceActivity.class);
+
+        TextView scope=new TextView(this);
+        scope.setText("Checklist coverage and illustrated accounts differ. An island " +
+            "reference is not a verified observation at your survey site.");
+        scope.setTextColor(UiKit.MUTED);
+        scope.setTextSize(12);
+        scope.setPadding(dp(3),dp(8),dp(3),dp(12));
+        body.addView(scope);
+
         setContentView(root);
         UiMotion.enter(this,body);
     }

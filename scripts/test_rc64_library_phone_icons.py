@@ -15,10 +15,10 @@ class Rc64PhoneIcons(unittest.TestCase):
         self.assertIn("frame.setClipToOutline(true)",portal)
     def test_original_assets_and_navigation_still_present(self):
         library=(JAVA/"LikasLibraryActivity.java").read_text()
-        for row in ('"Conservation","Dated assessments","library-conservation"',
-                    '"Habitat links","Cited associations","library-habitat-links"',
-                    '"Photos","Offline images","library-photo"',
-                    '"Sources","Checklists","library-sources"'):
+        for row in ('"Conservation evidence","IUCN and Philippine assessments"',
+                    '"Habitat associations","Cited species and habitat links"',
+                    '"Photo comparisons","Offline wildlife photographs"',
+                    '"Source checklists","Taxonomic provenance and imports"'):
             self.assertIn(row,library)
         self.assertEqual(18,len(list((ROOT/"app/src/main/res/drawable-nodpi").glob("likas_approved_*.png"))))
         build=(ROOT/"app/build.gradle").read_text()

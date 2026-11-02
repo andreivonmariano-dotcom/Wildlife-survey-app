@@ -25,10 +25,10 @@ class LibraryPolishContract(unittest.TestCase):
 
     def test_species_missing_status_never_implies_low_threat(self):
         view=(JAVA/"LikasDiscoveryActivity.java").read_text()
-        self.assertIn("if(status==null)return 0;",view)
+        self.assertIn('if(status==null)',view)
         self.assertIn('TextView missing=note("Status unverified"',view)
         self.assertIn("if(assessment==null)continue;",view)
-        self.assertIn('return UiKit.BORDER;',view)
+        self.assertIn('accent=UiKit.BORDER;',view)
         self.assertNotIn('"Priority species"',view)
         evidence=json.loads((ASSETS/"rc34_conservation_card_status_v1.json").read_text())
         core=json.loads((ASSETS/"rc18_unified_96_priority_accounts_v1.json").read_text())

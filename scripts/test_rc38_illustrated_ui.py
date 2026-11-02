@@ -31,9 +31,9 @@ class IllustratedUiContract(unittest.TestCase):
         self.assertNotIn("LikasPortalUi.action(this,title,detail,art,tap)",welcome)
     def test_library_is_separate_and_visual(self):
         library=src("LikasLibraryActivity.java")
-        self.assertIn('discover(body,"Species"',library)
-        self.assertIn('discover(body,"Habitats"',library)
-        self.assertIn("LikasPortalUi.libraryFeature(this,title,subtitle,icon",library)
+        self.assertIn('discover(body,"Wildlife guides"',library)
+        self.assertIn('discover(body,"Habitat guides"',library)
+        self.assertIn("LikasPortalUi.libraryFeature(this,title,detail,icon",library)
         self.assertIn("LikasPortalUi.mini(this,first,firstDetail,firstIcon",library)
         self.assertIn("Rc24ConservationDashboardActivity.class",library)
         self.assertNotIn("MainActivity.class",library)
@@ -47,10 +47,10 @@ class IllustratedUiContract(unittest.TestCase):
 
     def test_cards_avoid_invented_classification(self):
         cards=src("LikasDiscoveryActivity.java")
-        for piece in ('if(status==null)return 0;',
-                      'return UiKit.BORDER;',
-                      'categoryLevel(status.optJSONObject("iucn"))',
-                      'categoryLevel(status.optJSONObject("denr"))',
+        for piece in ('int severity=0,accent=UiKit.BORDER;',
+                      'if(status==null)',
+                      'for(String authority:new String[]{"iucn","denr"})',
+                      'appendLabel(card,labelText',
                       '"Status unverified"',
                       'new GradientDrawable(', 'severity>0'):
             self.assertIn(piece,cards)

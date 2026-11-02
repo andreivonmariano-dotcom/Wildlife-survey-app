@@ -29,12 +29,12 @@ class FieldGuideStudioQA(unittest.TestCase):
             'if(animate)UiMotion.enter(this,content);',
             'emptyState()',
             '"No matches"',
-            '"Full Philippine species checklist"',
-            '"All habitats"',
+            '"Search complete species checklist"',
+            '"Habitat reference index and site records"',
         ):self.assertIn(token,cards,token)
-        self.assertIn("if(status==null)return 0;",cards)
-        self.assertIn('return Math.max(categoryLevel(status.optJSONObject("iucn"))',cards)
-        self.assertIn('categoryLevel(status.optJSONObject("denr"))',cards)
+        self.assertIn('if(status==null)',cards)
+        self.assertNotIn('Math.max(categoryLevel',cards)
+        self.assertIn('for(String authority:new String[]{"iucn","denr"})',cards)
         for forbidden in ("getWritableDatabase(","execSQL(","deleteDatabase(","new URL("):
             self.assertNotIn(forbidden,cards)
 

@@ -41,7 +41,7 @@ class GpsRC83(unittest.TestCase):
         for t in ('versionCode=\'143\'','versionName=\'0.27.3-rc83-apo-survey-gps\'',
                   'GpsCompactUiEmulatorTest','Rc55GpsPreflightInstrumentedTest',
                   'font_scale 1.6','font_scale 2.0','wm size 960x2160',
-                  'apo_gps_','gps_\${mode}_160.png','gps_\${mode}_200.png',
+                  'apo_gps_','gps_${mode}_160.png','gps_${mode}_200.png',
                   'len(files)==4'):
             self.assertIn(t,wf)
         gradle=read("app/build.gradle")

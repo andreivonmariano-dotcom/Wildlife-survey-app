@@ -102,15 +102,19 @@ public final class TrapProtocolActivity extends Activity {
             rows.addView(label("Device-method surveys",16));
             // An active event remains accessible even before its first deployment.
             try(Cursor c=db.getReadableDatabase().rawQuery(
-                "SELECT s.id,s.method,s.started FROM surveys s "+
+                "SELECT s.id,s.method,s.started,"+SurveyOutcomeSql.RESOLVED+" FROM surveys s "+
                 "WHERE s.method IN ('camera_trap_check','drift_fence_check','live_trap_check') "+
                 "ORDER BY s.started DESC LIMIT 100",null)){
                 if(c.getCount()==0)rows.addView(label("No device-method surveys yet.",13));
                 while(c.moveToNext()){
-                    String id=c.getString(0);
-                    Button entry=UiKit.button(this,c.getString(1)+" · "+c.getString(2),"secondary");
-                    rows.addView(entry,new LinearLayout.LayoutParams(-1,dp(65)));
-                    entry.setOnClickListener(v->{eventId=id;method=cMethod(id);draw();});
+                    String id=c.getString(0),selectedMethod=c.getString(1);
+                    String display=SurveyMethods.displayLabel(
+                        "drift_fence_check".equals(selectedMethod)?"Herpetofauna":"Mammals",
+                        selectedMethod);
+                    Button entry=UiKit.button(this,display+" · "+c.getString(2)+
+                        "\n"+c.getString(3),"secondary");
+                    rows.addView(entry,new LinearLayout.LayoutParams(-1,dp(70)));
+                    entry.setOnClickListener(v->{eventId=id;method=selectedMethod;draw();});
                 }
             }
             return;
@@ -165,12 +169,6 @@ public final class TrapProtocolActivity extends Activity {
                 LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
                 lp.bottomMargin=dp(11);rows.addView(card,lp);
             }
-        }
-    }
-    private String cMethod(String event){
-        try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT method FROM surveys WHERE id=?",new String[]{event})){
-            return c.moveToFirst()?c.getString(0):"";
         }
     }
     private void addDeployment(){

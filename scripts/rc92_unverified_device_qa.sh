@@ -21,5 +21,9 @@ adb shell am force-stop "$PACKAGE"
 adb shell cmd location set-location-enabled true
 adb shell am instrument -w -r -e class org.phwildlife.survey.Rc92ProcessRestartInstrumentedTest "$RUNNER" | tee rc92-unverified-evidence/process_restart.txt
 grep -Fq 'OK (1 test)' rc92-unverified-evidence/process_restart.txt
+# Separate fresh disposable workspace: restore cannot overwrite existing data.
+adb shell pm clear "$PACKAGE"
+adb shell am instrument -w -r -e class org.phwildlife.survey.BackupRoundTripInstrumentedTest "$RUNNER" | tee rc92-unverified-evidence/backup_roundtrip.txt
+grep -Fq 'OK (1 test)' rc92-unverified-evidence/backup_roundtrip.txt
 adb logcat -d -s AndroidRuntime:E > rc92-unverified-evidence/android_runtime_errors.txt
 test ! -s rc92-unverified-evidence/android_runtime_errors.txt

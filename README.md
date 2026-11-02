@@ -2,16 +2,16 @@
 
 APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
 
-**Current APO Home development source:** `feature/apo-text-home-v133` (draft PR #75, branched from the latest APO startup; not merged into `main`)  
-**Latest verified signed APK:** `0.27.3-rc73-apo-text-home`, versionCode **133**, source `ac75b6abe1af2b5e3e5c758a1bdec86f075fc9c1`  
-**Android application ID:** `org.phwildlife.survey.beta08` (unchanged)  
-**SQLite schema:** **28** (data model unchanged; real-device upgrade not yet validated)
+**Current APO development branch:** `feature/apo-biotools-v134` (draft PR #76 into RC73, not merged into older `main`)  
+**Latest verified signed APK:** `0.27.3-rc74-apo-biotools`, versionCode **134**, source `f4f948c6533bb34ef55245aa2994c1ac5faf23a3`  
+**Android ID:** `org.phwildlife.survey.beta08` (unchanged); original beta signer retained  
+**SQLite schema:** **28** (data model unchanged; on-device historical upgrade test still pending)
 
-**APO RC73 signed preview, 2 November 2026:** The text-first Home presents **BioTools**, **PHLibrary**, **PHMaps**, and **BioDiscover** with Settings in the header and a contextual Resume shortcut. The former illustrated LIKAS Home hero and icon tiles are no longer used there. The 220ms reduced-motion-safe Home entrance preserves the owner-approved mountain launcher and gradient splash. PHMaps currently links existing site and habitat records, while a complete atlas remains unimplemented. BioDiscover is explicitly marked as in development because no live research feed is shipped.
+**RC74 signed BioTools preview (2 November 2026):** The revised BioTools workspace has five text-only destinations: Surveys, Projects & Stations, Field Records, Analysis & Exports, and Field Utilities. Active survey Resume and the original Birds/Herpetofauna/Mammals setup remain, with no illustrated navigation or hidden More field tools dropdown. Existing records, analysis and utilities are directly navigable. A standalone research ZIP export now calls the exact same `MainActivity.writeResearchArchive` routine through Android's save-file picker, without starting a survey. It is separate from Settings' restorable backup.
 
-**CI and downloadable build:** GitHub Actions run `41373151540` passed **385 Python regressions**, JVM/Android tests and build, original signer/Android ID and exact embedded-artwork and data checks. File `APO-v0.27.3-RC73-text-home-code133.apk` is **11,744,944 bytes**, SHA-256 `c21fbc5ba9d9b4bbc9e455148d680609f21974d2f53523b35ddbbb4a9eb2125d`. The APK was downloaded and delivered directly in the active user chat. See [RC73 signed Home preview QA](docs/APO_RC73_TEXT_HOME_SIGNED_QA_2026_11_02.md).
+**Verified build and direct delivery:** CI run `41375198786` passed **390 Python regressions**, JVM/Android build and AndroidTest compilation, package/signer checks, and byte-exact approved offline artwork and PAIC/WorldCover references. Downloaded APK `APO-v0.27.3-RC74-BioTools-code134.apk` is **11,747,380 bytes**, SHA-256 `09c96752003bda20660199a439485ba356558e740b59a37cffda0a2887ff0132`. Its ZIP integrity and embedded reference hashes were independently verified in the chat runtime. See [RC74 signed BioTools release QA](docs/APO_RC74_BIOTOOLS_SIGNED_QA_2026_11_02.md).
 
-**Release boundary:** RC73 is a **signed development preview**, not a stable field-certified release. Physical handset upgrade and saved records, GPS/field recording, screen accessibility and large-font navigation require device tests. The prior code132/RC72 startup build (SHA-256 `4a4210ff77aa40cf8c3f7c0741ddad5baeabe17d54ac93dbfaa62810e78cdfeb`) is historical and should not be presented as the current version. Old default `main` is not a suitable Android development baseline.
+**Release boundary:** RC74 is a signed **development preview**, not stable/field certified. Existing survey record upgrades, real GPS, 200%-text / TalkBack on-device navigation, and research export end-to-end content still need device acceptance. RC73 and RC72 remain historical signed previews; do not offer them as the latest APK. Older default `main` is not the development baseline.
 
 ## What APO currently provides
 

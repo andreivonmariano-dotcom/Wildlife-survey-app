@@ -193,8 +193,8 @@ public final class FieldProtocolsActivity extends Activity {
     private void draw(){
         LinearLayout root=col();root.setPadding(dp(14),dp(9),dp(14),dp(10));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Field protocol records",
-            eventId==null?"Back":"All records",()->{
+        root.addView(UiKit.navigationHeader(this,"Field protocols",
+            eventId==null?"Field Utilities":"All records",()->{
                 if(eventId!=null&&getIntent().getStringExtra("event_id")==null){
                     eventId=null;method="";draw();
                 }else finish();
@@ -223,7 +223,9 @@ public final class FieldProtocolsActivity extends Activity {
         else showSignEffort();
     }
     private void showSurveys(){
-        records.addView(text("Open a completed or active survey's field protocol.",14));
+        records.addView(ApoHomeUi.section(this,"Recorded methods",
+            "Review method-specific field evidence. New effort records require " +
+            "a supported active survey."));
         try(Cursor c=db.getReadableDatabase().rawQuery(
             "SELECT id,method,started,COALESCE(outcome,'active') FROM surveys "+
             "WHERE method IN ('coverboard_search','area_search','track_sign','spotlight') "+

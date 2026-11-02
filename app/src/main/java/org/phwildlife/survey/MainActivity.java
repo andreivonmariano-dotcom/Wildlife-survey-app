@@ -599,7 +599,7 @@ public class MainActivity extends Activity implements LocationListener {
         starP.leftMargin=dp(6);speciesActions.addView(favoriteButton,starP);
         favoriteButton.setContentDescription("Add or remove favorite species");
         favoriteButton.setOnClickListener(v->toggleFavorite());
-        content.addView(speciesActions);
+
         unknownBtn.setOnClickListener(v->{
             String[] choices=Taxa.unknownLabels(group);
             new AlertDialog.Builder(this).setTitle("Record unidentified "+group.toLowerCase(Locale.US))
@@ -637,6 +637,7 @@ public class MainActivity extends Activity implements LocationListener {
         plus.setContentDescription("Increase individuals or evidence count");
         countLine.addView(plus,new LinearLayout.LayoutParams(dp(52),dp(touchDp)));
         content.addView(countLine);
+        content.addView(speciesActions);
         LinearLayout confidenceBlock=vertical();
         confidenceBlock.addView(label("ID confidence",12,true));
         confidenceSpinner=new Spinner(this);

@@ -12,7 +12,7 @@ class LiveRecorderRC78(unittest.TestCase):
         self.assertLess(s.index('UiKit.sectionTitle(this,"Sampling session")'),
                         s.index('UiKit.sectionTitle(this,"Detection tools")'))
         self.assertLess(s.index('UiKit.sectionTitle(this,"Detection tools")'),
-                        s.index('FieldVisuals.section(this,"Record observation"'))
+                        s.index('FieldVisuals.section(this,"Observation"'))
         self.assertIn('FieldQuickActions.resolve(profile,method',s)
         self.assertIn('FieldQuickActions.choices(profile,method)',s)
         self.assertIn('SurveyHudReader(this)',s)

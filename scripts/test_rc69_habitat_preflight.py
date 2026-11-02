@@ -41,7 +41,7 @@ class Rc69HabitatPreflightTests(unittest.TestCase):
         self.assertFalse((ROOT/'app/src/main/assets/paic_worldcover_2020_500m_v1.txt').exists())
     def test_legacy_backup_compatibility(self):
         backup=read('FieldBackupArchive.java')
-        self.assertIn('version==27||version==28',backup)
+        self.assertIn('version>=27&&version<=29',backup)
         self.assertIn('manifest.put("sqliteSchema",28)',backup)
         self.assertIn('survey_habitat_setup',backup)
 

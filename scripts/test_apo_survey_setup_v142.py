@@ -49,7 +49,7 @@ class CompactSetupRC82(unittest.TestCase):
                       'studyTemplateIds.get('):
             self.assertIn(token,s)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 152",g)
+        self.assertIn("versionCode 153",g)
         self.assertIn("0.27.3-rc92-apo-closure-integrity",g)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",g)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))

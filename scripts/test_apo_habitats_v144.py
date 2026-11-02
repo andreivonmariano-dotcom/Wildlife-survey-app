@@ -46,7 +46,7 @@ class Rc84HabitatChecklist(unittest.TestCase):
                   "PaicHabitatPolicy"):
             self.assertIn(t,wf)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 152",g)
+        self.assertIn("versionCode 153",g)
         self.assertIn("0.27.3-rc92-apo-closure-integrity",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn("super(context,NAME,null,29)",

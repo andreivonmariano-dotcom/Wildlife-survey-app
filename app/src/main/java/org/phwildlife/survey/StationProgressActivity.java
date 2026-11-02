@@ -31,7 +31,7 @@ public final class StationProgressActivity extends Activity {
    }
    LinearLayout root=column();root.setPadding(dp(14),dp(12),dp(14),dp(12));
    root.setBackgroundColor(UiKit.BG);
-   root.addView(UiKit.navigationHeader(this,"Station progress","Survey",this::finish));
+   root.addView(UiKit.navigationHeader(this,"Station progress","Back",this::finish));
    root.addView(label("Method · "+SurveyMethods.displayLabel(profile,method),13));
    if(outcome.equals("not_counted")){
      TextView note=label("NOT COUNTED. Visits remain archived but excluded from analysis.",13);

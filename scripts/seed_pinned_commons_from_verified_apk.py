@@ -46,8 +46,8 @@ def seed(apk_path):
                 raise ValueError("Unexpected approved file path")
             raw = archive.read("assets/"+asset_name)
             if (len(raw) <= 1000 or len(raw) > 900000 or
-                    not raw.startswith(b"\\xff\\xd8\\xff") or
-                    not raw.endswith(b"\\xff\\xd9") or
+                    raw[:3] != bytes((255,216,255)) or
+                    raw[-2:] != bytes((255,217)) or
                     sha256(raw) != entry["sha256"]):
                 raise ValueError("Approved JPEG checksum invalid: "+image_id)
             validated[Path(asset_name).name] = raw

@@ -50,7 +50,16 @@ public class HistoryActivity extends Activity {
         UiKit.fieldInput(this,v);
         return v;
     }
-    @Override public void onCreate(Bundle b){super.onCreate(b);db=new FieldDb(this);eventFilter=getIntent().getStringExtra("event_id");draw();}
+    @Override public void onCreate(Bundle b){
+        super.onCreate(b);
+        db=new FieldDb(this);
+        eventFilter=getIntent().getStringExtra("event_id");
+        draw();
+        long focus=getIntent().getLongExtra("focus_record_id",-1L);
+        // Deep links are permitted only within the specified survey event.
+        if(focus>0&&eventFilter!=null&&root!=null)
+            root.post(()->recordDetail(focus));
+    }
     @Override protected void onDestroy(){
         searchHandler.removeCallbacksAndMessages(null);
         db.close();
@@ -373,9 +382,15 @@ public class HistoryActivity extends Activity {
     }
     private void recordDetail(long id){
         try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT * FROM field_records WHERE id=? AND deleted_at IS NULL",
-            new String[]{String.valueOf(id)})){
-            if(!c.moveToFirst()){draw();return;}
+            "SELECT * FROM field_records WHERE id=? AND deleted_at IS NULL"+
+                (eventFilter==null?"":" AND event_id=?"),
+            eventFilter==null?new String[]{String.valueOf(id)}:
+                new String[]{String.valueOf(id),eventFilter})){
+            if(!c.moveToFirst()){
+                Toast.makeText(this,"Observation is no longer available in this survey",
+                    Toast.LENGTH_SHORT).show();
+                return;
+            }
             JSONObject original=snapshot(c);
             String title=original.optString("raw_identification","Observation "+id);
             new AlertDialog.Builder(this).setTitle(title)
@@ -463,7 +478,7 @@ public class HistoryActivity extends Activity {
         notes.setInputType(InputType.TYPE_CLASS_TEXT|
             InputType.TYPE_TEXT_FLAG_MULTI_LINE|
             InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        EditText reason=field("Reason for correction (recommended)","");
+        EditText reason=field("Reason for correction (required)","");
         EditText confidenceNote=field("Identification evidence / notes",before.optString("identification_review_note",""));
         Spinner confidence=new Spinner(this);
         String[] levels={"Field-identified (not expert verified)","Probable","Uncertain","Unidentified"};
@@ -499,6 +514,15 @@ public class HistoryActivity extends Activity {
             String name=taxon.getText().toString().trim();
             int count=0;try{count=Integer.parseInt(individuals.getText().toString().trim());}catch(Exception ignored){}
             Double d=num(distance.getText().toString());
+            String why=reason.getText().toString().trim();
+            if(why.length()<5){
+                reason.setError("Record a specific reason (at least 5 characters)");
+                return;
+            }
+            if(!distance.getText().toString().trim().isEmpty()&&d==null){
+                distance.setError("Enter a valid horizontal distance or leave blank");
+                return;
+            }
             if(name.length()<2||count<1||d!=null&&(d<0||d>10000)){
                 Toast.makeText(this,"Check identification, count and distance",Toast.LENGTH_LONG).show();return;
             }
@@ -508,6 +532,13 @@ public class HistoryActivity extends Activity {
             try{
                 ContentValues values=new ContentValues();
                 values.put("raw_identification",name);values.put("common_name",split[0]);values.put("scientific_name",split[1]);
+                // Correcting the name invalidates the old catalog identity. It
+                // must not remain attached to a different raw identification.
+                if(!name.equals(before.optString("raw_identification","").trim())){
+                    values.putNull("taxon_key");
+                    values.putNull("taxon_source_version");
+                    values.put("name_source","user_corrected");
+                }
                 boolean unknown=Taxa.isUnknown(name);
                 boolean genusOnly=!unknown&&split[1]!=null&&(split[1].trim().endsWith(" sp.")||split[1].trim().endsWith(" spp."));
                 String rank=unknown?"unidentified":genusOnly?"genus":
@@ -551,12 +582,15 @@ public class HistoryActivity extends Activity {
                     values.put("perpendicular_m",Geometry.perpendicular(d,before.getDouble("bearing_magnetic"),Double.parseDouble(survey[1])));
                 else values.putNull("perpendicular_m");
                 values.put("updated_at",new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US){{setTimeZone(TimeZone.getTimeZone("UTC"));}}.format(new Date()));
-                writable.update("field_records",values,"id=?",new String[]{""+id});
+                int changed=writable.update("field_records",values,
+                    "id=? AND event_id=? AND deleted_at IS NULL",
+                    new String[]{String.valueOf(id),before.optString("event_id")});
+                if(changed!=1)throw new IllegalStateException("Record was changed or removed");
                 JSONObject after;
                 try(Cursor c=writable.rawQuery("SELECT * FROM field_records WHERE id=?",new String[]{""+id})){
                     c.moveToFirst();after=snapshot(c);
                 }
-                auditWrite(writable,id,"edit",before,after,reason.getText().toString());
+                auditWrite(writable,id,"edit",before,after,why);
                 writable.setTransactionSuccessful();
                 dialog.dismiss();draw();
             }catch(Exception e){Toast.makeText(this,"Save failed: "+e.getMessage(),Toast.LENGTH_LONG).show();}

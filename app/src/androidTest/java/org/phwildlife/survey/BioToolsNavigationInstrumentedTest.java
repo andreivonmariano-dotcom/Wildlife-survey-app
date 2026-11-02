@@ -310,7 +310,7 @@ public final class BioToolsNavigationInstrumentedTest {
         assertEquals("incomplete",outcome(id));
     }
 
-    @Test public void zRecorderActionsAnd200PercentFontDoNotClipEndSurvey(){
+    @Test public void zRecorderActionsAnd200PercentFontDoNotClipEndSurvey() throws Exception {
         Intent intent=new Intent(APP,MainActivity.class)
             .putExtra("create_new",true).putExtra("survey_profile","Birds")
             .putExtra("survey_method","opportunistic")

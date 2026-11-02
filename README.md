@@ -2,16 +2,16 @@
 
 APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
 
-**Current Android development branch:** `feature/apo-biotools-workflows-v136` (draft PR #78 into RC75, not merged into historical default `main`)  
-**Latest verified signed APK:** `0.27.3-rc76-apo-biotools-screen-refinement`, versionCode **136**, built source `80ca725f3fca516678f973d10be18da9e48c1df1`  
-**Android ID:** `org.phwildlife.survey.beta08` (unchanged); signer certificate unchanged  
+**Current Android development branch:** `feature/apo-biotools-all-screens-v137` (draft PR #79 into RC76, not merged to historical `main`)  
+**Latest verified signed APK:** `0.27.3-rc77-apo-biotools-all-screens`, versionCode **137**, tested source `0075ead49c4e60cd1a69a6dc29be3520b0a26ddd`  
+**Android ID:** `org.phwildlife.survey.beta08` (unchanged); original beta signing certificate retained  
 **SQLite schema:** **28** (unchanged)
 
-**APO RC76 signed BioTools workflow preview, 2 November 2026:** Builds on the four-module APO Home and five-part BioTools menu. Survey setup now clarifies method, project/region, sampling effort and GPS-preflight stages. Survey History places outcome/search controls in the same scroll as its records and honors hardware Back from observation detail. Study Templates presents field labels, grouped scientific requirements and compact editable entries without changing validation or historical templates. Research ZIP export now shows local archive scope, all-outcome privacy information and clearer status messaging while calling the existing archive writer. Data Quality Review places controls and findings in one scrolling page for small screens and enlarged text.
+**APO RC77 BioTools cross-screen polish, 2 November 2026:** Extends RC76 and audits all five BioTools modules plus their nested workflows. From Field Records, site habitats now opens *recorded field evidence*, not the reference guide; the guide remains a distinct tab. Acoustic history/review includes clearer offline/survey state and reflowing controls. Trap/camera and field-protocol archives now have text-first survey rows, honest empty states, preserved active-survey recording gates, accessible Back navigation and fewer fixed-height controls. Long project, study-template, trap and audio annotation dialogs scroll. Existing descriptive analysis, export, quality review and four-stage survey setup remain intact.
 
-**Signed preview and verification:** CI run `41378920723` passed **403 Python scientific/source tests**, JVM/Android compilation and AndroidTest APK, original signing certificate, package/version and embedded artwork/reference hashes. Direct-download APK `APO-v0.27.3-RC76-BioTools-Screen-Refinement-code136.apk` has **11,752,828 bytes**, SHA-256 `b2ba708d064ade8a7afd4062aeaf76d268d39d7c094989d7929ea7d760679ba2`. Exact file was downloaded from the CI artifact, checked for full archive integrity and rehashed in the user chat. See [RC76 BioTools workflow signed QA](docs/APO_RC76_BIOTOOLS_WORKFLOWS_SIGNED_QA_2026_11_02.md).
+**Verified RC77 signed preview:** `APO-v0.27.3-RC77-All-BioTools-code137.apk`, **11,754,140 bytes**, SHA-256 `99b84a1dcebe8ffdce3c2e35aa26780585de4d03b7980b7b493318fe62a4815d`. GitHub Actions `41380263162` passed **410 Python regressions**, JVM/Android compilation and AndroidTest APK, exact package/signer verification and locked art/PAIC714/WorldCover hashes. The CI artifact was copied to a direct in-chat APK and independently ZIP/asset/SHA checked. See [RC77 all BioTools screens signed QA](docs/APO_RC77_ALL_BIOTOOLS_SIGNED_QA_2026_11_02.md).
 
-**Release boundary:** RC76 is a signed **development preview**, not a validated stable field release. In-place upgrades with real archived surveys, long GPS field recordings, research ZIP contents, large-text/TalkBack, study-template editing on-device, and backup/restore remain unverified. Older RC75/RC74 builds are historical, not the latest development baseline.
+**Release boundary:** RC77 is a signed **development preview**, not a stable field-certified release. In-place upgrade retention of old field data, GNSS, research ZIP contents, audio capture, study-template changes, 320dp/200%-font screenshots and TalkBack still need on-device verification. Historical RC76/RC75/RC74 builds are superseded, not renamed or relabeled.
 
 ## What APO currently provides
 

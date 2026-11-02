@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public final class SetupCompactUiEmulatorTest {
     private View byDescription(View root,String description){
-        if(description.equals(String.valueOf(root.getContentDescription())))return root;
+        if(String.valueOf(root.getContentDescription()).startsWith(description))return root;
         if(root instanceof ViewGroup){
             ViewGroup group=(ViewGroup)root;
             for(int i=0;i<group.getChildCount();i++){

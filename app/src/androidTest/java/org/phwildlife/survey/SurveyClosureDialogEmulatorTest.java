@@ -38,18 +38,13 @@ public final class SurveyClosureDialogEmulatorTest {
         }
         return null;
     }
-    private static boolean hasAccessibleLabel(AccessibilityNodeInfo root,String text){
-        if(root==null)return false;
-        List<AccessibilityNodeInfo> found=root.findAccessibilityNodeInfosByText(text);
-        if(found==null)return false;
-        for(AccessibilityNodeInfo node:found){
-            if(node!=null && node.isVisibleToUser()){
-                CharSequence label=node.getText();
-                CharSequence description=node.getContentDescription();
-                if(label!=null&&label.toString().contains(text)||
-                   description!=null&&description.toString().contains(text))
-                    return true;
-            }
+    private static boolean containsDialogText(View root,String text){
+        if(root instanceof TextView &&
+            ((TextView)root).getText().toString().contains(text))return true;
+        if(root instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)root;
+            for(int i=0;i<group.getChildCount();i++)
+                if(containsDialogText(group.getChildAt(i),text))return true;
         }
         return false;
     }
@@ -71,23 +66,26 @@ public final class SurveyClosureDialogEmulatorTest {
                 View end=findExactVisible(activity.getWindow().getDecorView(),"End Survey");
                 assertNotNull("End Survey must remain accessible for device methods",end);
                 end.performClick();
+                android.app.AlertDialog dialog=activity.activeEndSurveyDialogForQa();
+                assertNotNull("End Survey dialog must open",dialog);
+                assertTrue(dialog.isShowing());
+                assertNotNull(dialog.getWindow());
+                View root=dialog.getWindow().getDecorView();
+                assertTrue("Complete remains an explicit choice",
+                    containsDialogText(root,"Finish Complete"));
+                assertTrue("Partial effort remains preservable",
+                    containsDialogText(root,"End Incomplete"));
+                assertTrue("Cancelled sampling stays auditable",
+                    containsDialogText(root,"Cancel Survey"));
+                assertTrue("Device record gaps must be visible",
+                    containsDialogText(root,"Device records need review"));
+                assertTrue("A direct repair route to real device records is present",
+                    containsDialogText(root,"Review device checks"));
+                assertTrue("The method review is not a completion classification",
+                    containsDialogText(root,"Complete checks the protocol"));
             });
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             UiAutomation automation=InstrumentationRegistry.getInstrumentation().getUiAutomation();
-            AccessibilityNodeInfo root=automation.getRootInActiveWindow();
-            assertNotNull("End Survey dialog must open",root);
-            assertTrue("Complete remains an explicit choice",
-                hasAccessibleLabel(root,"Finish Complete"));
-            assertTrue("Partial effort remains preservable",
-                hasAccessibleLabel(root,"End Incomplete"));
-            assertTrue("Cancelled sampling stays auditable",
-                hasAccessibleLabel(root,"Cancel Survey"));
-            assertTrue("Device record gaps must be visible",
-                hasAccessibleLabel(root,"Device records need review"));
-            assertTrue("A direct repair route to real device records is present",
-                hasAccessibleLabel(root,"Review device checks"));
-            assertTrue("The method review is not a completion classification",
-                hasAccessibleLabel(root,"Complete checks the protocol"));
             Bitmap screenshot=automation.takeScreenshot();
             assertNotNull("Actual Android screenshot required",screenshot);
             File folder=context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);

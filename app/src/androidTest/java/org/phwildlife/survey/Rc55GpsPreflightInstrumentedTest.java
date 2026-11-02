@@ -63,8 +63,8 @@ public final class Rc55GpsPreflightInstrumentedTest {
                 assertNotNull(findText(root,"Retry GPS acquisition"));
                 assertTrue("Retry should expand",findText(root,"Retry GPS acquisition").isShown());
                 assertNotNull(findDescription(root,"Open Android device location settings"));
-                assertFalse("No redundant visible start button",
-                    findText(root,"Start survey with verified GPS").isShown());
+                assertNull("No redundant visible start button",
+                    findText(root,"Start survey with verified GPS"));
             });
         }
     }
@@ -79,7 +79,7 @@ public final class Rc55GpsPreflightInstrumentedTest {
                 assertNotNull(detail);
                 detail.performClick();
                 assertNull(findText(root,"Satellites: waiting for receiver"));
-                assertFalse(findText(root,"Start station with current GPS").isShown());
+                assertNull(findText(root,"Start station with current GPS"));
             });
         }
     }

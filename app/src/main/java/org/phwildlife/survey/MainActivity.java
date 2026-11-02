@@ -2259,6 +2259,19 @@ public class MainActivity extends Activity implements LocationListener {
             return cursor.moveToNext()?null:match;
         }catch(Exception ignored){return null;}
     }
+    /** Prefer provenance for the exact selected key, even when it is archived. */
+    private String catalogSourceForKey(String key,String fallback){
+        if(key==null||key.isEmpty())return fallback;
+        for(String catalog:new String[]{"taxon_catalog","likas_prior_taxon_catalog"}){
+            try(Cursor source=db.getReadableDatabase().rawQuery(
+                    "SELECT source,source_version FROM "+catalog+
+                    " WHERE taxon_key=? LIMIT 1",new String[]{key})){
+                if(source.moveToFirst())return "catalog:"+
+                    source.getString(0)+"|"+source.getString(1);
+            }catch(Exception ignored){}
+        }
+        return fallback;
+    }
     private String scientificSource(String taxonGroup,String scientific){
         if(scientific!=null&&!scientific.isEmpty()){
             try(Cursor source=db.getReadableDatabase().rawQuery(
@@ -2355,7 +2368,8 @@ public class MainActivity extends Activity implements LocationListener {
             new Object[]{eventId,iso(first),group,id[0],id[1],raw,count,detectionSpinner.getSelectedItem().toString(),
                 distance,markedBearing,markedPitch,perp,lat,lon,acc,
                 habitatEntry.getText().toString().trim(),behaviorEntry.getText().toString().trim(),
-                notesEntry.getText().toString().trim(),sensorQuality,scientificSource(group,id[1]),
+                notesEntry.getText().toString().trim(),sensorQuality,
+                catalogSourceForKey(recordTaxonKey,scientificSource(group,id[1])),
                 distanceMethod,firstPosition,movement,candidate?1:0,iso(System.currentTimeMillis()),
                 method.equals("point_count")?pointCountId:null,inWindow?"within":"outside",
                 profile.equals("Herpetofauna")?temp:null,profile.equals("Herpetofauna")?humidity:null,

@@ -115,7 +115,8 @@ public final class CallLibraryActivity extends Activity {
     private void layout(String title){
         LinearLayout root=column();root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(14),dp(8),dp(14),dp(12));
-        root.addView(UiKit.navigationHeader(this,title,selectedClip!=null?"Library":"Back",()->{
+        root.addView(UiKit.navigationHeader(this,title,selectedClip!=null?"Sound recordings":
+            eventId==null?"Field Utilities":"Active survey",()->{
             if(recorder!=null){notice("Stop recording and finish saving before leaving");return;}
             if(selectedClip!=null){releasePlayer();selectedClip=null;draw();}
             else finish();
@@ -147,7 +148,10 @@ public final class CallLibraryActivity extends Activity {
         }else{
             spectrum=null;recordButton=null;
         }
-        TextView heading=label("Recording library",17,true);
+        if(!canRecord())body.addView(ApoHomeUi.note(this,
+            "Saved recordings can be reviewed here. To record new survey audio, " +
+            "open this tool from an active supported survey."));
+        TextView heading=label("Saved recordings",17,true);
         heading.setPadding(dp(4),dp(14),dp(4),dp(8));body.addView(heading);
         String sql="SELECT c.id,c.event_id,c.taxon_group,c.recorded_at_utc,c.duration_ms,"+
             "COALESCE(s.outcome,'active'),"+

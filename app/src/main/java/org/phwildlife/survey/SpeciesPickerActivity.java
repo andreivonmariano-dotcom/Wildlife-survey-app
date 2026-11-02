@@ -704,56 +704,86 @@ public final class SpeciesPickerActivity extends Activity {
             cards.addView(text("No matches · change the search or filters",14,false));
         }
     }
+    /** Show field-useful taxonomy and available conservation/ecology data first. */
     private void addSpecies(Species item){
         LinearLayout card=new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(dp(14),dp(10),dp(14),dp(10));
+        card.setPadding(dp(12),dp(9),dp(12),dp(9));
         card.setBackground(UiKit.surface(this));
-        LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
-        cardLp.bottomMargin=dp(8);cards.addView(card,cardLp);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.bottomMargin=dp(7);
+        cards.addView(card,lp);
+
         String name=item.common.isEmpty()?item.scientific:item.common;
-        TextView heading=text(name,16,true);card.addView(heading);
-        if(!name.equals(item.scientific)){
+        TextView heading=text(name,16,true);
+        card.addView(heading);
+        if(!name.equals(item.scientific)&&!item.scientific.isEmpty()){
             TextView scientific=text(item.scientific,14,false);
-            scientific.setTypeface(null,Typeface.ITALIC);card.addView(scientific);
+            scientific.setTypeface(null,Typeface.ITALIC);
+            scientific.setTextColor(UiKit.FOREST);
+            card.addView(scientific);
         }
-        // Source and conservation detail remain available on the Details page.
-        StringBuilder identifiers=new StringBuilder(item.family);
-        if(identifiers.length()>0){
-            TextView meta=text(identifiers.toString(),12,false);
-            meta.setTextColor(UiKit.MUTED);card.addView(meta);
+        // Taxonomy, recorded distribution and published red-list fields.
+        StringBuilder taxonomy=new StringBuilder();
+        if(!item.family.isEmpty())taxonomy.append(item.family);
+        if(!item.origin.isEmpty()){
+            if(taxonomy.length()>0)taxonomy.append(" · ");
+            taxonomy.append(item.origin);
         }
-        // Evidence is presented as separate source statements, never a probability.
-        TextView geographic=text(paicCatalogActive?
-            "Mindanao PAIC checklist reference · not proof of site presence":
-            "Geographic source: "+OccurrenceEvidencePolicy.title(item.evidence),13,true);
-        geographic.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
-        geographic.setPadding(0,dp(6),0,dp(3));
-        card.addView(geographic);
-        TextView habitat=text(paicCatalogActive?
-            "Habitat guide: "+(item.paicHabitat.isEmpty()?"Unreported":item.paicHabitat)+
-                (surveyPreparation!=null?" · selected habitat matches: "+
-                PaicHabitatPolicy.habitatMatches(item.paicHabitat,
-                    PaicHabitatPolicy.decode(surveyPreparation.habitats)):""):
-            item.screening.habitatStatus,13,false);
-        habitat.setTextColor(UiKit.MUTED);
-        card.addView(habitat);
-        TextView elevation=text(paicCatalogActive?
-            "Elevation guide: "+(item.paicElevation.isEmpty()?"Unreported":
-                item.paicElevation)+" · site compatibility is advisory":
-            item.screening.elevationStatus,13,false);
-        elevation.setTextColor(UiKit.MUTED);
-        card.addView(elevation);
-        // Source, ecological references and profile detail are available under Details.
+        if(taxonomy.length()>0){
+            TextView meta=text(taxonomy.toString(),12,false);
+            meta.setTextColor(UiKit.MUTED);
+            meta.setMaxLines(2);
+            card.addView(meta);
+        }
+        StringBuilder conservation=new StringBuilder();
+        if(!item.iucn.isEmpty())conservation.append("IUCN: ").append(item.iucn);
+        if(!item.ph.isEmpty()){
+            if(conservation.length()>0)conservation.append(" · ");
+            conservation.append("PH: ").append(item.ph);
+        }
+        if(conservation.length()>0){
+            TextView redlist=text(conservation.toString(),12,true);
+            redlist.setTextColor(UiKit.FOREST);
+            card.addView(redlist);
+        }
+        if(item.evidence>0){
+            TextView source=text(OccurrenceEvidencePolicy.title(item.evidence),12,false);
+            source.setTextColor(UiKit.FOREST);
+            card.addView(source);
+        }
+        if(item.paicRank>0&&paicCatalogActive){
+            TextView match=text("Site match",12,true);
+            match.setTextColor(UiKit.FOREST);
+            card.addView(match);
+        }
+        String habitats=paicCatalogActive?item.paicHabitat:item.reviewedHabitats;
+        String elevations=paicCatalogActive?item.paicElevation:item.reviewedElevation;
+        if(!habitats.isEmpty()){
+            TextView ecological=text("Habitat: "+habitats,12,false);
+            ecological.setMaxLines(2);
+            ecological.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            card.addView(ecological);
+        }
+        if(!elevations.isEmpty()){
+            TextView height=text("Elevation: "+elevations,12,false);
+            height.setMaxLines(1);
+            height.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            card.addView(height);
+        }
         LinearLayout buttons=new LinearLayout(this);
-        Button details=UiKit.button(this,"View sources","secondary");
+        buttons.setGravity(Gravity.CENTER_VERTICAL);
+        Button details=UiKit.button(this,"Profile","secondary");
+        details.setContentDescription("Open species taxonomy, sources and full ecological profile");
         buttons.addView(details,new LinearLayout.LayoutParams(0,dp(48),1f));
-        Button select=UiKit.button(this,"Use species","primary");
-        LinearLayout.LayoutParams selectLp=new LinearLayout.LayoutParams(0,dp(48),1.5f);
-        selectLp.leftMargin=dp(9);
+        Button select=UiKit.button(this,"Select","primary");
+        select.setContentDescription("Select "+name+" as the observation identification");
+        LinearLayout.LayoutParams selectLp=new LinearLayout.LayoutParams(0,dp(48),1f);
+        selectLp.leftMargin=dp(7);
         buttons.addView(select,selectLp);
-        LinearLayout.LayoutParams controlLp=new LinearLayout.LayoutParams(-1,dp(48));
-        controlLp.topMargin=dp(9);card.addView(buttons,controlLp);
+        LinearLayout.LayoutParams controls=new LinearLayout.LayoutParams(-1,dp(48));
+        controls.topMargin=dp(8);
+        card.addView(buttons,controls);
         details.setOnClickListener(v->startActivity(
             new Intent(this,TaxonDetailActivity.class).putExtra("taxon_key",item.key)));
         select.setOnClickListener(v->select(

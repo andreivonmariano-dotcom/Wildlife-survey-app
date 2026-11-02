@@ -1010,8 +1010,10 @@ public class WelcomeActivity extends Activity {
         if(routeOptionsToggle!=null)
             routeOptionsToggle.setVisibility(points?View.VISIBLE:View.GONE);
         if(routeOptions!=null&&!points)routeOptions.setVisibility(View.GONE);
-        if(points&&routeOptionsToggle!=null&&routeOptions.getVisibility()!=View.VISIBLE)
+        if(points&&routeOptionsToggle!=null&&routeOptions.getVisibility()!=View.VISIBLE){
             routeOptionsToggle.setText("Reuse or save a route (optional)");
+            routeOptionsToggle.setContentDescription("Show repeat route options");
+        }
         repeatHeader.setVisibility(points?View.VISIBLE:View.GONE);
         spacingHeader.setVisibility(points?View.VISIBLE:View.GONE);
         routeLengthEntry.setVisibility(route?View.VISIBLE:View.GONE);

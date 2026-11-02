@@ -105,6 +105,47 @@ public final class ApoHomeUi {
         divider(a,wrapper);
         return wrapper;
     }
+    /** Smaller numbered action for nested tool screens; no images or fixed text height. */
+    public static View tool(Activity a,String number,String title,String description,Runnable open){
+        LinearLayout wrapper=new LinearLayout(a);
+        wrapper.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout line=new LinearLayout(a);
+        line.setOrientation(LinearLayout.HORIZONTAL);
+        line.setGravity(Gravity.CENTER_VERTICAL);
+        line.setPadding(dp(a,3),dp(a,12),dp(a,3),dp(a,12));
+        line.setMinimumHeight(dp(a,72));
+        GradientDrawable base=new GradientDrawable();
+        base.setColor(UiKit.BG);
+        line.setBackground(new RippleDrawable(ColorStateList.valueOf(
+            Color.argb(27,25,87,61)),base,null));
+        TextView count=label(a,number,12,Color.rgb(116,137,121),true);
+        line.addView(count,new LinearLayout.LayoutParams(dp(a,32),-2));
+        LinearLayout detail=new LinearLayout(a);
+        detail.setOrientation(LinearLayout.VERTICAL);
+        detail.addView(label(a,title,17,INK,true));
+        if(description!=null&&!description.isEmpty()){
+            TextView sub=label(a,description,13,MUTED,false);
+            LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
+            subLp.topMargin=dp(a,4);
+            detail.addView(sub,subLp);
+        }
+        line.addView(detail,new LinearLayout.LayoutParams(0,-2,1f));
+        line.setFocusable(true);
+        line.setClickable(true);
+        line.setContentDescription("Open "+title+
+            (description==null||description.isEmpty()?"":". "+description));
+        line.setOnClickListener(v->open.run());
+        wrapper.addView(line,new LinearLayout.LayoutParams(-1,-2));
+        divider(a,wrapper);
+        return wrapper;
+    }
+    /** Plain text/status content for small screens and scalable Android text. */
+    public static TextView note(Activity a,String value){
+        TextView text=label(a,value,13,MUTED,false);
+        text.setPadding(dp(a,3),dp(a,10),dp(a,3),dp(a,12));
+        return text;
+    }
+
     public static View section(Activity a,String title,String description){
         LinearLayout block=new LinearLayout(a);
         block.setOrientation(LinearLayout.VERTICAL);

@@ -109,7 +109,8 @@ public class WelcomeActivity extends Activity {
         }else if("custom".equals(currentScreen)){
             // Legacy preference from older APKs; no new Custom Survey screen.
             fieldworkHub();
-        }else if("fieldwork".equals(currentScreen)){
+        }else if("fieldwork".equals(currentScreen)||"phmaps".equals(currentScreen)||
+                "biodiscover".equals(currentScreen)){
             home();
         }else{
             super.onBackPressed();
@@ -197,47 +198,61 @@ public class WelcomeActivity extends Activity {
         lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
         parent.addView(item,lp);
     }
+    /** APO Home: four text-only destinations, with no obsolete illustrated tiles. */
     private void home(){
         homeVisible=true;currentScreen="home";main.removeAllViews();scrollTop();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         lastHomeActiveSurvey=activeSurvey();
-        // Dynamic height avoids cutting off enlarged typography or the decorative mark.
-        main.addView(LikasPortalUi.hero(this,lastHomeActiveSurvey!=null),
-            new LinearLayout.LayoutParams(-1,-2));
+        main.addView(ApoHomeUi.header(this,()->
+            startActivity(new Intent(this,LikasSettingsActivity.class))));
         if(lastHomeActiveSurvey!=null){
-            View session=LikasPortalUi.session(this,()->
+            View resume=ApoHomeUi.resume(this,()->
                 startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
-            session.setContentDescription("Resume survey in progress. Continue field recording.");
             LinearLayout.LayoutParams resumeLp=new LinearLayout.LayoutParams(-1,-2);
-            resumeLp.topMargin=dp(LikasDesignSystem.SPACE_MD);
-            main.addView(session,resumeLp);
+            resumeLp.bottomMargin=dp(LikasDesignSystem.SPACE_LG);
+            main.addView(resume,resumeLp);
         }
-        // The brand hero already introduces LIKAS; omit a second decorative heading.
-        // Give the destinations breathing room without pushing actions off small phones.
-        View field=LikasPortalUi.tile(this,"Fieldwork","Surveys & history",
-            "field",LikasPortalUi.CANOPY,Color.WHITE,this::fieldworkHub);
-        LinearLayout.LayoutParams fieldLp=new LinearLayout.LayoutParams(-1,-2);
-        fieldLp.topMargin=dp(LikasDesignSystem.HOME_HERO_GAP_DP);
-        fieldLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
-        main.addView(field,fieldLp);
-        View library=LikasPortalUi.tile(this,"Library","Species & habitats",
-            "library",UiKit.LEAF_LIGHT,UiKit.LEAF_MID,()->
-                startActivity(new Intent(this,LikasLibraryActivity.class)));
-        LinearLayout.LayoutParams libraryLp=new LinearLayout.LayoutParams(-1,-2);
-        libraryLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);main.addView(library,libraryLp);
-        View settings=LikasPortalUi.tile(this,"Settings","Backups & preferences",
-            "settings",UiKit.LEAF_LIGHT,UiKit.LEAF_MID,()->
-                startActivity(new Intent(this,LikasSettingsActivity.class)));
-        main.addView(settings);
-        // A short page transition; disabled by Less motion or the OS animator setting.
-        if(!playedStartupHomeTransition && getIntent().getBooleanExtra("show_menu",false))
-            playedStartupHomeTransition=true;
+        main.addView(ApoHomeUi.module(this,"01","BioTools",
+            "Fieldwork, surveys and data analysis",this::fieldworkHub));
+        main.addView(ApoHomeUi.module(this,"02","PHLibrary",
+            "Philippine species, habitats and ecology",()->
+                startActivity(new Intent(this,LikasLibraryActivity.class))));
+        main.addView(ApoHomeUi.module(this,"03","PHMaps",
+            "Spatial context, site habitats and map tools",this::phMapsHub));
+        main.addView(ApoHomeUi.module(this,"04","BioDiscover",
+            "Research and conservation updates · In development",this::bioDiscoverHub));
+        UiMotion.enterHome(this,main);
+    }
+    /** Honest spatial hub: existing site records are available; a full atlas is not. */
+    private void phMapsHub(){
+        homeVisible=false;currentScreen="phmaps";main.removeAllViews();scrollTop();
+        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
+        main.addView(UiKit.navigationHeader(this,"PHMaps","Home",this::home));
+        main.addView(ApoHomeUi.section(this,"Spatial workspace",
+            "Explore existing field-site and habitat records. Standalone map layers, " +
+            "terrain and elevation exploration are still in development."));
+        main.addView(ApoHomeUi.module(this,"01","Projects & stations",
+            "Recorded field locations and station information",()->
+                startActivity(new Intent(this,SitesActivity.class))));
+        main.addView(ApoHomeUi.module(this,"02","Site habitats",
+            "Recorded site habitat details",()->
+                startActivity(new Intent(this,HabitatRecordsActivity.class))));
+        UiMotion.enter(this,main);
+    }
+    /** Sourced news is not represented as live until its feed actually exists. */
+    private void bioDiscoverHub(){
+        homeVisible=false;currentScreen="biodiscover";main.removeAllViews();scrollTop();
+        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
+        main.addView(UiKit.navigationHeader(this,"BioDiscover","Home",this::home));
+        main.addView(ApoHomeUi.section(this,"Research & conservation",
+            "BioDiscover is in development. A source-linked feed for recent wildlife " +
+            "research and conservation updates is not yet available in this build."));
         UiMotion.enter(this,main);
     }
     private void fieldworkHub(){
         homeVisible=false;currentScreen="fieldwork";main.removeAllViews();scrollTop();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        main.addView(UiKit.navigationHeader(this,"Fieldwork","Home",this::home));
+        main.addView(UiKit.navigationHeader(this,"BioTools","Home",this::home));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){

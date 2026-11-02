@@ -14,10 +14,12 @@ class FieldPolishContractTest(unittest.TestCase):
         self.assertIn('c.isNull(6)?" · accuracy unavailable"', s)
         self.assertIn('String.format(Locale.US," · ±%.0f m",c.getDouble(6))', s)
 
-    def test_station_lists_distinguish_registry_from_survey_visits(self):
+    def test_station_progress_focuses_on_current_survey_visits(self):
         s = source("StationProgressActivity.java")
-        self.assertIn("Other registered project stations", s)
         self.assertIn("Stations visited in this survey", s)
+        self.assertIn("No station visits recorded in this survey yet.", s)
+        self.assertNotIn("Other registered project stations", s)
+        self.assertNotIn("FROM sites WHERE project_id=?", s)
         self.assertIn("SurveyMethods.displayLabel(profile,method)", s)
         self.assertIn("WHEN complete=1 THEN 'complete' ELSE 'incomplete'", s)
 

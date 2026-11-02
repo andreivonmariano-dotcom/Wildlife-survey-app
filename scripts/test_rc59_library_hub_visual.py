@@ -11,7 +11,7 @@ class Rc59HubVisual(unittest.TestCase):
             '"Habitat links","Cited associations"','"Photos","Offline images"',
             '"Sources","Checklists"'):
             self.assertIn(phrase,src)
-        self.assertIn("UiKit.page(this,\"Library\",\"Home\",this::finish,body)",src)
+        self.assertIn("UiKit.page(this,\"PHLibrary\",\"Home\",this::finish,body)",src)
         self.assertIn("librarySection(\"Species & habitats\"",src)
         self.assertIn("librarySection(\"Reference tools\"",src)
         self.assertIn("getResources().getConfiguration().screenWidthDp<600",src)

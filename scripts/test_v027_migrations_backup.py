@@ -134,7 +134,7 @@ class RealSchemaMigrationTests(unittest.TestCase):
         self.assertIn("survey_profile TEXT",
             "\n".join(migration_sql(27)))
         self.assertIn("if(oldVersion<27)upgradeTwentySeven(d)",DB_SOURCE)
-        self.assertIn("super(context,NAME,null,28)",DB_SOURCE)
+        self.assertIn("super(context,NAME,null,29)",DB_SOURCE)
 
 if __name__=="__main__":
     unittest.main()

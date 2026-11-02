@@ -22,7 +22,7 @@ class RecorderPickerRC85(unittest.TestCase):
         self.assertLess(s.index('content.addView(photoRow)'),s.index('content.addView(birdQuick)'))
         self.assertIn('content.removeView(recorderTools)',s)
         self.assertIn('compactObservationFirst)methodRow.setVisibility(View.GONE)',s)
-        self.assertIn('confidenceSpinner.getSelectedItemPosition()==0?',s)
+        self.assertIn('confidenceSpinner.getSelectedItemPosition()==1?',s)
         self.assertIn('"Field-identified (not expert verified)"',s) # canonical saved label
         self.assertNotIn('"Field-identified (not expert verified)","Probable"',s)
     def test_species_cards_use_real_reviewed_attributes_without_lecture(self):
@@ -47,15 +47,15 @@ class RecorderPickerRC85(unittest.TestCase):
         self.assertIn("e.review_status='source_listed'",s)
     def test_screens_built_with_original_identity(self):
         wf=read(".github/workflows/apo-recorder-picker-v145-emulator-qa.yml")
-        for value in ("versionCode='145'","0.27.3-rc85-apo-recorder-species",
+        for value in ("versionCode='146'","0.27.3-rc86-apo-interactive-recorder",
                       'RecorderPickerCompactEmulatorTest','RecorderUiEmulatorTest',
                       'font_scale 1.6','font_scale 2.0',
                       'wm size 960x2160','len(files)==6'):
             self.assertIn(value,wf)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 145",g)
-        self.assertIn("0.27.3-rc85-apo-recorder-species",g)
+        self.assertIn("versionCode 146",g)
+        self.assertIn("0.27.3-rc86-apo-interactive-recorder",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
-        self.assertIn('super(context,NAME,null,28)',
+        self.assertIn('super(context,NAME,null,29)',
                       read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 if __name__=="__main__":unittest.main()

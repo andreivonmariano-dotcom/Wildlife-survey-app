@@ -65,7 +65,7 @@ class Rc44UiHarmony(unittest.TestCase):
         self.assertIn("versionName '0.27.3-rc",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         db=read("FieldDb.java")
-        self.assertIn("super(context,NAME,null,28)",db)
+        self.assertIn("super(context,NAME,null,29)",db)
         history=read("HistoryActivity.java")
         self.assertIn("SurveyOutcomeSql.RESOLVED",history)
 

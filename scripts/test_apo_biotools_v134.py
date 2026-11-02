@@ -68,6 +68,6 @@ class ApoBioToolsV134(unittest.TestCase):
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",gradle).group(1)),134)
         self.assertIn("0.27.3-rc",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
-        self.assertIn("super(context,NAME,null,28)",source("FieldDb.java"))
+        self.assertIn("super(context,NAME,null,29)",source("FieldDb.java"))
 
 if __name__=="__main__":unittest.main()

@@ -19,7 +19,7 @@ class Rc66SpeciesAccountUi(unittest.TestCase):
         self.assertIn("searchRow.addView(search,new LinearLayout.LayoutParams(-1,dp(64)))", page)
         self.assertIn("searchActions.addView(dropdown", page)
         self.assertIn("searchActions.addView(find", page)
-        self.assertIn("search.setAdapter(autocomplete)", page)
+        self.assertIn("search.setAdapter(detailSuggestions)", page)
 
     def test_detail_only_shows_reading_controls(self):
         page = source("TaxonDetailActivity.java")
@@ -44,7 +44,7 @@ class Rc66SpeciesAccountUi(unittest.TestCase):
 
     def test_scientific_identity_not_changed(self):
         page = source("TaxonDetailActivity.java")
-        self.assertIn("SELECT * FROM taxon_catalog WHERE taxon_key=? LIMIT 1", page)
+        self.assertIn('SELECT * FROM "+catalog+" WHERE taxon_key=? LIMIT 1', page)
         self.assertIn("Rc11PrioritySpeciesView.add(this,content,c,scientific)", page)
         self.assertIn('paragraph("Regional occurrence evidence"', page)
         self.assertIn("OfflinePhotoEvidence.addForTaxon", page)

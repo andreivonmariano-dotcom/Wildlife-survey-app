@@ -49,7 +49,7 @@ class Rc53FieldworkHub(unittest.TestCase):
         self.assertGreaterEqual(int(g.split("versionCode ",1)[1].split()[0]),125)
         self.assertIn("versionName \'0.27.3-",g)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",g)
-        self.assertIn("super(context,NAME,null,28)",source("FieldDb.java"))
+        self.assertIn("super(context,NAME,null,29)",source("FieldDb.java"))
         ui=source("LikasPortalUi.java")
         for icon in ("likas_approved_birds_writhed_hornbill",
                      "likas_approved_herpetofauna_staurois_natator",

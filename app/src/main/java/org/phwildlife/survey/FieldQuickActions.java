@@ -12,10 +12,8 @@ public final class FieldQuickActions {
         if(TrapProtocolPolicy.supported(method))return Kind.DEVICES;
         if(FieldProtocolPolicy.supported(method))return Kind.METHOD_EVIDENCE;
         if("Birds".equals(profile))return Kind.CALLS;
-        if("Herpetofauna".equals(profile))return Kind.PHOTO;
-        if("Mammals".equals(profile) &&
-           ("line_transect".equals(method)||"opportunistic".equals(method)))
-            return Kind.PHOTO;
+        // The recorder has one permanent Attach photo action; never duplicate it
+        // with a configurable shortcut that opens the same file picker.
         return Kind.NONE;
     }
     /** Reopen only tools already implemented for this method. No fake call recorder. */
@@ -25,8 +23,7 @@ public final class FieldQuickActions {
         if(profile==null||method==null)return result.toArray(new Kind[0]);
         if("Birds".equals(profile)||"Herpetofauna".equals(profile))
             result.add(Kind.CALLS);
-        if("Birds".equals(profile)||"Herpetofauna".equals(profile)||
-                "Mammals".equals(profile))result.add(Kind.PHOTO);
+        // PHOTO is no longer offered as a second copy of Attach photo.
         if(TrapProtocolPolicy.supported(method))result.add(Kind.DEVICES);
         if(FieldProtocolPolicy.supported(method))result.add(Kind.METHOD_EVIDENCE);
         return result.toArray(new Kind[0]);

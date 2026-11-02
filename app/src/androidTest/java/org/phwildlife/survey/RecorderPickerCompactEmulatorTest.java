@@ -2,6 +2,7 @@ package org.phwildlife.survey;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
@@ -70,6 +71,17 @@ public final class RecorderPickerCompactEmulatorTest {
         i.putExtra("profile",profile);
         i.putExtra("group",group);
         i.putExtra("geo_region","MINDANAO");
+        try{
+            BundledPrivateReferences.ensureInstalled(
+                InstrumentationRegistry.getInstrumentation().getTargetContext());
+        }catch(Exception error){throw new AssertionError("PAIC installation failed",error);}
+        try(FieldDb db=new FieldDb(
+                InstrumentationRegistry.getInstrumentation().getTargetContext());
+            Cursor count=db.getReadableDatabase().rawQuery(
+                "SELECT COUNT(*) FROM taxon_catalog",null)){
+            assertTrue(count.moveToFirst());
+            assertEquals("Active survey species roster",714,count.getInt(0));
+        }
         try(ActivityScenario<SpeciesPickerActivity> scenario=ActivityScenario.launch(i)){
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             scenario.onActivity(a->{
@@ -77,20 +89,60 @@ public final class RecorderPickerCompactEmulatorTest {
                 assertNotNull("Search input present",description(root,"Search offline species by"));
                 assertNotNull("Species header",text(root,"Species"));
                 assertNotNull("Unknown ID path",description(root,"Record an unidentified species"));
-                assertNotNull("Sort control",description(root,"Sort species by"));
+                assertNotNull("Readable ordering control",text(root,"Order"));
                 assertNotNull("Site conditions control",text(root,"Site"));
             });
-            try{Thread.sleep(900);}catch(InterruptedException e){Thread.currentThread().interrupt();}
+            // The native card query runs asynchronously; do not capture a loading page.
+            boolean loaded=false;
+            for(int attempt=0;attempt<30&&!loaded;attempt++){
+                InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+                final boolean[] ready={false};
+                scenario.onActivity(a->ready[0]=text(a.getWindow().getDecorView(),
+                    "Select")!=null);
+                loaded=ready[0];
+                if(!loaded)try{Thread.sleep(300);}catch(InterruptedException e){
+                    Thread.currentThread().interrupt();break;
+                }
+            }
+            assertTrue("Species cards must finish loading",loaded);
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
                 View list=text(root,"species");
                 assertNotNull("Results count shown",list);
                 View choose=text(root,"Select");
-                if(choose!=null)assertTrue("Loaded species can be selected",choose.isClickable());
+                assertNotNull("Loaded species card",choose);
+                assertTrue("Loaded species can be selected",choose.isClickable());
                 String scale=a.getResources().getConfiguration().fontScale>=1.9f?"200":"160";
                 screenshot(a,"apo_picker_"+group.toLowerCase(java.util.Locale.US)+"_"+scale+".png");
             });
+        }
+    }
+    @Test public void launchPathActivatesPaicReferences(){
+        Intent launch=new Intent(
+            InstrumentationRegistry.getInstrumentation().getTargetContext(),
+            LikasLaunchActivity.class);
+        try(ActivityScenario<LikasLaunchActivity> scenario=ActivityScenario.launch(launch)){
+            try{Thread.sleep(2500);}catch(InterruptedException e){
+                Thread.currentThread().interrupt();
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        }
+        try(FieldDb db=new FieldDb(
+                InstrumentationRegistry.getInstrumentation().getTargetContext());
+            Cursor count=db.getReadableDatabase().rawQuery(
+                "SELECT taxon_group,COUNT(*) FROM taxon_catalog GROUP BY taxon_group",null)){
+            int[] actual=new int[4];
+            while(count.moveToNext()){
+                switch(count.getString(0)){
+                    case "Birds":actual[0]=count.getInt(1);break;
+                    case "Reptiles":actual[1]=count.getInt(1);break;
+                    case "Mammals":actual[2]=count.getInt(1);break;
+                    case "Amphibians":actual[3]=count.getInt(1);break;
+                }
+            }
+            assertArrayEquals("PAIC group counts after startup",
+                new int[]{408,154,99,53},actual);
         }
     }
     @Test public void birdPickerSearchAndList(){verify("Birds","Birds");}

@@ -43,15 +43,16 @@ import java.util.concurrent.Executors;
  */
 public final class SpeciesPickerActivity extends Activity {
     private static final int PAGE=35;
-    private static final String[] VIEWS={"All species","Local source records"};
+    private static final String[] VIEWS={"Name · A-Z","Family · A-Z","Genus · A-Z","Local source records"};
+    private static final String[] PAIC_VIEWS={"Name · A-Z","Family · A-Z","Genus · A-Z","Habitat first"};
     private final Handler ui=new Handler(Looper.getMainLooper());
     private final ExecutorService worker=Executors.newSingleThreadExecutor();
     private final Runnable delayed=this::refresh;
     private AutoCompleteTextView search;
     private SpeciesReferenceSuggestionAdapter nameSuggestions;
     private FieldDb suggestionDb;
-    private Spinner groups,views;
-    private Button sortButton;
+    private Spinner groups,views,scope;
+    private boolean archivedCatalogAvailable=false;
     private LinearLayout cards;
     private TextView status,siteSummary;
     private int generation=0,offset=0,sortMode=0,statusFilter=0;
@@ -88,7 +89,7 @@ public final class SpeciesPickerActivity extends Activity {
     private boolean truncated=false;
     private SharedPreferences surveyOptions;
     private String preferencePrefix="";
-    private int savedGroupIndex=0,savedViewIndex=0;
+    private int savedGroupIndex=0,savedViewIndex=0,savedScopeIndex=0;
     private String[] availableGroups;
     private String geographicRegion="PH",province="",habitat="";
     private static final int MAX_QUERY_ROWS=5000;
@@ -124,6 +125,9 @@ public final class SpeciesPickerActivity extends Activity {
         statusFilter=0;
         savedGroupIndex=checked(surveyOptions.getInt(pref("group"),0),availableGroups.length);
         savedViewIndex=checked(surveyOptions.getInt(pref("view"),0),VIEWS.length);
+        if(paicCatalogActive&&!surveyOptions.getBoolean(pref("order_v2"),false)&&
+                savedViewIndex==1)savedViewIndex=3;
+        savedScopeIndex=checked(surveyOptions.getInt(pref("scope"),0),2);
         habitatCode=surveyOptions.getString(pref("habitat"),habitatCode);
         if(HabitatLikelihood.habitatIndex(habitatCode)==0)habitatCode="";
         elevationMode=checked(surveyOptions.getInt(visitPref("mode"),0),3);
@@ -135,7 +139,9 @@ public final class SpeciesPickerActivity extends Activity {
         surveyOptions.edit().putInt(pref("sort"),sortMode)
             .putInt(pref("filter"),statusFilter)
             .putInt(pref("group"),groups==null?0:groups.getSelectedItemPosition())
+            .putBoolean(pref("order_v2"),true)
             .putInt(pref("view"),views==null?0:views.getSelectedItemPosition())
+            .putInt(pref("scope"),scope==null?0:scope.getSelectedItemPosition())
             .putString(pref("habitat"),habitatCode)
             .putInt(visitPref("mode"),elevationMode)
             .putString(visitPref("elevation"),siteElevation==null?"":siteElevation.toString())
@@ -168,6 +174,11 @@ public final class SpeciesPickerActivity extends Activity {
                     "taxon_key LIKE 'LIKAS725:%'",null)){
                 paicCatalogActive=count.moveToFirst()&&count.getInt(0)==714;
             }
+            try(Cursor archive=sql.rawQuery("SELECT COUNT(*) FROM sqlite_master "+
+                    "WHERE type='table' AND name='likas_prior_taxon_catalog'",null)){
+                archivedCatalogAvailable=paicCatalogActive&&archive.moveToFirst()&&
+                    archive.getInt(0)>0;
+            }
         }catch(Exception ignored){}
         visitId=request.getStringExtra("visit_id");
         if(visitId==null||visitId.isEmpty())visitId="SURVEY-"+this.surveyId;
@@ -195,6 +206,7 @@ public final class SpeciesPickerActivity extends Activity {
         nameSuggestions=new SpeciesReferenceSuggestionAdapter(this,
             suggestionDb,availableGroups[Math.max(0,savedGroupIndex)]);
         search.setAdapter(nameSuggestions);
+        nameSuggestions.setArchivedCatalog(archivedCatalogAvailable&&savedScopeIndex==1);
         search.setDropDownHeight(dp(300));
         search.setOnItemClickListener((parent,view,pos,id)->{
             String label=parent.getItemAtPosition(pos).toString();
@@ -232,43 +244,59 @@ public final class SpeciesPickerActivity extends Activity {
                 .setNegativeButton("Back",null).show();
         });
 
+        // One ordering control and a separate, explicit reference scope.
         LinearLayout quick=new LinearLayout(this);
-        quick.setGravity(Gravity.CENTER_VERTICAL);
-        sortButton=UiKit.button(this,
-            "Sort","secondary");
-        sortButton.setContentDescription("Sort species by name, family or genus");
-        sortButton.setOnClickListener(v->openSortFilter());
-        quick.addView(sortButton,new LinearLayout.LayoutParams(0,dp(52),1.25f));
-        Button conditions=UiKit.button(this,"Site","secondary");
-        LinearLayout.LayoutParams conditionSpace=new LinearLayout.LayoutParams(0,dp(52),1f);
-        conditionSpace.leftMargin=dp(6);
-        quick.addView(conditions,conditionSpace);
-        conditions.setOnClickListener(v->openSiteConditions());
+        Button conditions=UiKit.button(this,"Site context","secondary");
+        quick.addView(conditions,new LinearLayout.LayoutParams(-1,dp(52)));
+        conditions.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Site context")
+            .setMessage(siteSummary==null?"":siteSummary.getText().toString())
+            .setNegativeButton("Close",null)
+            .setPositiveButton("Edit conditions",(dialog,which)->openSiteConditions())
+            .show());
         root.addView(quick);
-
         LinearLayout controls=new LinearLayout(this);
-        controls.setGravity(Gravity.CENTER_VERTICAL);
+        controls.setOrientation(LinearLayout.VERTICAL);
+        if(archivedCatalogAvailable){
+            scope=new Spinner(this);
+            scope.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                new String[]{"Mindanao PAIC (714)","Philippine catalog"}));
+            controls.addView(text("Checklist",12,true));
+            controls.addView(scope,new LinearLayout.LayoutParams(-1,dp(54)));
+            scope.setSelection(savedScopeIndex);
+            scope.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+                @Override public void onItemSelected(AdapterView<?> parent,View view,int pos,long id){
+                    if(nameSuggestions!=null){
+                        nameSuggestions.setArchivedCatalog(pos==1);
+                        nameSuggestions.getFilter().filter(search.getText().toString());
+                    }
+                    refresh();
+                }
+                @Override public void onNothingSelected(AdapterView<?> parent){}
+            });
+        }
         groups=new Spinner(this);
         groups.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,availableGroups));
-        controls.addView(groups,new LinearLayout.LayoutParams(0,dp(48),1f));
+        if(availableGroups.length>1){
+            controls.addView(text("Wildlife group",12,true));
+            controls.addView(groups,new LinearLayout.LayoutParams(-1,dp(54)));
+        }
         views=new Spinner(this);
         views.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,
-            paicCatalogActive?new String[]{"All species","Habitat first"}:VIEWS));
-        controls.addView(views,new LinearLayout.LayoutParams(0,dp(48),1f));
+            paicCatalogActive?PAIC_VIEWS:VIEWS));
+        controls.addView(text("Order",12,true));
+        controls.addView(views,new LinearLayout.LayoutParams(-1,dp(54)));
         root.addView(controls);
         groups.setSelection(savedGroupIndex);
-        groups.setVisibility(availableGroups.length>1?View.VISIBLE:View.GONE);
         if(paicCatalogActive&&surveyPreparation!=null&&
             "suggested".equals(surveyPreparation.mode)&&
             (!PaicHabitatPolicy.decode(surveyPreparation.habitats).isEmpty()||
                 GpsElevation.read(TrackService.currentFix()).usableForHabitat)&&
-            !surveyOptions.contains(pref("view"))){
-            // Default to suggestions only on first use; preserve later explicit
-            // observer choice to browse the complete master catalog.
-            views.setSelection(1);
-        }else views.setSelection(savedViewIndex);
+            !surveyOptions.contains(pref("view")))views.setSelection(3);
+        else views.setSelection(savedViewIndex);
 
         siteSummary=text("",12,false);
         siteSummary.setTextColor(UiKit.FOREST);
@@ -277,12 +305,8 @@ public final class SpeciesPickerActivity extends Activity {
         updateSiteSummary();
         status=text("Loading offline species…",12,false);
         status.setTextColor(UiKit.MUTED);status.setPadding(0,dp(9),0,dp(7));
-        status.setContentDescription("Species results and checklist region. Tap for site context");
+        status.setContentDescription("Species results and checklist region");
         status.setMinHeight(dp(40));
-        status.setOnClickListener(v->new AlertDialog.Builder(this)
-            .setTitle("Site")
-            .setMessage(siteSummary==null?"":siteSummary.getText().toString())
-            .setPositiveButton("Close",null).show());
         root.addView(status);
 
         ScrollView scroller=new ScrollView(this);
@@ -333,36 +357,6 @@ public final class SpeciesPickerActivity extends Activity {
         if(value.contains("riparian")||value.contains("stream"))return "riparian";
         if(value.contains("urban")||value.contains("settlement"))return "urban";
         return "";
-    }
-    private void openSortFilter(){
-        LinearLayout panel=new LinearLayout(this);
-        panel.setOrientation(LinearLayout.VERTICAL);
-        panel.setPadding(dp(18),dp(8),dp(18),dp(8));
-        panel.addView(text("Sort by",14,true));
-        Spinner order=new Spinner(this);
-        final String[] alphabeticSorts={
-            "Name · A to Z","Family · A to Z","Genus · A to Z"};
-        order.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,alphabeticSorts));
-        order.setSelection(Math.max(0,Math.min(2,sortMode)));
-        panel.addView(order);
-
-        new AlertDialog.Builder(this).setTitle("Sort")
-            .setView(panel)
-            .setPositiveButton("Apply",(dialog,which)->{
-                sortMode=order.getSelectedItemPosition();
-                statusFilter=0;
-                sortButton.setText("Sort");
-                savePickerSettings();
-                refresh();
-            })
-            .setNeutralButton("Reset",(dialog,which)->{
-                sortMode=0;statusFilter=0;
-                sortButton.setText("Sort");
-                savePickerSettings();
-                refresh();
-            })
-            .setNegativeButton("Cancel",null).show();
     }
     private static Double parseNumber(String value){
         if(value==null||value.trim().isEmpty())return null;
@@ -510,13 +504,21 @@ public final class SpeciesPickerActivity extends Activity {
         HabitatLikelihood.Result screening;
     }
     private List<Species> searchCatalog(String group,String term,boolean local,
-            String siteCode,Double altitude,Double uncertainty)throws Exception{
+            boolean broadCatalog,String siteCode,Double altitude,
+            Double uncertainty)throws Exception{
+        final String catalog=broadCatalog?"likas_prior_taxon_catalog":"taxon_catalog";
+        final String evidenceTable=broadCatalog?
+            "likas_prior_taxon_occurrence_evidence":"taxon_occurrence_evidence";
+        final String habitatTable=broadCatalog?
+            "likas_prior_taxon_habitat_profiles":"taxon_habitat_profiles";
+        final String synonymTable=broadCatalog?
+            "likas_prior_taxon_synonyms":"taxon_synonyms";
         List<Species> list=new ArrayList<>();
         String island=island(geographicRegion);
-        String provinceMatch="EXISTS(SELECT 1 FROM taxon_occurrence_evidence e "+
+        String provinceMatch="EXISTS(SELECT 1 FROM "+evidenceTable+" e "+
             "WHERE e.taxon_key=c.taxon_key AND e.review_status='source_listed' AND e.area_type='province' "+
             "AND LOWER(e.area_label)=LOWER(?))";
-        String islandMatch="EXISTS(SELECT 1 FROM taxon_occurrence_evidence e "+
+        String islandMatch="EXISTS(SELECT 1 FROM "+evidenceTable+" e "+
             "WHERE e.taxon_key=c.taxon_key AND e.review_status='source_listed' AND e.area_type='island' "+
             "AND LOWER(e.area_label)=LOWER(?))";
         // Only reviewed source listings confer geographic evidence rank.
@@ -529,12 +531,12 @@ public final class SpeciesPickerActivity extends Activity {
             "c.source,c.source_version,"+evidence+" AS evidence_rank,"+
             "p.habitat_codes,p.strict_habitat,p.elevation_min_m,"+
             "p.elevation_max_m,p.review_status,ma.habitat_text,ma.elevation_text "+
-            "FROM taxon_catalog c LEFT JOIN taxon_habitat_profiles p "+
+            "FROM "+catalog+" c LEFT JOIN "+habitatTable+" p "+
             "ON p.taxon_key=c.taxon_key "+
             "LEFT JOIN likas_master_attributes ma ON ma.taxon_key=c.taxon_key "+
             "WHERE c.taxon_group=? "+
             "AND (c.taxon_key NOT LIKE 'STARTER:%' OR NOT EXISTS "+
-            "(SELECT 1 FROM taxon_catalog newer WHERE newer.taxon_group=c.taxon_group "+
+            "(SELECT 1 FROM "+catalog+" newer WHERE newer.taxon_group=c.taxon_group "+
             "AND LOWER(newer.scientific_name)=LOWER(c.scientific_name) "+
             "AND newer.taxon_key NOT LIKE 'STARTER:%'))");
         ArrayList<String> args=new ArrayList<>();
@@ -542,7 +544,7 @@ public final class SpeciesPickerActivity extends Activity {
         if(!term.isEmpty()){
             sql.append(" AND (LOWER(c.common_name) LIKE ? ESCAPE '!' OR "+
                 "LOWER(c.scientific_name) LIKE ? ESCAPE '!' OR EXISTS "+
-                "(SELECT 1 FROM taxon_synonyms s WHERE s.taxon_key=c.taxon_key "+
+                "(SELECT 1 FROM "+synonymTable+" s WHERE s.taxon_key=c.taxon_key "+
                 "AND LOWER(s.alias_name) LIKE ? ESCAPE '!'))");
             String pattern="%"+TaxonSearchPolicy.escapeLike(
                 term.toLowerCase(Locale.ROOT))+"%";
@@ -584,7 +586,7 @@ public final class SpeciesPickerActivity extends Activity {
                         profileHabitats,strict,min,max,reviewed);
                     item.paicHabitat=string(c,16);
                     item.paicElevation=string(c,17);
-                    if(paicCatalogActive&&surveyPreparation!=null)
+                    if(paicCatalogActive&&!broadCatalog&&surveyPreparation!=null)
                         item.paicRank=PaicHabitatPolicy.ranking(item.paicHabitat,
                             item.paicElevation,PaicHabitatPolicy.decode(
                                 surveyPreparation.habitats),altitude);
@@ -600,11 +602,15 @@ public final class SpeciesPickerActivity extends Activity {
         final int ticket=++generation;
         final String term=search.getText().toString().trim();
         final String group=currentGroup();
-        final boolean siteSuggestions=paicCatalogActive&&
-            views.getSelectedItemPosition()==1;
+        final boolean broadCatalog=archivedCatalogAvailable&&scope!=null&&
+            scope.getSelectedItemPosition()==1;
+        final boolean siteSuggestions=paicCatalogActive&&!broadCatalog&&
+            views.getSelectedItemPosition()==3;
         final boolean onlyLocal=!paicCatalogActive&&
-            views.getSelectedItemPosition()==1;
-        final int sorting=sortMode,filter=statusFilter;
+            views.getSelectedItemPosition()==3;
+        final int sorting=views.getSelectedItemPosition()<3?
+            views.getSelectedItemPosition():0,filter=statusFilter;
+        sortMode=sorting;
         final String siteCode=habitatCode;
         final Double altitude=effectiveElevation(),uncertainty=effectiveUncertainty();
         offset=0;loaded=new ArrayList<>();truncated=false;
@@ -625,7 +631,7 @@ public final class SpeciesPickerActivity extends Activity {
                     }
                 }
                 List<Species> results=searchCatalog(group,term,onlyLocal,
-                    siteCode,altitude,uncertainty);
+                    broadCatalog,siteCode,altitude,uncertainty);
                 boolean capped=results.size()>MAX_QUERY_ROWS;
                 if(capped)results=results.subList(0,MAX_QUERY_ROWS);
                 List<Species> filtered=new ArrayList<>();
@@ -655,6 +661,11 @@ public final class SpeciesPickerActivity extends Activity {
             }
         });
     }
+    private String siteSortLabel(){
+        return paicCatalogActive&&views!=null&&views.getSelectedItemPosition()==3&&
+            (scope==null||scope.getSelectedItemPosition()==0)?
+            " · habitat first":"";
+    }
     private void appendPage(){
         int stop=Math.min(offset+PAGE,loaded.size());
         for(int i=offset;i<stop;i++){
@@ -679,8 +690,9 @@ public final class SpeciesPickerActivity extends Activity {
         status.setText(offset+" / "+loaded.size()+" species"+
             (region.isEmpty()?"":" · "+region)+
             (truncated?" · refine search":"")+
-            (paicCatalogActive&&views.getSelectedItemPosition()==1?
-                " · habitat first":""));
+            (siteSortLabel())+
+            (archivedCatalogAvailable&&scope!=null&&scope.getSelectedItemPosition()==1?
+                " · Philippine catalog":""));
         if(offset<loaded.size()){
             Button next=UiKit.button(this,"Load more species","secondary");
             cards.addView(next);
@@ -714,7 +726,7 @@ public final class SpeciesPickerActivity extends Activity {
         // Taxonomy, recorded distribution and published red-list fields.
         StringBuilder taxonomy=new StringBuilder();
         if(!item.family.isEmpty())taxonomy.append(item.family);
-        if(!item.origin.isEmpty()){
+        if(displayValue(item.origin)){
             if(taxonomy.length()>0)taxonomy.append(" · ");
             taxonomy.append(item.origin);
         }
@@ -725,10 +737,10 @@ public final class SpeciesPickerActivity extends Activity {
             card.addView(meta);
         }
         StringBuilder conservation=new StringBuilder();
-        if(!item.iucn.isEmpty())conservation.append("IUCN: ").append(item.iucn);
-        if(!item.ph.isEmpty()){
+        if(displayValue(item.iucn))conservation.append("IUCN: ").append(item.iucn);
+        if(displayValue(item.ph)){
             if(conservation.length()>0)conservation.append(" · ");
-            conservation.append("PH: ").append(item.ph);
+            conservation.append("DENR: ").append(item.ph);
         }
         if(conservation.length()>0){
             TextView redlist=text(conservation.toString(),12,true);
@@ -741,19 +753,21 @@ public final class SpeciesPickerActivity extends Activity {
             card.addView(source);
         }
         if(item.paicRank>0&&paicCatalogActive){
-            TextView match=text("Site match",12,true);
+            TextView match=text("Habitat / elevation overlap",12,true);
             match.setTextColor(UiKit.FOREST);
             card.addView(match);
         }
-        String habitats=paicCatalogActive?item.paicHabitat:item.reviewedHabitats;
-        String elevations=paicCatalogActive?item.paicElevation:item.reviewedElevation;
-        if(!habitats.isEmpty()){
+        String habitats=paicCatalogActive&&!item.paicHabitat.isEmpty()?
+            item.paicHabitat:item.reviewedHabitats;
+        String elevations=paicCatalogActive&&!item.paicElevation.isEmpty()?
+            item.paicElevation:item.reviewedElevation;
+        if(displayValue(habitats)){
             TextView ecological=text("Habitat: "+habitats,12,false);
             ecological.setMaxLines(2);
             ecological.setEllipsize(android.text.TextUtils.TruncateAt.END);
             card.addView(ecological);
         }
-        if(!elevations.isEmpty()){
+        if(displayValue(elevations)){
             TextView height=text("Elevation: "+elevations,12,false);
             height.setMaxLines(1);
             height.setEllipsize(android.text.TextUtils.TruncateAt.END);
@@ -775,12 +789,22 @@ public final class SpeciesPickerActivity extends Activity {
         details.setOnClickListener(v->startActivity(
             new Intent(this,TaxonDetailActivity.class).putExtra("taxon_key",item.key)));
         select.setOnClickListener(v->select(
-            item.common.isEmpty()?item.scientific:item.common+" · "+item.scientific,item.group));
+            item.common.isEmpty()?item.scientific:item.common+" · "+item.scientific,
+            item.group,item.key,item.version));
+    }
+    private static boolean displayValue(String value){
+        return value!=null&&!value.trim().isEmpty()&&
+            !value.trim().equals("—")&&!value.trim().equals("-");
     }
     private void select(String label,String group){
+        select(label,group,"","");
+    }
+    private void select(String label,String group,String key,String version){
         Intent result=new Intent();
         result.putExtra("species_label",label);
         result.putExtra("species_group",group);
+        result.putExtra("taxon_key",key);
+        result.putExtra("taxon_source_version",version);
         setResult(RESULT_OK,result);
         finish();
     }

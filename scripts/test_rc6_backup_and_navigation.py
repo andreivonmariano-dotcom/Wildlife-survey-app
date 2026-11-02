@@ -13,7 +13,7 @@ class Rc6RestoreAndNavigationContracts(unittest.TestCase):
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'", APP)
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)", APP).group(1)), 59)
         self.assertRegex(APP, r"versionName '0[.][0-9]+[.][0-9]+-rc[0-9]+[^']*'")
-        self.assertIn("super(context,NAME,null,28)",(JAVA / "FieldDb.java").read_text())
+        self.assertIn("super(context,NAME,null,29)",(JAVA / "FieldDb.java").read_text())
 
     def test_backup_is_complete_and_recovery_does_not_merge(self):
         src = (JAVA / "FieldBackupArchive.java").read_text()

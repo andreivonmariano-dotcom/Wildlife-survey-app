@@ -35,6 +35,8 @@ public final class TaxonDetailActivity extends Activity {
     private Button conservation;
     private TextView screenCaption;
     private String searchGroup="";
+    private boolean archivedProfileScope=false;
+    private SpeciesReferenceSuggestionAdapter detailSuggestions;
     private boolean stackedSearch;
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size,boolean bold){
@@ -78,9 +80,8 @@ public final class TaxonDetailActivity extends Activity {
         search.setThreshold(1);
         search.setHint("Search species");
         search.setContentDescription("Search species by scientific, common or former name");
-        SpeciesReferenceSuggestionAdapter autocomplete=
-            new SpeciesReferenceSuggestionAdapter(this,db,null);
-        search.setAdapter(autocomplete);
+        detailSuggestions=new SpeciesReferenceSuggestionAdapter(this,db,null);
+        search.setAdapter(detailSuggestions);
         search.setDropDownHeight(dp(220));
         search.setOnItemClickListener((parent,view,position,id)->{
             search.dismissDropDown();
@@ -98,7 +99,7 @@ public final class TaxonDetailActivity extends Activity {
                 return;
             }
             search.requestFocus();
-            autocomplete.getFilter().filter(search.getText().toString(),
+            detailSuggestions.getFilter().filter(search.getText().toString(),
                 count->{if(count>0)search.showDropDown();});
         });
         searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(52)));
@@ -142,7 +143,7 @@ public final class TaxonDetailActivity extends Activity {
             .setItems(groupNames,(dialog,which)->{
                 String group=which==0?null:groupNames[which];
                 searchGroup=group==null?"":group;
-                autocomplete.setGroup(group);
+                detailSuggestions.setGroup(group);
                 groupFilter.setText(groupNames[which]+"  ▾");
                 search.setText("");
                 showMessage("Search "+(group==null?
@@ -199,15 +200,17 @@ public final class TaxonDetailActivity extends Activity {
         int divider=query.lastIndexOf(" · ");
         if(divider>=0)query=query.substring(divider+3).trim();
         String pattern="%"+TaxonSearchPolicy.escapeLike(query.toLowerCase(Locale.ROOT))+"%";
+        String catalog=archivedProfileScope?"likas_prior_taxon_catalog":"taxon_catalog";
+        String synonyms=archivedProfileScope?"likas_prior_taxon_synonyms":"taxon_synonyms";
         ArrayList<String> names=new ArrayList<>(),keys=new ArrayList<>();
         java.util.HashSet<String> acceptedNames=new java.util.HashSet<>();
         try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT taxon_key,common_name,scientific_name FROM taxon_catalog WHERE ("+
+            "SELECT taxon_key,common_name,scientific_name FROM "+catalog+" WHERE ("+
                 "taxon_key=? OR LOWER(scientific_name)=LOWER(?) OR "+
                 "LOWER(common_name)=LOWER(?) OR "+
                 "LOWER(scientific_name) LIKE ? ESCAPE '!' OR "+
                 "LOWER(common_name) LIKE ? ESCAPE '!' OR EXISTS ("+
-                "SELECT 1 FROM taxon_synonyms a WHERE a.taxon_key=taxon_catalog.taxon_key "+
+                "SELECT 1 FROM "+synonyms+" a WHERE a.taxon_key="+catalog+".taxon_key "+
                 "AND LOWER(a.alias_name) LIKE ? ESCAPE '!')) "+
                 "AND (?='' OR taxon_group=?) "+
                 "ORDER BY CASE WHEN LOWER(scientific_name)=LOWER(?) THEN 0 ELSE 1 END,"+
@@ -302,8 +305,23 @@ public final class TaxonDetailActivity extends Activity {
 
     private void loadKey(String key){
         SQLiteDatabase database=db.getReadableDatabase();
+        boolean prior=false;
+        try(Cursor present=database.rawQuery(
+                "SELECT 1 FROM taxon_catalog WHERE taxon_key=? LIMIT 1",
+                new String[]{key})){
+            prior=!present.moveToFirst();
+        }
+        archivedProfileScope=prior;
+        if(detailSuggestions!=null)detailSuggestions.setArchivedCatalog(prior);
+        final String catalog=prior?"likas_prior_taxon_catalog":"taxon_catalog";
+        final String habitatCatalog=prior?
+            "likas_prior_taxon_habitat_profiles":"taxon_habitat_profiles";
+        final String synonymCatalog=prior?
+            "likas_prior_taxon_synonyms":"taxon_synonyms";
+        final String evidenceCatalog=prior?
+            "likas_prior_taxon_occurrence_evidence":"taxon_occurrence_evidence";
         try(Cursor c=database.rawQuery(
-            "SELECT * FROM taxon_catalog WHERE taxon_key=? LIMIT 1",new String[]{key})){
+            "SELECT * FROM "+catalog+" WHERE taxon_key=? LIMIT 1",new String[]{key})){
             if(!c.moveToFirst()){showMessage("Species record unavailable.");return;}
             String scientific=col(c,"scientific_name");
             content.removeAllViews();
@@ -403,7 +421,7 @@ public final class TaxonDetailActivity extends Activity {
             try(Cursor ecology=database.rawQuery(
                 "SELECT habitat_codes,elevation_min_m,elevation_max_m,"+
                     "source,source_version,review_status,source_url,evidence_note "+
-                    "FROM taxon_habitat_profiles WHERE taxon_key=? LIMIT 1",
+                    "FROM "+habitatCatalog+" WHERE taxon_key=? LIMIT 1",
                 new String[]{key})){
                 if(ecology.moveToFirst()){
                     String habitats=ecology.getString(0).replace("|",", ");
@@ -425,7 +443,7 @@ public final class TaxonDetailActivity extends Activity {
             }
             StringBuilder names=new StringBuilder();
             try(Cursor aliases=database.rawQuery(
-                "SELECT alias_name,source,source_version FROM taxon_synonyms "+
+                "SELECT alias_name,source,source_version FROM "+synonymCatalog+" "+
                     "WHERE taxon_key=? ORDER BY alias_name COLLATE NOCASE LIMIT 30",
                 new String[]{key})){
                 while(aliases.moveToNext()){
@@ -442,7 +460,7 @@ public final class TaxonDetailActivity extends Activity {
             try(Cursor evidence=database.rawQuery(
                 "SELECT area_type,area_label,evidence_basis,evidence_text,"+
                     "source,source_version,source_url,review_status "+
-                    "FROM taxon_occurrence_evidence WHERE taxon_key=? "+
+                    "FROM "+evidenceCatalog+" WHERE taxon_key=? "+
                     "ORDER BY area_type,area_label LIMIT 60",new String[]{key})){
                 while(evidence.moveToNext()){
                     if(regional.length()>0)regional.append("\n\n");

@@ -24,7 +24,7 @@ class Rc69HabitatPreflightTests(unittest.TestCase):
         db=read('FieldDb.java')
         export=read('ResearchExports.java')
         self.assertIn('SurveyHabitatSetup.save(database,eventId',main)
-        self.assertIn('super(context,NAME,null,28)',db)
+        self.assertIn('super(context,NAME,null,29)',db)
         self.assertIn('if(oldVersion<28)upgradeTwentyEight(d)',db)
         self.assertIn('survey_habitat_preparation.csv',export)
         self.assertIn('confirmed_habitats',export)

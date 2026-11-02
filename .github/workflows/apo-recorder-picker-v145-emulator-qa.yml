@@ -1,9 +1,9 @@
-name: APO RC85 focused recorder and informative species picker
+name: APO RC86 interactive recorder and species picker
 
 on:
   pull_request:
     branches:
-      - feature/apo-habitats-checklist-v144
+      - feature/apo-recorder-picker-v145
   workflow_dispatch:
 
 permissions:
@@ -60,8 +60,8 @@ jobs:
           APK=app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='145'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc85-apo-recorder-species'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='146'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc86-apo-interactive-recorder'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
           unzip -t "$APK" >/dev/null
           unzip -p "$APK" assets/apo_official_master.png | sha256sum | grep -F '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7'
@@ -101,13 +101,13 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: APO-v145-recorder-picker-emulator-evidence
+          name: APO-v146-interactive-recorder-emulator-evidence
           path: emulator-evidence/
           if-no-files-found: ignore
           retention-days: 7
       - name: Export signed candidate for direct in-chat download
         uses: actions/upload-artifact@v4
         with:
-          name: APO-v145-recorder-picker-emulator-signed-preview
+          name: APO-v146-interactive-recorder-emulator-signed-preview
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 7

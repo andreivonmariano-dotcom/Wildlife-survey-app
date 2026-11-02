@@ -10,7 +10,7 @@ class Rc56RecorderLayout(unittest.TestCase):
         block=a.split("private void draw(){",1)[1].split("private void showGroups(){",1)[0]
         self.assertIn('UiKit.button(this,"‹","quiet")',block)
         self.assertIn('home.setContentDescription("Back to Home")',block)
-        self.assertIn('export.setContentDescription("Export research ZIP")',block)
+        self.assertIn('export.setContentDescription("Export all projects and surveys as research ZIP")',block)
         self.assertIn('boolean stackSessionControls=FieldLayoutPolicy.stackPortalPair(',block)
         self.assertIn('utilityRow.setOrientation(LinearLayout.VERTICAL)',block)
         self.assertIn('if(stackCaptureActions)row.setOrientation(LinearLayout.VERTICAL)',block)
@@ -31,7 +31,7 @@ class Rc56RecorderLayout(unittest.TestCase):
             'countView.setContentDescription(count+" individuals or evidence items")',
             'b.setContentDescription(name+" observation group"+(selected?", selected":""))',
             'b.setSelected(selected)',
-            'persistDraft();group=name;showGroups();refreshAutocomplete();queueDraft();',
+            'changeObservationGroup(name)',
             'sessionToggle.setContentDescription("Show optional haptic interval alert")',
             'evidenceToggle.setContentDescription("Show other evidence capture tools")'
         ):self.assertIn(term,a)
@@ -59,5 +59,5 @@ class Rc56RecorderLayout(unittest.TestCase):
         self.assertIn('countView.setContentDescription(count+" individuals or evidence items")',a)
         self.assertGreaterEqual(int((ROOT/"app/build.gradle").read_text().split("versionCode ",1)[1].split()[0]),125)
         self.assertIn("versionName '0.27.3-", (ROOT/"app/build.gradle").read_text())
-        self.assertIn("super(context,NAME,null,28)",src("FieldDb.java"))
+        self.assertIn("super(context,NAME,null,29)",src("FieldDb.java"))
 if __name__=="__main__":unittest.main()

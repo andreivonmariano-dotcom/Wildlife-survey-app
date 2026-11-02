@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public final class FieldDb extends SQLiteOpenHelper {
     public static final String NAME="wildlife_field_v03.db";
     private final Context appContext;
-    public FieldDb(Context context){super(context,NAME,null,28);appContext=context.getApplicationContext();}
+    public FieldDb(Context context){super(context,NAME,null,29);appContext=context.getApplicationContext();}
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE surveys(id TEXT PRIMARY KEY,method TEXT,started TEXT,ended TEXT,transect_az REAL,taxon_group TEXT DEFAULT 'Birds',point_target_s INTEGER,effort_length_m REAL,complete INTEGER,survey_profile TEXT,station_id TEXT,observer_name TEXT,protocol_status TEXT)");
         d.execSQL("CREATE TABLE sightings(id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT,seen_at TEXT,taxon TEXT,individual_count INTEGER,detection TEXT,horizontal_m REAL,bearing_magnetic REAL,pitch_deg REAL,perpendicular_m REAL,lat REAL,lon REAL,gps_accuracy_m REAL)");
@@ -45,6 +45,7 @@ public final class FieldDb extends SQLiteOpenHelper {
         upgradeTwentySix(d);
         upgradeTwentySeven(d);
         upgradeTwentyEight(d);
+        upgradeTwentyNine(d);
     }
     @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){
         if(oldVersion<2){
@@ -87,6 +88,14 @@ public final class FieldDb extends SQLiteOpenHelper {
         if(oldVersion<26)upgradeTwentySix(d);
         if(oldVersion<27)upgradeTwentySeven(d);
         if(oldVersion<28)upgradeTwentyEight(d);
+        if(oldVersion<29)upgradeTwentyNine(d);
+    }
+    /** Stable catalog identity is stored only for new and explicitly selected records.
+     * Historic identifications remain unlinked until independently reconciled. */
+    private void upgradeTwentyNine(SQLiteDatabase d){
+        d.execSQL("ALTER TABLE field_records ADD COLUMN taxon_key TEXT");
+        d.execSQL("ALTER TABLE field_records ADD COLUMN taxon_source_version TEXT");
+        d.execSQL("CREATE INDEX IF NOT EXISTS field_records_taxon_key ON field_records(taxon_key)");
     }
     /** Survey-level preparatory context, independent of visit observations. */
     private void upgradeTwentyEight(SQLiteDatabase d){

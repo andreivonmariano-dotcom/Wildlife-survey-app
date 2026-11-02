@@ -66,7 +66,8 @@ public class MainActivity extends Activity implements LocationListener {
     private LocationManager locations;
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private LinearLayout markRowView;
-    private Button pauseButton,progressButton;
+    private Button pauseButton,progressButton,markTimeButton;
+    private String selectedTaxonKey="",selectedTaxonVersion="";
     private CheckBox vibrationChoice;
     private Spinner confidenceSpinner;
     private EditText identificationNote;
@@ -237,9 +238,9 @@ public class MainActivity extends Activity implements LocationListener {
         title.setPadding(dp(LikasDesignSystem.SPACE_MD),0,dp(LikasDesignSystem.SPACE_SM),0);
         title.setContentDescription(profile+" Survey");
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-        Button export=UiKit.button(this,largeText?"ZIP":"Export","secondary");
-        export.setContentDescription("Export research ZIP");
-        top.addView(export,new LinearLayout.LayoutParams(dp(largeText?65:82),dp(48)));
+        Button export=UiKit.button(this,"All data","secondary");
+        export.setContentDescription("Export all projects and surveys as research ZIP");
+        top.addView(export,new LinearLayout.LayoutParams(dp(largeText?103:96),dp(48)));
         export.setOnClickListener(v->exportZip());
         root.addView(top);
         // Fixed status HUD: short, high-contrast survey state, always visible.
@@ -390,7 +391,8 @@ public class MainActivity extends Activity implements LocationListener {
         recorderTools.addView(UiKit.sectionTitle(this,"Detection tools"));
         LinearLayout detectRow=horizontal();
         if(stackCaptureActions)detectRow.setOrientation(LinearLayout.VERTICAL);
-        Button markTime=UiKit.button(this,"Mark time","secondary");
+        markTimeButton=UiKit.button(this,"Mark detection","secondary");
+        Button markTime=markTimeButton;
         markTime.setContentDescription("Mark sighting time and available fresh observer GPS without saving an observation");
         detectRow.addView(markTime,stackCaptureActions?
             new LinearLayout.LayoutParams(-1,dp(touchDp)):weighted(0.9f));
@@ -572,7 +574,7 @@ public class MainActivity extends Activity implements LocationListener {
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
         UiKit.fieldInput(this,taxonEntry);
-        taxonEntry.setThreshold(100);taxonEntry.setHint("Species");
+        taxonEntry.setThreshold(2);taxonEntry.setHint("Species");
         taxonEntry.setSelectAllOnFocus(true);
         speciesRow.addView(taxonEntry,stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
@@ -605,7 +607,7 @@ public class MainActivity extends Activity implements LocationListener {
             new AlertDialog.Builder(this).setTitle("Record unidentified "+group.toLowerCase(Locale.US))
                .setItems(choices,(dialog,which)->{
                    taxonEntry.setText(choices[which]);taxonEntry.setSelection(taxonEntry.length());
-                   confidenceSpinner.setSelection(3);
+                   confidenceSpinner.setSelection(4);
                    queueDraft();
                }).setNegativeButton("Cancel",null).show();
         });
@@ -619,7 +621,10 @@ public class MainActivity extends Activity implements LocationListener {
         });
         taxonEntry.addTextChangedListener(new TextWatcher(){
             public void beforeTextChanged(CharSequence a,int b,int c,int d){}
-            public void onTextChanged(CharSequence a,int b,int before,int count){refreshFavoriteIcon();}
+            public void onTextChanged(CharSequence a,int b,int before,int count){
+                selectedTaxonKey="";selectedTaxonVersion="";
+                refreshFavoriteIcon();
+            }
             public void afterTextChanged(Editable e){}
         });
         LinearLayout countLine=horizontal();
@@ -642,10 +647,11 @@ public class MainActivity extends Activity implements LocationListener {
         confidenceBlock.addView(label("ID confidence",12,true));
         confidenceSpinner=new Spinner(this);
         confidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
-            new String[]{"Identified","Probable","Uncertain","Unidentified"}));
+            new String[]{"Not assessed","Identified","Probable","Uncertain","Unidentified"}));
         confidenceSpinner.setContentDescription("Identification confidence, not expert verification");
         confidenceSpinner.setMinimumHeight(dp(56));
         confidenceBlock.addView(confidenceSpinner);
+        content.addView(confidenceBlock);
         minus.setOnClickListener(v->{
             count=Math.max(1,count-1);countView.setText(""+count);
             countView.setContentDescription(count+" individuals or evidence items");
@@ -681,7 +687,7 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(row);
         // Photo evidence is a primary field action, above optional group details.
         LinearLayout photoRow=horizontal();
-        Button photoButton=UiKit.button(this,"Add photo","secondary");
+        Button photoButton=UiKit.button(this,"Attach photo","secondary");
         photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(touchDp),2));
         photoStatus=label("",12,false);
         photoStatus.setVisibility(View.GONE);
@@ -692,6 +698,23 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setAdjustViewBounds(true);
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
+        // The detection timestamp is immediately accessible while recording.
+        detectRow.removeView(markTime);
+        LinearLayout directActions=horizontal();
+        if(stackCaptureActions)directActions.setOrientation(LinearLayout.VERTICAL);
+        directActions.addView(markTime,stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):
+            new LinearLayout.LayoutParams(0,dp(touchDp),1));
+        if(compactObservationFirst){
+            utilityRow.removeView(pauseButton);
+            LinearLayout.LayoutParams pauseLp=stackCaptureActions?
+                new LinearLayout.LayoutParams(-1,dp(touchDp)):
+                new LinearLayout.LayoutParams(0,dp(touchDp),1);
+            if(stackCaptureActions)pauseLp.topMargin=dp(5);
+            else pauseLp.leftMargin=dp(7);
+            directActions.addView(pauseButton,pauseLp);
+        }
+        content.addView(directActions);
         if(compactObservationFirst&&toolsDisclosure[0]!=null){
             content.removeView(toolsDisclosure[0]);
             content.removeView(recorderTools);
@@ -816,7 +839,7 @@ public class MainActivity extends Activity implements LocationListener {
         }
         detailToggle=label("＋ More details",14,true);
         detailToggle.setTextColor(GREEN);disclosureTarget(detailToggle);
-        detailToggle.setContentDescription("Show optional identification confidence, habitat, behavior and observation notes");
+        detailToggle.setContentDescription("Show optional habitat, behavior and observation notes");
         content.addView(detailToggle);
         advancedPanel=vertical();
         habitatEntry=edit("Habitat / microhabitat",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -825,7 +848,7 @@ public class MainActivity extends Activity implements LocationListener {
         notesEntry.setSingleLine(false);notesEntry.setMinLines(2);
         identificationNote=edit("Identification evidence / uncertainty (optional)",
             InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        advancedPanel.addView(confidenceBlock);
+
         advancedPanel.addView(identificationNote);
         advancedPanel.addView(habitatEntry);advancedPanel.addView(behaviorEntry);advancedPanel.addView(notesEntry);
         advancedPanel.setVisibility(View.GONE);content.addView(advancedPanel);
@@ -930,9 +953,25 @@ public class MainActivity extends Activity implements LocationListener {
             if(groupBar.getChildCount()>0)groupLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
             groupBar.addView(b,groupLp);
             b.setOnClickListener(v->{
-                persistDraft();group=name;showGroups();refreshAutocomplete();queueDraft();
+                if(group.equals(name))return;
+                if(filled(taxonEntry)){
+                    new AlertDialog.Builder(this)
+                        .setTitle("Change wildlife group?")
+                        .setMessage("The current species entry will be cleared. Other measurements stay in this draft.")
+                        .setNegativeButton("Keep group",null)
+                        .setPositiveButton("Change",(dialog,which)->changeObservationGroup(name))
+                        .show();
+                }else changeObservationGroup(name);
             });
         }
+    }
+    private void changeObservationGroup(String next){
+        if(group.equals(next))return;
+        persistDraft();
+        taxonEntry.setText("");
+        selectedTaxonKey="";selectedTaxonVersion="";
+        group=next;
+        showGroups();refreshAutocomplete();queueDraft();
     }
     private void updateMethods(){
         lineRow.setVisibility(SurveyMethods.isBirdLine(profile,method)?View.VISIBLE:View.GONE);
@@ -990,7 +1029,7 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void showPendingPhoto(){
         if(photoStatus!=null){
-            photoStatus.setText(pendingPhoto==null?"":"Photo saved locally");
+            photoStatus.setText(pendingPhoto==null?"":"Photo ready to attach");
             photoStatus.setVisibility(pendingPhoto==null?View.GONE:View.VISIBLE);
         }
         if(photoPreview!=null){
@@ -1368,18 +1407,22 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private boolean hasUnsavedObservation(){
         return filled(taxonEntry)||filled(distanceEntry)||filled(notesEntry)||
+            filled(microhabitatEntry)||filled(herpHeightEntry)||filled(perchEntry)||
+            filled(deviceEntry)||
             filled(habitatEntry)||filled(behaviorEntry)||filled(identificationNote)||
             pendingPhoto!=null||markedAt>0||count!=1||
             (confidenceSpinner!=null&&confidenceSpinner.getSelectedItemPosition()>0)||
             (evidenceSpinner!=null&&evidenceSpinner.getSelectedItemPosition()>0)||
             (lifeStageSpinner!=null&&lifeStageSpinner.getSelectedItemPosition()>0)||
+            (callScoreSpinner!=null&&callScoreSpinner.getSelectedItemPosition()>0)||
             (distanceSourceSpinner!=null&&distanceSourceSpinner.getSelectedItemPosition()>0)||
             (firstPositionSpinner!=null&&firstPositionSpinner.getSelectedItemPosition()>0)||
             (movementSpinner!=null&&movementSpinner.getSelectedItemPosition()>0);
     }
     private void discardUnfinishedObservation(){
         for(EditText entry:new EditText[]{taxonEntry,distanceEntry,notesEntry,
-                habitatEntry,behaviorEntry,identificationNote}){
+                habitatEntry,behaviorEntry,identificationNote,microhabitatEntry,
+                herpHeightEntry,perchEntry,deviceEntry}){
             if(entry!=null)entry.setText("");
         }
         count=1;
@@ -1387,12 +1430,14 @@ public class MainActivity extends Activity implements LocationListener {
         if(confidenceSpinner!=null)confidenceSpinner.setSelection(0);
         if(evidenceSpinner!=null)evidenceSpinner.setSelection(0);
         if(lifeStageSpinner!=null)lifeStageSpinner.setSelection(0);
+        if(callScoreSpinner!=null)callScoreSpinner.setSelection(0);
         if(distanceSourceSpinner!=null)distanceSourceSpinner.setSelection(0);
         if(firstPositionSpinner!=null)firstPositionSpinner.setSelection(0);
         if(movementSpinner!=null)movementSpinner.setSelection(0);
         pendingPhoto=null;
         showPendingPhoto();
         clearMark();
+        selectedTaxonKey="";selectedTaxonVersion="";
     }
     private void finishPrompt(){
         if(!active)return;
@@ -2075,6 +2120,7 @@ public class MainActivity extends Activity implements LocationListener {
         markedAt=System.currentTimeMillis();
         markedObserverFix=freshObserverFix();
         showMarkStatus();persistDraft();
+        toast("Detection time marked");
     }
     private void openFieldProtocol(){
         if(!active||eventId==null){toast("Start a survey to record method effort");return;}
@@ -2188,6 +2234,8 @@ public class MainActivity extends Activity implements LocationListener {
     private void showMarkStatus(){
         if(bearingStatusView==null)return;
         if(markRowView!=null)markRowView.setVisibility(markedAt>0?View.VISIBLE:View.GONE);
+        if(markTimeButton!=null)markTimeButton.setText(
+            markedAt>0?"Update detection time":"Mark detection");
         if(markedBearing!=null)
             bearingStatusView.setText(String.format(Locale.US,"Bearing %.0f° magnetic · pitch %+.0f°",markedBearing,markedPitch));
         else if(markedAt>0) bearingStatusView.setText("Detection time marked · bearing optional");
@@ -2195,6 +2243,35 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private static Double number(String v){try{return Double.parseDouble(v.trim());}catch(Exception e){return null;}}
     /** Catalog provenance comes from source records, never from display punctuation. */
+    /** Link exact manual identifications only when one accepted catalog entry matches. */
+    private String[] resolveExactCatalogTaxon(String raw,String taxonGroup){
+        String term=raw==null?"":raw.trim();
+        int dot=term.lastIndexOf(" · ");
+        if(dot>=0)term=term.substring(dot+3);
+        try(Cursor cursor=db.getReadableDatabase().rawQuery(
+                "SELECT taxon_key,COALESCE(common_name,''),scientific_name,"+
+                "source_version FROM taxon_catalog WHERE taxon_group=? "+
+                "AND (LOWER(common_name)=LOWER(?) OR LOWER(scientific_name)=LOWER(?)) "+
+                "LIMIT 2",new String[]{taxonGroup,term,term})){
+            if(!cursor.moveToFirst())return null;
+            String[] match={cursor.getString(0),cursor.getString(1),
+                cursor.getString(2),cursor.getString(3)};
+            return cursor.moveToNext()?null:match;
+        }catch(Exception ignored){return null;}
+    }
+    /** Prefer provenance for the exact selected key, even when it is archived. */
+    private String catalogSourceForKey(String key,String fallback){
+        if(key==null||key.isEmpty())return fallback;
+        for(String catalog:new String[]{"taxon_catalog","likas_prior_taxon_catalog"}){
+            try(Cursor source=db.getReadableDatabase().rawQuery(
+                    "SELECT source,source_version FROM "+catalog+
+                    " WHERE taxon_key=? LIMIT 1",new String[]{key})){
+                if(source.moveToFirst())return "catalog:"+
+                    source.getString(0)+"|"+source.getString(1);
+            }catch(Exception ignored){}
+        }
+        return fallback;
+    }
     private String scientificSource(String taxonGroup,String scientific){
         if(scientific!=null&&!scientific.isEmpty()){
             try(Cursor source=db.getReadableDatabase().rawQuery(
@@ -2235,6 +2312,15 @@ public class MainActivity extends Activity implements LocationListener {
         }
         if(raw.length()<2){toast("Enter a taxon or unidentified species");return;}
         String[] id=Taxa.identify(raw);
+        String recordTaxonKey=selectedTaxonKey;
+        String recordTaxonVersion=selectedTaxonVersion;
+        if(recordTaxonKey.isEmpty()){
+            String[] resolved=resolveExactCatalogTaxon(raw,group);
+            if(resolved!=null){
+                recordTaxonKey=resolved[0];recordTaxonVersion=resolved[3];
+                id[0]=resolved[1];id[1]=resolved[2];
+            }
+        }
         boolean unidentified=Taxa.isUnknown(raw);
         boolean genusOnly=!unidentified&&id[1]!=null&&
             (id[1].trim().endsWith(" sp.")||id[1].trim().endsWith(" spp."));
@@ -2265,12 +2351,12 @@ public class MainActivity extends Activity implements LocationListener {
         if(height!=null&&(height<0||height>150)){
             toast("Check height above ground");return;
         }
-        String confidence=confidenceSpinner.getSelectedItemPosition()==0?
+        String confidence=confidenceSpinner.getSelectedItemPosition()==1?
             "Field-identified (not expert verified)":
             confidenceSpinner.getSelectedItem().toString();
         if(unidentified)confidence="Unidentified";
         boolean candidate=group.equals("Birds")&&!confidence.equals("Uncertain")&&!confidence.equals("Unidentified")&&!unidentified&&!genusOnly&&
-            !id[1].isEmpty()&&distance!=null&&!distanceMethod.equals("Unknown")
+            !confidence.equals("Not assessed")&&!id[1].isEmpty()&&distance!=null&&!distanceMethod.equals("Unknown")
           &&firstPosition.equals("Yes")&&inWindow&&(method.equals("point_count")||method.equals("line_transect"))
           &&(!method.equals("line_transect")||perp!=null)
           &&(!method.equals("point_count")||pointRadiusM==null||distance<=pointRadiusM)
@@ -2278,11 +2364,12 @@ public class MainActivity extends Activity implements LocationListener {
         Location loc=markedAt>0?markedObserverFix:freshObserverFix();
         Object lat=loc==null?null:loc.getLatitude(),lon=loc==null?null:loc.getLongitude(),acc=loc==null?null:loc.getAccuracy();
         db.getWritableDatabase().execSQL(
-            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,identification_level,regional_evidence_status,geo_region_at_detection,identification_confidence,identification_review_note) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO field_records(event_id,detected_at,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_m,bearing_magnetic,pitch_deg,perpendicular_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_eligible,updated_at,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,identification_level,regional_evidence_status,geo_region_at_detection,identification_confidence,identification_review_note,taxon_key,taxon_source_version) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             new Object[]{eventId,iso(first),group,id[0],id[1],raw,count,detectionSpinner.getSelectedItem().toString(),
                 distance,markedBearing,markedPitch,perp,lat,lon,acc,
                 habitatEntry.getText().toString().trim(),behaviorEntry.getText().toString().trim(),
-                notesEntry.getText().toString().trim(),sensorQuality,scientificSource(group,id[1]),
+                notesEntry.getText().toString().trim(),sensorQuality,
+                catalogSourceForKey(recordTaxonKey,scientificSource(group,id[1])),
                 distanceMethod,firstPosition,movement,candidate?1:0,iso(System.currentTimeMillis()),
                 method.equals("point_count")?pointCountId:null,inWindow?"within":"outside",
                 profile.equals("Herpetofauna")?temp:null,profile.equals("Herpetofauna")?humidity:null,
@@ -2303,7 +2390,9 @@ public class MainActivity extends Activity implements LocationListener {
                     method.equals("coverboard_search")||method.equals("drift_fence_check")?"encounter":
                     "individuals",
                 identificationLevel,geoSupport,geographicRegion,
-                confidence,identificationNote.getText().toString().trim()});
+                confidence,identificationNote.getText().toString().trim(),
+                recordTaxonKey.isEmpty()?null:recordTaxonKey,
+                recordTaxonVersion.isEmpty()?null:recordTaxonVersion});
         if(pendingPhoto!=null){
             try(Cursor c=db.getReadableDatabase().rawQuery("SELECT last_insert_rowid()",null)){
                 if(c.moveToFirst()){
@@ -2315,9 +2404,13 @@ public class MainActivity extends Activity implements LocationListener {
                 toast("Observation saved, but photo link needs review: "+photoError.getMessage());
             }
         }
-        taxonEntry.setText("");count=1;countView.setText("1");distanceEntry.setText("");
+        taxonEntry.setText("");selectedTaxonKey="";selectedTaxonVersion="";
+        count=1;countView.setText("1");distanceEntry.setText("");
         confidenceSpinner.setSelection(0);identificationNote.setText("");
         habitatEntry.setText("");behaviorEntry.setText("");notesEntry.setText("");
+        microhabitatEntry.setText("");herpHeightEntry.setText("");
+        perchEntry.setText("");deviceEntry.setText("");
+        if(callScoreSpinner!=null)callScoreSpinner.setSelection(0);
         // Retain environmental measurements through each visit. Reset identification-specific evidence.
         if(evidenceSpinner!=null)evidenceSpinner.setSelection(0);
         if(lifeStageSpinner!=null)lifeStageSpinner.setSelection(0);
@@ -2497,6 +2590,8 @@ public class MainActivity extends Activity implements LocationListener {
                         updateTaxaSuggestions(false);
                     }
                     taxonEntry.setText(label);
+                    selectedTaxonKey=nonNull(data.getStringExtra("taxon_key"));
+                    selectedTaxonVersion=nonNull(data.getStringExtra("taxon_source_version"));
                     taxonEntry.setSelection(taxonEntry.length());
                     refreshFavoriteIcon();
                     queueDraft();
@@ -2561,8 +2656,8 @@ public class MainActivity extends Activity implements LocationListener {
               "SELECT id,method,started,ended,transect_az,taxon_group,point_target_s,effort_length_m,complete,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,area_km2,point_radius_m,weather,planned_duration_s,gps_track_m,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id,start_gps_latitude,start_gps_longitude,start_gps_accuracy_m,start_gps_recorded_at,start_gps_status FROM surveys",
               "event_id,method,start_utc,end_utc,transect_magnetic_bearing_deg,initial_taxon_group,point_target_seconds,actual_route_length_m,completed,survey_profile,station_id,observer_name,protocol_status,project_id,region_label,stratum_area_km2,point_radius_m,weather,planned_duration_s,gps_path_m_estimate,gps_track_status,searched_area_m2,observer_effort_minutes,outcome,exclusion_reason,outcome_changed_at,effort_paused,total_paused_ms,paused_at_utc,geographic_region_id,geographic_selection_method,regional_taxa_version,admin_province_name,admin_province_psgc,admin_boundary_version,admin_boundary_status,planned_route_m,planned_station_spacing_m,planned_station_count,route_design,route_template_id,start_gps_latitude,start_gps_longitude,start_gps_accuracy_m,start_gps_recorded_at_utc,start_gps_status");
             csv(exportDb,z,"observations.csv",
-              "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,("+SurveyOutcomeSql.RESOLVED+"),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection,r.identification_confidence,r.identification_review_note FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
-              "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection,identification_confidence,identification_review_note");
+              "SELECT r.id,r.event_id,r.detected_at,r.taxon_group,r.common_name,r.scientific_name,r.raw_identification,r.individual_count,r.detection_method,r.horizontal_m,r.bearing_magnetic,r.pitch_deg,r.perpendicular_m,r.observer_lat,r.observer_lon,r.gps_accuracy_m,r.habitat,r.behavior,r.notes,r.compass_quality,r.name_source,r.distance_method,r.initial_position,r.movement_status,r.distance_eligible,r.updated_at,r.deleted_at,r.legacy_source_id,r.point_count_id,r.protocol_window_flag,r.air_temp_c,r.humidity_pct,r.substrate,r.weather_notes,r.amphibian_call_score,r.microhabitat,r.sampling_unit_id,r.life_stage,r.evidence_type,r.perch_height_m,r.call_noise_score,r.unit_time_status,r.equipment_id,r.count_basis,("+SurveyOutcomeSql.RESOLVED+"),r.identification_level,r.regional_evidence_status,r.geo_region_at_detection,r.identification_confidence,r.identification_review_note,r.taxon_key,r.taxon_source_version FROM field_records r LEFT JOIN surveys s ON s.id=r.event_id WHERE r.deleted_at IS NULL",
+              "record_id,event_id,detected_at_utc,taxon_group,common_name,scientific_name,raw_identification,individual_count,detection_method,horizontal_distance_m,magnetic_bearing_deg,pitch_deg,perpendicular_distance_m,observer_lat,observer_lon,gps_accuracy_m,habitat,behavior,notes,compass_quality,name_source,distance_method,initial_position,movement_status,distance_candidate_flag,updated_at,deleted_at,legacy_source_id,point_count_id,protocol_window_flag,air_temp_c,humidity_pct,substrate,weather_notes,amphibian_call_score,microhabitat,sampling_unit_id,life_stage,evidence_type,perch_height_m,call_noise_score,unit_time_status,equipment_id,count_basis,survey_outcome,identification_level,regional_evidence_status,geographic_region_at_detection,identification_confidence,identification_review_note,taxon_key,taxon_source_version");
             csv(exportDb,z,"sampling_units.csv",
               "SELECT u.id,u.event_id,u.station_id,u.sequence_number,u.method,u.started,u.ended,u.target_seconds,u.completed,u.effort_minutes,u.effort_area_m2,u.effort_length_m,u.noise_score,u.wind_score,u.rain_condition,u.equipment_id,u.number_devices,u.trap_effort_hours,u.unit_paused_ms,u.camera_days_verified,u.trap_nights_verified,u.recorder_hours_verified,u.deployment_started_utc,u.deployment_ended_utc,u.downtime_hours,u.effort_remarks,("+SurveyOutcomeSql.RESOLVED+"),u.gps_latitude,u.gps_longitude,u.gps_accuracy_m,u.gps_recorded_at,u.gps_status FROM sampling_units u JOIN surveys s ON s.id=u.event_id ORDER BY u.event_id,u.sequence_number",
               "sampling_unit_id,event_id,station_id,sequence,method,start_utc,end_utc,target_seconds,completed,active_effort_minutes,searched_area_m2,searched_length_m,noise_score,wind_score,rain_condition,equipment_id,number_devices,device_hours,unit_paused_ms,verified_camera_days,verified_trap_nights,verified_recorder_hours,deployment_start_utc,deployment_end_utc,downtime_hours,effort_notes,survey_outcome,station_gps_lat,station_gps_lon,station_accuracy_m,gps_fix_at_utc,gps_status");
@@ -2665,6 +2760,9 @@ public class MainActivity extends Activity implements LocationListener {
             JSONObject d=new JSONObject();
             d.put("group",group);d.put("taxon",taxonEntry.getText().toString());
             d.put("confidence",confidenceSpinner.getSelectedItemPosition());
+            d.put("confidence_v2",true);
+            d.put("taxon_key",selectedTaxonKey);
+            d.put("taxon_source_version",selectedTaxonVersion);
             d.put("identificationNote",identificationNote.getText().toString());
             d.put("pendingPhoto",pendingPhoto==null?"":pendingPhoto);
             d.put("count",count);d.put("distance",distanceEntry.getText().toString());
@@ -2716,7 +2814,11 @@ public class MainActivity extends Activity implements LocationListener {
                 group=g;showGroups();refreshAutocomplete();
             }
             taxonEntry.setText(d.optString("taxon",""));
-            confidenceSpinner.setSelection(d.optInt("confidence",0));
+            selectedTaxonKey=d.optString("taxon_key","");
+            selectedTaxonVersion=d.optString("taxon_source_version","");
+            int confidenceIndex=d.optInt("confidence",0);
+            confidenceSpinner.setSelection(Math.min(4,Math.max(0,
+                d.optBoolean("confidence_v2",false)?confidenceIndex:confidenceIndex+1)));
             identificationNote.setText(d.optString("identificationNote",""));
             pendingPhoto=d.optString("pendingPhoto","").isEmpty()?null:d.optString("pendingPhoto");
             showPendingPhoto();

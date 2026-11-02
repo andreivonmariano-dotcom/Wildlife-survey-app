@@ -10,7 +10,8 @@ def src(filename):
 class CleanFieldUi(unittest.TestCase):
     def test_recorder_has_only_one_browse_action_and_persistent_end(self):
         screen=src("MainActivity.java")
-        self.assertIn('UiKit.button(this,"Species list","secondary")',screen)
+        self.assertIn('compactBrowse?"List":"Species list"',screen)
+        self.assertIn('setContentDescription("Search offline species checklist")',screen)
         self.assertIn('taxonEntry.setHint("Species")',screen)
         self.assertNotIn('UiKit.button(this,"Find species","primary")',screen)
         self.assertNotIn('content.addView(section("Species"))',screen)

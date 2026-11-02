@@ -30,7 +30,7 @@ class LibraryNavigationContract(unittest.TestCase):
                       'getBoolean("reduced_motion",false)',
                       "ValueAnimator.areAnimatorsEnabled()"):
             self.assertIn(token,source)
-        self.assertIn("if(status==null)return 0;",source)
+        self.assertIn('int severity=0,accent=UiKit.BORDER;',source)
         for unsafe in ("execSQL(", "getWritableDatabase(", "deleteDatabase("):
             self.assertNotIn(unsafe,source)
 

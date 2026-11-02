@@ -2,16 +2,16 @@
 
 APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
 
-**Current APO development branch:** `feature/apo-biotools-v134` (draft PR #76 into RC73, not merged into older `main`)  
-**Latest verified signed APK:** `0.27.3-rc74-apo-biotools`, versionCode **134**, source `f4f948c6533bb34ef55245aa2994c1ac5faf23a3`  
-**Android ID:** `org.phwildlife.survey.beta08` (unchanged); original beta signer retained  
-**SQLite schema:** **28** (data model unchanged; on-device historical upgrade test still pending)
+**Current APO development branch:** `feature/apo-biotools-destinations-v135` (draft PR #77, built on RC74, not merged into older `main`)  
+**Latest verified signed APK:** `0.27.3-rc75-apo-biotools-destinations`, versionCode **135**, exact source `55e2864d4508bc512eafbdd9eb78eac4093030cc`  
+**Android application ID:** `org.phwildlife.survey.beta08` (unchanged); original signing certificate retained  
+**SQLite schema:** **28** (data model unchanged; real-device upgrade remains untested)
 
-**RC74 signed BioTools preview (2 November 2026):** The revised BioTools workspace has five text-only destinations: Surveys, Projects & Stations, Field Records, Analysis & Exports, and Field Utilities. Active survey Resume and the original Birds/Herpetofauna/Mammals setup remain, with no illustrated navigation or hidden More field tools dropdown. Existing records, analysis and utilities are directly navigable. A standalone research ZIP export now calls the exact same `MainActivity.writeResearchArchive` routine through Android's save-file picker, without starting a survey. It is separate from Settings' restorable backup.
+**APO RC75 BioTools destinations signed preview, 2 November 2026:** Extends the five-part typography-first BioTools workspace. Nested text-only rows are more compact. Projects & Stations now supports case-insensitive station name/ID/habitat searches, matched/total counts, clearer missing coordinates and input validation that rejects invalid or non-finite values. Survey History surfaces read-only Complete/Incomplete/Not Counted/Active counts. Analysis separates survey outcomes, point-count visits, other protocol sampling-unit records, and detection labels without implying abundance or density estimates. Database integrity checks now live within Data Quality Review. Field Utilities clearly explain supported active-survey recording requirements and study templates retain their scientific rules. Previously approved APO launcher/startup art and the bundled PAIC714/WorldCover references remain unchanged.
 
-**Verified build and direct delivery:** CI run `41375198786` passed **390 Python regressions**, JVM/Android build and AndroidTest compilation, package/signer checks, and byte-exact approved offline artwork and PAIC/WorldCover references. Downloaded APK `APO-v0.27.3-RC74-BioTools-code134.apk` is **11,747,380 bytes**, SHA-256 `09c96752003bda20660199a439485ba356558e740b59a37cffda0a2887ff0132`. Its ZIP integrity and embedded reference hashes were independently verified in the chat runtime. See [RC74 signed BioTools release QA](docs/APO_RC74_BIOTOOLS_SIGNED_QA_2026_11_02.md).
+**Verified signed APK:** `APO-v0.27.3-RC75-BioTools-Destinations-code135.apk`, **11,751,480 bytes**, SHA-256 `2083c18d98c2588c0d0382e7d6aaf0aa2885c890df91e78483c4ea710219263d`. GitHub Actions run `41376495935` passed **397 Python regressions**, JVM/Android unit compilation, AndroidTest APK, original signer/ID checks and immutable art/science assets. The current chat downloaded and independently verified the binary for direct delivery. See [RC75 signed BioTools destination QA](docs/APO_RC75_BIOTOOLS_DESTINATIONS_SIGNED_QA_2026_11_02.md).
 
-**Release boundary:** RC74 is a signed **development preview**, not stable/field certified. Existing survey record upgrades, real GPS, 200%-text / TalkBack on-device navigation, and research export end-to-end content still need device acceptance. RC73 and RC72 remain historical signed previews; do not offer them as the latest APK. Older default `main` is not the development baseline.
+**Release boundary:** RC75 is a **signed development preview**, not a handset-validated stable release. In-place upgrade with archived field data, GPS, data export/restore, station edits on-device and small-screen/large-text/TalkBack acceptance remain unverified. Historical RC74/RC73/RC72 APKs are superseded but remain documented. Older default `main` is not the APO development baseline.
 
 ## What APO currently provides
 

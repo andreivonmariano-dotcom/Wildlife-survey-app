@@ -1,5 +1,15 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2 November 2026 | APO RC74 BioTools signed build delivered
+
+- **Current development branch:** `feature/apo-biotools-v134` (draft PR #76 into latest signed RC73 branch). Exact app/test commit `f4f948c6533bb34ef55245aa2994c1ac5faf23a3`; GitHub Actions signed run `41375198786` **SUCCESS**, **390 Python tests**, Android/JVM tests, package and signer verification.
+- **Latest signed APK directly delivered in this conversation:** `APO-v0.27.3-RC74-BioTools-code134.apk`, **11,747,380 bytes**, SHA-256 `09c96752003bda20660199a439485ba356558e740b59a37cffda0a2887ff0132`. Exact package `org.phwildlife.survey.beta08`, `versionCode 134`, `versionName 0.27.3-rc74-apo-biotools`. Original signer cert SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` unchanged. See `docs/APO_RC74_BIOTOOLS_SIGNED_QA_2026_11_02.md` for checksum, tests and limits. A sandbox path from this chat must be reverified in any future chat.
+- **BioTools now:** five icon-free full-width destinations: Surveys, Projects & Stations, Field Records, Analysis & Exports, Field Utilities. Nested screens use text navigation. Survey page retains active Resume, group-specific new setup, and Complete/Incomplete/Not Counted handling. Previous fieldwork and analysis tools were relocated, not removed; no More field tools toggle. Existing species library and Home untouched.
+- **New independent research ZIP export:** `ResearchExportActivity` calls established `MainActivity.writeResearchArchive` via a system save-file picker and worker thread. No active survey required. Separately named from restorable backup, with privacy and partial-output warnings.
+- **Protected identity/science:** SQLite **28**, approved mountain launcher and gradient splash, PAIC714 checklist, ESA WorldCover map, field survey integrity rules and original signing key unchanged. Actual APK asset hashes and ZIP integrity checked.
+- **Still unverified:** RC73→RC74 install/upgrade retaining archived surveys, app's research ZIP contents on a real device, backup/restore, 320dp/200% font screenshots, TalkBack, field GNSS and recorder workflows. This remains signed development preview, not field-certified stable.
+
+
 ## 2 November 2026 | APO RC73 signed text-only Home delivered (current latest verified APK)
 
 - **Built source** `ac75b6abe1af2b5e3e5c758a1bdec86f075fc9c1`, branch `feature/apo-text-home-v133` (draft PR #75). CI run `41373151540` **SUCCESS**, including **385 Python regressions**, JVM tests, Android APK and AndroidTest compilation, unchanged package and original signing certificate verification, and exact locked source/art checks.

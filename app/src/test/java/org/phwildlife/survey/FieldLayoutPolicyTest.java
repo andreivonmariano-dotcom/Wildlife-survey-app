@@ -17,8 +17,11 @@ public final class FieldLayoutPolicyTest {
             FieldLayoutPolicy.stackPortalPair(360,1f));
     }
     @Test public void entryStacksOnlyWhenTooNarrow(){
-        assertTrue(FieldLayoutPolicy.stackSpeciesEntry(320,1f));
-        assertTrue(FieldLayoutPolicy.stackSpeciesEntry(393,1.8f));
+        assertFalse(FieldLayoutPolicy.stackSpeciesEntry(320,1f));
+        assertFalse(FieldLayoutPolicy.stackSpeciesEntry(320,2f));
+        assertFalse(FieldLayoutPolicy.stackSpeciesEntry(393,1.8f));
+        assertTrue(FieldLayoutPolicy.stackSpeciesEntry(280,1f));
+        assertTrue(FieldLayoutPolicy.stackSpeciesEntry(320,2.5f));
         assertFalse(FieldLayoutPolicy.stackSpeciesEntry(393,1f));
     }
     @Test public void buttonTargetsScaleWithinBounds(){

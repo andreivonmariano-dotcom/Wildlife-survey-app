@@ -66,6 +66,7 @@ public class MainActivity extends Activity implements LocationListener {
     private LocationManager locations;
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private LinearLayout markRowView;
+    private TextView clearDetectionMarkView;
     private Button pauseButton,progressButton,markTimeButton;
     private String selectedTaxonKey="",selectedTaxonVersion="";
     private CheckBox vibrationChoice;
@@ -524,13 +525,15 @@ public class MainActivity extends Activity implements LocationListener {
         });
         LinearLayout markRow=horizontal();
         markRowView=markRow;
-        markRow.setVisibility(View.GONE);
+        markRow.setVisibility(View.VISIBLE);
         bearingStatusView=label("",12,false);
         bearingStatusView.setTextColor(MUTED);
         markRow.addView(bearingStatusView,weighted(1));
         TextView clear=label("Clear mark",12,true);
         clear.setTextColor(GREEN);
-        clear.setContentDescription("Clear marked detection bearing and observer position");
+        clear.setContentDescription("Clear the unsaved detection timestamp, GPS fix and bearing");
+        clearDetectionMarkView=clear;
+        clear.setVisibility(View.GONE);
         clear.setPadding(dp(10),dp(8),dp(6),dp(8));
         clear.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));
         clear.setGravity(Gravity.CENTER_VERTICAL);
@@ -562,6 +565,45 @@ public class MainActivity extends Activity implements LocationListener {
             });
         }else content.addView(recorderTools);
         content.addView(FieldVisuals.section(this,"Observation",null));
+        // Field action 1: mark time and an actually qualified observer GPS fix.
+        // Keep the mark above identification so the event time is not mistaken
+        // for the later Save tap time. Existing station and effort controls remain.
+        detectRow.removeView(markTime);
+        markTime.setContentDescription(
+            "Mark encounter time and available qualified GPS fix in this unsaved draft");
+        // One compact row remains legible even at 200% text. Only genuinely
+        // narrower screens stack: otherwise two tall buttons hide the count.
+        boolean stackPrimaryActions=getResources().getConfiguration().screenWidthDp<300;
+        int primaryHeight=Math.max(52,Math.min(60,touchDp));
+        LinearLayout directActions=horizontal();
+        if(stackPrimaryActions)directActions.setOrientation(LinearLayout.VERTICAL);
+        directActions.addView(markTime,stackPrimaryActions?
+            new LinearLayout.LayoutParams(-1,dp(primaryHeight)):
+            new LinearLayout.LayoutParams(0,dp(primaryHeight),1.25f));
+        utilityRow.removeView(pauseButton);
+        LinearLayout.LayoutParams pauseLp=stackPrimaryActions?
+            new LinearLayout.LayoutParams(-1,dp(primaryHeight)):
+            new LinearLayout.LayoutParams(0,dp(primaryHeight),0.75f);
+        if(stackPrimaryActions)pauseLp.topMargin=dp(5);
+        else pauseLp.leftMargin=dp(5);
+        directActions.addView(pauseButton,pauseLp);
+        // A station-dependent method must expose the station-start action
+        // before the detection button. Never silently create a visit.
+        if(hasStationUnits()){
+            recorderTools.removeView(pointNextButton);
+            LinearLayout.LayoutParams stationLp=new LinearLayout.LayoutParams(-1,-2);
+            stationLp.bottomMargin=dp(6);
+            content.addView(pointNextButton,stationLp);
+        }
+        content.addView(directActions);
+        recorderTools.removeView(markRowView);
+        content.addView(markRowView,new LinearLayout.LayoutParams(-1,-2));
+        // Move advanced survey tools after the short observation form.
+        content.removeView(recorderTools);
+        if(toolsDisclosure[0]!=null)content.removeView(toolsDisclosure[0]);
+        showMarkStatus();
+
+
         // One row combines direct entry and the complete offline checklist.
         // Complete species selection now lives on its own page.
         // Retain direct text entry for novel/unidentified field observations.
@@ -580,11 +622,14 @@ public class MainActivity extends Activity implements LocationListener {
         speciesRow.addView(taxonEntry,stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
             new LinearLayout.LayoutParams(0,dp(fieldControlHeight),1));
-        Button identifySpecies=UiKit.button(this,"Species list","secondary");
+        boolean compactBrowse=getResources().getConfiguration().fontScale>=1.55f||
+            getResources().getConfiguration().screenWidthDp<350;
+        Button identifySpecies=UiKit.button(this,
+            compactBrowse?"List":"Species list","secondary");
         identifySpecies.setContentDescription("Search offline species checklist");
         LinearLayout.LayoutParams browseLp=stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
-            new LinearLayout.LayoutParams(dp(112),dp(fieldControlHeight));
+            new LinearLayout.LayoutParams(dp(compactBrowse?76:112),dp(fieldControlHeight));
         if(stackSpecies)browseLp.topMargin=dp(5);
         else browseLp.leftMargin=dp(8);
         speciesRow.addView(identifySpecies,browseLp);
@@ -706,30 +751,8 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setAdjustViewBounds(true);
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
-        // The detection timestamp is immediately accessible while recording.
-        detectRow.removeView(markTime);
-        LinearLayout directActions=horizontal();
-        if(stackCaptureActions)directActions.setOrientation(LinearLayout.VERTICAL);
-        directActions.addView(markTime,stackCaptureActions?
-            new LinearLayout.LayoutParams(-1,dp(touchDp)):
-            new LinearLayout.LayoutParams(0,dp(touchDp),1));
-        if(compactObservationFirst){
-            utilityRow.removeView(pauseButton);
-            LinearLayout.LayoutParams pauseLp=stackCaptureActions?
-                new LinearLayout.LayoutParams(-1,dp(touchDp)):
-                new LinearLayout.LayoutParams(0,dp(touchDp),1);
-            if(stackCaptureActions)pauseLp.topMargin=dp(5);
-            else pauseLp.leftMargin=dp(7);
-            directActions.addView(pauseButton,pauseLp);
-        }
-        content.addView(directActions);
-        if(compactObservationFirst&&toolsDisclosure[0]!=null){
-            content.removeView(toolsDisclosure[0]);
-            content.removeView(recorderTools);
-            content.addView(toolsDisclosure[0]);
-            content.addView(recorderTools);
-        }
-
+        if(toolsDisclosure[0]!=null)content.addView(toolsDisclosure[0]);
+        content.addView(recorderTools);
         LinearLayout birdQuick=vertical();
         birdMeasurements=vertical();
         distanceSourceSpinner=new Spinner(this);
@@ -1294,7 +1317,9 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void refreshPauseControls(){
         if(pauseButton!=null){
-            pauseButton.setText(surveyPaused?"Resume effort":"Pause effort");
+            boolean compact=getResources().getConfiguration().fontScale>=1.55f;
+            pauseButton.setText(surveyPaused?(compact?"Resume":"Resume effort"):
+                (compact?"Pause":"Pause effort"));
             pauseButton.setEnabled(active);
         }
         if(pauseStatusView!=null){
@@ -2138,10 +2163,35 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void markDetection(){
         if(!active){toast("Start a survey first");return;}
+        if(surveyPaused){toast("Resume effort before marking a detection");return;}
+        if(method.equals("point_count")&&pointCountId==null){
+            toast("Start the point-count station before marking a detection");return;
+        }
+        if(requiresGenericUnit()&&samplingUnitId==null){
+            toast("Start the sampling station before marking a detection");return;
+        }
+        if(markedAt>0){
+            new AlertDialog.Builder(this)
+                .setTitle("Replace detection time?")
+                .setMessage("This replaces the marked time and its GPS fix in the unsaved observation. The earlier mark and any captured bearing/pitch will be cleared.")
+                .setNegativeButton("Keep earlier mark",null)
+                .setPositiveButton("Mark now",(dialog,which)->captureDetectionMark())
+                .show();
+            return;
+        }
+        captureDetectionMark();
+    }
+    private void captureDetectionMark(){
+        // Bearing belongs to its original capture time. A new timestamp must
+        // not silently reuse that geometry or its sensor-quality assessment.
+        markedBearing=null;markedPitch=null;sensorQuality=-1;
         markedAt=System.currentTimeMillis();
         markedObserverFix=freshObserverFix();
-        showMarkStatus();persistDraft();
-        toast("Detection time marked");
+        showMarkStatus();
+        if(persistDraft(true)){
+            vibrateIfEnabled(35);
+            toast("Detection marked in unsaved draft");
+        }else toast("Mark captured, but draft storage could not be confirmed");
     }
     private void openFieldProtocol(){
         if(!active||eventId==null){toast("Start a survey to record method effort");return;}
@@ -2248,19 +2298,40 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void clearMark(){
         markedAt=0;markedObserverFix=null;markedBearing=null;markedPitch=null;
+        sensorQuality=-1;
         if(bearingStatusView!=null)bearingStatusView.setText("");
-        if(markRowView!=null)markRowView.setVisibility(View.GONE);
+        showMarkStatus();
         queueDraft();
     }
     private void showMarkStatus(){
         if(bearingStatusView==null)return;
-        if(markRowView!=null)markRowView.setVisibility(markedAt>0?View.VISIBLE:View.GONE);
-        if(markTimeButton!=null)markTimeButton.setText(
-            markedAt>0?"Update detection time":"Mark detection");
-        if(markedBearing!=null)
-            bearingStatusView.setText(String.format(Locale.US,"Bearing %.0f° magnetic · pitch %+.0f°",markedBearing,markedPitch));
-        else if(markedAt>0) bearingStatusView.setText("Detection time marked · bearing optional");
-        else bearingStatusView.setText("Time and bearing not marked");
+        if(markRowView!=null)markRowView.setVisibility(View.VISIBLE);
+        if(clearDetectionMarkView!=null)
+            clearDetectionMarkView.setVisibility(markedAt>0?View.VISIBLE:View.GONE);
+        if(markTimeButton!=null){
+            boolean compact=getResources().getConfiguration().fontScale>=1.55f;
+            markTimeButton.setText(markedAt>0?
+                (compact?"Edit mark":"Change detection mark"):
+                (compact?"Mark time":"Mark detection"));
+            markTimeButton.setContentDescription(markedAt>0?
+                "Detection marked. Tap to confirm replacement of the draft time and GPS fix":
+                "Mark an unsaved detection using the current time and qualified GPS fix");
+        }
+        if(markedAt<=0){
+            bearingStatusView.setText("Unmarked · save time");
+            bearingStatusView.setContentDescription(
+                "No detection time marked. Saving an observation will use the save time.");
+            return;
+        }
+        String when=new SimpleDateFormat("HH:mm:ss",Locale.getDefault())
+            .format(new Date(markedAt));
+        String gps=markedObserverFix==null?"GPS not captured":
+            String.format(Locale.US,"GPS ±%.0f m",markedObserverFix.getAccuracy());
+        String heading=markedBearing==null?"":String.format(Locale.US,
+            " · Bearing %.0f°",markedBearing);
+        bearingStatusView.setText("Draft · "+when+" · "+gps+heading);
+        bearingStatusView.setContentDescription("Unsaved detection marked at "+
+            when+". "+gps+heading);
     }
     private static Double number(String v){try{return Double.parseDouble(v.trim());}catch(Exception e){return null;}}
     /** Catalog provenance comes from source records, never from display punctuation. */
@@ -2775,8 +2846,9 @@ public class MainActivity extends Activity implements LocationListener {
         confidenceSpinner.setOnItemSelectedListener(onSelection);
     }
     /** Foreground survey draft is persisted independent of Android Activity lifetime. */
-    private void persistDraft(){
-        if(!active||eventId==null||taxonEntry==null)return;
+    private void persistDraft(){persistDraft(false);}
+    private boolean persistDraft(boolean immediate){
+        if(!active||eventId==null||taxonEntry==null)return false;
         try{
             JSONObject d=new JSONObject();
             d.put("group",group);d.put("taxon",taxonEntry.getText().toString());
@@ -2821,8 +2893,12 @@ public class MainActivity extends Activity implements LocationListener {
             d.put("pitch",markedPitch==null?JSONObject.NULL:markedPitch);
             d.put("sensorQuality",sensorQuality);
             d.put("scrollY",fieldScroll==null?0:fieldScroll.getScrollY());
-            getSharedPreferences("field_drafts",MODE_PRIVATE).edit().putString("draft_"+eventId,d.toString()).apply();
-        }catch(Exception ignored){}
+            android.content.SharedPreferences.Editor editor=
+                getSharedPreferences("field_drafts",MODE_PRIVATE).edit()
+                    .putString("draft_"+eventId,d.toString());
+            if(immediate)return editor.commit();
+            editor.apply();return true;
+        }catch(Exception ignored){return false;}
     }
     private void restoreDraft(){
         if(eventId==null||taxonEntry==null)return;

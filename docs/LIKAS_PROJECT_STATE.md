@@ -1,5 +1,16 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | RC88 detection-first recorder | signed code148 preview, verified in emulator
+
+- **Active development branch:** `feature/apo-rc88-detection-first-v148`, draft PR #90 based on RC87. **Last verified app/test commit** `76bd37cfaca773184a6f92bc71ca847b05beb1da`, package `org.phwildlife.survey.beta08`, code148, name `0.27.3-rc88-apo-detection-first`, SQLite29 and original Android signer. Historical `main` remains old LIKAS and must not be the baseline.
+- **User-approved first step:** Detection time/GPS Mark and Pause moved *before* species entry, with short visible unsaved-mark state, station/paused-effort guard, confirmation on replacement, and immediate draft commit when marked. New mark or clearing discards previous associated bearing/pitch/sensor quality. On large fonts, a compact horizontal action row and inline species + `List` entry preserve individual count above the fixed Save/Review/End footer. Full accessible descriptions retained; no observation created by Mark and no method-specific survey close changed.
+- **Verified CI:** workflow **41424653033 SUCCESS**, **452 Python tests**, Android/JVM unit and application build, original signer/PAIC714/WorldCover/mountain image checks, **5 Android14 tests at 160% and 5 at 200%/320dp**, zero failures. First emulator candidate failed the 160% count-above-footer assertion and was redesigned; only final run is evidence.
+- **Direct signed owner APK:** `APO-v0.27.3-RC88-Detection-First-code148.apk`, **11,765,208 bytes**, SHA-256 `7786cfcba35942a301ad6af9ee384c3a2b00cb45b7a9d9ff865ce3ee7f08e0a8`, artifact ID **13132056697**, independently extracted/ZIP-tested and embedded source asset hashes matched. Six verified emulator screenshots artifact **13131662685**; user was given direct APK and screenshots ZIP in owner chat. Direct chat paths are session-specific, verify before reuse.
+- **Remaining gates:** physical phone SQLite history upgrade, GPS with real quality, actual photo/acoustic handling, app background/process death/draft restoration, scientific ZIP roundtrip, TalkBack, all three closure outcomes. No merge into legacy main or field certification. See `docs/APO_RC88_DETECTION_FIRST_RECORDER_QA_2026_11_02.md`.
+- **Next user-facing milestone:** live in-survey observation timeline with reversible, auditable edits and explicit saved-vs-draft states; then adaptive method-specific recording panels. Do not implement a fake AI species identification or predict absence from PAIC habitat labels.
+
+
+
 ## 2026-11-02 | RC87 signed habitat-shortlist and recorder-interactivity preview | directly delivered
 
 - **Last tested app code:** `e3d60847ac25be7239a7556473d6b604e388d6ed`, draft PR #89 on `feature/apo-rc87-habitat-shortlist-recorder-v147` based on RC86. Android `0.27.3-rc87-apo-habitat-shortlist`, **versionCode 147**, unchanged `org.phwildlife.survey.beta08`, original signing identity and **SQLite29**.

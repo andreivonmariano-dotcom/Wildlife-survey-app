@@ -1,5 +1,14 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC85 live recorder/species picker | signed preview verified and delivered
+
+- **Verified source lineage:** current screen work on `feature/apo-recorder-picker-v145`, code commit `d7f151e158ef1aafd168fd5c1681055a3483e9f9`, derived from the signed RC84 source. Draft PR #87. Docs were updated after the verified build; preserve APK/code distinction.
+- **Passed Android CI:** run `41405626317` SUCCESS, with Python source/scientific regressions, JVM/AndroidTest compilation, signed APK and immutable source-asset verification, and Android 14 recorder/picker instrumentation for 160% and 200%/320dp. Six screenshots downloaded and visually inspected.
+- **Actual APK delivered in owner's 2 November 2026 chat:** `APO-v0.27.3-RC85-Recorder-Species-Picker-code145.apk`; **11,757,540 bytes**, SHA-256 `dcaf27e8ed6c16d1bcfec0b140dbbc8f44a63e6a48d6d56b7cd0ac6f0ce4a32b`, from artifact ID `13123203193`. Android binary contains manifest, dex, PAIC714 and WorldCover; ZIP integrity passed. APK Signing Block v2 certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937` matches the existing signer. App ID `org.phwildlife.survey.beta08`; versionName `0.27.3-rc85-apo-recorder-species`, versionCode 145; SQLite28 unchanged. This link is chat-local and must be verified again before reuse.
+- **Visible UX:** first observation controls for nonstation methods, near-at-hand species/photo, and concise informative species cards using actual family, status, habitat, elevational and geographic data. Species `Profile` and `Select` retain their separate actions; habitat ranking searches the full catalog. Removed warning paragraphs from these screens, not factual information or data-integrity controls.
+- **Observed minor UX issues:** 200%/320dp species group/view spinner selections truncate; Birds 160% screenshot captured while loading. Real camera, GNSS, end-of-survey outcomes, migration with existing data, TalkBack, manual species search, and export roundtrip still require phone acceptance. Draft branch unmerged.
+- **Next focused action:** conduct a follow-on visual pass on picker filter layout/loading, plus real-phone in-place upgrade and survey/save/export verification. Keep the signed code145 APK unchanged if iterating. Source QA: `docs/APO_RC85_RECORDER_PICKER_QA_2026_11_02.md`. Any new source build requires a higher versionCode and a newly verified direct APK.
+
 ## 2026-11-02 | APO RC85 recorder and species picker refinement | source under QA
 
 - **Owner request:** Streamline recorder and picker, show genuinely informative checklist cards, remove long scientific cautionary UI. New `feature/apo-recorder-picker-v145` from signed RC84 head `8692ecb56e6f294829e567ba8437095f4bb6c4c8`. Target code145, `0.27.3-rc85-apo-recorder-species`, original application ID/signing certificate/SQLite28 and immutable artwork/reference hashes.

@@ -47,7 +47,9 @@ public final class RecorderMethodUiPolicy {
                 return "Line transect · measured distance and bearing";
             if("area_search".equals(method))
                 return "Area search · search effort and repeat detections";
-            return "Incidental bird record · no standardized absence claim";
+            if("opportunistic".equals(method))
+                return "Incidental bird record · no standardized absence claim";
+            return "Bird survey · method-specific panel not configured";
         }
         if("Herpetofauna".equals(profile)){
             if("amphibian_calls".equals(method))
@@ -60,7 +62,9 @@ public final class RecorderMethodUiPolicy {
                 return "Cover-board check · unit inspections and substrate";
             if("drift_fence_check".equals(method))
                 return "Drift-fence check · traps and capture audit";
-            return "Incidental herpetofauna record · effort not standardized";
+            if("opportunistic".equals(method))
+                return "Incidental herpetofauna record · effort not standardized";
+            return "Herpetofauna survey · method-specific panel not configured";
         }
         if("Mammals".equals(profile)){
             if("camera_trap_check".equals(method))
@@ -75,7 +79,9 @@ public final class RecorderMethodUiPolicy {
                 return "Mammal transect · distance and encounter evidence";
             if("bat_acoustic".equals(method))
                 return "Bat acoustic · basic detection log only";
-            return "Incidental mammal record · no standardized absence claim";
+            if("opportunistic".equals(method))
+                return "Incidental mammal record · no standardized absence claim";
+            return "Mammal survey · method-specific panel not configured";
         }
         return "Field observation · review survey method and effort";
     }

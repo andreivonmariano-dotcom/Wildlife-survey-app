@@ -23,7 +23,7 @@ class Rc40ScreenAudit(unittest.TestCase):
         self.assertNotIn("R.drawable.",component)
         for title in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"'):
             self.assertIn(title,main)
-        self.assertIn("this::fieldworkHub",main)
+        self.assertIn("this::bioToolsHub",main)
         self.assertIn("LikasLibraryActivity.class",main)
         self.assertIn("LikasSettingsActivity.class",main)
         self.assertNotIn("LikasPortalUi.tile(",main)

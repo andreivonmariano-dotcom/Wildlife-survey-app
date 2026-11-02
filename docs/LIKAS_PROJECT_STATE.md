@@ -1,5 +1,14 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | RC87 signed habitat-shortlist and recorder-interactivity preview | directly delivered
+
+- **Last tested app code:** `e3d60847ac25be7239a7556473d6b604e388d6ed`, draft PR #89 on `feature/apo-rc87-habitat-shortlist-recorder-v147` based on RC86. Android `0.27.3-rc87-apo-habitat-shortlist`, **versionCode 147**, unchanged `org.phwildlife.survey.beta08`, original signing identity and **SQLite29**.
+- **CI pass:** GitHub Actions **41419356860 SUCCESS**, with **448 Python source/science tests**, JVM/app/AndroidTest compilation, original signing certificate, and immutable PAIC714/WorldCover/approved mountain art checks. Android14 emulator tested recorder + Birds/Amphibians species picker at **160% and 200%/320dp**, including newly instrumented montane-shortlist rejection of coastal-only Aleutian Tern and recovery in All species.
+- **Directly delivered signed APK:** `APO-v0.27.3-RC87-Habitat-Shortlist-Interactive-code147.apk`, **11,763,844 bytes**, SHA-256 `6eb23398eb18565f3e1694842881c509292ed93efeb599698d6c80c5f4067a6f`. Extracted from CI artifact **13128823267**; APK ZIP test and embedded PAIC714, WorldCover and mountain-master SHA-256 individually verified in the receiving runtime. Six emulator PNGs from artifact **13128683666** passed image dimensions and a visual review of selectable controls, 200% scope `PAIC · 714`, recorder `ZIP`, and recent-name buttons. Download paths are session-local and must be reverified later.
+- **Current behavior:** Site context's observed montane forest now offers habitat-source shortlist: `Montane habitats` direct tier and `Forest` broad tier, not coastal-only `Aleutian Tern`; Show all restores full catalog. Missing/broad guide data cannot prove local absence. Recorder/picker Recent reuses *names only*, not evidence/counts/coordinates. No catalog source data or archival records were changed.
+- **Release boundary:** APK is a signed **developer preview**, not field-certified. Physical on-phone in-place upgrade with populated SQLite28 records, GNSS, actual camera, research ZIP round-trip, TalkBack and full survey Complete/Incomplete/Not Counted still unverified. Draft PR #89 remains unmerged. Next: on-device continuity and field workflow checks, then review broader habitat-guide classifications before claiming ecological completeness.
+
+
 ## 2026-11-02 | RC87 montane habitat shortlist and interactive recorder | code review / signed QA pending
 
 - **Owner-reported defect:** Selecting `Montane forest` in Site context still showed Aleutian Tern. RC86 only ranked by preparatory habitat and retained the full catalog. PAIC714 source assigns Aleutian Tern `Coastal and intertidal areas, marine waters` and `0–30 m` display guide. This is an inappropriate default montane shortlist result, but source categories cannot prove local absence.

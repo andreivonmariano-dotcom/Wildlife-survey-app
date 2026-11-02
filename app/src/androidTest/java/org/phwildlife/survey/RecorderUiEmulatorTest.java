@@ -2,6 +2,10 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.ContentValues;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +19,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 import static org.junit.Assert.*;
 
@@ -66,10 +69,22 @@ public final class RecorderUiEmulatorTest {
                     Bitmap screenshot=InstrumentationRegistry.getInstrumentation()
                         .getUiAutomation().takeScreenshot();
                     assertNotNull("Emulator screenshot unavailable",screenshot);
-                    try(FileOutputStream out=new FileOutputStream(
-                            new File(activity.getFilesDir(),"apo_recorder_emulator.png"))){
+                    ContentValues metadata=new ContentValues();
+                    metadata.put(MediaStore.MediaColumns.DISPLAY_NAME,"apo_recorder_emulator.png");
+                    metadata.put(MediaStore.MediaColumns.MIME_TYPE,"image/png");
+                    metadata.put(MediaStore.MediaColumns.RELATIVE_PATH,
+                        Environment.DIRECTORY_PICTURES+"/APO");
+                    metadata.put(MediaStore.MediaColumns.IS_PENDING,1);
+                    Uri saved=activity.getContentResolver().insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,metadata);
+                    assertNotNull("Cannot create screenshot in emulator MediaStore",saved);
+                    try(OutputStream out=activity.getContentResolver().openOutputStream(saved)){
+                        assertNotNull("Cannot write emulator screenshot",out);
                         assertTrue(screenshot.compress(Bitmap.CompressFormat.PNG,100,out));
                     }
+                    metadata.clear();
+                    metadata.put(MediaStore.MediaColumns.IS_PENDING,0);
+                    activity.getContentResolver().update(saved,metadata,null,null);
                     screenshot.recycle();
                 }catch(Exception exception){
                     throw new AssertionError("Cannot save emulator screen evidence",exception);

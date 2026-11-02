@@ -576,15 +576,13 @@ public class MainActivity extends Activity implements LocationListener {
         directActions.addView(markTime,stackCaptureActions?
             new LinearLayout.LayoutParams(-1,dp(touchDp)):
             new LinearLayout.LayoutParams(0,dp(touchDp),1));
-        if(true){
-            utilityRow.removeView(pauseButton);
-            LinearLayout.LayoutParams pauseLp=stackCaptureActions?
-                new LinearLayout.LayoutParams(-1,dp(touchDp)):
-                new LinearLayout.LayoutParams(0,dp(touchDp),1);
-            if(stackCaptureActions)pauseLp.topMargin=dp(5);
-            else pauseLp.leftMargin=dp(7);
-            directActions.addView(pauseButton,pauseLp);
-        }
+        utilityRow.removeView(pauseButton);
+        LinearLayout.LayoutParams pauseLp=stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):
+            new LinearLayout.LayoutParams(0,dp(touchDp),1);
+        if(stackCaptureActions)pauseLp.topMargin=dp(5);
+        else pauseLp.leftMargin=dp(7);
+        directActions.addView(pauseButton,pauseLp);
         // A station-dependent method must expose the station-start action
         // before the detection button. Never silently create a visit.
         if(hasStationUnits()){

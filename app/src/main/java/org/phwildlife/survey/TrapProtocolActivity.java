@@ -37,6 +37,7 @@ public final class TrapProtocolActivity extends Activity {
         EditText x=new EditText(this);x.setHint(hint);x.setTextSize(15);
         if(numeric)x.setInputType(InputType.TYPE_CLASS_NUMBER|
             InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        UiKit.fieldInput(this,x);
         return x;
     }
     private void toast(String message){
@@ -84,7 +85,11 @@ public final class TrapProtocolActivity extends Activity {
         LinearLayout screen=column();screen.setPadding(dp(14),dp(9),dp(14),dp(12));
         screen.setBackgroundColor(UiKit.BG);
         screen.addView(UiKit.navigationHeader(this,"Trap & camera records",
-            eventId==null?"Field Utilities":"Survey",this::finish));
+            eventId==null?"Field Utilities":"Recorded device surveys",()->{
+                if(eventId!=null&&getIntent().getStringExtra("event_id")==null){
+                    eventId=null;method="";draw();
+                }else finish();
+            }));
         ScrollView scroll=new ScrollView(this);
         rows=column();scroll.addView(rows);
         screen.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
@@ -93,16 +98,24 @@ public final class TrapProtocolActivity extends Activity {
             rows.addView(ApoHomeUi.section(this,"Device evidence",
                 "Browse camera, pitfall and live-trap deployments. New deployments " +
                 "are registered in an active supported survey."));
-            rows.addView(label("Recorded device surveys",16));
+            rows.addView(UiKit.sectionTitle(this,"Recorded device surveys"));
             try(Cursor c=db.getReadableDatabase().rawQuery(
                 "SELECT DISTINCT d.event_id,s.method,s.started "+
                 "FROM trap_deployments d JOIN surveys s ON s.id=d.event_id "+
                 "ORDER BY s.started DESC LIMIT 100",null)){
+                int shown=0;
+                if(c.getCount()==0)rows.addView(ApoHomeUi.note(this,
+                    "No recorded device surveys yet. Register equipment from an " +
+                    "active supported sampling visit."));
                 while(c.moveToNext()){
                     String id=c.getString(0);
-                    Button entry=UiKit.button(this,c.getString(1)+" · "+c.getString(2),"secondary");
-                    rows.addView(entry,new LinearLayout.LayoutParams(-1,dp(65)));
-                    entry.setOnClickListener(v->{eventId=id;method=cMethod(id);draw();});
+                    rows.addView(ApoHomeUi.tool(this,
+                        String.format(Locale.US,"%02d",++shown),
+                        SurveyMethods.displayLabel(
+                            "drift_fence_check".equals(c.getString(1))?
+                                "Herpetofauna":"Mammals",c.getString(1)),
+                        "Survey "+id+" · "+c.getString(2),
+                        ()->{eventId=id;method=cMethod(id);draw();}));
                 }
             }
             return;
@@ -111,11 +124,15 @@ public final class TrapProtocolActivity extends Activity {
             rows.addView(label("This survey has no camera/pitfall/live-trap device protocol.",14));
             return;
         }
+        rows.addView(UiKit.sectionTitle(this,"Survey device records"));
         rows.addView(label("Survey "+eventId+" · "+SurveyMethods.lookup(
             "drift_fence_check".equals(method)?"Herpetofauna":"Mammals",method).label,13));
         if(writable()){
-            Button create=UiKit.button(this,"＋ Register device deployment","primary");
-            rows.addView(create,new LinearLayout.LayoutParams(-1,dp(55)));
+            rows.addView(ApoHomeUi.note(this,
+                "Record actual deployment and inspection effort. Zero detections " +
+                "and equipment downtime should be documented when observed."));
+            Button create=UiKit.button(this,"Register device deployment","primary");
+            rows.addView(create,new LinearLayout.LayoutParams(-1,-2));
             create.setOnClickListener(v->addDeployment());
         }else rows.addView(label("Archived record · read only after survey closure",13));
         try(Cursor c=db.getReadableDatabase().rawQuery(
@@ -138,8 +155,8 @@ public final class TrapProtocolActivity extends Activity {
                 if(writable()&&retrieved==null){
                     Button check=UiKit.button(this,"Record check","secondary");
                     Button retire=UiKit.button(this,"Retrieve / close device","secondary");
-                    card.addView(check,new LinearLayout.LayoutParams(-1,dp(48)));
-                    card.addView(retire,new LinearLayout.LayoutParams(-1,dp(48)));
+                    card.addView(check,new LinearLayout.LayoutParams(-1,-2));
+                    card.addView(retire,new LinearLayout.LayoutParams(-1,-2));
                     check.setOnClickListener(v->recordCheck(id,device));
                     retire.setOnClickListener(v->new AlertDialog.Builder(this)
                         .setTitle("Close device "+device+"?")
@@ -158,6 +175,13 @@ public final class TrapProtocolActivity extends Activity {
                 lp.bottomMargin=dp(11);rows.addView(card,lp);
             }
         }
+    }
+    @Override public void onBackPressed(){
+        if(eventId!=null&&getIntent().getStringExtra("event_id")==null){
+            eventId=null;
+            method="";
+            draw();
+        }else super.onBackPressed();
     }
     private String cMethod(String event){
         try(Cursor c=db.getReadableDatabase().rawQuery(
@@ -268,7 +292,7 @@ public final class TrapProtocolActivity extends Activity {
                 if(writable()&&TrapProtocolPolicy.needsCaptureDetails(method)&&
                     captures<count){
                     Button detail=UiKit.button(this,"＋ Capture and release record","secondary");
-                    card.addView(detail,new LinearLayout.LayoutParams(-1,dp(48)));
+                    card.addView(detail,new LinearLayout.LayoutParams(-1,-2));
                     detail.setOnClickListener(v->addCapture(checkId));
                 }
             }

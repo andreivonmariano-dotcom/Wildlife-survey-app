@@ -89,7 +89,7 @@ class AllBioToolsScreens(unittest.TestCase):
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",b).group(1)),137)
         self.assertIn("0.27.3-rc",b)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",b)
-        self.assertIn("super(context,NAME,null,28)",src("FieldDb.java"))
+        self.assertIn("super(context,NAME,null,29)",src("FieldDb.java"))
         main=src("MainActivity.java")
         for x in ('"Save Observation"','"End Survey"','"Cancel Survey · Not Counted"',
                   'SurveyClosePolicy.resolve('):

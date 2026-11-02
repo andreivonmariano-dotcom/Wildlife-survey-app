@@ -13,7 +13,7 @@ class DetectionFirstContracts(unittest.TestCase):
         self.assertLess(source.index('content.addView(directActions);'),
                         source.index('taxonEntry=new AutoCompleteTextView(this);'))
         self.assertLess(source.index('content.addView(directActions);'),
-                        source.index('content.addView(recorderTools);\n        LinearLayout birdQuick'))
+                        source.index('LinearLayout birdQuick=vertical();'))
         self.assertIn('recorderTools.removeView(pointNextButton);',source)
         self.assertIn('content.addView(pointNextButton,stationLp);',source)
         self.assertIn('utilityRow.removeView(pauseButton);',source)

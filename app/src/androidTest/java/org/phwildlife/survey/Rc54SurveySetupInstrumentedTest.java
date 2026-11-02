@@ -47,8 +47,10 @@ public final class Rc54SurveySetupInstrumentedTest {
     }
     private static void enterSetup(WelcomeActivity a,String group){
         View root=a.getWindow().getDecorView();
-        View field=findDescription(root,"Open Fieldwork.");
-        assertNotNull(field);field.performClick();
+        View bioTools=findDescription(root,"Open BioTools.");
+        assertNotNull(bioTools);bioTools.performClick();
+        View surveys=findDescription(root,"Open Surveys.");
+        assertNotNull(surveys);surveys.performClick();
         View choice=findDescription(root,"Open "+group+".");
         assertNotNull(choice);choice.performClick();
     }

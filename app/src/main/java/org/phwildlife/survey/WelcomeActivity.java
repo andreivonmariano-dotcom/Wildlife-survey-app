@@ -44,7 +44,8 @@ public class WelcomeActivity extends Activity {
     private CheckBox saveTemplateChoice,prepareFieldChecklist;
     private TextView templateHint;
     private boolean updatingRouteChoices=false;
-    private TextView stationCountPreview,routeHeader,spacingHeader,repeatHeader;
+    private TextView stationCountPreview,routeHeader,spacingHeader,repeatHeader,routeOptionsToggle;
+    private LinearLayout routeOptions;
     private Spinner projectChoice, geographicChoice,studyChoice;
     private TextView studyToggle;
     private LinearLayout studyOptions;
@@ -54,6 +55,7 @@ public class WelcomeActivity extends Activity {
     private TextView boundaryMessage;
     private ArrayList<String> projectKeys=new ArrayList<>();
     private RadioGroup methodChoices;
+    private Spinner methodPicker;
     private SurveyMethods.Method[] choices;
     private int dp(float f){return (int)(f*getResources().getDisplayMetrics().density+0.5f);}
     private TextView text(String s,int sz,boolean strong) {
@@ -444,8 +446,7 @@ public class WelcomeActivity extends Activity {
         main.addView(UiKit.navigationHeader(this,profile+" survey","Surveys",
             this::fieldworkHub));
         main.addView(ApoHomeUi.note(this,
-            "Set up a survey method and project first. GPS preflight and optional " +
-            "site habitat review follow before recording starts."));
+            "Choose a method, project and planned effort. GPS check comes next."));
         choices=SurveyMethods.forProfile(profile);
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){
@@ -466,25 +467,46 @@ public class WelcomeActivity extends Activity {
         methodChoices.check(1000);
         methodChoices.setOnCheckedChangeListener((group,checked)->refreshStudyChoices());
         main.addView(step("01","Survey method"));
-        main.addView(ApoHomeUi.note(this,
-            "Select the method that matches the actual field protocol. " +
-            "Its effort and completion rules will be applied to this survey."));
         LinearLayout methodsCard=vertical();
-        // Each radio choice already has an outlined surface; avoid nesting borders.
-        methodsCard.setPadding(0,0,0,0);
-        methodsCard.addView(methodChoices);
+        methodPicker=new Spinner(this);
+        methodPicker.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,SurveyMethods.displayNames(profile)));
+        setupSpinner(methodPicker,"Choose survey method");
+        methodsCard.addView(methodPicker,new LinearLayout.LayoutParams(-1,dp(56)));
         TextView methodHint=LikasPortalUi.text(this,choices[0].description,13,
             UiKit.MUTED,false);
         methodHint.setPadding(dp(LikasDesignSystem.SPACE_XS),
             dp(LikasDesignSystem.SPACE_XS),
             dp(LikasDesignSystem.SPACE_XS),dp(LikasDesignSystem.SPACE_SM));
         methodsCard.addView(methodHint);
+        TextView compareMethods=text("Compare all methods",13,true);
+        compareMethods.setTextColor(GREEN);
+        compareMethods.setMinHeight(dp(48));
+        compareMethods.setGravity(Gravity.CENTER_VERTICAL);
+        compareMethods.setFocusable(true);
+        compareMethods.setClickable(true);
+        compareMethods.setContentDescription("Show all survey methods");
+        methodsCard.addView(compareMethods);
+        methodChoices.setVisibility(View.GONE);
+        methodsCard.addView(methodChoices);
+        compareMethods.setOnClickListener(v->{
+            boolean show=methodChoices.getVisibility()!=View.VISIBLE;
+            methodChoices.setVisibility(show?View.VISIBLE:View.GONE);
+            compareMethods.setText(show?"Hide method comparison":"Compare all methods");
+            compareMethods.setContentDescription(show?
+                "Hide all survey methods":"Show all survey methods");
+        });
+        methodPicker.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+            public void onNothingSelected(android.widget.AdapterView<?> parent){}
+            public void onItemSelected(android.widget.AdapterView<?> parent,View view,int position,long id){
+                if(position>=0&&position<choices.length&&
+                    methodChoices.getCheckedRadioButtonId()!=1000+position)
+                    methodChoices.check(1000+position);
+            }
+        });
         main.addView(methodsCard);
         updateMethodSelection(1000);
         main.addView(step("02","Project and location"));
-        main.addView(ApoHomeUi.note(this,
-            "Project and checklist-region choices provide context for the record. " +
-            "A checklist-region suggestion is not a confirmed species occurrence."));
         projectChoice=new Spinner(this);
         projectKeys.clear();
         ArrayList<String> names=new ArrayList<>();
@@ -537,18 +559,32 @@ public class WelcomeActivity extends Activity {
                 }
             }
         });
-        gpsLookupButton=UiKit.button(this,"Choose checklist area by GPS","secondary");
+        LinearLayout regionAssistance=vertical();
+        gpsLookupButton=UiKit.button(this,"Suggest checklist area using GPS","secondary");
         LinearLayout.LayoutParams lookupLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
-        lookupLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
-        main.addView(gpsLookupButton,lookupLp);
+        regionAssistance.addView(gpsLookupButton,lookupLp);
         boundaryMessage=text("",12,false);
-        boundaryMessage.setTextColor(MUTED);main.addView(boundaryMessage);
+        boundaryMessage.setTextColor(MUTED);
+        regionAssistance.addView(boundaryMessage);
+        regionAssistance.setVisibility(View.GONE);
+        TextView regionToggle=text("Find checklist area with GPS",13,true);
+        regionToggle.setTextColor(GREEN);
+        regionToggle.setMinHeight(dp(48));
+        regionToggle.setGravity(Gravity.CENTER_VERTICAL);
+        regionToggle.setFocusable(true);regionToggle.setClickable(true);
+        regionToggle.setContentDescription("Show GPS checklist area assistance");
+        regionToggle.setOnClickListener(v->{
+            boolean show=regionAssistance.getVisibility()!=View.VISIBLE;
+            regionAssistance.setVisibility(show?View.VISIBLE:View.GONE);
+            regionToggle.setText(show?"Hide GPS area assistance":"Find checklist area with GPS");
+            regionToggle.setContentDescription(show?
+                "Hide GPS checklist area assistance":"Show GPS checklist area assistance");
+        });
+        main.addView(regionToggle);
+        main.addView(regionAssistance);
         gpsLookupButton.setOnClickListener(v->suggestBoundary());
         // Sampling stations are assigned within field visits, never in survey setup.
         main.addView(step("03","Sampling effort"));
-        main.addView(ApoHomeUi.note(this,
-            "Enter planned effort for the selected method. Only relevant fields are " +
-            "shown; recorded visits and actual effort are stored during the survey."));
         observerEntry=new EditText(this);
         observerEntry.setTextSize(16);observerEntry.setSingleLine(true);
         observerEntry.setHint("Observer (optional)");
@@ -592,20 +628,38 @@ public class WelcomeActivity extends Activity {
         customSpacingEntry.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         customSpacingEntry.setVisibility(View.GONE);main.addView(customSpacingEntry);
         stationCountPreview=text("",13,true);stationCountPreview.setTextColor(GREEN);main.addView(stationCountPreview);
-        repeatHeader=setupLabel("Repeat monitoring route");main.addView(repeatHeader);
+        routeOptions=vertical();
+        repeatHeader=setupLabel("Repeat monitoring route");
+        routeOptions.addView(repeatHeader);
         templateChoice=new Spinner(this);
-        main.addView(templateChoice);
+        routeOptions.addView(templateChoice);
         setupSpinner(templateChoice,"Choose a repeat monitoring route");
         templateHint=text("Saved routes reuse permanent stations.",12,false);
-        templateHint.setTextColor(MUTED);main.addView(templateHint);
+        templateHint.setTextColor(MUTED);routeOptions.addView(templateHint);
         saveTemplateChoice=new CheckBox(this);
         saveTemplateChoice.setText("Save this route for future monitoring");
-        saveTemplateChoice.setChecked(true);main.addView(saveTemplateChoice);
+        saveTemplateChoice.setChecked(false);routeOptions.addView(saveTemplateChoice);
         templateName=new EditText(this);
         templateName.setTextSize(16);templateName.setSingleLine(true);
         templateName.setHint("Reusable route name");
         templateName.setText("Bird route "+new java.text.SimpleDateFormat("yyyyMMdd-HHmm",Locale.US).format(new java.util.Date()));
-        main.addView(templateName);
+        routeOptions.addView(templateName);
+        routeOptions.setVisibility(View.GONE);
+        routeOptionsToggle=text("Reuse or save a route (optional)",13,true);
+        routeOptionsToggle.setTextColor(GREEN);
+        routeOptionsToggle.setMinHeight(dp(48));
+        routeOptionsToggle.setGravity(Gravity.CENTER_VERTICAL);
+        routeOptionsToggle.setFocusable(true);routeOptionsToggle.setClickable(true);
+        routeOptionsToggle.setContentDescription("Show repeat route options");
+        routeOptionsToggle.setOnClickListener(v->{
+            boolean show=routeOptions.getVisibility()!=View.VISIBLE;
+            routeOptions.setVisibility(show?View.VISIBLE:View.GONE);
+            routeOptionsToggle.setText(show?"Hide repeat route options":"Reuse or save a route (optional)");
+            routeOptionsToggle.setContentDescription(show?
+                "Hide repeat route options":"Show repeat route options");
+        });
+        main.addView(routeOptionsToggle);
+        main.addView(routeOptions);
         saveTemplateChoice.setOnCheckedChangeListener((button,checked)->
             templateName.setVisibility(checked?View.VISIBLE:View.GONE));
         templateChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
@@ -643,7 +697,11 @@ public class WelcomeActivity extends Activity {
         methodChoices.setOnCheckedChangeListener((group,checked)->{
             updateMethodSelection(checked);
             int choice=checked-1000;
-            if(choice>=0&&choice<choices.length)methodHint.setText(choices[choice].description);
+            if(choice>=0&&choice<choices.length){
+                methodHint.setText(choices[choice].description);
+                if(methodPicker!=null&&methodPicker.getSelectedItemPosition()!=choice)
+                    methodPicker.setSelection(choice);
+            }
             refreshStudyChoices();
             if(choice>=0&&choice<choices.length){
                 durationLabel.setVisibility(choices[choice].code.equals("point_count")?View.VISIBLE:View.GONE);
@@ -704,9 +762,6 @@ public class WelcomeActivity extends Activity {
             radiusEntry,routeLengthEntry,customSpacingEntry,lineBearingEntry,regionEntry,
             areaEntry,templateName})styleSetupInput(entry);
         main.addView(step("04","Begin survey"));
-        main.addView(ApoHomeUi.note(this,
-            "Review optional study rules and habitat preparation. The pinned " +
-            "Continue to GPS action checks prerequisites before recording."));
         studyOptions=vertical();
         studyOptions.setVisibility(View.GONE);
         studyChoice=new Spinner(this);
@@ -746,10 +801,6 @@ public class WelcomeActivity extends Activity {
         prepareFieldChecklist.setChecked(getPreferences(MODE_PRIVATE)
             .getBoolean("prepare_field_checklist",true));
         main.addView(prepareFieldChecklist);
-        TextView prepHint=text("Confirm multiple site habitats and review optional "+
-            "2020 land-cover suggestions before recording. Turn off to go directly "+
-            "from GPS into the recorder.",12,false);
-        prepHint.setTextColor(UiKit.MUTED);main.addView(prepHint);
         // The only Continue to GPS action is pinned beneath the scroll area.
         UiMotion.enter(this,main);
     }
@@ -928,7 +979,7 @@ public class WelcomeActivity extends Activity {
         }
         if(gpsLookupButton!=null){
             gpsLookupButton.setEnabled(true);
-            gpsLookupButton.setText("Choose checklist area by GPS");
+            gpsLookupButton.setText("Suggest checklist area using GPS");
         }
     }
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){
@@ -956,6 +1007,13 @@ public class WelcomeActivity extends Activity {
         boolean route=supportsRoute(method);
         routeHeader.setVisibility(route?View.VISIBLE:View.GONE);
         boolean points=FieldUiPolicy.pointStationSetup(method);
+        if(routeOptionsToggle!=null)
+            routeOptionsToggle.setVisibility(points?View.VISIBLE:View.GONE);
+        if(routeOptions!=null&&!points)routeOptions.setVisibility(View.GONE);
+        if(points&&routeOptionsToggle!=null&&routeOptions.getVisibility()!=View.VISIBLE){
+            routeOptionsToggle.setText("Reuse or save a route (optional)");
+            routeOptionsToggle.setContentDescription("Show repeat route options");
+        }
         repeatHeader.setVisibility(points?View.VISIBLE:View.GONE);
         spacingHeader.setVisibility(points?View.VISIBLE:View.GONE);
         routeLengthEntry.setVisibility(route?View.VISIBLE:View.GONE);

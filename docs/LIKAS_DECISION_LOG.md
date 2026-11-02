@@ -4,6 +4,12 @@
 
 ## Entries
 
+### 2026-11-02 | RC82 signed post-group setup screen | Acceptance record
+Code142 source `85aa224bd0031e9eaf6bd0ce9b024939de06ab01` passed signed CI `41391752701` (429 Python, JVM build, eight Android14 emulator setup tests, six screenshots across Birds/Herpetofauna/Mammals). Verified direct APK SHA `747b7c92fd34ce5d38b4a099f871ef96fe951dbeb6c6f1f829f9a41411d30601`. Initial setup is materially shorter via collapsed comparison, region assistance, and optional route management; all method/GPS/effort and analysis semantics preserved. Long selected method names can be ellipsized at 200% font. Field/handset certification still pending. See RC82 QA.
+
+### 2026-11-02 | RC82 wildlife-group setup progressive disclosure | Owner requested
+The screen after selecting Birds, Herpetofauna or Mammals is too long and crowded. Retain real method, project/region, required route/effort and GPS setup while making the primary method selector one native spinner, with the entire radio method catalog reachable through “Compare all methods”. Move optional GPS-region assistance and point-count saved-route management behind clear disclosures. Do not silently save newly created routes. Keep scientific validation, explicit GPS handling, original package/signer/schema, and historical data unchanged. Signed QA and direct APK must pass before release. See RC82 QA.
+
 ### 2026-11-02 | RC81 signed narrow-phone recorder acceptance | Verified preview
 Code141 source `719c45ea79b68a5912ae60180d6cf54ba7cf4ffb`, successful run `41388167462`, completed 426 Python regressions and two Android14 real emulator UI tests at 160% and 200%/320dp. Approved scientific/application identity checks passed. The 200% screenshot confirms visible observation heading and start of species entry, with Save, Review and End still reachable. Exact APK SHA `3d42823bfe59cfd2c631fac294a68b8edff23bc3699c32e1da9dec85c72900a8`, attached directly in chat. Physical handset upgrade, GPS and full survey outcomes remain unverified; PR #83 stays draft. See signed RC81 QA document.
 

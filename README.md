@@ -2,8 +2,8 @@
 
 APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
 
-**Current survey UI development branch:** `feature/apo-survey-compact-320-v141` (RC81 draft on signed RC80; not merged into historical default `main`)  
-**Latest verified signed APK:** `0.27.3-rc81-apo-survey-compact-320`, versionCode **141**, app/test source `719c45ea79b68a5912ae60180d6cf54ba7cf4ffb`, signed emulator run `41388167462`  
+**Current survey UI development branch:** `feature/apo-survey-setup-v142` (RC82 draft on signed RC81; not merged into historical default `main`)  
+**Latest verified signed APK:** `0.27.3-rc82-apo-survey-setup`, versionCode **142**, app/test source `85aa224bd0031e9eaf6bd0ce9b024939de06ab01`, signed emulator run `41391752701`  
 **Android ID:** `org.phwildlife.survey.beta08` (unchanged); original signer retained  
 **SQLite schema:** **28** (unchanged)
 
@@ -18,6 +18,8 @@ APO is an offline-first, Philippines-focused Android biodiversity companion for 
 **RC80 survey HUD/station changes (source under QA):** Compact effort/point timer and GPS display at 160%+ fonts, full unsaved-draft confirmation before changing stations, and expandable End Survey protocol details. VersionCode140 is **not signed or delivered** until its CI and emulator gates pass. [RC80 QA](docs/APO_RC80_SURVEY_HUD_STATIONS_QA_2026_11_02.md).
 
 **RC81 signed development preview:** The 200%/320dp emulator screenshot showed crowded controls. Code141 shortens the timing/GPS status and keeps Review / End Survey on one row at 320dp/200%; signed CI passed 426 Python tests and two emulator font/size checks. The exact 11,756,772-byte APK (SHA-256 `3d42823bfe59cfd2c631fac294a68b8edff23bc3699c32e1da9dec85c72900a8`) was directly delivered in the development conversation. [RC81 QA](docs/APO_RC81_COMPACT_320_QA_2026_11_02.md).
+
+**RC82 signed developer preview:** Selecting Birds, Herpetofauna or Mammals now opens a compact method picker with optional full comparison, collapsed GPS-region assistance and opt-in repeat-route controls. [RC82 QA](docs/APO_RC82_SURVEY_SETUP_QA_2026_11_02.md). Code142 is signed and directly delivered (11,757,508 bytes, SHA-256 `747b7c92fd34ce5d38b4a099f871ef96fe951dbeb6c6f1f829f9a41411d30601`). CI passed 429 Python source tests and eight Android setup emulator tests, with six screenshots. Handset field QA is still pending.
 
 ## What APO currently provides
 

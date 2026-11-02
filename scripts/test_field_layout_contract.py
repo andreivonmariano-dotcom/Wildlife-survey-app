@@ -63,7 +63,7 @@ class FieldLayoutContractTest(unittest.TestCase):
         self.assertIn('extraDetails.addView(observerEntry)',text)
 
     def test_gps_skip_and_exports_are_unchanged(self):
-        self.assertIn('"Start without GPS · mark start missing"',self.gps)
+        self.assertIn('UiKit.button(this,"Continue without GPS","warning")',self.gps)
         self.assertIn('start_gps_recorded_at_utc,start_gps_status',self.recorder)
         self.assertIn('"missing_at_survey_start"',self.recorder)
         self.assertIn("recordedCount(", (JAVA / "SurveyHudReader.java").read_text(encoding="utf-8"))

@@ -10,7 +10,7 @@
 - Recorder > Station progress: returns to recorder. History > Station progress: returns to history. **Fix:** common Back label instead of inaccurately promising Survey on the second route.
 - Recorder > Other evidence / quick capture > Field protocol records or Trap and camera records: direct event-scoped view and Back returns to recorder.
 - Fieldwork > More field tools > Protocols > survey details: **fix:** both header Back and Android Back return to the protocol-survey picker. Fieldwork > More field tools > Camera traps > survey details: same navigation fix for the device-survey picker.
-- **Fix:** device picker now shows all camera-trap, drift-fence, and live-trap survey events, even before any trap deployment is registered. Previously it joined only `trap_deployments`, concealing empty or newly started device-method events.
+- **Fix:** device picker now shows all camera-trap, drift-fence, and live-trap survey events, even before any trap deployment is registered. Previously it joined only `trap_deployments`, concealing empty or newly started device-method events. Each row now shows the resolved outcome as well as the readable method and start date. Selecting a row uses its already-read method, removing a redundant database query.
 - **Efficiency fix:** current-survey Station progress lists actual recorded visits first, with an explicit no-visits state. The unrelated project-station inventory was removed from this screen, as projects and stations have their own dedicated manager. No site or station data were deleted.
 - Fields such as Projects & sites and Habitat & Ecology can be opened from several places. **Fix:** neutral Back label for caller-relative finish rather than inaccurate Home navigation.
 - Species Browse > species choice > recorder, Call library > audio detail > call library, and picker > species reference > picker remain under the existing system navigation.
@@ -23,8 +23,12 @@ The recorder's method-specific Quick capture mirrors one available evidence acti
 - Added `SurveyNavigationPolicyTest` for picker-owned records, caller-owned records, history details, and the survey-list root.
 - Source changes are UI-only and keep `org.phwildlife.survey.beta08`, versionCode 109, schema 27, signing configuration, stored records, scientific completion rules, and startup assets unchanged.
 
+## Verification performed
+- GitHub Actions **LIKAS Scientific Core QA**, run `41441579728`, **SUCCESS** for source commit `a85636c498be43d95d930324f116f2370765dd87`. The run completed 316 Python tests, Gradle JVM unit tests, app compilation and AndroidTest APK compilation. The CI job confirmed that a debug APK was built, but the workflow did **not** publish an APK artifact for direct chat delivery. RC4 PR lineage gate `41441573079` also passed.
+- An intermediate run `41441315757` failed an outdated source-contract test requiring the removed unrelated-station section. The test was updated to assert the intentional layout. A later intermediate run `41441480269` failed a Wikimedia Commons HTTP 429 on the pinned eagle image before Gradle; this external download issue was not reproduced in the successful source run.
+
 ## Still requires verification
-- Unit tests and compilation of this exact branch in GitHub Actions or a local Gradle environment; Android Back and header Back on an API 34 emulator; handset 200% font and 360dp layout; nested dialogs and resume after task switching.
+- Tap-testing Android Back and header Back on an API 34 emulator; handset 200% font and 360dp layout; nested dialogs and resume after task switching.
 - Physical-device upgrade and record preservation before an installable release. This branch is **not** the RC51 app, does **not** ship an APK and must not be installed as a lower-version build over versionCode 111.
 - Full automated UI traversal of every dialog/form action is not complete. The route descriptions above are source-inspected paths, not claims of touchscreen testing.
 

@@ -4,6 +4,9 @@
 
 ## Entries
 
+### 2026-11-02 | RC82 signed post-group setup screen | Acceptance record
+Code142 source `85aa224bd0031e9eaf6bd0ce9b024939de06ab01` passed signed CI `41391752701` (429 Python, JVM build, eight Android14 emulator setup tests, six screenshots across Birds/Herpetofauna/Mammals). Verified direct APK SHA `747b7c92fd34ce5d38b4a099f871ef96fe951dbeb6c6f1f829f9a41411d30601`. Initial setup is materially shorter via collapsed comparison, region assistance, and optional route management; all method/GPS/effort and analysis semantics preserved. Long selected method names can be ellipsized at 200% font. Field/handset certification still pending. See RC82 QA.
+
 ### 2026-11-02 | RC82 wildlife-group setup progressive disclosure | Owner requested
 The screen after selecting Birds, Herpetofauna or Mammals is too long and crowded. Retain real method, project/region, required route/effort and GPS setup while making the primary method selector one native spinner, with the entire radio method catalog reachable through “Compare all methods”. Move optional GPS-region assistance and point-count saved-route management behind clear disclosures. Do not silently save newly created routes. Keep scientific validation, explicit GPS handling, original package/signer/schema, and historical data unchanged. Signed QA and direct APK must pass before release. See RC82 QA.
 

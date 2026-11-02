@@ -30,7 +30,7 @@ public final class HabitatsSpeciesActivity extends Activity {
     private final Set<String> confirmed=new HashSet<>();
     private List<String> suggested=new ArrayList<>();
     private LinearLayout body,checks;
-    private TextView mapSummary,speciesSummary,siteSummary,selectedSummary;
+    private TextView mapSummary,speciesSummary,siteSummary,siteEvidence,selectedSummary;
     private Button checklistButton;
     private RadioGroup checklistMode;
     private boolean othersVisible=false;
@@ -62,8 +62,10 @@ public final class HabitatsSpeciesActivity extends Activity {
         body.addView(siteSummary);
         LinearLayout siteDetails=new LinearLayout(this);
         siteDetails.setOrientation(LinearLayout.VERTICAL);
-        siteDetails.addView(label("Start GPS is one point, not the whole survey area. "+
-            "Device elevation is only a screening input.",12,false));
+        siteEvidence=label("",12,false);
+        siteDetails.addView(siteEvidence);
+        siteDetails.addView(label("One GPS point is not the whole survey area. "+
+            "Device MSL elevation is screening context, not a habitat observation.",12,false));
         siteDetails.setVisibility(View.GONE);
         Button siteToggle=UiKit.button(this,"GPS & elevation details","quiet");
         siteToggle.setContentDescription("Show GPS and elevation context");
@@ -182,14 +184,18 @@ public final class HabitatsSpeciesActivity extends Activity {
     }
     private void refreshSite(){
         boolean missing=getIntent().getBooleanExtra("start_without_gps",false);
-        String coords=missing||!Double.isFinite(preflightLat)||!Double.isFinite(preflightLon)?
-            "Start GPS: missing":
-            String.format(Locale.US,"Start GPS: %.6f, %.6f",
-                preflightLat,preflightLon);
+        boolean hasCoords=!missing&&Double.isFinite(preflightLat)&&Double.isFinite(preflightLon);
+        float accuracy=getIntent().getFloatExtra("start_gps_accuracy_m",Float.NaN);
+        String accuracyText=Float.isFinite(accuracy)&&accuracy>0?
+            String.format(Locale.US," · ±%.1f m",accuracy):"";
+        siteSummary.setText(hasCoords?"Start GPS recorded"+accuracyText:"Start GPS missing");
         GpsElevation.Sample altitude=GpsElevation.read(TrackService.currentFix());
         String height=altitude.usableForHabitat?
             altitude.label():"MSL elevation unavailable";
-        siteSummary.setText(coords+" · "+height);
+        siteEvidence.setText((hasCoords?
+            String.format(Locale.US,"Start: %.6f, %.6f%s",
+                preflightLat,preflightLon,accuracyText):
+            "Start coordinates unavailable")+"\\n"+height);
     }
     private void pickMap(){
         Intent select=new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -287,7 +293,7 @@ public final class HabitatsSpeciesActivity extends Activity {
                 if(master.moveToFirst())installed=master.getInt(0);
             }
             if(installed!=714){
-                speciesSummary.setText("Site matching unavailable · full checklist remains accessible");
+                speciesSummary.setText("Site matching unavailable · continue without ranking");
                 return;
             }
             // The master attributes are installed privately, separately from the app APK.
@@ -304,7 +310,7 @@ public final class HabitatsSpeciesActivity extends Activity {
                 }
             }
         }catch(Exception e){
-            speciesSummary.setText("Site matching unavailable · full checklist remains accessible");
+            speciesSummary.setText("Site matching unavailable · continue without ranking");
             return;
         }
         boolean ranked=checklistMode.getCheckedRadioButtonId()==3001;

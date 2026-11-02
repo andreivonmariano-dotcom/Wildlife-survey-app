@@ -83,7 +83,7 @@ class ApoBioToolsDestinations(unittest.TestCase):
 
     def test_locked_identity_and_export_writer_remain(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertGreaterEqual(int(re.search(r"versionCode\\s+(\\d+)",gradle).group(1)),135)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",gradle).group(1)),135)
         self.assertIn("0.27.3-rc",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn("super(context,NAME,null,28)",src("FieldDb.java"))

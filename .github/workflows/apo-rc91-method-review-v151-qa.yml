@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: apo-method-review-v151-${{ github.ref }}
@@ -50,6 +51,17 @@ jobs:
           test -s .signing/wildlife-beta08.keystore
           keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/apo-original-cert.der
           echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/apo-original-cert.der' | sha256sum -c -
+      - name: Restore previously signed and pinned reference photos
+        uses: actions/download-artifact@v4
+        with:
+          name: APO-v150-method-panels-emulator-signed-preview
+          run-id: 41430183895
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: .verified-photo-seed
+      - name: Recover only approved JPEG bytes from verified old APK
+        run: |
+          python3 scripts/seed_pinned_commons_from_verified_apk.py .verified-photo-seed/app-debug.apk
+          python3 scripts/prepare_offline_photos.py
       - name: Scientific and menu source regression tests
         run: |
           python3 -m unittest discover -s scripts -p 'test_*.py'

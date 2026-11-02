@@ -1,5 +1,12 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC82 signed survey setup refinement | latest verified developer preview
+
+- **Baseline:** RC82 Android app/test source `85aa224bd0031e9eaf6bd0ce9b024939de06ab01` on `feature/apo-survey-setup-v142`, draft PR #84 from signed RC81. GitHub Actions `41391752701` **SUCCESS**: **429 Python regressions**, JVM/app/AndroidTest build, **4 Android14 emulator setup tests at 160%** and **4 at 200%/320dp**, six distinct native screenshots of Birds/Herpetofauna/Mammals setup; original package/signer and locked assets verified. Older failed runs had test navigation/shell/prelayout screenshot faults fixed in final run.
+- **Direct-delivered signed code142 APK:** `APO-v0.27.3-RC82-Refined-Survey-Setup-code142.apk`, **11,757,508 bytes**, SHA-256 `747b7c92fd34ce5d38b4a099f871ef96fe951dbeb6c6f1f829f9a41411d30601`; signed CI artifact ID `13117454483`. Correct `0.27.3-rc82-apo-survey-setup`, `org.phwildlife.survey.beta08`, original signer, SQLite28, approved APO mountain/PAIC714/WorldCover bytes. Paths in user chat are session-specific.
+- **Refined post-group screen:** native compact method picker replaces always-expanded method radio grid; optional compare, GPS checklist-area assistance and point-count repeat-route tools collapsed. No implicit saving of new routes. Project/region/planned effort/GPS preflight remain; all survey outcomes and record structures unchanged.
+- **Limitations:** at 200% font the long method's native selected label can ellipsize; popup/full method description remains. Full field-device upgrade, GNSS, survey end-to-end, saved route reuse, TalkBack and export integrity still require separate QA. Legacy RC4 lineage gate fails on old artistic dependency unrelated to signed APO build; PR #84 remains unmerged. Full QA: `docs/APO_RC82_SURVEY_SETUP_QA_2026_11_02.md`.
+
 ## 2026-11-02 | APO RC82 compact setup after wildlife-group selection | source pending QA
 
 - **Baseline:** Signed RC81 code141 app/test SHA `719c45ea79b68a5912ae60180d6cf54ba7cf4ffb`, run `41388167462` SUCCESS (426 Python regressions, 160%/200%-320dp Android14 recorder checks). New code142 feature branch `feature/apo-survey-setup-v142` based on RC81 draft PR #83.

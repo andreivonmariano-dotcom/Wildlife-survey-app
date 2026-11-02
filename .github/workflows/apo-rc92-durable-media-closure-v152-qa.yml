@@ -10,8 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  actions: read
+  contents: read
 
 concurrency:
   group: apo-durable-media-v152-${{ github.ref }}
@@ -51,31 +50,7 @@ jobs:
           test -s .signing/wildlife-beta08.keystore
           keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/apo-original-cert.der
           echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/apo-original-cert.der' | sha256sum -c -
-      # Bootstrap once: vendor exact public CC-licensed thumbnails already
-      # approved by SHA-256 and source manifest. Later builds use repo bytes.
-      - name: Bootstrap public approved photos only when absent
-        if: ${{ hashFiles('app/src/main/assets/offline_photos/species_eagle.jpg') == '' }}
-        uses: actions/download-artifact@v4
-        with:
-          name: APO-v150-method-panels-emulator-signed-preview
-          run-id: 41430183895
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path: .verified-photo-seed
-      - name: Seed exact approved public media before first durable commit
-        if: ${{ hashFiles('app/src/main/assets/offline_photos/species_eagle.jpg') == '' }}
-        run: |
-          python3 scripts/seed_pinned_commons_from_verified_apk.py .verified-photo-seed/app-debug.apk
-          python3 scripts/prepare_offline_photos.py
-          if [ "${{ github.event_name }}" != "push" ]; then
-            echo "Cannot seed source media from PR checkout" >&2
-            exit 1
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f app/src/main/assets/offline_photos/*.jpg
-          git commit -m "assets(rc92): durably pin 9 approved Commons JPEGs with existing SHA lock"
-          git push origin "HEAD:refs/heads/${{ github.ref_name }}"
-      - name: Require complete immutable public photo source
+      - name: Verify durable approved photos from repository source
         run: |
           python3 scripts/prepare_offline_photos.py
       - name: Scientific and menu source regression tests
@@ -119,15 +94,17 @@ jobs:
             adb shell pm grant org.phwildlife.survey.beta08 android.permission.ACCESS_FINE_LOCATION
             adb shell pm grant org.phwildlife.survey.beta08 android.permission.ACCESS_COARSE_LOCATION
             adb shell settings put system font_scale 1.6
-            gradle --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.RecorderUiEmulatorTest,org.phwildlife.survey.RecorderPickerCompactEmulatorTest,org.phwildlife.survey.ObservationTimelineEmulatorTest,org.phwildlife.survey.RecorderMethodPanelsEmulatorTest,org.phwildlife.survey.SurveyClosureArchiveEmulatorTest
+            gradle --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.RecorderUiEmulatorTest,org.phwildlife.survey.RecorderPickerCompactEmulatorTest,org.phwildlife.survey.ObservationTimelineEmulatorTest,org.phwildlife.survey.RecorderMethodPanelsEmulatorTest,org.phwildlife.survey.SurveyClosureArchiveEmulatorTest,org.phwildlife.survey.SurveyClosureDialogEmulatorTest
             adb pull /sdcard/Pictures/APO/apo_recorder_160pct.png emulator-evidence/recorder_160.png
+            adb pull /sdcard/Android/data/org.phwildlife.survey.beta08/files/Pictures/apo_end_review_160.png emulator-evidence/end_review_160.png
             for group in birds amphibians; do adb pull "/sdcard/Pictures/APO/apo_picker_${group}_160.png" "emulator-evidence/picker_${group}_160.png" || exit 1; done
             adb shell wm size 960x2160
             adb shell settings put system font_scale 2.0
-            gradle --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.RecorderUiEmulatorTest,org.phwildlife.survey.RecorderPickerCompactEmulatorTest,org.phwildlife.survey.ObservationTimelineEmulatorTest,org.phwildlife.survey.RecorderMethodPanelsEmulatorTest,org.phwildlife.survey.SurveyClosureArchiveEmulatorTest
+            gradle --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.RecorderUiEmulatorTest,org.phwildlife.survey.RecorderPickerCompactEmulatorTest,org.phwildlife.survey.ObservationTimelineEmulatorTest,org.phwildlife.survey.RecorderMethodPanelsEmulatorTest,org.phwildlife.survey.SurveyClosureArchiveEmulatorTest,org.phwildlife.survey.SurveyClosureDialogEmulatorTest
             adb pull /sdcard/Pictures/APO/apo_recorder_200pct_320dp.png emulator-evidence/recorder_200.png
+            adb pull /sdcard/Android/data/org.phwildlife.survey.beta08/files/Pictures/apo_end_review_200.png emulator-evidence/end_review_200.png
             for group in birds amphibians; do adb pull "/sdcard/Pictures/APO/apo_picker_${group}_200.png" "emulator-evidence/picker_${group}_200.png" || exit 1; done
-            python3 -c "from pathlib import Path; import struct,hashlib; files=list(Path('emulator-evidence').glob('*.png')); assert len(files)==6,files; images=[p.read_bytes() for p in files]; assert all(len(x)>16000 and x[:8]==bytes.fromhex('89504e470d0a1a0a') for x in images); shapes={p.name:struct.unpack('>II',p.read_bytes()[16:24]) for p in files}; assert all(shapes[p.name]==((1080,2280) if '160' in p.name else (960,2160)) for p in files),shapes; assert len({hashlib.sha256(x).hexdigest() for x in images})==6,'Duplicate recorder/picker screenshots'; print('Verified recorder and Bird/Amphibian species pickers',shapes)"
+            python3 -c "from pathlib import Path; import struct,hashlib; files=list(Path('emulator-evidence').glob('*.png')); assert len(files)==8,files; images=[p.read_bytes() for p in files]; assert all(len(x)>16000 and x[:8]==bytes.fromhex('89504e470d0a1a0a') for x in images); shapes={p.name:struct.unpack('>II',p.read_bytes()[16:24]) for p in files}; assert all(shapes[p.name]==((1080,2280) if '160' in p.name else (960,2160)) for p in files),shapes; assert len({hashlib.sha256(x).hexdigest() for x in images})==8,'Duplicate recorder/picker/end review screenshots'; print('Verified recorder and Bird/Amphibian species pickers',shapes)"
       - name: Upload emulator screenshot evidence
         if: always()
         uses: actions/upload-artifact@v4

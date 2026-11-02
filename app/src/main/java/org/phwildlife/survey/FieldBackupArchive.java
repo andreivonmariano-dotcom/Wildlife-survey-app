@@ -71,13 +71,13 @@ public final class FieldBackupArchive {
                 Integer.parseInt(parts[1])*1000+Integer.parseInt(parts[2]);
         }catch(Exception e){return 0;}
     }
-    private static void checkDatabase(File file)throws Exception{
+    private static int checkDatabase(File file)throws Exception{
         SQLiteDatabase db=SQLiteDatabase.openDatabase(file.getAbsolutePath(),null,
             SQLiteDatabase.OPEN_READONLY);
         try{
             int version=db.getVersion();
-            require(version==27||version==28,
-                "Backup database schema is not a supported LIKAS v27/v28: "+version);
+            require(version>=27&&version<=29,
+                "Backup database schema is not a supported LIKAS v27-v29: "+version);
             try(Cursor c=db.rawQuery("PRAGMA quick_check",null)){
                 require(c.moveToFirst()&&"ok".equalsIgnoreCase(c.getString(0)),
                     "Backup SQLite integrity check failed");
@@ -87,6 +87,7 @@ public final class FieldBackupArchive {
                     require(c.moveToFirst(),"Backup missing table "+table);
                 }
             }
+            return version;
         }finally{db.close();}
     }
     public static boolean hasActiveSurvey(Context ctx){
@@ -179,7 +180,7 @@ public final class FieldBackupArchive {
                 }
                 db.execSQL("VACUUM INTO '"+snapshot.getAbsolutePath().replace("'","''")+"'");
             }
-            checkDatabase(snapshot);
+            int snapshotSchema=checkDatabase(snapshot);
             LinkedHashMap<String,File> entries=new LinkedHashMap<>();
             entries.put(DATABASE,snapshot);
             mediaEntries(ctx,entries);
@@ -196,7 +197,7 @@ public final class FieldBackupArchive {
             }
             JSONObject manifest=new JSONObject();
             manifest.put("format",FORMAT);
-            manifest.put("sqliteSchema",28);
+            manifest.put("sqliteSchema",snapshotSchema);
             manifest.put("createdUtc",new java.text.SimpleDateFormat(
                 "yyyy-MM-dd'T'HH:mm:ss'Z'",java.util.Locale.US) {{
                   setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
@@ -217,7 +218,8 @@ public final class FieldBackupArchive {
                 zip.closeEntry();
                 zip.finish();
             }
-            return "Verified v28 snapshot with "+(entries.size()-1)+" attachments and preferences.";
+            return "Verified v"+snapshotSchema+" snapshot with "+(entries.size()-1)+
+                " attachments and preferences.";
         }finally{clear(dir);}
     }
     private static File unpack(Context ctx,InputStream input)throws Exception{
@@ -266,8 +268,8 @@ public final class FieldBackupArchive {
             }
             require(manifest!=null&&FORMAT.equals(manifest.optString("format")),
                 "Not a LIKAS current-version recovery archive");
-            require(manifest.optInt("sqliteSchema")==27||
-                manifest.optInt("sqliteSchema")==28,"Incompatible backup schema");
+            int manifestSchema=manifest.optInt("sqliteSchema");
+            require(manifestSchema>=27&&manifestSchema<=29,"Incompatible backup schema");
             JSONObject hashes=manifest.getJSONObject("files");
             require(hashes.length()==found.size()-1&&found.contains(DATABASE),
                 "Missing or undeclared backup data");
@@ -278,7 +280,8 @@ public final class FieldBackupArchive {
                 require(checksum(new File(dir,name)).equalsIgnoreCase(hashes.getString(name)),
                     "Backup checksum mismatch: "+name);
             }
-            checkDatabase(new File(dir,DATABASE));
+            require(checkDatabase(new File(dir,DATABASE))==manifestSchema,
+                "Backup manifest schema disagrees with embedded SQLite database");
             return dir;
         }catch(Exception e){clear(dir);throw e;}
     }

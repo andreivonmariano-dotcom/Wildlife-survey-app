@@ -2,7 +2,8 @@
 
 APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
 
-**Current development source:** `feature/apo-startup-screen-v1-design` (draft PR #74, not merged into default `main`)  
+**Current Home development source:** `feature/apo-text-home-v133` (child of the APO RC72 startup branch; not merged into `main`)
+**Last verified signed APK before RC73 build:** `0.27.3-rc72-apo-gradient-startup`, versionCode **132**  
 **Latest verified signed APK:** `0.27.3-rc72-apo-gradient-startup`, versionCode **132** (built from `4ce953bbea100c1c6a90231434591ffb6f99f788`)  
 **Latest checked APO branch HEAD before this documentation update:** `2fc989cae924fc8c652d7b5c3bb6d578dc07d721`  
 **Android application ID:** `org.phwildlife.survey.beta08` (unchanged)  
@@ -12,7 +13,7 @@ APO is an offline-first, Philippines-focused Android biodiversity companion for 
 
 **Release boundary:** RC72 is a **signed development preview**, not a validated stable field release. Physical-phone upgrades with archived surveys, GPS and field workflows, accessibility and on-device menu layout remain unverified. Four later commits on this branch only updated APO startup documentation. They do not constitute a newer APK. Older `main` is not a suitable Android development baseline. Do not merge draft ancestry or reset the working branch without reviewing SQLite28 migration and original-signature tests.
 
-**Main-menu redesign starting point:** The startup identity has been updated to APO, but `WelcomeActivity.home()` and `LikasPortalUi.hero()` still contain legacy LIKAS Home/menu wording and frog-era Home illustration. Treat the Home redesign as new scoped work from this APO branch. Do not claim the entire interface has been rebranded yet.
+**RC73 Home implementation:** Four text-only top-level modules are coded: BioTools, PHLibrary, PHMaps and BioDiscover, with a small Settings header action. The legacy illustrated Home hero/tiles are no longer called; active survey Resume remains. PHMaps exposes existing field-site and habitat records while independent atlas features are not complete; BioDiscover is clearly identified as under development, not as a live news feed. Source is staged for signed build/QA, not yet physically field-validated.
 
 See [APO code132 signed APK and release QA](docs/APO_V132_SIGNED_APK_RELEASE_QA_2026_11_02.md), [approved official emblem](docs/APO_OFFICIAL_MOUNTAIN_ICON_LOCK_2026_11_02.md), [project state](docs/LIKAS_PROJECT_STATE.md), and [decision log](docs/LIKAS_DECISION_LOG.md).
 

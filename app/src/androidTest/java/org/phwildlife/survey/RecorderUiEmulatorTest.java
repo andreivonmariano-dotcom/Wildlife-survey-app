@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,9 +66,13 @@ public final class RecorderUiEmulatorTest {
                 assertTrue("End Survey should fit within viewport",
                     pos[1]>=0&&pos[1]+end.getHeight()<=height);
                 try{
-                    Bitmap screenshot=InstrumentationRegistry.getInstrumentation()
-                        .getUiAutomation().takeScreenshot();
-                    assertNotNull("Emulator screenshot unavailable",screenshot);
+                    // Capture only APO's actual View tree. System launcher ANR
+                    // overlays on a headless emulator must not contaminate UI QA.
+                    assertTrue("Recorder view was not laid out",
+                        root.getWidth()>0&&root.getHeight()>0);
+                    Bitmap screenshot=Bitmap.createBitmap(
+                        root.getWidth(),root.getHeight(),Bitmap.Config.ARGB_8888);
+                    root.draw(new Canvas(screenshot));
                     ContentValues metadata=new ContentValues();
                     metadata.put(MediaStore.MediaColumns.DISPLAY_NAME,"apo_recorder_emulator.png");
                     metadata.put(MediaStore.MediaColumns.MIME_TYPE,"image/png");

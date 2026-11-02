@@ -33,6 +33,8 @@ public final class SurveyGpsActivity extends Activity {
     private boolean acquisitionVisible=false;
     private boolean launchCommitted=false;
     private boolean skipConfirmationOpen=false;
+    // Package-visible solely for real Android dialog-button instrumentation.
+    AlertDialog gpsSkipDialog;
     private boolean skyRegistered=false;
     private Location qualifiedFix;
     private TextView status,statusDetails,qualitySummary,satelliteStatus,signalStatus;
@@ -211,7 +213,7 @@ public final class SurveyGpsActivity extends Activity {
             skip.setOnClickListener(v->{
                 if(launchCommitted||skipConfirmationOpen||!acquisitionVisible||isFinishing())return;
                 skipConfirmationOpen=true;
-                new AlertDialog.Builder(this)
+                gpsSkipDialog=new AlertDialog.Builder(this)
                     .setTitle("Continue with missing GPS?")
                     .setMessage((getIntent().getBooleanExtra("prepare_field_checklist",false)?
                         "Habitat preparation comes first. Survey effort does not begin until Begin survey. ":
@@ -224,7 +226,10 @@ public final class SurveyGpsActivity extends Activity {
                     .setOnCancelListener(dialog->{skipConfirmationOpen=false;updateLocation();})
                     .setPositiveButton("Continue, flag missing GPS",(dialog,which)->{
                         skipConfirmationOpen=false;launchWithoutFix();
-                    }).show();
+                    })
+                    .setOnDismissListener(dialog->gpsSkipDialog=null)
+                    .create();
+                gpsSkipDialog.show();
             });
             addAction(footer,skip);
         }else{

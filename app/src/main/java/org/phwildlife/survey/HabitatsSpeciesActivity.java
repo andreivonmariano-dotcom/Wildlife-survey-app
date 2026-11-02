@@ -82,7 +82,7 @@ public final class HabitatsSpeciesActivity extends Activity {
         if(BundledPrivateReferences.hasBundledMap(this)&&
                 PaicLandCoverPack.installed(this))
             importMap.setVisibility(View.GONE);
-        body.addView(importMap,new LinearLayout.LayoutParams(-1,dp(52)));
+        body.addView(importMap,new LinearLayout.LayoutParams(-1,-2));
         TextView intro=label("Select every habitat actually encountered. Suggested "+
             "habitats are not preselected. Other habitats can always be added.",13,false);
         body.addView(intro);
@@ -114,7 +114,8 @@ public final class HabitatsSpeciesActivity extends Activity {
         footer.setPadding(0,dp(6),0,dp(4));
         Button begin=UiKit.button(this,"Begin survey","primary");
         begin.setOnClickListener(v->beginSurvey());
-        footer.addView(begin,new LinearLayout.LayoutParams(-1,dp(56)));
+        begin.setMinHeight(dp(56));
+        footer.addView(begin,new LinearLayout.LayoutParams(-1,-2));
         page.addView(footer);
         setContentView(page);
         updateMap();

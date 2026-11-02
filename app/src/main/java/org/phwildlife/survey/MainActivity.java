@@ -534,7 +534,13 @@ public class MainActivity extends Activity implements LocationListener {
         markRow.addView(clear);
         recorderTools.addView(markRow);
         if(compactObservationFirst){
-            Button revealTools=UiKit.button(this,"Show sampling & detection tools","secondary");
+            boolean veryLargeText=getResources().getConfiguration().fontScale>=1.9f;
+            Button revealTools=UiKit.button(this,veryLargeText?
+                "Sampling & detection tools":"Show sampling & detection tools","secondary");
+            if(veryLargeText){
+                revealTools.setMinHeight(dp(56));
+                revealTools.setPadding(dp(7),dp(4),dp(7),dp(4));
+            }
             revealTools.setContentDescription("Show sampling and detection tools");
             content.addView(revealTools,new LinearLayout.LayoutParams(-1,-2));
             recorderTools.setVisibility(View.GONE);
@@ -542,8 +548,9 @@ public class MainActivity extends Activity implements LocationListener {
             revealTools.setOnClickListener(v->{
                 boolean expanded=recorderTools.getVisibility()!=View.VISIBLE;
                 recorderTools.setVisibility(expanded?View.VISIBLE:View.GONE);
-                revealTools.setText(expanded?
-                    "Hide sampling & detection tools":"Show sampling & detection tools");
+                revealTools.setText(veryLargeText?
+                    (expanded?"Hide tools":"Sampling & detection tools"):
+                    (expanded?"Hide sampling & detection tools":"Show sampling & detection tools"));
                 revealTools.setContentDescription(expanded?
                     "Hide sampling and detection tools":"Show sampling and detection tools");
             });
@@ -841,7 +848,9 @@ public class MainActivity extends Activity implements LocationListener {
             getResources().getConfiguration().fontScale);
         LinearLayout footerOptions=horizontal();
         if(stackDock)footerOptions.setOrientation(LinearLayout.VERTICAL);
-        reviewButton=UiKit.button(this,"Review Records","secondary");
+        reviewButton=UiKit.button(this,
+            getResources().getConfiguration().fontScale>=1.9f?"Review":"Review Records",
+            "secondary");
         reviewButton.setContentDescription("Review saved records from this survey");
         LinearLayout.LayoutParams reviewParams=new LinearLayout.LayoutParams(
             stackDock?-1:0,-2,stackDock?0:1);
@@ -1019,7 +1028,9 @@ public class MainActivity extends Activity implements LocationListener {
         if(compactGpsView==null||gpsView==null)return;
         boolean startMissing="missing_at_survey_start".equals(startGpsStatus);
         String live=gpsView.getText().toString().replace(" · details","");
-        String message=(startMissing?"Start GPS unverified · ":"")+live+" · details";
+        if(startMissing&&(live.contains("pending")||live.contains("searching")))
+            live="GPS pending";
+        String message=(startMissing?"Start GPS unverified · ":"")+live;
         compactGpsView.setText(message);
         compactGpsView.setTextColor(startMissing?UiKit.AMBER:gpsView.getCurrentTextColor());
         compactGpsView.setContentDescription(message+". Open observer GPS details");
@@ -2358,7 +2369,9 @@ public class MainActivity extends Activity implements LocationListener {
             String disclosure=statusDetailsPanel!=null&&
                 statusDetailsPanel.getVisibility()==View.VISIBLE?"Hide details":"More details";
             String summary="Session excl. pauses "+timeFmt(activeElapsed/1000)+
-                (surveyPaused?" · PAUSED":"")+" · "+disclosure+"\n"+eventView.getText();
+                (surveyPaused?" · PAUSED":"")+" · "+disclosure;
+            if(hasStationUnits()||method.equals("line_transect")||method.equals("ves_transect"))
+                summary+="\n"+eventView.getText();
             compactClockView.setText(summary);
             compactClockView.setContentDescription(summary+
                 ". Tap to expand or collapse session timing and station progress");

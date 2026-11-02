@@ -23,9 +23,9 @@ public final class FieldLayoutPolicy {
      * At very large fonts on narrow phones, preserve two full-width targets.
      */
     public static boolean stackRecorderDock(int widthDp,float fontScale){
-        if(widthDp<340)return true;
+        if(widthDp<320)return true;
         float scale=Float.isFinite(fontScale)?Math.max(1f,fontScale):1f;
-        return scale>=1.9f&&widthDp<390;
+        return scale>=2.4f&&widthDp<360;
     }
     public static int saveHeightDp(float fontScale){
         float scale=Float.isFinite(fontScale)?Math.max(1f,fontScale):1f;

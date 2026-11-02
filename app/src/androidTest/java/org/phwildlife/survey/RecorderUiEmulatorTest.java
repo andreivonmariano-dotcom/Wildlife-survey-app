@@ -62,7 +62,8 @@ public final class RecorderUiEmulatorTest {
             scenario.onActivity(activity->{
                 View root=activity.getWindow().getDecorView();
                 View save=findText(root,"Save Observation");
-                View review=findText(root,"Review Records");
+                boolean ultraLarge=activity.getResources().getConfiguration().fontScale>=1.9f;
+                View review=findText(root,ultraLarge?"Review":"Review Records");
                 View end=findText(root,"End Survey");
                 assertNotNull("Save control missing",save);
                 assertNotNull("Review control missing",review);
@@ -88,7 +89,8 @@ public final class RecorderUiEmulatorTest {
                     assertTrue("Total clock should expand",hiddenClock.isShown());
                     compactClock.performClick();
                     assertFalse("Detail should collapse",hiddenClock.isShown());
-                    View disclosure=findText(root,"Show sampling & detection tools");
+                    View disclosure=findText(root,ultraLarge?
+                        "Sampling & detection tools":"Show sampling & detection tools");
                     assertNotNull("Compact survey-tool disclosure missing",disclosure);
                     assertTrue("Survey tools disclosure should be visible",disclosure.isShown());
                     assertFalse("Nonessential survey tools must begin collapsed",samplingTools.isShown());

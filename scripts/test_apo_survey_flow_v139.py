@@ -25,7 +25,7 @@ class RecorderFlowRC79(unittest.TestCase):
         self.assertIn('root.addView(footer)',s)
         self.assertIn('footerOptions.addView(endSurveyButton,endParams)',s)
         self.assertIn('public static boolean stackRecorderDock(',p)
-        self.assertIn('return scale>=1.9f&&widthDp<390;',p)
+        self.assertIn('return scale>=2.4f&&widthDp<360;',p)
         self.assertIn('Math.min(80,Math.round(50f*scale))',p)
 
     def test_discard_confirmation_covers_unsaved_method_details(self):
@@ -45,8 +45,8 @@ class RecorderFlowRC79(unittest.TestCase):
                          "End Survey should fit within viewport"):
             self.assertIn(fragment,test)
         gradle=read("app/build.gradle")
-        self.assertIn("versionCode 140",gradle)
-        self.assertIn("versionName '0.27.3-rc80-apo-survey-hud-stations'",gradle)
+        self.assertIn("versionCode 141",gradle)
+        self.assertIn("versionName '0.27.3-rc81-apo-survey-compact-320'",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn('super(context,NAME,null,28)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 

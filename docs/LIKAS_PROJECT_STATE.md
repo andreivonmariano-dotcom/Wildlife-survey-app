@@ -1,5 +1,14 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | RC87 montane habitat shortlist and interactive recorder | code review / signed QA pending
+
+- **Owner-reported defect:** Selecting `Montane forest` in Site context still showed Aleutian Tern. RC86 only ranked by preparatory habitat and retained the full catalog. PAIC714 source assigns Aleutian Tern `Coastal and intertidal areas, marine waters` and `0–30 m` display guide. This is an inappropriate default montane shortlist result, but source categories cannot prove local absence.
+- **New development branch:** `feature/apo-rc87-habitat-shortlist-recorder-v147` from signed RC86 PR #88 code146, target code147/SQLite29. Added PAIC habitat-shortlist filtering (montane-specific and broad forest guide tiers), an explicit full-catalog switch and unassessed/missing-guide restraint. The observed site habitat rather than unrelated survey-prep category now controls the shortlist. Archived Philippines catalog remains browsable. No source data, observation or habitat evidence were silently modified.
+- **Interactive UX:** Recent saved identification names in recorder and picker are read-only shortcuts. They do not copy evidence, counts, GPS, confidence or effort. Picker scope has a compact selected label at 200% font and recorder `All data` text becomes `ZIP` at large font, with full content descriptions.
+- **QA:** Added PAIC JUnit matching tests, Python Aleutian source regression, and a dedicated signed Android14 emulator CI workflow. **Do not claim an RC87 build or direct APK until the tests and binary extraction complete.** Most recent verified previous preview remains RC86 code146. Branch draft, keep RC86 as the last known upgrade baseline. Required handset SQLite28→29 and GPS/camera/ZIP checks still pending.
+- **Next:** Run RC87 CI, inspect screenshots and a site-edit/filter Android acceptance path; then direct deliver exact signed code147 APK if verified. See `docs/APO_RC87_HABITAT_SHORTLIST_RECORDER_QA_2026_11_02.md`.
+
+
 ## 2026-11-02 | RC86 signed interactive recorder + PAIC picker preview | delivered
 
 - **Validated source:** `acc8506e85e5cf6a474d89187252e4619af02b1c` (code146, SQLite29). Dedicated CI run **41414607542 SUCCESS**: 445 scientific/source Python regressions, JVM/Android and AndroidTest compilation, original package/signer, SHA-locked PAIC714 and ESA WorldCover reference bytes, and six actual Android14 recorder/bird/amphibian picker screenshot tests at 160% and 200%/320dp.

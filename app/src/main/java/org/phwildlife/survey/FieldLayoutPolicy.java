@@ -11,7 +11,9 @@ public final class FieldLayoutPolicy {
         return stackPortalPair(availableWidthDp,fontScale);
     }
     public static boolean stackSpeciesEntry(int availableWidthDp,float fontScale){
-        return availableWidthDp<350||fontScale>=1.55f;
+        // A compact "List" shortcut keeps species and count in the first viewport.
+        // Stack only when there is truly insufficient horizontal space.
+        return availableWidthDp<300||(fontScale>=2.4f&&availableWidthDp<360);
     }
     public static int actionHeightDp(float fontScale){
         float scale=Float.isFinite(fontScale)?Math.max(1f,fontScale):1f;

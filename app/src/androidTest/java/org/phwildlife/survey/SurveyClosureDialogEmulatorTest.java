@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.content.ContentValues;
+import android.net.Uri;
+import android.provider.MediaStore;
+import java.io.OutputStream;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -88,14 +92,24 @@ public final class SurveyClosureDialogEmulatorTest {
             UiAutomation automation=InstrumentationRegistry.getInstrumentation().getUiAutomation();
             Bitmap screenshot=automation.takeScreenshot();
             assertNotNull("Actual Android screenshot required",screenshot);
-            File folder=context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            assertNotNull(folder);
-            int font=Math.round(context.getResources().getConfiguration().fontScale*100);
-            File png=new File(folder,font>=190?
-                "apo_end_review_200.png":"apo_end_review_160.png");
-            try(FileOutputStream output=new FileOutputStream(png)){
+            String name=context.getResources().getConfiguration().fontScale>=1.9f?
+                "apo_end_review_200.png":"apo_end_review_160.png";
+            ContentValues meta=new ContentValues();
+            meta.put(MediaStore.MediaColumns.DISPLAY_NAME,name);
+            meta.put(MediaStore.MediaColumns.MIME_TYPE,"image/png");
+            meta.put(MediaStore.MediaColumns.RELATIVE_PATH,
+                Environment.DIRECTORY_PICTURES+"/APO");
+            meta.put(MediaStore.MediaColumns.IS_PENDING,1);
+            Uri saved=context.getContentResolver().insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,meta);
+            assertNotNull("Cannot create persistent emulator screenshot",saved);
+            try(OutputStream output=context.getContentResolver().openOutputStream(saved)){
+                assertNotNull(output);
                 assertTrue(screenshot.compress(Bitmap.CompressFormat.PNG,100,output));
             }
+            meta.clear();
+            meta.put(MediaStore.MediaColumns.IS_PENDING,0);
+            context.getContentResolver().update(saved,meta,null,null);
             screenshot.recycle();
         }
     }

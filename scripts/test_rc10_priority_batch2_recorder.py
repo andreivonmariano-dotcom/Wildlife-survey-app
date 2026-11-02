@@ -46,7 +46,7 @@ class Rc10BatchTwoContracts(unittest.TestCase):
         self.assertIn("new JSONObject[]{source,secondSource,thirdSource}",reader)
         self.assertIn("Read original reference",reader)
         recorder=(JAVA/"MainActivity.java").read_text()
-        self.assertIn('UiKit.button(this,"Mark time","secondary")',recorder)
+        self.assertIn('markTimeButton=UiKit.button(this,"Mark detection","secondary")',recorder)
         self.assertIn("Mark sighting time and available fresh observer GPS",recorder)
         self.assertIn("Show optional identification confidence, habitat, behavior and observation notes",recorder)
         self.assertIn('UiKit.button(this,"End Survey","outline-danger")',recorder)

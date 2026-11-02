@@ -4,6 +4,9 @@
 
 ## Entries
 
+### 2026-11-02 | RC85 recorder and species-picker simplification | Owner directed
+Minimize scientific lectures, warning paragraphs and repetitive field-control text. Place observation entry first for nonstation sampling, keep station/transect effort accessible, make photo and picker discoverable. List real available conservation, taxonomy, habitat and elevation attributes compactly with source profiles on demand. Habitat-first mode ranks all taxa, not an undisclosed filtered absence. Keep existing recorded source/review statuses, GPS provenance, confidence codes, survey outcomes and data integrity under the hood. Signed APK must pass scientific tests and native 160/200% Android QA. See RC85 QA.
+
 ### 2026-11-02 | RC84 signed Habitat & Species acceptance | Verified preview
 The RC84 app source `2cfb36281bf9b89260939f14ff5c2915f75dc4f3` passed signed CI `41401267934`, including 435 Python tests, Android/JVM build and four actual Android14 habitat screen tests at 160% and 200%/320dp. It presents habitat selection, explicit-confirmation count and single checklist mode before optional full site/map provenance. All original scientific distinctions and package/signer/schema28/immutable assets retained. Direct APK 11,758,144 bytes, SHA `40bfe6326d0b937337f4ce9ad3b7b0933d455d29872f6a80b5a9088c36cf00a7`. Draft PR #86. Real handset/GNSS, species matching with installed catalog and field export still unverified.
 

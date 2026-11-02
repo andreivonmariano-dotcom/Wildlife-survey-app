@@ -186,7 +186,7 @@ public final class BioToolsNavigationInstrumentedTest {
                 new Intent(APP,TrapProtocolActivity.class).putExtra("event_id",id))){
             scenario.onActivity(a->{
                 assertTrue(contains(a,"No devices registered yet."));
-                described(a,"Back to Back").performClick();
+                described(a,"Back to previous screen").performClick();
                 assertTrue("recorder-owned device screen finishes",a.isFinishing());
             });
         }
@@ -233,7 +233,7 @@ public final class BioToolsNavigationInstrumentedTest {
                 new Intent(APP,FieldProtocolsActivity.class).putExtra("event_id",id))){
             scenario.onActivity(a->{
                 assertTrue(contains(a,"Coverboards"));
-                described(a,"Back to Back").performClick();
+                described(a,"Back to previous screen").performClick();
                 assertTrue(a.isFinishing());
             });
         }
@@ -250,7 +250,7 @@ public final class BioToolsNavigationInstrumentedTest {
                 assertFalse("unrelated stations omitted",
                     contains(a,"Other registered project stations"));
                 snapshot(a,"station_progress_empty");
-                described(a,"Back to Back").performClick();
+                described(a,"Back to previous screen").performClick();
                 assertTrue(a.isFinishing());
             });
         }

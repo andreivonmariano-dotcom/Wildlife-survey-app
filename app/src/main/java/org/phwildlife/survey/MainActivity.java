@@ -1391,18 +1391,22 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private boolean hasUnsavedObservation(){
         return filled(taxonEntry)||filled(distanceEntry)||filled(notesEntry)||
+            filled(microhabitatEntry)||filled(herpHeightEntry)||filled(perchEntry)||
+            filled(deviceEntry)||
             filled(habitatEntry)||filled(behaviorEntry)||filled(identificationNote)||
             pendingPhoto!=null||markedAt>0||count!=1||
             (confidenceSpinner!=null&&confidenceSpinner.getSelectedItemPosition()>0)||
             (evidenceSpinner!=null&&evidenceSpinner.getSelectedItemPosition()>0)||
             (lifeStageSpinner!=null&&lifeStageSpinner.getSelectedItemPosition()>0)||
+            (callScoreSpinner!=null&&callScoreSpinner.getSelectedItemPosition()>0)||
             (distanceSourceSpinner!=null&&distanceSourceSpinner.getSelectedItemPosition()>0)||
             (firstPositionSpinner!=null&&firstPositionSpinner.getSelectedItemPosition()>0)||
             (movementSpinner!=null&&movementSpinner.getSelectedItemPosition()>0);
     }
     private void discardUnfinishedObservation(){
         for(EditText entry:new EditText[]{taxonEntry,distanceEntry,notesEntry,
-                habitatEntry,behaviorEntry,identificationNote}){
+                habitatEntry,behaviorEntry,identificationNote,microhabitatEntry,
+                herpHeightEntry,perchEntry,deviceEntry}){
             if(entry!=null)entry.setText("");
         }
         count=1;
@@ -1410,12 +1414,14 @@ public class MainActivity extends Activity implements LocationListener {
         if(confidenceSpinner!=null)confidenceSpinner.setSelection(0);
         if(evidenceSpinner!=null)evidenceSpinner.setSelection(0);
         if(lifeStageSpinner!=null)lifeStageSpinner.setSelection(0);
+        if(callScoreSpinner!=null)callScoreSpinner.setSelection(0);
         if(distanceSourceSpinner!=null)distanceSourceSpinner.setSelection(0);
         if(firstPositionSpinner!=null)firstPositionSpinner.setSelection(0);
         if(movementSpinner!=null)movementSpinner.setSelection(0);
         pendingPhoto=null;
         showPendingPhoto();
         clearMark();
+        selectedTaxonKey="";selectedTaxonVersion="";
     }
     private void finishPrompt(){
         if(!active)return;
@@ -2341,9 +2347,13 @@ public class MainActivity extends Activity implements LocationListener {
                 toast("Observation saved, but photo link needs review: "+photoError.getMessage());
             }
         }
-        taxonEntry.setText("");count=1;countView.setText("1");distanceEntry.setText("");
+        taxonEntry.setText("");selectedTaxonKey="";selectedTaxonVersion="";
+        count=1;countView.setText("1");distanceEntry.setText("");
         confidenceSpinner.setSelection(0);identificationNote.setText("");
         habitatEntry.setText("");behaviorEntry.setText("");notesEntry.setText("");
+        microhabitatEntry.setText("");herpHeightEntry.setText("");
+        perchEntry.setText("");deviceEntry.setText("");
+        if(callScoreSpinner!=null)callScoreSpinner.setSelection(0);
         // Retain environmental measurements through each visit. Reset identification-specific evidence.
         if(evidenceSpinner!=null)evidenceSpinner.setSelection(0);
         if(lifeStageSpinner!=null)lifeStageSpinner.setSelection(0);
@@ -2523,6 +2533,8 @@ public class MainActivity extends Activity implements LocationListener {
                         updateTaxaSuggestions(false);
                     }
                     taxonEntry.setText(label);
+                    selectedTaxonKey=nonNull(data.getStringExtra("taxon_key"));
+                    selectedTaxonVersion=nonNull(data.getStringExtra("taxon_source_version"));
                     taxonEntry.setSelection(taxonEntry.length());
                     refreshFavoriteIcon();
                     queueDraft();
@@ -2691,6 +2703,9 @@ public class MainActivity extends Activity implements LocationListener {
             JSONObject d=new JSONObject();
             d.put("group",group);d.put("taxon",taxonEntry.getText().toString());
             d.put("confidence",confidenceSpinner.getSelectedItemPosition());
+            d.put("confidence_v2",true);
+            d.put("taxon_key",selectedTaxonKey);
+            d.put("taxon_source_version",selectedTaxonVersion);
             d.put("identificationNote",identificationNote.getText().toString());
             d.put("pendingPhoto",pendingPhoto==null?"":pendingPhoto);
             d.put("count",count);d.put("distance",distanceEntry.getText().toString());
@@ -2742,7 +2757,11 @@ public class MainActivity extends Activity implements LocationListener {
                 group=g;showGroups();refreshAutocomplete();
             }
             taxonEntry.setText(d.optString("taxon",""));
-            confidenceSpinner.setSelection(d.optInt("confidence",0));
+            selectedTaxonKey=d.optString("taxon_key","");
+            selectedTaxonVersion=d.optString("taxon_source_version","");
+            int confidenceIndex=d.optInt("confidence",0);
+            confidenceSpinner.setSelection(Math.min(4,Math.max(0,
+                d.optBoolean("confidence_v2",false)?confidenceIndex:confidenceIndex+1)));
             identificationNote.setText(d.optString("identificationNote",""));
             pendingPhoto=d.optString("pendingPhoto","").isEmpty()?null:d.optString("pendingPhoto");
             showPendingPhoto();

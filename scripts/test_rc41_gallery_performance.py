@@ -45,7 +45,7 @@ class GalleryPerf(unittest.TestCase):
 
     def test_full_checklist_and_back_navigation(self):
         gallery=src("LikasDiscoveryActivity.java")
-        self.assertIn('action("Full Philippine species checklist"',gallery)
+        self.assertIn('action("Search complete species checklist"',gallery)
         self.assertIn('Rc7SpeciesLibraryActivity.class',gallery)
         catalog=src("Rc7SpeciesLibraryActivity.java")
         self.assertIn('paicActive?"Mindanao PAIC species":"Philippine species checklist"',catalog)

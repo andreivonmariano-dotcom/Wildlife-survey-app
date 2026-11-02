@@ -1,5 +1,12 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC80 survey HUD/station continuation | source committed, build pending
+
+- **Owner instruction:** Proceed with smaller status HUD and improved station transitions; continue concise chat responses. Based on current RC79 source branch head `1cdfcbf0670d2a1cd0eb33189d74ee072f8a1a5c`, branch `feature/apo-survey-hud-stations-v140`. RC79 code139 remains the latest **verified signed and delivered APK** at this checkpoint.
+- **RC80 implementation:** versionCode140, `0.27.3-rc80-apo-survey-hud-stations`. At >=160% system font, compact always-visible effort/point timer and GPS quality/status with direct GPS detail and expandable full HUD; smaller fonts unchanged. Point count and generic station transitions now detect full unsaved draft and require explicit discard, preserving saved observations. End Survey shows compact three-option disposition with expandable protocol checks.
+- **Identity and science:** Original package `org.phwildlife.survey.beta08`, signer, SQLite schema28, GPS/effort policy, all historical records, PAIC714 and WorldCover references and locked mountain art protected. No method-completion logic altered. Source and QA in `docs/APO_RC80_SURVEY_HUD_STATIONS_QA_2026_11_02.md`.
+- **Configured, not yet verified:** RC80 Python source tests and Android instrumented test at 160%, 200% on 320dp, original-signature/asset/build checks. No new APK or device/field certification claimed at this checkpoint. CI must pass and an exact APK be direct-attached before delivery.
+
 ## 2026-11-02 | APO RC79 signed preview and emulator verified | latest development release
 
 - **Source lineage and status:** RC79 app/test source at `bdc8f067e00740b89adab893ae65f97c07d0422c` (draft PR #81 from RC78). GitHub Actions run `41384887314` **SUCCESS**. Declared `0.27.3-rc79-apo-survey-flow`, versionCode **139**, appId `org.phwildlife.survey.beta08`, original cert `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, SQLite28. Documentation-only commits after this source have no APK changes.

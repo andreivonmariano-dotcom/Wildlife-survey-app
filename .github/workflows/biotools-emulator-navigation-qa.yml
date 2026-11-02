@@ -6,6 +6,10 @@ on:
       - feature/likas-biotools-navigation-audit-20261102
   workflow_dispatch:
 
+concurrency:
+  group: likas-biotools-emulator-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -35,6 +39,11 @@ jobs:
         run: |
           python3 scripts/prepare_mdd_mammals.py
           gradle --no-daemon :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Enable KVM for Android emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
       - name: Test on Android 14 emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:

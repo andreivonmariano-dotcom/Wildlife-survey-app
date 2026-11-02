@@ -4,6 +4,9 @@
 
 ## Entries
 
+### 2026-11-02 | Continue APO survey flows from RC78 | Owner-directed RC79 draft
+The owner requested an ambitious continuation of the survey-screen overhaul. Based directly on RC78, RC79 prioritizes observation entry on large-font phones, adapts the permanent Save/Review/End dock to available width, keeps sampling/detection controls discoverable, extends unsaved-draft handling to life stage and detection evidence choices, and surfaces method completion criteria when ending a survey. All existing Complete, Incomplete and Not Counted meanings, scientific effort rules, GPS sources, historical data, package identity, signer, schema28 and approved references remain unchanged. This is **implemented in source** pending signed CI, emulator verification and direct APK handoff. Documented in `docs/APO_RC79_SURVEY_FLOW_QA_2026_11_02.md`.
+
 ### 2026-10-27 | Project vision | Accepted
 LIKAS is intended as an all-in-one biodiversity platform for Philippine field biologists, not only a wildlife survey recorder. Include field surveys, species information, ecological/habitat information, research/conservation updates, and analysis/export. See `docs/LIKAS_MASTER_PROJECT_SPEC_v1.0.md`.
 

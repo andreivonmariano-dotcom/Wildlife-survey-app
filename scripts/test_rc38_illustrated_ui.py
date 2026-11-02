@@ -25,10 +25,10 @@ class IllustratedUiContract(unittest.TestCase):
         self.assertNotIn("LikasPortalUi.hero(",home)
         field=welcome.split("private void fieldworkHub(){",1)[1].split("/** Short status caption",1)[0]
         for label in ('"Birds"','"Herpetofauna"','"Mammals"',
-                      '"History"','"Analysis"','HistoryActivity.class',
-                      'DashboardActivity.class'):
+                      '"Current survey"','"New survey"','"Resume Survey"'):
             self.assertIn(label,field)
-        self.assertIn("LikasPortalUi.action(this,title,detail,art,tap)",welcome)
+        self.assertIn("ApoHomeUi.module(this,index,title,detail,tap)",welcome)
+        self.assertNotIn("LikasPortalUi.action(this,title,detail,art,tap)",welcome)
     def test_library_is_separate_and_visual(self):
         library=src("LikasLibraryActivity.java")
         self.assertIn('discover(body,"Species"',library)

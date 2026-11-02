@@ -74,7 +74,7 @@ public final class ResearchExportActivity extends Activity {
             int projects=count(db,"SELECT COUNT(*) FROM projects");
             int stations=count(db,"SELECT COUNT(*) FROM sites");
             return surveys+" surveys (all outcomes) · "+observations+
-                " retained observations\\n"+projects+" projects · "+
+                " retained observations\n"+projects+" projects · "+
                 stations+" sampling stations";
         }catch(Exception error){
             return "The local record summary is unavailable. Export is still accessible.";

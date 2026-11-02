@@ -64,7 +64,7 @@ public class HistoryActivity extends Activity {
             dp(LikasDesignSystem.SPACE_SM));
         root.addView(UiKit.navigationHeader(this,
             eventFilter==null?(largeText()?"History":"Survey history"):"Observations",
-            eventFilter==null?"Home":"All surveys",()->{
+            eventFilter==null?"Field Records":"All surveys",()->{
                 if(eventFilter==null)finish();
                 else{
                     if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
@@ -132,6 +132,27 @@ public class HistoryActivity extends Activity {
         if(eventFilter==null)surveys();else observations(eventFilter);
     }
     private void surveys(){
+        if(surveyOffset==0){
+            int complete=0,incomplete=0,excluded=0,active=0;
+            try(Cursor summary=db.getReadableDatabase().rawQuery(
+                "SELECT "+OUTCOME_SQL+",COUNT(*) FROM surveys s GROUP BY "+OUTCOME_SQL,
+                null)){
+                while(summary.moveToNext()){
+                    String state=summary.getString(0);
+                    int n=summary.getInt(1);
+                    if("complete".equals(state))complete=n;
+                    else if("incomplete".equals(state))incomplete=n;
+                    else if("not_counted".equals(state))excluded=n;
+                    else if("active".equals(state))active=n;
+                }
+                rows.addView(ApoHomeUi.note(this,
+                    complete+" complete · "+incomplete+" incomplete · "+
+                    excluded+" not counted · "+active+" active"));
+            }catch(Exception error){
+                rows.addView(ApoHomeUi.note(this,
+                    "Survey status counts unavailable; saved records can still be browsed."));
+            }
+        }
         try(Cursor c=db.getReadableDatabase().rawQuery(
           "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,"+
           "COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),"+
@@ -147,9 +168,10 @@ public class HistoryActivity extends Activity {
               String.valueOf(PAGE_SIZE),String.valueOf(surveyOffset)})){
             int rowsThisPage=c.getCount();
             if(rowsThisPage==0&&surveyOffset==0)
-                rows.addView(text("No matching surveys",15));
+                rows.addView(ApoHomeUi.note(this,"No matching surveys. Adjust the status or search text."));
             while(c.moveToNext()){
-                String event=c.getString(0),profile=c.getString(1),method=c.getString(2),site=c.getString(3),date=c.getString(4);
+                String event=c.getString(0),profile=c.getString(1),method=c.getString(2),site=c.getString(3),
+                    date=c.isNull(4)?"Date not recorded":c.getString(4);
                 String outcome=c.getString(8);
                 String state="not_counted".equals(outcome)?"Not counted":
                     "complete".equals(outcome)?"Complete":

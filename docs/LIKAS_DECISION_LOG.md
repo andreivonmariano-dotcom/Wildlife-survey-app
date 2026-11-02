@@ -4,6 +4,9 @@
 
 ## Entries
 
+### 2026-11-02 | RC83 signed Survey GPS screen acceptance | Verified preview
+RC83 code143 source `2d52c0c602e955738f6960c89e276ec7eda07a72`, GitHub Actions `41397832886` SUCCESS: 432 scientific/UI tests, Android app/JVM build, eight Android14 survey/station GPS emulator tests at 160% and 200%/320dp, and four verified native screenshots. The compact accuracy/freshness card, optional GPS details/troubleshooting and explicit missing-location exception are implemented. Direct signed APK SHA `7cd62bf5706352298d15294c81034ab46922b4aba43dbb1f53e909b4a1edbf90`; original package/signer/schema28/references maintained. Large-text 200% still needs some scrolling. Real-phone field GNSS, persistence, upgrade and research ZIP remain unverified; PR #85 draft. See RC83 QA.
+
 ### 2026-11-02 | RC83 Survey GPS progressive disclosure | Owner directed, source implementation
 Refine the long, technical Survey GPS preflight after code142 setup. Keep actual GNSS quality and automatic verified-fix progression visible. Move raw coordinates, measured altitude and satellite diagnostics behind a labeled disclosure; retain troubleshooting buttons one tap away. Keep a single always-available, confirmed missing-GPS exception and a separate flagged station decision; use header Back rather than a redundant footer action. Do not infer location/elevation, change strict age/accuracy acceptance, or alter surveys/SQLite28/reference identity. Signed CI, emulator screenshots and direct APK required before preview is accepted. See RC83 GPS QA.
 

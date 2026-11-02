@@ -25,6 +25,13 @@ public final class TrapProtocolActivity extends Activity {
     private FieldDb db;
     private LinearLayout rows;
     private String eventId,method="",station="";
+    private void navigateBack(){
+        if(SurveyNavigationPolicy.backToSurveySelector(
+                getIntent().getStringExtra("event_id"),eventId)){
+            eventId=null;method="";station="";draw();
+        }else finish();
+    }
+    @Override public void onBackPressed(){navigateBack();}
     private int dp(int x){return Math.round(getResources().getDisplayMetrics().density*x);}
     private LinearLayout column(){
         LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;
@@ -83,17 +90,22 @@ public final class TrapProtocolActivity extends Activity {
     private void draw(){
         LinearLayout screen=column();screen.setPadding(dp(14),dp(9),dp(14),dp(12));
         screen.setBackgroundColor(UiKit.BG);
-        screen.addView(UiKit.navigationHeader(this,"Trap and camera records","Back",this::finish));
+        screen.addView(UiKit.navigationHeader(this,"Trap and camera records",
+            SurveyNavigationPolicy.backToSurveySelector(
+                getIntent().getStringExtra("event_id"),eventId)
+                ?"All device surveys":"Back",this::navigateBack));
         ScrollView scroll=new ScrollView(this);
         rows=column();scroll.addView(rows);
         screen.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         setContentView(screen);
         if(eventId==null){
-            rows.addView(label("Recorded device surveys",16));
+            rows.addView(label("Device-method surveys",16));
+            // An active event remains accessible even before its first deployment.
             try(Cursor c=db.getReadableDatabase().rawQuery(
-                "SELECT DISTINCT d.event_id,s.method,s.started "+
-                "FROM trap_deployments d JOIN surveys s ON s.id=d.event_id "+
+                "SELECT s.id,s.method,s.started FROM surveys s "+
+                "WHERE s.method IN ('camera_trap_check','drift_fence_check','live_trap_check') "+
                 "ORDER BY s.started DESC LIMIT 100",null)){
+                if(c.getCount()==0)rows.addView(label("No device-method surveys yet.",13));
                 while(c.moveToNext()){
                     String id=c.getString(0);
                     Button entry=UiKit.button(this,c.getString(1)+" · "+c.getString(2),"secondary");

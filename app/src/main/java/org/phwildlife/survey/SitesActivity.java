@@ -28,7 +28,7 @@ public class SitesActivity extends Activity {
     private String selectedProject(){int pos=projectSpinner==null?-1:projectSpinner.getSelectedItemPosition();return pos<0||pos>=pids.size()?"default":pids.get(pos);}
     private void render(){
         LinearLayout root=column();root.setPadding(dp(16),dp(16),dp(16),dp(16));root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Projects & sites","Home",this::finish));
+        root.addView(UiKit.navigationHeader(this,"Projects & sites","Back",this::finish));
         TextView introduction=label("Organize your projects and repeat-visit stations.",13);
         introduction.setTextColor(UiKit.MUTED);root.addView(introduction);
         Button explanation=UiKit.button(this,"About station identities  ▾","quiet");

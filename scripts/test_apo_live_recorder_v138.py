@@ -58,8 +58,8 @@ class LiveRecorderRC78(unittest.TestCase):
         self.assertIn("fieldScroll.addView(content)",s)
         self.assertIn("recorded_at",source("FieldDb.java"))
         b=(BASE/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertRegex(b,r"versionCode (13[89]|14[0-4])")
-        self.assertRegex(b,r"0\.27\.3-rc(78-apo-survey-recorder|79-apo-survey-flow|80-apo-survey-hud-stations|81-apo-survey-compact-320|82-apo-survey-setup|83-apo-survey-gps|84-apo-habitats-checklist)")
+        self.assertRegex(b,r"versionCode (13[89]|14[0-5])")
+        self.assertRegex(b,r"0\.27\.3-rc(78-apo-survey-recorder|79-apo-survey-flow|80-apo-survey-hud-stations|81-apo-survey-compact-320|82-apo-survey-setup|83-apo-survey-gps|84-apo-habitats-checklist|85-apo-recorder-species)")
         self.assertIn("org.phwildlife.survey.beta08",b)
         self.assertIn("super(context,NAME,null,28)",source("FieldDb.java"))
 

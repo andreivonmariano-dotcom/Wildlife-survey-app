@@ -4,10 +4,14 @@ on:
   push:
     branches:
       - feature/apo-rc94-phlibrary-overhaul-v154
+  pull_request:
+    branches:
+      - qa/apo-rc92-unverified-gates-20261102
   workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: apo-phlibrary-v154-${{ github.ref }}
@@ -94,6 +98,33 @@ jobs:
           path: |
             rc92-unverified-evidence/
             rc94-phlibrary-evidence/
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Retrieve independently hash-verified signed RC92 baseline
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13139140344/zip" > /tmp/apo-rc92-artifact.zip
+          unzip -p /tmp/apo-rc92-artifact.zip app-debug.apk > /tmp/apo-rc92-signed.apk
+          echo 'c88f641e73516b7e9916e34ec31a511c06b2f4042ffde0b559471aff91fabb06  /tmp/apo-rc92-signed.apk' | sha256sum -c -
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging /tmp/apo-rc92-signed.apk | grep -F "versionCode='152'"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs /tmp/apo-rc92-signed.apk | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
+      - name: Verify signed RC92 to RC94 no-data-clear upgrade
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_4
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-boot-anim -camera-back none -no-snapshot
+          script: bash scripts/rc94_signed_upgrade_qa.sh
+      - name: Upload signed upgrade evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: APO-RC92-to-RC94-data-preservation-evidence
+          path: rc94-upgrade-evidence/
           if-no-files-found: ignore
           retention-days: 7
       - name: Export signed candidate for direct in-chat download

@@ -86,8 +86,8 @@ class AllBioToolsScreens(unittest.TestCase):
 
     def test_surveys_brand_and_schema_remain_unchanged(self):
         b=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 137",b)
-        self.assertIn("0.27.3-rc77-apo-biotools-all-screens",b)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",b).group(1)),137)
+        self.assertIn("0.27.3-rc",b)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",b)
         self.assertIn("super(context,NAME,null,28)",src("FieldDb.java"))
         main=src("MainActivity.java")

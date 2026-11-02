@@ -101,7 +101,8 @@ public class MainActivity extends Activity implements LocationListener {
     private boolean plannedRouteCompleted=false;
     private String pendingEndReason=null;
     private String startGpsStatus="";
-    private TextView startGpsBanner;
+    private TextView startGpsBanner,compactClockView,compactGpsView;
+    private LinearLayout statusDetailsPanel;
     private TextView trackingView;
     private Double stratumAreaKm2=null,lineBearing=null,pointRadiusM=null;
     private int pointTargetSeconds=600;
@@ -267,9 +268,44 @@ public class MainActivity extends Activity implements LocationListener {
         hud.addView(startGpsBanner);
         refreshStartGpsBanner();
         if(!largeText)root.addView(hud,hudLp);
+        else {
+            // Keep effort timing and GPS quality available at a glance.
+            // The full session, station progress and start-fix history stay accessible.
+            LinearLayout compactHud=vertical();
+            compactHud.setBackground(UiKit.surface(this));
+            compactHud.setPadding(dp(10),dp(2),dp(10),dp(2));
+            compactClockView=label("Active 00:00:00 · survey details",13,true);
+            compactClockView.setTextColor(UiKit.FOREST);
+            compactClockView.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));
+            compactClockView.setGravity(Gravity.CENTER_VERTICAL);
+            compactClockView.setFocusable(true);
+            compactClockView.setOnClickListener(v->{
+                boolean expand=statusDetailsPanel!=null&&
+                    statusDetailsPanel.getVisibility()!=View.VISIBLE;
+                if(statusDetailsPanel!=null)
+                    statusDetailsPanel.setVisibility(expand?View.VISIBLE:View.GONE);
+                status();
+            });
+            compactHud.addView(compactClockView);
+            compactGpsView=label("GPS searching · details",12,true);
+            compactGpsView.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));
+            compactGpsView.setGravity(Gravity.CENTER_VERTICAL);
+            compactGpsView.setFocusable(true);
+            compactGpsView.setTextColor(UiKit.AMBER);
+            compactGpsView.setOnClickListener(v->showGpsDetail());
+            compactHud.addView(compactGpsView);
+            LinearLayout.LayoutParams compactParams=new LinearLayout.LayoutParams(-1,-2);
+            compactParams.topMargin=dp(3);
+            root.addView(compactHud,compactParams);
+        }
         fieldScroll=new ScrollView(this);fieldScroll.setFillViewport(false);fieldScroll.setVerticalScrollBarEnabled(false);
         LinearLayout content=vertical();content.setPadding(dp(1),0,dp(1),dp(12));
-        if(largeText)content.addView(hud,hudLp);
+        if(largeText){
+            statusDetailsPanel=hud;
+            hud.setVisibility(View.GONE);
+            content.addView(hud,hudLp);
+            syncCompactGps();
+        }
         groupBar=horizontal();content.addView(groupBar);showGroups();
         LinearLayout methodRow=horizontal();
         // The method was already chosen in survey setup. Do not offer a second, disabled selector.
@@ -849,6 +885,8 @@ public class MainActivity extends Activity implements LocationListener {
             if(inputKeyboardVisible==keyboardShown)return;
             inputKeyboardVisible=keyboardShown;
             top.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
+            if(compactClockView!=null)
+                compactClockView.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
             progressView.setVisibility(keyboardShown||
                 progressView.getText().length()==0?View.GONE:View.VISIBLE);
         });
@@ -975,6 +1013,16 @@ public class MainActivity extends Activity implements LocationListener {
         if(startGpsBanner==null)return;
         boolean missing="missing_at_survey_start".equals(startGpsStatus);
         startGpsBanner.setVisibility(missing?View.VISIBLE:View.GONE);
+        syncCompactGps();
+    }
+    private void syncCompactGps(){
+        if(compactGpsView==null||gpsView==null)return;
+        boolean startMissing="missing_at_survey_start".equals(startGpsStatus);
+        String live=gpsView.getText().toString().replace(" · details","");
+        String message=(startMissing?"Start GPS unverified · ":"")+live+" · details";
+        compactGpsView.setText(message);
+        compactGpsView.setTextColor(startMissing?UiKit.AMBER:gpsView.getCurrentTextColor());
+        compactGpsView.setContentDescription(message+". Open observer GPS details");
     }
     private void restoreEvent(){
         try(Cursor c=db.getReadableDatabase().rawQuery("SELECT id,method,started,COALESCE(taxon_group,'Birds'),COALESCE(survey_profile,'Birds'),COALESCE(station_id,''),COALESCE(observer_name,''),COALESCE(point_target_s,600),COALESCE(protocol_status,'legacy'),COALESCE(project_id,'default'),COALESCE(region_label,''),area_km2,transect_az,point_radius_m,COALESCE(start_gps_status,'legacy_start_location_unrecorded') FROM surveys WHERE ended IS NULL ORDER BY started DESC LIMIT 1",null)){
@@ -1345,16 +1393,25 @@ public class MainActivity extends Activity implements LocationListener {
             lp.bottomMargin=dp(10);
             actions.addView(button,lp);
         }
-        TextView details=label("Complete saves protocol-qualified effort. "+
-            "Incomplete preserves partial fieldwork. Not Counted archives the event "+
-            "but excludes it from default analysis.",12,false);
-        details.setTextColor(MUTED);actions.addView(details);
-        String readiness=completionChecklist();
-        if(!readiness.trim().isEmpty()){
-            TextView required=label("Method completion check\n"+readiness,12,false);
-            required.setTextColor(UiKit.INK);
-            actions.addView(required);
-        }
+        TextView details=label("Complete checks the protocol; unmet criteria save as Incomplete. "+
+            "Incomplete keeps partial effort. Not Counted archives but excludes from analysis.",12,false);
+        details.setTextColor(MUTED);actions.addView(details,0);
+        // Detailed evidence is available without pushing all three outcomes off screen.
+        TextView detailsToggle=label("Show method completion checks",13,true);
+        detailsToggle.setTextColor(UiKit.FOREST);
+        disclosureTarget(detailsToggle);
+        TextView required=label(completionChecklist(),12,false);
+        required.setTextColor(UiKit.INK);
+        required.setVisibility(View.GONE);
+        detailsToggle.setOnClickListener(v->{
+            boolean expand=required.getVisibility()!=View.VISIBLE;
+            required.setVisibility(expand?View.VISIBLE:View.GONE);
+            detailsToggle.setText(expand?
+                "Hide method completion checks":"Show method completion checks");
+            detailsToggle.setContentDescription(detailsToggle.getText());
+        });
+        actions.addView(detailsToggle,1);
+        actions.addView(required,2);
         ScrollView endScroll=new ScrollView(this);
         endScroll.addView(actions);
         AlertDialog dialog=new AlertDialog.Builder(this)
@@ -1675,12 +1732,14 @@ public class MainActivity extends Activity implements LocationListener {
     private void nextSamplingUnit(){
         if(!active||!requiresGenericUnit())return;
         if(surveyPaused){toast("Resume effort to change stations");return;}
-        if(!taxonEntry.getText().toString().trim().isEmpty()){
+        if(hasUnsavedObservation()){
             new AlertDialog.Builder(this).setTitle("Unsaved observation")
-                .setMessage("Save the current detection before ending this visit.")
+                .setMessage("Save this draft before changing stations, or explicitly discard the unfinished entry. Saved records remain unchanged.")
                 .setNegativeButton("Keep recording",null)
-                .setPositiveButton("Clear entry",(d,w)->{
-                    taxonEntry.setText("");distanceEntry.setText("");clearMark();genericUnitPicker();
+                .setPositiveButton("Discard draft",(d,w)->{
+                    discardUnfinishedObservation();
+                    persistDraft();
+                    genericUnitPicker();
                 }).show();
             return;
         }
@@ -1917,12 +1976,13 @@ public class MainActivity extends Activity implements LocationListener {
     private void nextPoint(){
         if(!active||!method.equals("point_count"))return;
         if(surveyPaused){toast("Resume effort to change stations");return;}
-        if(!taxonEntry.getText().toString().trim().isEmpty()){
+        if(hasUnsavedObservation()){
             new AlertDialog.Builder(this).setTitle("Unsaved observation")
-                .setMessage("Save the current bird record before switching stations, or clear the draft.")
-                .setPositiveButton("Keep recording",null)
-                .setNegativeButton("Clear draft",(d,w)->{
-                    taxonEntry.setText("");distanceEntry.setText("");clearMark();
+                .setMessage("Save this draft before changing points, or explicitly discard the unfinished entry. Saved records remain unchanged.")
+                .setNegativeButton("Keep recording",null)
+                .setPositiveButton("Discard draft",(d,w)->{
+                    discardUnfinishedObservation();
+                    persistDraft();
                     if(plannedStationCount>0)plannedPointAction();
                     else pointPicker();
                 }).show();
@@ -2250,6 +2310,7 @@ public class MainActivity extends Activity implements LocationListener {
         refreshPauseControls();
         if(!active){
             sessionClockView.setText("Survey not started");
+            if(compactClockView!=null)compactClockView.setText("Survey not started · details");
             eventView.setText("No active sampling unit");
             progressView.setText("");
             progressView.setVisibility(View.GONE);
@@ -2293,6 +2354,15 @@ public class MainActivity extends Activity implements LocationListener {
             !android.animation.ValueAnimator.areAnimatorsEnabled();
         eventView.setAlpha(!reducedMotion&&!surveyPaused&&near?
             (now/650%2==0?1f:0.45f):1f);
+        if(compactClockView!=null){
+            String disclosure=statusDetailsPanel!=null&&
+                statusDetailsPanel.getVisibility()==View.VISIBLE?"Hide details":"More details";
+            String summary="Session excl. pauses "+timeFmt(activeElapsed/1000)+
+                (surveyPaused?" · PAUSED":"")+" · "+disclosure+"\n"+eventView.getText();
+            compactClockView.setText(summary);
+            compactClockView.setContentDescription(summary+
+                ". Tap to expand or collapse session timing and station progress");
+        }
         if(!surveyPaused&&near&&!nearEndNotified){
             nearEndNotified=true;toast("30 seconds remaining");vibrateIfEnabled(160);
         }
@@ -2735,6 +2805,7 @@ public class MainActivity extends Activity implements LocationListener {
                 "Precise GPS permission needed · details":"Device GPS off · details");
             gpsView.setTextColor(UiKit.AMBER);
             gpsView.setContentDescription(gpsView.getText()+". Open GPS details");
+            syncCompactGps();
             return;
         }
         if(fix==null||!fix.hasAccuracy()){
@@ -2742,6 +2813,7 @@ public class MainActivity extends Activity implements LocationListener {
                 "GPS searching · details");
             gpsView.setTextColor(UiKit.AMBER);
             gpsView.setContentDescription(gpsView.getText()+". Open GPS details");
+            syncCompactGps();
             return;
         }
         long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
@@ -2751,6 +2823,7 @@ public class MainActivity extends Activity implements LocationListener {
             fix.getAccuracy(),qualified?"ready":"low quality"));
         gpsView.setTextColor(qualified?UiKit.FOREST:UiKit.AMBER);
         gpsView.setContentDescription(gpsView.getText()+". Open GPS details");
+        syncCompactGps();
     }
     private void showGpsDetail(){
         Location fix=TrackService.currentFix();

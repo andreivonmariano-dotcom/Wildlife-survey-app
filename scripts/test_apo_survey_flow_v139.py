@@ -34,7 +34,7 @@ class RecorderFlowRC79(unittest.TestCase):
         for name in ("lifeStageSpinner","distanceSourceSpinner","firstPositionSpinner","movementSpinner"):
             self.assertIn(name,closure)
             self.assertIn("if("+name+"!=null)"+name+".setSelection(0)",closure)
-        self.assertIn('"Method completion check\\n"+readiness',s)
+        self.assertIn('label(completionChecklist(),12,false)',s)
         self.assertIn('SurveyClosePolicy.resolve(',s)
         self.assertIn('"Cancel Survey · Not Counted"',s)
 
@@ -45,8 +45,8 @@ class RecorderFlowRC79(unittest.TestCase):
                          "End Survey should fit within viewport"):
             self.assertIn(fragment,test)
         gradle=read("app/build.gradle")
-        self.assertIn("versionCode 139",gradle)
-        self.assertIn("versionName '0.27.3-rc79-apo-survey-flow'",gradle)
+        self.assertIn("versionCode 140",gradle)
+        self.assertIn("versionName '0.27.3-rc80-apo-survey-hud-stations'",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn('super(context,NAME,null,28)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 

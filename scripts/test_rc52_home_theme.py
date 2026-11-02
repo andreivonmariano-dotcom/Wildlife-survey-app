@@ -35,5 +35,5 @@ class Rc52HomeTheme(unittest.TestCase):
         self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)
         self.assertIn("versionName \'0.27.3-",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
-        self.assertIn("super(context,NAME,null,28)",source("FieldDb.java"))
+        self.assertIn("super(context,NAME,null,29)",source("FieldDb.java"))
 if __name__=="__main__": unittest.main()

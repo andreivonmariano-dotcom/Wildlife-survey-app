@@ -234,6 +234,14 @@ public final class SpeciesPickerActivity extends Activity {
         // Keep unidentified records visible without taking width from species search.
         LinearLayout unidentifiedRow=new LinearLayout(this);
         unidentifiedRow.setGravity(Gravity.END);
+        Button recent=UiKit.button(this,"Recent","quiet");
+        recent.setTextSize(13);
+        recent.setContentDescription("Search species names from recently saved field records");
+        LinearLayout.LayoutParams recentSpace=new LinearLayout.LayoutParams(-2,dp(48));
+        recentSpace.topMargin=dp(6);
+        recentSpace.rightMargin=dp(7);
+        unidentifiedRow.addView(recent,recentSpace);
+        recent.setOnClickListener(v->showRecentSearches());
         Button unknown=UiKit.button(this,"Unidentified","secondary");
         unknown.setTextSize(13);
         unknown.setContentDescription("Record an unidentified species");
@@ -365,6 +373,25 @@ public final class SpeciesPickerActivity extends Activity {
         });
         views.setOnItemSelectedListener(chosen);
         refresh();
+    }
+    /** Search-only convenience; never declares a new sighting or identity. */
+    private void showRecentSearches(){
+        String[] names;
+        try(FieldDb helper=new FieldDb(getApplicationContext())){
+            names=RecentTaxa.names(helper.getReadableDatabase(),currentGroup());
+        }
+        if(names.length==0){
+            status.setText("No saved species names for this wildlife group");
+            return;
+        }
+        new AlertDialog.Builder(this).setTitle("Recent field records")
+            .setItems(names,(dialog,which)->{
+                String label=names[which];
+                int separator=label.lastIndexOf(" · ");
+                search.setText(separator<0?label:label.substring(separator+3));
+                search.setSelection(search.length());
+            })
+            .setNegativeButton("Back",null).show();
     }
     private String currentGroup(){
         return availableGroups[Math.max(0,groups.getSelectedItemPosition())];

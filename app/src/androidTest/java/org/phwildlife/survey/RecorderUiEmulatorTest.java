@@ -75,6 +75,35 @@ public final class RecorderUiEmulatorTest {
                 View countLabel=findText(root,"Individuals");
                 assertNotNull("Species picker entry remains discoverable",speciesList);
                 assertNotNull("Individual count remains available",countLabel);
+                // Step one: mark before identification, confirm unsaved draft,
+                // and reset without creating a field observation.
+                View previousMark=findText(root,"Change detection mark");
+                if(previousMark!=null){
+                    View clearPrevious=findText(root,"Clear mark");
+                    assertNotNull(clearPrevious);clearPrevious.performClick();
+                }
+                View mark=findText(root,"Mark detection");
+                assertNotNull("Mark detection belongs in primary field flow",mark);
+                assertTrue("Mark detection must be accessible without opening tools",
+                    mark.isShown());
+                int[] markY=new int[2],speciesMarkY=new int[2];
+                mark.getLocationOnScreen(markY);
+                speciesList.getLocationOnScreen(speciesMarkY);
+                assertTrue("Detection must come before species identification",
+                    markY[1]<speciesMarkY[1]);
+                assertNotNull("Unmarked time provenance must be displayed",
+                    findContainingText(root,"Not marked · Save will use the save time"));
+                mark.performClick();
+                assertNotNull("Marked time/GPS must be displayed as unsaved draft",
+                    findContainingText(root,"Draft · "));
+                assertNotNull("Marked time is not an observation save",
+                    findText(root,"Save Observation"));
+                View clearMark=findText(root,"Clear mark");
+                assertNotNull("Marked draft must have a reversible clear action",clearMark);
+                assertTrue(clearMark.isShown());
+                clearMark.performClick();
+                assertNotNull("Clearing a mark returns to unmarked state",
+                    findContainingText(root,"Not marked · Save will use the save time"));
                 int[] speciesY=new int[2],saveY=new int[2],countY=new int[2];
                 speciesList.getLocationOnScreen(speciesY);
                 countLabel.getLocationOnScreen(countY);

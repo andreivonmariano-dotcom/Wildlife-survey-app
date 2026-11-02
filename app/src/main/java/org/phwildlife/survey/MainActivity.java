@@ -571,17 +571,21 @@ public class MainActivity extends Activity implements LocationListener {
         detectRow.removeView(markTime);
         markTime.setContentDescription(
             "Mark encounter time and available qualified GPS fix in this unsaved draft");
+        // One compact row remains legible even at 200% text. Only genuinely
+        // narrower screens stack: otherwise two tall buttons hide the count.
+        boolean stackPrimaryActions=getResources().getConfiguration().screenWidthDp<300;
+        int primaryHeight=Math.max(52,Math.min(60,touchDp));
         LinearLayout directActions=horizontal();
-        if(stackCaptureActions)directActions.setOrientation(LinearLayout.VERTICAL);
-        directActions.addView(markTime,stackCaptureActions?
-            new LinearLayout.LayoutParams(-1,dp(touchDp)):
-            new LinearLayout.LayoutParams(0,dp(touchDp),1));
+        if(stackPrimaryActions)directActions.setOrientation(LinearLayout.VERTICAL);
+        directActions.addView(markTime,stackPrimaryActions?
+            new LinearLayout.LayoutParams(-1,dp(primaryHeight)):
+            new LinearLayout.LayoutParams(0,dp(primaryHeight),1.25f));
         utilityRow.removeView(pauseButton);
-        LinearLayout.LayoutParams pauseLp=stackCaptureActions?
-            new LinearLayout.LayoutParams(-1,dp(touchDp)):
-            new LinearLayout.LayoutParams(0,dp(touchDp),1);
-        if(stackCaptureActions)pauseLp.topMargin=dp(5);
-        else pauseLp.leftMargin=dp(7);
+        LinearLayout.LayoutParams pauseLp=stackPrimaryActions?
+            new LinearLayout.LayoutParams(-1,dp(primaryHeight)):
+            new LinearLayout.LayoutParams(0,dp(primaryHeight),0.75f);
+        if(stackPrimaryActions)pauseLp.topMargin=dp(5);
+        else pauseLp.leftMargin=dp(5);
         directActions.addView(pauseButton,pauseLp);
         // A station-dependent method must expose the station-start action
         // before the detection button. Never silently create a visit.
@@ -618,11 +622,14 @@ public class MainActivity extends Activity implements LocationListener {
         speciesRow.addView(taxonEntry,stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
             new LinearLayout.LayoutParams(0,dp(fieldControlHeight),1));
-        Button identifySpecies=UiKit.button(this,"Species list","secondary");
+        boolean compactBrowse=getResources().getConfiguration().fontScale>=1.55f||
+            getResources().getConfiguration().screenWidthDp<350;
+        Button identifySpecies=UiKit.button(this,
+            compactBrowse?"List":"Species list","secondary");
         identifySpecies.setContentDescription("Search offline species checklist");
         LinearLayout.LayoutParams browseLp=stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
-            new LinearLayout.LayoutParams(dp(112),dp(fieldControlHeight));
+            new LinearLayout.LayoutParams(dp(compactBrowse?76:112),dp(fieldControlHeight));
         if(stackSpecies)browseLp.topMargin=dp(5);
         else browseLp.leftMargin=dp(8);
         speciesRow.addView(identifySpecies,browseLp);
@@ -1310,7 +1317,9 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void refreshPauseControls(){
         if(pauseButton!=null){
-            pauseButton.setText(surveyPaused?"Resume effort":"Pause effort");
+            boolean compact=getResources().getConfiguration().fontScale>=1.55f;
+            pauseButton.setText(surveyPaused?(compact?"Resume":"Resume effort"):
+                (compact?"Pause":"Pause effort"));
             pauseButton.setEnabled(active);
         }
         if(pauseStatusView!=null){
@@ -2296,13 +2305,18 @@ public class MainActivity extends Activity implements LocationListener {
         if(clearDetectionMarkView!=null)
             clearDetectionMarkView.setVisibility(markedAt>0?View.VISIBLE:View.GONE);
         if(markTimeButton!=null){
-            markTimeButton.setText(markedAt>0?"Change detection mark":"Mark detection");
+            boolean compact=getResources().getConfiguration().fontScale>=1.55f;
+            markTimeButton.setText(markedAt>0?
+                (compact?"Edit mark":"Change detection mark"):
+                (compact?"Mark time":"Mark detection"));
             markTimeButton.setContentDescription(markedAt>0?
                 "Detection marked. Tap to confirm replacement of the draft time and GPS fix":
                 "Mark an unsaved detection using the current time and qualified GPS fix");
         }
         if(markedAt<=0){
-            bearingStatusView.setText("Not marked · Save will use the save time");
+            bearingStatusView.setText("Unmarked · save time");
+            bearingStatusView.setContentDescription(
+                "No detection time marked. Saving an observation will use the save time.");
             return;
         }
         String when=new SimpleDateFormat("HH:mm:ss",Locale.getDefault())
@@ -2312,6 +2326,8 @@ public class MainActivity extends Activity implements LocationListener {
         String heading=markedBearing==null?"":String.format(Locale.US,
             " · Bearing %.0f°",markedBearing);
         bearingStatusView.setText("Draft · "+when+" · "+gps+heading);
+        bearingStatusView.setContentDescription("Unsaved detection marked at "+
+            when+". "+gps+heading);
     }
     private static Double number(String v){try{return Double.parseDouble(v.trim());}catch(Exception e){return null;}}
     /** Catalog provenance comes from source records, never from display punctuation. */

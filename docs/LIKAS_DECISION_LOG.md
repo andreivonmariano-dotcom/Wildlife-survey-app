@@ -4,6 +4,9 @@
 
 ## Entries
 
+### 2026-11-02 | RC84 concise habitat/species preflight | Owner directed
+User requests less text after Survey GPS. Show brief GPS-status/confirmed habitats and one checklist-mode choice. Keep true site GPS/elevation details, ESA WorldCover 2020 map provenance, license and offline pack management behind clear disclosures, not deleted. Keep full 16 habitat options, preserve observer confirmation distinct from mapped suggestions, and retain full checklist and rank/full export semantics. Do not confuse habitat/elevation matching with actual occurrence. Signed CI and native large-font screenshots must pass prior to direct APK. See RC84 QA.
+
 ### 2026-11-02 | RC83 signed Survey GPS screen acceptance | Verified preview
 RC83 code143 source `2d52c0c602e955738f6960c89e276ec7eda07a72`, GitHub Actions `41397832886` SUCCESS: 432 scientific/UI tests, Android app/JVM build, eight Android14 survey/station GPS emulator tests at 160% and 200%/320dp, and four verified native screenshots. The compact accuracy/freshness card, optional GPS details/troubleshooting and explicit missing-location exception are implemented. Direct signed APK SHA `7cd62bf5706352298d15294c81034ab46922b4aba43dbb1f53e909b4a1edbf90`; original package/signer/schema28/references maintained. Large-text 200% still needs some scrolling. Real-phone field GNSS, persistence, upgrade and research ZIP remain unverified; PR #85 draft. See RC83 QA.
 

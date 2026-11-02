@@ -22,6 +22,7 @@ class DetectionFirstContracts(unittest.TestCase):
         source=read("MainActivity.java")
         block=source[source.index('private void captureDetectionMark()'):
                      source.index('private void openFieldProtocol()',source.index('private void captureDetectionMark()'))]
+        self.assertIn('markedBearing=null;markedPitch=null;sensorQuality=-1;',block)
         self.assertIn('markedAt=System.currentTimeMillis();',block)
         self.assertIn('markedObserverFix=freshObserverFix();',block)
         self.assertIn('persistDraft(true)',block)

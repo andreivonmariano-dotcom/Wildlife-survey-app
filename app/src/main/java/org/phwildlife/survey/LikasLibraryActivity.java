@@ -72,7 +72,7 @@ public final class LikasLibraryActivity extends Activity {
         getWindow().setStatusBarColor(UiKit.BG);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         LinearLayout body=new LinearLayout(this);
-        LinearLayout root=UiKit.page(this,"Library","Home",this::finish,body);
+        LinearLayout root=UiKit.page(this,"PHLibrary","Home",this::finish,body);
         // Android 14 font scaling is nonlinear. Use the shared full page-title token
         // rather than the compact navigation default so sections remain subordinate.
         LinearLayout navigation=(LinearLayout)root.getChildAt(0);

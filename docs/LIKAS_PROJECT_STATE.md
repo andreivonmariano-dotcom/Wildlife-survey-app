@@ -1,3 +1,11 @@
+## 2026-11-02 | Second BioTools deep audit: lifecycle integrity and resume (device verification in progress)
+
+- **Scope:** A second review round focused on the real survey-end dialogs, required exclusion reasons, analytical outcome, zero-detection event retention, missing start GPS provenance, and active-survey Home/Resume continuity. Relevant requirements G-02/03/05/06/07/09/10/11, S and U.
+- **Working source:** Draft PR #95, branch `feature/likas-biotools-navigation-audit-20261102`, RC49-derived code109, SQLite27. Not merged to the newer RC51 preview, and no APK released.
+- **New tests:** `app/src/androidTest/java/org/phwildlife/survey/BioToolsLifecycleInstrumentedTest.java` adds five real Android/Espresso dialog interactions with direct SQLite assertions; `scripts/run_biotools_emulator_qa.sh` runs those five before the previous eight navigation checks, producing screenshots, runtime errors and separate instrumentation logs. `app/build.gradle` adds test-only Espresso 3.6.1; runtime APK identity/version and database schema are unchanged.
+- **Acceptance under review:** CI run `41451423043`, source `48e19556ba335010272b76bf5379680fe7605dea` (current second-round source). Do not claim 13/13 passed until a successful job and log are verified. Previous independent 8/8 run `41446154258` remains successful.
+- **Open release gates:** Must test real GNSS and microphone, interruption recovery, physical-device in-place upgrade/data, RC51 integration, and direct verified safe APK. New tests use disposable emulator records and do not import private field data.
+
 ## 2026-11-02 | BioTools Android 14 emulator validation and further navigation safeguards
 
 - **Working branch:** `feature/likas-biotools-navigation-audit-20261102`, draft PR #95, derived from RC49 code109, SQLite schema27. **No installable APK has been published** and this older branch must not replace RC51 code111.

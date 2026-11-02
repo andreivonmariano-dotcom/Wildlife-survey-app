@@ -53,7 +53,6 @@ public final class SpeciesPickerActivity extends Activity {
     private FieldDb suggestionDb;
     private Spinner groups,views,scope;
     private boolean archivedCatalogAvailable=false;
-    private Button sortButton;
     private LinearLayout cards;
     private TextView status,siteSummary;
     private int generation=0,offset=0,sortMode=0,statusFilter=0;
@@ -126,6 +125,8 @@ public final class SpeciesPickerActivity extends Activity {
         statusFilter=0;
         savedGroupIndex=checked(surveyOptions.getInt(pref("group"),0),availableGroups.length);
         savedViewIndex=checked(surveyOptions.getInt(pref("view"),0),VIEWS.length);
+        if(paicCatalogActive&&!surveyOptions.getBoolean(pref("order_v2"),false)&&
+                savedViewIndex==1)savedViewIndex=3;
         savedScopeIndex=checked(surveyOptions.getInt(pref("scope"),0),2);
         habitatCode=surveyOptions.getString(pref("habitat"),habitatCode);
         if(HabitatLikelihood.habitatIndex(habitatCode)==0)habitatCode="";
@@ -138,6 +139,7 @@ public final class SpeciesPickerActivity extends Activity {
         surveyOptions.edit().putInt(pref("sort"),sortMode)
             .putInt(pref("filter"),statusFilter)
             .putInt(pref("group"),groups==null?0:groups.getSelectedItemPosition())
+            .putBoolean(pref("order_v2"),true)
             .putInt(pref("view"),views==null?0:views.getSelectedItemPosition())
             .putInt(pref("scope"),scope==null?0:scope.getSelectedItemPosition())
             .putString(pref("habitat"),habitatCode)
@@ -300,12 +302,8 @@ public final class SpeciesPickerActivity extends Activity {
         updateSiteSummary();
         status=text("Loading offline species…",12,false);
         status.setTextColor(UiKit.MUTED);status.setPadding(0,dp(9),0,dp(7));
-        status.setContentDescription("Species results and checklist region. Tap for site context");
+        status.setContentDescription("Species results and checklist region");
         status.setMinHeight(dp(40));
-        status.setOnClickListener(v->new AlertDialog.Builder(this)
-            .setTitle("Site")
-            .setMessage(siteSummary==null?"":siteSummary.getText().toString())
-            .setPositiveButton("Close",null).show());
         root.addView(status);
 
         ScrollView scroller=new ScrollView(this);
@@ -356,36 +354,6 @@ public final class SpeciesPickerActivity extends Activity {
         if(value.contains("riparian")||value.contains("stream"))return "riparian";
         if(value.contains("urban")||value.contains("settlement"))return "urban";
         return "";
-    }
-    private void openSortFilter(){
-        LinearLayout panel=new LinearLayout(this);
-        panel.setOrientation(LinearLayout.VERTICAL);
-        panel.setPadding(dp(18),dp(8),dp(18),dp(8));
-        panel.addView(text("Sort by",14,true));
-        Spinner order=new Spinner(this);
-        final String[] alphabeticSorts={
-            "Name · A to Z","Family · A to Z","Genus · A to Z"};
-        order.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,alphabeticSorts));
-        order.setSelection(Math.max(0,Math.min(2,sortMode)));
-        panel.addView(order);
-
-        new AlertDialog.Builder(this).setTitle("Sort")
-            .setView(panel)
-            .setPositiveButton("Apply",(dialog,which)->{
-                sortMode=order.getSelectedItemPosition();
-                statusFilter=0;
-                sortButton.setText("Sort");
-                savePickerSettings();
-                refresh();
-            })
-            .setNeutralButton("Reset",(dialog,which)->{
-                sortMode=0;statusFilter=0;
-                sortButton.setText("Sort");
-                savePickerSettings();
-                refresh();
-            })
-            .setNegativeButton("Cancel",null).show();
     }
     private static Double parseNumber(String value){
         if(value==null||value.trim().isEmpty())return null;

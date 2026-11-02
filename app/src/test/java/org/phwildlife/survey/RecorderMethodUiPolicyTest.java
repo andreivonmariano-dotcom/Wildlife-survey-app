@@ -34,6 +34,18 @@ public final class RecorderMethodUiPolicyTest {
         assertEquals(RecorderMethodUiPolicy.Action.NONE,
             RecorderMethodUiPolicy.action("Mammals","bat_acoustic"));
     }
+    @Test public void inlineActionsSuppressOnlyExactDuplicateShortcuts(){
+        assertEquals(FieldQuickActions.Kind.CALLS,
+            RecorderMethodUiPolicy.inlineQuickKind("Herpetofauna","amphibian_calls"));
+        assertEquals(FieldQuickActions.Kind.DEVICES,
+            RecorderMethodUiPolicy.inlineQuickKind("Mammals","camera_trap_check"));
+        assertEquals(FieldQuickActions.Kind.METHOD_EVIDENCE,
+            RecorderMethodUiPolicy.inlineQuickKind("Birds","area_search"));
+        assertEquals(FieldQuickActions.Kind.NONE,
+            RecorderMethodUiPolicy.inlineQuickKind("Birds","point_count"));
+        assertEquals(FieldQuickActions.Kind.NONE,
+            RecorderMethodUiPolicy.inlineQuickKind("Mammals","opportunistic"));
+    }
     @Test public void everyRegisteredMethodHasSpecificNonEmptyFocus(){
         for(String profile:new String[]{"Birds","Herpetofauna","Mammals"})
             for(SurveyMethods.Method m:SurveyMethods.forProfile(profile)){

@@ -76,7 +76,7 @@ public final class HabitatChecklistCompactEmulatorTest {
                 View root=a.getWindow().getDecorView();
                 assertNotNull(text(root,"Habitats & Species"));
                 assertNotNull(text(root,"Start GPS missing"));
-                assertNotNull(text(root,"No habitats confirmed"));
+                assertNotNull(text(root,"0 habitats confirmed"));
                 assertNotNull(text(root,"Choose habitats (16)"));
                 assertNotNull(text(root,"Checklist: Suggested"));
                 assertNotNull(text(root,"Matching does not confirm"));
@@ -100,7 +100,7 @@ public final class HabitatChecklistCompactEmulatorTest {
                 candidate.setChecked(true);
                 assertNotNull(text(root,"1 habitat confirmed"));
                 candidate.setChecked(false);
-                assertNotNull(text(root,"No habitats confirmed"));
+                assertNotNull(text(root,"0 habitats confirmed"));
                 text(root,"Hide habitats").performClick();
             });
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();

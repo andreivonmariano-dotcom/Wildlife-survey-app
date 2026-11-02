@@ -61,7 +61,7 @@ class GalleryPerf(unittest.TestCase):
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",build).group(1)),109)
         self.assertIn("versionName '0.27.3-rc",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
-        self.assertIn('super(context,NAME,null,28)',src("FieldDb.java"))
+        self.assertIn('super(context,NAME,null,29)',src("FieldDb.java"))
         main=src("MainActivity.java")
         self.assertIn('"Cancel Survey · Not Counted"',main)
         self.assertIn('"End Survey"',main)

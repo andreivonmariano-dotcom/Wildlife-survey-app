@@ -4,6 +4,9 @@
 
 ## Entries
 
+### 2026-11-02 | RC84 signed Habitat & Species acceptance | Verified preview
+The RC84 app source `2cfb36281bf9b89260939f14ff5c2915f75dc4f3` passed signed CI `41401267934`, including 435 Python tests, Android/JVM build and four actual Android14 habitat screen tests at 160% and 200%/320dp. It presents habitat selection, explicit-confirmation count and single checklist mode before optional full site/map provenance. All original scientific distinctions and package/signer/schema28/immutable assets retained. Direct APK 11,758,144 bytes, SHA `40bfe6326d0b937337f4ce9ad3b7b0933d455d29872f6a80b5a9088c36cf00a7`. Draft PR #86. Real handset/GNSS, species matching with installed catalog and field export still unverified.
+
 ### 2026-11-02 | RC84 concise habitat/species preflight | Owner directed
 User requests less text after Survey GPS. Show brief GPS-status/confirmed habitats and one checklist-mode choice. Keep true site GPS/elevation details, ESA WorldCover 2020 map provenance, license and offline pack management behind clear disclosures, not deleted. Keep full 16 habitat options, preserve observer confirmation distinct from mapped suggestions, and retain full checklist and rank/full export semantics. Do not confuse habitat/elevation matching with actual occurrence. Signed CI and native large-font screenshots must pass prior to direct APK. See RC84 QA.
 

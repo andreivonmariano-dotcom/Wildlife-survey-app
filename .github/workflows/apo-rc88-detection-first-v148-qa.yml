@@ -1,6 +1,9 @@
 name: APO RC88 detection-first field recording
 
 on:
+  push:
+    branches:
+      - feature/apo-rc88-detection-first-v148
   pull_request:
     branches:
       - feature/apo-rc87-habitat-shortlist-recorder-v147

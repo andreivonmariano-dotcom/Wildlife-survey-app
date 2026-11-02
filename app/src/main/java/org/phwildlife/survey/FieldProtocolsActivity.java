@@ -40,6 +40,9 @@ public final class FieldProtocolsActivity extends Activity {
     private long pendingTargetId=0;
 
     private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
+    private ScrollView scrollForm(LinearLayout form){
+        ScrollView scroll=new ScrollView(this);scroll.addView(form);return scroll;
+    }
     private LinearLayout col(){LinearLayout l=new LinearLayout(this);
         l.setOrientation(LinearLayout.VERTICAL);return l;}
     private TextView text(String s,int size){
@@ -320,7 +323,7 @@ public final class FieldProtocolsActivity extends Activity {
         EditText notes=field("Setup notes",false);
         for(EditText e:new EditText[]{code,installed,material,habitat,notes})form.addView(e);
         AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Register coverboard")
-            .setView(form).setNegativeButton("Back",null)
+            .setView(scrollForm(form)).setNegativeButton("Back",null)
             .setPositiveButton("Register",null).create();
         dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(w->{
@@ -363,7 +366,7 @@ public final class FieldProtocolsActivity extends Activity {
         for(EditText e:new EditText[]{substrate,temp,humidity,n,taxon,notes})form.addView(e);
         ScrollView view=new ScrollView(this);view.addView(form);
         AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Inspect "+board)
-            .setView(view).setNegativeButton("Back",null).setPositiveButton("Save",null).create();
+            .setView(scrollForm(view)).setNegativeButton("Back",null).setPositiveButton("Save",null).create();
         dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(w->{
                 if(!active()){toast("Survey is no longer active");return;}

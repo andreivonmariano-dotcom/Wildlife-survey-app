@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 152
-        versionName '0.27.3-rc92-apo-closure-integrity'
+        versionCode 153
+        versionName '0.27.3-rc93-apo-schema29-backup-qa'
     }
     signingConfigs {
         debug {

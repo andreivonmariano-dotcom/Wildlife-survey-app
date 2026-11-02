@@ -89,8 +89,8 @@ jobs:
             adb shell pm grant org.phwildlife.survey.beta08 android.permission.ACCESS_FINE_LOCATION
             adb shell pm grant org.phwildlife.survey.beta08 android.permission.ACCESS_COARSE_LOCATION
             gradle --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.RecorderUiEmulatorTest
-            adb exec-out run-as org.phwildlife.survey.beta08 cat files/apo_recorder_emulator.png > emulator-evidence/recorder_160pct.png
-            test -s emulator-evidence/recorder_160pct.png
+            adb pull /sdcard/Pictures/APO/apo_recorder_emulator.png emulator-evidence/recorder_160pct.png
+            python3 -c "import pathlib,struct; d=pathlib.Path('emulator-evidence/recorder_160pct.png').read_bytes(); assert d.startswith(bytes.fromhex('89504e470d0a1a0a')) and len(d)>20000, 'Invalid screenshot'; w,h=struct.unpack('>II',d[16:24]); assert w>=320 and h>=480, 'Invalid emulator viewport'; print('Verified emulator screenshot',w,h,len(d))"
       - name: Upload emulator screenshot evidence
         if: always()
         uses: actions/upload-artifact@v4

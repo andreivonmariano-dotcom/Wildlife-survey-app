@@ -1,4 +1,12 @@
-# LIKAS: Current Project State and Next-Chat Handoff
+# APO (historically LIKAS): Current Project State and Next-Chat Handoff
+
+## 2 November 2026 | Current APO branch selected for Home redesign
+
+- **Live checked source:** `feature/apo-startup-screen-v1-design`, HEAD `2fc989cae924fc8c652d7b5c3bb6d578dc07d721` before this documentation-only update. The final build's app-code ancestor is `4ce953bbea100c1c6a90231434591ffb6f99f788`; GitHub comparison showed exactly four later docs-only commits. The signed APK is still code132, original application ID and signer, SQLite28.
+- **Latest owner direction:** Start the main-menu overhaul from this APO v132 lineage, not LIKAS RC54, old `main`, or RC71. Rename/retheme the Home menu in a separate scoped code change. Existing `WelcomeActivity.home()`/ `LikasPortalUi.hero()` retain LIKAS-era wording, frog illustration and Fieldwork/Library/Settings navigation until explicitly updated.
+- **Protect:** Approved mountain launcher and transparent splash, live field survey endpoints and statuses, 714-species PAIC roster, WorldCover reference, evidence provenance, database upgrade path, signer, and direct-APK delivery rule. Release remains a preview pending handset/upgrade and accessibility checks. No code, APK, or survey record was changed by this baseline documentation synchronization.
+- **Repository state:** Default `main` diverges and is unsuitable as the Android change base. Keep draft PR #74 unmerged until lineage and field-release gates are satisfied. The current development source is this APO branch, with documentation refreshed before Home-screen work.
+
 
 ## 2 November 2026 | APO v132 signed Android APK successfully built and direct-delivered
 

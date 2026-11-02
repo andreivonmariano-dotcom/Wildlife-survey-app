@@ -1,5 +1,12 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC83 signed focused Survey GPS preflight | latest verified preview
+
+- **Signed source and QA:** `2d52c0c602e955738f6960c89e276ec7eda07a72` (draft PR #85 on RC82 branch), GitHub Actions `41397832886` **SUCCESS**, **432 Python**, JVM/Android app+AndroidTest build, and **8 Android14 instrumented GPS screen tests** at 160% and 200%/320dp (4 each). Exact original Android ID, signing cert, SQLite28, mountain art, PAIC714 and WorldCover remain unchanged.
+- **Direct-apk delivered:** `APO-v0.27.3-RC83-Refined-Survey-GPS-code143.apk`, **11,757,620 bytes**, SHA-256 `7cd62bf5706352298d15294c81034ab46922b4aba43dbb1f53e909b4a1edbf90`; obtained from successful signed artifact **13120031786**, independent ZIP and embedded reference hashes verified. Old sandbox links do not carry between sessions.
+- **Screen evidence:** Four separate native screenshots, CI artifact **13120690245**. Survey and station GPS at 160% (1080×2280) and 200%/320dp (960×2160). Visual review shows fix state and accuracy/freshness rule immediately visible, one persistent flagged missing-GPS option, optional raw evidence and troubleshooting collapsed. At 200%, some disclosed options sit below first fold due to large text, still scrollable.
+- **Behavior:** Actual GNSS provider source, 10m exclusive accuracy and 10s monotonic fix age, mock rejection, automatic progression when valid, explicit missing survey vs station location and original survey outcomes/effort remain. Physical device permissions/GNSS/migration, end-to-end saved missing outcomes, full accessibility and exports remain unverified. PR stays draft. QA: `docs/APO_RC83_SURVEY_GPS_QA_2026_11_02.md`.
+
 ## 2026-11-02 | APO RC83 focused Survey GPS screen | source pending signed QA
 
 - User requested refinement of the GPS screen immediately after signed RC82 survey-group setup. New `feature/apo-survey-gps-v143` derives from RC82 head `c0d422e9e2511476a8872e47996dd030a638731a`. Target `0.27.3-rc83-apo-survey-gps`, versionCode **143**, same original package, signer and SQLite28.

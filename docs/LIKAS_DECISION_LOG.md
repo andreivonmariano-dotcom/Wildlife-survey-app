@@ -3,6 +3,11 @@
 **Purpose:** Append-only record of accepted project-owner decisions and governing rules. This file is not proof that an item has been implemented or tested.
 
 ## Entries
+### 2026-11-02 | Lock RC85 findings and implement interactive recorder/picker | Owner-directed source change
+
+Owner accepted the RC85 audit recommendations and requested a more interactive field app. Implement on separate RC86 code146 draft PR #88, with additive SQLite29 species-key/version provenance, retained raw IDs, PAIC-default/national-archive browse scope, one sorting control, visible neutral confidence, direct detection mark, direct pause in compact recorder, field-only reset/draft checks, single photo action, cleaner placeholders, explicit all-data export and protected wildlife-group switching. Preserve offline work, source evidence, historical records, fixed signing/branding and Complete/Incomplete/Not Counted lifecycle. Deferred interactive ideas: recent/favorite chips and audited Undo last Save after validated database and device tests. Source implementation is not an APK delivery. See `docs/APO_RC86_INTERACTIVE_RECORDER_SPECIES_IMPLEMENTATION_2026_11_02.md`.
+
+
 
 ### 2026-11-02 | RC85 recorder and species-picker simplification | Owner directed
 Minimize scientific lectures, warning paragraphs and repetitive field-control text. Place observation entry first for nonstation sampling, keep station/transect effort accessible, make photo and picker discoverable. List real available conservation, taxonomy, habitat and elevation attributes compactly with source profiles on demand. Habitat-first mode ranks all taxa, not an undisclosed filtered absence. Keep existing recorded source/review statuses, GPS provenance, confidence codes, survey outcomes and data integrity under the hood. Signed APK must pass scientific tests and native 160/200% Android QA. See RC85 QA.

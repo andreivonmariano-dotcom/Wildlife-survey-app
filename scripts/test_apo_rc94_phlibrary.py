@@ -55,7 +55,8 @@ class PHLibraryScreenContract(unittest.TestCase):
         self.assertIn("0.27.3-rc94-phlibrary-preview",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
-        self.assertIn("FieldBackupArchive",read("MainActivity.java"))
+        self.assertIn('manifest.put("sqliteSchema",snapshotSchema)',
+                      read("FieldBackupArchive.java"))
         self.assertIn("SurveyClosePolicy.resolve(",read("MainActivity.java"))
 
 if __name__=="__main__":

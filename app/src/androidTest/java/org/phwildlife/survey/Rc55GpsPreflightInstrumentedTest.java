@@ -48,34 +48,42 @@ public final class Rc55GpsPreflightInstrumentedTest {
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
                 assertNotNull(findText(root,"Survey GPS"));
-                assertNotNull(findText(root,"Position status"));
-                assertNotNull(findText(root,"GPS controls"));
-                assertNotNull(findText(root,"Check current GPS again"));
+                assertNotNull(findText(root,"Required: device GPS accuracy under 10 m"));
+                assertNotNull(findDescription(root,"Continue without a verified survey-start GPS fix"));
+                View detail=findDescription(root,"Show coordinates, altitude, accuracy and satellite diagnostics");
+                View help=findDescription(root,"Show GPS retry and Android location settings");
+                assertNotNull(detail);
+                assertNotNull(help);
+                assertNotNull(findText(root,"Retry GPS acquisition"));
+                assertFalse("Retry should start collapsed",findText(root,"Retry GPS acquisition").isShown());
+                detail.performClick();
+                assertNotNull(findDescription(root,"Hide coordinates and GPS diagnostics"));
+                detail.performClick();
+                help.performClick();
+                assertNotNull(findText(root,"Retry GPS acquisition"));
+                assertTrue("Retry should expand",findText(root,"Retry GPS acquisition").isShown());
                 assertNotNull(findDescription(root,"Open Android device location settings"));
-                View missing=findDescription(root,"Start survey with its starting GPS position missing");
-                assertNotNull(missing);
-                assertTrue(missing.isClickable());
-                assertNotNull(findDescription(root,"Cancel GPS acquisition and return to survey setup"));
-                View disclosure=findDescription(root,"Show satellite signal and sky details");
-                assertNotNull(disclosure);disclosure.performClick();
-                assertNotNull(findDescription(root,"Hide satellite signal and sky details"));
-                disclosure.performClick();
-                assertNotNull(findDescription(root,"Show satellite signal and sky details"));
-                assertNull("A second start button must not appear",findText(root,"Start survey with verified GPS"));
+                assertNull("No redundant visible start button",
+                    findText(root,"Start survey with verified GPS").isShown()?
+                    findText(root,"Start survey with verified GPS"):null);
             });
         }
     }
-    @Test public void stationPreflightHasSeparateMissingFixReturnAndNoSkyMap(){
+    @Test public void stationPreflightHasSeparateFlagAndNoSkyMap(){
         try(ActivityScenario<SurveyGpsActivity> scenario=ActivityScenario.launch(screen(true))){
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
                 assertNotNull(findText(root,"Station GPS"));
-                assertNotNull(findText(root,"Position status"));
-                assertNotNull(findText(root,"Start without GPS · flag missing"));
-                assertNotNull(findDescription(root,"Return to the active survey without starting a station"));
-                assertNull(findDescription(root,"Show satellite signal and sky details"));
-                assertNull(findText(root,"Start station with current GPS"));
+                assertNotNull(findText(root,"Start station without GPS"));
+                assertNotNull(findDescription(root,"Start station visit with unverified station GPS coordinates"));
+                View detail=findDescription(root,"Show coordinates, altitude, accuracy and satellite diagnostics");
+                assertNotNull(detail);
+                detail.performClick();
+                assertNull(findText(root,"Satellites: waiting for receiver"));
+                assertNull(findText(root,"Start station with current GPS").isShown()?
+                    null:null);
             });
         }
     }
+
 }

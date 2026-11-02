@@ -86,6 +86,9 @@ public class MainActivity extends Activity implements LocationListener {
     private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry;
     private Button endSurveyButton,markButton,saveButton,reviewButton,pointNextButton;
     private TextView saveEligibilityView;
+    // A non-mutating Android test hook to inspect the actual End Survey dialog.
+    private AlertDialog activeEndSurveyDialog;
+    AlertDialog activeEndSurveyDialogForQa(){return activeEndSurveyDialog;}
     // Saved and unsaved states must stay separate.
     private TextView timelineToggle,timelineDraft;
     private LinearLayout timelineRows;
@@ -1645,6 +1648,8 @@ public class MainActivity extends Activity implements LocationListener {
         complete.setOnClickListener(v->{dialog.dismiss();showFinalizationForm(true);});
         incomplete.setOnClickListener(v->{dialog.dismiss();showFinalizationForm(false);});
         cancel.setOnClickListener(v->{dialog.dismiss();showNotCountedReason();});
+        activeEndSurveyDialog=dialog;
+        dialog.setOnDismissListener(v->{if(activeEndSurveyDialog==dialog)activeEndSurveyDialog=null;});
         dialog.show();
     }
     /** Record true effort, then validate the complete/incomplete classification. */

@@ -1,5 +1,13 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2 November 2026 | APO RC73 text-only Home implementation (source; signed QA pending)
+
+- **Owner-approved Home structure:** exactly four plain-text primary modules: **BioTools**, **PHLibrary**, **PHMaps**, **BioDiscover**; Settings is a small text action in the top-right header. The legacy frog Home hero, illustrated Home tiles, and decorative menu icons are no longer instantiated by `WelcomeActivity.home()`. The locked mountain launcher and native-gradient splash remain untouched. Home uses 220 ms easing and existing Less motion/system animator gates. All text reflows without fixed-height typography clipping.
+- **Implementation branch:** `feature/apo-text-home-v133`, created from verified RC72 APO branch HEAD `542092743437763ae91430655a0a1f89955e57a0`. New component `ApoHomeUi.java`, module navigation changes in `WelcomeActivity.java`, PHLibrary hub title, new Home transition, and source contracts `scripts/test_apo_home_v133.py`. Intended build versionCode **133**, `0.27.3-rc73-apo-text-home`, with unchanged app ID, signer requirement and SQLite **28**.
+- **Working destinations:** BioTools enters existing fieldwork/analysis screen, PHLibrary enters existing offline reference hub, PHMaps shows available project/station and habitat records and explicitly identifies standalone map/terrain exploration as incomplete, and BioDiscover openly states the live sourced research/conservation feed is under development. A contextual Resume current survey shortcut remains present when a survey is active. No news results or geographic measurements are fabricated.
+- **Verification state:** source changes committed; signed CI, APK identity/signature and direct-download status require actual verification before an updated app is claimed delivered. No on-device GPS, old survey migration, accessibility or field survey acceptance has been performed for RC73.
+
+
 ## 2 November 2026 | Current APO branch selected for Home redesign
 
 - **Live checked source:** `feature/apo-startup-screen-v1-design`, HEAD `2fc989cae924fc8c652d7b5c3bb6d578dc07d721` before this documentation-only update. The final build's app-code ancestor is `4ce953bbea100c1c6a90231434591ffb6f99f788`; GitHub comparison showed exactly four later docs-only commits. The signed APK is still code132, original application ID and signer, SQLite28.

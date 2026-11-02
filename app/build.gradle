@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 151
-        versionName '0.27.3-rc91-apo-method-review'
+        versionCode 152
+        versionName '0.27.3-rc92-apo-closure-integrity'
     }
     signingConfigs {
         debug {

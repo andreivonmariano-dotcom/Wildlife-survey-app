@@ -41,7 +41,7 @@ public final class HabitatRecordsActivity extends Activity {
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(16),dp(12),dp(16),dp(12));
         root.addView(UiKit.navigationHeader(this,
-            largeText?"Habitats":"Habitat & Ecology","Home",this::finish));
+            largeText?"Habitats":"Habitat & Ecology","Back",this::finish));
         String fullHabitatNote="Offline reference guide and separately recorded field evidence.";
         TextView note=label(largeText?"Reference guide · measured field records":fullHabitatNote,13);
         note.setContentDescription(fullHabitatNote);

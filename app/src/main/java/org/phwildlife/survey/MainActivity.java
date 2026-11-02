@@ -89,6 +89,9 @@ public class MainActivity extends Activity implements LocationListener {
     // A non-mutating Android test hook to inspect the actual End Survey dialog.
     private AlertDialog activeEndSurveyDialog;
     AlertDialog activeEndSurveyDialogForQa(){return activeEndSurveyDialog;}
+    // Read-only test access to the real final outcome confirmation dialog.
+    private AlertDialog activeFinalizationDialog;
+    AlertDialog activeFinalizationDialogForQa(){return activeFinalizationDialog;}
     // Saved and unsaved states must stay separate.
     private TextView timelineToggle,timelineDraft;
     private LinearLayout timelineRows;
@@ -1792,6 +1795,10 @@ public class MainActivity extends Activity implements LocationListener {
                 dialog.dismiss();
                 finish(requestedComplete,measured);
             }));
+        activeFinalizationDialog=dialog;
+        dialog.setOnDismissListener(v->{
+            if(activeFinalizationDialog==dialog)activeFinalizationDialog=null;
+        });
         dialog.show();
     }
     private void finish(boolean complete,Double length){

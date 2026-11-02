@@ -51,3 +51,5 @@ The recorder's method-specific Quick capture mirrors one available evidence acti
 - **Source changes:** Test-only Espresso 3.6.1 dependency in `app/build.gradle`, new `BioToolsLifecycleInstrumentedTest.java`, and runner updates in `scripts/run_biotools_emulator_qa.sh`. No application logic, persistent SQLite schema, package/signature identity, or versionCode changed in this second round.
 - **Still required:** GNSS preflight start/skip/cancel tested with real service and location-provider edge cases, audio recording with actual WAV persistence and metadata, field method-specific station-device measurements, keyboard and process death recovery, real production-data export preservation and in-place install upgrade from RC51 code111, physical-phone testing. The branch is an RC49 code109 **draft**, not a new APK release.
 
+
+- **Additional source CI:** Scientific Core QA run `41451432278` succeeded for the tested source commit `48e19556ba335010272b76bf5379680fe7605dea` (316 Python tests and Gradle build successful). No APK was released or independently signed for installation.

@@ -58,6 +58,34 @@ public final class Rc92UnverifiedDeviceInstrumentedTest {
             return c.getString(0);
         }
     }
+    /**
+     * Tap the actual Android confirmation-window accessibility node. This avoids
+     * Espresso selecting the underlying Activity root while the modal owns focus,
+     * and still exercises the production dialog's positive/negative listener.
+     */
+    private static void confirmDialog(String exactLabel){
+        android.app.UiAutomation automation=
+            InstrumentationRegistry.getInstrumentation().getUiAutomation();
+        for(int attempt=0;attempt<40;attempt++){
+            android.view.accessibility.AccessibilityNodeInfo root=
+                automation.getRootInActiveWindow();
+            if(root!=null){
+                java.util.List<android.view.accessibility.AccessibilityNodeInfo> found=
+                    root.findAccessibilityNodeInfosByText(exactLabel);
+                for(android.view.accessibility.AccessibilityNodeInfo node:found){
+                    if(node.getText()!=null&&exactLabel.contentEquals(node.getText())){
+                        android.view.accessibility.AccessibilityNodeInfo target=node;
+                        while(target!=null&&!target.isClickable())target=target.getParent();
+                        if(target!=null&&target.performAction(
+                            android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK))
+                            return;
+                    }
+                }
+            }
+            SystemClock.sleep(150);
+        }
+        fail("GPS dialog button was not accessible: "+exactLabel);
+    }
     private static Intent gps(String observer){
         return new Intent(APP,SurveyGpsActivity.class)
             .putExtra("create_new",true)
@@ -73,7 +101,7 @@ public final class Rc92UnverifiedDeviceInstrumentedTest {
                 assertNotNull(skip);assertTrue(skip.isShown());
                 skip.performClick();
             });
-            onView(withText("Keep checking GPS")).perform(click());
+            confirmDialog("Keep checking GPS");
             test.onActivity(Activity::onBackPressed);
         }
         assertEquals("Back and dismissed confirmation cannot create an event",0,count(CANCEL));
@@ -85,7 +113,7 @@ public final class Rc92UnverifiedDeviceInstrumentedTest {
                 Button skip=button(a.getWindow().getDecorView(),"Continue without GPS");
                 assertNotNull(skip);skip.performClick();
             });
-            onView(withText("Continue, flag missing GPS")).perform(click());
+            confirmDialog("Continue, flag missing GPS");
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         }
         String id=survey();

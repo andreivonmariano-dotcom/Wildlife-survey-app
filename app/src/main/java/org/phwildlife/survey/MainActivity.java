@@ -729,7 +729,8 @@ public class MainActivity extends Activity implements LocationListener {
         saveButton.setOnClickListener(v->save());
         reviewButton.setOnClickListener(v->{
             persistDraft();
-            startActivity(new Intent(this,HistoryActivity.class).putExtra("event_id",eventId));
+            startActivity(new Intent(this,HistoryActivity.class)
+                .putExtra("event_id",eventId).putExtra("from_recorder",true));
         });
         setContentView(root);
         // adjustResize keeps the Save/Review/End dock on screen. When the keyboard

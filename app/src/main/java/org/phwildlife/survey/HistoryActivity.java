@@ -23,6 +23,7 @@ public class HistoryActivity extends Activity {
     private FieldDb db;
     private LinearLayout rows,root;
     private String eventFilter;
+    private boolean fromRecorder;
     private String outcomeFilter="all";
     private String surveySearch="";
     private final Handler searchHandler=new Handler(Looper.getMainLooper());
@@ -50,7 +51,20 @@ public class HistoryActivity extends Activity {
         UiKit.fieldInput(this,v);
         return v;
     }
-    @Override public void onCreate(Bundle b){super.onCreate(b);db=new FieldDb(this);eventFilter=getIntent().getStringExtra("event_id");draw();}
+    @Override public void onCreate(Bundle b){
+        super.onCreate(b);db=new FieldDb(this);
+        eventFilter=getIntent().getStringExtra("event_id");
+        fromRecorder=getIntent().getBooleanExtra("from_recorder",false);
+        draw();
+    }
+    private void navigateBack(){
+        if(SurveyNavigationPolicy.closeHistoryToCaller(fromRecorder,eventFilter)){
+            finish();return;
+        }
+        if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
+        eventFilter=null;surveyOffset=0;observationOffset=0;draw();
+    }
+    @Override public void onBackPressed(){navigateBack();}
     @Override protected void onDestroy(){
         searchHandler.removeCallbacksAndMessages(null);
         db.close();
@@ -64,13 +78,8 @@ public class HistoryActivity extends Activity {
             dp(LikasDesignSystem.SPACE_SM));
         root.addView(UiKit.navigationHeader(this,
             eventFilter==null?(largeText()?"History":"Survey history"):"Observations",
-            eventFilter==null?"Home":"All surveys",()->{
-                if(eventFilter==null)finish();
-                else{
-                    if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
-                    eventFilter=null;surveyOffset=0;observationOffset=0;draw();
-                }
-            }));
+            eventFilter==null?"Back":fromRecorder?"Survey":"All surveys",
+            this::navigateBack));
         if(eventFilter==null){
             Spinner outcomes=new Spinner(this);
             outcomes.setAdapter(new ArrayAdapter<String>(this,

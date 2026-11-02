@@ -20,18 +20,18 @@ public final class StationProgressActivity extends Activity {
  @Override protected void onResume(){super.onResume();if(event!=null)render();}
  @Override protected void onDestroy(){super.onDestroy();store.close();}
  private void render(){
-   String project="default",profile="Birds",method="",outcome="active";
+   String profile="Birds",method="",outcome="active";
    try(Cursor c=store.getReadableDatabase().rawQuery(
-     "SELECT COALESCE(project_id,'default'),COALESCE(survey_profile,taxon_group,'Birds'),method,"+
+     "SELECT COALESCE(survey_profile,taxon_group,'Birds'),method,"+
       "CASE WHEN outcome IS NOT NULL THEN outcome WHEN ended IS NULL THEN 'active' "+
       "WHEN complete=1 THEN 'complete' ELSE 'incomplete' END FROM surveys WHERE id=?",
      new String[]{event})){
      if(!c.moveToFirst()){finish();return;}
-     project=c.getString(0);profile=c.getString(1);method=c.getString(2);outcome=c.getString(3);
+     profile=c.getString(0);method=c.getString(1);outcome=c.getString(2);
    }
    LinearLayout root=column();root.setPadding(dp(14),dp(12),dp(14),dp(12));
    root.setBackgroundColor(UiKit.BG);
-   root.addView(UiKit.navigationHeader(this,"Station progress","Survey",this::finish));
+   root.addView(UiKit.navigationHeader(this,"Station progress","Back",this::finish));
    root.addView(label("Method · "+SurveyMethods.displayLabel(profile,method),13));
    if(outcome.equals("not_counted")){
      TextView note=label("NOT COUNTED. Visits remain archived but excluded from analysis.",13);
@@ -65,18 +65,8 @@ public final class StationProgressActivity extends Activity {
      }
    }
    list.addView(UiKit.sectionTitle(this,"Visits · "+finished+" completed, "+unfinished+" incomplete, "+running+" active"));
-   list.addView(UiKit.sectionTitle(this,"Other registered project stations"));
-    list.addView(label("These stations belong to the project but have no visit recorded in this survey.",12));
-   int missing=0;
-   try(Cursor c=store.getReadableDatabase().rawQuery(
-     "SELECT id,name FROM sites WHERE project_id=? ORDER BY id",new String[]{project})){
-     while(c.moveToNext()){
-       String id=c.getString(0);
-       if(!stations.containsKey(id)){missing++;card(id,c.getString(1),null);}
-     }
-   }
-   if(missing==0)list.addView(label("No other registered project stations.",12));
    list.addView(UiKit.sectionTitle(this,"Stations visited in this survey"));
+   if(stations.isEmpty())list.addView(label("No station visits recorded in this survey yet.",13));
    for(Map.Entry<String,List<String>> e:stations.entrySet())card(e.getKey(),e.getKey(),e.getValue());
  }
  private void showPlannedStations(){

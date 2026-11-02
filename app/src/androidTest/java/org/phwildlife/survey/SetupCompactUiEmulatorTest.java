@@ -83,8 +83,10 @@ public final class SetupCompactUiEmulatorTest {
             try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(home)){
                 scenario.onActivity(activity->{
                     View root=activity.getWindow().getDecorView();
-                    View field=byDescription(root,"Open Fieldwork.");
-                    assertNotNull(field);field.performClick();
+                    View bioTools=byDescription(root,"Open BioTools.");
+                    assertNotNull(bioTools);bioTools.performClick();
+                    View surveys=byDescription(root,"Open Surveys.");
+                    assertNotNull(surveys);surveys.performClick();
                     View choice=byDescription(root,"Open "+profile+".");
                     assertNotNull(choice);choice.performClick();
                     View method=byDescription(root,"Choose survey method");

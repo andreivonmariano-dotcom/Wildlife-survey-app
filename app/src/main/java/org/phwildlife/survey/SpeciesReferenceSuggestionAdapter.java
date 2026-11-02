@@ -20,12 +20,14 @@ public final class SpeciesReferenceSuggestionAdapter
         extends ArrayAdapter<String> implements Filterable {
     private final FieldDb helper;
     private volatile String groupFilter;
+    private volatile boolean useArchivedCatalog=false;
     private final Filter filter=new Search();
     public SpeciesReferenceSuggestionAdapter(Context context,FieldDb db,String group){
         super(context,android.R.layout.simple_dropdown_item_1line,new ArrayList<String>());
         helper=db;groupFilter=group;
     }
     public void setGroup(String group){groupFilter=group;}
+    public void setArchivedCatalog(boolean archived){useArchivedCatalog=archived;}
     @Override public View getView(int position,View convertView,ViewGroup parent){
         TextView view=convertView instanceof TextView?(TextView)convertView:
             new TextView(getContext());
@@ -57,13 +59,16 @@ public final class SpeciesReferenceSuggestionAdapter
             }
 
             String group=groupFilter;
+            boolean archived=useArchivedCatalog;
+            String catalog=archived?"likas_prior_taxon_catalog":"taxon_catalog";
+            String synonyms=archived?"likas_prior_taxon_synonyms":"taxon_synonyms";
             String like=TaxonSearchPolicy.contains(name);
             String where=group==null||group.isEmpty()?"":" AND c.taxon_group=?";
             String sql="SELECT c.taxon_key,COALESCE(c.common_name,''),c.scientific_name,"+
-                "COALESCE(c.taxon_group,'') FROM taxon_catalog c WHERE "+
+                "COALESCE(c.taxon_group,'') FROM "+catalog+" c WHERE "+
                 "(?='' OR LOWER(c.scientific_name) LIKE ? ESCAPE '!' OR "+
                 "LOWER(COALESCE(c.common_name,'')) LIKE ? ESCAPE '!' OR EXISTS ("+
-                "SELECT 1 FROM taxon_synonyms a WHERE a.taxon_key=c.taxon_key "+
+                "SELECT 1 FROM "+synonyms+" a WHERE a.taxon_key=c.taxon_key "+
                 "AND LOWER(a.alias_name) LIKE ? ESCAPE '!'))"+where+
                 " ORDER BY CASE WHEN c.taxon_key LIKE 'STARTER:%' THEN 1 ELSE 0 END,"+
                 "c.scientific_name COLLATE NOCASE LIMIT 90";

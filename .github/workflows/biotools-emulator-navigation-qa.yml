@@ -31,11 +31,9 @@ jobs:
         with:
           path: .signing/wildlife-beta08.keystore
           key: wildlife-v08-beta-debug-signing-v1
-      - name: Prepare source assets and compile instrumentation
+      - name: Compile survey navigation APKs without external photo-fetch dependency
         run: |
           python3 scripts/prepare_mdd_mammals.py
-          python3 scripts/prepare_offline_photos.py
-          python3 scripts/audit_inaturalist_photos.py --install-approved
           gradle --no-daemon :app:assembleDebug :app:assembleDebugAndroidTest
       - name: Test on Android 14 emulator
         uses: reactivecircus/android-emulator-runner@v2

@@ -37,6 +37,7 @@ public final class StudyProtocolsActivity extends Activity {
     private EditText entry(String hint,boolean number){
         EditText e=new EditText(this);e.setTextSize(15);e.setHint(hint);
         if(number)e.setInputType(InputType.TYPE_CLASS_NUMBER);
+        UiKit.fieldInput(this,e);
         return e;
     }
     private static String utc(){
@@ -51,8 +52,10 @@ public final class StudyProtocolsActivity extends Activity {
         screen=new LinearLayout(this);screen.setOrientation(LinearLayout.VERTICAL);
         screen.setPadding(dp(14),dp(12),dp(14),dp(18));screen.setBackgroundColor(UiKit.BG);
         scroll.addView(screen);setContentView(scroll);
-        screen.addView(UiKit.navigationHeader(this,"Study protocol templates","Workspace",this::finish));
-        screen.addView(label("Rules are copied into each new survey. Past surveys keep their original rules."));
+        screen.addView(UiKit.navigationHeader(this,"Study templates","Field Utilities",this::finish));
+        screen.addView(ApoHomeUi.section(this,"Study effort rules",
+            "Define requirements for future surveys. Already saved surveys keep " +
+            "their original criteria."));
         project=new Spinner(this);
         ArrayList<String> projects=new ArrayList<>();projectIds.clear();
         try(Cursor c=store.getReadableDatabase().rawQuery(

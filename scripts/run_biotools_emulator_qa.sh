@@ -15,9 +15,14 @@ adb shell wm size > biotools-emulator-qa/screen_size.txt
 adb shell wm density > biotools-emulator-qa/screen_density.txt
 adb shell settings get system font_scale > biotools-emulator-qa/font_scale.txt
 
+# Run closure tests first while the disposable workspace contains no active survey.
+adb shell am instrument -w -r -e class org.phwildlife.survey.BioToolsLifecycleInstrumentedTest org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner | tee biotools-emulator-qa/lifecycle_instrumentation.txt
+grep -Eq 'OK \\(5 tests\\)' biotools-emulator-qa/lifecycle_instrumentation.txt
+
 adb shell am instrument -w -r -e class org.phwildlife.survey.BioToolsNavigationInstrumentedTest org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner | tee biotools-emulator-qa/instrumentation.txt
 
 adb pull /sdcard/Android/data/org.phwildlife.survey.beta08/files/biotools_qa biotools-emulator-qa/screenshots || true
+adb pull /sdcard/Android/data/org.phwildlife.survey.beta08/files/biotools_qa_lifecycle biotools-emulator-qa/lifecycle_screenshots || true
 adb logcat -d -s AndroidRuntime:E > biotools-emulator-qa/android_runtime_errors.txt
 
 grep -Eq 'OK \(8 tests\)' biotools-emulator-qa/instrumentation.txt

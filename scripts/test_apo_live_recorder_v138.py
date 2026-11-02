@@ -41,7 +41,8 @@ class LiveRecorderRC78(unittest.TestCase):
             "private void finishPrompt()",1)[0]
         for entry in ("taxonEntry","notesEntry","distanceEntry","habitatEntry",
                       "behaviorEntry","pendingPhoto","markedAt","count!=1",
-                      "confidenceSpinner","evidenceSpinner"):
+                      "confidenceSpinner","evidenceSpinner","lifeStageSpinner",
+                      "distanceSourceSpinner","firstPositionSpinner","movementSpinner"):
             self.assertIn(entry,closure)
         self.assertIn("if(hasUnsavedObservation())",s)
         self.assertIn("discardUnfinishedObservation()",s)

@@ -160,19 +160,17 @@ public class WelcomeActivity extends Activity {
         row.setPadding(dp(LikasDesignSystem.SPACE_XS),dp(LikasDesignSystem.SPACE_LG),
             dp(LikasDesignSystem.SPACE_XS),dp(LikasDesignSystem.SPACE_SM));
         TextView index=text(number,12,true);
-        index.setTextColor(UiKit.FOREST);
-        index.setGravity(Gravity.CENTER);
-        index.setMinWidth(dp(38));
-        index.setMinHeight(dp(36));
-        index.setPadding(dp(5),dp(5),dp(5),dp(5));
-        android.graphics.drawable.GradientDrawable marker=new android.graphics.drawable.GradientDrawable();
-        marker.setColor(UiKit.LEAF_MID);
-        marker.setCornerRadius(dp(LikasDesignSystem.RADIUS_INPUT));
-        index.setBackground(marker);
-        row.addView(index,new LinearLayout.LayoutParams(dp(38),dp(36)));
+        index.setTextColor(UiKit.MUTED);
+        index.setGravity(Gravity.CENTER_VERTICAL);
+        index.setMinWidth(dp(32));
+        index.setMinHeight(dp(40));
+        index.setPadding(dp(3),dp(5),dp(3),dp(5));
+        index.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        row.addView(index,new LinearLayout.LayoutParams(dp(34),-2));
         TextView label=text(title,LikasDesignSystem.TEXT_SECTION,true);
         label.setTextColor(UiKit.INK);
         label.setPadding(dp(LikasDesignSystem.SPACE_MD),0,0,0);
+        label.setContentDescription("Step "+number+": "+title);
         row.addView(label,new LinearLayout.LayoutParams(0,-2,1));
         return row;
     }
@@ -444,6 +442,9 @@ public class WelcomeActivity extends Activity {
         setupFooter.setVisibility(View.VISIBLE);
         main.addView(UiKit.navigationHeader(this,profile+" survey","Surveys",
             this::fieldworkHub));
+        main.addView(ApoHomeUi.note(this,
+            "Set up a survey method and project first. GPS preflight and optional " +
+            "site habitat review follow before recording starts."));
         choices=SurveyMethods.forProfile(profile);
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){
@@ -464,6 +465,9 @@ public class WelcomeActivity extends Activity {
         methodChoices.check(1000);
         methodChoices.setOnCheckedChangeListener((group,checked)->refreshStudyChoices());
         main.addView(step("01","Survey method"));
+        main.addView(ApoHomeUi.note(this,
+            "Select the method that matches the actual field protocol. " +
+            "Its effort and completion rules will be applied to this survey."));
         LinearLayout methodsCard=vertical();
         // Each radio choice already has an outlined surface; avoid nesting borders.
         methodsCard.setPadding(0,0,0,0);
@@ -477,6 +481,9 @@ public class WelcomeActivity extends Activity {
         main.addView(methodsCard);
         updateMethodSelection(1000);
         main.addView(step("02","Project and location"));
+        main.addView(ApoHomeUi.note(this,
+            "Project and checklist-region choices provide context for the record. " +
+            "A checklist-region suggestion is not a confirmed species occurrence."));
         projectChoice=new Spinner(this);
         projectKeys.clear();
         ArrayList<String> names=new ArrayList<>();
@@ -538,6 +545,9 @@ public class WelcomeActivity extends Activity {
         gpsLookupButton.setOnClickListener(v->suggestBoundary());
         // Sampling stations are assigned within field visits, never in survey setup.
         main.addView(step("03","Sampling effort"));
+        main.addView(ApoHomeUi.note(this,
+            "Enter planned effort for the selected method. Only relevant fields are " +
+            "shown; recorded visits and actual effort are stored during the survey."));
         observerEntry=new EditText(this);
         observerEntry.setTextSize(16);observerEntry.setSingleLine(true);
         observerEntry.setHint("Observer (optional)");
@@ -693,6 +703,9 @@ public class WelcomeActivity extends Activity {
             radiusEntry,routeLengthEntry,customSpacingEntry,lineBearingEntry,regionEntry,
             areaEntry,templateName})styleSetupInput(entry);
         main.addView(step("04","Begin survey"));
+        main.addView(ApoHomeUi.note(this,
+            "Review optional study rules and habitat preparation. The pinned " +
+            "Continue to GPS action checks prerequisites before recording."));
         studyOptions=vertical();
         studyOptions.setVisibility(View.GONE);
         studyChoice=new Spinner(this);
@@ -761,7 +774,7 @@ public class WelcomeActivity extends Activity {
         if(studyChoice==null||projectChoice==null||methodChoices==null||
             methodChoices.getCheckedRadioButtonId()<1000||projectKeys.isEmpty())return;
         String earlier=selectedStudyId();
-        ArrayList<String> labels=new ArrayList<>();labels.add("Standard LIKAS requirements");
+        ArrayList<String> labels=new ArrayList<>();labels.add("Standard survey requirements");
         studyTemplateIds.clear();studyTemplateIds.add("");
         int methodIndex=methodChoices.getCheckedRadioButtonId()-1000;
         if(methodIndex<0||choices==null||methodIndex>=choices.length)return;

@@ -40,7 +40,7 @@ class Rc84HabitatChecklist(unittest.TestCase):
         self.assertNotIn('matching is a presence prediction',s.lower())
     def test_signed_preview_and_system_identity(self):
         wf=read(".github/workflows/apo-habitats-v144-emulator-qa.yml")
-        for t in ("versionCode='144'","0.27.3-rc85-apo-recorder-species",
+        for t in ("versionCode='144'","0.27.3-rc84-apo-habitats-checklist",
                   "HabitatChecklistCompactEmulatorTest","font_scale 1.6",
                   "font_scale 2.0","wm size 960x2160","len(files)==4",
                   "PaicHabitatPolicy"):

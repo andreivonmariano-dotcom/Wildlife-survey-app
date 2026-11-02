@@ -76,8 +76,8 @@ public final class RecorderUiEmulatorTest {
                 assertNotNull("Session section missing",samplingTools);
                 assertNotNull("Detection section missing",detectionTools);
                 if(activity.getResources().getConfiguration().fontScale>=1.60f){
-                    View compactClock=findContainingText(root,"More details");
-                    View compactGps=findContainingText(root,"Start GPS unverified");
+                    View compactClock=findContainingText(root,ultraLarge?"Time ":"More details");
+                    View compactGps=findContainingText(root,ultraLarge?"Start GPS missing":"Start GPS unverified");
                     assertNotNull("Compact timing control missing",compactClock);
                     assertNotNull("Explicit survey-start GPS warning missing",compactGps);
                     assertTrue("Timing should be visible",compactClock.isShown());

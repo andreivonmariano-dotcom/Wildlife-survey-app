@@ -1,5 +1,12 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC85 recorder and species picker refinement | source under QA
+
+- **Owner request:** Streamline recorder and picker, show genuinely informative checklist cards, remove long scientific cautionary UI. New `feature/apo-recorder-picker-v145` from signed RC84 head `8692ecb56e6f294829e567ba8437095f4bb6c4c8`. Target code145, `0.27.3-rc85-apo-recorder-species`, original application ID/signing certificate/SQLite28 and immutable artwork/reference hashes.
+- **Recorder:** Observation-first for non-station/nontransect methods at all font sizes, abbreviated section and disclosure labels; species list direct action and photo brought above optional group fields; existing confidence storage, GNSS start, effort, station controls, survey outcomes, research export preserved.
+- **Species picker:** Concise search/sort/site and locality context, cards with actual family/distribution status/IUCN/PH red list, reviewed location listing, mapped habitat and elevation where present; Profile + Select. Habitat first now ranks rather than hiding unmatched species. No assumed occurrence or invented statuses. All source fields and synonym SQL remain.
+- **QA:** New `scripts/test_apo_recorder_picker_v145.py`, native Android14 recorder + Birds/Amphibians picker test and six 160%/200%-320dp screenshots; workflow `.github/workflows/apo-recorder-picker-v145-emulator-qa.yml`. **Signed code145 APK not yet accepted.** RC84 remains last verified preview. See `docs/APO_RC85_RECORDER_PICKER_QA_2026_11_02.md`.
+
 ## 2026-11-02 | APO RC84 signed compact Habitat & Species screen | latest verified APK
 
 - **Signed source/QA:** `2cfb36281bf9b89260939f14ff5c2915f75dc4f3`, successful GitHub Actions `41401267934`: **435 Python** scientific/UI regressions, Android/JVM + AndroidTest compilation, four native emulator UI tests (Birds and Herpetofauna at 160% and 200%/320dp), four distinct PNG images, original app signer/package and approved art/catalog/map hashes. VersionCode144, `0.27.3-rc84-apo-habitats-checklist`, original SQLite schema28.

@@ -111,7 +111,9 @@ public final class RecorderUiEmulatorTest {
                         root.getWidth(),root.getHeight(),Bitmap.Config.ARGB_8888);
                     root.draw(new Canvas(screenshot));
                     ContentValues metadata=new ContentValues();
-                    metadata.put(MediaStore.MediaColumns.DISPLAY_NAME,"apo_recorder_emulator.png");
+                    String captureName=activity.getResources().getConfiguration().fontScale>=1.9f?
+                        "apo_recorder_200pct_320dp.png":"apo_recorder_160pct.png";
+                    metadata.put(MediaStore.MediaColumns.DISPLAY_NAME,captureName);
                     metadata.put(MediaStore.MediaColumns.MIME_TYPE,"image/png");
                     metadata.put(MediaStore.MediaColumns.RELATIVE_PATH,
                         Environment.DIRECTORY_PICTURES+"/APO");

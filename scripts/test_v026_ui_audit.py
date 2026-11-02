@@ -10,7 +10,7 @@ def src(filename):
 class CleanFieldUi(unittest.TestCase):
     def test_recorder_has_only_one_browse_action_and_persistent_end(self):
         screen=src("MainActivity.java")
-        self.assertIn('UiKit.button(this,"Browse","secondary")',screen)
+        self.assertIn('UiKit.button(this,"Species list","secondary")',screen)
         self.assertIn('taxonEntry.setHint("Species or field ID")',screen)
         self.assertNotIn('UiKit.button(this,"Find species","primary")',screen)
         self.assertNotIn('content.addView(section("Species"))',screen)
@@ -67,10 +67,11 @@ class CleanFieldUi(unittest.TestCase):
         picker=src("SpeciesPickerActivity.java")
         self.assertIn('updateSiteSummary();',picker)
         self.assertNotIn('root.addView(siteSummary);',picker)
-        self.assertIn('"Geographic source: "+OccurrenceEvidencePolicy.title(item.evidence)',picker)
-        self.assertIn('"Mindanao PAIC checklist reference · not proof of site presence"',picker)
-        self.assertIn('item.screening.habitatStatus',picker)
-        self.assertIn('item.screening.elevationStatus',picker)
+        self.assertIn('OccurrenceEvidencePolicy.title(item.evidence)',picker)
+        self.assertIn('item.paicHabitat',picker)
+        self.assertIn('item.paicElevation',picker)
+        self.assertIn('item.iucn',picker)
+        self.assertIn('item.ph',picker)
         self.assertNotIn('item.screening.scorePercent+"% screening index',picker)
 
     def test_method_capture_tools_are_disclosed_without_hiding_recording_actions(self):

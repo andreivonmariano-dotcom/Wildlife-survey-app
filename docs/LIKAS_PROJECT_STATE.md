@@ -1,5 +1,11 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC81 320dp/200% screenshot correction | source pending signed QA
+
+- **Baseline:** RC80 app code140 built and signed in successful CI run `41386352644`; direct APK `APO-v0.27.3-RC80-Survey-Status-code140.apk` (11,756,608 bytes, SHA-256 `b39352e84bb34b8cb636173ca84612cdd15a200717c5b605c86cdbd7a1ce3ab6`) was attached in current user conversation. Run `41387037571` reverified unique 160% and 200%/320dp captures with correct filenames and different image hashes. **200% screenshot showed footer/long status crowding the observation section.** RC80 still retains correct survey data policies.
+- **New source:** `feature/apo-survey-compact-320-v141` derived from RC80 PR #82 head `7769c9dbaf378afce0acae9865badb37fa41b554`. VersionCode **141**, versionName `0.27.3-rc81-apo-survey-compact-320`. Compact clock no longer duplicates opportunistic duration; GPS text remains source-honest but shorter; 320dp/200% layout uses two-column abbreviated Review/End secondary actions and a shorter optional sampling/detection disclosure. Very narrow and extreme-font cases may still stack.
+- **QA:** New code141 source tests and 160%/200% Android 14 emulator workflow. No APK or verified code141 screenshot at this checkpoint. Science invariants (SQLite28, real effort vs session, outcome definitions, GPS source, records, PAIC714, WorldCover, original app signer/art) unchanged. See `docs/APO_RC81_COMPACT_320_QA_2026_11_02.md`. Only release exact signed APK after CI, extraction and verified direct file attachment.
+
 ## 2026-11-02 | APO RC80 survey HUD/station continuation | source committed, build pending
 
 - **Owner instruction:** Proceed with smaller status HUD and improved station transitions; continue concise chat responses. Based on current RC79 source branch head `1cdfcbf0670d2a1cd0eb33189d74ee072f8a1a5c`, branch `feature/apo-survey-hud-stations-v140`. RC79 code139 remains the latest **verified signed and delivered APK** at this checkpoint.

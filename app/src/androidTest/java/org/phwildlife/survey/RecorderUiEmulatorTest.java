@@ -71,6 +71,18 @@ public final class RecorderUiEmulatorTest {
                 assertTrue("End Survey must stay visible",end.isShown());
                 assertTrue("Save must remain visible",save.isShown());
                 assertTrue("End Survey should be enabled in a running survey",end.isEnabled());
+                View speciesList=findText(root,"Species list");
+                View countLabel=findText(root,"Individuals");
+                assertNotNull("Species picker entry remains discoverable",speciesList);
+                assertNotNull("Individual count remains available",countLabel);
+                int[] speciesY=new int[2],saveY=new int[2],countY=new int[2];
+                speciesList.getLocationOnScreen(speciesY);
+                countLabel.getLocationOnScreen(countY);
+                save.getLocationOnScreen(saveY);
+                assertTrue("Species picker button should be above fixed Save footer",
+                    speciesY[1]>=0&&speciesY[1]+speciesList.getHeight()<=saveY[1]);
+                assertTrue("Individuals should be above fixed Save footer",
+                    countY[1]>=0&&countY[1]+countLabel.getHeight()<=saveY[1]);
                 View samplingTools=findText(root,"Sampling session");
                 View detectionTools=findText(root,"Detection tools");
                 assertNotNull("Session section missing",samplingTools);

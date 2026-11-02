@@ -5,6 +5,15 @@
 **Build declared in source:** `0.27.3-rc79-apo-survey-flow`, versionCode **139**, package `org.phwildlife.survey.beta08`, SQLite **28**.  
 **Status when authored:** Changes committed; signing, CI, APK, emulator screenshot and physical-phone acceptance are **not yet verified**.
 
+## Signed RC79 build and Android emulator acceptance | 2 November 2026
+
+- **Verified source revision:** `bdc8f067e00740b89adab893ae65f97c07d0422c`. Signed GitHub Actions run **41384887314** completed **successfully**; exact candidate `0.27.3-rc79-apo-survey-flow`, versionCode **139**, `org.phwildlife.survey.beta08`.
+- **APK extracted directly from CI artifact** ID `13115261330` and verified in the current conversation: `APO-v0.27.3-RC79-Survey-Flow-code139.apk`, **11,755,588 bytes**, SHA-256 `a45503c9facdf9f4d1a3dfd631c943ec6ef40da007d60086811f0d1a5d5daf6e`. ZIP archive validation passed. CI `aapt`/Android `apksigner` confirmed package/code/version and original certificate `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. Stored approved asset hashes were also independently rechecked in the extracted APK.
+- **Automated test evidence:** **419 Python source/scientific tests**, Gradle/JVM build, AndroidTest APK compilation, and **one Android 14 API34 emulator instrumentation test at 160% font** passed. The emulator test verifies Save, Review and End visibility, disclosure expand/collapse, and captures the activity View tree.
+- **Screenshot:** CI artifact ID `13114639688`, PNG `APO-RC79-Live-Recorder-Emulator-160pct.png`, **1080×2280** pixels, **205,630 bytes**, SHA-256 `0f6dd9e60b465572653e148d76af5e80b04de8a42d83cb3343065af6273a52b9`. Manual visual inspection shows persistent End Survey and a slimmer two-column footer, with the Record observation heading and top of the species entry above the dock. **Remaining UX limit:** the enlarged HUD card occupies considerable space; the species entry continues partly below the fold.
+- **Release status:** A signed APK and screenshot were provided via verified **direct in-chat download links** during the RC79 development conversation. Those paths are session-specific and must never be reused by another chat without re-verification. RC79 is a **development preview, not physical-field-certified**.
+- **Outstanding:** Device upgrade from RC78 preserving actual survey records, 320dp/200% layouts, TalkBack, keyboard/back navigation, actual GPS/microphone/camera, the Complete/Incomplete/Not Counted end-to-end paths and raw data/research ZIP contents.
+
 ## Scope and rationale
 
 RC78's Android 14, 160% text-size screenshot found that a full-width three-action dock and the expanded sampling/detection sections placed observation entry below the initial screen. RC79 addresses the measured layout problem without removing critical data or survey exits.

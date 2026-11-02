@@ -1,0 +1,10 @@
+name: BioTools emulator navigation
+on:
+  push:
+    branches: [feature/likas-biotools-navigation-audit-20261102]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo 'BioTools emulator workflow configured'

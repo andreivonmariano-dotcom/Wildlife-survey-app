@@ -594,7 +594,7 @@ public class MainActivity extends Activity implements LocationListener {
         Button unknownBtn=UiKit.button(this,"Unidentified","quiet");
         unknownBtn.setContentDescription("Choose an unidentified taxon label");
         unknownBtn.setTextSize(13);
-        if(veryLargeText)unknownBtn.setText("Unknown");
+        if(largeText)unknownBtn.setText("Unknown");
         LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(0,dp(touchDp),1);
         speciesActions.addView(unknownBtn,unknownLp);
         Button recentSpecies=UiKit.button(this,"Recent","secondary");

@@ -30,6 +30,19 @@ public final class UiMotion {
             .setInterpolator(new DecelerateInterpolator()).start();
     }
 
+    /** Slightly longer Home entrance, disabled by the same motion preference. */
+    public static void enterHome(Activity a,View root){
+        if(root==null)return;
+        root.animate().cancel();
+        if(!animate(a)){
+            root.setAlpha(1f);root.setTranslationY(0f);return;
+        }
+        root.setAlpha(0f);
+        root.setTranslationY(dp(a,6));
+        root.animate().alpha(1f).translationY(0f).setDuration(220)
+            .setInterpolator(new DecelerateInterpolator()).start();
+    }
+
     /** Reveal only secondary content. Do not animate or delay main field actions. */
     public static void reveal(Activity a,View content){
         if(content==null)return;

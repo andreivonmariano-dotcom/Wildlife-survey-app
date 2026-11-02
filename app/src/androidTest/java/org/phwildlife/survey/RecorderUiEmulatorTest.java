@@ -90,7 +90,7 @@ public final class RecorderUiEmulatorTest {
                     compactClock.performClick();
                     assertFalse("Detail should collapse",hiddenClock.isShown());
                     View disclosure=findText(root,ultraLarge?
-                        "Sampling & detection tools":"Show sampling & detection tools");
+                        "Field tools":"Field tools");
                     assertNotNull("Compact survey-tool disclosure missing",disclosure);
                     assertTrue("Survey tools disclosure should be visible",disclosure.isShown());
                     assertFalse("Nonessential survey tools must begin collapsed",samplingTools.isShown());

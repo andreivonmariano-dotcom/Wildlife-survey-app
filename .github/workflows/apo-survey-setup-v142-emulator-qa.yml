@@ -89,15 +89,11 @@ jobs:
             adb shell pm grant org.phwildlife.survey.beta08 android.permission.ACCESS_FINE_LOCATION
             adb shell pm grant org.phwildlife.survey.beta08 android.permission.ACCESS_COARSE_LOCATION
             gradle --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.SetupCompactUiEmulatorTest,org.phwildlife.survey.Rc54SurveySetupInstrumentedTest
-            for group in birds herpetofauna mammals; do
-              adb pull "/sdcard/Pictures/APO/apo_setup_${group}_160.png" "emulator-evidence/setup_${group}_160.png"
-            done
+            for group in birds herpetofauna mammals; do adb pull "/sdcard/Pictures/APO/apo_setup_${group}_160.png" "emulator-evidence/setup_${group}_160.png" || exit 1; done
             adb shell wm size 960x2160
             adb shell settings put system font_scale 2.0
             gradle --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.SetupCompactUiEmulatorTest,org.phwildlife.survey.Rc54SurveySetupInstrumentedTest
-            for group in birds herpetofauna mammals; do
-              adb pull "/sdcard/Pictures/APO/apo_setup_${group}_200.png" "emulator-evidence/setup_${group}_200.png"
-            done
+            for group in birds herpetofauna mammals; do adb pull "/sdcard/Pictures/APO/apo_setup_${group}_200.png" "emulator-evidence/setup_${group}_200.png" || exit 1; done
             python3 -c "from pathlib import Path; import struct,hashlib; files=list(Path('emulator-evidence').glob('*.png')); assert len(files)==6,files; images=[f.read_bytes() for f in files]; assert all(len(x)>15000 and x[:8]==bytes.fromhex('89504e470d0a1a0a') for x in images); shapes={f.name:struct.unpack('>II',f.read_bytes()[16:24]) for f in files}; assert all(shapes[f.name]==((1080,2280) if '160' in f.name else (960,2160)) for f in files),shapes; assert len({hashlib.sha256(x).hexdigest() for x in images})==6,'Duplicate setup screenshots'; print('Verified all three group setups at 160% and 200%:',shapes)"
       - name: Upload emulator screenshot evidence
         if: always()

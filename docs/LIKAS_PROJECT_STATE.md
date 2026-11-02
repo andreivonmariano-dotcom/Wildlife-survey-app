@@ -1,5 +1,17 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | Cross-chat continuity audit: RC92 and emerging RC93 source candidate
+
+- **Current active experimental source observed in GitHub:** `qa/apo-rc92-unverified-gates-20261102` HEAD `1fa024adcff6a74ac15c1d2d1dfba7df82a36b94`, app `0.27.3-rc93-apo-schema29-backup-qa`, **versionCode 153**, original app ID `org.phwildlife.survey.beta08` and SQLite29. The branch's `FieldBackupArchive` source now accepts schemas 27–29 and writes a manifest matching the actual backed-up database schema. This is **source inspection, not a verified signed RC93 build or release**. The separate `qa/apo-rc92-to-rc93-signed-upgrade-20261102` branch also contains code153.
+- **RC92 baseline:** `feature/apo-rc92-durable-media-closure-qa-v152`, PR #94, HEAD `1eaf3d1189cd17ddbb334bf5f0ded835b143e701`. Its dedicated GitHub Actions run **41438922667 completed successfully**, and APK/evidence artifacts 13139140344 / 13139080353 exist. No RC92 binary was retrieved, independently inspected or directly delivered in this continuity audit. Preserve the distinction between CI success and phone validation.
+- **Independent gate #96:** Run **41460115528 failed** at `Rc92ProcessRestartInstrumentedTest` because its then-current fixture tried `FieldBackupArchive.export` with an active survey; production correctly refuses that operation. Current branch source subsequently closes the resumed event through the End Incomplete UI before export. **No successful rerun of the corrected fixture was established in this audit.** The three preliminary GPS/audio emulator tests had passed.
+- **Signed RC91→RC92 gate #97:** Run **41461189213 failed** at `AcousticEvidence.writeZip` because the then-current synthetic WAV filename did not meet the production `clip_[0-9]+_[a-z0-9]+.wav` safety rule. The branch HEAD `32c427a97d27e3255e9b6e4eea2bc2f68a8e578c` changed the fixture to `clip_20261102_qa92.wav`. **No successful rerun of that corrected fixture was established.**
+- **Next release gate:** Verify CI on the exact RC93 source and signed RC92→RC93 upgrade lineage with populated SQLite29, survey statuses, WAV bytes, research ZIP and active-session recovery. Confirm signer and source/checklist/art hashes, then extract and directly attach the newly verified APK. Actual physical phone/GNSS/microphone and historical user-data upgrade tests remain unverified. Do not promote these QA branches or claim a verified RC93 APK.
+- This entry records audit observations only. It introduces **no product-owner decision, Android source change, survey-data mutation or APK release**.
+
+---
+
+
 ## 2026-11-02 | RC91 evidence-based completion review and duplicate-action cleanup | signed code151 preview
 
 - **Latest verified app/test source:** commit `41536df8af31b7f06b2d2aab83feb90e73dd1c77` on `feature/apo-rc91-method-completion-review-v151`, draft PR #93 based on signed RC90 code150. VersionName **0.27.3-rc91-apo-method-review**, versionCode **151**, package `org.phwildlife.survey.beta08`, original Android signing cert, **SQLite29 unchanged**. Historical `main` is not the development baseline; later commits to this branch are documentation-only.

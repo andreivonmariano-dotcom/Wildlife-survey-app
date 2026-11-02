@@ -82,7 +82,7 @@ class ApoBioToolsWorkflowsV136(unittest.TestCase):
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",gradle).group(1)),136)
         self.assertIn('0.27.3-rc',gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
-        self.assertIn('super(context,NAME,null,28)',src("FieldDb.java"))
+        self.assertIn('super(context,NAME,null,29)',src("FieldDb.java"))
         main=src("MainActivity.java")
         self.assertIn('endSurveyButton.setOnClickListener(v->finishPrompt())',main)
         self.assertIn('static void writeResearchArchive(',main)

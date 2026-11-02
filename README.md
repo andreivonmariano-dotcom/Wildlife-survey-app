@@ -2,7 +2,7 @@
 
 APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
 
-**Current survey UI development branch:** `feature/apo-survey-hud-stations-v140` (RC80 draft on verified RC79; not merged into historical default `main`)  
+**Current survey UI development branch:** `feature/apo-survey-compact-320-v141` (RC81 draft on signed RC80; not merged into historical default `main`)  
 **Latest verified signed APK:** `0.27.3-rc79-apo-survey-flow`, versionCode **139**, exact signed/tested source `bdc8f067e00740b89adab893ae65f97c07d0422c`  
 **Android ID:** `org.phwildlife.survey.beta08` (unchanged); original signer retained  
 **SQLite schema:** **28** (unchanged)
@@ -16,6 +16,8 @@ APO is an offline-first, Philippines-focused Android biodiversity companion for 
 **RC79 survey-flow changes, signed development preview:** The new code139 draft fits Review and End Survey side-by-side at 160% font when width permits, prioritizes the observation form in continuous non-transect methods, expands the unsaved-entry guard to additional evidence selections, and displays completion criteria when ending a survey. Signed GitHub Actions run `41384887314` passed 419 Python tests, Android/JVM compilation and one Android 14 emulator test at 160% text. The signed 11,755,588-byte code139 APK (SHA-256 `a45503c9facdf9f4d1a3dfd631c943ec6ef40da007d60086811f0d1a5d5daf6e`) was directly delivered in the development chat. The observation form enters the initial viewport, but the status HUD still occupies considerable height. Physical-device survey QA remains unverified. [RC79 survey QA](docs/APO_RC79_SURVEY_FLOW_QA_2026_11_02.md).
 
 **RC80 survey HUD/station changes (source under QA):** Compact effort/point timer and GPS display at 160%+ fonts, full unsaved-draft confirmation before changing stations, and expandable End Survey protocol details. VersionCode140 is **not signed or delivered** until its CI and emulator gates pass. [RC80 QA](docs/APO_RC80_SURVEY_HUD_STATIONS_QA_2026_11_02.md).
+
+**RC81 source preview (not released):** The 200%/320dp emulator screenshot showed crowded controls. Code141 shortens the timing/GPS status and keeps Review / End Survey on one row when safe. [RC81 QA](docs/APO_RC81_COMPACT_320_QA_2026_11_02.md).
 
 ## What APO currently provides
 

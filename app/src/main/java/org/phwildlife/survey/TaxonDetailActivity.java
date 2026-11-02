@@ -36,6 +36,7 @@ public final class TaxonDetailActivity extends Activity {
     private TextView screenCaption;
     private String searchGroup="";
     private boolean archivedProfileScope=false;
+    private SpeciesReferenceSuggestionAdapter detailSuggestions;
     private boolean stackedSearch;
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size,boolean bold){
@@ -79,9 +80,8 @@ public final class TaxonDetailActivity extends Activity {
         search.setThreshold(1);
         search.setHint("Search species");
         search.setContentDescription("Search species by scientific, common or former name");
-        SpeciesReferenceSuggestionAdapter autocomplete=
-            new SpeciesReferenceSuggestionAdapter(this,db,null);
-        search.setAdapter(autocomplete);
+        detailSuggestions=new SpeciesReferenceSuggestionAdapter(this,db,null);
+        search.setAdapter(detailSuggestions);
         search.setDropDownHeight(dp(220));
         search.setOnItemClickListener((parent,view,position,id)->{
             search.dismissDropDown();
@@ -312,6 +312,7 @@ public final class TaxonDetailActivity extends Activity {
             prior=!present.moveToFirst();
         }
         archivedProfileScope=prior;
+        if(detailSuggestions!=null)detailSuggestions.setArchivedCatalog(prior);
         final String catalog=prior?"likas_prior_taxon_catalog":"taxon_catalog";
         final String habitatCatalog=prior?
             "likas_prior_taxon_habitat_profiles":"taxon_habitat_profiles";

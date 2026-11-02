@@ -4,6 +4,9 @@
 
 ## Entries
 
+### 2026-11-02 | APO RC80 compact HUD and protected station-change drafts | Owner directed
+Continue from signed RC79. Compact live effort/point timing and GPS quality at enlarged font sizes, preserve direct GPS details and expandable history, and leave normal text-size HUD unchanged. At station changes, use the complete unsaved-draft check, not only species text. Require explicit discard of an unfinished entry; preserve saved records. Keep End Survey accessible, show three outcomes before optional detailed checklist, preserve real completeness rules and SQLite28. Version code140 is a draft until signed CI and direct artifact delivery. See RC80 QA file.
+
 ### 2026-11-02 | RC79 signed recorder preview and 160% emulator acceptance | Verification record
 Source `bdc8f067e00740b89adab893ae65f97c07d0422c` produced signed code139 APK through GitHub Actions run `41384887314`, passing 419 Python scientific/UI tests, Android/JVM build, retained signing and bundled-reference identity, plus an Android14 emulator instrumented 160% font recorder test. APK SHA-256 `a45503c9facdf9f4d1a3dfd631c943ec6ef40da007d60086811f0d1a5d5daf6e`; direct in-chat file delivered. The initial screen now shows the start of species entry with visible Save/Review/End, but the enlarged status HUD remains tall. Field-tested upgrade, complete/incomplete/not-counted methods, GNSS, equipment and ZIP export remain outstanding. Keep draft PR #81 open; see RC79 QA record.
 

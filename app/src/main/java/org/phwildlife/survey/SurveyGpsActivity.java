@@ -35,7 +35,9 @@ public final class SurveyGpsActivity extends Activity {
     private boolean skipConfirmationOpen=false;
     private boolean skyRegistered=false;
     private Location qualifiedFix;
-    private TextView status,statusDetails,satelliteStatus,signalStatus;
+    private TextView status,statusDetails,qualitySummary,satelliteStatus,signalStatus;
+    private LinearLayout detailPanel,helpPanel;
+    private Button helpToggle;
     private SatelliteSkyView skyView;
     private Button startButton;
     private final Handler ui=new Handler(Looper.getMainLooper());
@@ -78,6 +80,13 @@ public final class SurveyGpsActivity extends Activity {
     private void setStatusDetails(String message){
         if(statusDetails!=null)statusDetails.setText(message);
     }
+    private void setQuality(String message){
+        if(qualitySummary!=null)qualitySummary.setText(message);
+    }
+    private void needsGpsHelp(){
+        if(helpToggle!=null&&helpPanel!=null&&helpPanel.getVisibility()!=View.VISIBLE)
+            helpToggle.setText("Fix GPS · troubleshooting");
+    }
     /** Controls with different consequences remain separate and readable on small phones. */
     private void addAction(LinearLayout parent,Button button){
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
@@ -91,128 +100,149 @@ public final class SurveyGpsActivity extends Activity {
         getWindow().setStatusBarColor(UiKit.BG);
         getWindow().setNavigationBarColor(UiKit.BG);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+
         LinearLayout content=new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
-        TextView explanation=UiKit.caption(this,stationMode?
-            "Wait for a recent, accurate station fix. A missing fix can be flagged.":
-            "Auto-starts with a fresh GPS fix within 10 m. Otherwise flag the starting position missing.");
-        explanation.setTextSize(LikasDesignSystem.TEXT_BODY);
-        explanation.setPadding(dp(4),dp(LikasDesignSystem.SPACE_SM),
-            dp(4),dp(LikasDesignSystem.SPACE_LG));
-        content.addView(explanation);
-        content.addView(FieldVisuals.section(this,"Position status",null));
-        LinearLayout positionCard=new LinearLayout(this);
-        positionCard.setOrientation(LinearLayout.VERTICAL);
-        positionCard.setPadding(dp(14),dp(12),dp(14),dp(14));
-        positionCard.setBackground(UiKit.surface(this));
+        TextView intro=UiKit.caption(this,stationMode?
+            "Waiting for a fresh station GPS fix. Verified coordinates continue automatically.":
+            "GPS checks automatically. A fresh fix under 10 m continues to the next step.");
+        intro.setTextSize(LikasDesignSystem.TEXT_BODY);
+        intro.setPadding(dp(4),dp(4),dp(4),dp(10));
+        content.addView(intro);
+
+        // First-screen essentials: state, measured fix quality, optional evidence.
+        LinearLayout card=new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setPadding(dp(14),dp(12),dp(14),dp(10));
+        card.setBackground(UiKit.surface(this));
         status=new TextView(this);
         status.setTextSize(LikasDesignSystem.TEXT_SECTION);
         status.setTypeface(null,android.graphics.Typeface.BOLD);
         status.setTextColor(UiKit.INK);
-        status.setText("Waiting for a device GPS fix");
-        positionCard.addView(status);
-        statusDetails=UiKit.caption(this,
-            "Coordinates: unavailable\nHorizontal accuracy: unavailable\nFix age: unavailable\nEllipsoidal altitude: unavailable");
-        statusDetails.setPadding(0,dp(LikasDesignSystem.SPACE_SM),0,0);
-        positionCard.addView(statusDetails);
-        content.addView(positionCard);
-        content.addView(FieldVisuals.section(this,"GPS controls",null));
-        Button retry=UiKit.button(this,"Check current GPS again","secondary");
+        status.setText("Waiting for device GPS");
+        status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        card.addView(status);
+        qualitySummary=UiKit.caption(this,"Accuracy unavailable · Fix age unavailable");
+        qualitySummary.setTextColor(UiKit.MUTED);
+        qualitySummary.setPadding(0,dp(6),0,dp(6));
+        card.addView(qualitySummary);
+        TextView requirement=UiKit.caption(this,
+            "Required: device GPS accuracy under 10 m, age at most 10 s");
+        card.addView(requirement);
+        content.addView(card);
+
+        detailPanel=new LinearLayout(this);
+        detailPanel.setOrientation(LinearLayout.VERTICAL);
+        detailPanel.setPadding(dp(10),dp(6),dp(10),dp(12));
+        statusDetails=UiKit.caption(this,"Device coordinates, altitude and fix provenance unavailable");
+        detailPanel.addView(statusDetails);
+        if(!stationMode){
+            satelliteStatus=UiKit.caption(this,"Satellites: waiting for receiver");
+            satelliteStatus.setPadding(0,dp(10),0,0);
+            detailPanel.addView(satelliteStatus);
+            signalStatus=UiKit.caption(this,"Signal quality: waiting");
+            detailPanel.addView(signalStatus);
+            skyView=new SatelliteSkyView(this);
+            detailPanel.addView(skyView,new LinearLayout.LayoutParams(-1,dp(220)));
+            detailPanel.addView(UiKit.caption(this,
+                "Green outline: satellite used in the device position fix"));
+        }
+        detailPanel.setVisibility(View.GONE);
+        Button detailToggle=UiKit.button(this,"GPS details","quiet");
+        detailToggle.setContentDescription("Show coordinates, altitude, accuracy and satellite diagnostics");
+        detailToggle.setOnClickListener(v->{
+            boolean open=detailPanel.getVisibility()!=View.VISIBLE;
+            detailPanel.setVisibility(open?View.VISIBLE:View.GONE);
+            detailToggle.setText(open?"Hide GPS details":"GPS details");
+            detailToggle.setContentDescription(open?
+                "Hide coordinates and GPS diagnostics":
+                "Show coordinates, altitude, accuracy and satellite diagnostics");
+        });
+        content.addView(detailToggle);
+        content.addView(detailPanel);
+
+        // Troubleshooting is one tap away, not two permanent primary-looking actions.
+        helpPanel=new LinearLayout(this);
+        helpPanel.setOrientation(LinearLayout.VERTICAL);
+        Button retry=UiKit.button(this,"Retry GPS acquisition","secondary");
         retry.setOnClickListener(v->{
             if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
                 try{TrackService.startGnss(this);receiverStartedInThisScreen=true;}
-                catch(Exception e){setStatus("GPS could not restart");}
+                catch(Exception error){setStatus("GPS restart failed");}
             }
-            ensureReceiver();updateLocation();
+            ensureReceiver();
+            updateLocation();
         });
-        addAction(content,retry);
-        Button settings=UiKit.button(this,"Open location settings","secondary");
+        addAction(helpPanel,retry);
+        Button settings=UiKit.button(this,"Android location settings","secondary");
         settings.setContentDescription("Open Android device location settings");
-        settings.setOnClickListener(v->startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
-        addAction(content,settings);
-        // Receiver diagnostics are optional; do not make a sky chart the primary task.
-        LinearLayout diagnostics=new LinearLayout(this);
-        diagnostics.setOrientation(LinearLayout.VERTICAL);
-        if(!stationMode){
-            satelliteStatus=UiKit.caption(this,"Satellites: waiting for receiver");
-            diagnostics.addView(satelliteStatus);
-            signalStatus=UiKit.caption(this,"Signal quality: waiting");
-            diagnostics.addView(signalStatus);
-            skyView=new SatelliteSkyView(this);
-            diagnostics.addView(skyView,
-                new LinearLayout.LayoutParams(-1,dp(240)));
-            TextView legend=UiKit.caption(this,
-                "Green outline: satellite used for the device position fix");
-            diagnostics.addView(legend);
-            diagnostics.setVisibility(View.GONE);
-            Button detailToggle=UiKit.button(this,"Satellite details","quiet");
-            detailToggle.setContentDescription("Show satellite signal and sky details");
-            detailToggle.setOnClickListener(v->{
-                boolean open=diagnostics.getVisibility()!=View.VISIBLE;
-                diagnostics.setVisibility(open?View.VISIBLE:View.GONE);
-                detailToggle.setText(open?"Hide satellite details":"Satellite details");
-                detailToggle.setContentDescription(open?
-                    "Hide satellite signal and sky details":
-                    "Show satellite signal and sky details");
-            });
-            content.addView(detailToggle);
-            LinearLayout.LayoutParams infoLp=new LinearLayout.LayoutParams(-1,-2);
-            infoLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
-            content.addView(diagnostics,infoLp);
-        }
+        settings.setOnClickListener(v->
+            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
+        addAction(helpPanel,settings);
+        helpPanel.setVisibility(View.GONE);
+        helpToggle=UiKit.button(this,"GPS troubleshooting","quiet");
+        helpToggle.setContentDescription("Show GPS retry and Android location settings");
+        helpToggle.setOnClickListener(v->{
+            boolean open=helpPanel.getVisibility()!=View.VISIBLE;
+            helpPanel.setVisibility(open?View.VISIBLE:View.GONE);
+            helpToggle.setText(open?"Hide GPS troubleshooting":"GPS troubleshooting");
+            helpToggle.setContentDescription(open?
+                "Hide GPS retry and location settings":"Show GPS retry and Android location settings");
+        });
+        content.addView(helpToggle);
+        content.addView(helpPanel);
+
+        // A fresh verified fix advances automatically. This hidden button is retained
+        // only for the existing internal readiness gate.
         startButton=UiKit.button(this,stationMode?"Start station with current GPS":
             "Start survey with verified GPS","primary");
         startButton.setEnabled(false);
         startButton.setOnClickListener(v->launchWithFix());
-        // Valid GPS automatically opens the session; never present a redundant Start tap.
         startButton.setVisibility(View.GONE);
 
         LinearLayout page=UiKit.page(this,stationMode?"Station GPS":"Survey GPS",
             stationMode?"Survey":"Survey setup",this::cancel,content);
         LinearLayout footer=new LinearLayout(this);
         footer.setOrientation(LinearLayout.VERTICAL);
-        footer.setPadding(0,dp(LikasDesignSystem.SPACE_SM),0,0);
+        footer.setPadding(0,dp(4),0,0);
         if(!stationMode){
-            Button skip=UiKit.button(this,"Start without GPS · mark start missing","warning");
+            Button skip=UiKit.button(this,"Continue without GPS","warning");
+            skip.setContentDescription("Continue without a verified survey-start GPS fix; mark start coordinates missing");
             skip.setOnClickListener(v->{
                 if(launchCommitted||skipConfirmationOpen||!acquisitionVisible||isFinishing())return;
                 skipConfirmationOpen=true;
                 new AlertDialog.Builder(this)
-                    .setTitle("Start this survey without GPS?")
+                    .setTitle("Continue with missing GPS?")
                     .setMessage((getIntent().getBooleanExtra("prepare_field_checklist",false)?
-                        "Habitat preparation comes first. Survey effort does not "+
-                        "begin until you choose Begin survey. ":
-                        "Survey time and observations will be recorded now. ")+
-                        "The starting coordinates stay blank and are flagged in the export. "+
-                        "A later GPS fix cannot replace the missing starting position. "+
-                        "GPS tracking and station readings can begin when available.")
+                        "Habitat preparation comes first. Survey effort does not begin until Begin survey. ":
+                        "The survey starts after this confirmation. ")+
+                        "Starting coordinates will remain missing in the export. "+
+                        "Later GPS readings cannot replace them.")
                     .setNegativeButton("Keep checking GPS",(dialog,which)->{
                         skipConfirmationOpen=false;updateLocation();
                     })
                     .setOnCancelListener(dialog->{skipConfirmationOpen=false;updateLocation();})
-                    .setPositiveButton("Start with missing GPS",(dialog,which)->{
+                    .setPositiveButton("Continue, flag missing GPS",(dialog,which)->{
                         skipConfirmationOpen=false;launchWithoutFix();
                     }).show();
             });
-            skip.setContentDescription("Start survey with its starting GPS position missing");
             addAction(footer,skip);
         }else{
-            Button missing=UiKit.button(this,"Start without GPS · flag missing","warning");
-            missing.setOnClickListener(v->new AlertDialog.Builder(this)
-                .setTitle("Start without a verified station position?")
-                .setMessage("This station's GPS coordinates will be left blank and flagged in the export. "+
-                    "The continuous phone GPS service will remain active.")
-                .setNegativeButton("Keep checking GPS",null)
-                .setPositiveButton("Start flagged station",(dialog,which)->finishStation(null)).show());
+            Button missing=UiKit.button(this,"Start station without GPS","warning");
+            missing.setContentDescription("Start station visit with unverified station GPS coordinates");
+            missing.setOnClickListener(v->{
+                if(launchCommitted||isFinishing())return;
+                new AlertDialog.Builder(this)
+                    .setTitle("Start station without a GPS fix?")
+                    .setMessage("Station coordinates will remain blank and flagged. "+
+                        "The continuous phone GPS service remains active.")
+                    .setNegativeButton("Keep checking GPS",null)
+                    .setPositiveButton("Start flagged station",(dialog,which)->finishStation(null))
+                    .show();
+            });
             addAction(footer,missing);
         }
-        Button cancel=UiKit.button(this,stationMode?"Return without starting station":
-            "Return to survey setup","secondary");
-        cancel.setContentDescription(stationMode?
-            "Return to the active survey without starting a station":
-            "Cancel GPS acquisition and return to survey setup");
-        cancel.setOnClickListener(v->cancel());
-        addAction(footer,cancel);
+        // The page's navigation header already provides the Back action.
         page.addView(footer);
         setContentView(page);
     }
@@ -273,16 +303,20 @@ public final class SurveyGpsActivity extends Activity {
             qualifiedFix=null;
             startButton.setEnabled(false);
             setStatus("Precise location permission required");
-            setStatusDetails("Enable Precise location for LIKAS in Android app permissions. "+
-                "No starting position has been recorded.");
+            setQuality("No verified position");
+            setStatusDetails("Enable precise location for APO in Android app permissions. "+
+                "No starting coordinates have been recorded.");
+            needsGpsHelp();
             return;
         }
         if(manager==null||!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             qualifiedFix=null;
             startButton.setEnabled(false);
             setStatus("Device GPS is switched off");
+            setQuality("No verified position");
             setStatusDetails("Enable device location to obtain a GPS fix. "+
-                "No starting position has been recorded.");
+                "No starting coordinates have been recorded.");
+            needsGpsHelp();
             return;
         }
         Location current=TrackService.currentFix();
@@ -297,11 +331,13 @@ public final class SurveyGpsActivity extends Activity {
             return;
         }
         if(current==null){
-            setStatus(TrackService.isRunning()?
-                "Searching for a device GPS fix":"GPS receiver is not running");
-            setStatusDetails(TrackService.isRunning()?
-                "Move toward open sky if possible. Position, fix age, and accuracy are not yet available.":
-                "Select Check current GPS again to restart acquisition. No GPS position has been recorded.");
+            boolean running=TrackService.isRunning();
+            setStatus(running?"Searching for GPS":"GPS receiver stopped");
+            setQuality("Accuracy unavailable · Fix age unavailable");
+            setStatusDetails(running?
+                "No device GPS coordinates yet. Open sky may improve reception.":
+                "GPS receiver stopped. Use GPS troubleshooting to retry.");
+            if(!running)needsGpsHelp();
             return;
         }
         long age=(SystemClock.elapsedRealtimeNanos()-current.getElapsedRealtimeNanos())/1000000L;
@@ -316,9 +352,11 @@ public final class SurveyGpsActivity extends Activity {
                     String.format(Locale.US," (reported vertical accuracy ±%.1f m)",
                         current.getVerticalAccuracyMeters()):""):
             "unavailable";
-        setStatus(good?"GPS ready · starting":
+        setStatus(good?"GPS verified · continuing":
             (current.isFromMockProvider()?"Mock device position rejected":
-                "Waiting for a fresher or more accurate GPS fix"));
+                "Waiting for a better GPS fix"));
+        setQuality("Accuracy "+accuracy+" · Age "+
+            String.format(Locale.US,"%.1f s",shownAge));
         setStatusDetails("Device GPS coordinates: "+coords+
             "\nHorizontal accuracy (reported): "+accuracy+
             "\nFix age: "+String.format(Locale.US,"%.1f s",shownAge)+

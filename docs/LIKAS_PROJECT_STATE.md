@@ -1,3 +1,11 @@
+## 2026-11-02 | BioTools survey-navigation audit (review branch, no APK)
+
+- **User direction:** audit the BioTools survey setup, recorder, history, progress, protocols, device records and connected screens, checking where every navigation button leads and removing wrong Back destinations and redundant controls.
+- **Verified baseline:** `feature/likas-core-fieldwork-post-rc4` commit `5cae072c99427d2b318fdde567c194884d31965b`, Android versionCode 109 (RC49), SQLite 27. Historical `main` is not the app baseline. Current task branch: `feature/likas-biotools-navigation-audit-20261102`.
+- **Source changes:** record review launched from an active recorder now returns to that recorder; History detail returns to survey list via both Back controls; Field protocols and camera/trap details return to their pickers unless opened for a caller-owned event; device picker includes surveys without deployments; projects, habitats and station progress use caller-neutral Back labels. Shared `SurveyNavigationPolicy` and unit tests added. Retained original survey lifecycle, status, GPS, species references, database, signer, splash and app version.
+- **Audit:** `docs/LIKAS_BIOTOOLS_NAVIGATION_AUDIT_2026_11_02.md`; no redundant action was removed where the existing Quick capture disclosure already prevents duplicate display.
+- **Verification state:** code and behavior reviewed statically; branch CI, emulator, physical handset, APK signing/in-place upgrade and installable artifact remain unverified. This branch is not RC51 (versionCode 111), and no lower-version APK should be offered for installation. Next: test the navigation matrix in CI/device, then merge or port into current approved release lineage, build a signed APK with a safe versionCode and deliver verified direct download.
+
 ## 2026-11-01 | Complete 725-species master v2.18: taxonomic family, English names, habitat/elevation, Philippine distribution
 
 - **Owner request:** Complete unified master for all 725 taxa with taxonomic families, preferred English/common names, habitat, microhabitat, altitude, Philippine distribution/origin/occurrence, and prior IUCN/DENR conservation-status data. Continue v2.17 common-name corrections and v2.16 standardized conservation code data. Avoid inventing distribution or asserting county-level presence implies Greater Mindanao.

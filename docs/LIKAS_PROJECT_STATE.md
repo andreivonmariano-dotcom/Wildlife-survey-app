@@ -1,5 +1,13 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | RC86 signed interactive recorder + PAIC picker preview | delivered
+
+- **Validated source:** `acc8506e85e5cf6a474d89187252e4619af02b1c` (code146, SQLite29). Dedicated CI run **41414607542 SUCCESS**: 445 scientific/source Python regressions, JVM/Android and AndroidTest compilation, original package/signer, SHA-locked PAIC714 and ESA WorldCover reference bytes, and six actual Android14 recorder/bird/amphibian picker screenshot tests at 160% and 200%/320dp.
+- **Direct APK delivered:** `APO-v0.27.3-RC86-Interactive-Recorder-Species-code146.apk` extracted from signed Actions artifact **13127640605**, **11,759,916 bytes**, SHA-256 `124340ea6a66a5dd8948073baa1b746d3cb9f48e7bd88b0765d68ba676c9ab4f`. ZIP APK integrity, 714 PAIC and WorldCover asset digests and locked APO master-art digest checked again after extraction. Signing/package verification passed in CI. Direct sandbox paths must be reverified in a new chat.
+- **Emulator evidence:** artifact **13127580871** has six 160/200% screenshot PNGs. Both group checklists show PAIC active (408 birds and 53 amphibians); recorder shows the primary observation form plus Save/Review/End. **Remaining visual issue:** at 200%, `Mindanao PAIC (714)` scope label and `All data` header caption truncate to `Mindanao PAIC (71…)` and `All`. This is a development preview, not final visual acceptance.
+- **Field gates:** Physical Android in-place update preserving archived SQLite28 observations, live GNSS, real camera/file-picker, end-state and research ZIP round-trip, TalkBack and 200% label refinements remain unverified. PR #88 stays draft/unmerged. RC85 is superseded as most recent signed preview; old installs should be upgraded, never uninstalled to downgrade.
+
+
 ## 2026-11-02 | RC86 interactive recorder and species picker | source implemented, release gated
 
 - **Owner approved implementation of RC85 audit**, with greater interactivity and fewer duplicate field controls. New draft PR #88, branch `feature/apo-recorder-picker-rc86-interactive-v146`, based directly on RC85, target code146, SQLite29. Legacy package/signature and original PAIC714/WorldCover/art assets were not changed.

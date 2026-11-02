@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 138
-        versionName '0.27.3-rc78-apo-survey-recorder'
+        versionCode 139
+        versionName '0.27.3-rc79-apo-survey-flow'
     }
     signingConfigs {
         debug {

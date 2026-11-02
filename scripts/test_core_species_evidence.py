@@ -25,8 +25,8 @@ def actual_detail_lookup_sql():
     # Resolve the active reference-table variables to exercise the original SQL
     # shape. The Java view may instead select the archived source tables.
     query = DETAIL[start:finish]
-    query = query.replace('"+catalog+"', '"taxon_catalog"')
-    query = query.replace('"+synonyms+"', '"taxon_synonyms"')
+    query = query.replace('"+catalog+"', '"+"taxon_catalog"+"')
+    query = query.replace('"+synonyms+"', '"+"taxon_synonyms"+"')
     return java_strings(query)
 
 def conn():

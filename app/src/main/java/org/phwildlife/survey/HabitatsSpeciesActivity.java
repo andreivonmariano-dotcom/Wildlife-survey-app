@@ -178,7 +178,7 @@ public final class HabitatsSpeciesActivity extends Activity {
     }
     private void updateSelectedSummary(){
         if(selectedSummary==null)return;
-        selectedSummary.setText(confirmed.isEmpty()?"No habitats confirmed":
+        selectedSummary.setText(confirmed.isEmpty()?"0 habitats confirmed":
             confirmed.size()+" habitat"+(confirmed.size()==1?"":"s")+" confirmed");
     }
     private void refreshSite(){

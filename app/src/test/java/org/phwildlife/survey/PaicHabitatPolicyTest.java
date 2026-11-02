@@ -31,6 +31,20 @@ public final class PaicHabitatPolicyTest {
         assertNull(PaicHabitatPolicy.elevationWithin("0 m",35d));
         assertNull(PaicHabitatPolicy.elevationWithin("1,000 m",1000d));
     }
+    @Test public void montaneShortlistDoesNotShowCoastalOnlyAleutianTern(){
+        assertEquals(0,PaicHabitatPolicy.siteHabitatRelevance(
+            "Coastal and intertidal areas, marine waters","montane"));
+        assertEquals(2,PaicHabitatPolicy.siteHabitatRelevance(
+            "Montane habitats","montane"));
+        assertEquals(1,PaicHabitatPolicy.siteHabitatRelevance(
+            "Forest","montane"));
+        assertEquals(-1,PaicHabitatPolicy.siteHabitatRelevance(
+            "","montane"));
+        assertEquals(0,PaicHabitatPolicy.siteHabitatRelevance(
+            "Montane habitats","mangrove"));
+        assertEquals(2,PaicHabitatPolicy.siteHabitatRelevance(
+            "Freshwater wetlands","wetland"));
+    }
     @Test public void bareLandAndOpenWaterDoNotBecomeHabitats(){
         assertEquals("",PaicHabitatPolicy.landCoverSuggestion(60));
         assertEquals("",PaicHabitatPolicy.landCoverSuggestion(80));

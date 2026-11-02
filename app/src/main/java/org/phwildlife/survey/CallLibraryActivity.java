@@ -130,6 +130,9 @@ public final class CallLibraryActivity extends Activity {
     private void draw(){
         if(selectedClip!=null){showClip();return;}
         releasePlayer();layout("Sound recordings");
+        body.addView(ApoHomeUi.section(this,"Acoustic evidence",
+            "Browse saved field audio and review call annotations. All recordings " +
+            "are kept locally unless you explicitly export or share them."));
         TextView desc=label(eventId==null?
             "Saved bird songs and amphibian calls · all surveys":
             group+" · "+SurveyMethods.displayLabel(surveyProfile,method),13,false);
@@ -151,8 +154,7 @@ public final class CallLibraryActivity extends Activity {
         if(!canRecord())body.addView(ApoHomeUi.note(this,
             "Saved recordings can be reviewed here. To record new survey audio, " +
             "open this tool from an active supported survey."));
-        TextView heading=label("Saved recordings",17,true);
-        heading.setPadding(dp(4),dp(14),dp(4),dp(8));body.addView(heading);
+        body.addView(UiKit.sectionTitle(this,"Saved recordings"));
         String sql="SELECT c.id,c.event_id,c.taxon_group,c.recorded_at_utc,c.duration_ms,"+
             "COALESCE(s.outcome,'active'),"+
             "(SELECT COUNT(*) FROM acoustic_labels l WHERE l.clip_id=c.id) "+
@@ -161,7 +163,9 @@ public final class CallLibraryActivity extends Activity {
             "ORDER BY c.recorded_at_utc DESC LIMIT 250";
         try(Cursor c=database.getReadableDatabase().rawQuery(
                 sql,eventId==null?null:new String[]{eventId})){
-            if(c.getCount()==0)body.addView(label("No saved sound clips yet.",14,false));
+            if(c.getCount()==0)body.addView(ApoHomeUi.note(this,
+                "No saved recordings match this survey. Audio can be captured " +
+                "from an active survey with a compatible method."));
             while(c.moveToNext()){
                 String id=c.getString(0),survey=c.getString(1),taxon=c.getString(2),
                     date=c.getString(3),outcome=c.getString(5);
@@ -169,12 +173,23 @@ public final class CallLibraryActivity extends Activity {
                 Button item=UiKit.button(this,"▶  "+taxon+"  ·  "+format(duration)+
                     "\n"+date+"  ·  "+labels+" call labels  ·  "+outcome,"secondary");
                 item.setAllCaps(false);
-                item.setMinHeight(dp(78));
-                LinearLayout.LayoutParams card=new LinearLayout.LayoutParams(-1,dp(84));
+                item.setMinHeight(dp(72));
+                LinearLayout.LayoutParams card=new LinearLayout.LayoutParams(-1,-2);
                 card.bottomMargin=dp(9);body.addView(item,card);
                 item.setOnClickListener(v->{selectedClip=id;selectedMs=0;showClip();});
             }
         }catch(Exception e){body.addView(label("Cannot load recordings: "+e.getMessage(),13,false));}
+    }
+    @Override public void onBackPressed(){
+        if(recorder!=null){
+            notice("Stop recording and finish saving before leaving.");
+            return;
+        }
+        if(selectedClip!=null){
+            releasePlayer();
+            selectedClip=null;
+            draw();
+        }else super.onBackPressed();
     }
     private void checkMicrophone(){
         if(checkSelfPermission(Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED){
@@ -266,7 +281,11 @@ public final class CallLibraryActivity extends Activity {
             body.addView(label("Clip metadata missing or invalid.",15,true));return;
         }
         final File file=new File(AcousticEvidence.directory(this),filename);
-        body.addView(label(profile+" · "+date+"\nSurvey: "+outcome,14,true));
+        body.addView(ApoHomeUi.section(this,"Review audio clip",
+            profile+" · "+date+" · "+outcome));
+        body.addView(ApoHomeUi.note(this,
+            "Spectrogram frequency is approximate; label calls using acoustic " +
+            "evidence and the uncertainty supported by the recording."));
         spectrum=new CallSpectrogramView(this);
         spectrum.setContrast(spectrogramContrast);
         body.addView(spectrum,new LinearLayout.LayoutParams(-1,dp(260)));
@@ -347,11 +366,19 @@ public final class CallLibraryActivity extends Activity {
             }
         });
         LinearLayout actions=new LinearLayout(this);
-        Button play=UiKit.button(this,"▶ Play / Pause","primary");
-        actions.addView(play,new LinearLayout.LayoutParams(0,dp(52),1));
+        boolean stackActions=FieldLayoutPolicy.stackPortalPair(
+            getResources().getConfiguration().screenWidthDp,
+            getResources().getConfiguration().fontScale);
+        actions.setOrientation(stackActions?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        Button play=UiKit.button(this,"Play / Pause","primary");
+        actions.addView(play,new LinearLayout.LayoutParams(
+            stackActions?-1:0,-2,stackActions?0:1));
         Button label=UiKit.button(this,"Label call","secondary");
-        LinearLayout.LayoutParams labelSize=new LinearLayout.LayoutParams(0,dp(52),1);
-        labelSize.leftMargin=dp(8);actions.addView(label,labelSize);
+        LinearLayout.LayoutParams labelSize=new LinearLayout.LayoutParams(
+            stackActions?-1:0,-2,stackActions?0:1);
+        if(stackActions)labelSize.topMargin=dp(8);
+        else labelSize.leftMargin=dp(8);
+        actions.addView(label,labelSize);
         body.addView(actions);
         play.setOnClickListener(v->{
             try{
@@ -374,8 +401,7 @@ public final class CallLibraryActivity extends Activity {
             }catch(Exception e){notice("Playback failed: "+e.getMessage());releasePlayer();}
         });
         label.setOnClickListener(v->newLabel(clip));
-        TextView labelHeader=label("Call annotations",17,true);
-        body.addView(labelHeader);
+        body.addView(UiKit.sectionTitle(this,"Call annotations"));
         try(Cursor rows=database.getReadableDatabase().rawQuery(
             "SELECT start_ms,end_ms,call_label,COALESCE(notes,''),id,"+
             "COALESCE(taxon_key,''),observation_id,selected_frequency_hz "+

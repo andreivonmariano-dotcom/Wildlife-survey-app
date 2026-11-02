@@ -6,9 +6,9 @@ def read(p):return (ROOT/p).read_text(encoding="utf-8")
 class Rc84HabitatChecklist(unittest.TestCase):
     def test_essential_controls_visible_and_options_disclosed(self):
         s=read("app/src/main/java/org/phwildlife/survey/HabitatsSpeciesActivity.java")
-        for token in ('"Select observed habitats"', '"No habitats confirmed"',
-                      '"All habitats (16)"', '"Species checklist"',
-                      '"Checklist: Suggested first"', 'checklistMode.setVisibility(View.GONE)',
+        for token in ('"0 habitats confirmed"',
+                      '"Choose habitats (16)"', '"Species checklist"',
+                      '"Checklist: Suggested"', 'checklistMode.setVisibility(View.GONE)',
                       'mapOptions.setVisibility(View.GONE)',
                       'siteDetails.setVisibility(View.GONE)',
                       '"Source & license"', '"Map source & files"',
@@ -17,7 +17,7 @@ class Rc84HabitatChecklist(unittest.TestCase):
             self.assertIn(token,s)
         self.assertIn('body.addView(siteSummary)',s)
         self.assertIn('body.addView(checks)',s)
-        self.assertLess(s.index('body.addView(checks)'),s.index('body.addView(mapOptions)'))
+        self.assertLess(s.index('body.addView(speciesSummary)'),s.index('body.addView(mapOptions)'))
     def test_rank_mode_habitat_confirmation_and_scientific_provenance(self):
         s=read("app/src/main/java/org/phwildlife/survey/HabitatsSpeciesActivity.java")
         for token in ('confirmed.add(name)', 'confirmed.remove(name)',
@@ -30,7 +30,7 @@ class Rc84HabitatChecklist(unittest.TestCase):
                       'GpsFixPolicy.acceptableElapsed(',
                       'launch.removeExtra("start_gps_latitude")',
                       'launch.putExtra("start_without_gps",true)',
-                      'Reference only · not a species occurrence record',
+                      'Matching does not confirm species presence',
                       'historical satellite land cover',
                       'DOI: 10.5281/zenodo.5571936',
                       'License: CC BY 4.0'):

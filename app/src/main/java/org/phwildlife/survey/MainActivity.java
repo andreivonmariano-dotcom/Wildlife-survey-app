@@ -2173,7 +2173,7 @@ public class MainActivity extends Activity implements LocationListener {
         if(markedAt>0){
             new AlertDialog.Builder(this)
                 .setTitle("Replace detection time?")
-                .setMessage("This replaces the marked time and its GPS fix in the unsaved observation. The earlier mark will not be recoverable.")
+                .setMessage("This replaces the marked time and its GPS fix in the unsaved observation. The earlier mark and any captured bearing/pitch will be cleared.")
                 .setNegativeButton("Keep earlier mark",null)
                 .setPositiveButton("Mark now",(dialog,which)->captureDetectionMark())
                 .show();
@@ -2182,6 +2182,9 @@ public class MainActivity extends Activity implements LocationListener {
         captureDetectionMark();
     }
     private void captureDetectionMark(){
+        // Bearing belongs to its original capture time. A new timestamp must
+        // not silently reuse that geometry or its sensor-quality assessment.
+        markedBearing=null;markedPitch=null;sensorQuality=-1;
         markedAt=System.currentTimeMillis();
         markedObserverFix=freshObserverFix();
         showMarkStatus();
@@ -2295,6 +2298,7 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void clearMark(){
         markedAt=0;markedObserverFix=null;markedBearing=null;markedPitch=null;
+        sensorQuality=-1;
         if(bearingStatusView!=null)bearingStatusView.setText("");
         showMarkStatus();
         queueDraft();

@@ -22,7 +22,12 @@ def java_strings(source):
 def actual_detail_lookup_sql():
     start = DETAIL.index('try(Cursor c=db.getReadableDatabase().rawQuery(',DETAIL.index("private void lookup("))
     finish = DETAIL.index("new String[]{query,query,query,pattern,pattern,pattern,searchGroup,searchGroup,query}",start)
-    return java_strings(DETAIL[start:finish])
+    # Resolve the active reference-table variables to exercise the original SQL
+    # shape. The Java view may instead select the archived source tables.
+    query = DETAIL[start:finish]
+    query = query.replace('"+catalog+"', '"taxon_catalog"')
+    query = query.replace('"+synonyms+"', '"taxon_synonyms"')
+    return java_strings(query)
 
 def conn():
     c=sqlite3.connect(":memory:")

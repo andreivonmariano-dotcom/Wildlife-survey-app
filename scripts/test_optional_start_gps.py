@@ -9,13 +9,13 @@ CODE = ROOT / "app/src/main/java/org/phwildlife/survey"
 class SurveyStartGpsSmokeTest(unittest.TestCase):
     def test_gps_skip_available_before_sky_chart(self):
         text=(CODE / "SurveyGpsActivity.java").read_text(encoding="utf-8")
-        self.assertIn('"Start without GPS · mark start missing"',text)
+        self.assertIn('"Continue without GPS","warning"',text)
         self.assertIn('launch.putExtra("start_without_gps",true)',text)
         self.assertIn('skipConfirmationOpen=true',text)
-        self.assertIn("setPositiveButton(\"Start with missing GPS\"",text)
+        self.assertIn("setPositiveButton(\"Continue, flag missing GPS\"",text)
         self.assertIn('addAction(footer,skip)',text)
         self.assertIn('page.addView(footer)',text)
-        self.assertIn('diagnostics.setVisibility(View.GONE)',text)
+        self.assertIn('detailPanel.setVisibility(View.GONE)',text)
 
     def test_start_requires_verification_or_explicit_skip(self):
         text=(CODE / "MainActivity.java").read_text(encoding="utf-8")

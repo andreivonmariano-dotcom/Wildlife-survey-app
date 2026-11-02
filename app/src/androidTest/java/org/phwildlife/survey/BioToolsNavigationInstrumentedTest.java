@@ -124,10 +124,10 @@ public final class BioToolsNavigationInstrumentedTest {
                 described(a,"Back to All surveys").performClick();
                 assertTrue("header Back reached survey list",contains(a,"Survey history"));
                 assertTrue("existing fixture still listed",contains(a,"Point count"));
-                snapshot(a,"history_survey_list");
-                // Re-enter the same survey using the displayed survey card.
-                // Test the Android Back path independently on a fresh detail instance below.
+                // Android needs a drawing frame after the list redraw.
             });
+            INSTR.waitForIdleSync();
+            scenario.onActivity(a->snapshot(a,"history_survey_list"));
         }
         try(ActivityScenario<HistoryActivity> scenario=ActivityScenario.launch(launch)){
             scenario.onActivity(a->assertTrue(contains(a,"Observations")));
@@ -177,6 +177,9 @@ public final class BioToolsNavigationInstrumentedTest {
                 candidate.performClick();
                 assertTrue(contains(a,"No devices registered yet."));
                 assertTrue(contains(a,id));
+            });
+            INSTR.waitForIdleSync();
+            scenario.onActivity(a->{
                 snapshot(a,"device_no_deployments");
                 described(a,"Back to All device surveys").performClick();
                 assertTrue(contains(a,"Device-method surveys"));
@@ -224,6 +227,9 @@ public final class BioToolsNavigationInstrumentedTest {
                 assertNotNull("fixture in method list",choice);
                 choice.performClick();
                 assertTrue(contains(a,"Coverboards"));
+            });
+            INSTR.waitForIdleSync();
+            scenario.onActivity(a->{
                 snapshot(a,"protocol_detail");
                 described(a,"Back to All protocol surveys").performClick();
                 assertTrue(contains(a,"Open a completed or active survey"));

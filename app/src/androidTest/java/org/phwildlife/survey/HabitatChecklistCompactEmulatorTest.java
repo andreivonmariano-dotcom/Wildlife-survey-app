@@ -76,11 +76,10 @@ public final class HabitatChecklistCompactEmulatorTest {
                 View root=a.getWindow().getDecorView();
                 assertNotNull(text(root,"Habitats & Species"));
                 assertNotNull(text(root,"Start GPS missing"));
-                assertNotNull(text(root,"Select observed habitats"));
                 assertNotNull(text(root,"No habitats confirmed"));
-                assertNotNull(text(root,"All habitats (16)"));
-                assertNotNull(text(root,"Checklist: Suggested first"));
-                assertNotNull(text(root,"Reference only"));
+                assertNotNull(text(root,"Choose habitats (16)"));
+                assertNotNull(text(root,"Checklist: Suggested"));
+                assertNotNull(text(root,"Matching does not confirm"));
                 View begin=text(root,"Begin survey");
                 assertNotNull(begin);assertTrue(begin.isShown());
                 assertNotNull(description(root,"Show GPS and elevation context"));
@@ -91,7 +90,7 @@ public final class HabitatChecklistCompactEmulatorTest {
                 site.performClick();
                 View all=text(root,"All habitats (16)");
                 all.performClick();
-                assertNotNull(text(root,"Hide other habitats"));
+                assertNotNull(text(root,"Hide habitats"));
                 CheckBox candidate=null;
                 for(String name:PaicHabitatPolicy.HABITATS){
                     View match=text(root,name);
@@ -102,7 +101,10 @@ public final class HabitatChecklistCompactEmulatorTest {
                 assertNotNull(text(root,"1 habitat confirmed"));
                 candidate.setChecked(false);
                 assertNotNull(text(root,"No habitats confirmed"));
-                text(root,"Hide other habitats").performClick();
+                text(root,"Hide habitats").performClick();
+            });
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            scenario.onActivity(a->{
                 String scale=a.getResources().getConfiguration().fontScale>=1.9f?"200":"160";
                 screenshot(a,"apo_habitats_"+group.toLowerCase(java.util.Locale.US)+"_"+scale+".png");
             });

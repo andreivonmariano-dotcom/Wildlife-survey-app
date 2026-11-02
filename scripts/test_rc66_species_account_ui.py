@@ -44,7 +44,7 @@ class Rc66SpeciesAccountUi(unittest.TestCase):
 
     def test_scientific_identity_not_changed(self):
         page = source("TaxonDetailActivity.java")
-        self.assertIn("SELECT * FROM "+catalog+" WHERE taxon_key=? LIMIT 1", page)
+        self.assertIn('SELECT * FROM "+catalog+" WHERE taxon_key=? LIMIT 1', page)
         self.assertIn("Rc11PrioritySpeciesView.add(this,content,c,scientific)", page)
         self.assertIn('paragraph("Regional occurrence evidence"', page)
         self.assertIn("OfflinePhotoEvidence.addForTaxon", page)

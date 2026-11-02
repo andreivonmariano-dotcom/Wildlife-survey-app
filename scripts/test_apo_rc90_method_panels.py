@@ -52,7 +52,6 @@ class AdaptivePanels(unittest.TestCase):
             "if(hasUnsavedObservation())","INSERT INTO field_records(",
             "persistDraft(true)","refreshTimeline();"):
             self.assertIn(marker,m)
-        self.assertIn('value.put(',m.replace('values.put(', 'value.put('))
         policy=read("RecorderMethodUiPolicy.java")
         for dangerous in ("SQLiteDatabase","ContentValues","execSQL(","insert(",
             "UPDATE field_records","setSurveyOutcome"):

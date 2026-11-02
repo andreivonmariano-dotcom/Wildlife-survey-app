@@ -1,4 +1,4 @@
-name: APO RC92 additional GPS audio process restart acceptance
+name: APO RC93 SQLite29 backup restore GPS/audio process QA
 
 on:
   push:
@@ -63,8 +63,8 @@ jobs:
           APK=app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='152'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc92-apo-closure-integrity'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='153'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc93-apo-schema29-backup-qa'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
           unzip -t "$APK" >/dev/null
           unzip -p "$APK" assets/apo_official_master.png | sha256sum | grep -F '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7'
@@ -90,13 +90,13 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: APO-RC92-extra-unverified-gates-evidence
+          name: APO-RC93-SQLite29-backup-device-evidence
           path: rc92-unverified-evidence/
           if-no-files-found: ignore
           retention-days: 7
       - name: Export signed candidate for direct in-chat download
         uses: actions/upload-artifact@v4
         with:
-          name: APO-RC92-gates-signed-code152-QA-only
+          name: APO-RC93-SQLite29-signed-code153-QA-preview
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 7

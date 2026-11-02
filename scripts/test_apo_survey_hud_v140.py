@@ -30,8 +30,8 @@ class Rc80SurveyLayout(unittest.TestCase):
         for label in ('"Finish Complete"','"End Incomplete"','"Cancel Survey · Not Counted"'):
             self.assertIn(label,s)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 151",g)
-        self.assertIn("versionName '0.27.3-rc91-apo-method-review'",g)
+        self.assertIn("versionCode 152",g)
+        self.assertIn("versionName '0.27.3-rc92-apo-closure-integrity'",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 if __name__=="__main__":unittest.main()

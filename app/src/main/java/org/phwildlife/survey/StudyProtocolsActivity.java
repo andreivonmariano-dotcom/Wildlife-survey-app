@@ -184,6 +184,11 @@ public final class StudyProtocolsActivity extends Activity {
             }
         }
     }
+    private ScrollView scrollForm(LinearLayout panel){
+        ScrollView sc=new ScrollView(this);
+        sc.addView(panel);
+        return sc;
+    }
     private void editTemplate(String id,String code,String existingName,
             int oldVisits,int oldMinutes,int oldUnits,boolean oldGps,boolean oldPhoto){
         LinearLayout panel=new LinearLayout(this);
@@ -202,7 +207,7 @@ public final class StudyProtocolsActivity extends Activity {
         panel.addView(title);panel.addView(visits);panel.addView(minutes);
         panel.addView(units);panel.addView(gps);panel.addView(photo);
         AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Edit study requirements")
-            .setView(panel).setNegativeButton("Cancel",null)
+            .setView(scrollForm(panel)).setNegativeButton("Cancel",null)
             .setPositiveButton("Save changes",null).create();
         dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(w->{

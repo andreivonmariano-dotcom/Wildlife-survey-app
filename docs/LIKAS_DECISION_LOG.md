@@ -4,6 +4,9 @@
 
 ## Entries
 
+### 2026-11-02 | RC81 signed narrow-phone recorder acceptance | Verified preview
+Code141 source `719c45ea79b68a5912ae60180d6cf54ba7cf4ffb`, successful run `41388167462`, completed 426 Python regressions and two Android14 real emulator UI tests at 160% and 200%/320dp. Approved scientific/application identity checks passed. The 200% screenshot confirms visible observation heading and start of species entry, with Save, Review and End still reachable. Exact APK SHA `3d42823bfe59cfd2c631fac294a68b8edff23bc3699c32e1da9dec85c72900a8`, attached directly in chat. Physical handset upgrade, GPS and full survey outcomes remain unverified; PR #83 stays draft. See signed RC81 QA document.
+
 ### 2026-11-02 | APO RC81 narrow-phone readability from real 200% emulator screenshot | Owner continuation
 After accepting the compact RC80 HUD and signed APK, proper 200%/320dp screenshot capture revealed the persistent footer and status still pushed the observation form off the initial screen. RC81 retains a visible End Survey but uses abbreviated side-by-side secondary actions at 320dp/200%, shortens redundant unpaused-session and unverified-GPS wording, and compacts optional tools. Maintain full GPS diagnostics on tap, genuine effort definitions, saved records, method outcomes, sign/identity and SQLite28. Await new signed CI and real screenshot review. See RC81 QA file.
 

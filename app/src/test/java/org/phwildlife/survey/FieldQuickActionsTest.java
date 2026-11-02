@@ -13,8 +13,8 @@ public final class FieldQuickActionsTest {
         assertEquals(FieldQuickActions.Kind.CALLS,
             FieldQuickActions.forSurvey("Herpetofauna","amphibian_calls"));
     }
-    @Test public void reptileVesHasQuickPhoto(){
-        assertEquals(FieldQuickActions.Kind.PHOTO,
+    @Test public void reptileVesDoesNotDuplicatePermanentAttachPhoto(){
+        assertEquals(FieldQuickActions.Kind.NONE,
             FieldQuickActions.forSurvey("Herpetofauna","visual_encounter"));
     }
     @Test public void mammalTrapAndSignMethodsHaveOwnEvidence(){

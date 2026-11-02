@@ -38,6 +38,18 @@ public final class RecorderUiEmulatorTest {
         }
         return null;
     }
+    private View findContainingText(View view,String fragment){
+        if(view instanceof TextView &&
+            ((TextView)view).getText().toString().contains(fragment))return view;
+        if(view instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)view;
+            for(int i=0;i<group.getChildCount();i++){
+                View result=findContainingText(group.getChildAt(i),fragment);
+                if(result!=null)return result;
+            }
+        }
+        return null;
+    }
     @Test public void recorderHasPersistentSaveReviewAndEndSurvey() throws Exception {
         Intent launch=new Intent(ApplicationProvider.getApplicationContext(),MainActivity.class);
         launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -63,6 +75,19 @@ public final class RecorderUiEmulatorTest {
                 assertNotNull("Session section missing",samplingTools);
                 assertNotNull("Detection section missing",detectionTools);
                 if(activity.getResources().getConfiguration().fontScale>=1.60f){
+                    View compactClock=findContainingText(root,"More details");
+                    View compactGps=findContainingText(root,"Start GPS unverified");
+                    assertNotNull("Compact timing control missing",compactClock);
+                    assertNotNull("Explicit survey-start GPS warning missing",compactGps);
+                    assertTrue("Timing should be visible",compactClock.isShown());
+                    assertTrue("GPS warning should be visible",compactGps.isShown());
+                    View hiddenClock=findContainingText(root,"Session 00:");
+                    assertNotNull("Total session clock missing",hiddenClock);
+                    assertFalse("Detail should start collapsed",hiddenClock.isShown());
+                    compactClock.performClick();
+                    assertTrue("Total clock should expand",hiddenClock.isShown());
+                    compactClock.performClick();
+                    assertFalse("Detail should collapse",hiddenClock.isShown());
                     View disclosure=findText(root,"Show sampling & detection tools");
                     assertNotNull("Compact survey-tool disclosure missing",disclosure);
                     assertTrue("Survey tools disclosure should be visible",disclosure.isShown());

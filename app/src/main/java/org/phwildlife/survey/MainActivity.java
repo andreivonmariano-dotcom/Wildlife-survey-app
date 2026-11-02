@@ -239,8 +239,9 @@ public class MainActivity extends Activity implements LocationListener {
         title.setContentDescription(profile+" Survey");
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
         Button export=UiKit.button(this,"All data","secondary");
+        if(largeText)export.setText("ZIP");
         export.setContentDescription("Export all projects and surveys as research ZIP");
-        top.addView(export,new LinearLayout.LayoutParams(dp(largeText?103:96),dp(48)));
+        top.addView(export,new LinearLayout.LayoutParams(dp(largeText?68:96),dp(48)));
         export.setOnClickListener(v->exportZip());
         root.addView(top);
         // Fixed status HUD: short, high-contrast survey state, always visible.
@@ -593,8 +594,15 @@ public class MainActivity extends Activity implements LocationListener {
         Button unknownBtn=UiKit.button(this,"Unidentified","quiet");
         unknownBtn.setContentDescription("Choose an unidentified taxon label");
         unknownBtn.setTextSize(13);
+        if(veryLargeText)unknownBtn.setText("Unknown");
         LinearLayout.LayoutParams unknownLp=new LinearLayout.LayoutParams(0,dp(touchDp),1);
         speciesActions.addView(unknownBtn,unknownLp);
+        Button recentSpecies=UiKit.button(this,"Recent","secondary");
+        recentSpecies.setContentDescription("Reuse a previously recorded species name, without copying observations");
+        LinearLayout.LayoutParams recentLp=new LinearLayout.LayoutParams(0,dp(touchDp),1);
+        recentLp.leftMargin=dp(5);
+        speciesActions.addView(recentSpecies,recentLp);
+        recentSpecies.setOnClickListener(v->showRecentSpecies());
         favoriteButton=UiKit.button(this,"☆","quiet");
         favoriteButton.setTextSize(22);
         LinearLayout.LayoutParams starP=new LinearLayout.LayoutParams(dp(52),dp(touchDp));
@@ -975,6 +983,19 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void updateMethods(){
         lineRow.setVisibility(SurveyMethods.isBirdLine(profile,method)?View.VISIBLE:View.GONE);
+    }
+    /** Reusing a name never reuses counts, location, confidence or evidence. */
+    private void showRecentSpecies(){
+        String[] names=RecentTaxa.names(db.getReadableDatabase(),group);
+        if(names.length==0){toast("No recent records in this wildlife group");return;}
+        new AlertDialog.Builder(this).setTitle("Recently recorded species")
+            .setItems(names,(dialog,which)->{
+                taxonEntry.setText(names[which]);
+                taxonEntry.setSelection(taxonEntry.length());
+                confidenceSpinner.setSelection(0);
+                queueDraft();
+            })
+            .setNegativeButton("Back",null).show();
     }
     private void toggleFavorite(){
         if(taxonEntry==null)return;

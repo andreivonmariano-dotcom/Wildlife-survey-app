@@ -67,24 +67,22 @@ public final class HabitatsSpeciesActivity extends Activity {
         siteDetails.addView(label("One GPS point is not the whole survey area. "+
             "Device MSL elevation is screening context, not a habitat observation.",12,false));
         siteDetails.setVisibility(View.GONE);
-        Button siteToggle=UiKit.button(this,"GPS & elevation details","quiet");
+        Button siteToggle=UiKit.button(this,"GPS details","quiet");
         siteToggle.setContentDescription("Show GPS and elevation context");
         siteToggle.setOnClickListener(v->{
             boolean open=siteDetails.getVisibility()!=View.VISIBLE;
             siteDetails.setVisibility(open?View.VISIBLE:View.GONE);
-            siteToggle.setText(open?"Hide GPS & elevation details":"GPS & elevation details");
+            siteToggle.setText(open?"Hide GPS details":"GPS details");
             siteToggle.setContentDescription(open?
                 "Hide GPS and elevation context":"Show GPS and elevation context");
         });
-        body.addView(siteToggle);
-        body.addView(siteDetails);
         refreshSite();
 
         body.addView(FieldVisuals.section(this,"Habitats",null));
-        body.addView(label("Select observed habitats",14,true));
+        // Habitat selections below are observer-confirmed only.
         mapSummary=label("",12,false);
         body.addView(mapSummary);
-        selectedSummary=label("No habitats confirmed",12,true);
+        selectedSummary=label("0 habitats confirmed",12,true);
         body.addView(selectedSummary);
         checks=new LinearLayout(this);
         checks.setOrientation(LinearLayout.VERTICAL);
@@ -122,9 +120,6 @@ public final class HabitatsSpeciesActivity extends Activity {
                 "Hide land-cover source and file management":
                 "Show land-cover source, license and file management");
         });
-        body.addView(mapToggle);
-        body.addView(mapOptions);
-
         body.addView(FieldVisuals.section(this,"Species checklist",null));
         checklistMode=new RadioGroup(this);
         checklistMode.setOrientation(RadioGroup.VERTICAL);
@@ -142,7 +137,7 @@ public final class HabitatsSpeciesActivity extends Activity {
             refreshSpecies();
         });
         body.addView(checklistMode);
-        checklistButton=UiKit.button(this,"Checklist: Suggested first","secondary");
+        checklistButton=UiKit.button(this,"Checklist: Suggested","secondary");
         checklistButton.setContentDescription("Choose suggested-first or full species checklist");
         checklistButton.setOnClickListener(v->new AlertDialog.Builder(this)
             .setTitle("Species checklist")
@@ -155,7 +150,11 @@ public final class HabitatsSpeciesActivity extends Activity {
             .setNegativeButton("Cancel",null).show());
         body.addView(checklistButton,new LinearLayout.LayoutParams(-1,-2));
         speciesSummary=label("",12,false);body.addView(speciesSummary);
-        body.addView(label("Reference only · not a species occurrence record",12,false));
+        body.addView(label("Matching does not confirm species presence",12,false));
+        body.addView(siteToggle);
+        body.addView(siteDetails);
+        body.addView(mapToggle);
+        body.addView(mapOptions);
         LinearLayout page=UiKit.page(this,"Habitats & Species",
             "Survey GPS",this::finish,body);
         LinearLayout footer=new LinearLayout(this);
@@ -175,7 +174,7 @@ public final class HabitatsSpeciesActivity extends Activity {
     private void updateChecklistButton(){
         if(checklistButton==null||checklistMode==null)return;
         checklistButton.setText(checklistMode.getCheckedRadioButtonId()==3001?
-            "Checklist: Suggested first":"Checklist: All species");
+            "Checklist: Suggested":"Checklist: Full");
     }
     private void updateSelectedSummary(){
         if(selectedSummary==null)return;
@@ -188,7 +187,9 @@ public final class HabitatsSpeciesActivity extends Activity {
         float accuracy=getIntent().getFloatExtra("start_gps_accuracy_m",Float.NaN);
         String accuracyText=Float.isFinite(accuracy)&&accuracy>0?
             String.format(Locale.US," · ±%.1f m",accuracy):"";
-        siteSummary.setText(hasCoords?"Start GPS recorded"+accuracyText:"Start GPS missing");
+        String group=getIntent().getStringExtra("survey_profile");
+        siteSummary.setText((group==null?"":group+" · ")+
+            (hasCoords?"GPS recorded"+accuracyText:"Start GPS missing"));
         GpsElevation.Sample altitude=GpsElevation.read(TrackService.currentFix());
         String height=altitude.usableForHabitat?
             altitude.label():"MSL elevation unavailable";
@@ -226,7 +227,7 @@ public final class HabitatsSpeciesActivity extends Activity {
         suggested=new ArrayList<>();
         if(getIntent().getBooleanExtra("start_without_gps",false)||
             !Double.isFinite(preflightLat)||!Double.isFinite(preflightLon)){
-            mapSummary.setText("No GPS · choose habitats manually");
+            mapSummary.setText("Map hints unavailable");
             return;
         }
         if(!PaicLandCoverPack.installed(this)){
@@ -250,15 +251,15 @@ public final class HabitatsSpeciesActivity extends Activity {
         if(!suggested.isEmpty()){
             for(String name:suggested)addCheck(name,true);
         }
-        Button browse=UiKit.button(this,othersVisible?"Hide other habitats":
-            "All habitats (16)","secondary");
+        Button browse=UiKit.button(this,othersVisible?"Hide habitats":
+            "Choose habitats (16)","secondary");
         browse.setOnClickListener(v->{othersVisible=!othersVisible;renderHabitats();});
         checks.addView(browse,new LinearLayout.LayoutParams(-1,dp(52)));
         for(String name:PaicHabitatPolicy.HABITATS)
             if(!suggested.contains(name)&&(othersVisible||confirmed.contains(name)))
                 addCheck(name,false);
         if(suggested.isEmpty()&&!othersVisible){
-            TextView noMap=label("Optional · no selection also allowed",12,false);
+            TextView noMap=label("Optional",12,false);
             checks.addView(noMap);
         }
     }

@@ -22,7 +22,7 @@ class Rc47DesignSystem(unittest.TestCase):
         self.assertIn("public static LinearLayout page(Activity a,String name,String parent",ui)
         self.assertIn("scroll.setFillViewport(true)",ui)
         self.assertIn("root.addView(navigationHeader(a,name,parent,onBack))",ui)
-        for filename,label in [("LikasLibraryActivity.java","Library"),
+        for filename,label in [("LikasLibraryActivity.java","PHLibrary"),
                                ("LikasSettingsActivity.java","Settings")]:
             c=read(filename)
             self.assertIn(f'UiKit.page(this,"{label}","Home",this::finish,body)',c)

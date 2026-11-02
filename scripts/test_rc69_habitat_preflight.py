@@ -31,7 +31,7 @@ class Rc69HabitatPreflightTests(unittest.TestCase):
     def test_imported_landcover_is_separate_from_observed_habitat(self):
         screen=read('HabitatsSpeciesActivity.java')
         pack=read('PaicLandCoverPack.java')
-        self.assertIn('Select every habitat actually encountered',screen)
+        self.assertIn('Select observed habitats',screen)
         self.assertIn('PaicHabitatPolicy.encode(confirmed)',screen)
         self.assertIn('PaicHabitatPolicy.encode(new HashSet<>(suggested))',screen)
         self.assertIn('LIKAS_WORLDCOVER_2020_500M_V1',pack)

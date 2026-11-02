@@ -25,7 +25,7 @@ class RecorderFlowRC79(unittest.TestCase):
         self.assertIn('root.addView(footer)',s)
         self.assertIn('footerOptions.addView(endSurveyButton,endParams)',s)
         self.assertIn('public static boolean stackRecorderDock(',p)
-        self.assertIn('return scale>=1.9f&&widthDp<390;',p)
+        self.assertIn('return scale>=2.4f&&widthDp<360;',p)
         self.assertIn('Math.min(80,Math.round(50f*scale))',p)
 
     def test_discard_confirmation_covers_unsaved_method_details(self):

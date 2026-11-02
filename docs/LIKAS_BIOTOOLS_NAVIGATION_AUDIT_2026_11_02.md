@@ -11,6 +11,7 @@
 - Recorder > Other evidence / quick capture > Field protocol records or Trap and camera records: direct event-scoped view and Back returns to recorder.
 - Fieldwork > More field tools > Protocols > survey details: **fix:** both header Back and Android Back return to the protocol-survey picker. Fieldwork > More field tools > Camera traps > survey details: same navigation fix for the device-survey picker.
 - **Fix:** device picker now shows all camera-trap, drift-fence, and live-trap survey events, even before any trap deployment is registered. Previously it joined only `trap_deployments`, concealing empty or newly started device-method events.
+- **Efficiency fix:** current-survey Station progress lists actual recorded visits first, with an explicit no-visits state. The unrelated project-station inventory was removed from this screen, as projects and stations have their own dedicated manager. No site or station data were deleted.
 - Fields such as Projects & sites and Habitat & Ecology can be opened from several places. **Fix:** neutral Back label for caller-relative finish rather than inaccurate Home navigation.
 - Species Browse > species choice > recorder, Call library > audio detail > call library, and picker > species reference > picker remain under the existing system navigation.
 

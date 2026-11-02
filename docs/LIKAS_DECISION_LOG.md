@@ -4,6 +4,11 @@
 
 ## Entries
 
+### 2026-11-02 | RC88 signed detection-first recorder | Step 1 delivered
+Owner requested staged implementation of ambitious survey-screen improvements. First milestone deliberately prioritizes marking detection time/qualified observer fix and paused effort ahead of species typing. Preserves draft persistence, observation identity, source files and survey lifecycle. Guard against unstarted sampling stations, paused effort and accidental overwriting; replacing a mark also clears previous bearing/pitch/sensor confidence. Real emulator revealed the initial new controls hid count at 160% font: corrected with responsive Mark/Pause and compact List shortcut; final signed CI **41424653033** green with 452 Python tests and ten Android14 instrumented tests. Code SHA `76bd37cfaca773184a6f92bc71ca847b05beb1da`, original certificate, code148, SQLite29, no reference data change. Signed APK `APO-v0.27.3-RC88-Detection-First-code148.apk` (11,765,208 bytes; SHA-256 `7786cfcba35942a301ad6af9ee384c3a2b00cb45b7a9d9ff865ce3ee7f08e0a8`) was delivered directly in this chat from GitHub artifact 13132056697. Draft PR #90 remains unmerged; physical handset, historical database, camera/GPS, TalkBack, ZIP and end-state acceptance still pending. Next stage: auditable in-survey observation timeline.
+
+
+
 ### 2026-11-02 | RC87 signed development preview with habitat-shortlist correction | Verified emulator and direct file
 Source commit `e3d60847ac25be7239a7556473d6b604e388d6ed` passed run `41419356860` with 448 Python tests, Android/JVM builds and Android14 UI checks at 160% and 200%, including the montane/Aleutian Tern shortlist toggle. Code147 signed APK (11,763,844 bytes, SHA-256 `6eb23398eb18565f3e1694842881c509292ed93efeb599698d6c80c5f4067a6f`) was extracted and directly delivered in the 2 November owner chat. Preserve PAIC714 habitat evidence as a source-qualified *shortlist*, not absence/occurrence proof; Show all species stays available. Recent quick picks select names only and do not clone recorded effort or measurements. PR #89 remains draft; physical-phone GNSS, SQLite archival upgrade, camera, exports and TalkBack are pending.
 

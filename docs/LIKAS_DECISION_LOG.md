@@ -4,6 +4,9 @@
 
 ## Entries
 
+### 2026-11-02 | RC83 Survey GPS progressive disclosure | Owner directed, source implementation
+Refine the long, technical Survey GPS preflight after code142 setup. Keep actual GNSS quality and automatic verified-fix progression visible. Move raw coordinates, measured altitude and satellite diagnostics behind a labeled disclosure; retain troubleshooting buttons one tap away. Keep a single always-available, confirmed missing-GPS exception and a separate flagged station decision; use header Back rather than a redundant footer action. Do not infer location/elevation, change strict age/accuracy acceptance, or alter surveys/SQLite28/reference identity. Signed CI, emulator screenshots and direct APK required before preview is accepted. See RC83 GPS QA.
+
 ### 2026-11-02 | RC82 signed post-group setup screen | Acceptance record
 Code142 source `85aa224bd0031e9eaf6bd0ce9b024939de06ab01` passed signed CI `41391752701` (429 Python, JVM build, eight Android14 emulator setup tests, six screenshots across Birds/Herpetofauna/Mammals). Verified direct APK SHA `747b7c92fd34ce5d38b4a099f871ef96fe951dbeb6c6f1f829f9a41411d30601`. Initial setup is materially shorter via collapsed comparison, region assistance, and optional route management; all method/GPS/effort and analysis semantics preserved. Long selected method names can be ellipsized at 200% font. Field/handset certification still pending. See RC82 QA.
 

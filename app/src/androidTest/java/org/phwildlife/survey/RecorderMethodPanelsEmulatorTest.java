@@ -30,6 +30,17 @@ public final class RecorderMethodPanelsEmulatorTest {
         }
         return null;
     }
+    private static int visibleExactLabels(View root,String value){
+        int count=0;
+        if(root instanceof TextView&&root.isShown()&&
+            ((TextView)root).getText().toString().equals(value))count++;
+        if(root instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)root;
+            for(int i=0;i<group.getChildCount();i++)
+                count+=visibleExactLabels(group.getChildAt(i),value);
+        }
+        return count;
+    }
     private static View hint(View root,String value){
         if(root instanceof EditText&&
             ((EditText)root).getHint()!=null&&
@@ -79,6 +90,8 @@ public final class RecorderMethodPanelsEmulatorTest {
                     micro.isShown());
                 View audio=text(root,"Record / review calls");
                 assertNotNull(audio);assertTrue(audio.isShown());
+                assertEquals("Only one visible call library action",1,
+                    visibleExactLabels(root,"Record / review calls"));
                 assertTrue(text(root,"Save Observation").isShown());
                 assertTrue(text(root,"End Survey").isShown());
             });
@@ -113,6 +126,8 @@ public final class RecorderMethodPanelsEmulatorTest {
                 assertFalse("Optional measurements must start collapsed",height.isShown());
                 View checks=text(root,"Device checks & captures");
                 assertNotNull(checks);assertTrue(checks.isShown());
+                assertEquals("Only one visible device checks action",1,
+                    visibleExactLabels(root,"Device checks & captures"));
                 assertTrue(text(root,"End Survey").isShown());
             });
         }

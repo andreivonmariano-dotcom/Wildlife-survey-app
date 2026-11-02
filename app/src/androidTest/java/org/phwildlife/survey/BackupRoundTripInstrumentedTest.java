@@ -61,7 +61,7 @@ public final class BackupRoundTripInstrumentedTest {
 
         ByteArrayOutputStream archive=new ByteArrayOutputStream();
         String exported=FieldBackupArchive.export(ctx,archive);
-        assertTrue(exported.contains("Verified v27"));
+        assertTrue(exported.contains("Verified v29"));
         HashMap<String,byte[]> unzipped=new HashMap<>();
         try(ZipInputStream in=new ZipInputStream(
             new ByteArrayInputStream(archive.toByteArray()))){
@@ -78,7 +78,7 @@ public final class BackupRoundTripInstrumentedTest {
         assertTrue(unzipped.containsKey("media/record_media/qa_record_image.jpg"));
         assertArrayEquals(bytes,unzipped.get("media/record_media/qa_record_image.jpg"));
         JSONObject manifest=new JSONObject(new String(unzipped.get("manifest.json"),"UTF-8"));
-        assertEquals(27,manifest.getInt("sqliteSchema"));
+        assertEquals(29,manifest.getInt("sqliteSchema"));
         assertEquals(hex(digest(bytes)),manifest.getJSONObject("files")
             .getString("media/record_media/qa_record_image.jpg"));
 

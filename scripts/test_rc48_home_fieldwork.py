@@ -38,7 +38,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         self.assertIn('surveyTile(main,"Birds"',hub)
         for target in ("SitesActivity.class","HistoryActivity.class",
                        "DashboardActivity.class","FieldProtocolsActivity.class"):
-            self.assertIn(target,hub)
+            self.assertIn(target,welcome)
 
     def test_survey_setup_has_shared_back_header_and_same_gps_dock(self):
         welcome=src("WelcomeActivity.java")

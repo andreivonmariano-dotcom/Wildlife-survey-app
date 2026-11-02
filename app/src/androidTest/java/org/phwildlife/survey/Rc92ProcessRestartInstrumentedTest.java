@@ -17,6 +17,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.*;
 
 /** Run in a NEW instrumentation process after shell am force-stop. */
@@ -57,7 +60,20 @@ public final class Rc92ProcessRestartInstrumentedTest {
                 Button end=find(a.getWindow().getDecorView(),"End Survey");
                 assertNotNull("Recorder can resume after process death",end);
                 assertTrue(end.isShown()&&end.isEnabled());
+                end.performClick();
             });
+            // The app deliberately blocks full backup while a survey is active.
+            // End through its REAL UI before checking that the WAV is archived.
+            onView(withText("End Incomplete")).perform(click());
+            onView(withText("Save incomplete")).perform(click());
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        }
+        try(FieldDb db=new FieldDb(ctx);
+            Cursor c=db.getReadableDatabase().rawQuery(
+                "SELECT outcome,ended FROM surveys WHERE id=?",new String[]{event})){
+            assertTrue(c.moveToFirst());
+            assertEquals("incomplete",c.getString(0));
+            assertFalse("Resumed survey now closed",c.isNull(1));
         }
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
         String status=FieldBackupArchive.export(ctx,bytes);

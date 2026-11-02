@@ -1,5 +1,13 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC79 observation-first survey workflow | source committed, CI pending
+
+- Latest signed/emulator-tested source remains RC78 code138, run 41383237787, with verified APK identity in `docs/APO_RC78_SURVEY_RECORDER_EMULATOR_QA_2026_11_02.md`. This task resumes from RC78 head `6a953dab2f9f383021815d5f04faaa05a2bbabf7`, **not** historical `main` or RC54.
+- New isolated branch: `feature/apo-survey-flow-v139`. Declares `0.27.3-rc79-apo-survey-flow`, code139, original `org.phwildlife.survey.beta08`, original signer and SQLite28. Source changes: narrower secondary Review/End dock where screen width permits, size-capped full-width Save, one-tap collapsible sampling/detection tools for large-font nonstation nontracking methods, additional unsaved life-stage/distance-source/position/movement guards and discard resets, and a read-only completion checklist in the End Survey selector.
+- Existing sampling/station methods, complete/incomplete/not-counted semantics, survey event/evidence data, PAIC714 catalog, WorldCover, approved mountain branding, GPS and effort policy remain unchanged.
+- New RC79 Python/JUnit and Android14 (API34) 160% font emulator regressions plus signer/art/reference checks are configured in `.github/workflows/apo-survey-flow-v139-emulator-qa.yml`. At this checkpoint they have **not yet passed**; no new signed RC79 APK or current-session direct APK link is verified. See `docs/APO_RC79_SURVEY_FLOW_QA_2026_11_02.md`.
+- Next: verify build and emulator screenshot; if successful, obtain direct signed APK; then complete physical-device migration and three-outcome field checks.
+
 ## 2 November 2026 | APO RC78 live recorder optimized; real Android emulator test passed
 
 - **Authoritative Android development branch:** `feature/apo-survey-recorder-v138` (draft PR #80 into signed RC77 branch `feature/apo-biotools-all-screens-v137`). Exact app/test source verified in GitHub Actions before documentation-only commits: `1d63da9eda84ad75d31bdcb12fbc7c15693cc027`. **Final successful signed CI/emulator run: `41383237787`**, with 415 Python regressions, JVM/Android debug and AndroidTest compilation, and a real Android 14 (API34) emulator recorder smoke test at 160% font.

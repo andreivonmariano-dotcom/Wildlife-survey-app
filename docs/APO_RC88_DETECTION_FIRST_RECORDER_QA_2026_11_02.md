@@ -1,4 +1,15 @@
 # APO RC88 | Step 1: detection-first field recorder
+## Signed acceptance evidence | 2 November 2026
+
+**Verified app/test code:** `76bd37cfaca773184a6f92bc71ca847b05beb1da`. GitHub Actions **41424653033 succeeded**. The project ran **452 Python scientific/source regressions**, JVM/Android app and test compilation, original Android signer/package/version checks, and locked PAIC714/WorldCover/approved mountain artwork verification. Android14 API34 emulator completed 5 tests at 160% font and 5 at 200%/320dp, with zero failures. These included explicit Mark/Clear unsaved draft interaction and pre-species positioning, the normal species picker and montane/Aleutian Tern fallback checks.
+
+**Verified direct release artifact:** `APO-v0.27.3-RC88-Detection-First-code148.apk`, **11,765,208 bytes**, SHA-256 `7786cfcba35942a301ad6af9ee384c3a2b00cb45b7a9d9ff865ce3ee7f08e0a8`, extracted from successful signed workflow artifact ID **13132056697** and directly attached to owner conversation. ZIP integrity and exact embedded PAIC714, WorldCover and mountain-master SHA-256 independently passed in the receiving container. CI signed certificate and Android ID `org.phwildlife.survey.beta08` unchanged, versionCode **148**, SQLite **29**.
+
+**Six screenshot evidence files** from artifact **13131662685** were retrieved and validated at 1080×2280 (160%) and 960×2160 (200%/320dp), including visual review of both recorder layouts. The initial emulator attempt failed because the individual-count field was below the fixed Save footer after adding the new Mark/Pause controls. The corrected final build uses a compact horizontal Mark/Pause row, compressed explicit status and inline text + List species entry, preserving the count and fixed Save/Review/End controls above the fold. Another source attempt failed only on historical fixed button-label assertions; corrected tests check the responsive List label plus its accessible full description. **Only run 41424653033 is final acceptance evidence.**
+
+**Cautions:** Signed development preview, not certified for physical field use. Real on-device GNSS timing and horizontal accuracy, populated-record update from older SQLite versions, app restart/background draft recovery, microphone/camera interactions, TalkBack and ZIP data roundtrip remain unverified. Repeat validation on actual handset with a backed-up historic database. Do not claim that Mark creates a saved observation; it persists a recoverable unsaved draft only.
+
+
 2 November 2026 | **development milestone**, not field-certified.
 
 ## Source

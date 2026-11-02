@@ -9,24 +9,21 @@ def source(name):
 
 class Rc46FieldLayoutHierarchy(unittest.TestCase):
     def test_active_home_uses_compact_content_sized_hero(self):
-        portal=source("LikasPortalUi.java")
         welcome=source("WelcomeActivity.java")
-        self.assertIn("public static View hero(Activity a,boolean compact)",portal)
-        self.assertIn("cover.setMinimumHeight(dp(a,compact?88:(largeHomeText?118:151)))",portal)
-        self.assertIn("boolean showFrog=a.getResources().getConfiguration().fontScale<1.30f",portal)
-        self.assertIn("dp(a,showFrog?76:20)",portal)
-        self.assertIn("new FrameLayout.LayoutParams(-1,-2,Gravity.TOP)",portal)
-        home=welcome.split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]
-        self.assertIn("hero(this,lastHomeActiveSurvey!=null)",home)
-        self.assertIn("new LinearLayout.LayoutParams(-1,-2)",home)
-        self.assertNotIn('LikasPortalUi.kicker(this,"EXPLORE LIKAS")',home)
-        self.assertIn("fieldLp.topMargin=dp(LikasDesignSystem.HOME_HERO_GAP_DP)",home)
-        self.assertIn('LikasPortalUi.session(this,()->',home)
-        self.assertLess(home.index("LikasPortalUi.session(this,()->"),
-                        home.index('LikasPortalUi.tile(this,"Fieldwork"'))
-        for route in ('"Fieldwork"','"Library"','"Settings"'):
+        home=welcome.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
+        component=source("ApoHomeUi.java")
+        self.assertIn("lastHomeActiveSurvey=activeSurvey()",home)
+        self.assertIn("if(lastHomeActiveSurvey!=null)",home)
+        self.assertIn("ApoHomeUi.resume(this,",home)
+        self.assertLess(home.index("ApoHomeUi.resume(this,"),
+                        home.index('ApoHomeUi.module(this,"01","BioTools"'))
+        self.assertIn("ApoHomeUi.header(this,",home)
+        self.assertIn("UiMotion.enterHome(this,main)",home)
+        self.assertNotIn("LikasPortalUi.hero(",home)
+        self.assertNotIn("LikasPortalUi.tile(",home)
+        self.assertIn("row.setMinimumHeight(dp(a,88))",component)
+        for route in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"'):
             self.assertIn(route,home)
-
     def test_ime_layout_keeps_footer_and_essential_warnings(self):
         recorder=source("MainActivity.java")
         self.assertIn("private boolean inputKeyboardVisible=false",recorder)

@@ -1,5 +1,21 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2 November 2026 | APO RC73 signed text-only Home delivered (current latest verified APK)
+
+- **Built source** `ac75b6abe1af2b5e3e5c758a1bdec86f075fc9c1`, branch `feature/apo-text-home-v133` (draft PR #75). CI run `41373151540` **SUCCESS**, including **385 Python regressions**, JVM tests, Android APK and AndroidTest compilation, unchanged package and original signing certificate verification, and exact locked source/art checks.
+- **Current signed development preview** `0.27.3-rc73-apo-text-home`, versionCode **133**, package `org.phwildlife.survey.beta08`, original signer fingerprint `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`. APK `APO-v0.27.3-RC73-text-home-code133.apk`, **11,744,944 bytes**, SHA-256 `c21fbc5ba9d9b4bbc9e455148d680609f21974d2f53523b35ddbbb4a9eb2125d`. Direct APK link delivered in this conversation after verified Actions artifact `13110156812` download and rehash. See `docs/APO_RC73_TEXT_HOME_SIGNED_QA_2026_11_02.md`.
+- **Home:** four typography-only top-level modules, BioTools, PHLibrary, PHMaps, BioDiscover; small text Settings and conditional Resume. Removed illustrated LIKAS Home hero/tiles only. PHMaps currently provides existing spatial/site records, and BioDiscover honestly discloses unfinished research feed. All historical field records, database schema **28**, and owner-approved launcher/splash and embedded 714 PAIC + WorldCover data remain unchanged in source and passed package hashes.
+- **Not yet validated:** real-device upgrade/preserved historic survey records, GPS, on-device menu layout at larger font size, TalkBack and complete field lifecycle. Signed preview is not a stable field-certified release. Later documentation-only changes do not create a newer APK. Do not use old `main` as APO development baseline.
+
+
+## 2 November 2026 | APO RC73 text-only Home implementation (source; signed QA pending)
+
+- **Owner-approved Home structure:** exactly four plain-text primary modules: **BioTools**, **PHLibrary**, **PHMaps**, **BioDiscover**; Settings is a small text action in the top-right header. The legacy frog Home hero, illustrated Home tiles, and decorative menu icons are no longer instantiated by `WelcomeActivity.home()`. The locked mountain launcher and native-gradient splash remain untouched. Home uses 220 ms easing and existing Less motion/system animator gates. All text reflows without fixed-height typography clipping.
+- **Implementation branch:** `feature/apo-text-home-v133`, created from verified RC72 APO branch HEAD `542092743437763ae91430655a0a1f89955e57a0`. New component `ApoHomeUi.java`, module navigation changes in `WelcomeActivity.java`, PHLibrary hub title, new Home transition, and source contracts `scripts/test_apo_home_v133.py`. Intended build versionCode **133**, `0.27.3-rc73-apo-text-home`, with unchanged app ID, signer requirement and SQLite **28**.
+- **Working destinations:** BioTools enters existing fieldwork/analysis screen, PHLibrary enters existing offline reference hub, PHMaps shows available project/station and habitat records and explicitly identifies standalone map/terrain exploration as incomplete, and BioDiscover openly states the live sourced research/conservation feed is under development. A contextual Resume current survey shortcut remains present when a survey is active. No news results or geographic measurements are fabricated.
+- **Verification state:** source changes committed; signed CI, APK identity/signature and direct-download status require actual verification before an updated app is claimed delivered. No on-device GPS, old survey migration, accessibility or field survey acceptance has been performed for RC73.
+
+
 ## 2 November 2026 | Current APO branch selected for Home redesign
 
 - **Live checked source:** `feature/apo-startup-screen-v1-design`, HEAD `2fc989cae924fc8c652d7b5c3bb6d578dc07d721` before this documentation-only update. The final build's app-code ancestor is `4ce953bbea100c1c6a90231434591ffb6f99f788`; GitHub comparison showed exactly four later docs-only commits. The signed APK is still code132, original application ID and signer, SQLite28.

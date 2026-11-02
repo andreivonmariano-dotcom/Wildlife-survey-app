@@ -9,16 +9,17 @@ def src(name):return (JAVA/name).read_text(encoding="utf-8")
 class Rc48HomeFieldwork(unittest.TestCase):
     def test_home_has_only_three_destinations_and_explicit_resume(self):
         welcome=src("WelcomeActivity.java")
-        home=welcome.split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]
-        self.assertIn("LikasPortalUi.hero(this,lastHomeActiveSurvey!=null)",home)
-        self.assertIn("LikasPortalUi.session(this,()->",home)
-        self.assertIn('"Fieldwork"',home)
-        self.assertIn('"Library"',home)
-        self.assertIn('"Settings"',home)
-        self.assertLess(home.index("LikasPortalUi.session(this,()->"),
-                        home.index('LikasPortalUi.tile(this,"Fieldwork"'))
+        home=welcome.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
+        self.assertIn("ApoHomeUi.header(this,",home)
+        self.assertIn("ApoHomeUi.resume(this,",home)
+        self.assertNotIn("LikasPortalUi.hero(",home)
+        self.assertNotIn("LikasPortalUi.tile(",home)
+        for label in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"'):
+            self.assertIn(label,home)
+        self.assertIn("LikasSettingsActivity.class",home)
+        self.assertLess(home.index("ApoHomeUi.resume(this,"),
+                        home.index('ApoHomeUi.module(this,"01","BioTools"'))
         self.assertNotIn("startSelected();",home)
-
     def test_active_fieldwork_is_not_labelled_a_new_survey(self):
         welcome=src("WelcomeActivity.java")
         hub=welcome.split("private void fieldworkHub(){",1)[1].split(

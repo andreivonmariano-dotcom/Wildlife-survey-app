@@ -15,21 +15,19 @@ class Rc40ScreenAudit(unittest.TestCase):
     def test_three_home_destinations_are_content_sized(self):
         portal=source("LikasPortalUi.java")
         home=source("WelcomeActivity.java")
-        body=portal.split("public static View tile(",1)[1].split(
-            "/** Persistent field-session",1)[0]
-        self.assertIn("LinearLayout panel=new LinearLayout(a)",body)
-        self.assertIn("panel.setMinimumHeight(dp(a,LikasDesignSystem.HOME_CARD_MIN_DP))",body)
-        self.assertIn("panel.setOrientation(LinearLayout.HORIZONTAL)",body)
-        self.assertNotIn("new FrameLayout(a);\n        panel.setBackground(",body)
-        self.assertNotIn("panel.addView(backdrop",body)
+        component=source("ApoHomeUi.java")
+        main=home.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
         self.assertIn("new LinearLayout.LayoutParams(-1,-2)",home)
-        main=home.split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]
-        for title in ('"Fieldwork"','"Library"','"Settings"'):
+        self.assertIn("setMinimumHeight(dp(a,88))",component)
+        self.assertIn("setFocusable(true)",component)
+        self.assertNotIn("R.drawable.",component)
+        for title in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"'):
             self.assertIn(title,main)
-        self.assertIn('this::fieldworkHub',main)
-        self.assertIn('LikasLibraryActivity.class',main)
-        self.assertIn('LikasSettingsActivity.class',main)
-
+        self.assertIn("this::fieldworkHub",main)
+        self.assertIn("LikasLibraryActivity.class",main)
+        self.assertIn("LikasSettingsActivity.class",main)
+        self.assertNotIn("LikasPortalUi.tile(",main)
+        self.assertNotIn("LikasPortalUi.hero(",main)
     def test_fieldwork_has_one_history_entry_and_clean_headings(self):
         home=source("WelcomeActivity.java")
         field=home.split("private void fieldworkHub(){",1)[1].split(

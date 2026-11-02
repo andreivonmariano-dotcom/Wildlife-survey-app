@@ -26,13 +26,13 @@ class CleanFieldUi(unittest.TestCase):
         self.assertIn('progressView.setVisibility(',screen)
     def test_home_puts_shortcuts_first_and_groups_other_tools(self):
         home=src("WelcomeActivity.java")
-        for key in ('"Fieldwork"','"Library"','"Settings"',
-                    'LikasPortalUi.hero(this,lastHomeActiveSurvey!=null)',
-                    'LikasLibraryActivity.class','LikasSettingsActivity.class',
-                    'HistoryActivity.class','SitesActivity.class'):
+        for key in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"',
+                    "ApoHomeUi.header(this,","ApoHomeUi.resume(this,",
+                    "LikasLibraryActivity.class","LikasSettingsActivity.class",
+                    "HistoryActivity.class","SitesActivity.class"):
             self.assertIn(key,home)
         self.assertNotIn('"History & tools  ▾"',home)
-        self.assertIn('ImportActivity.class',src("LikasSettingsActivity.java"))
+        self.assertIn("ImportActivity.class",src("LikasSettingsActivity.java"))
     def test_study_template_is_never_silently_hidden_after_selection(self):
         home=src("WelcomeActivity.java")
         for key in ('refreshStudyTitle()', 'selectedStudyId()',

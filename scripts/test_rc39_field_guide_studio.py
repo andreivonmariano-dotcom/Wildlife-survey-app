@@ -56,8 +56,8 @@ class FieldGuideStudioQA(unittest.TestCase):
     def test_active_survey_and_setup_method_are_safe_and_readable(self):
         home=read("WelcomeActivity.java")
         portal=read("LikasPortalUi.java")
-        self.assertIn("LikasPortalUi.session(this,",home)
-        self.assertIn("Resume survey in progress",home)
+        self.assertIn("ApoHomeUi.resume(this,",home)
+        self.assertIn("lastHomeActiveSurvey=activeSurvey()",home)
         self.assertIn('String unfinished=activeSurvey()',home)
         self.assertIn('"field_tools_open"',home)
         self.assertIn('toolsToggle.setOnClickListener(v->{',home)

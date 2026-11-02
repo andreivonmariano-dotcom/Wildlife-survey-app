@@ -22,7 +22,7 @@ class RecorderPickerRC85(unittest.TestCase):
         self.assertLess(s.index('content.addView(photoRow)'),s.index('content.addView(birdQuick)'))
         self.assertIn('content.removeView(recorderTools)',s)
         self.assertIn('compactObservationFirst)methodRow.setVisibility(View.GONE)',s)
-        self.assertIn('confidenceSpinner.getSelectedItemPosition()==0?',s)
+        self.assertIn('confidenceSpinner.getSelectedItemPosition()==1?',s)
         self.assertIn('"Field-identified (not expert verified)"',s) # canonical saved label
         self.assertNotIn('"Field-identified (not expert verified)","Probable"',s)
     def test_species_cards_use_real_reviewed_attributes_without_lecture(self):
@@ -53,9 +53,9 @@ class RecorderPickerRC85(unittest.TestCase):
                       'wm size 960x2160','len(files)==6'):
             self.assertIn(value,wf)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 145",g)
+        self.assertIn("versionCode 146",g)
         self.assertIn("0.27.3-rc85-apo-recorder-species",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
-        self.assertIn('super(context,NAME,null,28)',
+        self.assertIn('super(context,NAME,null,29)',
                       read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 if __name__=="__main__":unittest.main()

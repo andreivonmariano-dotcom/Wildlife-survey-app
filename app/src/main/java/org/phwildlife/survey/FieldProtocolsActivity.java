@@ -366,7 +366,7 @@ public final class FieldProtocolsActivity extends Activity {
         for(EditText e:new EditText[]{substrate,temp,humidity,n,taxon,notes})form.addView(e);
         ScrollView view=new ScrollView(this);view.addView(form);
         AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Inspect "+board)
-            .setView(scrollForm(view)).setNegativeButton("Back",null).setPositiveButton("Save",null).create();
+            .setView(view).setNegativeButton("Back",null).setPositiveButton("Save",null).create();
         dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(w->{
                 if(!active()){toast("Survey is no longer active");return;}

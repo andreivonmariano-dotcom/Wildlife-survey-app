@@ -2357,7 +2357,7 @@ public class MainActivity extends Activity implements LocationListener {
         if(compactClockView!=null){
             String disclosure=statusDetailsPanel!=null&&
                 statusDetailsPanel.getVisibility()==View.VISIBLE?"Hide details":"More details";
-            String summary="Active "+timeFmt(activeElapsed/1000)+
+            String summary="Session excl. pauses "+timeFmt(activeElapsed/1000)+
                 (surveyPaused?" · PAUSED":"")+" · "+disclosure+"\n"+eventView.getText();
             compactClockView.setText(summary);
             compactClockView.setContentDescription(summary+

@@ -2209,6 +2209,7 @@ public class MainActivity extends Activity implements LocationListener {
         markedAt=System.currentTimeMillis();
         markedObserverFix=freshObserverFix();
         showMarkStatus();
+        updateTimelineDraftLabel();
         if(persistDraft(true)){
             vibrateIfEnabled(35);
             toast("Detection marked in unsaved draft");

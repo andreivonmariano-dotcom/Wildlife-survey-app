@@ -40,7 +40,8 @@ class RecorderPickerRC85(unittest.TestCase):
         for phrase in ('not proof of site presence','not probabilities',
                        'site compatibility is advisory','proof of absence'):
             self.assertNotIn(phrase,card)
-        self.assertIn('if(SpeciesSortPolicy.keep(filter,species.screening.label))',s)
+        self.assertIn('if(SpeciesSortPolicy.keep(filter,species.screening.label)&&',s)
+        self.assertIn('(!habitatShortlist||species.siteRelevance>0)',s)
         self.assertIn('if(paicCatalogActive&&surveyPreparation!=null&&siteSuggestions)',s)
         self.assertNotIn('if((!siteSuggestions||species.paicRank>0)',s)
         self.assertIn("taxon_synonyms",s)
@@ -53,8 +54,8 @@ class RecorderPickerRC85(unittest.TestCase):
                       'wm size 960x2160','len(files)==6'):
             self.assertIn(value,wf)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 146",g)
-        self.assertIn("0.27.3-rc86-apo-interactive-recorder",g)
+        self.assertIn("versionCode 147",g)
+        self.assertIn("0.27.3-rc87-apo-habitat-shortlist",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn('super(context,NAME,null,29)',
                       read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))

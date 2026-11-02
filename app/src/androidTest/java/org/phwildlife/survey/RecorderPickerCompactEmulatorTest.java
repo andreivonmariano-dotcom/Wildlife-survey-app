@@ -145,6 +145,62 @@ public final class RecorderPickerCompactEmulatorTest {
                 new int[]{408,154,99,53},actual);
         }
     }
+    @Test public void montaneContextHidesCoastalTernButAllSpeciesCanFindIt(){
+        try{
+            BundledPrivateReferences.ensureInstalled(
+                InstrumentationRegistry.getInstrumentation().getTargetContext());
+        }catch(Exception error){throw new AssertionError(error);}
+        Intent intent=new Intent(
+            InstrumentationRegistry.getInstrumentation().getTargetContext(),
+            SpeciesPickerActivity.class);
+        intent.putExtra("profile","Birds");
+        intent.putExtra("group","Birds");
+        intent.putExtra("geo_region","MINDANAO");
+        intent.putExtra("survey_id","RC87-MONTANE-EMULATOR");
+        intent.putExtra("habitat","montane forest");
+        try(ActivityScenario<SpeciesPickerActivity> scenario=ActivityScenario.launch(intent)){
+            scenario.onActivity(a->{
+                View root=a.getWindow().getDecorView();
+                View search=description(root,"Search offline species by");
+                assertTrue(search instanceof android.widget.AutoCompleteTextView);
+                ((android.widget.AutoCompleteTextView)search).setText("Aleutian Tern");
+                assertNotNull("Shortlist switch should be visible",
+                    text(root,"Habitat shortlist · Show all species"));
+            });
+            boolean excluded=false;
+            for(int attempt=0;attempt<30&&!excluded;attempt++){
+                InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+                final boolean[] done={false};
+                scenario.onActivity(a->done[0]=text(a.getWindow().getDecorView(),
+                    "No matching habitat guide labels")!=null);
+                excluded=done[0];
+                if(!excluded)try{Thread.sleep(300);}catch(InterruptedException e){
+                    Thread.currentThread().interrupt();break;
+                }
+            }
+            assertTrue("Coastal-only tern must be absent from montane shortlist",excluded);
+            scenario.onActivity(a->{
+                View toggle=text(a.getWindow().getDecorView(),
+                    "Habitat shortlist · Show all species");
+                assertNotNull(toggle);toggle.performClick();
+            });
+            boolean recovered=false;
+            for(int attempt=0;attempt<30&&!recovered;attempt++){
+                InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+                final boolean[] done={false};
+                scenario.onActivity(a->{
+                    View root=a.getWindow().getDecorView();
+                    done[0]=text(root,"Aleutian Tern")!=null&&
+                        text(root,"Select")!=null;
+                });
+                recovered=done[0];
+                if(!recovered)try{Thread.sleep(300);}catch(InterruptedException e){
+                    Thread.currentThread().interrupt();break;
+                }
+            }
+            assertTrue("All-species fallback must retain Aleutian Tern",recovered);
+        }
+    }
     @Test public void birdPickerSearchAndList(){verify("Birds","Birds");}
     @Test public void herpetofaunaPickerGroup(){verify("Herpetofauna","Amphibians");}
 }

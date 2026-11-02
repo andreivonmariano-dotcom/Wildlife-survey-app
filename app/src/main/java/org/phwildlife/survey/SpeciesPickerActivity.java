@@ -52,6 +52,8 @@ public final class SpeciesPickerActivity extends Activity {
     private SpeciesReferenceSuggestionAdapter nameSuggestions;
     private FieldDb suggestionDb;
     private Spinner groups,views,scope;
+    private Button shortlistToggle;
+    private boolean shortlistEnabled=true;
     private boolean archivedCatalogAvailable=false;
     private LinearLayout cards;
     private TextView status,siteSummary;
@@ -128,6 +130,7 @@ public final class SpeciesPickerActivity extends Activity {
         if(paicCatalogActive&&!surveyOptions.getBoolean(pref("order_v2"),false)&&
                 savedViewIndex==1)savedViewIndex=3;
         savedScopeIndex=checked(surveyOptions.getInt(pref("scope"),0),2);
+        shortlistEnabled=surveyOptions.getBoolean(pref("habitat_shortlist"),true);
         habitatCode=surveyOptions.getString(pref("habitat"),habitatCode);
         if(HabitatLikelihood.habitatIndex(habitatCode)==0)habitatCode="";
         elevationMode=checked(surveyOptions.getInt(visitPref("mode"),0),3);
@@ -142,6 +145,7 @@ public final class SpeciesPickerActivity extends Activity {
             .putBoolean(pref("order_v2"),true)
             .putInt(pref("view"),views==null?0:views.getSelectedItemPosition())
             .putInt(pref("scope"),scope==null?0:scope.getSelectedItemPosition())
+            .putBoolean(pref("habitat_shortlist"),shortlistEnabled)
             .putString(pref("habitat"),habitatCode)
             .putInt(visitPref("mode"),elevationMode)
             .putString(visitPref("elevation"),siteElevation==null?"":siteElevation.toString())
@@ -230,6 +234,14 @@ public final class SpeciesPickerActivity extends Activity {
         // Keep unidentified records visible without taking width from species search.
         LinearLayout unidentifiedRow=new LinearLayout(this);
         unidentifiedRow.setGravity(Gravity.END);
+        Button recent=UiKit.button(this,"Recent","quiet");
+        recent.setTextSize(13);
+        recent.setContentDescription("Search species names from recently saved field records");
+        LinearLayout.LayoutParams recentSpace=new LinearLayout.LayoutParams(-2,dp(48));
+        recentSpace.topMargin=dp(6);
+        recentSpace.rightMargin=dp(7);
+        unidentifiedRow.addView(recent,recentSpace);
+        recent.setOnClickListener(v->showRecentSearches());
         Button unknown=UiKit.button(this,"Unidentified","secondary");
         unknown.setTextSize(13);
         unknown.setContentDescription("Record an unidentified species");
@@ -255,13 +267,35 @@ public final class SpeciesPickerActivity extends Activity {
             .setPositiveButton("Edit conditions",(dialog,which)->openSiteConditions())
             .show());
         root.addView(quick);
+        shortlistToggle=UiKit.button(this,"Habitat shortlist","pond");
+        shortlistToggle.setTextSize(13);
+        shortlistToggle.setMinHeight(dp(56));
+        shortlistToggle.setSingleLine(false);
+        shortlistToggle.setContentDescription("Switch between habitat-guide shortlist and all catalog species");
+        LinearLayout.LayoutParams shortlistSpace=new LinearLayout.LayoutParams(-1,-2);
+        shortlistSpace.topMargin=dp(5);
+        root.addView(shortlistToggle,shortlistSpace);
+        shortlistToggle.setOnClickListener(v->{
+            shortlistEnabled=!shortlistEnabled;
+            savePickerSettings();
+            refresh();
+        });
         LinearLayout controls=new LinearLayout(this);
         controls.setOrientation(LinearLayout.VERTICAL);
         if(archivedCatalogAvailable){
             scope=new Spinner(this);
             scope.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"Mindanao PAIC (714)","Philippine catalog"}));
+                android.R.layout.simple_spinner_item,
+                new String[]{"Mindanao PAIC (714)","Philippine catalog"}){
+                @Override public View getView(int position,View convertView,
+                        android.view.ViewGroup parent){
+                    TextView selected=(TextView)super.getView(position,convertView,parent);
+                    selected.setText(position==0?"PAIC · 714":"Philippines");
+                    selected.setContentDescription(position==0?
+                        "Mindanao PAIC 714 species":"Archived Philippine catalog");
+                    return selected;
+                }
+            });
             controls.addView(text("Checklist",12,true));
             controls.addView(scope,new LinearLayout.LayoutParams(-1,dp(54)));
             scope.setSelection(savedScopeIndex);
@@ -339,6 +373,25 @@ public final class SpeciesPickerActivity extends Activity {
         });
         views.setOnItemSelectedListener(chosen);
         refresh();
+    }
+    /** Search-only convenience; never declares a new sighting or identity. */
+    private void showRecentSearches(){
+        String[] names;
+        try(FieldDb helper=new FieldDb(getApplicationContext())){
+            names=RecentTaxa.names(helper.getReadableDatabase(),currentGroup());
+        }
+        if(names.length==0){
+            status.setText("No saved species names for this wildlife group");
+            return;
+        }
+        new AlertDialog.Builder(this).setTitle("Recent field records")
+            .setItems(names,(dialog,which)->{
+                String label=names[which];
+                int separator=label.lastIndexOf(" · ");
+                search.setText(separator<0?label:label.substring(separator+3));
+                search.setSelection(search.length());
+            })
+            .setNegativeButton("Back",null).show();
     }
     private String currentGroup(){
         return availableGroups[Math.max(0,groups.getSelectedItemPosition())];
@@ -473,6 +526,7 @@ public final class SpeciesPickerActivity extends Activity {
                 }
                 elevationMode=selectedMode;
                 habitatCode=HabitatLikelihood.codeAt(site.getSelectedItemPosition());
+                shortlistEnabled=!habitatCode.isEmpty();
                 siteElevation=meters;elevationUncertainty=uncertainty;
                 savePickerSettings();
                 if(!surveyId.isEmpty()){
@@ -499,7 +553,7 @@ public final class SpeciesPickerActivity extends Activity {
         String key,group,common,scientific,family,origin,iucn,ph,source,version;
         String reviewedHabitats="",reviewedElevation="";
         String paicHabitat="",paicElevation="";
-        int paicRank=0;
+        int paicRank=0,siteRelevance=-1;
         int evidence;
         HabitatLikelihood.Result screening;
     }
@@ -586,6 +640,9 @@ public final class SpeciesPickerActivity extends Activity {
                         profileHabitats,strict,min,max,reviewed);
                     item.paicHabitat=string(c,16);
                     item.paicElevation=string(c,17);
+                    if(paicCatalogActive&&!broadCatalog)
+                        item.siteRelevance=PaicHabitatPolicy.siteHabitatRelevance(
+                            item.paicHabitat,siteCode);
                     if(paicCatalogActive&&!broadCatalog&&surveyPreparation!=null)
                         item.paicRank=PaicHabitatPolicy.ranking(item.paicHabitat,
                             item.paicElevation,PaicHabitatPolicy.decode(
@@ -612,6 +669,18 @@ public final class SpeciesPickerActivity extends Activity {
             views.getSelectedItemPosition():0,filter=statusFilter;
         sortMode=sorting;
         final String siteCode=habitatCode;
+        final boolean habitatShortlist=paicCatalogActive&&!broadCatalog&&
+            !siteCode.isEmpty()&&shortlistEnabled;
+        if(shortlistToggle!=null){
+            shortlistToggle.setVisibility(paicCatalogActive&&!broadCatalog&&
+                !siteCode.isEmpty()?View.VISIBLE:View.GONE);
+            shortlistToggle.setText(shortlistEnabled?
+                "Habitat shortlist · Show all species":
+                "All species · Show habitat shortlist");
+            shortlistToggle.setContentDescription(shortlistEnabled?
+                "Showing species with matching or broad habitat guide labels. Show all species":
+                "Showing all species. Filter to habitat-guide shortlist");
+        }
         final Double altitude=effectiveElevation(),uncertainty=effectiveUncertainty();
         offset=0;loaded=new ArrayList<>();truncated=false;
         cards.removeAllViews();
@@ -636,9 +705,14 @@ public final class SpeciesPickerActivity extends Activity {
                 if(capped)results=results.subList(0,MAX_QUERY_ROWS);
                 List<Species> filtered=new ArrayList<>();
                 for(Species species:results)
-                    if(SpeciesSortPolicy.keep(filter,species.screening.label))
+                    if(SpeciesSortPolicy.keep(filter,species.screening.label)&&
+                            (!habitatShortlist||species.siteRelevance>0))
                         filtered.add(species);
                 Collections.sort(filtered,(a,b)->{
+                    if(habitatShortlist){
+                        int relevance=Integer.compare(b.siteRelevance,a.siteRelevance);
+                        if(relevance!=0)return relevance;
+                    }
                     if(paicCatalogActive&&surveyPreparation!=null&&siteSuggestions){
                         int rank=Integer.compare(b.paicRank,a.paicRank);
                         if(rank!=0)return rank;
@@ -688,6 +762,9 @@ public final class SpeciesPickerActivity extends Activity {
         offset=stop;
         String region=island(geographicRegion);
         status.setText(offset+" / "+loaded.size()+" species"+
+            (paicCatalogActive&&!habitatCode.isEmpty()&&shortlistEnabled&&
+                (scope==null||scope.getSelectedItemPosition()==0)?
+                " · habitat shortlist":"")+
             (region.isEmpty()?"":" · "+region)+
             (truncated?" · refine search":"")+
             (siteSortLabel())+
@@ -701,7 +778,10 @@ public final class SpeciesPickerActivity extends Activity {
                 appendPage();
             });
         }else if(offset==0){
-            cards.addView(text("No matches · change the search or filters",14,false));
+            cards.addView(text(shortlistEnabled&&!habitatCode.isEmpty()&&
+                paicCatalogActive&&(scope==null||scope.getSelectedItemPosition()==0)?
+                "No matching habitat guide labels. Choose Show all species to inspect other taxa.":
+                "No matches · change the search or filters",14,false));
         }
     }
     /** Show field-useful taxonomy and available conservation/ecology data first. */
@@ -751,6 +831,13 @@ public final class SpeciesPickerActivity extends Activity {
             TextView source=text(OccurrenceEvidencePolicy.title(item.evidence),12,false);
             source.setTextColor(UiKit.FOREST);
             card.addView(source);
+        }
+        if(paicCatalogActive&&!habitatCode.isEmpty()&&item.siteRelevance>0){
+            TextView siteLabel=text(item.siteRelevance==2?
+                "Observed habitat · named in guide":
+                "Observed habitat · broad guide category",12,true);
+            siteLabel.setTextColor(UiKit.FOREST);
+            card.addView(siteLabel);
         }
         if(item.paicRank>0&&paicCatalogActive){
             TextView match=text("Habitat / elevation overlap",12,true);

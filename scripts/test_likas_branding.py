@@ -86,7 +86,8 @@ class LikasBrandingSmokeTest(unittest.TestCase):
         self.assertIn('endSurveyButton=UiKit.button(this,"End Survey"', recording)
         self.assertIn('footerOptions.addView(endSurveyButton,endParams)', recording)
         self.assertIn('root.addView(footer)', recording)
-        self.assertIn('footer.addView(saveButton,new LinearLayout.LayoutParams(-1,dp(', recording)
+        self.assertIn('footer.addView(saveButton,new LinearLayout.LayoutParams(-1,-2))', recording)
+        self.assertIn('saveButton.setMinHeight(dp(FieldLayoutPolicy.saveHeightDp(', recording)
         self.assertIn('FieldLayoutPolicy.saveHeightDp(', recording)
         for item in ("Finish Complete", "End Incomplete", "Cancel Survey"):
             self.assertIn(item, recording)

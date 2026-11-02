@@ -26,6 +26,9 @@ public final class TrapProtocolActivity extends Activity {
     private LinearLayout rows;
     private String eventId,method="",station="";
     private int dp(int x){return Math.round(getResources().getDisplayMetrics().density*x);}
+    private ScrollView scrollForm(LinearLayout content){
+        ScrollView scroll=new ScrollView(this);scroll.addView(content);return scroll;
+    }
     private LinearLayout column(){
         LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;
     }
@@ -203,7 +206,7 @@ public final class TrapProtocolActivity extends Activity {
         if("drift_fence_check".equals(method))form.addView(length);
         form.addView(notes);
         AlertDialog dialog=new AlertDialog.Builder(this)
-            .setTitle("Register deployment").setView(form)
+            .setTitle("Register deployment").setView(scrollForm(form))
             .setNegativeButton("Cancel",null).setPositiveButton("Deploy",null).create();
         dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(w->{
@@ -250,7 +253,7 @@ public final class TrapProtocolActivity extends Activity {
         EditText notes=field("Battery, memory, trap condition, weather, observer notes",false);
         form.addView(notes);
         AlertDialog d=new AlertDialog.Builder(this).setTitle("Inspect "+device)
-            .setView(form).setNegativeButton("Cancel",null)
+            .setView(scrollForm(form)).setNegativeButton("Cancel",null)
             .setPositiveButton("Save check",null).create();
         d.setOnShowListener(v->d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(w->{
             int n=0;
@@ -309,7 +312,7 @@ public final class TrapProtocolActivity extends Activity {
         EditText notes=field("Condition, measurements and release notes",false);
         form.addView(taxon);form.addView(tag);form.addView(fate);form.addView(notes);
         AlertDialog dialog=new AlertDialog.Builder(this)
-            .setTitle("Log inspected animal (time recorded now)").setView(form)
+            .setTitle("Log inspected animal (time recorded now)").setView(scrollForm(form))
             .setNegativeButton("Cancel",null).setPositiveButton("Save capture",null).create();
         dialog.setOnShowListener(v->dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(w->{

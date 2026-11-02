@@ -16,7 +16,8 @@ import java.util.Locale;
 public final class HabitatRecordsActivity extends Activity {
     private FieldDb helper;
     private LinearLayout items;
-    private Button guideTab,recordsTab;
+    private Button guideTab,recordsTab,researchToggle;
+    private LinearLayout researchTools;
     private int selectedTab=0;
     private boolean largeText;
     private String habitatGroup="All habitats";
@@ -64,11 +65,11 @@ public final class HabitatRecordsActivity extends Activity {
         other.leftMargin=dp(8);
         tabs.addView(recordsTab,other);
         root.addView(tabs,new LinearLayout.LayoutParams(-1,dp(tabHeight)));
-        Button researchToggle=UiKit.button(this,largeText?
+        researchToggle=UiKit.button(this,largeText?
             "Research tools  ▾":"Habitat research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand source-linked habitat comparisons and species associations");
         // The research disclosure moves into the scrolling area with its content.
-        LinearLayout researchTools=new LinearLayout(this);
+        researchTools=new LinearLayout(this);
         researchTools.setOrientation(LinearLayout.VERTICAL);
         researchTools.setVisibility(android.view.View.GONE);
         // Research controls scroll with the habitat cards, not as a fixed tall header.
@@ -137,6 +138,9 @@ public final class HabitatRecordsActivity extends Activity {
     private void render(){
         if(items==null)return;
         items.removeAllViews();
+        researchToggle.setVisibility(selectedTab==0?
+            android.view.View.VISIBLE:android.view.View.GONE);
+        if(selectedTab!=0)researchTools.setVisibility(android.view.View.GONE);
         guideTab.setSelected(selectedTab==0);
         recordsTab.setSelected(selectedTab==1);
         guideTab.setContentDescription(selectedTab==0?

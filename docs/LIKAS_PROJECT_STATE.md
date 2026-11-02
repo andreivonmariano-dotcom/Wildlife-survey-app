@@ -1,3 +1,11 @@
+## 2026-11-02 | BioTools Android 14 emulator validation and further navigation safeguards
+
+- **Working branch:** `feature/likas-biotools-navigation-audit-20261102`, draft PR #95, derived from RC49 code109, SQLite schema27. **No installable APK has been published** and this older branch must not replace RC51 code111.
+- **Confirmed real emulator:** GitHub Actions `41444816304` passed **6/6 Android 14 instrumentation tests**, with 360 dp screen, direct header and Android Back events, synthetic archived survey fixtures, and checked recorder footer actions. Source `2adf10875e8bf8a944019c53a78eba4fb8dce70b`. Uploaded evidence artifact ID `13141622013`. Runtime exception log empty. This is NOT a physical phone upgrade test.
+- **Deeper fixes:** Shared UI Back labels no longer announce “Back to Back.” Audio record/review screen uses a unified Back routine that blocks leaving during WAV/metadata saving. Companion Python source regression assertion updated. Survey outcomes/data schema untouched.
+- **Visual QA issue:** 3 of 7 first-pass screenshots captured blank new screens because test harness made a capture mid-redraw, while functional screen assertions passed. Delayed screenshots to next layout frame; expanded test suite adds Home/Fieldwork/Birds setup return, audio library navigation, real 200%-font recorder. This expanded 8-test run is unverified until newest workflow finishes. An intermediate 8-test compilation failed due an undeclared checked IOException in the font-scale test and was corrected.
+- **Still open:** End Survey Complete/Incomplete/Not Counted through dialogs, on-device GPS preflight, actual mic file persistence, all method-specific buttons/dialogs, real data upgrade/recovery and handset accessibility. No production records were modified. Detailed navigation matrix `docs/LIKAS_BIOTOOLS_NAVIGATION_AUDIT_2026_11_02.md`.
+
 ## 2026-11-02 | BioTools survey-navigation audit (review branch, no APK)
 
 - **User direction:** audit the BioTools survey setup, recorder, history, progress, protocols, device records and connected screens, checking where every navigation button leads and removing wrong Back destinations and redundant controls.

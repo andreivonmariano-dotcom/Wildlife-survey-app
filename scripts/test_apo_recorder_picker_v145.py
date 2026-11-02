@@ -10,7 +10,7 @@ class RecorderPickerRC85(unittest.TestCase):
                       '!method.equals("line_transect")&&!method.equals("ves_transect")',
                       'recorderTools.setVisibility(View.GONE)',
                       '"Field tools":"Field tools"',
-                      'FieldVisuals.section(this,"Record observation",null)',
+                      'FieldVisuals.section(this,"Observation",null)',
                       'UiKit.button(this,"Species list","secondary")',
                       'UiKit.button(this,"Save Observation","primary")',
                       'UiKit.button(this,"End Survey","outline-danger")',
@@ -19,6 +19,8 @@ class RecorderPickerRC85(unittest.TestCase):
             self.assertIn(token,s)
         self.assertLess(s.index('content.addView(speciesRow)'),s.index('content.addView(countLine)'))
         self.assertLess(s.index('content.addView(photoRow)'),s.index('content.addView(birdQuick)'))
+        self.assertIn('content.removeView(recorderTools)',s)
+        self.assertIn('compactObservationFirst)methodRow.setVisibility(View.GONE)',s)
         self.assertIn('confidenceSpinner.getSelectedItemPosition()==0?',s)
         self.assertIn('"Field-identified (not expert verified)"',s) # canonical saved label
         self.assertNotIn('"Field-identified (not expert verified)","Probable"',s)

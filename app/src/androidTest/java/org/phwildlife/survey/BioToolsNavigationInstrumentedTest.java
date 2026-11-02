@@ -22,6 +22,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -35,6 +37,7 @@ import static org.junit.Assert.*;
  * No database reset, no deletion of user projects, no mock GPS fixes.
  */
 @RunWith(AndroidJUnit4.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public final class BioToolsNavigationInstrumentedTest {
     private static final Instrumentation INSTR =
         InstrumentationRegistry.getInstrumentation();
@@ -111,6 +114,50 @@ public final class BioToolsNavigationInstrumentedTest {
             .rawQuery("SELECT COUNT(*) FROM surveys WHERE id=?",new String[]{id})){
             assertTrue(c.moveToFirst());return c.getInt(0)==1;
         }
+    }
+
+
+    @Test public void aWelcomeFieldworkSetupAndBackStayInCorrectHierarchy(){
+        Intent home=new Intent(APP,WelcomeActivity.class).putExtra("show_menu",true);
+        try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(home)){
+            scenario.onActivity(a->{
+                described(a,"Open Fieldwork. Surveys · Data · History").performClick();
+                assertTrue(contains(a,"New survey"));
+                described(a,"Open Birds. Counts · Transects").performClick();
+                assertTrue("Bird setup opened",contains(a,"Point count duration (minutes)"));
+                assertTrue(contains(a,"Continue to GPS"));
+            });
+            INSTR.waitForIdleSync();
+            scenario.onActivity(a->{
+                snapshot(a,"survey_setup_360dp");
+                a.onBackPressed();
+                assertTrue("Setup Back returns to Fieldwork",contains(a,"New survey"));
+            });
+            INSTR.waitForIdleSync();
+            scenario.onActivity(a->{
+                snapshot(a,"fieldwork_hub");
+                a.onBackPressed();
+                assertTrue("Fieldwork Back returns to Home",contains(a,"Fieldwork"));
+            });
+        }
+    }
+
+    @Test public void bAudioLibraryHeaderAndAndroidBackBothExitToCaller(){
+        String id=fixture("amphibian_calls","Herpetofauna","incomplete");
+        Intent launch=new Intent(APP,CallLibraryActivity.class).putExtra("event_id",id);
+        try(ActivityScenario<CallLibraryActivity> scenario=ActivityScenario.launch(launch)){
+            scenario.onActivity(a->{
+                assertTrue(contains(a,"Sound recordings"));
+                snapshot(a,"audio_library");
+                described(a,"Back to previous screen").performClick();
+                assertTrue("header Back exits read-only audio library",a.isFinishing());
+            });
+        }
+        try(ActivityScenario<CallLibraryActivity> scenario=ActivityScenario.launch(launch)){
+            INSTR.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+            INSTR.waitForIdleSync();
+        }
+        assertEquals("incomplete",outcome(id));
     }
 
     @Test public void historyHeaderAndAndroidBackReturnToSameSurveyList() {
@@ -263,12 +310,15 @@ public final class BioToolsNavigationInstrumentedTest {
         assertEquals("incomplete",outcome(id));
     }
 
-    @Test public void recorderActionsAnd200PercentFontDoNotClipEndSurvey(){
+    @Test public void zRecorderActionsAnd200PercentFontDoNotClipEndSurvey(){
         Intent intent=new Intent(APP,MainActivity.class)
             .putExtra("create_new",true).putExtra("survey_profile","Birds")
             .putExtra("survey_method","opportunistic")
             .putExtra("start_without_gps",true)
             .putExtra("observer_name","BIOTOOLS-NAV-RECORDER");
+        try(android.os.ParcelFileDescriptor fd=INSTR.getUiAutomation()
+                .executeShellCommand("settings put system font_scale 2.0")){}
+        SystemClock.sleep(750);
         try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(intent)){
             scenario.onActivity(a->{
                 Button end=button(a,"End Survey");
@@ -279,8 +329,11 @@ public final class BioToolsNavigationInstrumentedTest {
                 Rect bounds=new Rect();
                 assertTrue(end.getGlobalVisibleRect(bounds));
                 assertTrue("End Survey not clipped",bounds.height()>=end.getHeight()-2);
-                snapshot(a,"recorder_360dp");
+                snapshot(a,"recorder_360dp_200percent");
             });
+        }finally{
+            try(android.os.ParcelFileDescriptor fd=INSTR.getUiAutomation()
+                    .executeShellCommand("settings put system font_scale 1.0")){}
         }
         // No synthetic observations deleted; leave any active fixture on the disposable image
         // for emulator log inspection, not as a production survey.

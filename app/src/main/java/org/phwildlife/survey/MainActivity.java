@@ -576,7 +576,7 @@ public class MainActivity extends Activity implements LocationListener {
         directActions.addView(markTime,stackCaptureActions?
             new LinearLayout.LayoutParams(-1,dp(touchDp)):
             new LinearLayout.LayoutParams(0,dp(touchDp),1));
-        if(compactObservationFirst){
+        if(true){
             utilityRow.removeView(pauseButton);
             LinearLayout.LayoutParams pauseLp=stackCaptureActions?
                 new LinearLayout.LayoutParams(-1,dp(touchDp)):
@@ -596,16 +596,9 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(directActions);
         recorderTools.removeView(markRowView);
         content.addView(markRowView,new LinearLayout.LayoutParams(-1,-2));
-        // The field toolkit is secondary to recording, even on point counts.
-        if(compactObservationFirst&&toolsDisclosure[0]!=null){
-            content.removeView(toolsDisclosure[0]);
-            content.removeView(recorderTools);
-            content.addView(toolsDisclosure[0]);
-            content.addView(recorderTools);
-        }else{
-            content.removeView(recorderTools);
-            content.addView(recorderTools);
-        }
+        // Move advanced survey tools after the short observation form.
+        content.removeView(recorderTools);
+        if(toolsDisclosure[0]!=null)content.removeView(toolsDisclosure[0]);
         showMarkStatus();
 
 
@@ -753,6 +746,8 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setAdjustViewBounds(true);
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
+        if(toolsDisclosure[0]!=null)content.addView(toolsDisclosure[0]);
+        content.addView(recorderTools);
         LinearLayout birdQuick=vertical();
         birdMeasurements=vertical();
         distanceSourceSpinner=new Spinner(this);

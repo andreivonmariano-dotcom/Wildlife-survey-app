@@ -167,19 +167,29 @@ public final class HabitatsSpeciesActivity extends Activity {
         setContentView(page);
         updateMap();
         renderHabitats();
+        updateChecklistButton();
         refreshSpecies();
+    }
+    private void updateChecklistButton(){
+        if(checklistButton==null||checklistMode==null)return;
+        checklistButton.setText(checklistMode.getCheckedRadioButtonId()==3001?
+            "Checklist: Suggested first":"Checklist: All species");
+    }
+    private void updateSelectedSummary(){
+        if(selectedSummary==null)return;
+        selectedSummary.setText(confirmed.isEmpty()?"No habitats confirmed":
+            confirmed.size()+" habitat"+(confirmed.size()==1?"":"s")+" confirmed");
     }
     private void refreshSite(){
         boolean missing=getIntent().getBooleanExtra("start_without_gps",false);
         String coords=missing||!Double.isFinite(preflightLat)||!Double.isFinite(preflightLon)?
-            "Survey starting GPS not recorded":
-            String.format(Locale.US,"Starting GPS %.6f, %.6f · ±%.1f m",
-                preflightLat,preflightLon,
-                getIntent().getFloatExtra("start_gps_accuracy_m",Float.NaN));
+            "Start GPS: missing":
+            String.format(Locale.US,"Start GPS: %.6f, %.6f",
+                preflightLat,preflightLon);
         GpsElevation.Sample altitude=GpsElevation.read(TrackService.currentFix());
         String height=altitude.usableForHabitat?
-            altitude.label():"MSL elevation not available for site screening";
-        siteSummary.setText(coords+"\n"+height);
+            altitude.label():"MSL elevation unavailable";
+        siteSummary.setText(coords+" · "+height);
     }
     private void pickMap(){
         Intent select=new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -210,47 +220,45 @@ public final class HabitatsSpeciesActivity extends Activity {
         suggested=new ArrayList<>();
         if(getIntent().getBooleanExtra("start_without_gps",false)||
             !Double.isFinite(preflightLat)||!Double.isFinite(preflightLon)){
-            mapSummary.setText("GPS not recorded. Map suggestions unavailable; select habitats manually.");
+            mapSummary.setText("No GPS · choose habitats manually");
             return;
         }
         if(!PaicLandCoverPack.installed(this)){
-            mapSummary.setText("No offline map file installed. Import the optional "+
-                "WorldCover 2020 land-cover file, or select habitats manually.");
+            mapSummary.setText("Map unavailable · choose habitats manually");
             return;
         }
         try{
             suggested=PaicLandCoverPack.suggest(this,preflightLat,preflightLon);
             mapSummary.setText(suggested.isEmpty()?
-                "No reliably mapped habitat classes near this location. Choose manually.":
-                "Nearby mapped classes around your GPS starting point (about 2.5 km across). "+
-                "Map resolution is generalized to ~500 m; land cover may have changed since 2020.");
+                "No mapped classes · choose manually":
+                "2020 map suggestions · ~500 m resolution · verify in field");
         }catch(Exception e){
-            mapSummary.setText("Map cannot be read; select habitats manually.");
+            mapSummary.setText("Map unreadable · choose manually");
             suggested.clear();
         }
     }
     private void renderHabitats(){
         if(checks==null)return;
         checks.removeAllViews();
+        updateSelectedSummary();
         if(!suggested.isEmpty()){
             for(String name:suggested)addCheck(name,true);
         }
         Button browse=UiKit.button(this,othersVisible?"Hide other habitats":
-            "Browse all 16 habitats","secondary");
+            "All habitats (16)","secondary");
         browse.setOnClickListener(v->{othersVisible=!othersVisible;renderHabitats();});
         checks.addView(browse,new LinearLayout.LayoutParams(-1,dp(52)));
         for(String name:PaicHabitatPolicy.HABITATS)
             if(!suggested.contains(name)&&(othersVisible||confirmed.contains(name)))
                 addCheck(name,false);
         if(suggested.isEmpty()&&!othersVisible){
-            TextView noMap=label("Choose Browse all 16 habitats to make manual "+
-                "selections. You can continue with no habitat recorded.",13,false);
+            TextView noMap=label("Optional · no selection also allowed",12,false);
             checks.addView(noMap);
         }
     }
     private void addCheck(String name,boolean fromMap){
         CheckBox check=new CheckBox(this);
-        check.setText(name+(fromMap?" · mapped suggestion":""));
+        check.setText(name);
         check.setTextColor(UiKit.INK);check.setTextSize(15);
         check.setMinHeight(dp(52));check.setPadding(dp(6),dp(4),dp(6),dp(4));
         check.setChecked(confirmed.contains(name));
@@ -258,6 +266,7 @@ public final class HabitatsSpeciesActivity extends Activity {
             ". Suggested from historical satellite land cover, not field confirmed.":""));
         check.setOnCheckedChangeListener((b,selected)->{
             if(selected)confirmed.add(name);else confirmed.remove(name);
+            updateSelectedSummary();
             refreshSpecies();
         });
         checks.addView(check);
@@ -278,9 +287,7 @@ public final class HabitatsSpeciesActivity extends Activity {
                 if(master.moveToFirst())installed=master.getInt(0);
             }
             if(installed!=714){
-                speciesSummary.setText("Activate the private 714-species Mindanao PAIC "+
-                    "catalog in Species Library to enable site-matched suggestions. "+
-                    "You can continue without it.");
+                speciesSummary.setText("Site matching unavailable · full checklist remains accessible");
                 return;
             }
             // The master attributes are installed privately, separately from the app APK.
@@ -297,17 +304,13 @@ public final class HabitatsSpeciesActivity extends Activity {
                 }
             }
         }catch(Exception e){
-            speciesSummary.setText("Activate the 714-species private checklist in "+
-                "Species Library before expecting site-matched suggestions.");
+            speciesSummary.setText("Site matching unavailable · full checklist remains accessible");
             return;
         }
         boolean ranked=checklistMode.getCheckedRadioButtonId()==3001;
         speciesSummary.setText(ranked?
-            match+" of "+total+" "+profile.toLowerCase(Locale.US)+
-                " references match at least one available habitat/elevation criterion. "+
-                "Matching is not a presence prediction. All "+total+" remain available.":
-            "Full "+profile.toLowerCase(Locale.US)+" reference list: "+total+
-                " species. No species will be hidden by habitat or elevation.");
+            match+" / "+total+" references match habitat or elevation criteria":
+            total+" references · no site sorting");
     }
     private void beginSurvey(){
         if(preparing)return;

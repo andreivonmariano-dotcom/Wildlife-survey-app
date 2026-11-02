@@ -89,12 +89,12 @@ jobs:
             adb shell pm grant org.phwildlife.survey.beta08 android.permission.ACCESS_FINE_LOCATION
             adb shell pm grant org.phwildlife.survey.beta08 android.permission.ACCESS_COARSE_LOCATION
             gradle --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.RecorderUiEmulatorTest
-            adb pull /sdcard/Pictures/APO/apo_recorder_emulator.png emulator-evidence/recorder_160pct.png
+            adb pull /sdcard/Pictures/APO/apo_recorder_160pct.png emulator-evidence/recorder_160pct.png
             adb shell wm size 960x2160
             adb shell settings put system font_scale 2.0
             gradle --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.phwildlife.survey.RecorderUiEmulatorTest
-            adb pull /sdcard/Pictures/APO/apo_recorder_emulator.png emulator-evidence/recorder_200pct_320dp.png
-            python3 -c "import pathlib,struct; files=list(pathlib.Path('emulator-evidence').glob('*.png')); assert len(files)==2, files; [(lambda d: (d.startswith(bytes.fromhex('89504e470d0a1a0a')) and len(d)>20000 and struct.unpack('>II',d[16:24])[0]>=900) or (_ for _ in ()).throw(AssertionError('Bad emulator image')))(p.read_bytes()) for p in files]; print('Verified two font-size emulator screenshots')"
+            adb pull /sdcard/Pictures/APO/apo_recorder_200pct_320dp.png emulator-evidence/recorder_200pct_320dp.png
+            python3 -c "import pathlib,struct,hashlib; a=pathlib.Path('emulator-evidence/recorder_160pct.png').read_bytes(); b=pathlib.Path('emulator-evidence/recorder_200pct_320dp.png').read_bytes(); assert len(a)>20000 and len(b)>20000 and a[:8]==bytes.fromhex('89504e470d0a1a0a') and b[:8]==a[:8]; w1,h1=struct.unpack('>II',a[16:24]); w2,h2=struct.unpack('>II',b[16:24]); assert w1>=1000 and w2>=900 and w2<w1 and h2>=1200,(w1,h1,w2,h2); assert hashlib.sha256(a).digest()!=hashlib.sha256(b).digest(),'Identical screenshots from different configurations'; print('Verified distinct emulator screenshots',w1,h1,w2,h2)"
       - name: Upload emulator screenshot evidence
         if: always()
         uses: actions/upload-artifact@v4

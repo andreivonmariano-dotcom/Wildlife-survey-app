@@ -60,7 +60,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         recorder=src("MainActivity.java")
         self.assertIn("UiKit.fieldInput(this,e);return e;",recorder)
         self.assertIn("UiKit.fieldInput(this,taxonEntry)",recorder)
-        self.assertIn('taxonEntry.setHint("Species or field ID")',recorder)
+        self.assertIn('taxonEntry.setHint("Species")',recorder)
         self.assertIn("Math.max(56,FieldLayoutPolicy.actionHeightDp(",recorder)
         self.assertIn("getResources().getConfiguration().screenWidthDp",recorder)
         self.assertIn("boolean stackCaptureActions=FieldLayoutPolicy.stackPortalPair(",recorder)

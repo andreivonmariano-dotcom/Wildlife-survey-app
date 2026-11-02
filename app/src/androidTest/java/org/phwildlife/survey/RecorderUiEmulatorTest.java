@@ -71,13 +71,25 @@ public final class RecorderUiEmulatorTest {
                 assertTrue("End Survey must stay visible",end.isShown());
                 assertTrue("Save must remain visible",save.isShown());
                 assertTrue("End Survey should be enabled in a running survey",end.isEnabled());
+                View speciesList=findText(root,"Species list");
+                View countLabel=findText(root,"Individuals");
+                assertNotNull("Species picker entry remains discoverable",speciesList);
+                assertNotNull("Individual count remains available",countLabel);
+                int[] speciesY=new int[2],saveY=new int[2],countY=new int[2];
+                speciesList.getLocationOnScreen(speciesY);
+                countLabel.getLocationOnScreen(countY);
+                save.getLocationOnScreen(saveY);
+                assertTrue("Species picker button should be above fixed Save footer",
+                    speciesY[1]>=0&&speciesY[1]+speciesList.getHeight()<=saveY[1]);
+                assertTrue("Individuals should be above fixed Save footer",
+                    countY[1]>=0&&countY[1]+countLabel.getHeight()<=saveY[1]);
                 View samplingTools=findText(root,"Sampling session");
                 View detectionTools=findText(root,"Detection tools");
                 assertNotNull("Session section missing",samplingTools);
                 assertNotNull("Detection section missing",detectionTools);
                 if(activity.getResources().getConfiguration().fontScale>=1.60f){
-                    View compactClock=findContainingText(root,"More details");
-                    View compactGps=findContainingText(root,"Start GPS unverified");
+                    View compactClock=findContainingText(root,ultraLarge?"Time ":"More details");
+                    View compactGps=findContainingText(root,ultraLarge?"Start GPS missing":"Start GPS unverified");
                     assertNotNull("Compact timing control missing",compactClock);
                     assertNotNull("Explicit survey-start GPS warning missing",compactGps);
                     assertTrue("Timing should be visible",compactClock.isShown());
@@ -90,7 +102,7 @@ public final class RecorderUiEmulatorTest {
                     compactClock.performClick();
                     assertFalse("Detail should collapse",hiddenClock.isShown());
                     View disclosure=findText(root,ultraLarge?
-                        "Sampling & detection tools":"Show sampling & detection tools");
+                        "Field tools":"Field tools");
                     assertNotNull("Compact survey-tool disclosure missing",disclosure);
                     assertTrue("Survey tools disclosure should be visible",disclosure.isShown());
                     assertFalse("Nonessential survey tools must begin collapsed",samplingTools.isShown());

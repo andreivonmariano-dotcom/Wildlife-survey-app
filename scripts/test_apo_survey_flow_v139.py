@@ -10,11 +10,11 @@ def read(path):
 class RecorderFlowRC79(unittest.TestCase):
     def test_large_type_observation_first_without_hiding_station_methods(self):
         s=read("app/src/main/java/org/phwildlife/survey/MainActivity.java")
-        self.assertIn('compactObservationFirst=largeText&&!hasStationUnits()',s)
+        self.assertIn('compactObservationFirst=!hasStationUnits()',s)
         self.assertIn('!method.equals("line_transect")&&!method.equals("ves_transect")',s)
         self.assertIn('recorderTools.setVisibility(View.GONE)',s)
         self.assertIn('revealTools.setOnClickListener',s)
-        self.assertLess(s.index('content.addView(revealTools'),s.index('FieldVisuals.section(this,"Record observation"'))
+        self.assertLess(s.index('content.addView(revealTools'),s.index('FieldVisuals.section(this,"Observation"'))
         self.assertIn('pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE)',s)
 
     def test_two_column_footer_still_has_persistent_end(self):
@@ -45,8 +45,8 @@ class RecorderFlowRC79(unittest.TestCase):
                          "End Survey should fit within viewport"):
             self.assertIn(fragment,test)
         gradle=read("app/build.gradle")
-        self.assertIn("versionCode 144",gradle)
-        self.assertIn("versionName '0.27.3-rc84-apo-habitats-checklist'",gradle)
+        self.assertIn("versionCode 145",gradle)
+        self.assertIn("versionName '0.27.3-rc85-apo-recorder-species'",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn('super(context,NAME,null,28)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 

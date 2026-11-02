@@ -112,8 +112,7 @@ class CoreEvidenceTests(unittest.TestCase):
 
     def test_unknown_locality_is_never_reported_as_absence(self):
         self.assertIn("onlyLocal&&province.trim().isEmpty()&&island(geographicRegion).isEmpty()",PICKER)
-        self.assertIn("This does not mean species are absent.",PICKER)
-        self.assertIn("Use All species or set the geographic survey area.",PICKER)
+        self.assertIn("Switch to All species or set a survey region.",PICKER)
 
     def test_regional_empty_and_large_results_are_honest(self):
         self.assertIn("LIMIT 1001", REGIONAL)

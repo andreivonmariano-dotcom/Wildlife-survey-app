@@ -330,8 +330,10 @@ public class MainActivity extends Activity implements LocationListener {
         // At enlarged text, methods without station-dependent effort can
         // open directly onto the observation form. Survey tools remain one tap
         // away; station-based and GPS-transect controls stay expanded.
-        final boolean compactObservationFirst=largeText&&!hasStationUnits()&&
+        final boolean compactObservationFirst=!hasStationUnits()&&
             !method.equals("line_transect")&&!method.equals("ves_transect");
+        if(compactObservationFirst)methodRow.setVisibility(View.GONE);
+        final Button[] toolsDisclosure={null};
         LinearLayout recorderTools=vertical();
         recorderTools.addView(UiKit.sectionTitle(this,"Sampling session"));
         LinearLayout utilityRow=horizontal();
@@ -352,7 +354,7 @@ public class MainActivity extends Activity implements LocationListener {
         pauseButton.setOnClickListener(v->togglePause());
         progressButton.setOnClickListener(v->openProgress());
         vibrationChoice=new CheckBox(this);
-        vibrationChoice.setText("Vibrate near interval end (optional)");
+        vibrationChoice.setText("Vibrate near interval end");
         vibrationChoice.setTextSize(12);
         vibrationChoice.setChecked(getSharedPreferences("field_prefs",MODE_PRIVATE).getBoolean("vibrate_warnings",false));
         vibrationChoice.setOnCheckedChangeListener((button,enabled)->
@@ -388,11 +390,11 @@ public class MainActivity extends Activity implements LocationListener {
         recorderTools.addView(UiKit.sectionTitle(this,"Detection tools"));
         LinearLayout detectRow=horizontal();
         if(stackCaptureActions)detectRow.setOrientation(LinearLayout.VERTICAL);
-        Button markTime=UiKit.button(this,"Mark detection","secondary");
+        Button markTime=UiKit.button(this,"Mark time","secondary");
         markTime.setContentDescription("Mark sighting time and available fresh observer GPS without saving an observation");
         detectRow.addView(markTime,stackCaptureActions?
             new LinearLayout.LayoutParams(-1,dp(touchDp)):weighted(0.9f));
-        markButton=UiKit.button(this,"Measure bearing","secondary");
+        markButton=UiKit.button(this,"Bearing","secondary");
         markButton.setContentDescription("Open sighting camera to capture detection bearing and pitch");
         LinearLayout.LayoutParams bearingLp=stackCaptureActions?
             new LinearLayout.LayoutParams(-1,dp(touchDp)):weighted(1.1f);
@@ -461,7 +463,7 @@ public class MainActivity extends Activity implements LocationListener {
             optionalMethod[0]=methodRecords;
             methodRecords.setOnClickListener(v->openFieldProtocol());
         }
-        Button evidenceToggle=UiKit.button(this,"Other evidence tools  ▾","quiet");
+        Button evidenceToggle=UiKit.button(this,"More tools  ▾","quiet");
         evidenceToggle.setContentDescription("Show other evidence capture tools");
         LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,-2);
         evidenceLp.topMargin=dp(7);
@@ -470,8 +472,8 @@ public class MainActivity extends Activity implements LocationListener {
         evidenceToggle.setOnClickListener(v->{
             boolean open=evidenceTools.getVisibility()!=View.VISIBLE;
             evidenceTools.setVisibility(open?View.VISIBLE:View.GONE);
-            evidenceToggle.setText(open?"Other evidence tools  ▴":
-                "Other evidence tools  ▾");
+            evidenceToggle.setText(open?"More tools  ▴":
+                "More tools  ▾");
             evidenceToggle.setContentDescription(open?
                 "Hide other evidence capture tools":"Show other evidence capture tools");
         });
@@ -536,12 +538,13 @@ public class MainActivity extends Activity implements LocationListener {
         if(compactObservationFirst){
             boolean veryLargeText=getResources().getConfiguration().fontScale>=1.9f;
             Button revealTools=UiKit.button(this,veryLargeText?
-                "Sampling & detection tools":"Show sampling & detection tools","secondary");
+                "Field tools":"Field tools","secondary");
             if(veryLargeText){
                 revealTools.setMinHeight(dp(56));
                 revealTools.setPadding(dp(7),dp(4),dp(7),dp(4));
             }
             revealTools.setContentDescription("Show sampling and detection tools");
+            toolsDisclosure[0]=revealTools;
             content.addView(revealTools,new LinearLayout.LayoutParams(-1,-2));
             recorderTools.setVisibility(View.GONE);
             content.addView(recorderTools);
@@ -549,14 +552,13 @@ public class MainActivity extends Activity implements LocationListener {
                 boolean expanded=recorderTools.getVisibility()!=View.VISIBLE;
                 recorderTools.setVisibility(expanded?View.VISIBLE:View.GONE);
                 revealTools.setText(veryLargeText?
-                    (expanded?"Hide tools":"Sampling & detection tools"):
-                    (expanded?"Hide sampling & detection tools":"Show sampling & detection tools"));
+                    (expanded?"Hide tools":"Field tools"):
+                    (expanded?"Hide tools":"Field tools"));
                 revealTools.setContentDescription(expanded?
                     "Hide sampling and detection tools":"Show sampling and detection tools");
             });
         }else content.addView(recorderTools);
-        content.addView(FieldVisuals.section(this,"Record observation",
-            "Species, number of individuals and encounter details"));
+        content.addView(FieldVisuals.section(this,"Observation",null));
         // One row combines direct entry and the complete offline checklist.
         // Complete species selection now lives on its own page.
         // Retain direct text entry for novel/unidentified field observations.
@@ -570,16 +572,16 @@ public class MainActivity extends Activity implements LocationListener {
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
         UiKit.fieldInput(this,taxonEntry);
-        taxonEntry.setThreshold(100);taxonEntry.setHint("Species or field ID");
+        taxonEntry.setThreshold(100);taxonEntry.setHint("Species");
         taxonEntry.setSelectAllOnFocus(true);
         speciesRow.addView(taxonEntry,stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
             new LinearLayout.LayoutParams(0,dp(fieldControlHeight),1));
-        Button identifySpecies=UiKit.button(this,"Browse","secondary");
+        Button identifySpecies=UiKit.button(this,"Species list","secondary");
         identifySpecies.setContentDescription("Search offline species checklist");
         LinearLayout.LayoutParams browseLp=stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
-            new LinearLayout.LayoutParams(dp(94),dp(fieldControlHeight));
+            new LinearLayout.LayoutParams(dp(112),dp(fieldControlHeight));
         if(stackSpecies)browseLp.topMargin=dp(5);
         else browseLp.leftMargin=dp(8);
         speciesRow.addView(identifySpecies,browseLp);
@@ -597,7 +599,7 @@ public class MainActivity extends Activity implements LocationListener {
         starP.leftMargin=dp(6);speciesActions.addView(favoriteButton,starP);
         favoriteButton.setContentDescription("Add or remove favorite species");
         favoriteButton.setOnClickListener(v->toggleFavorite());
-        content.addView(speciesActions);
+
         unknownBtn.setOnClickListener(v->{
             String[] choices=Taxa.unknownLabels(group);
             new AlertDialog.Builder(this).setTitle("Record unidentified "+group.toLowerCase(Locale.US))
@@ -635,11 +637,12 @@ public class MainActivity extends Activity implements LocationListener {
         plus.setContentDescription("Increase individuals or evidence count");
         countLine.addView(plus,new LinearLayout.LayoutParams(dp(52),dp(touchDp)));
         content.addView(countLine);
+        content.addView(speciesActions);
         LinearLayout confidenceBlock=vertical();
-        confidenceBlock.addView(label("Identification confidence",12,true));
+        confidenceBlock.addView(label("ID confidence",12,true));
         confidenceSpinner=new Spinner(this);
         confidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
-            new String[]{"Field-identified (not expert verified)","Probable","Uncertain","Unidentified"}));
+            new String[]{"Identified","Probable","Uncertain","Unidentified"}));
         confidenceSpinner.setContentDescription("Identification confidence, not expert verification");
         confidenceSpinner.setMinimumHeight(dp(56));
         confidenceBlock.addView(confidenceSpinner);
@@ -676,6 +679,26 @@ public class MainActivity extends Activity implements LocationListener {
         else detectionLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         row.addView(detectionBlock,detectionLp);
         content.addView(row);
+        // Photo evidence is a primary field action, above optional group details.
+        LinearLayout photoRow=horizontal();
+        Button photoButton=UiKit.button(this,"Add photo","secondary");
+        photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(touchDp),2));
+        photoStatus=label("",12,false);
+        photoStatus.setVisibility(View.GONE);
+        photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));
+        content.addView(photoRow);
+        photoButton.setOnClickListener(v->pickPhoto());
+        photoPreview=new ImageView(this);
+        photoPreview.setAdjustViewBounds(true);
+        photoPreview.setMaxHeight(dp(180));
+        photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
+        if(compactObservationFirst&&toolsDisclosure[0]!=null){
+            content.removeView(toolsDisclosure[0]);
+            content.removeView(recorderTools);
+            content.addView(toolsDisclosure[0]);
+            content.addView(recorderTools);
+        }
+
         LinearLayout birdQuick=vertical();
         birdMeasurements=vertical();
         distanceSourceSpinner=new Spinner(this);
@@ -684,7 +707,7 @@ public class MainActivity extends Activity implements LocationListener {
         birdQuick.addView(label("Distance method",13,true));
         birdQuick.addView(distanceSourceSpinner);
         if(FieldUiPolicy.birdDetails(profile)){
-            content.addView(section("Bird distance sampling"));
+            content.addView(section("Distance"));
             content.addView(birdQuick);
         }
         firstPositionSpinner=new Spinner(this);
@@ -698,7 +721,7 @@ public class MainActivity extends Activity implements LocationListener {
         birdMeasurements.addView(label("Movement at first detection",12,false));
         birdMeasurements.addView(movementSpinner);
         if(FieldUiPolicy.birdDetails(profile))content.addView(birdMeasurements);
-        TextView birdToggle=label("＋ First position and movement",13,true);
+        TextView birdToggle=label("＋ First detection",13,true);
         birdToggle.setTextColor(GREEN);disclosureTarget(birdToggle);
         if(profile.equals("Birds")){
             // Keep the distance sampling quality items accessible in one tap.
@@ -708,7 +731,7 @@ public class MainActivity extends Activity implements LocationListener {
             birdToggle.setOnClickListener(v->{
                 boolean show=birdMeasurements.getVisibility()!=View.VISIBLE;
                 birdMeasurements.setVisibility(show?View.VISIBLE:View.GONE);
-                birdToggle.setText(show?"− Hide first position and movement":"＋ First position and movement");
+                birdToggle.setText(show?"− First detection":"＋ First detection");
                 birdToggle.setContentDescription(show?
                     "Hide first-detection position and movement fields":
                     "Show first-detection position and movement fields");
@@ -746,11 +769,11 @@ public class MainActivity extends Activity implements LocationListener {
         noiseLabel=label("Background noise during amphibian listening",12,false);
         herpQuick.addView(noiseLabel);herpQuick.addView(noiseSpinner);
         if(FieldUiPolicy.herpetofaunaDetails(profile)){
-            content.addView(section("Herpetofauna field evidence"));
+            content.addView(section("Herpetofauna"));
             content.addView(herpQuick);
             content.addView(herpPanel);
         }
-        TextView herpToggle=label("＋ Weather and substrate details",13,true);
+        TextView herpToggle=label("＋ Environment",13,true);
         herpToggle.setTextColor(GREEN);disclosureTarget(herpToggle);
         if(profile.equals("Herpetofauna")){
             content.addView(herpToggle);herpPanel.setVisibility(View.GONE);
@@ -758,7 +781,7 @@ public class MainActivity extends Activity implements LocationListener {
             herpToggle.setOnClickListener(v->{
                 boolean open=herpPanel.getVisibility()!=View.VISIBLE;
                 herpPanel.setVisibility(open?View.VISIBLE:View.GONE);
-                herpToggle.setText(open?"− Hide weather and substrate":"＋ Weather and substrate details");
+                herpToggle.setText(open?"− Environment":"＋ Environment");
                 herpToggle.setContentDescription(open?
                     "Hide weather and substrate fields":"Show weather and substrate fields");
             });
@@ -774,11 +797,11 @@ public class MainActivity extends Activity implements LocationListener {
         perchEntry=edit("Height above ground (m, optional)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         mammalPanel.addView(perchEntry);
         if(FieldUiPolicy.mammalDetails(profile)){
-            content.addView(section("Mammal evidence"));
+            content.addView(section("Mammals"));
             content.addView(mammalQuick);
             content.addView(mammalPanel);
         }
-        TextView mammalToggle=label("＋ Additional mammal measurements",13,true);
+        TextView mammalToggle=label("＋ Measurements",13,true);
         mammalToggle.setTextColor(GREEN);disclosureTarget(mammalToggle);
         if(profile.equals("Mammals")){
             content.addView(mammalToggle);mammalPanel.setVisibility(View.GONE);
@@ -786,24 +809,12 @@ public class MainActivity extends Activity implements LocationListener {
             mammalToggle.setOnClickListener(v->{
                 boolean open=mammalPanel.getVisibility()!=View.VISIBLE;
                 mammalPanel.setVisibility(open?View.VISIBLE:View.GONE);
-                mammalToggle.setText(open?"− Hide additional measurements":"＋ Additional mammal measurements");
+                mammalToggle.setText(open?"− Measurements":"＋ Measurements");
                 mammalToggle.setContentDescription(open?
                     "Hide additional mammal measurements":"Show additional mammal measurements");
             });
         }
-        LinearLayout photoRow=horizontal();
-        Button photoButton=UiKit.button(this,"Add photo","secondary");
-        photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(touchDp),2));
-        photoStatus=label("",12,false);
-        photoStatus.setVisibility(View.GONE);
-        photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));
-        content.addView(photoRow);
-        photoButton.setOnClickListener(v->pickPhoto());
-        photoPreview=new ImageView(this);
-        photoPreview.setAdjustViewBounds(true);
-        photoPreview.setMaxHeight(dp(180));
-        photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
-        detailToggle=label("＋ More observation details",14,true);
+        detailToggle=label("＋ More details",14,true);
         detailToggle.setTextColor(GREEN);disclosureTarget(detailToggle);
         detailToggle.setContentDescription("Show optional identification confidence, habitat, behavior and observation notes");
         content.addView(detailToggle);
@@ -821,7 +832,7 @@ public class MainActivity extends Activity implements LocationListener {
         detailToggle.setOnClickListener(v->{
             detailShown=!detailShown;
             advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);
-            detailToggle.setText(detailShown?"− Hide observation details":"＋ More observation details");
+            detailToggle.setText(detailShown?"− Hide details":"＋ More details");
             detailToggle.setContentDescription(detailShown?
                 "Hide optional identification, habitat, behavior and observation notes":
                 "Show optional identification confidence, habitat, behavior and observation notes");
@@ -999,8 +1010,7 @@ public class MainActivity extends Activity implements LocationListener {
                 geographicRegion,adminPsgc,regional);
             taxonEntry.setAdapter(taxonSuggestionAdapter);
         }else taxonSuggestionAdapter.setScope(group,geographicRegion,adminPsgc,regional);
-        taxonEntry.setHint(group.equals("Birds")?"Bird name or unidentified bird":
-            "Species or unidentified "+group.toLowerCase(Locale.US));
+        taxonEntry.setHint("Species");
         if(clear)taxonEntry.setText("");
         else taxonSuggestionAdapter.getFilter().filter(taxonEntry.getText());
         if(distanceEntry!=null)distanceEntry.setHint(group.equals("Birds")?
@@ -1030,7 +1040,10 @@ public class MainActivity extends Activity implements LocationListener {
         String live=gpsView.getText().toString().replace(" · details","");
         if(startMissing&&(live.contains("pending")||live.contains("searching")))
             live="GPS pending";
-        String message=(startMissing?"Start GPS unverified · ":"")+live;
+        boolean veryLarge=getResources().getConfiguration().fontScale>=1.9f;
+        String message=veryLarge?
+            (startMissing?"Start GPS missing":live):
+            (startMissing?"Start GPS unverified · ":"")+live;
         compactGpsView.setText(message);
         compactGpsView.setTextColor(startMissing?UiKit.AMBER:gpsView.getCurrentTextColor());
         compactGpsView.setContentDescription(message+". Open observer GPS details");
@@ -2252,7 +2265,9 @@ public class MainActivity extends Activity implements LocationListener {
         if(height!=null&&(height<0||height>150)){
             toast("Check height above ground");return;
         }
-        String confidence=confidenceSpinner.getSelectedItem().toString();
+        String confidence=confidenceSpinner.getSelectedItemPosition()==0?
+            "Field-identified (not expert verified)":
+            confidenceSpinner.getSelectedItem().toString();
         if(unidentified)confidence="Unidentified";
         boolean candidate=group.equals("Birds")&&!confidence.equals("Uncertain")&&!confidence.equals("Unidentified")&&!unidentified&&!genusOnly&&
             !id[1].isEmpty()&&distance!=null&&!distanceMethod.equals("Unknown")
@@ -2368,8 +2383,11 @@ public class MainActivity extends Activity implements LocationListener {
         if(compactClockView!=null){
             String disclosure=statusDetailsPanel!=null&&
                 statusDetailsPanel.getVisibility()==View.VISIBLE?"Hide details":"More details";
-            String summary="Session excl. pauses "+timeFmt(activeElapsed/1000)+
-                (surveyPaused?" · PAUSED":"")+" · "+disclosure;
+            boolean veryLarge=getResources().getConfiguration().fontScale>=1.9f;
+            String summary=veryLarge?
+                ("Time "+timeFmt(activeElapsed/1000)+(surveyPaused?" · PAUSED":"")):
+                ("Session excl. pauses "+timeFmt(activeElapsed/1000)+
+                    (surveyPaused?" · PAUSED":"")+" · "+disclosure);
             if(hasStationUnits()||method.equals("line_transect")||method.equals("ves_transect"))
                 summary+="\n"+eventView.getText();
             compactClockView.setText(summary);
@@ -2727,7 +2745,7 @@ public class MainActivity extends Activity implements LocationListener {
             movementSpinner.setSelection(d.optInt("movement",0));
             detailShown=d.optBoolean("details",false);
             advancedPanel.setVisibility(detailShown?View.VISIBLE:View.GONE);
-            detailToggle.setText(detailShown?"− Hide observation details":"＋ More observation details");
+            detailToggle.setText(detailShown?"− Hide details":"＋ More details");
             detailToggle.setContentDescription(detailShown?
                 "Hide optional identification, habitat, behavior and observation notes":
                 "Show optional identification confidence, habitat, behavior and observation notes");

@@ -182,14 +182,14 @@ public final class SpeciesPickerActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(16),dp(8),dp(16),dp(12));
-        root.addView(UiKit.navigationHeader(this,"Identify species","Survey",this::finish));
+        root.addView(UiKit.navigationHeader(this,"Species","Survey",this::finish));
 
         search=new AutoCompleteTextView(this){
             @Override public boolean enoughToFilter(){return true;}
         };
         search.setSingleLine(true);search.setTextSize(16);
         search.setThreshold(1);
-        search.setHint("Search common, scientific or former name");
+        search.setHint("Search species");
         search.setContentDescription("Search offline species by common, scientific or former name");
         suggestionDb=new FieldDb(this);
         nameSuggestions=new SpeciesReferenceSuggestionAdapter(this,
@@ -219,7 +219,7 @@ public final class SpeciesPickerActivity extends Activity {
         LinearLayout unidentifiedRow=new LinearLayout(this);
         unidentifiedRow.setGravity(Gravity.END);
         Button unknown=UiKit.button(this,"Unidentified","secondary");
-        unknown.setTextSize(12);
+        unknown.setTextSize(13);
         unknown.setContentDescription("Record an unidentified species");
         LinearLayout.LayoutParams unknownSpace=new LinearLayout.LayoutParams(-2,dp(48));
         unknownSpace.topMargin=dp(6);
@@ -235,10 +235,11 @@ public final class SpeciesPickerActivity extends Activity {
         LinearLayout quick=new LinearLayout(this);
         quick.setGravity(Gravity.CENTER_VERTICAL);
         sortButton=UiKit.button(this,
-            "Sort · "+SpeciesSortPolicy.SORT_LABELS[sortMode],"secondary");
+            "Sort","secondary");
+        sortButton.setContentDescription("Sort species by name, family or genus");
         sortButton.setOnClickListener(v->openSortFilter());
         quick.addView(sortButton,new LinearLayout.LayoutParams(0,dp(52),1.25f));
-        Button conditions=UiKit.button(this,"Site conditions","secondary");
+        Button conditions=UiKit.button(this,"Site","secondary");
         LinearLayout.LayoutParams conditionSpace=new LinearLayout.LayoutParams(0,dp(52),1f);
         conditionSpace.leftMargin=dp(6);
         quick.addView(conditions,conditionSpace);
@@ -254,7 +255,7 @@ public final class SpeciesPickerActivity extends Activity {
         views=new Spinner(this);
         views.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,
-            paicCatalogActive?new String[]{"All species","Suggested for site"}:VIEWS));
+            paicCatalogActive?new String[]{"All species","Habitat first"}:VIEWS));
         controls.addView(views,new LinearLayout.LayoutParams(0,dp(48),1f));
         root.addView(controls);
         groups.setSelection(savedGroupIndex);
@@ -269,30 +270,6 @@ public final class SpeciesPickerActivity extends Activity {
             views.setSelection(1);
         }else views.setSelection(savedViewIndex);
 
-        Location fix=TrackService.currentFix();
-        String gps="GPS unavailable";
-        if(fix!=null&&fix.hasAccuracy()){
-            long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
-            if(age>=0&&age<=10000L)
-                gps=String.format(Locale.US,"GPS ±%.1f m",fix.getAccuracy());
-        }
-        String scope=island(geographicRegion);
-        TextView context=text("ⓘ  "+(scope.isEmpty()?"Philippine checklist":scope+" checklist")+
-            (province.isEmpty()?"":" · "+province)+" · "+gps,12,false);
-        context.setTextColor(UiKit.FOREST);
-        context.setMinHeight(dp(48));
-        context.setGravity(Gravity.CENTER_VERTICAL);
-        context.setFocusable(true);
-        context.setContentDescription("Checklist context and species screening information");
-        context.setOnClickListener(v->new AlertDialog.Builder(this)
-            .setTitle("Checklist and species screening")
-            .setMessage("Regional and habitat evidence help organize the offline list. "+
-                "Scores summarize reviewed habitat and elevation data. "+
-                "They are screening indexes, not probabilities of occurrence or "+
-                "proof of absence. Unassessed species remain selectable.\n\n"+
-                (siteSummary==null?"":siteSummary.getText().toString()))
-            .setPositiveButton("Close",null).show());
-        root.addView(context);
         siteSummary=text("",12,false);
         siteSummary.setTextColor(UiKit.FOREST);
         siteSummary.setPadding(0,0,0,dp(4));
@@ -300,6 +277,12 @@ public final class SpeciesPickerActivity extends Activity {
         updateSiteSummary();
         status=text("Loading offline species…",12,false);
         status.setTextColor(UiKit.MUTED);status.setPadding(0,dp(9),0,dp(7));
+        status.setContentDescription("Species results and checklist region. Tap for site context");
+        status.setMinHeight(dp(40));
+        status.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Site")
+            .setMessage(siteSummary==null?"":siteSummary.getText().toString())
+            .setPositiveButton("Close",null).show());
         root.addView(status);
 
         ScrollView scroller=new ScrollView(this);
@@ -355,7 +338,7 @@ public final class SpeciesPickerActivity extends Activity {
         LinearLayout panel=new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(18),dp(8),dp(18),dp(8));
-        panel.addView(text("Order species references by",14,true));
+        panel.addView(text("Sort by",14,true));
         Spinner order=new Spinner(this);
         final String[] alphabeticSorts={
             "Name · A to Z","Family · A to Z","Genus · A to Z"};
@@ -363,23 +346,19 @@ public final class SpeciesPickerActivity extends Activity {
             android.R.layout.simple_spinner_dropdown_item,alphabeticSorts));
         order.setSelection(Math.max(0,Math.min(2,sortMode)));
         panel.addView(order);
-        TextView note=text("Regional source records, habitat and elevation references "+
-            "appear separately on each card. They are not probabilities "+
-            "and do not filter out unassessed species.",12,false);
-        note.setTextColor(UiKit.MUTED);note.setPadding(0,dp(14),0,0);
-        panel.addView(note);
-        new AlertDialog.Builder(this).setTitle("Sort species references")
+
+        new AlertDialog.Builder(this).setTitle("Sort")
             .setView(panel)
             .setPositiveButton("Apply",(dialog,which)->{
                 sortMode=order.getSelectedItemPosition();
                 statusFilter=0;
-                sortButton.setText("Sort · "+alphabeticSorts[sortMode]);
+                sortButton.setText("Sort");
                 savePickerSettings();
                 refresh();
             })
             .setNeutralButton("Reset",(dialog,which)->{
                 sortMode=0;statusFilter=0;
-                sortButton.setText("Sort · A–Z");
+                sortButton.setText("Sort");
                 savePickerSettings();
                 refresh();
             })
@@ -480,12 +459,7 @@ public final class SpeciesPickerActivity extends Activity {
             }
             @Override public void onNothingSelected(AdapterView<?> parent){}
         });
-        TextView note=text("GPS horizontal accuracy does not indicate altitude accuracy. "+
-            "WGS84 ellipsoid height is shown for reference but not used as MSL. "+
-            "Automatic scores require a fresh GPS MSL value with reported "+
-            "vertical uncertainty at most 50 m.",12,false);
-        note.setTextColor(UiKit.MUTED);note.setPadding(0,dp(9),0,0);
-        panel.addView(note);
+
         AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Site conditions")
             .setView(panel).setNegativeButton("Cancel",null)
             .setPositiveButton("Apply",null).create();
@@ -636,9 +610,8 @@ public final class SpeciesPickerActivity extends Activity {
         offset=0;loaded=new ArrayList<>();truncated=false;
         cards.removeAllViews();
         if(onlyLocal&&province.trim().isEmpty()&&island(geographicRegion).isEmpty()){
-            status.setText("Select an island or province in survey setup to filter local source records.");
-            cards.addView(text("No local area is selected. This does not mean species are absent. "+
-                "Use All species or set the geographic survey area.",14,false));
+            status.setText("Choose a region to view local records");
+            cards.addView(text("Switch to All species or set a survey region.",14,false));
             return;
         }
         status.setText("Finding "+group+"…");
@@ -657,12 +630,10 @@ public final class SpeciesPickerActivity extends Activity {
                 if(capped)results=results.subList(0,MAX_QUERY_ROWS);
                 List<Species> filtered=new ArrayList<>();
                 for(Species species:results)
-                    if((!siteSuggestions||species.paicRank>0)&&
-                        SpeciesSortPolicy.keep(filter,species.screening.label))
+                    if(SpeciesSortPolicy.keep(filter,species.screening.label))
                         filtered.add(species);
                 Collections.sort(filtered,(a,b)->{
-                    if(paicCatalogActive&&surveyPreparation!=null&&
-                            "suggested".equals(surveyPreparation.mode)&&siteSuggestions){
+                    if(paicCatalogActive&&surveyPreparation!=null&&siteSuggestions){
                         int rank=Integer.compare(b.paicRank,a.paicRank);
                         if(rank!=0)return rank;
                     }
@@ -704,8 +675,12 @@ public final class SpeciesPickerActivity extends Activity {
             addSpecies(item);
         }
         offset=stop;
-        status.setText(offset+" of "+loaded.size()+" species"+
-            (truncated?" · refine search for more":""));
+        String region=island(geographicRegion);
+        status.setText(offset+" / "+loaded.size()+" species"+
+            (region.isEmpty()?"":" · "+region)+
+            (truncated?" · refine search":"")+
+            (paicCatalogActive&&views.getSelectedItemPosition()==1?
+                " · habitat first":""));
         if(offset<loaded.size()){
             Button next=UiKit.button(this,"Load more species","secondary");
             cards.addView(next);
@@ -714,60 +689,89 @@ public final class SpeciesPickerActivity extends Activity {
                 appendPage();
             });
         }else if(offset==0){
-            cards.addView(text("No matches for these filters. "+
-                "Change Sort & Filter or show All species.",14,false));
+            cards.addView(text("No matches · change the search or filters",14,false));
         }
     }
+    /** Show field-useful taxonomy and available conservation/ecology data first. */
     private void addSpecies(Species item){
         LinearLayout card=new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(dp(14),dp(10),dp(14),dp(10));
+        card.setPadding(dp(12),dp(9),dp(12),dp(9));
         card.setBackground(UiKit.surface(this));
-        LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
-        cardLp.bottomMargin=dp(8);cards.addView(card,cardLp);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.bottomMargin=dp(7);
+        cards.addView(card,lp);
+
         String name=item.common.isEmpty()?item.scientific:item.common;
-        TextView heading=text(name,16,true);card.addView(heading);
-        if(!name.equals(item.scientific)){
+        TextView heading=text(name,16,true);
+        card.addView(heading);
+        if(!name.equals(item.scientific)&&!item.scientific.isEmpty()){
             TextView scientific=text(item.scientific,14,false);
-            scientific.setTypeface(null,Typeface.ITALIC);card.addView(scientific);
+            scientific.setTypeface(null,Typeface.ITALIC);
+            scientific.setTextColor(UiKit.FOREST);
+            card.addView(scientific);
         }
-        // Source and conservation detail remain available on the Details page.
-        StringBuilder identifiers=new StringBuilder(item.family);
-        if(identifiers.length()>0){
-            TextView meta=text(identifiers.toString(),12,false);
-            meta.setTextColor(UiKit.MUTED);card.addView(meta);
+        // Taxonomy, recorded distribution and published red-list fields.
+        StringBuilder taxonomy=new StringBuilder();
+        if(!item.family.isEmpty())taxonomy.append(item.family);
+        if(!item.origin.isEmpty()){
+            if(taxonomy.length()>0)taxonomy.append(" · ");
+            taxonomy.append(item.origin);
         }
-        // Evidence is presented as separate source statements, never a probability.
-        TextView geographic=text(paicCatalogActive?
-            "Mindanao PAIC checklist reference · not proof of site presence":
-            "Geographic source: "+OccurrenceEvidencePolicy.title(item.evidence),13,true);
-        geographic.setTextColor(item.evidence==0?UiKit.MUTED:UiKit.FOREST);
-        geographic.setPadding(0,dp(6),0,dp(3));
-        card.addView(geographic);
-        TextView habitat=text(paicCatalogActive?
-            "Habitat guide: "+(item.paicHabitat.isEmpty()?"Unreported":item.paicHabitat)+
-                (surveyPreparation!=null?" · selected habitat matches: "+
-                PaicHabitatPolicy.habitatMatches(item.paicHabitat,
-                    PaicHabitatPolicy.decode(surveyPreparation.habitats)):""):
-            item.screening.habitatStatus,13,false);
-        habitat.setTextColor(UiKit.MUTED);
-        card.addView(habitat);
-        TextView elevation=text(paicCatalogActive?
-            "Elevation guide: "+(item.paicElevation.isEmpty()?"Unreported":
-                item.paicElevation)+" · site compatibility is advisory":
-            item.screening.elevationStatus,13,false);
-        elevation.setTextColor(UiKit.MUTED);
-        card.addView(elevation);
-        // Source, ecological references and profile detail are available under Details.
+        if(taxonomy.length()>0){
+            TextView meta=text(taxonomy.toString(),12,false);
+            meta.setTextColor(UiKit.MUTED);
+            meta.setMaxLines(2);
+            card.addView(meta);
+        }
+        StringBuilder conservation=new StringBuilder();
+        if(!item.iucn.isEmpty())conservation.append("IUCN: ").append(item.iucn);
+        if(!item.ph.isEmpty()){
+            if(conservation.length()>0)conservation.append(" · ");
+            conservation.append("PH: ").append(item.ph);
+        }
+        if(conservation.length()>0){
+            TextView redlist=text(conservation.toString(),12,true);
+            redlist.setTextColor(UiKit.FOREST);
+            card.addView(redlist);
+        }
+        if(item.evidence>0){
+            TextView source=text(OccurrenceEvidencePolicy.title(item.evidence),12,false);
+            source.setTextColor(UiKit.FOREST);
+            card.addView(source);
+        }
+        if(item.paicRank>0&&paicCatalogActive){
+            TextView match=text("Site match",12,true);
+            match.setTextColor(UiKit.FOREST);
+            card.addView(match);
+        }
+        String habitats=paicCatalogActive?item.paicHabitat:item.reviewedHabitats;
+        String elevations=paicCatalogActive?item.paicElevation:item.reviewedElevation;
+        if(!habitats.isEmpty()){
+            TextView ecological=text("Habitat: "+habitats,12,false);
+            ecological.setMaxLines(2);
+            ecological.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            card.addView(ecological);
+        }
+        if(!elevations.isEmpty()){
+            TextView height=text("Elevation: "+elevations,12,false);
+            height.setMaxLines(1);
+            height.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            card.addView(height);
+        }
         LinearLayout buttons=new LinearLayout(this);
-        Button details=UiKit.button(this,"View sources","secondary");
+        buttons.setGravity(Gravity.CENTER_VERTICAL);
+        Button details=UiKit.button(this,"Profile","secondary");
+        details.setContentDescription("Open species taxonomy, sources and full ecological profile");
         buttons.addView(details,new LinearLayout.LayoutParams(0,dp(48),1f));
-        Button select=UiKit.button(this,"Use species","primary");
-        LinearLayout.LayoutParams selectLp=new LinearLayout.LayoutParams(0,dp(48),1.5f);
-        selectLp.leftMargin=dp(9);
+        Button select=UiKit.button(this,"Select","primary");
+        select.setContentDescription("Select "+name+" as the observation identification");
+        LinearLayout.LayoutParams selectLp=new LinearLayout.LayoutParams(0,dp(48),1f);
+        selectLp.leftMargin=dp(7);
         buttons.addView(select,selectLp);
-        LinearLayout.LayoutParams controlLp=new LinearLayout.LayoutParams(-1,dp(48));
-        controlLp.topMargin=dp(9);card.addView(buttons,controlLp);
+        LinearLayout.LayoutParams controls=new LinearLayout.LayoutParams(-1,dp(48));
+        controls.topMargin=dp(8);
+        card.addView(buttons,controls);
         details.setOnClickListener(v->startActivity(
             new Intent(this,TaxonDetailActivity.class).putExtra("taxon_key",item.key)));
         select.setOnClickListener(v->select(

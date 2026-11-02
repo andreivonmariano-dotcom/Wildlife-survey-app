@@ -1,5 +1,12 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC82 compact setup after wildlife-group selection | source pending QA
+
+- **Baseline:** Signed RC81 code141 app/test SHA `719c45ea79b68a5912ae60180d6cf54ba7cf4ffb`, run `41388167462` SUCCESS (426 Python regressions, 160%/200%-320dp Android14 recorder checks). New code142 feature branch `feature/apo-survey-setup-v142` based on RC81 draft PR #83.
+- **Target screen:** `WelcomeActivity.setup(profile)` opens after selecting Birds / Herpetofauna / Mammals, not the active recorder. The long method radio list now defaults collapsed behind a native method picker and “Compare all methods”. Picker and radio selection stay synchronized; the saved method and actual protocol validation are unchanged. Project/region remain visible; GPS-area help collapses. Point-count route length, spacing, station preview and duration remain visible; repeat-route template management collapses and new route saving requires explicit opt-in. Redundant setup explanations removed.
+- **App identity:** `0.27.3-rc82-apo-survey-setup`, code142, original `org.phwildlife.survey.beta08`, original signer, SQLite28, PAIC714/WorldCover and mountain art unchanged. No archived surveys edited.
+- **QA configured:** all existing tests plus RC82 Python source test, original RC54 setup emulator regressions and real 160%/200%-320dp screenshots across all 3 groups. Source/QA details: `docs/APO_RC82_SURVEY_SETUP_QA_2026_11_02.md`. Code142 is not signed or available until workflow success and exact direct APK attachment.
+
 ## 2026-11-02 | APO RC81 signed 320dp/200% survey recorder | latest verified preview
 
 - **Latest signed APK:** source `719c45ea79b68a5912ae60180d6cf54ba7cf4ffb`; CI run `41388167462` **SUCCESS**, **426 Python** tests, JVM/Android and AndroidTest builds and instrumented Android 14 recorder acceptance at both 160% and **200%/320dp**. Version code **141**, `0.27.3-rc81-apo-survey-compact-320`, original Android ID `org.phwildlife.survey.beta08`, original signing certificate and SQLite28.

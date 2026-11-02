@@ -1,5 +1,13 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | RC85 recorder/picker and PAIC 714 audit | findings only, no app change
+
+- **Review artifact:** `docs/APO_RC85_RECORDER_SPECIES_PICKER_AUDIT_2026_11_02.md` on RC85 branch, source review of current recorder and picker, six RC85 emulator screenshots, existing RC85 signed APK, and owner-uploaded 714-species workbook.
+- **Confirmed packaged data:** all 714 names and all nine workbook checklist columns match the APK CSV. Counts: 408 birds, 154 reptiles, 99 mammals, 53 amphibians. The bundled PAIC library must still be checked through normal startup into a real survey; the existing emulator picker test bypassed startup and showed the broader national catalog (765 birds and 121 amphibians), not an established normal-launch fault.
+- **Priority findings:** missing startup-to-picker acceptance; PAIC installation archives/replaces national catalog with no browsable fallback; picker does not return or store stable taxon key; manual common-name text can lack catalog linkage; hidden identification confidence defaults to Identified; some observation-specific inputs persist between saves and bypass unsaved-draft detection; recorder header ZIP exports entire research archive; 432 DENR and 24 IUCN missing cells risk visible dash labels; conflicting order controls/site-overlap wording; Site dialog changes environment; duplicate photo actions; large-font spinner truncation; early loading screenshot. See audit for exact code evidence and recommendations.
+- **Status:** audit completed and documented, no implementation decisions approved yet, no changed application source/SQLite schema/build/art. Signed code145 APK remains latest verified development preview, but its full handset/active-reference checks remain unverified. Next action is owner review/prioritization and scoped code fixes with appropriate new code/version and device/CI verification.
+
+
 ## 2026-11-02 | APO RC85 live recorder/species picker | signed preview verified and delivered
 
 - **Verified source lineage:** current screen work on `feature/apo-recorder-picker-v145`, code commit `d7f151e158ef1aafd168fd5c1681055a3483e9f9`, derived from the signed RC84 source. Draft PR #87. Docs were updated after the verified build; preserve APK/code distinction.

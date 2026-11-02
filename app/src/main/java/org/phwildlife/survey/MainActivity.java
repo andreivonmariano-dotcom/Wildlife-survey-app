@@ -332,6 +332,8 @@ public class MainActivity extends Activity implements LocationListener {
         // away; station-based and GPS-transect controls stay expanded.
         final boolean compactObservationFirst=!hasStationUnits()&&
             !method.equals("line_transect")&&!method.equals("ves_transect");
+        if(compactObservationFirst)methodRow.setVisibility(View.GONE);
+        final Button[] toolsDisclosure={null};
         LinearLayout recorderTools=vertical();
         recorderTools.addView(UiKit.sectionTitle(this,"Sampling session"));
         LinearLayout utilityRow=horizontal();
@@ -542,6 +544,7 @@ public class MainActivity extends Activity implements LocationListener {
                 revealTools.setPadding(dp(7),dp(4),dp(7),dp(4));
             }
             revealTools.setContentDescription("Show sampling and detection tools");
+            toolsDisclosure[0]=revealTools;
             content.addView(revealTools,new LinearLayout.LayoutParams(-1,-2));
             recorderTools.setVisibility(View.GONE);
             content.addView(recorderTools);
@@ -555,7 +558,7 @@ public class MainActivity extends Activity implements LocationListener {
                     "Hide sampling and detection tools":"Show sampling and detection tools");
             });
         }else content.addView(recorderTools);
-        content.addView(FieldVisuals.section(this,"Record observation",null));
+        content.addView(FieldVisuals.section(this,"Observation",null));
         // One row combines direct entry and the complete offline checklist.
         // Complete species selection now lives on its own page.
         // Retain direct text entry for novel/unidentified field observations.
@@ -569,7 +572,7 @@ public class MainActivity extends Activity implements LocationListener {
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
         UiKit.fieldInput(this,taxonEntry);
-        taxonEntry.setThreshold(100);taxonEntry.setHint("Species or field ID");
+        taxonEntry.setThreshold(100);taxonEntry.setHint("Species");
         taxonEntry.setSelectAllOnFocus(true);
         speciesRow.addView(taxonEntry,stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
@@ -688,6 +691,12 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setAdjustViewBounds(true);
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
+        if(compactObservationFirst&&toolsDisclosure[0]!=null){
+            content.removeView(toolsDisclosure[0]);
+            content.removeView(recorderTools);
+            content.addView(toolsDisclosure[0]);
+            content.addView(recorderTools);
+        }
 
         LinearLayout birdQuick=vertical();
         birdMeasurements=vertical();
@@ -1000,8 +1009,7 @@ public class MainActivity extends Activity implements LocationListener {
                 geographicRegion,adminPsgc,regional);
             taxonEntry.setAdapter(taxonSuggestionAdapter);
         }else taxonSuggestionAdapter.setScope(group,geographicRegion,adminPsgc,regional);
-        taxonEntry.setHint(group.equals("Birds")?"Bird name or unidentified bird":
-            "Species or unidentified "+group.toLowerCase(Locale.US));
+        taxonEntry.setHint("Species");
         if(clear)taxonEntry.setText("");
         else taxonSuggestionAdapter.getFilter().filter(taxonEntry.getText());
         if(distanceEntry!=null)distanceEntry.setHint(group.equals("Birds")?
@@ -1031,7 +1039,10 @@ public class MainActivity extends Activity implements LocationListener {
         String live=gpsView.getText().toString().replace(" · details","");
         if(startMissing&&(live.contains("pending")||live.contains("searching")))
             live="GPS pending";
-        String message=(startMissing?"Start GPS unverified · ":"")+live;
+        boolean veryLarge=getResources().getConfiguration().fontScale>=1.9f;
+        String message=veryLarge?
+            (startMissing?"Start GPS missing":live):
+            (startMissing?"Start GPS unverified · ":"")+live;
         compactGpsView.setText(message);
         compactGpsView.setTextColor(startMissing?UiKit.AMBER:gpsView.getCurrentTextColor());
         compactGpsView.setContentDescription(message+". Open observer GPS details");
@@ -2371,8 +2382,11 @@ public class MainActivity extends Activity implements LocationListener {
         if(compactClockView!=null){
             String disclosure=statusDetailsPanel!=null&&
                 statusDetailsPanel.getVisibility()==View.VISIBLE?"Hide details":"More details";
-            String summary="Session excl. pauses "+timeFmt(activeElapsed/1000)+
-                (surveyPaused?" · PAUSED":"")+" · "+disclosure;
+            boolean veryLarge=getResources().getConfiguration().fontScale>=1.9f;
+            String summary=veryLarge?
+                ("Time "+timeFmt(activeElapsed/1000)+(surveyPaused?" · PAUSED":"")):
+                ("Session excl. pauses "+timeFmt(activeElapsed/1000)+
+                    (surveyPaused?" · PAUSED":"")+" · "+disclosure);
             if(hasStationUnits()||method.equals("line_transect")||method.equals("ves_transect"))
                 summary+="\n"+eventView.getText();
             compactClockView.setText(summary);

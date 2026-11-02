@@ -30,7 +30,7 @@ class CustomSurveyRetirement(unittest.TestCase):
 
     def test_no_database_migration_or_legacy_record_rewrite(self):
         db=(SRC/"FieldDb.java").read_text(encoding="utf-8")
-        self.assertIn('super(context,NAME,null,28)',db)
+        self.assertIn('super(context,NAME,null,29)',db)
         recorder=(SRC/"MainActivity.java").read_text(encoding="utf-8")
         self.assertIn('private void restoreEvent()',recorder)
         self.assertIn('survey_profile',recorder)

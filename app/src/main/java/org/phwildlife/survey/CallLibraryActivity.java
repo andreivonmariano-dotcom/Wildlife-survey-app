@@ -180,17 +180,6 @@ public final class CallLibraryActivity extends Activity {
             }
         }catch(Exception e){body.addView(label("Cannot load recordings: "+e.getMessage(),13,false));}
     }
-    @Override public void onBackPressed(){
-        if(recorder!=null){
-            notice("Stop recording and finish saving before leaving.");
-            return;
-        }
-        if(selectedClip!=null){
-            releasePlayer();
-            selectedClip=null;
-            draw();
-        }else super.onBackPressed();
-    }
     private ScrollView scrollForm(LinearLayout form){
         ScrollView scroll=new ScrollView(this);
         scroll.addView(form);
@@ -611,8 +600,17 @@ public final class CallLibraryActivity extends Activity {
         seek=null;playbackTime=null;
     }
     @Override public void onBackPressed(){
-        if(recorder!=null&&recorder.isCapturing()){stopRecord();return;}
-        if(selectedClip!=null){selectedClip=null;draw();return;}
+        if(recorder!=null){
+            if(recorder.isCapturing())stopRecord();
+            else notice("Finish saving this recording before leaving.");
+            return;
+        }
+        if(selectedClip!=null){
+            releasePlayer();
+            selectedClip=null;
+            draw();
+            return;
+        }
         super.onBackPressed();
     }
     @Override protected void onResume(){

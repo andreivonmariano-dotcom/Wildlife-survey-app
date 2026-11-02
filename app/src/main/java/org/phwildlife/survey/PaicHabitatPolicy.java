@@ -79,6 +79,40 @@ public final class PaicHabitatPolicy {
         Boolean elevation=elevationWithin(elevationGuide,mslMeters);
         return matched*10+(Boolean.TRUE.equals(elevation)?1:0);
     }
+    /**
+     * Use only the owner's named PAIC habitat guide categories. This is a
+     * source-label shortlist, not an absence claim or ecological prediction.
+     * 2: directly named habitat, 1: broader compatible guide category,
+     * 0: different named category, -1: no usable habitat entry.
+     */
+    public static int siteHabitatRelevance(String habitatGuide,String observedCode){
+        if(observedCode==null||observedCode.isEmpty()||
+                habitatGuide==null||habitatGuide.trim().isEmpty()||
+                habitatGuide.trim().equals("—"))return -1;
+        Set<String> entries=new HashSet<>();
+        for(String part:habitatGuide.split(",\\s*"))
+            entries.add(part.trim().toLowerCase(Locale.ROOT));
+        String exact="";
+        String broad="";
+        switch(observedCode){
+            case "montane": exact="Montane habitats";broad="Forest";break;
+            case "mossy": broad="Montane habitats|Forest";break;
+            case "lowland": broad="Forest";break;
+            case "secondary": broad="Forest|Forest edge";break;
+            case "grassland": exact="Grassland and open country";break;
+            case "agriculture": exact="Agricultural areas";break;
+            case "wetland": exact="Freshwater wetlands";break;
+            case "riparian": exact="Rivers and streams";broad="Riverbanks and shorelines";break;
+            case "mangrove": broad="Coastal and intertidal areas";break;
+            case "urban": exact="Urban and disturbed areas";break;
+            default:return -1;
+        }
+        if(!exact.isEmpty()&&entries.contains(exact.toLowerCase(Locale.ROOT)))return 2;
+        if(!broad.isEmpty())for(String candidate:broad.split("\\|"))
+            if(entries.contains(candidate.toLowerCase(Locale.ROOT)))return 1;
+        return 0;
+    }
+
     /** WorldCover classes are land cover, not ground-verified habitat. */
     public static String landCoverSuggestion(int code){
         switch(code){

@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - qa/apo-rc92-unverified-gates-20261102
+  pull_request:
+    branches:
+      - feature/apo-rc92-durable-media-closure-qa-v152
   workflow_dispatch:
 
 permissions:

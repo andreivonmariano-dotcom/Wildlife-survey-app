@@ -6,16 +6,16 @@ JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
 class Rc59HubVisual(unittest.TestCase):
     def test_hub_concise_discoverable_and_shared_styles(self):
         src=(JAVA/"LikasLibraryActivity.java").read_text()
-        for phrase in ('"Species","Illustrated accounts"','"Habitats","Habitat profiles"',
-            '"Similar species","Compare traits","research"','"Conservation","Dated assessments"',
-            '"Habitat links","Cited associations"','"Photos","Offline images"',
-            '"Sources","Checklists"'):
+        for phrase in ('"Wildlife guides","Photos and cited species accounts"','"Habitat guides","Ecological profiles and habitat references"',
+            '"Similar species","Compare identification traits"','"Conservation evidence","IUCN and Philippine assessments"',
+            '"Habitat associations","Cited species and habitat links"','"Photo comparisons","Offline wildlife photographs"',
+            '"Source checklists","Taxonomic provenance and imports"'):
             self.assertIn(phrase,src)
         self.assertIn("UiKit.page(this,\"PHLibrary\",\"Home\",this::finish,body)",src)
-        self.assertIn("librarySection(\"Species & habitats\"",src)
-        self.assertIn("librarySection(\"Reference tools\"",src)
+        self.assertIn("section(\"Species checklist\"",src)
+        self.assertIn("section(\"Reference tools\"",src)
         self.assertIn("getResources().getConfiguration().screenWidthDp<600",src)
-        self.assertIn("libraryScroll.setPadding(0,0,dp(8),0)",src)
+        self.assertIn("scroller.setPadding(0,0,dp(8),0)",src)
         self.assertIn("View.SCROLLBARS_OUTSIDE_INSET",src)
         self.assertIn("LikasPortalUi.libraryFeature(this",src)
         self.assertIn("LikasPortalUi.action(this",src)

@@ -1,5 +1,15 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | RC93 signed SQLite29 backup validation completed | development preview
+
+- **Verified source/test commit:** `783e50755ce12faa7efed9f9e177e757aec16c33` on `qa/apo-rc92-unverified-gates-20261102`. Existing package `org.phwildlife.survey.beta08`, signer certificate SHA-256 `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, SQLite29, **versionCode 153** and versionName `0.27.3-rc93-apo-schema29-backup-qa`.
+- **Full CI succeeded:** workflow **41470817942**, originally signed artifact **13155810406**. Scientific Python/source tests, JVM compilation, signed Android APK and immutable checklist/WorldCover/art integrity were validated. Android 14 additional instrumented tests passed after updating the no-GPS confirmation test to click the real dialog buttons, alongside recorder process restart and a current-schema backup/restore rollback test. Real GNSS, real phone/owner records and physical field acceptance remain outstanding.
+- **Independent direct APK delivery:** `APO-v0.27.3-RC93-SQLite29-backup-code153-preview.apk`, **11,775,284 bytes**, SHA-256 `697595b20b0ba2fd52e3e98a7f8d96ac90b69c5376fccf11ab73dcb4b92e8794`. Exact file was downloaded in the 2 Nov chat, ZIP-tested, Android manifest parsed for package/version, original v2 certificate checked, embedded `paic714_master.csv` SHA `1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959`, `paic_worldcover2020_500m.txt` SHA `e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089`, art SHA `6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7`. It was linked directly in the current chat, with local link validity restricted to this chat.
+- **Next:** RC94 PHLibrary code154 is developed on draft PR #98, distinct from RC93. Its source/JVM/signing checks pass but its extended Android QA is still under test. Do not claim RC94 released or install lower-versionCode RC93 over an existing newer APK.
+
+---
+
+
 ## 2026-11-02 | Cross-chat continuity audit: RC92 and emerging RC93 source candidate
 
 - **Current active experimental source observed in GitHub:** `qa/apo-rc92-unverified-gates-20261102` HEAD `1fa024adcff6a74ac15c1d2d1dfba7df82a36b94`, app `0.27.3-rc93-apo-schema29-backup-qa`, **versionCode 153**, original app ID `org.phwildlife.survey.beta08` and SQLite29. The branch's `FieldBackupArchive` source now accepts schemas 27–29 and writes a manifest matching the actual backed-up database schema. This is **source inspection, not a verified signed RC93 build or release**. The separate `qa/apo-rc92-to-rc93-signed-upgrade-20261102` branch also contains code153.

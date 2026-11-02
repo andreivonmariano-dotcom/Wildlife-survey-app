@@ -40,8 +40,9 @@ def seed(apk_path):
                     entry["commonsFile"] != meta["fileName"]):
                 raise ValueError("Mismatch with approved source metadata: "+image_id)
             asset_name = entry["offlineAsset"]
-            if not asset_name.startswith("offline_photos/") or (
-                    Path(asset_name).name not in {Path(asset_name).name}):
+            if (len(Path(asset_name).parts) != 2 or
+                    Path(asset_name).parts[0] != "offline_photos" or
+                    not Path(asset_name).name.endswith(".jpg")):
                 raise ValueError("Unexpected approved file path")
             raw = archive.read("assets/"+asset_name)
             if (len(raw) <= 1000 or len(raw) > 900000 or

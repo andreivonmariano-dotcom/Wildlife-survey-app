@@ -1,4 +1,14 @@
 # APO RC90 | Step 3: method-adaptive survey recording panels
+
+## Verified signed development-preview acceptance | 2 November 2026
+
+- **Verified app/test commit:** `2beca77152f5c925b54469858f796d5b6bf0d383` (before documentation-only handoff). **Successful GitHub Actions run:** `41430183895`, conclusion **SUCCESS**.
+- **Tests:** **459 Python source/science regressions**, JVM/unit and Android app/test compilation, then **10 Android14 (API34) emulator tests at 160%** and **10 at 200% / 320dp**, zero failures. New automated emulator tests covered amphibian-call score and noise priority, visual encounter microhabitat, and camera-trap device ID. Existing RC89 timeline/RC88 recorder/RC87 species-picker tests remained included.
+- **Original signer / immutable data:** CI verified unchanged `org.phwildlife.survey.beta08`, versionCode **150**, versionName `0.27.3-rc90-apo-method-panels`, same signing certificate, PAIC714, WorldCover text reference, and official mountain artwork. Independent extraction verified APK ZIP integrity and the three embedded SHA-256 digests.
+- **Direct signed owner APK:** `APO-v0.27.3-RC90-Adaptive-Method-Panels-code150.apk`, **11,771,932 bytes**, SHA-256 `8d24c96581618570aace24a50d3e6a7be641a2d082f0cf53b05ced69da9e27c3`, from GitHub artifact **13134576097**. Local file was extracted and exact SHA independently matched CI. Six screenshots retrieved from artifact **13134596066** were validated as distinct noncorrupt PNGs, 1080×2280 (160%) and 960×2160 (200%) and visually reviewed. Screenshot evidence shows **default, collapsed opportunistic recorder and Bird/Amphibian picker**, not the scrolled specialized panels; actual specialized panel behavior is covered by successful Android instrumentation.
+- **First run failures disclosed:** Legacy RC88 source assertion expected fixed code layout; a weak RC90 source test failed against correctly explicit unknown-method handling; both were corrected. One **parallel** build run was blocked by Wikimedia Commons HTTP429 when retrieving an already-approved offline photo; another same-commit run fetched/verified exact approved media, compiled and passed emulator. Do not lower photo hash/license integrity checks. Consider future hash-keyed offline photo CI cache to reduce transient network dependency.
+- **Status:** Emulator-tested signed development preview, **not physical-phone certified**. Still validate on-device existing SQLite29 data, station/effort transitions for every method, life-stage and call-source expectations, actual photo/audio/device records, GNSS, researcher ZIP audit roundtrip, TalkBack and survey closure outcomes. PR #92 remains draft and unmerged.
+
 2 November 2026 · Development stage, unsigned until CI verified.
 
 ## Scope and source

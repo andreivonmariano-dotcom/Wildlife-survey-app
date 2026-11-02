@@ -204,6 +204,7 @@ public final class SpeciesPickerActivity extends Activity {
         nameSuggestions=new SpeciesReferenceSuggestionAdapter(this,
             suggestionDb,availableGroups[Math.max(0,savedGroupIndex)]);
         search.setAdapter(nameSuggestions);
+        nameSuggestions.setArchivedCatalog(archivedCatalogAvailable&&savedScopeIndex==1);
         search.setDropDownHeight(dp(300));
         search.setOnItemClickListener((parent,view,pos,id)->{
             String label=parent.getItemAtPosition(pos).toString();
@@ -264,6 +265,7 @@ public final class SpeciesPickerActivity extends Activity {
             scope.setSelection(savedScopeIndex);
             scope.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
                 @Override public void onItemSelected(AdapterView<?> parent,View view,int pos,long id){
+                    if(nameSuggestions!=null)nameSuggestions.setArchivedCatalog(pos==1);
                     refresh();
                 }
                 @Override public void onNothingSelected(AdapterView<?> parent){}
@@ -688,6 +690,11 @@ public final class SpeciesPickerActivity extends Activity {
             }
         });
     }
+    private String siteSortLabel(){
+        return paicCatalogActive&&views!=null&&views.getSelectedItemPosition()==3&&
+            (scope==null||scope.getSelectedItemPosition()==0)?
+            " · habitat first":"";
+    }
     private void appendPage(){
         int stop=Math.min(offset+PAGE,loaded.size());
         for(int i=offset;i<stop;i++){
@@ -712,8 +719,9 @@ public final class SpeciesPickerActivity extends Activity {
         status.setText(offset+" / "+loaded.size()+" species"+
             (region.isEmpty()?"":" · "+region)+
             (truncated?" · refine search":"")+
-            (paicCatalogActive&&views.getSelectedItemPosition()==3?
-                " · habitat first":""));
+            (siteSortLabel())+
+            (archivedCatalogAvailable&&scope!=null&&scope.getSelectedItemPosition()==1?
+                " · Philippine catalog":""));
         if(offset<loaded.size()){
             Button next=UiKit.button(this,"Load more species","secondary");
             cards.addView(next);

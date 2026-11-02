@@ -1,5 +1,18 @@
 # APO RC91 | Step 4: method completion checks and a single action per tool
 
+## Verified signed development-preview acceptance | 2 November 2026
+
+- **Verified signed code and tests:** source SHA `41536df8af31b7f06b2d2aab83feb90e73dd1c77`, GitHub Actions workflow **41433764045 SUCCESS**, app version **0.27.3-rc91-apo-method-review**, versionCode **151**, SQLite **29**, package **org.phwildlife.survey.beta08**, original signing certificate.
+- **QA:** **462 Python source/scientific regression tests passed**, Android JVM + APK and AndroidTest builds passed, **10 Android14 API34 tests at 160% font and 10 at 200%/320dp**, zero failures. Device-method and amphibian audio screens have a single visible action. All original RC90 survey-method panels, RC89 timeline, RC88 mark/draft, RC87 habitat shortlist tests retained. The finished run has no failed steps.
+- **Released owner-downloadable signed preview:** `APO-v0.27.3-RC91-Method-Completion-Review-code151.apk`, **11,774,604 bytes**, SHA-256 `3529b0fd38c89a333723540febeeeb4c5619e58a319931ee3e02bcc330d26580`, direct artifact from run **41433764045**, artifact ID **13136291087**. Exact archive integrity and installed APK byte digest verified independently, with unchanged embedded PAIC714, ESA WorldCover, approved mountain artwork and pinned Commons eagle photo SHA-256. CI independently checked Android signer, app ID and version.
+- **Screenshots:** artifact **13134979640**, six valid distinct PNGs, 1080×2280 at 160% and 960×2160 at 200%/320dp. The recorder and picker contact sheet was visually inspected: individual-count field and fixed Save/Review/End remain accessible. **Screenshots show default recorder/picker screens, not the expanded method-completion dialog.** The summary logic is covered by policy/JVM tests and source contracts, and the duplicate-action UI by Android instrumentation.
+- **Retained photography:** Initial builds were blocked by Wikimedia Commons HTTP429 on a previously approved pinned eagle JPEG. The final workflow restores exactly nine Commons JPEG bytes from verified **signed RC90 artifact** `APO-v150-method-panels-emulator-signed-preview` (run **41430183895**, SHA-256 `8d24c96581618570aace24a50d3e6a7be641a2d082f0cf53b05ced69da9e27c3`) and then independently validates each approved SHA-256 and existing source manifest using `scripts/seed_pinned_commons_from_verified_apk.py`, with `prepare_offline_photos.py` still mandatory. No new image or license substitution. **Important durability limitation:** original GitHub Actions artifact is retained for only seven days, so the APK seed fallback is temporary; store reviewed bytes in a durable hash-pinned repository bundle or durable cache before expiration, never bypass checks.
+- **Earlier emulator failure:** the initial RC91 test queried the now-hidden duplicate shortcut instead of its visible counterpart for amphibian calls and camera-trap devices. The final test identifies a visible operable button and asserts exactly one matching visible action; it passes. App-level evidence was unchanged.
+
+**Physical-device limitations:** No verified existing-populated-database upgrade, actual station-start/effort modification/finalization on phone, expanded End Survey dialog screenshot, real GNSS/photo/audio/device and ZIP export roundtrip, screen-reader usability or field study scientific method certification. RC91 is **signed emulator-tested development preview**, draft PR #93 unmerged.
+
+
+
 2 November 2026 · **Development preview, not field-certified.**
 
 ## Source and scope

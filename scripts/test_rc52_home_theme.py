@@ -8,27 +8,28 @@ def source(name): return (JAVA/name).read_text()
 
 class Rc52HomeTheme(unittest.TestCase):
     def test_home_has_one_brand_heading_and_three_destinations(self):
-        home=source("WelcomeActivity.java").split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]
-        self.assertNotIn('LikasPortalUi.kicker(this,"EXPLORE LIKAS")',home)
-        self.assertEqual(home.count("LikasPortalUi.tile(this,"),3)
-        self.assertIn("LikasPortalUi.session(this,()->",home)
-        self.assertLess(home.index("LikasPortalUi.session(this,()->"),home.index('LikasPortalUi.tile(this,"Fieldwork"'))
-        self.assertEqual(home.count("UiKit.LEAF_LIGHT,UiKit.LEAF_MID"),2)
-
+        home=source("WelcomeActivity.java").split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
+        self.assertIn("ApoHomeUi.header(this,",home)
+        self.assertEqual(home.count("ApoHomeUi.module(this,"),4)
+        self.assertIn("ApoHomeUi.resume(this,",home)
+        self.assertLess(home.index("ApoHomeUi.resume(this,"),
+                        home.index('ApoHomeUi.module(this,"01","BioTools"'))
+        self.assertNotIn("LikasPortalUi.hero(",home)
+        self.assertNotIn("LikasPortalUi.tile(",home)
     def test_theme_uses_shared_home_tokens_and_preserves_owner_icons(self):
         theme=source("LikasDesignSystem.java")
         portal=source("LikasPortalUi.java")
+        apo=source("ApoHomeUi.java")
         for key in ("HOME_CARD_MIN_DP","HOME_ICON_DP","HOME_HERO_GAP_DP","TEXT_HOME_ACTION"):
             self.assertIn(key,theme)
-            self.assertIn(key,portal if key!="HOME_HERO_GAP_DP" else source("WelcomeActivity.java"))
-        self.assertIn('TextView mark=text(a,"LIKAS",',portal)
-        self.assertIn("Explore. Record. Conserve.",portal)
         for res in ("likas_approved_fieldwork","likas_approved_species_library",
                     "likas_approved_settings","likas_natator_frog"):
             self.assertIn(res,portal)
+        self.assertNotIn("R.drawable.",apo)
+        self.assertNotIn("ImageView",apo)
+        self.assertIn("setFocusable(true)",apo)
+        self.assertIn("setContentDescription",apo)
         self.assertNotIn("cover.addView(contours",portal)
-        self.assertIn("cover.setWillNotDraw(false)",portal)
-
     def test_same_package_schema_and_preview_version(self):
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)

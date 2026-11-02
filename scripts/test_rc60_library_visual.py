@@ -21,7 +21,7 @@ class Rc60VisualDecisions(unittest.TestCase):
         self.assertIn("heading.setTextSize(14)",library)
         self.assertIn("heading.setLetterSpacing(.06f)",library)
         self.assertIn("Typeface.create(\"sans-serif-medium\",Typeface.NORMAL)",library)
-        self.assertIn('UiKit.page(this,"Library","Home",this::finish,body)',library)
+        self.assertIn('UiKit.page(this,"PHLibrary","Home",this::finish,body)',library)
         self.assertIn("pageTitle.setTextSize(LikasDesignSystem.TEXT_PAGE)",library)
         self.assertIn('librarySection("Species & habitats"',library)
         self.assertIn('librarySection("Reference tools"',library)

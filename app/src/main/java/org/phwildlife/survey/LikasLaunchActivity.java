@@ -1,130 +1,228 @@
 package org.phwildlife.survey;
 
-import android.app.AlertDialog;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/** Minimal typographic splash. Never changes research data or starts a survey. */
+/**
+ * APO identity splash. Startup must never manufacture survey data or imply
+ * that unavailable references are installed. This screen is intentionally
+ * not buildable without the exact approved APO artwork and derivatives.
+ */
 public final class LikasLaunchActivity extends Activity {
-    private static final int FOREST=Color.rgb(11,45,35);
-    private static final int CREAM=Color.rgb(245,247,235);
-    private final Handler handler=new Handler(Looper.getMainLooper());
+    private static final int FOREST=Color.rgb(11,75,57);
+    private static final int DARK_FOREST=Color.rgb(2,25,24);
+    private static final int IVORY=Color.rgb(245,240,226);
+    private static final int SAGE=Color.rgb(176,199,184);
     private boolean entered=false;
     private boolean loadingReferences=false;
-    private boolean continueRequested=false;
+    private boolean animationDone=false;
     private boolean referenceErrorShown=false;
+    private boolean exitStarted=false;
     private String referenceFailure=null;
-    private TextView brand;
+    private LinearLayout identity;
+    private ImageView mark;
+    private TextView status;
+    private TextView wordmark;
     private FrameLayout root;
-    private int dp(float n){
+
+    private int dp(float n) {
         return Math.round(getResources().getDisplayMetrics().density*n);
     }
-    @Override public void onCreate(Bundle saved){
+
+    private boolean reducedMotion() {
+        return !ValueAnimator.areAnimatorsEnabled() ||
+            getSharedPreferences("likas_ui",MODE_PRIVATE)
+                .getBoolean("reduced_motion",false);
+    }
+
+    @Override public void onCreate(Bundle saved) {
         super.onCreate(saved);
         getWindow().setStatusBarColor(FOREST);
-        getWindow().setNavigationBarColor(FOREST);
-        root=new FrameLayout(this);
-        root.setBackgroundColor(FOREST);
-        brand=new TextView(this);
-        brand.setText("LIKAS");
-        brand.setTextColor(CREAM);
-        brand.setTextSize(getResources().getConfiguration().fontScale>1.4f?43:58);
-        brand.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));
-        brand.setLetterSpacing(.20f);
-        brand.setGravity(Gravity.CENTER);
-        brand.setContentDescription("LIKAS biodiversity fieldwork");
-        FrameLayout.LayoutParams lp=new FrameLayout.LayoutParams(-1,dp(110),Gravity.CENTER);
-        lp.leftMargin=dp(18);lp.rightMargin=dp(18);
-        root.addView(brand,lp);
-        setContentView(root);
-        startPrivateReferenceBootstrap();
+        getWindow().setNavigationBarColor(DARK_FOREST);
 
-        // Android accessibility and device settings determine whether motion runs.
-        if(!ValueAnimator.areAnimatorsEnabled()||
-            getSharedPreferences("likas_ui",MODE_PRIVATE).getBoolean("reduced_motion",false)){
-            enterHome();
-            return;
+        root=new FrameLayout(this);
+        GradientDrawable backdrop=new GradientDrawable(
+            GradientDrawable.Orientation.TOP_BOTTOM,
+            new int[]{FOREST,DARK_FOREST});
+        root.setBackground(backdrop);
+
+        identity=new LinearLayout(this);
+        identity.setGravity(Gravity.CENTER);
+        identity.setOrientation(LinearLayout.VERTICAL);
+        identity.setPadding(dp(20),dp(8),dp(20),dp(8));
+        FrameLayout.LayoutParams identityParams=new FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.CENTER);
+        identityParams.leftMargin=dp(12);
+        identityParams.rightMargin=dp(12);
+        identityParams.topMargin=dp(80);
+        root.addView(identity,identityParams);
+
+        mark=new ImageView(this);
+        // Borderless transparent ribbon derivative from the unchanged locked master.
+        // The dark rounded-square launcher tile does not belong on the splash.
+        mark.setImageResource(R.drawable.apo_splash_mark);
+        mark.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        int availableDp=Math.round(getResources().getDisplayMetrics().widthPixels /
+            getResources().getDisplayMetrics().density);
+        int markWidthDp=Math.min(276,Math.max(180,availableDp-88));
+        LinearLayout.LayoutParams markParams=new LinearLayout.LayoutParams(
+            dp(markWidthDp),dp(markWidthDp*0.55f));
+        identity.addView(mark,markParams);
+
+        wordmark=new TextView(this);
+        wordmark.setText("APO");
+        wordmark.setTextColor(IVORY);
+        wordmark.setTextSize(getResources().getConfiguration().fontScale>1.5f ? 34f : 43f);
+        wordmark.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));
+        wordmark.setLetterSpacing(.12f);
+        wordmark.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams wordParams=new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT);
+        wordParams.topMargin=dp(16);
+        identity.addView(wordmark,wordParams);
+
+        status=new TextView(this);
+        status.setText("Preparing offline references");
+        status.setTextSize(14);
+        status.setTextColor(SAGE);
+        status.setGravity(Gravity.CENTER);
+        status.setVisibility(View.GONE);
+        status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        FrameLayout.LayoutParams statusParams=new FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL);
+        statusParams.leftMargin=dp(24);
+        statusParams.rightMargin=dp(24);
+        statusParams.bottomMargin=dp(32);
+        root.addView(status,statusParams);
+
+        mark.setContentDescription("APO mountain emblem");
+        // Keep the mountain and wordmark individually available to TalkBack.
+        // An ancestor description would mask their separate accessibility names.
+        wordmark.setContentDescription("Apo");
+        setContentView(root);
+        startReferenceBootstrap();
+
+        if(reducedMotion()) {
+            animationDone=true;
+            maybeEnterHome();
+        } else {
+            mark.setAlpha(0f);
+            mark.setTranslationY(dp(9));
+            wordmark.setAlpha(0f);
+            wordmark.setTranslationY(dp(5));
+            mark.animate().alpha(1f).translationY(0f)
+                .setInterpolator(new DecelerateInterpolator(1.5f))
+                .setDuration(380).start();
+            wordmark.animate().alpha(1f).translationY(0f)
+                .setInterpolator(new DecelerateInterpolator(1.4f))
+                .setStartDelay(90).setDuration(320).withEndAction(()->{
+                    animationDone=true;
+                    maybeEnterHome();
+                }).start();
+            root.setOnClickListener(v->{
+                mark.animate().cancel();
+                wordmark.animate().cancel();
+                mark.setAlpha(1f);
+                wordmark.setAlpha(1f);
+                mark.setTranslationY(0f);
+                wordmark.setTranslationY(0f);
+                animationDone=true;
+                maybeEnterHome();
+            });
         }
-        brand.setAlpha(0f);
-        brand.setScaleX(.91f);brand.setScaleY(.91f);
-        brand.animate().alpha(1f).scaleX(1f).scaleY(1f)
-            .setDuration(460).withEndAction(()->handler.postDelayed(this::leaveSplash,280))
-            .start();
-        root.setOnClickListener(v->leaveSplash()); // tap-to-skip on slow devices
     }
-    private void leaveSplash(){
-        if(entered||isFinishing()||isDestroyed())return;
-        if(!ValueAnimator.areAnimatorsEnabled()||
-            getSharedPreferences("likas_ui",MODE_PRIVATE).getBoolean("reduced_motion",false)){enterHome();return;}
-        brand.animate().cancel();
-        brand.animate().alpha(0f).translationY(-dp(16))
-            .setDuration(210).withEndAction(this::enterHome).start();
-    }
-    private void startPrivateReferenceBootstrap(){
-        if(!BundledPrivateReferences.packaged(this))return;
+
+    private void startReferenceBootstrap() {
+        if(!BundledPrivateReferences.packaged(this)) return;
         loadingReferences=true;
         new Thread(()->{
             String failure=null;
-            try{
+            try {
                 BundledPrivateReferences.ensureInstalled(getApplicationContext());
-            }catch(Exception error){
-                failure=error.getMessage()==null?error.getClass().getSimpleName():
-                    error.getMessage();
+            } catch(Exception error) {
+                failure=error.getMessage()==null
+                    ? error.getClass().getSimpleName() : error.getMessage();
             }
-            final String status=failure;
+            final String result=failure;
             runOnUiThread(()->{
-                if(isFinishing()||isDestroyed())return;
+                if(isFinishing()||isDestroyed()) return;
                 loadingReferences=false;
-                referenceFailure=status;
-                if(continueRequested)enterHome();
+                referenceFailure=result;
+                status.setVisibility(View.GONE);
+                maybeEnterHome();
             });
-        },"LIKAS-Owner-Reference-Startup").start();
+        },"APO-Reference-Bootstrap").start();
     }
-    private void enterHome(){
-        if(entered||isFinishing()||isDestroyed())return;
-        if(loadingReferences){
-            continueRequested=true;
-            brand.animate().cancel();
-            brand.setAlpha(1f);
-            brand.setTranslationY(0f);
-            brand.setText("LIKAS\nPreparing offline references");
-            brand.setTextSize(24);
+
+    private void maybeEnterHome() {
+        if(entered||exitStarted||isFinishing()||isDestroyed()||!animationDone)
+            return;
+        if(loadingReferences) {
+            status.setVisibility(View.VISIBLE);
             return;
         }
-        if(referenceFailure!=null&&!referenceErrorShown){
+        if(referenceFailure!=null&&!referenceErrorShown) {
             referenceErrorShown=true;
             new AlertDialog.Builder(this)
                 .setTitle("Offline references not installed")
-                .setMessage("The private reference package could not be installed: "+
-                    referenceFailure+". Existing surveys remain available. "+
-                    "Continue without the new references?")
+                .setMessage("The offline reference package could not be installed: "
+                    +referenceFailure+". Existing surveys remain available. "
+                    +"Continue without the new references?")
                 .setCancelable(false)
-                .setPositiveButton("Continue",(dialog,which)->enterHome())
+                .setPositiveButton("Continue",(dialog,which)->maybeEnterHome())
                 .show();
             return;
         }
+
+        exitStarted=true;
+        if(reducedMotion()) {
+            enterHome();
+        } else {
+            // Keep the gradient visible while the identity gently clears;
+            // Android then cross-fades the outgoing splash to Home.
+            identity.animate().alpha(0f).translationY(-dp(6))
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setDuration(190).withEndAction(this::enterHome).start();
+        }
+    }
+
+    private void enterHome() {
+        if(entered||isFinishing()||isDestroyed()) return;
         entered=true;
         Intent home=new Intent(this,WelcomeActivity.class);
         home.putExtra("show_menu",true);
         startActivity(home);
-        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+        if(reducedMotion()) {
+            overridePendingTransition(0,0);
+        } else {
+            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+        }
         finish();
     }
-    @Override protected void onDestroy(){
-        handler.removeCallbacksAndMessages(null);
-        if(brand!=null)brand.animate().cancel();
+
+    @Override protected void onDestroy() {
+        if(identity!=null) identity.animate().cancel();
+        if(mark!=null) mark.animate().cancel();
+        if(wordmark!=null) wordmark.animate().cancel();
         super.onDestroy();
     }
 }

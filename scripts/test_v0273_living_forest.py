@@ -42,12 +42,12 @@ class LikasLivingForestTest(unittest.TestCase):
         self.assertIn("loadPreferred(context,NIGHT_HD,NIGHT_FALLBACK)",RENDER)
 
     def test_minimal_startup_auto_enters_home_and_respects_motion_accessibility(self):
-        self.assertIn('brand.setText("LIKAS")',START)
+        self.assertIn('wordmark.setText("APO")',START)
         self.assertIn('ValueAnimator.areAnimatorsEnabled()',START)
-        self.assertIn('setDuration(460)',START)
-        self.assertIn('setDuration(210)',START)
+        self.assertIn('setDuration(380)',START)
+        self.assertIn('setDuration(190)',START)
         self.assertIn('overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out)',START)
-        self.assertIn('root.setOnClickListener(v->leaveSplash())',START)
+        self.assertIn('root.setOnClickListener(v->{',START)
         self.assertIn('new Intent(this,WelcomeActivity.class)',START)
         self.assertNotIn('new LikasForestView(this)',START)
         self.assertNotIn('action("Resume survey"',START)

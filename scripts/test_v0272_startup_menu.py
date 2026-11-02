@@ -25,10 +25,10 @@ class LikasStartupMenuTests(unittest.TestCase):
         self.assertNotIn('resumeButton',CODE)
 
     def test_minimal_title_motion_supports_reduced_motion(self):
-        self.assertIn('brand.setText("LIKAS")',CODE)
+        self.assertIn('wordmark.setText("APO")',CODE)
         self.assertIn('ValueAnimator.areAnimatorsEnabled()',CODE)
-        self.assertIn('root.setOnClickListener(v->leaveSplash())',CODE)
-        self.assertIn('handler.removeCallbacksAndMessages(null)',CODE)
+        self.assertIn('root.setOnClickListener(v->{',CODE)
+        self.assertIn('if(mark!=null) mark.animate().cancel()',CODE)
         self.assertNotIn('new LikasForestView(this)',CODE)
         self.assertNotIn('new RippleDrawable(',CODE)
         self.assertNotIn('getWritableDatabase()',CODE)

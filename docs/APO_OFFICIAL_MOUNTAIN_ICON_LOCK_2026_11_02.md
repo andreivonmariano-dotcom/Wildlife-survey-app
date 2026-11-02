@@ -1,5 +1,8 @@
 # APO | Owner-approved official mountain icon, hard lock
 
+> **Current definitive lock, 2 November 2026, superseding the earlier master below:** The owner has locked **`forest_green_mountain_ribbon_icon.png`**, 1254×1254 RGB, SHA-256 **`6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7`**. The approved launcher image is the original deep forest-green rounded-square artwork with an ivory folded ribbon mountain and jade depth, without any text. Do not use the earlier source `a_clean_modern_minimalist_logo_app_icon_on_a_rou.png` recorded below or the interim rainforest mountain artwork. The owner separately locked a **startup-only** borderless transparent ribbon derivative (SHA-256 `a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc`) over a plain vertical green gradient from `#0B4B39` to `#021918`, with a native ivory `APO` text layer, no scenic background. A one-time eased mountain/wordmark fade-in and smooth Home crossfade are approved; do not introduce a mandatory launch delay, repeated motion, or startup location/network requests. Keep original `org.phwildlife.survey.beta08`, signing certificate, SQLite28 and survey records unchanged. New app binaries are not verified or released. Earlier paragraphs are retained as historical design decisions, not the current asset lock.
+
+
 **Decision:** 2 November 2026 (Asia/Manila)  
 **State:** **APPROVED, HARD-LOCKED as the definitive visual identity.** Design approval, not yet evidence that launcher assets were replaced in a signed APK.
 

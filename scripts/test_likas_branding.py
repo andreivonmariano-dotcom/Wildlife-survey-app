@@ -55,10 +55,10 @@ class LikasBrandingSmokeTest(unittest.TestCase):
     def test_minimal_startup_is_offline_and_home_preserves_resume(self):
         manifest=ET.parse(RES.parent/"AndroidManifest.xml").getroot()
         self.assertEqual(manifest.find("application").attrib[ANDROID+"icon"],
-                         "@mipmap/ic_launcher")
+                         "@mipmap/apo_launcher")
         launch=(JAVA/"LikasLaunchActivity.java").read_text(encoding="utf-8")
         home=(JAVA/"WelcomeActivity.java").read_text(encoding="utf-8")
-        self.assertIn('brand.setText("LIKAS")',launch)
+        self.assertIn('wordmark.setText("APO")',launch)
         self.assertIn('new Intent(this,WelcomeActivity.class)',launch)
         self.assertIn('ValueAnimator.areAnimatorsEnabled()',launch)
         self.assertIn('home.putExtra("show_menu",true)',launch)

@@ -1,17 +1,22 @@
-# LIKAS
+# APO
 
-LIKAS is an offline-first Android biodiversity fieldwork and reference tool for Philippine wildlife surveys.
+APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
 
-**Active development branch:** `feature/likas-rc71-public-preloaded-paic-references`  
-**Current signed development APK:** `0.27.3-rc71-preloaded-paic714-worldcover` (versionCode **131**)  
-**Application ID:** `org.phwildlife.survey.beta08` (original signer retained)  
-**SQLite schema:** **28** (upgrade from v27; no survey-record deletion)
+**Current development source:** `feature/apo-startup-screen-v1-design` (draft PR #74, not merged into default `main`)  
+**Latest verified signed APK:** `0.27.3-rc72-apo-gradient-startup`, versionCode **132** (built from `4ce953bbea100c1c6a90231434591ffb6f99f788`)  
+**Latest checked APO branch HEAD before this documentation update:** `2fc989cae924fc8c652d7b5c3bb6d578dc07d721`  
+**Android application ID:** `org.phwildlife.survey.beta08` (unchanged)  
+**SQLite schema:** **28** (historical field records retained by design; real-device upgrade not yet validated)
 
-**Current signed build status (1 November 2026):** The owner authorized distributing their harmonized 714-species Mindanao PAIC checklist publicly in the LIKAS repository and APK. The 16-tile derived ESA WorldCover 2020 land-cover reference is shipped under CC BY 4.0 with full attribution and modification notice. Both source files are committed in `app/src/main/assets/` and activate automatically at first launch, with no manual import step. RC71 CI **41322915705** passed 377 Python source/science tests, JVM tests, Android APK + AndroidTest builds, signer verification, and independent SHA256 checks of the exact files *inside the signed APK*. Direct owner APK: `LIKAS-v0.27.3-RC71-PAIC714-WorldCover-code131.apk`, SHA256 `76620a2ae6d102012fc7e08740049e2e562f262e01f462bf63dd46e023ccbe6d`. This is a **development preview** until physical-phone startup, historical migration, GPS and UI acceptance are verified. Public source is staged in draft PR #72, inheriting PRs #70–71. The old trusted PR lineage gate requires literal SQLite27 and must be reviewed for current schema28.
+**APO signed preview, 2 November 2026:** The owner-approved textless mountain-ribbon launcher icon and a separate transparent logo on a static forest-to-dark-green splash gradient are in the signed code132 APK. The startup has gentle one-time entrance/exit animations and a reduced-motion path. The 714-species Mindanao PAIC checklist and a sourced ESA WorldCover 2020 reference are installed automatically for offline access. GitHub Actions run `41332798258` passed 380 Python regressions, JVM/Android compilation, signing/identity checks, and packaged reference/artwork SHA checks. APK SHA-256: `4a4210ff77aa40cf8c3f7c0741ddad5baeabe17d54ac93dbfaa62810e78cdfeb`.
 
-See [RC71 reference packaging and QA](docs/LIKAS_RC71_PUBLIC_REFERENCE_EMBED_QA.md) and [latest project state](docs/LIKAS_PROJECT_STATE.md).
+**Release boundary:** RC72 is a **signed development preview**, not a validated stable field release. Physical-phone upgrades with archived surveys, GPS and field workflows, accessibility and on-device menu layout remain unverified. Four later commits on this branch only updated APO startup documentation. They do not constitute a newer APK. Older `main` is not a suitable Android development baseline. Do not merge draft ancestry or reset the working branch without reviewing SQLite28 migration and original-signature tests.
 
-## What LIKAS currently provides
+**Main-menu redesign starting point:** The startup identity has been updated to APO, but `WelcomeActivity.home()` and `LikasPortalUi.hero()` still contain legacy LIKAS Home/menu wording and frog-era Home illustration. Treat the Home redesign as new scoped work from this APO branch. Do not claim the entire interface has been rebranded yet.
+
+See [APO code132 signed APK and release QA](docs/APO_V132_SIGNED_APK_RELEASE_QA_2026_11_02.md), [approved official emblem](docs/APO_OFFICIAL_MOUNTAIN_ICON_LOCK_2026_11_02.md), [project state](docs/LIKAS_PROJECT_STATE.md), and [decision log](docs/LIKAS_DECISION_LOG.md).
+
+## What APO currently provides
 
 - **Fieldwork:** birds, amphibians/reptiles and mammals, project and station records, GPS/elevation, observations, effort, survey history and analysis. A survey can end as **Complete**, **Incomplete**, or **Not Counted**.
 - **Library:** the owner-authorized offline **714-species Mindanao PAIC** master catalog activates automatically (408 birds, 53 amphibians, 154 reptiles, 99 mammals) with the supplied habitat and elevation guides. Legacy illustrated references, cited habitat profiles and approved photos remain separate reference assets, not proof of a local species record. Global IUCN and Philippine DENR fields remain distinct; missing or unverified statuses are not automatically certified.

@@ -58,7 +58,7 @@ class PublicBundledReferencesTest(unittest.TestCase):
         self.assertIn('static final String MAP="paic_worldcover2020_500m.txt"',java)
         self.assertIn("BundledPrivateReferences.ensureInstalled",launch)
         self.assertIn("verifyBundledPaicReferences",gradle)
-        self.assertIn("versionCode 131",gradle)
+        self.assertGreaterEqual(int(__import__('re').search(r'versionCode\s+(\d+)',gradle).group(1)),131)
 
 if __name__=="__main__":
     unittest.main()

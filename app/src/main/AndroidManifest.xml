@@ -21,6 +21,7 @@
         <activity android:name=".HabitatRecordsActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".DataManagementActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".AuditActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".ResearchExportActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".DashboardActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".StationProgressActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".CatalogActivity" android:exported="false" android:screenOrientation="portrait" />

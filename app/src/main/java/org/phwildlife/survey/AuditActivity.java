@@ -21,14 +21,43 @@ public final class AuditActivity extends Activity{
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16),dp(14),dp(16),dp(12));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Scientific data review","Home",this::finish));
+        root.addView(UiKit.navigationHeader(this,"Data quality review","Analysis & Exports",this::finish));
         TextView explanation=new TextView(this);
-        explanation.setText("Read-only checks for records, GPS, survey effort and evidence files.");
+        explanation.setText("Read-only checks of recorded effort, location metadata and evidence files. The review does not alter records.");
         explanation.setTextSize(14);explanation.setTextColor(UiKit.MUTED);
         explanation.setPadding(0,dp(4),0,dp(12));root.addView(explanation);
         refreshButton=UiKit.button(this,"Run quality checks","primary");
         root.addView(refreshButton);
         refreshButton.setOnClickListener(v->scan());
+        Button integrity=UiKit.button(this,"Check local database integrity","secondary");
+        LinearLayout.LayoutParams integrityLp=new LinearLayout.LayoutParams(-1,-2);
+        integrityLp.topMargin=dp(9);
+        root.addView(integrity,integrityLp);
+        integrity.setOnClickListener(v->{
+            integrity.setEnabled(false);
+            auditWorker.execute(()->{
+                String result;
+                try(FieldDb local=new FieldDb(getApplicationContext());
+                    android.database.Cursor cursor=local.getReadableDatabase()
+                        .rawQuery("PRAGMA quick_check",null)){
+                    result=cursor.moveToFirst()?cursor.getString(0):"No response";
+                }catch(Exception error){
+                    result="Check could not finish: "+error.getClass().getSimpleName();
+                }
+                final String message="ok".equalsIgnoreCase(result)?
+                    "SQLite quick_check returned OK. This does not verify field accuracy or taxon identifications.":
+                    "Database integrity result: "+result+
+                    ". Back up field data and review before further edits.";
+                runOnUiThread(()->{
+                    if(isFinishing()||isDestroyed())return;
+                    integrity.setEnabled(true);
+                    new android.app.AlertDialog.Builder(this)
+                        .setTitle("Database integrity")
+                        .setMessage(message)
+                        .setPositiveButton("Close",null).show();
+                });
+            });
+        });
         ScrollView scroll=new ScrollView(this);
         items=new LinearLayout(this);items.setOrientation(LinearLayout.VERTICAL);
         scroll.addView(items);
@@ -65,8 +94,13 @@ public final class AuditActivity extends Activity{
     }
     private void display(List<DataAudit.Issue> issues){
         TextView summary=new TextView(this);
+        int errors=0,warnings=0;
+        for(DataAudit.Issue finding:issues){
+            if("ERROR".equals(finding.level))errors++;
+            else warnings++;
+        }
         summary.setText(issues.isEmpty()?"No issues detected by the current checks":
-            issues.size()+" issue categories need review");
+            errors+" error categories · "+warnings+" other flag categories");
         summary.setTextSize(19);summary.setTextColor(UiKit.FOREST);
         summary.setPadding(0,dp(12),0,dp(12));items.addView(summary);
         if(issues.isEmpty()){
@@ -91,8 +125,9 @@ public final class AuditActivity extends Activity{
             margin.topMargin=dp(9);items.addView(card,margin);
         }
         TextView explanation=new TextView(this);
-        explanation.setText("Full inspection results are included in the research ZIP as data_quality_flags.csv. "+
-            "Warnings require review. This screen never changes source records.");
+        explanation.setText("Issue counts are categories, not necessarily unique observations. " +
+            "Full inspection results appear in research ZIP data_quality_flags.csv. " +
+            "A passing check never verifies sampling design or species identification.");
         explanation.setTextColor(UiKit.INK);explanation.setTextSize(12);
         explanation.setPadding(0,dp(15),0,0);items.addView(explanation);
     }

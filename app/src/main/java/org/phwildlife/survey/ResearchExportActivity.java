@@ -34,21 +34,56 @@ public final class ResearchExportActivity extends Activity {
         LinearLayout body=new LinearLayout(this);
         LinearLayout root=UiKit.page(this,"Research export","Analysis & Exports",
             this::finish,body);
-        body.addView(ApoHomeUi.section(this,"Export survey data",
-            "Create a ZIP with research CSV files, recorded sampling effort, " +
-            "and linked field evidence. This is different from a restorable " +
-            "device backup. Review sensitive locations before sharing."));
-        exportButton=UiKit.button(this,"Create research ZIP","primary");
+        body.addView(ApoHomeUi.section(this,"Research archive",
+            "Export project records, survey effort, observations and linked " +
+            "evidence in the established research ZIP format."));
+        body.addView(UiKit.sectionTitle(this,"Records on this device"));
+        body.addView(ApoHomeUi.note(this,recordSummary()));
+        body.addView(UiKit.sectionTitle(this,"What will be included"));
+        body.addView(ApoHomeUi.note(this,
+            "Surveys of all outcomes, including incomplete and not-counted " +
+            "records, are included for auditability. Some analysis tables " +
+            "are restricted to completed surveys."));
+        body.addView(ApoHomeUi.note(this,
+            "The archive may contain precise coordinates, timestamps, observer " +
+            "names and sensitive species locations. Review access before sharing."));
+        body.addView(UiKit.sectionTitle(this,"Save research ZIP"));
+        exportButton=UiKit.button(this,"Choose ZIP destination","primary");
         LinearLayout.LayoutParams action=new LinearLayout.LayoutParams(-1,-2);
         action.topMargin=dp(12);
         body.addView(exportButton,action);
         exportButton.setOnClickListener(v->chooseDestination());
-        status=UiKit.caption(this,"Choose a destination to save a research ZIP.");
+        status=UiKit.caption(this,"No file has been exported in this session.");
+        status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        status.setMinHeight(dp(48));
         LinearLayout.LayoutParams note=new LinearLayout.LayoutParams(-1,-2);
         note.topMargin=dp(18);
         body.addView(status,note);
+        body.addView(ApoHomeUi.note(this,
+            "Research ZIP exports are not restorable device backups. " +
+            "Use Settings > Backup for workspace recovery."));
         setContentView(root);
         UiMotion.enter(this,body);
+    }
+
+    private String recordSummary(){
+        try(FieldDb db=new FieldDb(this)){
+            int surveys=count(db,"SELECT COUNT(*) FROM surveys");
+            int observations=count(db,
+                "SELECT COUNT(*) FROM field_records WHERE deleted_at IS NULL");
+            int projects=count(db,"SELECT COUNT(*) FROM projects");
+            int stations=count(db,"SELECT COUNT(*) FROM sites");
+            return surveys+" surveys (all outcomes) · "+observations+
+                " retained observations\\n"+projects+" projects · "+
+                stations+" sampling stations";
+        }catch(Exception error){
+            return "The local record summary is unavailable. Export is still accessible.";
+        }
+    }
+    private int count(FieldDb db,String statement){
+        try(android.database.Cursor c=db.getReadableDatabase().rawQuery(statement,null)){
+            return c.moveToFirst()?c.getInt(0):0;
+        }
     }
 
     private void chooseDestination(){
@@ -66,7 +101,11 @@ public final class ResearchExportActivity extends Activity {
 
     @Override protected void onActivityResult(int request,int result,Intent data){
         super.onActivityResult(request,result,data);
-        if(request!=CREATE_RESEARCH_ZIP || result!=RESULT_OK || data==null)return;
+        if(request!=CREATE_RESEARCH_ZIP)return;
+        if(result!=RESULT_OK || data==null){
+            status.setText("Export cancelled. No research ZIP was created by APO.");
+            return;
+        }
         Uri destination=data.getData();
         if(destination==null){status.setText("No export destination selected.");return;}
         if(exporting)return;

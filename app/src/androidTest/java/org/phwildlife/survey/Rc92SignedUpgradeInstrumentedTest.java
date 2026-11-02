@@ -27,7 +27,7 @@ public final class Rc92SignedUpgradeInstrumentedTest {
     static final String ZERO="QA_RC92_UPGRADE_ZERO";
     static final String ACTIVE="QA_RC92_UPGRADE_ACTIVE";
     static final String LABEL="Unidentified bird, original field note";
-    static final String AUDIO="qa_rc92_upgrade_fixture.wav";
+    static final String AUDIO="clip_20261102_qa92.wav";
     static final String TIMESTAMP="2026-11-02T08:00:00Z";
 
     private static Context app(){

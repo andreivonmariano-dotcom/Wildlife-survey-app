@@ -2,20 +2,16 @@
 
 APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
 
-**Current Home development source:** `feature/apo-text-home-v133` (child of the APO RC72 startup branch; not merged into `main`)
-**Last verified signed APK before RC73 build:** `0.27.3-rc72-apo-gradient-startup`, versionCode **132**  
-**Latest verified signed APK:** `0.27.3-rc72-apo-gradient-startup`, versionCode **132** (built from `4ce953bbea100c1c6a90231434591ffb6f99f788`)  
-**Latest checked APO branch HEAD before this documentation update:** `2fc989cae924fc8c652d7b5c3bb6d578dc07d721`  
+**Current APO Home development source:** `feature/apo-text-home-v133` (draft PR #75, branched from the latest APO startup; not merged into `main`)  
+**Latest verified signed APK:** `0.27.3-rc73-apo-text-home`, versionCode **133**, source `ac75b6abe1af2b5e3e5c758a1bdec86f075fc9c1`  
 **Android application ID:** `org.phwildlife.survey.beta08` (unchanged)  
-**SQLite schema:** **28** (historical field records retained by design; real-device upgrade not yet validated)
+**SQLite schema:** **28** (data model unchanged; real-device upgrade not yet validated)
 
-**APO signed preview, 2 November 2026:** The owner-approved textless mountain-ribbon launcher icon and a separate transparent logo on a static forest-to-dark-green splash gradient are in the signed code132 APK. The startup has gentle one-time entrance/exit animations and a reduced-motion path. The 714-species Mindanao PAIC checklist and a sourced ESA WorldCover 2020 reference are installed automatically for offline access. GitHub Actions run `41332798258` passed 380 Python regressions, JVM/Android compilation, signing/identity checks, and packaged reference/artwork SHA checks. APK SHA-256: `4a4210ff77aa40cf8c3f7c0741ddad5baeabe17d54ac93dbfaa62810e78cdfeb`.
+**APO RC73 signed preview, 2 November 2026:** The text-first Home presents **BioTools**, **PHLibrary**, **PHMaps**, and **BioDiscover** with Settings in the header and a contextual Resume shortcut. The former illustrated LIKAS Home hero and icon tiles are no longer used there. The 220ms reduced-motion-safe Home entrance preserves the owner-approved mountain launcher and gradient splash. PHMaps currently links existing site and habitat records, while a complete atlas remains unimplemented. BioDiscover is explicitly marked as in development because no live research feed is shipped.
 
-**Release boundary:** RC72 is a **signed development preview**, not a validated stable field release. Physical-phone upgrades with archived surveys, GPS and field workflows, accessibility and on-device menu layout remain unverified. Four later commits on this branch only updated APO startup documentation. They do not constitute a newer APK. Older `main` is not a suitable Android development baseline. Do not merge draft ancestry or reset the working branch without reviewing SQLite28 migration and original-signature tests.
+**CI and downloadable build:** GitHub Actions run `41373151540` passed **385 Python regressions**, JVM/Android tests and build, original signer/Android ID and exact embedded-artwork and data checks. File `APO-v0.27.3-RC73-text-home-code133.apk` is **11,744,944 bytes**, SHA-256 `c21fbc5ba9d9b4bbc9e455148d680609f21974d2f53523b35ddbbb4a9eb2125d`. The APK was downloaded and delivered directly in the active user chat. See [RC73 signed Home preview QA](docs/APO_RC73_TEXT_HOME_SIGNED_QA_2026_11_02.md).
 
-**RC73 Home implementation:** Four text-only top-level modules are coded: BioTools, PHLibrary, PHMaps and BioDiscover, with a small Settings header action. The legacy illustrated Home hero/tiles are no longer called; active survey Resume remains. PHMaps exposes existing field-site and habitat records while independent atlas features are not complete; BioDiscover is clearly identified as under development, not as a live news feed. Source is staged for signed build/QA, not yet physically field-validated.
-
-See [APO code132 signed APK and release QA](docs/APO_V132_SIGNED_APK_RELEASE_QA_2026_11_02.md), [approved official emblem](docs/APO_OFFICIAL_MOUNTAIN_ICON_LOCK_2026_11_02.md), [project state](docs/LIKAS_PROJECT_STATE.md), and [decision log](docs/LIKAS_DECISION_LOG.md).
+**Release boundary:** RC73 is a **signed development preview**, not a stable field-certified release. Physical handset upgrade and saved records, GPS/field recording, screen accessibility and large-font navigation require device tests. The prior code132/RC72 startup build (SHA-256 `4a4210ff77aa40cf8c3f7c0741ddad5baeabe17d54ac93dbfaa62810e78cdfeb`) is historical and should not be presented as the current version. Old default `main` is not a suitable Android development baseline.
 
 ## What APO currently provides
 

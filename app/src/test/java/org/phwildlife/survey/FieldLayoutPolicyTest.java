@@ -26,6 +26,11 @@ public final class FieldLayoutPolicyTest {
         assertTrue(FieldLayoutPolicy.actionHeightDp(2f)>=96);
         assertEquals(96,FieldLayoutPolicy.actionHeightDp(4f));
         assertEquals(56,FieldLayoutPolicy.saveHeightDp(1f));
-        assertEquals(110,FieldLayoutPolicy.saveHeightDp(3f));
+        assertEquals(80,FieldLayoutPolicy.saveHeightDp(3f));
+        assertEquals(80,FieldLayoutPolicy.saveHeightDp(1.6f));
+        assertTrue(FieldLayoutPolicy.stackRecorderDock(320,2f));
+        assertFalse(FieldLayoutPolicy.stackRecorderDock(360,1.6f));
+        assertTrue(FieldLayoutPolicy.stackRecorderDock(360,2f));
+        assertFalse(FieldLayoutPolicy.stackRecorderDock(412,2f));
     }
 }

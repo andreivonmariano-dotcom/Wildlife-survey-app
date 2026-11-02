@@ -17,7 +17,19 @@ public final class FieldLayoutPolicy {
         float scale=Float.isFinite(fontScale)?Math.max(1f,fontScale):1f;
         return Math.max(48,Math.min(96,Math.round(50f*scale)));
     }
+    /**
+     * Keep secondary survey actions side-by-side when actual screen width can
+     * fit both labels. Other portal pairs may still stack at this width.
+     * At very large fonts on narrow phones, preserve two full-width targets.
+     */
+    public static boolean stackRecorderDock(int widthDp,float fontScale){
+        if(widthDp<340)return true;
+        float scale=Float.isFinite(fontScale)?Math.max(1f,fontScale):1f;
+        return scale>=1.9f&&widthDp<390;
+    }
     public static int saveHeightDp(float fontScale){
-        return Math.max(56,Math.min(110,Math.round(56f*Math.max(1f,fontScale))));
+        float scale=Float.isFinite(fontScale)?Math.max(1f,fontScale):1f;
+        // A single large target remains reachable without consuming the form.
+        return Math.max(56,Math.min(80,Math.round(50f*scale)));
     }
 }

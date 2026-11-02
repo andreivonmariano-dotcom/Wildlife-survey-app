@@ -58,8 +58,20 @@ public final class RecorderUiEmulatorTest {
                 assertTrue("End Survey must stay visible",end.isShown());
                 assertTrue("Save must remain visible",save.isShown());
                 assertTrue("End Survey should be enabled in a running survey",end.isEnabled());
-                assertNotNull("Session section missing",findText(root,"Sampling session"));
-                assertNotNull("Detection section missing",findText(root,"Detection tools"));
+                View samplingTools=findText(root,"Sampling session");
+                View detectionTools=findText(root,"Detection tools");
+                assertNotNull("Session section missing",samplingTools);
+                assertNotNull("Detection section missing",detectionTools);
+                if(activity.getResources().getConfiguration().fontScale>=1.60f){
+                    View disclosure=findText(root,"Show sampling & detection tools");
+                    assertNotNull("Compact survey-tool disclosure missing",disclosure);
+                    assertTrue("Survey tools disclosure should be visible",disclosure.isShown());
+                    assertFalse("Nonessential survey tools must begin collapsed",samplingTools.isShown());
+                    disclosure.performClick();
+                    assertTrue("Sampling tools should expand on demand",samplingTools.isShown());
+                    disclosure.performClick();
+                    assertFalse("Sampling tools should collapse again",samplingTools.isShown());
+                }
                 int[] pos=new int[2];
                 end.getLocationOnScreen(pos);
                 int height=activity.getResources().getDisplayMetrics().heightPixels;

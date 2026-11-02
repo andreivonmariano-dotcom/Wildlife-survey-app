@@ -41,7 +41,8 @@ class LiveRecorderRC78(unittest.TestCase):
             "private void finishPrompt()",1)[0]
         for entry in ("taxonEntry","notesEntry","distanceEntry","habitatEntry",
                       "behaviorEntry","pendingPhoto","markedAt","count!=1",
-                      "confidenceSpinner","evidenceSpinner"):
+                      "confidenceSpinner","evidenceSpinner","lifeStageSpinner",
+                      "distanceSourceSpinner","firstPositionSpinner","movementSpinner"):
             self.assertIn(entry,closure)
         self.assertIn("if(hasUnsavedObservation())",s)
         self.assertIn("discardUnfinishedObservation()",s)
@@ -57,8 +58,8 @@ class LiveRecorderRC78(unittest.TestCase):
         self.assertIn("fieldScroll.addView(content)",s)
         self.assertIn("recorded_at",source("FieldDb.java"))
         b=(BASE/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 138",b)
-        self.assertIn("0.27.3-rc78-apo-survey-recorder",b)
+        self.assertRegex(b,r"versionCode 13[89]")
+        self.assertRegex(b,r"0\.27\.3-rc(78-apo-survey-recorder|79-apo-survey-flow)")
         self.assertIn("org.phwildlife.survey.beta08",b)
         self.assertIn("super(context,NAME,null,28)",source("FieldDb.java"))
 

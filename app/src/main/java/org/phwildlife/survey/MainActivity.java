@@ -291,7 +291,13 @@ public class MainActivity extends Activity implements LocationListener {
         boolean stackSessionControls=FieldLayoutPolicy.stackPortalPair(
             getResources().getConfiguration().screenWidthDp,
             getResources().getConfiguration().fontScale);
-        content.addView(UiKit.sectionTitle(this,"Sampling session"));
+        // At enlarged text, methods without station-dependent effort can
+        // open directly onto the observation form. Survey tools remain one tap
+        // away; station-based and GPS-transect controls stay expanded.
+        final boolean compactObservationFirst=largeText&&!hasStationUnits()&&
+            !method.equals("line_transect")&&!method.equals("ves_transect");
+        LinearLayout recorderTools=vertical();
+        recorderTools.addView(UiKit.sectionTitle(this,"Sampling session"));
         LinearLayout utilityRow=horizontal();
         if(stackSessionControls)utilityRow.setOrientation(LinearLayout.VERTICAL);
         pauseButton=UiKit.button(this,"Pause effort","secondary");
@@ -305,7 +311,7 @@ public class MainActivity extends Activity implements LocationListener {
         if(stackSessionControls)progressLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
         else progressLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         utilityRow.addView(progressButton,progressLp);
-        content.addView(utilityRow);
+        recorderTools.addView(utilityRow);
         progressButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
         pauseButton.setOnClickListener(v->togglePause());
         progressButton.setOnClickListener(v->openProgress());
@@ -331,19 +337,19 @@ public class MainActivity extends Activity implements LocationListener {
         });
         // Optional settings are placed below the observation form.
         pointNextButton=UiKit.button(this,"Finish point · Next station","camera");
-        content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,-2));
+        recorderTools.addView(pointNextButton,new LinearLayout.LayoutParams(-1,-2));
         pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
         pointNextButton.setOnClickListener(v->{if(method.equals("point_count"))nextPoint();else nextSamplingUnit();});
         trackingView=label("Track: awaiting GPS",12,true);
         trackingView.setTextColor(UiKit.BLUE);
-        content.addView(trackingView);
+        recorderTools.addView(trackingView);
         trackingView.setVisibility(method.equals("line_transect")||method.equals("ves_transect")?View.VISIBLE:View.GONE);
 
         // Stack both actions at phone widths and enlarged text to avoid clipped labels.
         boolean stackCaptureActions=FieldLayoutPolicy.stackPortalPair(
             getResources().getConfiguration().screenWidthDp,
             getResources().getConfiguration().fontScale);
-        content.addView(UiKit.sectionTitle(this,"Detection tools"));
+        recorderTools.addView(UiKit.sectionTitle(this,"Detection tools"));
         LinearLayout detectRow=horizontal();
         if(stackCaptureActions)detectRow.setOrientation(LinearLayout.VERTICAL);
         Button markTime=UiKit.button(this,"Mark detection","secondary");
@@ -357,7 +363,7 @@ public class MainActivity extends Activity implements LocationListener {
         if(stackCaptureActions)bearingLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
         else bearingLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         detectRow.addView(markButton,bearingLp);
-        content.addView(detectRow);
+        recorderTools.addView(detectRow);
         markTime.setOnClickListener(v->markDetection());
         markButton.setOnClickListener(v->openCamera());
         // Saved preferences are scoped to the method, never a particular observation.
@@ -382,7 +388,7 @@ public class MainActivity extends Activity implements LocationListener {
         captureRow.addView(changeQuick,changeLp);
         LinearLayout.LayoutParams captureLp=new LinearLayout.LayoutParams(-1,-2);
         captureLp.topMargin=dp(7);
-        content.addView(captureRow,captureLp);
+        recorderTools.addView(captureRow,captureLp);
         quickCapture.setOnClickListener(v->{
             switch(chosen[0]){
                 case CALLS:openCallLibrary();break;
@@ -423,8 +429,8 @@ public class MainActivity extends Activity implements LocationListener {
         evidenceToggle.setContentDescription("Show other evidence capture tools");
         LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,-2);
         evidenceLp.topMargin=dp(7);
-        content.addView(evidenceToggle,evidenceLp);
-        content.addView(evidenceTools);
+        recorderTools.addView(evidenceToggle,evidenceLp);
+        recorderTools.addView(evidenceTools);
         evidenceToggle.setOnClickListener(v->{
             boolean open=evidenceTools.getVisibility()!=View.VISIBLE;
             evidenceTools.setVisibility(open?View.VISIBLE:View.GONE);
@@ -490,7 +496,22 @@ public class MainActivity extends Activity implements LocationListener {
         clear.setFocusable(true);
         clear.setOnClickListener(v->clearMark());
         markRow.addView(clear);
-        content.addView(markRow);
+        recorderTools.addView(markRow);
+        if(compactObservationFirst){
+            Button revealTools=UiKit.button(this,"Show sampling & detection tools","secondary");
+            revealTools.setContentDescription("Show sampling and detection tools");
+            content.addView(revealTools,new LinearLayout.LayoutParams(-1,-2));
+            recorderTools.setVisibility(View.GONE);
+            content.addView(recorderTools);
+            revealTools.setOnClickListener(v->{
+                boolean expanded=recorderTools.getVisibility()!=View.VISIBLE;
+                recorderTools.setVisibility(expanded?View.VISIBLE:View.GONE);
+                revealTools.setText(expanded?
+                    "Hide sampling & detection tools":"Show sampling & detection tools");
+                revealTools.setContentDescription(expanded?
+                    "Hide sampling and detection tools":"Show sampling and detection tools");
+            });
+        }else content.addView(recorderTools);
         content.addView(FieldVisuals.section(this,"Record observation",
             "Species, number of individuals and encounter details"));
         // One row combines direct entry and the complete offline checklist.
@@ -779,7 +800,7 @@ public class MainActivity extends Activity implements LocationListener {
         saveButton.setMinHeight(dp(FieldLayoutPolicy.saveHeightDp(
             getResources().getConfiguration().fontScale)));
         footer.addView(saveButton,new LinearLayout.LayoutParams(-1,-2));
-        boolean stackDock=FieldLayoutPolicy.stackPortalPair(
+        boolean stackDock=FieldLayoutPolicy.stackRecorderDock(
             getResources().getConfiguration().screenWidthDp,
             getResources().getConfiguration().fontScale);
         LinearLayout footerOptions=horizontal();
@@ -1278,7 +1299,11 @@ public class MainActivity extends Activity implements LocationListener {
             filled(habitatEntry)||filled(behaviorEntry)||filled(identificationNote)||
             pendingPhoto!=null||markedAt>0||count!=1||
             (confidenceSpinner!=null&&confidenceSpinner.getSelectedItemPosition()>0)||
-            (evidenceSpinner!=null&&evidenceSpinner.getSelectedItemPosition()>0);
+            (evidenceSpinner!=null&&evidenceSpinner.getSelectedItemPosition()>0)||
+            (lifeStageSpinner!=null&&lifeStageSpinner.getSelectedItemPosition()>0)||
+            (distanceSourceSpinner!=null&&distanceSourceSpinner.getSelectedItemPosition()>0)||
+            (firstPositionSpinner!=null&&firstPositionSpinner.getSelectedItemPosition()>0)||
+            (movementSpinner!=null&&movementSpinner.getSelectedItemPosition()>0);
     }
     private void discardUnfinishedObservation(){
         for(EditText entry:new EditText[]{taxonEntry,distanceEntry,notesEntry,
@@ -1289,6 +1314,10 @@ public class MainActivity extends Activity implements LocationListener {
         if(countView!=null)countView.setText("1");
         if(confidenceSpinner!=null)confidenceSpinner.setSelection(0);
         if(evidenceSpinner!=null)evidenceSpinner.setSelection(0);
+        if(lifeStageSpinner!=null)lifeStageSpinner.setSelection(0);
+        if(distanceSourceSpinner!=null)distanceSourceSpinner.setSelection(0);
+        if(firstPositionSpinner!=null)firstPositionSpinner.setSelection(0);
+        if(movementSpinner!=null)movementSpinner.setSelection(0);
         pendingPhoto=null;
         showPendingPhoto();
         clearMark();
@@ -1316,9 +1345,16 @@ public class MainActivity extends Activity implements LocationListener {
             lp.bottomMargin=dp(10);
             actions.addView(button,lp);
         }
-        TextView details=label("Complete: requirements met. Incomplete: save partial work. "+
-            "Not Counted: exclude from analysis.",12,false);
+        TextView details=label("Complete saves protocol-qualified effort. "+
+            "Incomplete preserves partial fieldwork. Not Counted archives the event "+
+            "but excludes it from default analysis.",12,false);
         details.setTextColor(MUTED);actions.addView(details);
+        String readiness=completionChecklist();
+        if(!readiness.trim().isEmpty()){
+            TextView required=label("Method completion check\n"+readiness,12,false);
+            required.setTextColor(UiKit.INK);
+            actions.addView(required);
+        }
         ScrollView endScroll=new ScrollView(this);
         endScroll.addView(actions);
         AlertDialog dialog=new AlertDialog.Builder(this)

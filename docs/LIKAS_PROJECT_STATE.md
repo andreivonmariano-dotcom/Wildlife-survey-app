@@ -1,5 +1,17 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | RC94 PHLibrary redesign | source implemented, signed test gate pending
+
+- **Active source:** `feature/apo-rc94-phlibrary-overhaul-v154` is derived from RC93 QA code153, keeping original app ID, signer configuration, SQLite29 and immutable PAIC714/WorldCover/photo/art assets. This feature increments `app/build.gradle` to **versionCode154**, `0.27.3-rc94-phlibrary-preview`. **No verified signed RC94 APK or physical-phone installation is claimed.** Do not use historical default main.
+- **PHLibrary hub:** Direct source-linked Mindanao PAIC checklist entry precedes the narrower illustrated species and habitat guides; reference tools remain available in grouped, readable targets. This fixes misleading extra navigation to the 714-name library.
+- **Discovery screen:** Illustrations are explicitly distinguished from a complete checklist; independent species/habitat search strings persist across tabs and rotation, eight-or-fewer filtered matches become vertical cards, selected tab state is accessible, and citation-bearing conservation cards no longer sort or style by a pooled IUCN/DENR severity.
+- **Source and test changes:** `LikasLibraryActivity.java`, `LikasDiscoveryActivity.java`, `app/build.gradle`, thirteen version-pinned Python science/source tests, `scripts/test_apo_rc94_phlibrary.py`, `Rc94PhLibraryInstrumentedTest.java`, `Rc94SignedUpgradeInstrumentedTest.java`, two instrumented acceptance scripts, and `.github/workflows/apo-rc94-phlibrary-v154-qa.yml`. All changes are **source committed**, not certified.
+- **QA gate:** CI must build code154 under original certificate, run all existing science tests and Android14 RC93 GPS/audio/process/SQLite29 backup tests, capture PHLibrary at 160% and 200% font, then run signed **RC92 code152 → RC94 code154** `adb install -r` with disposable synthetic outcomes, audio, records and research ZIP. Approved predecessor APK artifact 13139140344 was downloaded and independently ZIP/PAIC714/WorldCover/art SHA-checked in this conversation, SHA-256 `c88f641e73516b7e9916e34ec31a511c06b2f4042ffde0b559471aff91fabb06`.
+- **Remaining:** Check actual GitHub Actions run and failures, confirm exact resulting signed binary, retrieve and verify it in the chat before any direct APK link; evaluate screen screenshots and real phone with archived surveys. Existing PR #96/#97 previously failed before their fixture corrections; do not describe either as successful until a corrected run passes. Full details: `docs/APO_RC94_PHLIBRARY_QA_2026_11_02.md`.
+
+---
+
+
 ## 2026-11-02 | Cross-chat continuity audit: RC92 and emerging RC93 source candidate
 
 - **Current active experimental source observed in GitHub:** `qa/apo-rc92-unverified-gates-20261102` HEAD `1fa024adcff6a74ac15c1d2d1dfba7df82a36b94`, app `0.27.3-rc93-apo-schema29-backup-qa`, **versionCode 153**, original app ID `org.phwildlife.survey.beta08` and SQLite29. The branch's `FieldBackupArchive` source now accepts schemas 27–29 and writes a manifest matching the actual backed-up database schema. This is **source inspection, not a verified signed RC93 build or release**. The separate `qa/apo-rc92-to-rc93-signed-upgrade-20261102` branch also contains code153.

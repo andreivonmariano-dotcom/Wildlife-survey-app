@@ -140,7 +140,7 @@ public final class BioToolsNavigationInstrumentedTest {
     }
 
     @Test public void recorderOwnedHistoryClosesToCallerInsteadOfAllSurveys(){
-        String id=fixture("opportunistic","Birds","active");
+        String id=fixture("opportunistic","Birds","incomplete");
         Intent intent=new Intent(APP,HistoryActivity.class)
             .putExtra("event_id",id).putExtra("from_recorder",true);
         try(ActivityScenario<HistoryActivity> scenario=ActivityScenario.launch(intent)){
@@ -155,11 +155,11 @@ public final class BioToolsNavigationInstrumentedTest {
             INSTR.waitForIdleSync();
             // Avoid dereferencing a destroyed ActivityScenario after Back.
         }
-        assertEquals("active",outcome(id));
+        assertEquals("incomplete",outcome(id));
     }
 
     @Test public void devicePickerShowsUndeployedSurveyAndBothBackRoutes(){
-        String id=fixture("camera_trap_check","Mammals","active");
+        String id=fixture("camera_trap_check","Mammals","incomplete");
         Intent launch=new Intent(APP,TrapProtocolActivity.class);
         try(ActivityScenario<TrapProtocolActivity> scenario=ActivityScenario.launch(launch)){
             scenario.onActivity(a->{
@@ -205,7 +205,7 @@ public final class BioToolsNavigationInstrumentedTest {
             scenario.onActivity(a->assertTrue("system Back returns to picker",
                 contains(a,"Device-method surveys")));
         }
-        assertEquals("active",outcome(id));
+        assertEquals("incomplete",outcome(id));
     }
 
     @Test public void protocolSurveyPickerBackReturnsToPicker(){
@@ -241,7 +241,7 @@ public final class BioToolsNavigationInstrumentedTest {
     }
 
     @Test public void stationProgressShowsSurveyVisitsWithoutProjectInventory(){
-        String id=fixture("visual_encounter","Herpetofauna","active");
+        String id=fixture("visual_encounter","Herpetofauna","incomplete");
         try(ActivityScenario<StationProgressActivity> scenario=ActivityScenario.launch(
                 new Intent(APP,StationProgressActivity.class).putExtra("event_id",id))){
             scenario.onActivity(a->{
@@ -254,7 +254,7 @@ public final class BioToolsNavigationInstrumentedTest {
                 assertTrue(a.isFinishing());
             });
         }
-        assertEquals("active",outcome(id));
+        assertEquals("incomplete",outcome(id));
     }
 
     @Test public void recorderActionsAnd200PercentFontDoNotClipEndSurvey(){

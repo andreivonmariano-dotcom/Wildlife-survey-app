@@ -42,7 +42,7 @@ class Rc69HabitatPreflightTests(unittest.TestCase):
     def test_legacy_backup_compatibility(self):
         backup=read('FieldBackupArchive.java')
         self.assertIn('version>=27&&version<=29',backup)
-        self.assertIn('manifest.put("sqliteSchema",28)',backup)
+        self.assertIn('manifest.put("sqliteSchema",snapshotSchema)',backup)
         self.assertIn('survey_habitat_setup',backup)
 
 if __name__=='__main__':unittest.main()

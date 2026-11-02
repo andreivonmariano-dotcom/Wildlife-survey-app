@@ -51,6 +51,6 @@ class MethodCompletionReviewContracts(unittest.TestCase):
         self.assertIn('super(context,NAME,null,29)',src("FieldDb.java"))
         build=(ROOT/"app/build.gradle").read_text()
         self.assertIn("versionCode 153",build)
-        self.assertIn("versionName '0.27.3-rc92-apo-closure-integrity'",build)
+        self.assertIn("versionName '0.27.3-rc93-apo-schema29-backup-qa'",build)
 
 if __name__=="__main__":unittest.main()

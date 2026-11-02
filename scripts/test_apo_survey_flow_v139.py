@@ -46,7 +46,7 @@ class RecorderFlowRC79(unittest.TestCase):
             self.assertIn(fragment,test)
         gradle=read("app/build.gradle")
         self.assertIn("versionCode 153",gradle)
-        self.assertIn("versionName '0.27.3-rc92-apo-closure-integrity'",gradle)
+        self.assertIn("versionName '0.27.3-rc93-apo-schema29-backup-qa'",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 

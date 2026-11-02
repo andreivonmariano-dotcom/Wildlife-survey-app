@@ -77,7 +77,7 @@ public final class RecorderPickerCompactEmulatorTest {
                 assertNotNull("Search input present",description(root,"Search offline species by"));
                 assertNotNull("Species header",text(root,"Species"));
                 assertNotNull("Unknown ID path",description(root,"Record an unidentified species"));
-                assertNotNull("Sort control",text(root,"Sort:"));
+                assertNotNull("Sort control",description(root,"Sort species by"));
                 assertNotNull("Site conditions control",text(root,"Site"));
             });
             try{Thread.sleep(900);}catch(InterruptedException e){Thread.currentThread().interrupt();}

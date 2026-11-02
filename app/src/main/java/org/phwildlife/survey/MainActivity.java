@@ -953,9 +953,25 @@ public class MainActivity extends Activity implements LocationListener {
             if(groupBar.getChildCount()>0)groupLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
             groupBar.addView(b,groupLp);
             b.setOnClickListener(v->{
-                persistDraft();group=name;showGroups();refreshAutocomplete();queueDraft();
+                if(group.equals(name))return;
+                if(filled(taxonEntry)){
+                    new AlertDialog.Builder(this)
+                        .setTitle("Change wildlife group?")
+                        .setMessage("The current species entry will be cleared. Other measurements stay in this draft.")
+                        .setNegativeButton("Keep group",null)
+                        .setPositiveButton("Change",(dialog,which)->changeObservationGroup(name))
+                        .show();
+                }else changeObservationGroup(name);
             });
         }
+    }
+    private void changeObservationGroup(String next){
+        if(group.equals(next))return;
+        persistDraft();
+        taxonEntry.setText("");
+        selectedTaxonKey="";selectedTaxonVersion="";
+        group=next;
+        showGroups();refreshAutocomplete();queueDraft();
     }
     private void updateMethods(){
         lineRow.setVisibility(SurveyMethods.isBirdLine(profile,method)?View.VISIBLE:View.GONE);

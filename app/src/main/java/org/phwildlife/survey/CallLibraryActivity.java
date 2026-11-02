@@ -112,14 +112,23 @@ public final class CallLibraryActivity extends Activity {
             return c.moveToFirst()&&c.isNull(0);
         }catch(Exception e){return false;}
     }
+    /** Header and Android Back both wait until pending audio has a persisted record. */
+    private void navigateBack(){
+        if(recorder!=null){
+            if(recorder.isCapturing()){
+                stopRecord();
+                notice("Recording stopped. Saving sound before leaving.");
+            }else notice("Sound is still being saved. Return when saving finishes.");
+            return;
+        }
+        if(selectedClip!=null){releasePlayer();selectedClip=null;draw();}
+        else finish();
+    }
     private void layout(String title){
         LinearLayout root=column();root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(14),dp(8),dp(14),dp(12));
-        root.addView(UiKit.navigationHeader(this,title,selectedClip!=null?"Library":"Back",()->{
-            if(recorder!=null){notice("Stop recording and finish saving before leaving");return;}
-            if(selectedClip!=null){releasePlayer();selectedClip=null;draw();}
-            else finish();
-        }));
+        root.addView(UiKit.navigationHeader(this,title,selectedClip!=null?"Library":"Back",
+            this::navigateBack));
         ScrollView scroll=new ScrollView(this);
         body=column();body.setPadding(0,dp(8),0,dp(24));
         scroll.addView(body);
@@ -575,11 +584,7 @@ public final class CallLibraryActivity extends Activity {
         }
         seek=null;playbackTime=null;
     }
-    @Override public void onBackPressed(){
-        if(recorder!=null&&recorder.isCapturing()){stopRecord();return;}
-        if(selectedClip!=null){selectedClip=null;draw();return;}
-        super.onBackPressed();
-    }
+    @Override public void onBackPressed(){navigateBack();}
     @Override protected void onResume(){
         super.onResume();
     }

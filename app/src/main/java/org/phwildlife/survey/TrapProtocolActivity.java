@@ -83,12 +83,16 @@ public final class TrapProtocolActivity extends Activity {
     private void draw(){
         LinearLayout screen=column();screen.setPadding(dp(14),dp(9),dp(14),dp(12));
         screen.setBackgroundColor(UiKit.BG);
-        screen.addView(UiKit.navigationHeader(this,"Trap and camera records","Back",this::finish));
+        screen.addView(UiKit.navigationHeader(this,"Trap & camera records",
+            eventId==null?"Field Utilities":"Survey",this::finish));
         ScrollView scroll=new ScrollView(this);
         rows=column();scroll.addView(rows);
         screen.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         setContentView(screen);
         if(eventId==null){
+            rows.addView(ApoHomeUi.section(this,"Device evidence",
+                "Browse camera, pitfall and live-trap deployments. New deployments " +
+                "are registered in an active supported survey."));
             rows.addView(label("Recorded device surveys",16));
             try(Cursor c=db.getReadableDatabase().rawQuery(
                 "SELECT DISTINCT d.event_id,s.method,s.started "+

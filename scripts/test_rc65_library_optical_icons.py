@@ -55,6 +55,6 @@ class Rc65OpticalArt(unittest.TestCase):
         self.assertIn("prepareRc65LibraryIcons",build)
         self.assertIn("task.name.contains('Resources')",build)
         self.assertIn("task.name.endsWith('SourceSetPaths')",build)
-        self.assertIn("super(context,NAME,null,28)",(JAVA/"FieldDb.java").read_text())
+        self.assertIn("super(context,NAME,null,29)",(JAVA/"FieldDb.java").read_text())
 
 if __name__=="__main__":unittest.main()

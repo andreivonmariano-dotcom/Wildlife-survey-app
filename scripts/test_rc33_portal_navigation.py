@@ -15,13 +15,13 @@ class PortalNavigation(unittest.TestCase):
         splash=read("LikasLaunchActivity.java")
         assert 'new Intent(this,WelcomeActivity.class)' in splash
         home=welcome.split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]
-        self.assertIn('LikasPortalUi.hero(this,lastHomeActiveSurvey!=null)',home)
-        for label in ('"Fieldwork"','"Library"','"Settings"'):
+        self.assertIn('ApoHomeUi.header(this,',home)
+        for label in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"'):
             self.assertIn(label,home)
         self.assertIn("LikasLibraryActivity.class",home)
         self.assertIn("LikasSettingsActivity.class",home)
         self.assertIn("this::fieldworkHub",home)
-        self.assertIn("Resume survey",home)
+        self.assertIn("ApoHomeUi.resume",home)
         self.assertNotIn("DataManagementActivity.class",home)
         self.assertNotIn("FieldBackupActivity.class",home)
 

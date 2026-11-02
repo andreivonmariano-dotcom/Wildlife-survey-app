@@ -13,7 +13,7 @@ class DetectionFirstContracts(unittest.TestCase):
         self.assertLess(source.index('content.addView(directActions);'),
                         source.index('taxonEntry=new AutoCompleteTextView(this);'))
         self.assertLess(source.index('content.addView(directActions);'),
-                        source.index('content.addView(recorderTools);\n        LinearLayout birdQuick'))
+                        source.index('LinearLayout birdQuick=vertical();'))
         self.assertIn('recorderTools.removeView(pointNextButton);',source)
         self.assertIn('content.addView(pointNextButton,stationLp);',source)
         self.assertIn('utilityRow.removeView(pauseButton);',source)
@@ -47,8 +47,8 @@ class DetectionFirstContracts(unittest.TestCase):
         self.assertIn('UiKit.button(this,"End Survey","outline-danger")',main)
         self.assertIn('if(hasUnsavedObservation())',main)
         self.assertIn('markedAt>0||count!=1',main)
-        self.assertIn("versionCode 149",(ROOT/"app/build.gradle").read_text())
-        self.assertIn('0.27.3-rc89-apo-live-timeline',(ROOT/"app/build.gradle").read_text())
+        self.assertIn("versionCode 150",(ROOT/"app/build.gradle").read_text())
+        self.assertIn('0.27.3-rc90-apo-method-panels',(ROOT/"app/build.gradle").read_text())
 
 if __name__=="__main__":
     unittest.main()

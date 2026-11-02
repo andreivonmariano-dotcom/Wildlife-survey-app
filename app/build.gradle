@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 149
-        versionName '0.27.3-rc89-apo-live-timeline'
+        versionCode 150
+        versionName '0.27.3-rc90-apo-method-panels'
     }
     signingConfigs {
         debug {

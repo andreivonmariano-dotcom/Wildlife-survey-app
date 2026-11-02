@@ -1,0 +1,31 @@
+# APO RC90 | Step 3: method-adaptive survey recording panels
+
+## Verified signed development-preview acceptance | 2 November 2026
+
+- **Verified app/test commit:** `2beca77152f5c925b54469858f796d5b6bf0d383` (before documentation-only handoff). **Successful GitHub Actions run:** `41430183895`, conclusion **SUCCESS**.
+- **Tests:** **459 Python source/science regressions**, JVM/unit and Android app/test compilation, then **10 Android14 (API34) emulator tests at 160%** and **10 at 200% / 320dp**, zero failures. New automated emulator tests covered amphibian-call score and noise priority, visual encounter microhabitat, and camera-trap device ID. Existing RC89 timeline/RC88 recorder/RC87 species-picker tests remained included.
+- **Original signer / immutable data:** CI verified unchanged `org.phwildlife.survey.beta08`, versionCode **150**, versionName `0.27.3-rc90-apo-method-panels`, same signing certificate, PAIC714, WorldCover text reference, and official mountain artwork. Independent extraction verified APK ZIP integrity and the three embedded SHA-256 digests.
+- **Direct signed owner APK:** `APO-v0.27.3-RC90-Adaptive-Method-Panels-code150.apk`, **11,771,932 bytes**, SHA-256 `8d24c96581618570aace24a50d3e6a7be641a2d082f0cf53b05ced69da9e27c3`, from GitHub artifact **13134576097**. Local file was extracted and exact SHA independently matched CI. Six screenshots retrieved from artifact **13134596066** were validated as distinct noncorrupt PNGs, 1080×2280 (160%) and 960×2160 (200%) and visually reviewed. Screenshot evidence shows **default, collapsed opportunistic recorder and Bird/Amphibian picker**, not the scrolled specialized panels; actual specialized panel behavior is covered by successful Android instrumentation.
+- **First run failures disclosed:** Legacy RC88 source assertion expected fixed code layout; a weak RC90 source test failed against correctly explicit unknown-method handling; both were corrected. One **parallel** build run was blocked by Wikimedia Commons HTTP429 when retrieving an already-approved offline photo; another same-commit run fetched/verified exact approved media, compiled and passed emulator. Do not lower photo hash/license integrity checks. Consider future hash-keyed offline photo CI cache to reduce transient network dependency.
+- **Status:** Emulator-tested signed development preview, **not physical-phone certified**. Still validate on-device existing SQLite29 data, station/effort transitions for every method, life-stage and call-source expectations, actual photo/audio/device records, GNSS, researcher ZIP audit roundtrip, TalkBack and survey closure outcomes. PR #92 remains draft and unmerged.
+
+2 November 2026 · Development stage, unsigned until CI verified.
+
+## Scope and source
+Derived from the signed and emulator-tested RC89 code149 app. New branch `feature/apo-rc90-adaptive-method-panels-v150`, target name `0.27.3-rc90-apo-method-panels`, code **150**, original `org.phwildlife.survey.beta08` package, signer, locked media and references. SQLite version remains **29**. The current `SurveyMethods.forProfile` registers 17 profile-method options. New `RecorderMethodUiPolicy` is strictly presentation-only; it does not modify protocols, save rules, elapsed effort, sampling units, counts, database, source taxonomy or scientific eligibility.
+
+## Method-specific behaviors
+- **Bird point count and line transect:** emphasize distance source and show first-detection position/movement immediately. Other bird methods keep first-detection detail collapsed but accessible. Point count remains station-gated and continues to use the actual timed count; line transect still requires real magnetic geometry before perpendicular distance can be derived.
+- **Herpetofauna amphibian calls:** display call-index and assessed background noise in the main herp panel; move microhabitat and life stage to its existing optional environment panel. Amphibian audio/evidence action opens the existing Call Library, never generates a sound record on its own.
+- **Herpetofauna VES / transect / coverboard / drift fence:** microhabitat and life stage remain prominent; call score, substrate, environmental values and other metadata stay accessible by disclosure rather than silently disappearing. Coverboard and drift-fence actions open existing method and device records.
+- **Mammals camera-trap and live-trap checks:** keep evidence type and device/trap identifier in the main mammal form, with optional height below the existing Measurements disclosure. Other mammal methods retain equipment ID in that disclosure; track-sign/spotlight effort opens their existing checked protocol tools.
+- **Other and incidental methods:** explicit short labels avoid claims of standardized absence or fully implemented acoustic effort. Bat acoustic is labeled a basic detection log, consistent with the method catalog. Existing `Save Observation`, `Review`, `End Survey`, draft/timeline, GNSS, correction and export flows are preserved.
+
+## Validation required
+1. `RecorderMethodUiPolicyTest` tests all registered method focus labels and exact first-detection, listening, microhabitat and device action gates.
+2. `scripts/test_apo_rc90_method_panels.py` ensures actual UI bindings, no database behavior in policy, and unchanged Complete / Incomplete / Not Counted semantics.
+3. `RecorderMethodPanelsEmulatorTest` opens actual amphibian calling, herp VES and camera-trap screens and inspects the visible/default-collapsed fields and method protocol actions. Existing `RecorderUiEmulatorTest`, `ObservationTimelineEmulatorTest` and `RecorderPickerCompactEmulatorTest` remain in the Android14/160%/200%-font suite.
+4. Dedicated signed workflow `.github/workflows/apo-rc90-adaptive-method-panels-v150-qa.yml`: science Python tests, JVM, Android build, signer and pinned assets, Android14 UI tests and screenshots before delivering the verified APK.
+5. **Not field-certified:** physical handset save→reopen→correction→research ZIP audit; prior populated database upgrade; real GPS/photos/audio; station lifecycle; complete/incomplete/not-counted and accessibility/TalkBack remain external acceptance gates.
+
+Do not report release acceptance, CI success or direct APK before checking actual results.

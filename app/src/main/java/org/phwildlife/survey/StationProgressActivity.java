@@ -32,7 +32,10 @@ public final class StationProgressActivity extends Activity {
    LinearLayout root=column();root.setPadding(dp(14),dp(12),dp(14),dp(12));
    root.setBackgroundColor(UiKit.BG);
    root.addView(UiKit.navigationHeader(this,"Station progress","Survey",this::finish));
-   root.addView(label("Method · "+SurveyMethods.displayLabel(profile,method),13));
+   root.addView(ApoHomeUi.section(this,"Survey sampling progress",
+       SurveyMethods.displayLabel(profile,method)));
+   root.addView(ApoHomeUi.note(this,
+       "Completed, incomplete and unvisited sampling units remain separate."));
    if(outcome.equals("not_counted")){
      TextView note=label("NOT COUNTED. Visits remain archived but excluded from analysis.",13);
      note.setTextColor(Color.rgb(188,40,38));root.addView(note);
@@ -64,20 +67,28 @@ public final class StationProgressActivity extends Activity {
        stations.get(station).add("Visit "+c.getInt(1)+" · "+flag+" · "+c.getString(2));
      }
    }
-   list.addView(UiKit.sectionTitle(this,"Visits · "+finished+" completed, "+unfinished+" incomplete, "+running+" active"));
-   list.addView(UiKit.sectionTitle(this,"Other registered project stations"));
-    list.addView(label("These stations belong to the project but have no visit recorded in this survey.",12));
+   list.addView(ApoHomeUi.section(this,"Survey sampling units",
+       finished+" complete · "+unfinished+" incomplete · "+running+" active"));
+   if(stations.isEmpty())list.addView(ApoHomeUi.note(this,
+       "No visits recorded yet. Start the next station from the live recorder."));
+   else {
+     list.addView(UiKit.sectionTitle(this,"Visited stations"));
+     for(Map.Entry<String,List<String>> entry:stations.entrySet())
+       card(entry.getKey(),entry.getKey(),entry.getValue());
+   }
+   list.addView(UiKit.sectionTitle(this,"Project stations without a recorded visit"));
+   list.addView(ApoHomeUi.note(this,
+       "Project registration alone does not count as sampled effort."));
    int missing=0;
    try(Cursor c=store.getReadableDatabase().rawQuery(
-     "SELECT id,name FROM sites WHERE project_id=? ORDER BY id",new String[]{project})){
+       "SELECT id,name FROM sites WHERE project_id=? ORDER BY id",new String[]{project})){
      while(c.moveToNext()){
        String id=c.getString(0);
        if(!stations.containsKey(id)){missing++;card(id,c.getString(1),null);}
      }
    }
-   if(missing==0)list.addView(label("No other registered project stations.",12));
-   list.addView(UiKit.sectionTitle(this,"Stations visited in this survey"));
-   for(Map.Entry<String,List<String>> e:stations.entrySet())card(e.getKey(),e.getKey(),e.getValue());
+   if(missing==0)list.addView(ApoHomeUi.note(this,
+       "No other registered stations without a visit."));
  }
  private void showPlannedStations(){
    int done=0,started=0,missing=0;
@@ -86,8 +97,8 @@ public final class StationProgressActivity extends Activity {
        new String[]{event})){
      while(c.moveToNext()){
        String state=c.getString(0);int n=c.getInt(1);
-       if(state.equals("completed"))done+=n;
-       else if(state.equals("planned"))missing+=n;
+       if("completed".equals(state))done+=n;
+       else if("planned".equals(state))missing+=n;
        else started+=n;
      }
    }

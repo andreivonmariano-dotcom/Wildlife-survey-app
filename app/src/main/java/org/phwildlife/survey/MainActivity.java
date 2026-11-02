@@ -66,7 +66,8 @@ public class MainActivity extends Activity implements LocationListener {
     private LocationManager locations;
     private TextView bearingStatusView,gpsView,eventView,countView,hintView,detailToggle,sessionClockView,progressView,pauseStatusView;
     private LinearLayout markRowView;
-    private Button pauseButton,progressButton;
+    private Button pauseButton,progressButton,markTimeButton;
+    private String selectedTaxonKey="",selectedTaxonVersion="";
     private CheckBox vibrationChoice;
     private Spinner confidenceSpinner;
     private EditText identificationNote;
@@ -237,9 +238,9 @@ public class MainActivity extends Activity implements LocationListener {
         title.setPadding(dp(LikasDesignSystem.SPACE_MD),0,dp(LikasDesignSystem.SPACE_SM),0);
         title.setContentDescription(profile+" Survey");
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-        Button export=UiKit.button(this,largeText?"ZIP":"Export","secondary");
-        export.setContentDescription("Export research ZIP");
-        top.addView(export,new LinearLayout.LayoutParams(dp(largeText?65:82),dp(48)));
+        Button export=UiKit.button(this,"All data","secondary");
+        export.setContentDescription("Export all projects and surveys as research ZIP");
+        top.addView(export,new LinearLayout.LayoutParams(dp(largeText?103:96),dp(48)));
         export.setOnClickListener(v->exportZip());
         root.addView(top);
         // Fixed status HUD: short, high-contrast survey state, always visible.
@@ -390,7 +391,8 @@ public class MainActivity extends Activity implements LocationListener {
         recorderTools.addView(UiKit.sectionTitle(this,"Detection tools"));
         LinearLayout detectRow=horizontal();
         if(stackCaptureActions)detectRow.setOrientation(LinearLayout.VERTICAL);
-        Button markTime=UiKit.button(this,"Mark time","secondary");
+        markTimeButton=UiKit.button(this,"Mark detection","secondary");
+        Button markTime=markTimeButton;
         markTime.setContentDescription("Mark sighting time and available fresh observer GPS without saving an observation");
         detectRow.addView(markTime,stackCaptureActions?
             new LinearLayout.LayoutParams(-1,dp(touchDp)):weighted(0.9f));
@@ -572,7 +574,7 @@ public class MainActivity extends Activity implements LocationListener {
         taxonEntry=new AutoCompleteTextView(this);
         taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
         UiKit.fieldInput(this,taxonEntry);
-        taxonEntry.setThreshold(100);taxonEntry.setHint("Species");
+        taxonEntry.setThreshold(2);taxonEntry.setHint("Species");
         taxonEntry.setSelectAllOnFocus(true);
         speciesRow.addView(taxonEntry,stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
@@ -605,7 +607,7 @@ public class MainActivity extends Activity implements LocationListener {
             new AlertDialog.Builder(this).setTitle("Record unidentified "+group.toLowerCase(Locale.US))
                .setItems(choices,(dialog,which)->{
                    taxonEntry.setText(choices[which]);taxonEntry.setSelection(taxonEntry.length());
-                   confidenceSpinner.setSelection(3);
+                   confidenceSpinner.setSelection(4);
                    queueDraft();
                }).setNegativeButton("Cancel",null).show();
         });
@@ -619,7 +621,10 @@ public class MainActivity extends Activity implements LocationListener {
         });
         taxonEntry.addTextChangedListener(new TextWatcher(){
             public void beforeTextChanged(CharSequence a,int b,int c,int d){}
-            public void onTextChanged(CharSequence a,int b,int before,int count){refreshFavoriteIcon();}
+            public void onTextChanged(CharSequence a,int b,int before,int count){
+                selectedTaxonKey="";selectedTaxonVersion="";
+                refreshFavoriteIcon();
+            }
             public void afterTextChanged(Editable e){}
         });
         LinearLayout countLine=horizontal();
@@ -642,10 +647,11 @@ public class MainActivity extends Activity implements LocationListener {
         confidenceBlock.addView(label("ID confidence",12,true));
         confidenceSpinner=new Spinner(this);
         confidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
-            new String[]{"Identified","Probable","Uncertain","Unidentified"}));
+            new String[]{"Not assessed","Identified","Probable","Uncertain","Unidentified"}));
         confidenceSpinner.setContentDescription("Identification confidence, not expert verification");
         confidenceSpinner.setMinimumHeight(dp(56));
         confidenceBlock.addView(confidenceSpinner);
+        content.addView(confidenceBlock);
         minus.setOnClickListener(v->{
             count=Math.max(1,count-1);countView.setText(""+count);
             countView.setContentDescription(count+" individuals or evidence items");
@@ -681,7 +687,7 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(row);
         // Photo evidence is a primary field action, above optional group details.
         LinearLayout photoRow=horizontal();
-        Button photoButton=UiKit.button(this,"Add photo","secondary");
+        Button photoButton=UiKit.button(this,"Attach photo","secondary");
         photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(touchDp),2));
         photoStatus=label("",12,false);
         photoStatus.setVisibility(View.GONE);
@@ -692,6 +698,23 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setAdjustViewBounds(true);
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
+        // The detection timestamp is immediately accessible while recording.
+        detectRow.removeView(markTime);
+        LinearLayout directActions=horizontal();
+        if(stackCaptureActions)directActions.setOrientation(LinearLayout.VERTICAL);
+        directActions.addView(markTime,stackCaptureActions?
+            new LinearLayout.LayoutParams(-1,dp(touchDp)):
+            new LinearLayout.LayoutParams(0,dp(touchDp),1));
+        if(compactObservationFirst){
+            utilityRow.removeView(pauseButton);
+            LinearLayout.LayoutParams pauseLp=stackCaptureActions?
+                new LinearLayout.LayoutParams(-1,dp(touchDp)):
+                new LinearLayout.LayoutParams(0,dp(touchDp),1);
+            if(stackCaptureActions)pauseLp.topMargin=dp(5);
+            else pauseLp.leftMargin=dp(7);
+            directActions.addView(pauseButton,pauseLp);
+        }
+        content.addView(directActions);
         if(compactObservationFirst&&toolsDisclosure[0]!=null){
             content.removeView(toolsDisclosure[0]);
             content.removeView(recorderTools);
@@ -816,7 +839,7 @@ public class MainActivity extends Activity implements LocationListener {
         }
         detailToggle=label("＋ More details",14,true);
         detailToggle.setTextColor(GREEN);disclosureTarget(detailToggle);
-        detailToggle.setContentDescription("Show optional identification confidence, habitat, behavior and observation notes");
+        detailToggle.setContentDescription("Show optional habitat, behavior and observation notes");
         content.addView(detailToggle);
         advancedPanel=vertical();
         habitatEntry=edit("Habitat / microhabitat",InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -825,7 +848,7 @@ public class MainActivity extends Activity implements LocationListener {
         notesEntry.setSingleLine(false);notesEntry.setMinLines(2);
         identificationNote=edit("Identification evidence / uncertainty (optional)",
             InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        advancedPanel.addView(confidenceBlock);
+
         advancedPanel.addView(identificationNote);
         advancedPanel.addView(habitatEntry);advancedPanel.addView(behaviorEntry);advancedPanel.addView(notesEntry);
         advancedPanel.setVisibility(View.GONE);content.addView(advancedPanel);
@@ -990,7 +1013,7 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void showPendingPhoto(){
         if(photoStatus!=null){
-            photoStatus.setText(pendingPhoto==null?"":"Photo saved locally");
+            photoStatus.setText(pendingPhoto==null?"":"Photo ready to attach");
             photoStatus.setVisibility(pendingPhoto==null?View.GONE:View.VISIBLE);
         }
         if(photoPreview!=null){
@@ -2075,6 +2098,7 @@ public class MainActivity extends Activity implements LocationListener {
         markedAt=System.currentTimeMillis();
         markedObserverFix=freshObserverFix();
         showMarkStatus();persistDraft();
+        toast("Detection time marked");
     }
     private void openFieldProtocol(){
         if(!active||eventId==null){toast("Start a survey to record method effort");return;}
@@ -2188,6 +2212,8 @@ public class MainActivity extends Activity implements LocationListener {
     private void showMarkStatus(){
         if(bearingStatusView==null)return;
         if(markRowView!=null)markRowView.setVisibility(markedAt>0?View.VISIBLE:View.GONE);
+        if(markTimeButton!=null)markTimeButton.setText(
+            markedAt>0?"Update detection time":"Mark detection");
         if(markedBearing!=null)
             bearingStatusView.setText(String.format(Locale.US,"Bearing %.0f° magnetic · pitch %+.0f°",markedBearing,markedPitch));
         else if(markedAt>0) bearingStatusView.setText("Detection time marked · bearing optional");

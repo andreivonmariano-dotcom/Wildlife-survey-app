@@ -49,8 +49,8 @@ class CompactSetupRC82(unittest.TestCase):
                       'studyTemplateIds.get('):
             self.assertIn(token,s)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 142",g)
-        self.assertIn("0.27.3-rc82-apo-survey-setup",g)
+        self.assertIn("versionCode 143",g)
+        self.assertIn("0.27.3-rc83-apo-survey-gps",g)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",g)
         self.assertIn('super(context,NAME,null,28)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 if __name__=="__main__":unittest.main()

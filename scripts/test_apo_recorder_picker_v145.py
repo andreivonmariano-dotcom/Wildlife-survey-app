@@ -18,6 +18,7 @@ class RecorderPickerRC85(unittest.TestCase):
                       'SurveyClosePolicy.resolve('):
             self.assertIn(token,s)
         self.assertLess(s.index('content.addView(speciesRow)'),s.index('content.addView(countLine)'))
+        self.assertLess(s.index('content.addView(countLine)'),s.index('content.addView(speciesActions)'))
         self.assertLess(s.index('content.addView(photoRow)'),s.index('content.addView(birdQuick)'))
         self.assertIn('content.removeView(recorderTools)',s)
         self.assertIn('compactObservationFirst)methodRow.setVisibility(View.GONE)',s)

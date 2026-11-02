@@ -4,6 +4,9 @@
 
 ## Entries
 
+### 2026-11-02 | APO RC81 narrow-phone readability from real 200% emulator screenshot | Owner continuation
+After accepting the compact RC80 HUD and signed APK, proper 200%/320dp screenshot capture revealed the persistent footer and status still pushed the observation form off the initial screen. RC81 retains a visible End Survey but uses abbreviated side-by-side secondary actions at 320dp/200%, shortens redundant unpaused-session and unverified-GPS wording, and compacts optional tools. Maintain full GPS diagnostics on tap, genuine effort definitions, saved records, method outcomes, sign/identity and SQLite28. Await new signed CI and real screenshot review. See RC81 QA file.
+
 ### 2026-11-02 | APO RC80 compact HUD and protected station-change drafts | Owner directed
 Continue from signed RC79. Compact live effort/point timing and GPS quality at enlarged font sizes, preserve direct GPS details and expandable history, and leave normal text-size HUD unchanged. At station changes, use the complete unsaved-draft check, not only species text. Require explicit discard of an unfinished entry; preserve saved records. Keep End Survey accessible, show three outcomes before optional detailed checklist, preserve real completeness rules and SQLite28. Version code140 is a draft until signed CI and direct artifact delivery. See RC80 QA file.
 

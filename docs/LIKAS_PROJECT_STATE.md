@@ -1,5 +1,17 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | RC89 live observation timeline and audited corrections | signed code149 developer preview
+
+- **Current newest verified code:** `6745bf00e4fd3a2e413f5aad27edf5ed70b7ca65` on `feature/apo-rc89-live-observation-timeline-v149`, draft PR #91 directly based on signed RC88 code148. Target `0.27.3-rc89-apo-live-timeline`, versionCode **149**, original `org.phwildlife.survey.beta08` package/certificate, **SQLite29 unchanged**. Historical default `main` is not the working app baseline.
+- **Step 2 delivered:** Live, collapsed-by-default **Saved timeline** below the core recorder input. Displays current survey's nondeleted saved count, and up to 4 newest saved observations with identification, count, detection UTC timestamp and **Corrected** tag for existing audit edits. A clearly separate draft label warns that marked but unsaved entries are not counted. Tap a saved row to open scoped History details/photo/edit/edit-history; full Review remains fixed. Updates on save, return from History and timeline toggle. No synthetic detections, unproven absence, or database migration.
+- **Audit correction strengthened:** History deep-link record_id must belong to current survey; correction reason now required >=5 characters; malformed distance cannot silently become null; name change drops stale `taxon_key` and `taxon_source_version`, sets `name_source=user_corrected`. Existing before/after JSON `record_edits` in one transaction retained; research ZIP continues to export record_edits.
+- **CI verified:** Actions **41427619415 SUCCESS**, **456 Python tests**, JVM/Android builds, original signer/catalog/art checks, **7 Android14 emulator tests at 160% and 7 at 200%/320dp**, no failed tests. Android screenshots artifact **13133176373** six distinct PNGs; initial collapsed layout visually inspected. Expanded timeline tested instrumentally but no expanded screenshot captured.
+- **Direct signed APK:** `APO-v0.27.3-RC89-Live-Observation-Timeline-code149.apk`, **11,769,024 bytes**, SHA-256 `8f3e7c3468829854da19f2ca2d2023aed29f8a1740be86c8fe3d1d05fba1040f`; independently extracted from CI artifact **13132932660**, ZIP and all three embedded pinned asset digests verified; direct chat download attached. Download paths are session-specific.
+- **Pending:** physical phone with populated SQLite database and signer-safe in-place update, actual save/History correction/export audit roundtrip, GNSS/camera/audio, background recovery, TalkBack and 3 survey end outcomes. RC89 draft/unmerged and not field-certified. See `docs/APO_RC89_LIVE_TIMELINE_QA_2026_11_02.md`.
+- **Next ambitious milestone:** adaptive method-specific recording panels; preserve all methodological units, measured effort, count/taxon uncertainty, and auditability. Do not infer any missing environmental values or occurrence.
+
+
+
 ## 2026-11-02 | RC88 detection-first recorder | signed code148 preview, verified in emulator
 
 - **Active development branch:** `feature/apo-rc88-detection-first-v148`, draft PR #90 based on RC87. **Last verified app/test commit** `76bd37cfaca773184a6f92bc71ca847b05beb1da`, package `org.phwildlife.survey.beta08`, code148, name `0.27.3-rc88-apo-detection-first`, SQLite29 and original Android signer. Historical `main` remains old LIKAS and must not be the baseline.

@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,6 +23,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.io.OutputStream;
 import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.Assert.*;
 
 /** Disposable emulator setup: three wildlife groups; never starts a real survey. */
@@ -75,8 +79,10 @@ public final class SetupCompactUiEmulatorTest {
             bitmap.recycle();
         }catch(Exception e){throw new AssertionError("Screenshot failed",e);}
     }
-    @Test public void eachWildlifeGroupHasShortSetupAndReachableAdvancedControls(){
+    @Test public void eachWildlifeGroupHasShortSetupAndReachableAdvancedControls() throws Exception {
         for(String profile:new String[]{"Birds","Herpetofauna","Mammals"}){
+            CountDownLatch laidOut=new CountDownLatch(1);
+            AtomicReference<Throwable> captureFailure=new AtomicReference<>();
             Intent home=new Intent(ApplicationProvider.getApplicationContext(),WelcomeActivity.class);
             home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             home.putExtra("show_menu",true);
@@ -124,8 +130,23 @@ public final class SetupCompactUiEmulatorTest {
                         assertFalse("Saving a route must be deliberate",((CheckBox)save).isChecked());
                         route.performClick();assertFalse(save.isShown());
                     }
-                    snapshot(activity,profile);
+                    // Setup is rebuilt synchronously, but Android measures the new
+                    // tree on its next layout pass. Capturing before that is blank.
+                    View setupRoot=activity.getWindow().getDecorView();
+                    setupRoot.getViewTreeObserver().addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener(){
+                            @Override public void onGlobalLayout(){
+                                setupRoot.getViewTreeObserver()
+                                    .removeOnGlobalLayoutListener(this);
+                                try{snapshot(activity,profile);}
+                                catch(Throwable failure){captureFailure.set(failure);}
+                                finally{laidOut.countDown();}
+                            }
+                        });
                 });
+                assertTrue("Setup never completed its Android layout",laidOut.await(20,TimeUnit.SECONDS));
+                if(captureFailure.get()!=null)
+                    throw new AssertionError("Native setup screenshot failed",captureFailure.get());
             }
         }
     }

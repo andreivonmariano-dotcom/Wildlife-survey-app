@@ -1,5 +1,11 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC83 focused Survey GPS screen | source pending signed QA
+
+- User requested refinement of the GPS screen immediately after signed RC82 survey-group setup. New `feature/apo-survey-gps-v143` derives from RC82 head `c0d422e9e2511476a8872e47996dd030a638731a`. Target `0.27.3-rc83-apo-survey-gps`, versionCode **143**, same original package, signer and SQLite28.
+- Survey/station GPS: first-screen status with measured accuracy and fix age and explicit policy; raw coordinates/ellipsoidal altitude/GNSS sky and retry/settings accessible via disclosures, not expanded by default. Distinct persistent confirmed missing-start versus missing-station actions, one navigation Back, nonmock GNSS fix still auto-advances. No fabricated GPS or recorded elevation, no data/outcome/schema changes.
+- Existing RC55 tests updated, new RC83 source contracts and dual-font Android14 survey/station screenshot CI configured in `docs/APO_RC83_SURVEY_GPS_QA_2026_11_02.md`. **No new signed APK is verified at this checkpoint**; latest signed app remains RC82 code142. Must obtain successful CI artifact, original signer/package, actual screenshots and direct in-chat link before handing off. Field GNSS and historical-data phone upgrade remain untested.
+
 ## 2026-11-02 | APO RC82 signed survey setup refinement | latest verified developer preview
 
 - **Baseline:** RC82 Android app/test source `85aa224bd0031e9eaf6bd0ce9b024939de06ab01` on `feature/apo-survey-setup-v142`, draft PR #84 from signed RC81. GitHub Actions `41391752701` **SUCCESS**: **429 Python regressions**, JVM/app/AndroidTest build, **4 Android14 emulator setup tests at 160%** and **4 at 200%/320dp**, six distinct native screenshots of Birds/Herpetofauna/Mammals setup; original package/signer and locked assets verified. Older failed runs had test navigation/shell/prelayout screenshot faults fixed in final run.

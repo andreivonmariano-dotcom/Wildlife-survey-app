@@ -65,7 +65,9 @@ public final class StudyProtocolsActivity extends Activity {
         if(projects.isEmpty()){projectIds.add("default");projects.add("General field project");}
         project.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,projects));
+        screen.addView(UiKit.sectionTitle(this,"Survey context"));
         screen.addView(label("Project"));screen.addView(project);
+        project.setContentDescription("Project for new study template");
         method=new Spinner(this);methods.clear();wildlifeProfiles.clear();
         ArrayList<String> labels=new ArrayList<>();
         for(String group:new String[]{"Birds","Herpetofauna","Mammals"}){
@@ -77,13 +79,24 @@ public final class StudyProtocolsActivity extends Activity {
         method.setAdapter(new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_dropdown_item,labels));
         screen.addView(label("Survey method"));screen.addView(method);
+        method.setContentDescription("Wildlife group and field survey method");
+        screen.addView(UiKit.sectionTitle(this,"Completion thresholds"));
+        screen.addView(ApoHomeUi.note(this,
+            "Zero uses the selected method's default. Enter positive values only " +
+            "for effort units recorded by that method."));
         EditText name=entry("Study template name",false);
         EditText visits=entry("Minimum completed visits (0 = default)",true);visits.setText("0");
         EditText minutes=entry("Minimum active sampling minutes (0 = default)",true);minutes.setText("0");
         EditText units=entry("Minimum evidence units/passes/devices (0 = default)",true);units.setText("0");
         CheckBox gps=new CheckBox(this);gps.setText("Require a verified survey-start GPS fix for Complete");
         CheckBox photo=new CheckBox(this);photo.setText("Require at least one archived evidence photo");
-        for(EditText e:new EditText[]{name,visits,minutes,units})screen.addView(e);
+        screen.addView(label("Template name"));screen.addView(name);
+        screen.addView(label("Minimum completed visits"));screen.addView(visits);
+        screen.addView(label("Minimum active sampling minutes"));screen.addView(minutes);
+        screen.addView(label("Minimum evidence units, passes or devices"));screen.addView(units);
+        screen.addView(UiKit.sectionTitle(this,"Evidence requirements"));
+        gps.setMinHeight(dp(52));photo.setMinHeight(dp(52));
+        gps.setTextColor(UiKit.INK);photo.setTextColor(UiKit.INK);
         screen.addView(gps);screen.addView(photo);
         Button save=UiKit.button(this,"Save study template","primary");screen.addView(save);
         save.setOnClickListener(v->{
@@ -118,7 +131,10 @@ public final class StudyProtocolsActivity extends Activity {
             store.getWritableDatabase().insertOrThrow("study_protocol_templates",null,row);
             name.setText("");reloadTemplates();
         });
-        screen.addView(label("Saved templates"));
+        screen.addView(UiKit.sectionTitle(this,"Saved templates"));
+        screen.addView(ApoHomeUi.note(this,
+            "Tap a template to edit or delete its future-use rules. Past survey " +
+            "requirements remain unchanged."));
         templates=new LinearLayout(this);templates.setOrientation(LinearLayout.VERTICAL);
         screen.addView(templates);reloadTemplates();
     }
@@ -134,21 +150,21 @@ public final class StudyProtocolsActivity extends Activity {
             "SELECT id,project_id,method,name,min_visits,min_minutes,min_units,"+
             "require_verified_gps,require_protocol_photo,survey_profile "+
             "FROM study_protocol_templates ORDER BY created_at_utc DESC LIMIT 150",null)){
-            if(c.getCount()==0)templates.addView(label("No custom templates yet."));
+            if(c.getCount()==0)templates.addView(ApoHomeUi.note(this,
+                "No custom study templates saved yet."));
+            int shown=0;
             while(c.moveToNext()){
                 String id=c.getString(0);
                 String scope=c.isNull(9)?"Shared legacy":"Group: "+c.getString(9);
-                String detail=c.getString(3)+" · "+scope+" · "+c.getString(1)+
-                    " · "+c.getString(2)+
-                    "\nVisits "+c.getInt(4)+" · minutes "+c.getInt(5)+" · units "+c.getInt(6)+
-                    " · start GPS "+(c.getInt(7)>0?"required":"optional")+
-                    " · photo "+(c.getInt(8)>0?"required":"optional");
-                Button item=UiKit.button(this,detail,"secondary");
-                item.setAllCaps(false);item.setMinHeight(dp(80));templates.addView(item);
                 String methodCode=c.getString(2),name=c.getString(3);
                 int oldVisits=c.getInt(4),oldMinutes=c.getInt(5),oldUnits=c.getInt(6);
                 boolean oldGps=c.getInt(7)!=0,oldPhoto=c.getInt(8)!=0;
-                item.setOnClickListener(v->new AlertDialog.Builder(this)
+                String projectId=c.getString(1);
+                String info=scope+" · Project "+projectId+" · "+methodCode+
+                    "\nVisits "+oldVisits+" · minutes "+oldMinutes+" · units "+oldUnits+
+                    " · GPS "+(oldGps?"required":"optional")+
+                    " · photo "+(oldPhoto?"required":"optional");
+                Runnable open=()->new AlertDialog.Builder(this)
                     .setTitle(name)
                     .setItems(new String[]{"Edit template","Delete template"},(dialog,which)->{
                         if(which==0)editTemplate(id,methodCode,name,oldVisits,
@@ -162,7 +178,9 @@ public final class StudyProtocolsActivity extends Activity {
                                     "study_protocol_templates","id=?",new String[]{id});
                                 reloadTemplates();
                             }).show();
-                    }).setNegativeButton("Close",null).show());
+                    }).setNegativeButton("Close",null).show();
+                templates.addView(ApoHomeUi.tool(this,
+                    String.format(Locale.US,"%02d",++shown),name,info,open));
             }
         }
     }

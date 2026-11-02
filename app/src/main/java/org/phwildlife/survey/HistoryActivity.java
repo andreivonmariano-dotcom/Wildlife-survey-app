@@ -71,7 +71,17 @@ public class HistoryActivity extends Activity {
                     eventFilter=null;surveyOffset=0;observationOffset=0;draw();
                 }
             }));
+        // Keep only the page header fixed. Filters must scroll on 320dp devices
+        // and under 200% font scaling so result rows remain reachable.
+        ScrollView scroll=new ScrollView(this);
+        scroll.setFillViewport(true);
+        LinearLayout scrollBody=column();
+        scrollBody.setPadding(0,dp(4),0,dp(22));
+        scroll.addView(scrollBody);
+        LinearLayout filters=column();
         if(eventFilter==null){
+            filters.addView(ApoHomeUi.section(this,"Saved surveys",
+                "Filter by survey outcome, field method, sampling station or date."));
             Spinner outcomes=new Spinner(this);
             outcomes.setAdapter(new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item,OUTCOME_LABELS));
@@ -88,8 +98,9 @@ public class HistoryActivity extends Activity {
                 @Override public void onNothingSelected(android.widget.AdapterView<?> parent){}
             });
             outcomes.setContentDescription("Filter saved surveys by outcome");
-            root.addView(UiKit.caption(this,"Survey status"));
-            root.addView(outcomes,new LinearLayout.LayoutParams(-1,dp(largeText()?72:56)));
+            filters.addView(UiKit.caption(this,"Survey status"));
+            filters.addView(outcomes,new LinearLayout.LayoutParams(-1,
+                dp(largeText()?72:56)));
             EditText search=new EditText(this);search.setSingleLine(true);
             search.setTextSize(LikasDesignSystem.TEXT_BODY);
             search.setHint("Search group, method, station, date");
@@ -110,7 +121,7 @@ public class HistoryActivity extends Activity {
             clear.setOnClickListener(v->search.setText(""));
             LinearLayout.LayoutParams searchLp=new LinearLayout.LayoutParams(-1,-2);
             searchLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
-            root.addView(searchRow,searchLp);
+            filters.addView(searchRow,searchLp);
             search.addTextChangedListener(new TextWatcher(){
                 public void beforeTextChanged(CharSequence s,int st,int n,int after){}
                 public void onTextChanged(CharSequence s,int st,int before,int count){
@@ -126,10 +137,21 @@ public class HistoryActivity extends Activity {
                 public void afterTextChanged(Editable value){}
             });
         }
-        ScrollView scroll=new ScrollView(this);
-        rows=column();scroll.addView(rows);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
+        scrollBody.addView(filters);
+        rows=column();
+        scrollBody.addView(rows,new LinearLayout.LayoutParams(-1,-2));
+        root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         setContentView(root);
         if(eventFilter==null)surveys();else observations(eventFilter);
+    }
+    @Override public void onBackPressed(){
+        if(eventFilter!=null){
+            if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
+            eventFilter=null;
+            surveyOffset=0;
+            observationOffset=0;
+            draw();
+        }else super.onBackPressed();
     }
     private void surveys(){
         if(surveyOffset==0){

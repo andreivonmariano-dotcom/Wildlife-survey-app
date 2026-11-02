@@ -22,17 +22,30 @@ public final class AuditActivity extends Activity{
         root.setPadding(dp(16),dp(14),dp(16),dp(12));
         root.setBackgroundColor(UiKit.BG);
         root.addView(UiKit.navigationHeader(this,"Data quality review","Analysis & Exports",this::finish));
+        // Controls and findings share one scroll to keep results reachable under
+        // enlarged system fonts and on compact field phones.
+        ScrollView scroll=new ScrollView(this);
+        scroll.setFillViewport(true);
+        LinearLayout body=new LinearLayout(this);
+        body.setOrientation(LinearLayout.VERTICAL);
+        body.setPadding(0,dp(6),0,dp(22));
+        scroll.addView(body);
+        root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
+        body.addView(ApoHomeUi.section(this,"Record checks",
+            "Review saved effort, location metadata and evidence. These checks " +
+            "do not change the underlying observations."));
         TextView explanation=new TextView(this);
         explanation.setText("Read-only checks of recorded effort, location metadata and evidence files. The review does not alter records.");
         explanation.setTextSize(14);explanation.setTextColor(UiKit.MUTED);
-        explanation.setPadding(0,dp(4),0,dp(12));root.addView(explanation);
+        explanation.setPadding(0,dp(4),0,dp(12));body.addView(explanation);
+        body.addView(UiKit.sectionTitle(this,"Run checks"));
         refreshButton=UiKit.button(this,"Run quality checks","primary");
-        root.addView(refreshButton);
+        body.addView(refreshButton);
         refreshButton.setOnClickListener(v->scan());
         Button integrity=UiKit.button(this,"Check local database integrity","secondary");
         LinearLayout.LayoutParams integrityLp=new LinearLayout.LayoutParams(-1,-2);
         integrityLp.topMargin=dp(9);
-        root.addView(integrity,integrityLp);
+        body.addView(integrity,integrityLp);
         integrity.setOnClickListener(v->{
             integrity.setEnabled(false);
             auditWorker.execute(()->{
@@ -58,10 +71,10 @@ public final class AuditActivity extends Activity{
                 });
             });
         });
-        ScrollView scroll=new ScrollView(this);
-        items=new LinearLayout(this);items.setOrientation(LinearLayout.VERTICAL);
-        scroll.addView(items);
-        root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
+        body.addView(UiKit.sectionTitle(this,"Findings"));
+        items=new LinearLayout(this);
+        items.setOrientation(LinearLayout.VERTICAL);
+        body.addView(items,new LinearLayout.LayoutParams(-1,-2));
         setContentView(root);scan();
     }
     private void scan(){
@@ -71,6 +84,7 @@ public final class AuditActivity extends Activity{
         items.removeAllViews();
         TextView pending=new TextView(this);
         pending.setText("Checking saved research records…");
+        pending.setAccessibilityLiveRegion(android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE);
         pending.setTextColor(UiKit.MUTED);
         pending.setTextSize(14);
         items.addView(pending);

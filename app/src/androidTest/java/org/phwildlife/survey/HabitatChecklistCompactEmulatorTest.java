@@ -88,7 +88,7 @@ public final class HabitatChecklistCompactEmulatorTest {
                 site.performClick();
                 assertNotNull(description(root,"Hide GPS and elevation context"));
                 site.performClick();
-                View all=text(root,"All habitats (16)");
+                View all=text(root,"Choose habitats (16)");
                 all.performClick();
                 assertNotNull(text(root,"Hide habitats"));
                 CheckBox candidate=null;

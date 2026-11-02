@@ -11,7 +11,7 @@ class RecorderPickerRC85(unittest.TestCase):
                       'recorderTools.setVisibility(View.GONE)',
                       '"Field tools":"Field tools"',
                       'FieldVisuals.section(this,"Observation",null)',
-                      'UiKit.button(this,"Species list","secondary")',
+                      'compactBrowse?"List":"Species list"',
                       'UiKit.button(this,"Save Observation","primary")',
                       'UiKit.button(this,"End Survey","outline-danger")',
                       'FieldQuickActions.preferenceKey(profile,method)',

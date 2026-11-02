@@ -83,6 +83,7 @@ public class MainActivity extends Activity implements LocationListener {
     private AutoCompleteTextView taxonEntry;
     private EditText distanceEntry,lineEntry,notesEntry,habitatEntry,behaviorEntry,tempEntry,humidityEntry,weatherEntry,microhabitatEntry,perchEntry,herpHeightEntry,deviceEntry;
     private Button endSurveyButton,markButton,saveButton,reviewButton,pointNextButton;
+    private TextView saveEligibilityView;
     private LinearLayout groupBar,advancedPanel,lineRow,birdMeasurements,herpPanel,mammalPanel;
     private ScrollView fieldScroll;
     private boolean inputKeyboardVisible=false;
@@ -290,6 +291,7 @@ public class MainActivity extends Activity implements LocationListener {
         boolean stackSessionControls=FieldLayoutPolicy.stackPortalPair(
             getResources().getConfiguration().screenWidthDp,
             getResources().getConfiguration().fontScale);
+        content.addView(UiKit.sectionTitle(this,"Sampling session"));
         LinearLayout utilityRow=horizontal();
         if(stackSessionControls)utilityRow.setOrientation(LinearLayout.VERTICAL);
         pauseButton=UiKit.button(this,"Pause effort","secondary");
@@ -329,7 +331,7 @@ public class MainActivity extends Activity implements LocationListener {
         });
         // Optional settings are placed below the observation form.
         pointNextButton=UiKit.button(this,"Finish point · Next station","camera");
-        content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,dp(touchDp)));
+        content.addView(pointNextButton,new LinearLayout.LayoutParams(-1,-2));
         pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE);
         pointNextButton.setOnClickListener(v->{if(method.equals("point_count"))nextPoint();else nextSamplingUnit();});
         trackingView=label("Track: awaiting GPS",12,true);
@@ -341,6 +343,7 @@ public class MainActivity extends Activity implements LocationListener {
         boolean stackCaptureActions=FieldLayoutPolicy.stackPortalPair(
             getResources().getConfiguration().screenWidthDp,
             getResources().getConfiguration().fontScale);
+        content.addView(UiKit.sectionTitle(this,"Detection tools"));
         LinearLayout detectRow=horizontal();
         if(stackCaptureActions)detectRow.setOrientation(LinearLayout.VERTICAL);
         Button markTime=UiKit.button(this,"Mark detection","secondary");
@@ -397,30 +400,28 @@ public class MainActivity extends Activity implements LocationListener {
         if(FieldUiPolicy.birdDetails(profile)||FieldUiPolicy.herpetofaunaDetails(profile)){
             Button sound=UiKit.button(this,"Record / review calls","secondary");
             sound.setContentDescription("Open calls, spectrogram and time labels");
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
             lp.topMargin=dp(7);evidenceTools.addView(sound,lp);
             optionalCalls[0]=sound;
             sound.setOnClickListener(v->openCallLibrary());
         }
         if(TrapProtocolPolicy.supported(method)){
             Button devices=UiKit.button(this,"Devices, checks & captures","secondary");
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
             lp.topMargin=dp(7);evidenceTools.addView(devices,lp);
             optionalDevices[0]=devices;
             devices.setOnClickListener(v->openTrapProtocol());
         }
         if(FieldProtocolPolicy.supported(method)){
             Button methodRecords=UiKit.button(this,"Method effort & evidence","secondary");
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(52));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
             lp.topMargin=dp(7);evidenceTools.addView(methodRecords,lp);
             optionalMethod[0]=methodRecords;
             methodRecords.setOnClickListener(v->openFieldProtocol());
         }
         Button evidenceToggle=UiKit.button(this,"Other evidence tools  ▾","quiet");
         evidenceToggle.setContentDescription("Show other evidence capture tools");
-        LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,
-            dp(FieldLayoutPolicy.actionHeightDp(
-                getResources().getConfiguration().fontScale)));
+        LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,-2);
         evidenceLp.topMargin=dp(7);
         content.addView(evidenceToggle,evidenceLp);
         content.addView(evidenceTools);
@@ -770,21 +771,31 @@ public class MainActivity extends Activity implements LocationListener {
         // Two-tier fixed action dock. Save is the only filled primary action.
         LinearLayout footer=vertical();
         footer.setPadding(0,dp(5),0,0);
+        saveEligibilityView=UiKit.caption(this,"");
+        saveEligibilityView.setVisibility(View.GONE);
+        saveEligibilityView.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        footer.addView(saveEligibilityView,new LinearLayout.LayoutParams(-1,-2));
         saveButton=UiKit.button(this,"Save Observation","primary");
-        footer.addView(saveButton,new LinearLayout.LayoutParams(-1,dp(
-            FieldLayoutPolicy.saveHeightDp(getResources().getConfiguration().fontScale))));
+        saveButton.setMinHeight(dp(FieldLayoutPolicy.saveHeightDp(
+            getResources().getConfiguration().fontScale)));
+        footer.addView(saveButton,new LinearLayout.LayoutParams(-1,-2));
+        boolean stackDock=FieldLayoutPolicy.stackPortalPair(
+            getResources().getConfiguration().screenWidthDp,
+            getResources().getConfiguration().fontScale);
         LinearLayout footerOptions=horizontal();
+        if(stackDock)footerOptions.setOrientation(LinearLayout.VERTICAL);
         reviewButton=UiKit.button(this,"Review Records","secondary");
         reviewButton.setContentDescription("Review saved records from this survey");
-        LinearLayout.LayoutParams reviewParams=new LinearLayout.LayoutParams(0,dp(
-            FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale)),1);
+        LinearLayout.LayoutParams reviewParams=new LinearLayout.LayoutParams(
+            stackDock?-1:0,-2,stackDock?0:1);
         footerOptions.addView(reviewButton,reviewParams);
         // Ending a survey remains accessible even with the keyboard open.
         endSurveyButton=UiKit.button(this,"End Survey","outline-danger");
         endSurveyButton.setContentDescription("End survey. Choose Complete, Incomplete, or Not Counted.");
-        LinearLayout.LayoutParams endParams=new LinearLayout.LayoutParams(0,dp(
-            FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale)),1);
-        endParams.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+        LinearLayout.LayoutParams endParams=new LinearLayout.LayoutParams(
+            stackDock?-1:0,-2,stackDock?0:1);
+        if(stackDock)endParams.topMargin=dp(LikasDesignSystem.SPACE_SM);
+        else endParams.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         footerOptions.addView(endSurveyButton,endParams);
         LinearLayout.LayoutParams optionsParams=new LinearLayout.LayoutParams(-1,-2);
         optionsParams.topMargin=dp(LikasDesignSystem.SPACE_SM);
@@ -1140,6 +1151,21 @@ public class MainActivity extends Activity implements LocationListener {
         if(saveButton!=null&&active)saveButton.setEnabled(!surveyPaused&&
             (!method.equals("point_count")||pointCountId!=null)&&
             (!requiresGenericUnit()||samplingUnitId!=null));
+        refreshSaveEligibility();
+    }
+    /** Explain disabled Save states without inventing effort or observations. */
+    private void refreshSaveEligibility(){
+        if(saveEligibilityView==null)return;
+        String message="";
+        if(!active)message="Begin the survey before recording an observation.";
+        else if(surveyPaused)message="Effort paused. Resume sampling to save a detection.";
+        else if(method.equals("point_count")&&pointCountId==null)
+            message="Start a point count at its station before saving detections.";
+        else if(requiresGenericUnit()&&samplingUnitId==null)
+            message="Start a sampling station visit before saving detections.";
+        if(!message.contentEquals(saveEligibilityView.getText()))
+            saveEligibilityView.setText(message);
+        saveEligibilityView.setVisibility(message.isEmpty()?View.GONE:View.VISIBLE);
     }
     private void togglePause(){
         if(!active){toast("Start a survey to pause effort");return;}
@@ -1243,15 +1269,39 @@ public class MainActivity extends Activity implements LocationListener {
      * Survey disposition is available at all times through the pinned footer.
      * Each outcome is deliberate and distinguishable, including cancellation.
      */
+    /** Detect unsaved observations even when the species field remains blank. */
+    private boolean filled(EditText entry){
+        return entry!=null&&!entry.getText().toString().trim().isEmpty();
+    }
+    private boolean hasUnsavedObservation(){
+        return filled(taxonEntry)||filled(distanceEntry)||filled(notesEntry)||
+            filled(habitatEntry)||filled(behaviorEntry)||filled(identificationNote)||
+            pendingPhoto!=null||markedAt>0||count!=1||
+            (confidenceSpinner!=null&&confidenceSpinner.getSelectedItemPosition()>0)||
+            (evidenceSpinner!=null&&evidenceSpinner.getSelectedItemPosition()>0);
+    }
+    private void discardUnfinishedObservation(){
+        for(EditText entry:new EditText[]{taxonEntry,distanceEntry,notesEntry,
+                habitatEntry,behaviorEntry,identificationNote}){
+            if(entry!=null)entry.setText("");
+        }
+        count=1;
+        if(countView!=null)countView.setText("1");
+        if(confidenceSpinner!=null)confidenceSpinner.setSelection(0);
+        if(evidenceSpinner!=null)evidenceSpinner.setSelection(0);
+        pendingPhoto=null;
+        showPendingPhoto();
+        clearMark();
+    }
     private void finishPrompt(){
         if(!active)return;
-        if(taxonEntry!=null&&!taxonEntry.getText().toString().trim().isEmpty()){
+        if(hasUnsavedObservation()){
             new AlertDialog.Builder(this).setTitle("Unsaved observation")
                 .setMessage("Save this observation before ending the survey, "+
                     "or discard only the unfinished entry.")
                 .setNegativeButton("Keep recording",null)
                 .setPositiveButton("Discard entry",(d,w)->{
-                    taxonEntry.setText("");distanceEntry.setText("");clearMark();
+                    discardUnfinishedObservation();
                     finishPrompt();
                 }).show();
             return;
@@ -1262,16 +1312,18 @@ public class MainActivity extends Activity implements LocationListener {
         Button incomplete=UiKit.button(this,"End Incomplete","secondary");
         Button cancel=UiKit.button(this,"Cancel Survey · Not Counted","danger");
         for(Button button:new Button[]{complete,incomplete,cancel}){
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(54));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
             lp.bottomMargin=dp(10);
             actions.addView(button,lp);
         }
         TextView details=label("Complete: requirements met. Incomplete: save partial work. "+
             "Not Counted: exclude from analysis.",12,false);
         details.setTextColor(MUTED);actions.addView(details);
+        ScrollView endScroll=new ScrollView(this);
+        endScroll.addView(actions);
         AlertDialog dialog=new AlertDialog.Builder(this)
             .setTitle("End Survey")
-            .setView(actions)
+            .setView(endScroll)
             .setNegativeButton("Keep recording",null).create();
         complete.setOnClickListener(v->{dialog.dismiss();showFinalizationForm(true);});
         incomplete.setOnClickListener(v->{dialog.dismiss();showFinalizationForm(false);});

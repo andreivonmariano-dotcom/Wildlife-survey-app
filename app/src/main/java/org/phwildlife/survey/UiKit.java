@@ -44,7 +44,8 @@ public final class UiKit {
     boolean largeText=a.getResources().getConfiguration().fontScale>=1.30f;
     // One small icon-only Back action, with the full destination spoken to assistive tools.
     Button back=button(a,"‹","quiet");
-    back.setContentDescription("Back to "+backLabel);
+    back.setContentDescription("Back".equals(backLabel)
+          ?"Back to previous screen":"Back to "+backLabel);
     back.setTextSize(18);
     back.setPadding(0,0,0,0);
     back.setMinWidth(dp(a,LikasDesignSystem.MIN_TOUCH_DP));

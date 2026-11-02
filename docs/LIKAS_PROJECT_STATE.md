@@ -1,5 +1,13 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC79 signed preview and emulator verified | latest development release
+
+- **Source lineage and status:** RC79 app/test source at `bdc8f067e00740b89adab893ae65f97c07d0422c` (draft PR #81 from RC78). GitHub Actions run `41384887314` **SUCCESS**. Declared `0.27.3-rc79-apo-survey-flow`, versionCode **139**, appId `org.phwildlife.survey.beta08`, original cert `f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937`, SQLite28. Documentation-only commits after this source have no APK changes.
+- **Direct APK delivered in the owner conversation:** `APO-v0.27.3-RC79-Survey-Flow-code139.apk`, **11,755,588 bytes**, SHA-256 `a45503c9facdf9f4d1a3dfd631c943ec6ef40da007d60086811f0d1a5d5daf6e`. Retrieved from run artifact ID `13115261330`, extracted, ZIP/Android-package checked, exact original signer and immutable PAIC714/WorldCover/mountain hashes confirmed in CI (source files additionally checked in extracted APK). Previous sandbox paths are not portable to other conversations.
+- **QA evidence:** 419 Python tests, JVM/Android build, one Android14 emulator instrumentation test at 160% font passed. Captured actual app screenshot: `APO-RC79-Live-Recorder-Emulator-160pct.png`, 1080×2280, 205,630 bytes, SHA-256 `0f6dd9e60b465572653e148d76af5e80b04de8a42d83cb3343065af6273a52b9`; artifact ID `13114639688`. Screenshot visually inspected: Record observation and top of species input now appear above persistent Save/Review/End dock. **Remaining layout concern:** enlarged session/GPS HUD pushes some of species input below first fold.
+- **Methods and data intact:** station-based sampling and tracked transects retain visible controls, Complete/Incomplete/Not Counted semantics unchanged; no changes to historical records, taxonomic library, WorldCover, measured effort, GPS provenance or SQLite schema.
+- **Unverified:** physical-device data-preserving upgrade, full survey completion paths, GPS/elevation, media, field-protocol studies, research ZIP content, 320dp/200% font, TalkBack, rotating device, and keyboard/Back usability. Keep draft PR unmerged until those gates; RC79 is not field-certified. Next UX pass: reduce nonessential HUD vertical footprint without obscuring sampling effort or GPS confidence.
+
 ## 2026-11-02 | APO RC79 observation-first survey workflow | source committed, CI pending
 
 - Latest signed/emulator-tested source remains RC78 code138, run 41383237787, with verified APK identity in `docs/APO_RC78_SURVEY_RECORDER_EMULATOR_QA_2026_11_02.md`. This task resumes from RC78 head `6a953dab2f9f383021815d5f04faaa05a2bbabf7`, **not** historical `main` or RC54.

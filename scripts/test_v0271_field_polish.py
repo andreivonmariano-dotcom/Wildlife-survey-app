@@ -16,8 +16,8 @@ class FieldPolishContractTest(unittest.TestCase):
 
     def test_station_lists_distinguish_registry_from_survey_visits(self):
         s = source("StationProgressActivity.java")
-        self.assertIn("Other registered project stations", s)
-        self.assertIn("Stations visited in this survey", s)
+        self.assertIn("Project stations without a recorded visit", s)
+        self.assertIn("Visited stations", s)
         self.assertIn("SurveyMethods.displayLabel(profile,method)", s)
         self.assertIn("WHEN complete=1 THEN 'complete' ELSE 'incomplete'", s)
 

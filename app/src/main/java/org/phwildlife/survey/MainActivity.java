@@ -487,20 +487,24 @@ public class MainActivity extends Activity implements LocationListener {
                 "Hide other evidence capture tools":"Show other evidence capture tools");
         });
         Runnable reflectQuick=()->{
+            // RC91: one route per operation; the inline method action has
+            // priority while an alternative user-selected shortcut remains.
+            FieldQuickActions.Kind inline=
+                RecorderMethodUiPolicy.inlineQuickKind(profile,method);
             quickCapture.setText(FieldQuickActions.label(chosen[0]));
             quickCapture.setContentDescription("Quick capture: "+
                 FieldQuickActions.label(chosen[0]));
-            quickCapture.setVisibility(chosen[0]==FieldQuickActions.Kind.NONE?
-                View.GONE:View.VISIBLE);
+            quickCapture.setVisibility(chosen[0]==FieldQuickActions.Kind.NONE||
+                chosen[0]==inline?View.GONE:View.VISIBLE);
             if(optionalCalls[0]!=null)
-                optionalCalls[0].setVisibility(chosen[0]==FieldQuickActions.Kind.CALLS?
-                    View.GONE:View.VISIBLE);
+                optionalCalls[0].setVisibility(chosen[0]==FieldQuickActions.Kind.CALLS||
+                    inline==FieldQuickActions.Kind.CALLS?View.GONE:View.VISIBLE);
             if(optionalDevices[0]!=null)
-                optionalDevices[0].setVisibility(chosen[0]==FieldQuickActions.Kind.DEVICES?
-                    View.GONE:View.VISIBLE);
+                optionalDevices[0].setVisibility(chosen[0]==FieldQuickActions.Kind.DEVICES||
+                    inline==FieldQuickActions.Kind.DEVICES?View.GONE:View.VISIBLE);
             if(optionalMethod[0]!=null)
-                optionalMethod[0].setVisibility(chosen[0]==FieldQuickActions.Kind.METHOD_EVIDENCE?
-                    View.GONE:View.VISIBLE);
+                optionalMethod[0].setVisibility(chosen[0]==FieldQuickActions.Kind.METHOD_EVIDENCE||
+                    inline==FieldQuickActions.Kind.METHOD_EVIDENCE?View.GONE:View.VISIBLE);
             int visible=0;
             for(int n=0;n<evidenceTools.getChildCount();n++)
                 if(evidenceTools.getChildAt(n).getVisibility()==View.VISIBLE)visible++;
@@ -1599,18 +1603,56 @@ public class MainActivity extends Activity implements LocationListener {
         });
         actions.addView(detailsToggle,1);
         actions.addView(required,2);
+        // Summarize actual method records without claiming survey completion.
+        // The existing closure policy, station and study checks remain decisive.
+        MethodCompletionReview.Result methodReview=methodRecordReview();
+        final Button[] methodFix={null};
+        if(methodReview.kind!=MethodCompletionReview.Kind.NONE){
+            TextView reviewTitle=label(methodReview.headline,13,true);
+            reviewTitle.setTextColor(methodReview.methodRecordsReady?
+                UiKit.FOREST:UiKit.AMBER);
+            reviewTitle.setContentDescription("Method-record status. "+
+                methodReview.headline);
+            actions.addView(reviewTitle,3);
+            TextView reviewDetail=label(methodReview.detail,12,false);
+            reviewDetail.setTextColor(UiKit.MUTED);
+            actions.addView(reviewDetail,4);
+            if(!methodReview.methodRecordsReady){
+                Button fix=UiKit.button(this,methodReview.actionLabel,"secondary");
+                fix.setContentDescription(methodReview.actionLabel+
+                    ". Open existing protocol records without changing survey outcome");
+                actions.addView(fix,5,new LinearLayout.LayoutParams(-1,dp(48)));
+                methodFix[0]=fix;
+            }
+        }
         ScrollView endScroll=new ScrollView(this);
         endScroll.addView(actions);
         AlertDialog dialog=new AlertDialog.Builder(this)
             .setTitle("End Survey")
             .setView(endScroll)
             .setNegativeButton("Keep recording",null).create();
+        if(methodFix[0]!=null)
+            methodFix[0].setOnClickListener(v->{
+                dialog.dismiss();
+                persistDraft();
+                if(methodReview.kind==MethodCompletionReview.Kind.FIELD_EFFORT){
+                    if(requiresGenericUnit()&&samplingUnitId==null)
+                        pointNextButton.performClick(); // opens the real station workflow
+                    else openFieldProtocol();
+                }else if(methodReview.kind==MethodCompletionReview.Kind.DEVICES)
+                    openTrapProtocol();
+            });
         complete.setOnClickListener(v->{dialog.dismiss();showFinalizationForm(true);});
         incomplete.setOnClickListener(v->{dialog.dismiss();showFinalizationForm(false);});
         cancel.setOnClickListener(v->{dialog.dismiss();showNotCountedReason();});
         dialog.show();
     }
     /** Record true effort, then validate the complete/incomplete classification. */
+    private MethodCompletionReview.Result methodRecordReview(){
+        return MethodCompletionReview.assess(method,
+            FieldProtocolPolicy.supported(method)?methodCompleteness():null,
+            TrapProtocolPolicy.supported(method)?deviceCompleteness():null);
+    }
     private String completionChecklist(){
         if(eventId==null)return "Survey has not started";
         StringBuilder result=new StringBuilder();

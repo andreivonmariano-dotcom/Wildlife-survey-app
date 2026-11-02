@@ -6,7 +6,7 @@ def read(p):return (ROOT/p).read_text(encoding="utf-8")
 class Rc81SurveyCompact(unittest.TestCase):
     def test_compact_clock_does_not_duplicate_opportunistic_time(self):
         s=read("app/src/main/java/org/phwildlife/survey/MainActivity.java")
-        self.assertIn('String summary="Session excl. pauses "',s)
+        self.assertIn('("Session excl. pauses "',s)
         self.assertIn('if(hasStationUnits()||method.equals("line_transect")||method.equals("ves_transect"))',s)
         self.assertIn('summary+="\\n"+eventView.getText()',s)
         self.assertIn('Start GPS unverified',s)

@@ -51,5 +51,5 @@ class Rc55GpsUiContract(unittest.TestCase):
         self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)
         self.assertIn("versionName \'0.27.3-",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
-        self.assertIn("super(context,NAME,null,28)",src("FieldDb.java"))
+        self.assertIn("super(context,NAME,null,29)",src("FieldDb.java"))
 if __name__=="__main__":unittest.main()

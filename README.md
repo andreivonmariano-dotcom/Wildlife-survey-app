@@ -2,7 +2,7 @@
 
 APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
 
-**Current survey UI development branch:** `feature/apo-survey-setup-v142` (RC82 draft on signed RC81; not merged into historical default `main`)  
+**Current survey UI development branch:** `feature/apo-survey-gps-v143` (RC83 GPS draft on signed RC82; not merged into historical default `main`)  
 **Latest verified signed APK:** `0.27.3-rc82-apo-survey-setup`, versionCode **142**, app/test source `85aa224bd0031e9eaf6bd0ce9b024939de06ab01`, signed emulator run `41391752701`  
 **Android ID:** `org.phwildlife.survey.beta08` (unchanged); original signer retained  
 **SQLite schema:** **28** (unchanged)
@@ -20,6 +20,8 @@ APO is an offline-first, Philippines-focused Android biodiversity companion for 
 **RC81 signed development preview:** The 200%/320dp emulator screenshot showed crowded controls. Code141 shortens the timing/GPS status and keeps Review / End Survey on one row at 320dp/200%; signed CI passed 426 Python tests and two emulator font/size checks. The exact 11,756,772-byte APK (SHA-256 `3d42823bfe59cfd2c631fac294a68b8edff23bc3699c32e1da9dec85c72900a8`) was directly delivered in the development conversation. [RC81 QA](docs/APO_RC81_COMPACT_320_QA_2026_11_02.md).
 
 **RC82 signed developer preview:** Selecting Birds, Herpetofauna or Mammals now opens a compact method picker with optional full comparison, collapsed GPS-region assistance and opt-in repeat-route controls. [RC82 QA](docs/APO_RC82_SURVEY_SETUP_QA_2026_11_02.md). Code142 is signed and directly delivered (11,757,508 bytes, SHA-256 `747b7c92fd34ce5d38b4a099f871ef96fe951dbeb6c6f1f829f9a41411d30601`). CI passed 429 Python source tests and eight Android setup emulator tests, with six screenshots. Handset field QA is still pending.
+
+**RC83 Survey GPS source candidate (not yet signed):** Live GPS quality and acquisition state up front; coordinates, satellite data and troubleshooting expandable; a single confirmed missing-GPS path. Station GPS receives the same compact layout. [RC83 QA](docs/APO_RC83_SURVEY_GPS_QA_2026_11_02.md).
 
 ## What APO currently provides
 

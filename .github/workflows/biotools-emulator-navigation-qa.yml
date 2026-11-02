@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - feature/likas-biotools-navigation-audit-20261102
+    paths:
+      - 'app/src/**'
+      - 'scripts/**'
+      - '.github/workflows/biotools-emulator-navigation-qa.yml'
   workflow_dispatch:
 
 concurrency:

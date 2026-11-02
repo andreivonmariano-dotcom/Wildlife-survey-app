@@ -14,7 +14,7 @@ class RecorderFlowRC79(unittest.TestCase):
         self.assertIn('!method.equals("line_transect")&&!method.equals("ves_transect")',s)
         self.assertIn('recorderTools.setVisibility(View.GONE)',s)
         self.assertIn('revealTools.setOnClickListener',s)
-        self.assertLess(s.index('content.addView(revealTools'),s.index('FieldVisuals.section(this,"Record observation"'))
+        self.assertLess(s.index('content.addView(revealTools'),s.index('FieldVisuals.section(this,"Observation"'))
         self.assertIn('pointNextButton.setVisibility(hasStationUnits()?View.VISIBLE:View.GONE)',s)
 
     def test_two_column_footer_still_has_persistent_end(self):

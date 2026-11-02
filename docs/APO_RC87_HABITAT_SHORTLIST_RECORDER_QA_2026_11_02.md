@@ -1,5 +1,12 @@
 # APO RC87 | Site habitat shortlist and faster field identifications
 
+## Signed CI and direct artifact acceptance | 2 November 2026
+
+App/test code `e3d60847ac25be7239a7556473d6b604e388d6ed` passed GitHub Actions `41419356860`. Python discovered **448** passing source/scientific tests, JVM/App/AndroidTest compilation and original APK signer/package and PAIC714/WorldCover/locked-art checks. Android14 (API34) instrumented 160%- and 200%-font recorder/Birds/Amphibians species picker tests succeeded, including `montaneContextHidesCoastalTernButAllSpeciesCanFindIt`. Six screen PNGs were uploaded and visually inspected. At 200%, `PAIC · 714`, `ZIP`, Recent and Unidentified are readable; the field recorder's Save/Review/End actions remain visible. Screen captures of the selected montane state were not generated separately: its behavior is supported by the passed instrumentation, not by those six default-view screenshots.
+
+Signed binary from artifact `13128823267`: `APO-v0.27.3-RC87-Habitat-Shortlist-Interactive-code147.apk`, 11,763,844 bytes, SHA-256 `6eb23398eb18565f3e1694842881c509292ed93efeb599698d6c80c5f4067a6f`. User-visible binary was extracted, integrity checked, and attached directly in the originating chat. All three embedded immutable reference/art asset digests matched; emulator screenshots artifact `13128683666`. This is a **developer preview, not physical-device field certification**. The source-only status from the initial RC87 drafting below is superseded by this signed acceptance entry.
+
+
 **2 November 2026, Asia/Manila.** Draft source branch `feature/apo-rc87-habitat-shortlist-recorder-v147` derived from verified signed RC86, code146/SQLite29. Target is `0.27.3-rc87-apo-habitat-shortlist`, versionCode **147**; APK remains **unshipped** until signed CI, emulator screenshots and direct delivery are checked.
 
 ## Observed defect and source evidence

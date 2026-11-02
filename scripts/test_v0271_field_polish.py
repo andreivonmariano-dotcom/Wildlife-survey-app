@@ -25,7 +25,8 @@ class FieldPolishContractTest(unittest.TestCase):
         s = source("MainActivity.java")
         self.assertIn('UiKit.button(this,"End Survey"', s)
         self.assertIn('UiKit.button(this,"Save Observation"', s)
-        self.assertIn('UiKit.button(this,"Review Records"', s)
+        self.assertIn('fontScale>=1.9f?"Review":"Review Records"', s)
+        self.assertIn('reviewButton.setContentDescription("Review saved records from this survey")', s)
         self.assertIn('private void finishPrompt()', s)
 
     def test_shared_touch_feedback_and_palette(self):

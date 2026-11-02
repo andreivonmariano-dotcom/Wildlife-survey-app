@@ -31,7 +31,7 @@ class Rc81SurveyCompact(unittest.TestCase):
     def test_version_and_scientific_record_identity(self):
         g=read("app/build.gradle")
         self.assertIn("versionCode 146",g)
-        self.assertIn("0.27.3-rc85-apo-recorder-species",g)
+        self.assertIn("0.27.3-rc86-apo-interactive-recorder",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
         s=read("app/src/main/java/org/phwildlife/survey/MainActivity.java")

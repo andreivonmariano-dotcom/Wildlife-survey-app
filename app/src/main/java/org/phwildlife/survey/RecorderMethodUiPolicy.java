@@ -31,6 +31,18 @@ public final class RecorderMethodUiPolicy {
             return Action.FIELD_EFFORT;
         return Action.NONE;
     }
+    /**
+     * A visible inline action replaces the identical advanced quick action.
+     * Other user-selected shortcuts remain available under Field tools.
+     */
+    public static FieldQuickActions.Kind inlineQuickKind(String profile,String method){
+        switch(action(profile,method)){
+            case AUDIO:return FieldQuickActions.Kind.CALLS;
+            case FIELD_EFFORT:return FieldQuickActions.Kind.METHOD_EVIDENCE;
+            case DEVICES:return FieldQuickActions.Kind.DEVICES;
+            default:return FieldQuickActions.Kind.NONE;
+        }
+    }
     public static String actionLabel(String profile,String method){
         switch(action(profile,method)){
             case AUDIO:return "Record / review calls";

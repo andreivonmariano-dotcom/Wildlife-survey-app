@@ -45,8 +45,8 @@ class RecorderFlowRC79(unittest.TestCase):
                          "End Survey should fit within viewport"):
             self.assertIn(fragment,test)
         gradle=read("app/build.gradle")
-        self.assertIn("versionCode 150",gradle)
-        self.assertIn("versionName '0.27.3-rc90-apo-method-panels'",gradle)
+        self.assertIn("versionCode 151",gradle)
+        self.assertIn("versionName '0.27.3-rc91-apo-method-review'",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 

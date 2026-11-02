@@ -30,6 +30,30 @@ public final class RecorderMethodPanelsEmulatorTest {
         }
         return null;
     }
+    /** Prefer the action that can actually be operated by a field observer. */
+    private static View visibleText(View root,String value){
+        if(root instanceof TextView&&root.isShown()&&
+            ((TextView)root).getText().toString().contains(value))return root;
+        if(root instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)root;
+            for(int i=0;i<group.getChildCount();i++){
+                View found=visibleText(group.getChildAt(i),value);
+                if(found!=null)return found;
+            }
+        }
+        return null;
+    }
+    private static int visibleExactLabels(View root,String value){
+        int count=0;
+        if(root instanceof TextView&&root.isShown()&&
+            ((TextView)root).getText().toString().equals(value))count++;
+        if(root instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)root;
+            for(int i=0;i<group.getChildCount();i++)
+                count+=visibleExactLabels(group.getChildAt(i),value);
+        }
+        return count;
+    }
     private static View hint(View root,String value){
         if(root instanceof EditText&&
             ((EditText)root).getHint()!=null&&
@@ -77,8 +101,10 @@ public final class RecorderMethodPanelsEmulatorTest {
                 assertTrue("Noise must be presented by default",noise.isShown());
                 assertFalse("Other microhabitat measurements remain in disclosure",
                     micro.isShown());
-                View audio=text(root,"Record / review calls");
+                View audio=visibleText(root,"Record / review calls");
                 assertNotNull(audio);assertTrue(audio.isShown());
+                assertEquals("Only one visible call library action",1,
+                    visibleExactLabels(root,"Record / review calls"));
                 assertTrue(text(root,"Save Observation").isShown());
                 assertTrue(text(root,"End Survey").isShown());
             });
@@ -111,8 +137,10 @@ public final class RecorderMethodPanelsEmulatorTest {
                 assertNotNull(device);assertNotNull(height);
                 assertTrue("Equipment ID is a primary device-specific field",device.isShown());
                 assertFalse("Optional measurements must start collapsed",height.isShown());
-                View checks=text(root,"Device checks & captures");
+                View checks=visibleText(root,"Device checks & captures");
                 assertNotNull(checks);assertTrue(checks.isShown());
+                assertEquals("Only one visible device checks action",1,
+                    visibleExactLabels(root,"Device checks & captures"));
                 assertTrue(text(root,"End Survey").isShown());
             });
         }

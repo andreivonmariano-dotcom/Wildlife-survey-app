@@ -20,4 +20,4 @@ adb shell am instrument -w -r -e class org.phwildlife.survey.BioToolsNavigationI
 adb pull /sdcard/Android/data/org.phwildlife.survey.beta08/files/biotools_qa biotools-emulator-qa/screenshots || true
 adb logcat -d -s AndroidRuntime:E > biotools-emulator-qa/android_runtime_errors.txt
 
-grep -Eq 'OK \(6 tests\)' biotools-emulator-qa/instrumentation.txt
+grep -Eq 'OK \(8 tests\)' biotools-emulator-qa/instrumentation.txt

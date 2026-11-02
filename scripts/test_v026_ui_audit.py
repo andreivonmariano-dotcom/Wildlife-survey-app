@@ -11,7 +11,7 @@ class CleanFieldUi(unittest.TestCase):
     def test_recorder_has_only_one_browse_action_and_persistent_end(self):
         screen=src("MainActivity.java")
         self.assertIn('UiKit.button(this,"Species list","secondary")',screen)
-        self.assertIn('taxonEntry.setHint("Species or field ID")',screen)
+        self.assertIn('taxonEntry.setHint("Species")',screen)
         self.assertNotIn('UiKit.button(this,"Find species","primary")',screen)
         self.assertNotIn('content.addView(section("Species"))',screen)
         self.assertIn('UiKit.button(this,"Save Observation","primary")',screen)
@@ -80,7 +80,7 @@ class CleanFieldUi(unittest.TestCase):
         self.assertIn('evidenceTools.addView(sound,lp)',recorder)
         self.assertIn('evidenceTools.addView(devices,lp)',recorder)
         self.assertIn('evidenceTools.addView(methodRecords,lp)',recorder)
-        self.assertIn('content.addView(FieldVisuals.section(this,"Record observation"',recorder)
+        self.assertIn('content.addView(FieldVisuals.section(this,"Observation"',recorder)
         self.assertIn('UiKit.button(this,"Save Observation","primary")',recorder)
         self.assertIn('UiKit.button(this,"End Survey","outline-danger")',recorder)
 

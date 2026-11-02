@@ -2,8 +2,8 @@
 
 APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
 
-**Current survey UI development branch:** `feature/apo-survey-gps-v143` (RC83 GPS draft on signed RC82; not merged into historical default `main`)  
-**Latest verified signed APK:** `0.27.3-rc83-apo-survey-gps`, versionCode **143**, app/test source `2d52c0c602e955738f6960c89e276ec7eda07a72`, signed emulator run `41397832886`  
+**Current survey UI development branch:** `feature/apo-habitats-checklist-v144` (RC84 draft on signed RC83; not merged into historical default `main`)  
+**Latest verified signed APK:** `0.27.3-rc84-apo-habitats-checklist`, versionCode **144**, app/test source `2cfb36281bf9b89260939f14ff5c2915f75dc4f3`, signed emulator run `41401267934`  
 **Android ID:** `org.phwildlife.survey.beta08` (unchanged); original signer retained  
 **SQLite schema:** **28** (unchanged)
 
@@ -22,6 +22,8 @@ APO is an offline-first, Philippines-focused Android biodiversity companion for 
 **RC82 signed developer preview:** Selecting Birds, Herpetofauna or Mammals now opens a compact method picker with optional full comparison, collapsed GPS-region assistance and opt-in repeat-route controls. [RC82 QA](docs/APO_RC82_SURVEY_SETUP_QA_2026_11_02.md). Code142 is signed and directly delivered (11,757,508 bytes, SHA-256 `747b7c92fd34ce5d38b4a099f871ef96fe951dbeb6c6f1f829f9a41411d30601`). CI passed 429 Python source tests and eight Android setup emulator tests, with six screenshots. Handset field QA is still pending.
 
 **RC83 Survey GPS signed development preview:** Live GPS quality and acquisition state up front; coordinates, satellite data and troubleshooting expandable; a single confirmed missing-GPS path. Station GPS receives the same compact layout. Signed 11,757,620-byte code143 APK (SHA-256 `7cd62bf5706352298d15294c81034ab46922b4aba43dbb1f53e909b4a1edbf90`) directly delivered, with 432 Python regressions and eight Android emulator tests at 160%/200%. Physical GNSS/data-upgrade remain unverified. [RC83 QA](docs/APO_RC83_SURVEY_GPS_QA_2026_11_02.md).
+
+**RC84 Habitat & Species signed developer preview:** Compact observed-habitat selection and count, one suggested/full checklist control, expandable start-GPS evidence, and collapsed WorldCover source/import. Original evidence and survey rules remain. Signed code144 APK (11,758,144 bytes; SHA-256 `40bfe6326d0b937337f4ce9ad3b7b0933d455d29872f6a80b5a9088c36cf00a7`) directly delivered after 435 tests and four Android14 emulator checks. [RC84 QA](docs/APO_RC84_HABITAT_CHECKLIST_QA_2026_11_02.md).
 
 ## What APO currently provides
 

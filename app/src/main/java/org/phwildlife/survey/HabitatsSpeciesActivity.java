@@ -30,7 +30,8 @@ public final class HabitatsSpeciesActivity extends Activity {
     private final Set<String> confirmed=new HashSet<>();
     private List<String> suggested=new ArrayList<>();
     private LinearLayout body,checks;
-    private TextView mapSummary,speciesSummary,siteSummary;
+    private TextView mapSummary,speciesSummary,siteSummary,siteEvidence,selectedSummary;
+    private Button checklistButton;
     private RadioGroup checklistMode;
     private boolean othersVisible=false;
     private boolean preparing=false;
@@ -56,57 +57,104 @@ public final class HabitatsSpeciesActivity extends Activity {
         }
         body=new LinearLayout(this);
         body.setOrientation(LinearLayout.VERTICAL);
-        body.addView(FieldVisuals.section(this,"Site context",
-            "GPS coordinates describe the survey starting point, not an entire transect."));
-        siteSummary=label("",13,false);body.addView(siteSummary);
+        // Essentials first. Source details stay one tap away.
+        siteSummary=label("",13,true);
+        body.addView(siteSummary);
+        LinearLayout siteDetails=new LinearLayout(this);
+        siteDetails.setOrientation(LinearLayout.VERTICAL);
+        siteEvidence=label("",12,false);
+        siteDetails.addView(siteEvidence);
+        siteDetails.addView(label("One GPS point is not the whole survey area. "+
+            "Device MSL elevation is screening context, not a habitat observation.",12,false));
+        siteDetails.setVisibility(View.GONE);
+        Button siteToggle=UiKit.button(this,"GPS details","quiet");
+        siteToggle.setContentDescription("Show GPS and elevation context");
+        siteToggle.setOnClickListener(v->{
+            boolean open=siteDetails.getVisibility()!=View.VISIBLE;
+            siteDetails.setVisibility(open?View.VISIBLE:View.GONE);
+            siteToggle.setText(open?"Hide GPS details":"GPS details");
+            siteToggle.setContentDescription(open?
+                "Hide GPS and elevation context":"Show GPS and elevation context");
+        });
         refreshSite();
-        body.addView(FieldVisuals.section(this,"Suggested habitats nearby",
-            "ESA WorldCover 2020 · generalized land-cover map · observer confirmation required"));
-        mapSummary=label("",13,false);body.addView(mapSummary);
-        Button mapCredit=UiKit.button(this,"Land-cover source and license","quiet");
-        mapCredit.setContentDescription("About ESA WorldCover 2020 source and Creative Commons license");
-        mapCredit.setOnClickListener(v->new AlertDialog.Builder(this)
-            .setTitle("ESA WorldCover 2020 · source")
-            .setMessage("© ESA WorldCover project 2020 / Contains modified "+
-                "Copernicus Sentinel data (2020) processed by ESA WorldCover consortium.\\n\\n"+
-                "Source: Zanaga et al. (2021), ESA WorldCover 10 m 2020 v100. "+
-                "DOI: 10.5281/zenodo.5571936. License: CC BY 4.0.\\n\\n"+
-                "LIKAS aggregates land cover to approximately 500 m; these are "+
-                "historical mapped suggestions, not verified current habitats.")
-            .setPositiveButton("OK",null).show());
-        body.addView(mapCredit);
-        Button importMap=UiKit.button(this,PaicLandCoverPack.installed(this)?
-            "Replace offline land-cover file":"Import offline land-cover file","secondary");
-        importMap.setOnClickListener(v->pickMap());
-        // Personal build loads the map before leaving the startup screen.
-        if(BundledPrivateReferences.hasBundledMap(this)&&
-                PaicLandCoverPack.installed(this))
-            importMap.setVisibility(View.GONE);
-        body.addView(importMap,new LinearLayout.LayoutParams(-1,-2));
-        TextView intro=label("Select every habitat actually encountered. Suggested "+
-            "habitats are not preselected. Other habitats can always be added.",13,false);
-        body.addView(intro);
+
+        body.addView(FieldVisuals.section(this,"Habitats",null));
+        // Habitat selections below are observer-confirmed only.
+        mapSummary=label("",12,false);
+        body.addView(mapSummary);
+        selectedSummary=label("0 habitats confirmed",12,true);
+        body.addView(selectedSummary);
         checks=new LinearLayout(this);
         checks.setOrientation(LinearLayout.VERTICAL);
         body.addView(checks);
-        body.addView(FieldVisuals.section(this,"Species checklist",
-            "Site-based ordering is advisory. Every species remains searchable."));
+
+        LinearLayout mapOptions=new LinearLayout(this);
+        mapOptions.setOrientation(LinearLayout.VERTICAL);
+        Button mapCredit=UiKit.button(this,"Source & license","quiet");
+        mapCredit.setContentDescription("ESA WorldCover 2020 citation and CC BY 4.0 license");
+        mapCredit.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("ESA WorldCover 2020 · source")
+            .setMessage("© ESA WorldCover project 2020 / Contains modified "+
+                "Copernicus Sentinel data (2020) processed by ESA WorldCover consortium.\n\n"+
+                "Source: Zanaga et al. (2021), ESA WorldCover 10 m 2020 v100. "+
+                "DOI: 10.5281/zenodo.5571936. License: CC BY 4.0.\n\n"+
+                "APO aggregates land cover to approximately 500 m; these are "+
+                "historical mapped suggestions, not verified current habitats.")
+            .setPositiveButton("OK",null).show());
+        mapOptions.addView(mapCredit);
+        Button importMap=UiKit.button(this,PaicLandCoverPack.installed(this)?
+            "Replace offline map":"Import offline map","secondary");
+        importMap.setOnClickListener(v->pickMap());
+        if(BundledPrivateReferences.hasBundledMap(this)&&
+                PaicLandCoverPack.installed(this))
+            importMap.setVisibility(View.GONE);
+        mapOptions.addView(importMap,new LinearLayout.LayoutParams(-1,-2));
+        mapOptions.setVisibility(View.GONE);
+        Button mapToggle=UiKit.button(this,"Map source & files","quiet");
+        mapToggle.setContentDescription("Show land-cover source, license and file management");
+        mapToggle.setOnClickListener(v->{
+            boolean open=mapOptions.getVisibility()!=View.VISIBLE;
+            mapOptions.setVisibility(open?View.VISIBLE:View.GONE);
+            mapToggle.setText(open?"Hide map options":"Map source & files");
+            mapToggle.setContentDescription(open?
+                "Hide land-cover source and file management":
+                "Show land-cover source, license and file management");
+        });
+        body.addView(FieldVisuals.section(this,"Species checklist",null));
         checklistMode=new RadioGroup(this);
         checklistMode.setOrientation(RadioGroup.VERTICAL);
         RadioButton ranked=new RadioButton(this);
         ranked.setId(3001);ranked.setText("Suggested species first");
-        ranked.setMinHeight(dp(52));ranked.setTextSize(15);
-        ranked.setTextColor(UiKit.INK);
         checklistMode.addView(ranked);
         RadioButton full=new RadioButton(this);
         full.setId(3002);full.setText("Full checklist · no site ranking");
-        full.setMinHeight(dp(52));full.setTextSize(15);
-        full.setTextColor(UiKit.INK);
         checklistMode.addView(full);
         checklistMode.check(saved==null||saved.getBoolean("ranked",true)?3001:3002);
-        checklistMode.setOnCheckedChangeListener((g,id)->refreshSpecies());
+        // Keep exported mode unchanged while hiding the two permanent radio rows.
+        checklistMode.setVisibility(View.GONE);
+        checklistMode.setOnCheckedChangeListener((g,id)->{
+            updateChecklistButton();
+            refreshSpecies();
+        });
         body.addView(checklistMode);
-        speciesSummary=label("",13,false);body.addView(speciesSummary);
+        checklistButton=UiKit.button(this,"Checklist: Suggested","secondary");
+        checklistButton.setContentDescription("Choose suggested-first or full species checklist");
+        checklistButton.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Species checklist")
+            .setSingleChoiceItems(new String[]{"Suggested first","Full checklist"},
+                checklistMode.getCheckedRadioButtonId()==3001?0:1,
+                (dialog,choice)->{
+                    checklistMode.check(choice==0?3001:3002);
+                    dialog.dismiss();
+                })
+            .setNegativeButton("Cancel",null).show());
+        body.addView(checklistButton,new LinearLayout.LayoutParams(-1,-2));
+        speciesSummary=label("",12,false);body.addView(speciesSummary);
+        body.addView(label("Matching does not confirm species presence",12,false));
+        body.addView(siteToggle);
+        body.addView(siteDetails);
+        body.addView(mapToggle);
+        body.addView(mapOptions);
         LinearLayout page=UiKit.page(this,"Habitats & Species",
             "Survey GPS",this::finish,body);
         LinearLayout footer=new LinearLayout(this);
@@ -120,19 +168,35 @@ public final class HabitatsSpeciesActivity extends Activity {
         setContentView(page);
         updateMap();
         renderHabitats();
+        updateChecklistButton();
         refreshSpecies();
+    }
+    private void updateChecklistButton(){
+        if(checklistButton==null||checklistMode==null)return;
+        checklistButton.setText(checklistMode.getCheckedRadioButtonId()==3001?
+            "Checklist: Suggested":"Checklist: Full");
+    }
+    private void updateSelectedSummary(){
+        if(selectedSummary==null)return;
+        selectedSummary.setText(confirmed.isEmpty()?"0 habitats confirmed":
+            confirmed.size()+" habitat"+(confirmed.size()==1?"":"s")+" confirmed");
     }
     private void refreshSite(){
         boolean missing=getIntent().getBooleanExtra("start_without_gps",false);
-        String coords=missing||!Double.isFinite(preflightLat)||!Double.isFinite(preflightLon)?
-            "Survey starting GPS not recorded":
-            String.format(Locale.US,"Starting GPS %.6f, %.6f · ±%.1f m",
-                preflightLat,preflightLon,
-                getIntent().getFloatExtra("start_gps_accuracy_m",Float.NaN));
+        boolean hasCoords=!missing&&Double.isFinite(preflightLat)&&Double.isFinite(preflightLon);
+        float accuracy=getIntent().getFloatExtra("start_gps_accuracy_m",Float.NaN);
+        String accuracyText=Float.isFinite(accuracy)&&accuracy>0?
+            String.format(Locale.US," · ±%.1f m",accuracy):"";
+        String group=getIntent().getStringExtra("survey_profile");
+        siteSummary.setText((group==null?"":group+" · ")+
+            (hasCoords?"GPS recorded"+accuracyText:"Start GPS missing"));
         GpsElevation.Sample altitude=GpsElevation.read(TrackService.currentFix());
         String height=altitude.usableForHabitat?
-            altitude.label():"MSL elevation not available for site screening";
-        siteSummary.setText(coords+"\n"+height);
+            altitude.label():"MSL elevation unavailable";
+        siteEvidence.setText((hasCoords?
+            String.format(Locale.US,"Start: %.6f, %.6f%s",
+                preflightLat,preflightLon,accuracyText):
+            "Start coordinates unavailable")+"\\n"+height);
     }
     private void pickMap(){
         Intent select=new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -163,47 +227,45 @@ public final class HabitatsSpeciesActivity extends Activity {
         suggested=new ArrayList<>();
         if(getIntent().getBooleanExtra("start_without_gps",false)||
             !Double.isFinite(preflightLat)||!Double.isFinite(preflightLon)){
-            mapSummary.setText("GPS not recorded. Map suggestions unavailable; select habitats manually.");
+            mapSummary.setText("Map hints unavailable");
             return;
         }
         if(!PaicLandCoverPack.installed(this)){
-            mapSummary.setText("No offline map file installed. Import the optional "+
-                "WorldCover 2020 land-cover file, or select habitats manually.");
+            mapSummary.setText("Map unavailable · choose habitats manually");
             return;
         }
         try{
             suggested=PaicLandCoverPack.suggest(this,preflightLat,preflightLon);
             mapSummary.setText(suggested.isEmpty()?
-                "No reliably mapped habitat classes near this location. Choose manually.":
-                "Nearby mapped classes around your GPS starting point (about 2.5 km across). "+
-                "Map resolution is generalized to ~500 m; land cover may have changed since 2020.");
+                "No mapped classes · choose manually":
+                "2020 map suggestions · ~500 m resolution · verify in field");
         }catch(Exception e){
-            mapSummary.setText("Map cannot be read; select habitats manually.");
+            mapSummary.setText("Map unreadable · choose manually");
             suggested.clear();
         }
     }
     private void renderHabitats(){
         if(checks==null)return;
         checks.removeAllViews();
+        updateSelectedSummary();
         if(!suggested.isEmpty()){
             for(String name:suggested)addCheck(name,true);
         }
-        Button browse=UiKit.button(this,othersVisible?"Hide other habitats":
-            "Browse all 16 habitats","secondary");
+        Button browse=UiKit.button(this,othersVisible?"Hide habitats":
+            "Choose habitats (16)","secondary");
         browse.setOnClickListener(v->{othersVisible=!othersVisible;renderHabitats();});
         checks.addView(browse,new LinearLayout.LayoutParams(-1,dp(52)));
         for(String name:PaicHabitatPolicy.HABITATS)
             if(!suggested.contains(name)&&(othersVisible||confirmed.contains(name)))
                 addCheck(name,false);
         if(suggested.isEmpty()&&!othersVisible){
-            TextView noMap=label("Choose Browse all 16 habitats to make manual "+
-                "selections. You can continue with no habitat recorded.",13,false);
+            TextView noMap=label("Optional",12,false);
             checks.addView(noMap);
         }
     }
     private void addCheck(String name,boolean fromMap){
         CheckBox check=new CheckBox(this);
-        check.setText(name+(fromMap?" · mapped suggestion":""));
+        check.setText(name);
         check.setTextColor(UiKit.INK);check.setTextSize(15);
         check.setMinHeight(dp(52));check.setPadding(dp(6),dp(4),dp(6),dp(4));
         check.setChecked(confirmed.contains(name));
@@ -211,6 +273,7 @@ public final class HabitatsSpeciesActivity extends Activity {
             ". Suggested from historical satellite land cover, not field confirmed.":""));
         check.setOnCheckedChangeListener((b,selected)->{
             if(selected)confirmed.add(name);else confirmed.remove(name);
+            updateSelectedSummary();
             refreshSpecies();
         });
         checks.addView(check);
@@ -231,9 +294,7 @@ public final class HabitatsSpeciesActivity extends Activity {
                 if(master.moveToFirst())installed=master.getInt(0);
             }
             if(installed!=714){
-                speciesSummary.setText("Activate the private 714-species Mindanao PAIC "+
-                    "catalog in Species Library to enable site-matched suggestions. "+
-                    "You can continue without it.");
+                speciesSummary.setText("Site matching unavailable · continue without ranking");
                 return;
             }
             // The master attributes are installed privately, separately from the app APK.
@@ -250,17 +311,13 @@ public final class HabitatsSpeciesActivity extends Activity {
                 }
             }
         }catch(Exception e){
-            speciesSummary.setText("Activate the 714-species private checklist in "+
-                "Species Library before expecting site-matched suggestions.");
+            speciesSummary.setText("Site matching unavailable · continue without ranking");
             return;
         }
         boolean ranked=checklistMode.getCheckedRadioButtonId()==3001;
         speciesSummary.setText(ranked?
-            match+" of "+total+" "+profile.toLowerCase(Locale.US)+
-                " references match at least one available habitat/elevation criterion. "+
-                "Matching is not a presence prediction. All "+total+" remain available.":
-            "Full "+profile.toLowerCase(Locale.US)+" reference list: "+total+
-                " species. No species will be hidden by habitat or elevation.");
+            match+" / "+total+" references match habitat or elevation criteria":
+            total+" references · no site sorting");
     }
     private void beginSurvey(){
         if(preparing)return;

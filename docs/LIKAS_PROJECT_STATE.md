@@ -1,5 +1,18 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-02 | APO RC84 signed compact Habitat & Species screen | latest verified APK
+
+- **Signed source/QA:** `2cfb36281bf9b89260939f14ff5c2915f75dc4f3`, successful GitHub Actions `41401267934`: **435 Python** scientific/UI regressions, Android/JVM + AndroidTest compilation, four native emulator UI tests (Birds and Herpetofauna at 160% and 200%/320dp), four distinct PNG images, original app signer/package and approved art/catalog/map hashes. VersionCode144, `0.27.3-rc84-apo-habitats-checklist`, original SQLite schema28.
+- **Exact direct-delivered APK:** `APO-v0.27.3-RC84-Compact-Habitat-Checklist-code144.apk`, **11,758,144 bytes**, SHA-256 `40bfe6326d0b937337f4ce9ad3b7b0933d455d29872f6a80b5a9088c36cf00a7`, extracted from CI artifact **13121089719**, checked ZIP and immutable embedded assets. Chat sandbox files are session-local and must be regenerated/verified in later chats.
+- **Screen:** A compact, group-labeled start-GPS status; habitat confirmation and short count, one mode picker, optional full GPS/elevation detail and map source/import underneath. Historical map suggestions remain unconfirmed until explicitly checked. Species matching is reference-only, never claimed occurrence. Begin Survey pinned. 200% screenshot shows habitat and checklist choices above persistent Begin. Screenshot artifact **13121079780**.
+- **Release limitations:** PR #86 remains draft/unmerged; 714-species ranking on installed user catalog, actual GPS/elevation, full handset TalkBack, archival upgrade and research ZIP/outcomes are not field-verified. [Full QA](docs/APO_RC84_HABITAT_CHECKLIST_QA_2026_11_02.md). Historical RC4 art-lineage gate still separately incompatible with current APO.
+
+## 2026-11-02 | APO RC84 concise Habitats & Species preflight | source under QA
+
+- **Owner request:** Shorten and declutter the pre-recorder Habitats & Species screen after Survey GPS. New `feature/apo-habitats-checklist-v144` derives from verified signed RC83 PR #85 head `3f053750dbb99b6c9087456c58fc08d85a76334f`. Target version code **144**, `0.27.3-rc84-apo-habitats-checklist`, original package/signature, SQLite28 and locked references.
+- **Implemented:** concise GPS-start status with optional full coordinates/elevation disclosure, short observed habitat instructions, count of explicitly confirmed habitats, "All habitats (16)" disclosure with suggested classes never auto-checked; historical map attribution, CC BY 4.0 and optional pack file management collapsed; single "Checklist" mode action replaces two permanent radio rows, preserving exact existing rank/full stored values and advisory-not-occurrence semantics. Begin Survey stays pinned and original missing/reverified GPS handling remains.
+- **QA:** new source tests, updated RC69 invariants, Android14 native Birds/Herpetofauna screen test at 160% and 200%/320dp, signer/immutable assets checks. **Signed code144 APK and real screenshots not verified yet.** Last delivered preview remains signed RC83 until CI and exact file handoff. See `docs/APO_RC84_HABITAT_CHECKLIST_QA_2026_11_02.md`.
+
 ## 2026-11-02 | APO RC83 signed focused Survey GPS preflight | latest verified preview
 
 - **Signed source and QA:** `2d52c0c602e955738f6960c89e276ec7eda07a72` (draft PR #85 on RC82 branch), GitHub Actions `41397832886` **SUCCESS**, **432 Python**, JVM/Android app+AndroidTest build, and **8 Android14 instrumented GPS screen tests** at 160% and 200%/320dp (4 each). Exact original Android ID, signing cert, SQLite28, mountain art, PAIC714 and WorldCover remain unchanged.

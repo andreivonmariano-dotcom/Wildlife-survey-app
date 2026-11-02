@@ -67,6 +67,17 @@ class Rc86InteractiveTest(unittest.TestCase):
         self.assertIn('Habitat / elevation overlap',picker)
         self.assertIn("Site context",picker)
         self.assertNotIn('TextView match=text("Site match"',picker)
+    def test_archived_profiles_and_source_attribution(self):
+        profile=src("TaxonDetailActivity.java")
+        recorder=src("MainActivity.java")
+        for token in ("likas_prior_taxon_catalog",
+                      "likas_prior_taxon_synonyms",
+                      "likas_prior_taxon_habitat_profiles",
+                      "likas_prior_taxon_occurrence_evidence",
+                      "detailSuggestions.setArchivedCatalog(prior)"):
+            self.assertIn(token,profile)
+        self.assertIn("catalogSourceForKey(recordTaxonKey",recorder)
+        self.assertIn('"SELECT source,source_version FROM "+catalog+',recorder)
     def test_candidate_presence_needs_assessed_identification(self):
         self.assertIn('!confidence.equals("Not assessed")',src("MainActivity.java"))
         self.assertIn("'Not assessed'",src("ResearchExports.java"))

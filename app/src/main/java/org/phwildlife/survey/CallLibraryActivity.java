@@ -191,6 +191,11 @@ public final class CallLibraryActivity extends Activity {
             draw();
         }else super.onBackPressed();
     }
+    private ScrollView scrollForm(LinearLayout form){
+        ScrollView scroll=new ScrollView(this);
+        scroll.addView(form);
+        return scroll;
+    }
     private void checkMicrophone(){
         if(checkSelfPermission(Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_AUDIO);return;
@@ -478,7 +483,7 @@ public final class CallLibraryActivity extends Activity {
         EditText notes=new EditText(this);notes.setHint("Call pattern or ID evidence (optional)");
         form.addView(notes);
         new AlertDialog.Builder(this).setTitle("Label recorded call")
-            .setView(form).setNegativeButton("Cancel",null)
+            .setView(scrollForm(form)).setNegativeButton("Cancel",null)
             .setPositiveButton("Save label",(dialog,which)->{
                 try{
                     String species=name.getText().toString().trim();

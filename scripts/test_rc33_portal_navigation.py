@@ -20,7 +20,8 @@ class PortalNavigation(unittest.TestCase):
             self.assertIn(label,home)
         self.assertIn("LikasLibraryActivity.class",home)
         self.assertIn("LikasSettingsActivity.class",home)
-        self.assertIn("this::fieldworkHub",home)
+        self.assertIn("this::bioToolsHub",home)
+        self.assertIn("this::fieldworkHub",welcome)
         self.assertIn("ApoHomeUi.resume",home)
         self.assertNotIn("DataManagementActivity.class",home)
         self.assertNotIn("FieldBackupActivity.class",home)
@@ -29,16 +30,18 @@ class PortalNavigation(unittest.TestCase):
         c=read("WelcomeActivity.java")
         tools=c.split("private void fieldworkHub(){",1)[1].split("/** Short status caption",1)[0]
         for label in ('"Birds"','"Herpetofauna"','"Mammals"',
-                      'HistoryActivity.class','DashboardActivity.class',
-                      'SitesActivity.class','CallLibraryActivity.class',
-                      'TrapProtocolActivity.class'):
+                      '"Current survey"','"New survey"','"Resume Survey"'):
             self.assertIn(label,tools)
         self.assertNotIn('Rc7SpeciesLibraryActivity.class',tools)
         self.assertIn('private void setup(String selected)',c)
         self.assertNotIn('surveyTile(second,"Custom"',tools)
         self.assertNotIn('private void customPicker()',c)
         self.assertIn('private String activeSurvey()',c)
-        self.assertIn('this::home',tools)
+        self.assertIn('this::bioToolsHub',tools)
+        for target in ('SitesActivity.class','HistoryActivity.class',
+                       'DashboardActivity.class','CallLibraryActivity.class',
+                       'TrapProtocolActivity.class'):
+            self.assertIn(target,c)
 
     def test_library_and_settings_are_separate_destinations(self):
         manifest=(ROOT/"app/src/main/AndroidManifest.xml").read_text()

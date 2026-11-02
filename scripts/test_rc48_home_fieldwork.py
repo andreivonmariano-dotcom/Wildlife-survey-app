@@ -31,18 +31,20 @@ class Rc48HomeFieldwork(unittest.TestCase):
         self.assertIn('UiKit.button(this,"Resume Survey","primary")',hub)
         for profile in ("Birds","Herpetofauna","Mammals"):
             self.assertIn('"'+profile+'"',hub)
-        self.assertIn('LikasPortalUi.action(this,"History"',hub)
-        self.assertIn('LikasPortalUi.action(this,"Analysis"',hub)
+        self.assertIn('private void fieldRecordsHub(){',hub)
+        self.assertIn('HistoryActivity.class',hub)
+        self.assertIn('private void analysisHub(){',hub)
+        self.assertIn('DashboardActivity.class',hub)
         self.assertIn('surveyTile(main,"Birds"',hub)
         for target in ("SitesActivity.class","HistoryActivity.class",
                        "DashboardActivity.class","FieldProtocolsActivity.class"):
-            self.assertIn(target,hub)
+            self.assertIn(target,welcome)
 
     def test_survey_setup_has_shared_back_header_and_same_gps_dock(self):
         welcome=src("WelcomeActivity.java")
         setup=welcome.split("private void setup(String selected)",1)[1].split(
             "private void refreshStudyTitle()",1)[0]
-        self.assertIn('UiKit.navigationHeader(this,profile+" survey","Fieldwork"',setup)
+        self.assertIn('UiKit.navigationHeader(this,profile+" survey","Surveys"',setup)
         self.assertIn("this::fieldworkHub",setup)
         self.assertIn("UiKit.fieldInput(this,input)",welcome)
         self.assertIn("styleSetupInput(entry)",setup)

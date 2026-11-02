@@ -59,8 +59,9 @@ class FieldGuideStudioQA(unittest.TestCase):
         self.assertIn("ApoHomeUi.resume(this,",home)
         self.assertIn("lastHomeActiveSurvey=activeSurvey()",home)
         self.assertIn('String unfinished=activeSurvey()',home)
-        self.assertIn('"field_tools_open"',home)
-        self.assertIn('toolsToggle.setOnClickListener(v->{',home)
+        self.assertIn('private void fieldUtilitiesHub(){',home)
+        self.assertIn('private void analysisHub(){',home)
+        self.assertNotIn('"field_tools_open"',home)
         for dest in ("SitesActivity.class","HistoryActivity.class",
                      "DashboardActivity.class","FieldProtocolsActivity.class",
                      "StudyProtocolsActivity.class","TrapProtocolActivity.class"):

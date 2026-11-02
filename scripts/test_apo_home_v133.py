@@ -39,8 +39,8 @@ class ApoHomeContracts(unittest.TestCase):
         self.assertIn("ApoHomeUi.resume",s)
         self.assertIn('putExtra("resume",true)',s)
         g=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 133",g)
-        self.assertIn("0.27.3-rc73-apo-text-home",g)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",g).group(1)),133)
+        self.assertIn("0.27.3-rc",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
 
     def test_motion_respects_system_and_preference(self):

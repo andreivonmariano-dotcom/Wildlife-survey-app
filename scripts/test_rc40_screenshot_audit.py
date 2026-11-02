@@ -23,7 +23,7 @@ class Rc40ScreenAudit(unittest.TestCase):
         self.assertNotIn("R.drawable.",component)
         for title in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"'):
             self.assertIn(title,main)
-        self.assertIn("this::fieldworkHub",main)
+        self.assertIn("this::bioToolsHub",main)
         self.assertIn("LikasLibraryActivity.class",main)
         self.assertIn("LikasSettingsActivity.class",main)
         self.assertNotIn("LikasPortalUi.tile(",main)
@@ -34,10 +34,12 @@ class Rc40ScreenAudit(unittest.TestCase):
             "/** Short status caption",1)[0]
         self.assertNotIn("addHomeRecentSurvey()",field)
         self.assertEqual(field.count("HistoryActivity.class"),1)
+        self.assertIn('private void fieldRecordsHub(){',field)
         self.assertEqual(field.count('FieldVisuals.section(this,"New survey"'),1)
         self.assertNotIn('"Go to the field."',field)
         self.assertNotIn('step("NEW"',field)
-        self.assertIn('recentSurveySummary()',field)
+        self.assertIn('private void analysisHub(){',field)
+        self.assertIn('ResearchExportActivity.class',field)
         for key in ("home","fieldwork","setup"):
             self.assertIn('scrollTop();',home)
         self.assertIn('shellScroll.post(()->shellScroll.scrollTo(0,0))',home)

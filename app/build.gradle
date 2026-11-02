@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 144
-        versionName '0.27.3-rc84-apo-habitats-checklist'
+        versionCode 145
+        versionName '0.27.3-rc85-apo-recorder-species'
     }
     signingConfigs {
         debug {

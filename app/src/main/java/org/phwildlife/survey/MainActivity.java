@@ -675,6 +675,20 @@ public class MainActivity extends Activity implements LocationListener {
         else detectionLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         row.addView(detectionBlock,detectionLp);
         content.addView(row);
+        // Photo evidence is a primary field action, above optional group details.
+        LinearLayout photoRow=horizontal();
+        Button photoButton=UiKit.button(this,"Add photo","secondary");
+        photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(touchDp),2));
+        photoStatus=label("",12,false);
+        photoStatus.setVisibility(View.GONE);
+        photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));
+        content.addView(photoRow);
+        photoButton.setOnClickListener(v->pickPhoto());
+        photoPreview=new ImageView(this);
+        photoPreview.setAdjustViewBounds(true);
+        photoPreview.setMaxHeight(dp(180));
+        photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
+
         LinearLayout birdQuick=vertical();
         birdMeasurements=vertical();
         distanceSourceSpinner=new Spinner(this);
@@ -790,18 +804,6 @@ public class MainActivity extends Activity implements LocationListener {
                     "Hide additional mammal measurements":"Show additional mammal measurements");
             });
         }
-        LinearLayout photoRow=horizontal();
-        Button photoButton=UiKit.button(this,"Add photo","secondary");
-        photoRow.addView(photoButton,new LinearLayout.LayoutParams(0,dp(touchDp),2));
-        photoStatus=label("",12,false);
-        photoStatus.setVisibility(View.GONE);
-        photoRow.addView(photoStatus,new LinearLayout.LayoutParams(0,-2,2));
-        content.addView(photoRow);
-        photoButton.setOnClickListener(v->pickPhoto());
-        photoPreview=new ImageView(this);
-        photoPreview.setAdjustViewBounds(true);
-        photoPreview.setMaxHeight(dp(180));
-        photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
         detailToggle=label("＋ More details",14,true);
         detailToggle.setTextColor(GREEN);disclosureTarget(detailToggle);
         detailToggle.setContentDescription("Show optional identification confidence, habitat, behavior and observation notes");
@@ -2251,7 +2253,9 @@ public class MainActivity extends Activity implements LocationListener {
         if(height!=null&&(height<0||height>150)){
             toast("Check height above ground");return;
         }
-        String confidence=confidenceSpinner.getSelectedItem().toString();
+        String confidence=confidenceSpinner.getSelectedItemPosition()==0?
+            "Field-identified (not expert verified)":
+            confidenceSpinner.getSelectedItem().toString();
         if(unidentified)confidence="Unidentified";
         boolean candidate=group.equals("Birds")&&!confidence.equals("Uncertain")&&!confidence.equals("Unidentified")&&!unidentified&&!genusOnly&&
             !id[1].isEmpty()&&distance!=null&&!distanceMethod.equals("Unknown")

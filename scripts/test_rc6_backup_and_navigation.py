@@ -50,9 +50,11 @@ class Rc6RestoreAndNavigationContracts(unittest.TestCase):
                          "SpeciesPickerActivity","FieldProtocolsActivity",
                          "TrapProtocolActivity"):
             self.assertIn("UiKit.navigationHeader(this",(JAVA/(activity+".java")).read_text())
-        self.assertIn("Stop recording and finish saving before leaving",
+        self.assertIn("private void navigateBack()",
                       (JAVA/"CallLibraryActivity.java").read_text())
-        self.assertIn("eventFilter=null;surveyOffset=0;observationOffset=0;draw();",
+        self.assertIn("if(recorder.isCapturing())stopRecord();",
+                      (JAVA/"CallLibraryActivity.java").read_text())
+        self.assertIn("private void returnToCaller()",
                       (JAVA/"HistoryActivity.java").read_text())
     def test_three_credible_and_distinct_new_species(self):
         pack=json.loads((ROOT/"app/src/main/assets/diagnostic_profiles_v1.json").read_text())

@@ -252,7 +252,9 @@ public final class FieldProtocolsActivity extends Activity {
             "a supported active survey."));
         records.addView(UiKit.sectionTitle(this,"Recorded surveys"));
         try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT id,method,started,COALESCE(outcome,'active') FROM surveys "+
+            "SELECT id,method,started,CASE WHEN outcome IS NOT NULL THEN outcome "+
+                "WHEN ended IS NULL THEN 'active' WHEN complete=1 THEN 'complete' "+
+                "ELSE 'incomplete' END FROM surveys "+
             "WHERE method IN ('coverboard_search','area_search','track_sign','spotlight') "+
             "ORDER BY started DESC LIMIT 200",null)){
             if(c.getCount()==0)records.addView(ApoHomeUi.note(this,

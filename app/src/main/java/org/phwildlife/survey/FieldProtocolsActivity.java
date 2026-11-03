@@ -199,11 +199,7 @@ public final class FieldProtocolsActivity extends Activity {
         LinearLayout root=col();root.setPadding(dp(14),dp(9),dp(14),dp(10));
         root.setBackgroundColor(UiKit.BG);
         root.addView(UiKit.navigationHeader(this,"Field protocols",
-            eventId==null?"Field Utilities":"All records",()->{
-                if(eventId!=null&&getIntent().getStringExtra("event_id")==null){
-                    eventId=null;method="";draw();
-                }else finish();
-            }));
+            returnLabel(),this::returnToCaller));
         ScrollView sc=new ScrollView(this);records=col();
         records.setPadding(0,dp(3),0,dp(20));sc.addView(records);
         root.addView(sc,new LinearLayout.LayoutParams(-1,0,1));
@@ -233,13 +229,23 @@ public final class FieldProtocolsActivity extends Activity {
         else if("spotlight".equals(method))showSpotlight();
         else showSignEffort();
     }
-    @Override public void onBackPressed(){
+    /** Distinguish a picker-selected survey from an event opened by its caller. */
+    private String returnLabel(){
+        if(eventId==null)return "Field Utilities";
+        if(getIntent().getStringExtra("event_id")==null)return "Recorded surveys";
+        String origin=getIntent().getStringExtra("navigation_origin");
+        if("recorder".equals(origin))return "Live survey";
+        if("history".equals(origin))return "Observations";
+        return "Previous screen";
+    }
+    private void returnToCaller(){
         if(eventId!=null&&getIntent().getStringExtra("event_id")==null){
             eventId=null;
             method="";
             draw();
-        }else super.onBackPressed();
+        }else finish();
     }
+    @Override public void onBackPressed(){returnToCaller();}
     private void showSurveys(){
         records.addView(ApoHomeUi.section(this,"Recorded methods",
             "Review method-specific field evidence. New effort records require " +

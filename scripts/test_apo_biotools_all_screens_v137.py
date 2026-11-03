@@ -26,7 +26,7 @@ class AllBioToolsScreens(unittest.TestCase):
     def test_habitat_records_open_correct_context_and_preserve_unknowns(self):
         s=src("HabitatRecordsActivity.java")
         self.assertIn('selectedTab="records".equals(getIntent().getStringExtra("initial_tab"))?1:0;',s)
-        self.assertIn('selectedTab==1?"Field Records":"PHLibrary"',s)
+        self.assertIn('"Previous screen",this::finish',s)
         self.assertIn('researchToggle.setVisibility(selectedTab==0?',s)
         self.assertIn("recordSummary()",s)
         self.assertIn('FROM station_environment',s)
@@ -57,7 +57,8 @@ class AllBioToolsScreens(unittest.TestCase):
         self.assertIn("TrapProtocolPolicy.supported(method)",s)
         self.assertIn("if(writable())",s)
         self.assertIn("new AlertDialog.Builder(this)",s)
-        self.assertIn('"No recorded device surveys yet.',s)
+        self.assertIn('"No camera, drift-fence or live-trap surveys yet.',s)
+        self.assertIn("FROM surveys s WHERE s.method IN",s)
         self.assertIn('getWritableDatabase().update("trap_deployments"',s)
 
     def test_field_methods_preserve_effort_and_evidence_rules(self):

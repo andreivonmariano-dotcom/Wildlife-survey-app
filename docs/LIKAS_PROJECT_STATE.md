@@ -1,5 +1,18 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-03 | RC95 BioTools survey and downstream navigation audit | source committed, CI pending
+
+- **Active change:** `feature/apo-rc95-biotools-survey-navigation-v155` based on draft RC94 code154, maintaining `org.phwildlife.survey.beta08`, original signer configuration and SQLite29. VersionCode **155**, name `0.27.3-rc95-biotools-navigation`. **Not a verified APK or a released field build** until the exact new CI/artifact gates succeed. Historical `main` and PR #95 RC49 are not safe build baselines.
+- **Confirmed and corrected routes:** Recorder-owned Review Records/History now Back directly to active recorder; archived History returns to survey list. Live recorder Home and Android Back share the same confirmation without altering active survey effort. Event-specific station progress excludes unrelated project sites. Field protocol and trap/device detail Back returns either to its picker or the real caller; device picker now lists supported surveys with zero equipment deployments and their outcomes without redundant SQL lookups. Audio header and Android Back both stop/capture and wait for WAV saving. Field Records > Site habitat records opens the records tab, optional Habitats & Species Back points to survey setup, and multi-entry sites/study/habitat reference screens use accurate caller-neutral Back captions.
+- **Scientific boundaries retained:** End Survey Complete/Incomplete/Not Counted, zero-detection sampling, no inferred observations, observer GPS provenance, audio/exports, all species sources, artwork, data migrations and SQLite schema stay unchanged. Navigation action cannot silently complete or discard a survey.
+- **Tests:** New `scripts/test_apo_rc95_biotools_routes.py`, `Rc95BioToolsNavigationInstrumentedTest.java` (five device route cases at 160% and 200% font), CI `apo-rc95-biotools-navigation-v155-qa.yml`, RC92→RC95 in-place signed upgrade fixtures, and inherited RC93 GPS/audio/process/backup + RC94 PHLibrary suites. **Verification was not completed when this entry was authored.**
+- **Open QA:** Check GitHub CI status/logs, fix failures, inspect signed v155 APK signer/package and PAIC714/WorldCover/art/photo checksum, confirm no-data-clear upgrade and real-record preservation, then directly attach verified artifact. Real phone with location/microphone, 17 survey methods, live child-screen navigation and Android Back/gesture accessibility remain field-unverified.
+- **Route map / finding log:** `docs/APO_RC95_BIOTOOLS_SURVEY_NAVIGATION_AUDIT_2026_11_03.md`. Prior dedicated BioTools navigation PR #95 (RC49 branch) provided historical evidence, but was not blindly merged into the newer RC95 source.
+
+---
+
+
+
 ## 2026-11-02 | RC94 PHLibrary redesign | source implemented, signed test gate pending
 
 - **Active source:** `feature/apo-rc94-phlibrary-overhaul-v154` is derived from RC93 QA code153, keeping original app ID, signer configuration, SQLite29 and immutable PAIC714/WorldCover/photo/art assets. This feature increments `app/build.gradle` to **versionCode154**, `0.27.3-rc94-phlibrary-preview`. **No verified signed RC94 APK or physical-phone installation is claimed.** Do not use historical default main.

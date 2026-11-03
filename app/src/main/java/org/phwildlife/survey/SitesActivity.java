@@ -31,7 +31,7 @@ public class SitesActivity extends Activity {
         LinearLayout root=column();
         root.setPadding(dp(16),dp(12),dp(16),dp(10));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Projects & Stations","BioTools",this::finish));
+        root.addView(UiKit.navigationHeader(this,"Projects & Stations","Previous screen",this::finish));
         ScrollView scroll=new ScrollView(this);
         scroll.setFillViewport(true);
         LinearLayout page=column();

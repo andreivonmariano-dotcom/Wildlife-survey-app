@@ -68,6 +68,11 @@ public final class Rc92ProcessRestartInstrumentedTest {
                     "End Incomplete");
                 assertNotNull("Incomplete is an available end state",incomplete);
                 incomplete.performClick();
+            });
+            // AlertDialog's OnShowListener is posted on the UI thread. Allow it to
+            // install the app's validated positive-button handler before tapping.
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            session.onActivity(a->{
                 android.app.AlertDialog confirmation=a.activeFinalizationDialogForQa();
                 assertNotNull("Real incomplete confirmation modal is shown",confirmation);
                 assertTrue(confirmation.isShowing());

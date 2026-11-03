@@ -44,17 +44,44 @@ public final class Rc94PhLibraryInstrumentedTest {
         }
         return null;
     }
+    /**
+     * Android screenshot capture can precede the first compositor frame, especially
+     * after the 200%-font configuration change. Check the app content region,
+     * rather than trusting a valid PNG header or a file-size threshold.
+     */
+    private static boolean hasRenderedContent(Bitmap screenshot){
+        int width=screenshot.getWidth(),height=screenshot.getHeight();
+        int contrasting=0;
+        for(int y=height/5;y<height*4/5;y+=20){
+            for(int x=width/10;x<width*9/10;x+=20){
+                int pixel=screenshot.getPixel(x,y);
+                // Library headings, text and controls use darker green/ink.
+                if(android.graphics.Color.red(pixel)<175 &&
+                   android.graphics.Color.green(pixel)<185 &&
+                   android.graphics.Color.blue(pixel)<175)contrasting++;
+                if(contrasting>=15)return true;
+            }
+        }
+        return false;
+    }
     private static void saveShot(String label)throws Exception{
         Context ctx=InstrumentationRegistry.getInstrumentation().getTargetContext();
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-        Bitmap bitmap=InstrumentationRegistry.getInstrumentation()
-            .getUiAutomation().takeScreenshot();
-        assertNotNull("Android window screenshot",bitmap);
+        Bitmap bitmap=null;
+        for(int attempt=0;attempt<15;attempt++){
+            bitmap=InstrumentationRegistry.getInstrumentation()
+                .getUiAutomation().takeScreenshot();
+            if(bitmap!=null&&hasRenderedContent(bitmap))break;
+            if(bitmap!=null)bitmap.recycle();
+            bitmap=null;
+            android.os.SystemClock.sleep(200);
+        }
+        assertNotNull("PHLibrary foreground content must render before screenshot",bitmap);
         File target=new File(ctx.getExternalFilesDir(null),label+".png");
         try(FileOutputStream file=new FileOutputStream(target)){
             assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG,100,file));
         }finally{bitmap.recycle();}
-        assertTrue(target.isFile()&&target.length()>12000);
+        assertTrue(target.isFile()&&target.length()>30000);
     }
     @Test public void aHubShowsChecklistFirstAndCitedGuides()throws Exception{
         try(ActivityScenario<LikasLibraryActivity> scenario=

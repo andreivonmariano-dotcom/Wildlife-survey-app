@@ -20,18 +20,21 @@ public final class StationProgressActivity extends Activity {
  @Override protected void onResume(){super.onResume();if(event!=null)render();}
  @Override protected void onDestroy(){super.onDestroy();store.close();}
  private void render(){
-   String project="default",profile="Birds",method="",outcome="active";
+   String profile="Birds",method="",outcome="active";
    try(Cursor c=store.getReadableDatabase().rawQuery(
-     "SELECT COALESCE(project_id,'default'),COALESCE(survey_profile,taxon_group,'Birds'),method,"+
+     "SELECT COALESCE(survey_profile,taxon_group,'Birds'),method,"+
       "CASE WHEN outcome IS NOT NULL THEN outcome WHEN ended IS NULL THEN 'active' "+
       "WHEN complete=1 THEN 'complete' ELSE 'incomplete' END FROM surveys WHERE id=?",
      new String[]{event})){
      if(!c.moveToFirst()){finish();return;}
-     project=c.getString(0);profile=c.getString(1);method=c.getString(2);outcome=c.getString(3);
+     profile=c.getString(0);method=c.getString(1);outcome=c.getString(2);
    }
    LinearLayout root=column();root.setPadding(dp(14),dp(12),dp(14),dp(12));
    root.setBackgroundColor(UiKit.BG);
-   root.addView(UiKit.navigationHeader(this,"Station progress","Survey",this::finish));
+   String origin=getIntent().getStringExtra("navigation_origin");
+   String back="history".equals(origin)?"Observations":
+       "recorder".equals(origin)?"Live survey":"Previous screen";
+   root.addView(UiKit.navigationHeader(this,"Station progress",back,this::finish));
    root.addView(ApoHomeUi.section(this,"Survey sampling progress",
        SurveyMethods.displayLabel(profile,method)));
    root.addView(ApoHomeUi.note(this,
@@ -76,19 +79,7 @@ public final class StationProgressActivity extends Activity {
      for(Map.Entry<String,List<String>> entry:stations.entrySet())
        card(entry.getKey(),entry.getKey(),entry.getValue());
    }
-   list.addView(UiKit.sectionTitle(this,"Project stations without a recorded visit"));
-   list.addView(ApoHomeUi.note(this,
-       "Project registration alone does not count as sampled effort."));
-   int missing=0;
-   try(Cursor c=store.getReadableDatabase().rawQuery(
-       "SELECT id,name FROM sites WHERE project_id=? ORDER BY id",new String[]{project})){
-     while(c.moveToNext()){
-       String id=c.getString(0);
-       if(!stations.containsKey(id)){missing++;card(id,c.getString(1),null);}
-     }
-   }
-   if(missing==0)list.addView(ApoHomeUi.note(this,
-       "No other registered stations without a visit."));
+
  }
  private void showPlannedStations(){
    int done=0,started=0,missing=0;

@@ -156,7 +156,7 @@ public final class HabitatsSpeciesActivity extends Activity {
         body.addView(mapToggle);
         body.addView(mapOptions);
         LinearLayout page=UiKit.page(this,"Habitats & Species",
-            "Survey GPS",this::finish,body);
+            "Survey setup",this::finish,body);
         LinearLayout footer=new LinearLayout(this);
         footer.setOrientation(LinearLayout.VERTICAL);
         footer.setPadding(0,dp(6),0,dp(4));

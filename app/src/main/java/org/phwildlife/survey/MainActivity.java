@@ -241,7 +241,7 @@ public class MainActivity extends Activity implements LocationListener {
         home.setContentDescription("Back to Home");
         home.setTextSize(18);
         top.addView(home,new LinearLayout.LayoutParams(dp(48),dp(48)));
-        home.setOnClickListener(v->navigateHome());
+        home.setOnClickListener(v->requestLeaveRecorder());
         String screenTitle=largeText&&"Herpetofauna".equals(profile)?
             "Herp survey":profile+" Survey";
         TextView title=label(screenTitle,largeText?17:19,true);
@@ -1500,7 +1500,8 @@ public class MainActivity extends Activity implements LocationListener {
     private void openProgress(){
         if(eventId==null){toast("Start a survey to see station progress");return;}
         persistDraft();
-        startActivity(new Intent(this,StationProgressActivity.class).putExtra("event_id",eventId));
+        startActivity(new Intent(this,StationProgressActivity.class)
+            .putExtra("event_id",eventId).putExtra("navigation_origin","recorder"));
     }
     private void showNotCountedReason(){
         if(!active)return;
@@ -2329,6 +2330,7 @@ public class MainActivity extends Activity implements LocationListener {
         Intent i=new Intent(this,FieldProtocolsActivity.class);
         i.putExtra("event_id",eventId);
         i.putExtra("station_id",stationId);
+        i.putExtra("navigation_origin","recorder");
         startActivity(i);
     }
     private int[] methodCompleteness(){
@@ -2383,6 +2385,7 @@ public class MainActivity extends Activity implements LocationListener {
         Intent i=new Intent(this,TrapProtocolActivity.class);
         i.putExtra("event_id",eventId);
         i.putExtra("station_id",stationId);
+        i.putExtra("navigation_origin","recorder");
         startActivity(i);
     }
     private int[] deviceCompleteness(){
@@ -2413,6 +2416,7 @@ public class MainActivity extends Activity implements LocationListener {
         persistDraft();
         Intent audio=new Intent(this,CallLibraryActivity.class);
         audio.putExtra("event_id",eventId);
+        audio.putExtra("navigation_origin","recorder");
         audio.putExtra("taxon_group",group);
         audio.putExtra("method",method);
         audio.putExtra("station_id",stationId);
@@ -2645,7 +2649,8 @@ public class MainActivity extends Activity implements LocationListener {
         if(eventId==null)return;
         persistDraft();
         Intent review=new Intent(this,HistoryActivity.class)
-            .putExtra("event_id",eventId);
+            .putExtra("event_id",eventId)
+            .putExtra("navigation_origin","recorder");
         if(focusedRecordId>0)review.putExtra("focus_record_id",focusedRecordId);
         startActivity(review);
     }
@@ -3176,7 +3181,8 @@ public class MainActivity extends Activity implements LocationListener {
         startActivity(intent);
         finish();
     }
-    @Override public void onBackPressed(){
+    /** Header Home and Android Back share one confirmation for an active survey. */
+    private void requestLeaveRecorder(){
         if(active){
             new AlertDialog.Builder(this).setTitle("Leave survey running?")
               .setMessage("Your unfinished entry is saved on this device. Continue the survey later from Home.")
@@ -3184,6 +3190,7 @@ public class MainActivity extends Activity implements LocationListener {
               .setPositiveButton("Go Home",(d,w)->navigateHome()).show();
         }else navigateHome();
     }
+    @Override public void onBackPressed(){requestLeaveRecorder();}
     @Override protected void onSaveInstanceState(Bundle out){
         persistDraft();
         out.putString("saved_event_id",eventId);

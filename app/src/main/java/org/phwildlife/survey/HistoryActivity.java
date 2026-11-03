@@ -73,13 +73,8 @@ public class HistoryActivity extends Activity {
             dp(LikasDesignSystem.SPACE_SM));
         root.addView(UiKit.navigationHeader(this,
             eventFilter==null?(largeText()?"History":"Survey history"):"Observations",
-            eventFilter==null?"Field Records":"All surveys",()->{
-                if(eventFilter==null)finish();
-                else{
-                    if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
-                    eventFilter=null;surveyOffset=0;observationOffset=0;draw();
-                }
-            }));
+            eventFilter==null?"Field Records":fromRecorder()?"Live survey":"All surveys",
+            this::returnToCaller));
         // Keep only the page header fixed. Filters must scroll on 320dp devices
         // and under 200% font scaling so result rows remain reachable.
         ScrollView scroll=new ScrollView(this);
@@ -153,15 +148,23 @@ public class HistoryActivity extends Activity {
         setContentView(root);
         if(eventFilter==null)surveys();else observations(eventFilter);
     }
-    @Override public void onBackPressed(){
-        if(eventFilter!=null){
-            if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
-            eventFilter=null;
-            surveyOffset=0;
-            observationOffset=0;
-            draw();
-        }else super.onBackPressed();
+    /** Recorder-owned review closes directly to the live recorder.
+     * Browsing an archived survey from History returns to the survey list. */
+    private boolean fromRecorder(){
+        return "recorder".equals(getIntent().getStringExtra("navigation_origin"));
     }
+    private void returnToCaller(){
+        if(eventFilter==null||fromRecorder()){
+            finish();
+            return;
+        }
+        if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
+        eventFilter=null;
+        surveyOffset=0;
+        observationOffset=0;
+        draw();
+    }
+    @Override public void onBackPressed(){returnToCaller();}
     private void surveys(){
         if(surveyOffset==0){
             int complete=0,incomplete=0,excluded=0,active=0;
@@ -312,7 +315,8 @@ public class HistoryActivity extends Activity {
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
             lp.topMargin=dp(5);rows.addView(sounds,lp);
             sounds.setOnClickListener(v->startActivity(new Intent(this,CallLibraryActivity.class)
-                .putExtra("event_id",event)));
+                .putExtra("event_id",event)
+                .putExtra("navigation_origin","history")));
         }
         if(trap||field){
             Button evidence=UiKit.button(this,trap?"Device checks & captures":"Method effort & evidence","secondary");
@@ -320,14 +324,16 @@ public class HistoryActivity extends Activity {
             lp.topMargin=dp(5);rows.addView(evidence,lp);
             final Class<?> destination=trap?TrapProtocolActivity.class:FieldProtocolsActivity.class;
             evidence.setOnClickListener(v->startActivity(new Intent(this,destination)
-                .putExtra("event_id",event)));
+                .putExtra("event_id",event)
+                .putExtra("navigation_origin","history")));
         }
         if("point_count".equals(surveyMethod)||SurveyMethods.timedInterval(surveyMethod)){
             Button progress=UiKit.button(this,"Station & effort progress","quiet");
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
             lp.topMargin=dp(5);rows.addView(progress,lp);
             progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
-                .putExtra("event_id",event)));
+                .putExtra("event_id",event)
+                .putExtra("navigation_origin","history")));
         }
         appendObservations(event);
     }

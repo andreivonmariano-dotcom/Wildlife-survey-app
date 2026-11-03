@@ -44,7 +44,7 @@ public final class HabitatRecordsActivity extends Activity {
         root.setPadding(dp(16),dp(12),dp(16),dp(12));
         root.addView(UiKit.navigationHeader(this,
             selectedTab==1?"Site habitat records":largeText?"Habitats":"Habitat & Ecology",
-            selectedTab==1?"Field Records":"PHLibrary",this::finish));
+            "Previous screen",this::finish));
         String fullHabitatNote="Offline reference guide and separately recorded field evidence.";
         TextView note=label(largeText?"Reference guide · measured field records":fullHabitatNote,13);
         note.setContentDescription(fullHabitatNote);

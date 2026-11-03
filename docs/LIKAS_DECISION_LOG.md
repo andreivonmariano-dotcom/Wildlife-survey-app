@@ -84,3 +84,7 @@ Owner requested a final concise spreadsheet with order, family, species/common n
 
 ### 2026-11-01 | RC54 screen-by-screen survey chooser | Source change, unshipped
 Owner chose to improve LIKAS one screen at a time, starting with survey option/method selection. Branch RC54 and draft PR #68 extend the approved RC53 Fieldwork visual system with two-line native radio choices, per-method descriptions, readable selected styling, and enlarged touch targets. Methods, data, GPS preflight, project and survey workflows remain unchanged. VersionCode 114 is source-only until verified signed APK delivery. 725-species v3.6 data is not imported in this screen-specific change. Refer to `docs/LIKAS_PROJECT_STATE.md` and `docs/LIKAS_RC54_SURVEY_METHOD_CHOOSER_QA.md` on the RC54 branch.
+
+
+### 2026-11-03 | Minimum 100 substantiated species expansions per PHLibrary research pass | Owner-approved working rule
+Owner explicitly required that the current and subsequent encyclopedia expansion passes each **examine at least 100 distinct species and expand their accounts**. The first pass applying this threshold produced Book 01 Greater Mindanao Research Edition v1.7 with 169 distinct accounts and 264 source-attributed, site-qualified additions from seven papers or institutional field reports. The 714-species scope and source-linked evidence log are preserved; unchanged placeholders and scientific uncertainties remain visible. This is a research-manuscript rule, not a release of the LIKAS app. See project-state entry dated 2026-11-03.

@@ -339,7 +339,8 @@ public class WelcomeActivity extends Activity {
                 startActivity(new Intent(this,HistoryActivity.class))));
         main.addView(ApoHomeUi.tool(this,"02","Site habitat records",
             "Review and record site-level habitat information",()->
-                startActivity(new Intent(this,HabitatRecordsActivity.class))));
+                startActivity(new Intent(this,HabitatRecordsActivity.class)
+                    .putExtra("initial_tab","records"))));
         UiMotion.enter(this,main);
     }
 

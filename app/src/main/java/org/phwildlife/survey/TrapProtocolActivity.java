@@ -88,11 +88,7 @@ public final class TrapProtocolActivity extends Activity {
         LinearLayout screen=column();screen.setPadding(dp(14),dp(9),dp(14),dp(12));
         screen.setBackgroundColor(UiKit.BG);
         screen.addView(UiKit.navigationHeader(this,"Trap & camera records",
-            eventId==null?"Field Utilities":"Recorded device surveys",()->{
-                if(eventId!=null&&getIntent().getStringExtra("event_id")==null){
-                    eventId=null;method="";draw();
-                }else finish();
-            }));
+            returnLabel(),this::returnToCaller));
         ScrollView scroll=new ScrollView(this);
         rows=column();scroll.addView(rows);
         screen.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
@@ -103,22 +99,26 @@ public final class TrapProtocolActivity extends Activity {
                 "are registered in an active supported survey."));
             rows.addView(UiKit.sectionTitle(this,"Recorded device surveys"));
             try(Cursor c=db.getReadableDatabase().rawQuery(
-                "SELECT DISTINCT d.event_id,s.method,s.started "+
-                "FROM trap_deployments d JOIN surveys s ON s.id=d.event_id "+
+                "SELECT s.id,s.method,s.started,"+
+                "CASE WHEN s.outcome IS NOT NULL THEN s.outcome "+
+                "WHEN s.ended IS NULL THEN 'active' "+
+                "WHEN s.complete=1 THEN 'complete' ELSE 'incomplete' END "+
+                "FROM surveys s WHERE s.method IN "+
+                "('camera_trap_check','drift_fence_check','live_trap_check') "+
                 "ORDER BY s.started DESC LIMIT 100",null)){
                 int shown=0;
                 if(c.getCount()==0)rows.addView(ApoHomeUi.note(this,
-                    "No recorded device surveys yet. Register equipment from an " +
-                    "active supported sampling visit."));
+                    "No camera, drift-fence or live-trap surveys yet. " +
+                    "Start a supported survey to register equipment."));
                 while(c.moveToNext()){
-                    String id=c.getString(0);
+                    String id=c.getString(0),selectedMethod=c.getString(1);
                     rows.addView(ApoHomeUi.tool(this,
                         String.format(Locale.US,"%02d",++shown),
                         SurveyMethods.displayLabel(
                             "drift_fence_check".equals(c.getString(1))?
                                 "Herpetofauna":"Mammals",c.getString(1)),
-                        "Survey "+id+" · "+c.getString(2),
-                        ()->{eventId=id;method=cMethod(id);draw();}));
+                        "Survey "+id+" · "+c.getString(2)+" · "+c.getString(3),
+                        ()->{eventId=id;method=selectedMethod;draw();}));
                 }
             }
             return;
@@ -179,19 +179,22 @@ public final class TrapProtocolActivity extends Activity {
             }
         }
     }
-    @Override public void onBackPressed(){
+    private String returnLabel(){
+        if(eventId==null)return "Field Utilities";
+        if(getIntent().getStringExtra("event_id")==null)return "Recorded device surveys";
+        String origin=getIntent().getStringExtra("navigation_origin");
+        if("recorder".equals(origin))return "Live survey";
+        if("history".equals(origin))return "Observations";
+        return "Previous screen";
+    }
+    private void returnToCaller(){
         if(eventId!=null&&getIntent().getStringExtra("event_id")==null){
             eventId=null;
             method="";
             draw();
-        }else super.onBackPressed();
+        }else finish();
     }
-    private String cMethod(String event){
-        try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT method FROM surveys WHERE id=?",new String[]{event})){
-            return c.moveToFirst()?c.getString(0):"";
-        }
-    }
+    @Override public void onBackPressed(){returnToCaller();}
     private void addDeployment(){
         LinearLayout form=column();form.setPadding(dp(14),dp(6),dp(14),dp(6));
         EditText device=field("Unique camera/trap identifier",false);

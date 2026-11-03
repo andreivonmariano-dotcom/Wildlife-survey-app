@@ -115,12 +115,7 @@ public final class CallLibraryActivity extends Activity {
     private void layout(String title){
         LinearLayout root=column();root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(14),dp(8),dp(14),dp(12));
-        root.addView(UiKit.navigationHeader(this,title,selectedClip!=null?"Sound recordings":
-            eventId==null?"Field Utilities":"Active survey",()->{
-            if(recorder!=null){notice("Stop recording and finish saving before leaving");return;}
-            if(selectedClip!=null){releasePlayer();selectedClip=null;draw();}
-            else finish();
-        }));
+        root.addView(UiKit.navigationHeader(this,title,backLabel(),this::navigateBack));
         ScrollView scroll=new ScrollView(this);
         body=column();body.setPadding(0,dp(8),0,dp(24));
         scroll.addView(body);
@@ -599,7 +594,16 @@ public final class CallLibraryActivity extends Activity {
         }
         seek=null;playbackTime=null;
     }
-    @Override public void onBackPressed(){
+    private String backLabel(){
+        if(selectedClip!=null)return "Sound recordings";
+        if(eventId==null)return "Field Utilities";
+        String origin=getIntent().getStringExtra("navigation_origin");
+        if("recorder".equals(origin))return "Live survey";
+        if("history".equals(origin))return "Observations";
+        return "Previous screen";
+    }
+    /** Both Back controls finish saving before any navigation is permitted. */
+    private void navigateBack(){
         if(recorder!=null){
             if(recorder.isCapturing())stopRecord();
             else notice("Finish saving this recording before leaving.");
@@ -611,8 +615,9 @@ public final class CallLibraryActivity extends Activity {
             draw();
             return;
         }
-        super.onBackPressed();
+        finish();
     }
+    @Override public void onBackPressed(){navigateBack();}
     @Override protected void onResume(){
         super.onResume();
     }

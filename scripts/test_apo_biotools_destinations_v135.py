@@ -39,7 +39,7 @@ class ApoBioToolsDestinations(unittest.TestCase):
 
     def test_history_outcomes_are_read_only_and_explicit(self):
         s=src("HistoryActivity.java")
-        self.assertIn('eventFilter==null?"Field Records":"All surveys"',s)
+        self.assertIn('eventFilter==null?"Field Records":fromRecorder()?"Live survey":"All surveys"',s)
         self.assertIn('"SELECT "+OUTCOME_SQL+",COUNT(*) FROM surveys s GROUP BY "+OUTCOME_SQL',s)
         self.assertIn('"not_counted".equals(state)',s)
         self.assertIn('c.isNull(4)?"Date not recorded"',s)
@@ -76,7 +76,8 @@ class ApoBioToolsDestinations(unittest.TestCase):
         self.assertIn("if(writable())",trap)
         self.assertIn('"Trap & camera records"',trap)
         self.assertIn('FieldProtocolPolicy.supported(method)',fields)
-        self.assertIn('eventId==null?"Field Utilities"',fields)
+        self.assertIn('if(eventId==null)return "Field Utilities";',fields)
+        self.assertIn('"recorder".equals(origin)',fields)
         self.assertIn('UiKit.fieldInput(this,e)',study)
         self.assertIn("Already saved surveys keep",study)
         self.assertIn("StudyProtocols",src("WelcomeActivity.java"))

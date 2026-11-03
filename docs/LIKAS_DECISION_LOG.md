@@ -88,3 +88,7 @@ Owner chose to improve LIKAS one screen at a time, starting with survey option/m
 
 ### 2026-11-03 | Minimum 100 substantiated species expansions per PHLibrary research pass | Owner-approved working rule
 Owner explicitly required that the current and subsequent encyclopedia expansion passes each **examine at least 100 distinct species and expand their accounts**. The first pass applying this threshold produced Book 01 Greater Mindanao Research Edition v1.7 with 169 distinct accounts and 264 source-attributed, site-qualified additions from seven papers or institutional field reports. The 714-species scope and source-linked evidence log are preserved; unchanged placeholders and scientific uncertainties remain visible. This is a research-manuscript rule, not a release of the LIKAS app. See project-state entry dated 2026-11-03.
+
+
+### 2026-11-04 | Reader-oriented encyclopedia prose | Accepted editorial direction
+The owner requested that PHLibrary Book 01 read like a natural-history encyclopedia rather than a defensive research audit. Source context, taxonomic distinctions and real uncertainty remain necessary, but repetitive generic warnings should be consolidated in a short reading note or editorial appendix. Keep flowing, species-specific prose with accurate dates, localities, morphology and citations. Omit wholly empty sections instead of displaying repeated `No data` placeholders. The v1.14 Reader’s edit is an editorial derivative, not a new research pass or Android release. See the 2026-11-04 project-state entry.

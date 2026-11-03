@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 154
-        versionName '0.27.3-rc94-phlibrary-preview'
+        versionCode 155
+        versionName '0.27.3-rc95-biotools-navigation'
     }
     signingConfigs {
         debug {

@@ -92,3 +92,8 @@ Owner explicitly required that the current and subsequent encyclopedia expansion
 
 ### 2026-11-04 | Reader-oriented encyclopedia prose | Accepted editorial direction
 The owner requested that PHLibrary Book 01 read like a natural-history encyclopedia rather than a defensive research audit. Source context, taxonomic distinctions and real uncertainty remain necessary, but repetitive generic warnings should be consolidated in a short reading note or editorial appendix. Keep flowing, species-specific prose with accurate dates, localities, morphology and citations. Omit wholly empty sections instead of displaying repeated `No data` placeholders. The v1.14 Reader’s edit is an editorial derivative, not a new research pass or Android release. See the 2026-11-04 project-state entry.
+
+
+### 2026-11-04 | Public-source edition 1.15 | Source-only editorial standard
+
+By explicit owner request, PHLibrary species accounts intended for readers should use only information traceable to published scientific work or credible publicly identifiable institutional references. Statements derived solely from unpublished internal checklists without corresponding public citations are excluded until properly supported. Retain a separate audit record of removals, because failing this evidence screen does not prove biological falsehood. Keep current uncertainty where material and distinguish source traceability from *individual claim-level validation*. The 714 taxon headings remain an identified working checklist pending independent island occurrence and taxonomy audit. This editorial filtering is **not a new species research expansion release**.

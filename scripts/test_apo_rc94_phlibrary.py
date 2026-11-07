@@ -51,8 +51,8 @@ class PHLibraryScreenContract(unittest.TestCase):
 
     def test_app_identity_biology_and_schema_remain(self):
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 155",gradle)
-        self.assertIn("0.27.3-rc95-biotools-navigation",gradle)
+        self.assertIn("versionCode 156",gradle)
+        self.assertIn("0.27.3-rc96-phlibrary-reader",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn('manifest.put("sqliteSchema",snapshotSchema)',

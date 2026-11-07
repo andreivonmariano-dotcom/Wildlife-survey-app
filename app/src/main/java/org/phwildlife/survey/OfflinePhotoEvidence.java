@@ -384,4 +384,66 @@ public final class OfflinePhotoEvidence {
                 "Photo source & license  ▾");
         });
     }
+    /** Quiet, authorized image plate for one-paragraph PHLibrary accounts. */
+    public static void addPhLibraryPlate(Activity a,LinearLayout parent,String scientific){
+        JSONObject entry=findForTaxon(a,scientific);
+        if(entry==null)return;
+        String asset=entry.optString("offlineAsset");
+        if(!asset.matches("offline_photos/(species|habitat|inat)_[a-z0-9_]+\\.jpg"))
+            return;
+        Bitmap bitmap;
+        try(InputStream input=a.getAssets().open(asset)){
+            BitmapFactory.Options options=new BitmapFactory.Options();
+            options.inSampleSize=2;
+            options.inPreferredConfig=Bitmap.Config.RGB_565;
+            bitmap=BitmapFactory.decodeStream(input,null,options);
+        }catch(Exception ignored){return;}
+        if(bitmap==null)return;
+        ImageView image=new ImageView(a);
+        image.setImageBitmap(bitmap);
+        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        image.setBackgroundColor(UiKit.BG);
+        image.setContentDescription("Offline photo of "+scientific+
+            ". Photographer and rights immediately below.");
+        LinearLayout.LayoutParams imageLp=
+            new LinearLayout.LayoutParams(-1,dp(a,158));
+        imageLp.topMargin=dp(a,12);
+        parent.addView(image,imageLp);
+
+        String author=entry.optString("author").trim();
+        String license=entry.optString("license").trim();
+        TextView credit=new TextView(a);
+        String visibleRights="owner_direct_private_research_permission".equals(
+            entry.optString("rightsBasis"))?"Used with permission":license;
+        credit.setText("Photo: "+author+" · "+visibleRights+"  ·  Details");
+        credit.setTextSize(11);
+        credit.setTextColor(UiKit.MUTED);
+        credit.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        credit.setMinHeight(dp(a,48));
+        credit.setContentDescription("Photo attribution and license. Tap for the full rights and source.");
+        credit.setClickable(true);
+        credit.setFocusable(true);
+        credit.setOnClickListener(v->{
+            String original=entry.optString("sourceUrl");
+            String licenseUrl=entry.optString("licenseUrl");
+            String rights=entry.optString("rightsBasis");
+            TextView details=new TextView(a);
+            details.setText(entry.optString("caption")+
+                "\n\nPhotographer: "+author+
+                "\nRights: "+license+
+                (rights.isEmpty()?"":"\nAuthorization: "+rights)+
+                (original.isEmpty()?"":"\nOriginal: "+original)+
+                (licenseUrl.isEmpty()?"":"\nLicense information: "+licenseUrl));
+            details.setTextSize(14);
+            details.setTextColor(UiKit.INK);
+            details.setTextIsSelectable(true);
+            details.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
+            details.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+            details.setPadding(dp(a,20),dp(a,12),dp(a,20),dp(a,10));
+            new android.app.AlertDialog.Builder(a).setTitle("Photo source and rights")
+                .setView(details).setPositiveButton("Close",null).show();
+        });
+        parent.addView(credit,new LinearLayout.LayoutParams(-1,-2));
+    }
+
 }

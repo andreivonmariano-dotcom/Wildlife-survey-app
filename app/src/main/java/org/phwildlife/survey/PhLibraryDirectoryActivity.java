@@ -107,7 +107,8 @@ public final class PhLibraryDirectoryActivity extends Activity {
         search=new EditText(this);
         search.setSingleLine(true);
         search.setTextSize(16);
-        search.setHint(getResources().getConfiguration().fontScale>=1.6f?\n            "Search":"Search species or family");
+        search.setHint(getResources().getConfiguration().fontScale>=1.6f?
+            "Search":"Search species or family");
         search.setContentDescription("Search Greater Mindanao species, scientific names and families");
         UiKit.fieldInput(this,search);
         root.addView(search,new LinearLayout.LayoutParams(-1,-2));

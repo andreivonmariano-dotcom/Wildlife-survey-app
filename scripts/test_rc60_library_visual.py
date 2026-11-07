@@ -16,27 +16,24 @@ class Rc60VisualDecisions(unittest.TestCase):
         self.assertIn("likas_approved_research",portal)
     def test_library_title_section_hierarchy_is_local_only(self):
         library=(JAVA/"LikasLibraryActivity.java").read_text()
-        self.assertIn("private LinearLayout section(",library)
-        self.assertIn("FieldVisuals.section(this,title,caption)",library)
-        self.assertIn("heading.setTextSize(16)",library)
-        self.assertIn("heading.setTextColor(UiKit.FOREST)",library)
-        self.assertIn("Typeface.create(\"sans-serif-medium\",Typeface.NORMAL)",library)
+        style=(JAVA/"PhLibraryStyle.java").read_text()
+        self.assertIn("PhLibraryStyle.bookCover",library)
+        self.assertIn("PhLibraryStyle.section",library)
+        self.assertIn("PhLibraryStyle.row",library)
         self.assertIn('UiKit.page(this,"PHLibrary","Home",this::finish,body)',library)
-        self.assertIn("pageTitle.setTextSize(LikasDesignSystem.TEXT_PAGE)",library)
-        self.assertIn('section("Species checklist"',library)
-        self.assertIn('section("Reference tools"',library)
+        self.assertIn("sans-serif-medium",style)
+        self.assertNotIn("FieldVisuals.section(this",library)
     def test_main_destinations_use_same_open_cue_and_original_routing(self):
         portal=(JAVA/"LikasPortalUi.java").read_text()
         library=(JAVA/"LikasLibraryActivity.java").read_text()
         self.assertIn("public static View libraryFeature(",portal)
-        self.assertIn("LinearLayout panel=(LinearLayout)action(a,title,subtitle,icon,open)",portal)
-        self.assertIn("panel.setMinimumHeight(dp(a,LikasDesignSystem.HOME_CARD_MIN_DP))",portal)
-        self.assertIn("LikasPortalUi.libraryFeature(this",library)
-        self.assertEqual(library.count("discover(body,"),2)
-        for target in ["LikasDiscoveryActivity.class","Rc9DifferentialActivity.class",
-                       "Rc8PhotoComparisonActivity.class","Rc24ConservationDashboardActivity.class",
+        self.assertIn("PhLibraryStyle.bookCover",library)
+        self.assertNotIn("LikasPortalUi.libraryFeature(this",library)
+        for target in ["PhLibraryDirectoryActivity.class","Rc9DifferentialActivity.class",
+                       "Rc24ConservationDashboardActivity.class",
                        "CatalogActivity.class","HabitatSpeciesEvidenceActivity.class"]:
             self.assertIn(target,library)
+        self.assertNotIn("Rc8PhotoComparisonActivity.class",library)
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)
         self.assertIn("versionName \'0.27.3-",build)

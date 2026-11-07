@@ -188,7 +188,7 @@ public final class PhLibraryBook01 {
         parent.removeAllViews();
         parent.setPadding(0,dp(a,9),0,dp(a,18));
         // Text-only educational book reading; photographs are deliberately omitted.
-        TextView kicker=label(a,"PHLIBRARY  ·  GREATER MINDANAO  ·  BOOK 01",11,UiKit.MUTED,true);
+        TextView kicker=label(a,\n            a.getResources().getConfiguration().fontScale>=1.6f?\n            "GREATER MINDANAO":"PHLIBRARY  ·  GREATER MINDANAO  ·  BOOK 01",\n            11,UiKit.MUTED,true);
         kicker.setLetterSpacing(0.04f);
         kicker.setPadding(0,dp(a,13),0,dp(a,8));
         parent.addView(kicker);

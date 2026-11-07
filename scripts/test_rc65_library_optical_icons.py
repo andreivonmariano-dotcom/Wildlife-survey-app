@@ -43,10 +43,12 @@ class Rc65OpticalArt(unittest.TestCase):
             self.assertIn(old,portal)
         self.assertIn("setFilterBitmap(false)",portal)
         self.assertIn("ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_INSIDE",portal)
-        for route in ("LikasDiscoveryActivity.class","Rc9DifferentialActivity.class",
-                      "Rc8PhotoComparisonActivity.class","Rc24ConservationDashboardActivity.class",
-                      "CatalogActivity.class","HabitatSpeciesEvidenceActivity.class"):
+        for route in ("PhLibraryDirectoryActivity.class","Rc9DifferentialActivity.class",
+                      "Rc24ConservationDashboardActivity.class","CatalogActivity.class",
+                      "HabitatSpeciesEvidenceActivity.class"):
             self.assertIn(route,library)
+        self.assertNotIn("Rc8PhotoComparisonActivity.class",library)
+        self.assertIn("PhLibraryStyle.bookCover",library)
     def test_gradle_generates_before_resource_merge_and_keeps_identity(self):
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)

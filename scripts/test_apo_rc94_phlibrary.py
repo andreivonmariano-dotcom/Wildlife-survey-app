@@ -23,7 +23,7 @@ class PHLibraryScreenContract(unittest.TestCase):
         self.assertNotIn("LikasPortalUi.action",hub)
         self.assertNotIn("addApprovedIcon",style)
         self.assertIn("species listings",hub.lower())
-        self.assertIn("LikasDiscoveryActivity.class",read("LikasDiscoveryActivity.java"))
+        self.assertIn("class LikasDiscoveryActivity",read("LikasDiscoveryActivity.java"))
 
     def test_discovery_separates_account_scope_from_source_catalog(self):
         source=read("LikasDiscoveryActivity.java")

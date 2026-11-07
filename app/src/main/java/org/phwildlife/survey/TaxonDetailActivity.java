@@ -320,7 +320,8 @@ public final class TaxonDetailActivity extends Activity {
         if(phLibraryBack!=null){
             phLibraryBack.setText("Back");
             phLibraryBack.setTextSize(14);
-            phLibraryBack.setLayoutParams(new LinearLayout.LayoutParams(\n                dp(getResources().getConfiguration().fontScale>=1.6f?104:68),dp(48)));
+            phLibraryBack.setLayoutParams(new LinearLayout.LayoutParams(
+                dp(getResources().getConfiguration().fontScale>=1.6f?104:68),dp(48)));
         }
         if(phLibraryPage!=null)phLibraryPage.setPadding(dp(16),dp(10),dp(16),dp(8));
         searchRow.setVisibility(View.GONE);

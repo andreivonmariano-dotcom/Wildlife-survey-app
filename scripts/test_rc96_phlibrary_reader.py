@@ -57,7 +57,7 @@ class PhLibraryBook01(unittest.TestCase):
         self.assertIn('label(a,"REFERENCES",12',text)
         self.assertIn('record.optString("p"),16.5f',text)
         self.assertIn("referenceDialog(a,refs)",text)
-        self.assertIn("addPhLibraryPlate",text)
+        self.assertNotIn("addPhLibraryPlate(a,parent",text)
         self.assertIn("this::showPhLibraryBook",(JAVA/"TaxonDetailActivity.java").read_text())
         self.assertIn('getStringExtra("phlibrary_scientific_name")',
             (JAVA/"TaxonDetailActivity.java").read_text())
@@ -68,8 +68,8 @@ class PhLibraryBook01(unittest.TestCase):
 
     def test_no_database_or_signing_identity_change(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 156",gradle)
-        self.assertIn("0.27.3-rc96-phlibrary-reader",gradle)
+        self.assertIn("versionCode 157",gradle)
+        self.assertIn("0.27.3-rc97-phlibrary-visual",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         db=(JAVA/"FieldDb.java").read_text()
         self.assertIn("super(context,NAME,null,29)",db)

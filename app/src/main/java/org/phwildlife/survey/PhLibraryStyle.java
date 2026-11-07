@@ -47,7 +47,7 @@ public final class PhLibraryStyle {
         Button back=(Button)rail.getChildAt(0);
         back.setText("Back");
         back.setTextSize(14);
-        back.setLayoutParams(new LinearLayout.LayoutParams(dp(a,68),dp(a,48)));
+        back.setLayoutParams(new LinearLayout.LayoutParams(dp(a,\n            a.getResources().getConfiguration().fontScale>=1.6f?104:68),dp(a,48)));
         return rail;
     }
     public static TextView section(Activity a,String label){
@@ -80,22 +80,23 @@ public final class PhLibraryStyle {
     }
     /** Unique book cover element: a typography-led dark card with no image or icon. */
     public static View bookCover(Activity a,Runnable open){
+        final boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
         LinearLayout card=new LinearLayout(a);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(a,20),dp(a,20),dp(a,20),dp(a,20));
         card.setBackground(touch(a,UiKit.FOREST,Color.TRANSPARENT,20));
-        TextView eyebrow=text(a,"BOOK 01  /  GREATER MINDANAO",11,
+        TextView eyebrow=text(a,large?"BOOK 01":"BOOK 01  /  GREATER MINDANAO",11,
             Color.rgb(215,236,206),true);
         eyebrow.setLetterSpacing(.10f);
         card.addView(eyebrow);
-        TextView title=text(a,"Wildlife of Greater Mindanao",23,Color.WHITE,true);
+        TextView title=text(a,large?"Greater Mindanao":"Wildlife of Greater Mindanao",23,Color.WHITE,true);
         title.setPadding(0,dp(a,9),0,dp(a,5));
         card.addView(title);
-        TextView summary=text(a,"714 species  ·  Birds, amphibians, reptiles and mammals",
+        TextView summary=text(a,large?"714 species  ·  Four wildlife groups":\n            "714 species  ·  Birds, amphibians, reptiles and mammals",
             13,Color.rgb(229,240,224),false);
         summary.setLineSpacing(dp(a,2),1f);
         card.addView(summary);
-        TextView action=text(a,"BROWSE ENCYCLOPEDIA",12,Color.WHITE,true);
+        TextView action=text(a,large?"BROWSE SPECIES":"BROWSE ENCYCLOPEDIA",12,Color.WHITE,true);
         action.setLetterSpacing(.06f);
         action.setPadding(0,dp(a,17),0,0);
         card.addView(action);

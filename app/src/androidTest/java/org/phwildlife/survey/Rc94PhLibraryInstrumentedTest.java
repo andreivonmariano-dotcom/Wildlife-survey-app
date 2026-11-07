@@ -83,14 +83,14 @@ public final class Rc94PhLibraryInstrumentedTest {
         }finally{bitmap.recycle();}
         assertTrue(target.isFile()&&target.length()>30000);
     }
-    @Test public void aHubShowsChecklistFirstAndCitedGuides()throws Exception{
+    @Test public void aHubShowsBookAndTextReferences()throws Exception{
         try(ActivityScenario<LikasLibraryActivity> scenario=
                 ActivityScenario.launch(LikasLibraryActivity.class)){
             scenario.onActivity(activity->{
                 View view=activity.getWindow().getDecorView();
-                for(String target:new String[]{"PHLibrary","Search species checklist",
-                        "Wildlife guides","Habitat guides","Conservation evidence",
-                        "Photo comparisons","Source checklists"}){
+                for(String target:new String[]{"PHLibrary","Wildlife of Greater Mindanao",
+                        "Conservation evidence","Similar species",
+                        "Source collections","Habitat associations"}){
                     TextView title=text(view,target);
                     assertNotNull("Missing reference destination: "+target,title);
                 }

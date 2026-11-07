@@ -85,6 +85,10 @@ public final class PhLibraryBook01 {
                 }
             }
             if(rows.size()!=714)throw new IllegalStateException("Incomplete PHLibrary edition");
+            // The source PAIC714 checklist retains an older combination for
+            // this bat. The Book 01 account documents the named transfer.
+            Integer formerBat=index.get(key("Mops plicatus"));
+            if(formerBat!=null)index.put(key("Chaerephon plicata"),formerBat);
             ENTRIES.addAll(rows);
             BY_NAME.putAll(index);
         } catch(Exception ex) {

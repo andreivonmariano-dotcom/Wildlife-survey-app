@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - feature/likas-rc60-phlibrary-single-paragraph
+  pull_request:
+    branches:
+      - feature/likas-rc59-library-hub-visual
   workflow_dispatch:
 permissions:
   contents: read

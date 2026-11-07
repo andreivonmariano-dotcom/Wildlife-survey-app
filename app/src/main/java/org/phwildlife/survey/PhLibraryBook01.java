@@ -187,8 +187,7 @@ public final class PhLibraryBook01 {
         if(pos==null)return false;
         parent.removeAllViews();
         parent.setPadding(0,dp(a,9),0,dp(a,18));
-        // This helper checks the approved offline photo manifest and includes
-        // its photographer, source and license only when a real asset exists.
+        // Text-only educational book reading; photographs are deliberately omitted.
         TextView kicker=label(a,"PHLIBRARY  ·  GREATER MINDANAO  ·  BOOK 01",11,UiKit.MUTED,true);
         kicker.setLetterSpacing(0.04f);
         kicker.setPadding(0,dp(a,13),0,dp(a,8));
@@ -207,12 +206,13 @@ public final class PhLibraryBook01 {
         parent.addView(taxonomy);
         // Rarity, IUCN and origin retain their separate source-defined labels.
         // Original Word edition badge order and wording are preserved.
-        TextView badges=label(a,record.optString("b").replace("     •     ","   ·   "),
-            12.5f,UiKit.INK,true);
-        badges.setPadding(dp(a,10),dp(a,8),dp(a,10),dp(a,8));
-        badges.setBackground(UiKit.surface(a));
+        String badgeLine=record.optString("b")
+            .replace("↝","").replace("◉","").replace("◆","").replace("✦","")
+            .replace("     •     ","   ·   ").replaceAll(" +"," ").trim();
+        TextView badges=label(a,badgeLine,13,UiKit.FOREST,true);
+        badges.setPadding(dp(a,1),dp(a,8),dp(a,1),dp(a,9));
+        badges.setLineSpacing(dp(a,3),1.08f);
         parent.addView(badges);
-        OfflinePhotoEvidence.addPhLibraryPlate(a,parent,scientific);
         View separator=new View(a);
         separator.setBackgroundColor(UiKit.BORDER);
         LinearLayout.LayoutParams separatorLp=new LinearLayout.LayoutParams(-1,dp(a,1));

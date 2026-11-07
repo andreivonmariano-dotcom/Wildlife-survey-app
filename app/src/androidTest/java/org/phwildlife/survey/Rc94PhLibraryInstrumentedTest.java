@@ -88,7 +88,7 @@ public final class Rc94PhLibraryInstrumentedTest {
                 ActivityScenario.launch(LikasLibraryActivity.class)){
             scenario.onActivity(activity->{
                 View view=activity.getWindow().getDecorView();
-                for(String target:new String[]{"PHLibrary","Wildlife of Greater Mindanao",
+                for(String target:new String[]{"PHLibrary","Greater Mindanao",
                         "Conservation evidence","Similar species",
                         "Source collections","Habitat associations"}){
                     TextView title=text(view,target);

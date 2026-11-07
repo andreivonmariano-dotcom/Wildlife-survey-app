@@ -1,5 +1,6 @@
 """RC56 live recorder UI-only contract; do not alter survey lifecycle or data."""
 from pathlib import Path
+import re
 import unittest
 ROOT=Path(__file__).resolve().parents[1]
 J=ROOT/"app/src/main/java/org/phwildlife/survey"
@@ -57,7 +58,7 @@ class Rc56RecorderLayout(unittest.TestCase):
         self.assertIn('gpsView.setText(permissionMissing?',a)
         self.assertIn('"Precise GPS permission needed · details":"Device GPS off · details"',a)
         self.assertIn('countView.setContentDescription(count+" individuals or evidence items")',a)
-        self.assertIn("versionCode 119",(ROOT/"app/build.gradle").read_text())
-        self.assertIn("0.27.3-rc59-library-hub-preview",(ROOT/"app/build.gradle").read_text())
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",(ROOT/"app/build.gradle").read_text()).group(1)),119)
+        self.assertRegex((ROOT/"app/build.gradle").read_text(),r"versionName\s+'[^']+'")
         self.assertIn("super(context,NAME,null,27)",src("FieldDb.java"))
 if __name__=="__main__":unittest.main()

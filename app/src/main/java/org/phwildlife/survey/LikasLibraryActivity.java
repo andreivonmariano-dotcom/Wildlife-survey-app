@@ -36,6 +36,10 @@ public final class LikasLibraryActivity extends Activity {
             View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         LinearLayout body=new LinearLayout(this);
         LinearLayout root=UiKit.page(this,"PHLibrary","Home",this::finish,body);
+        LinearLayout nav=(LinearLayout)root.getChildAt(0);
+        ((android.widget.Button)nav.getChildAt(0)).setText("Back");
+        ((android.widget.Button)nav.getChildAt(0)).setLayoutParams(
+            new LinearLayout.LayoutParams(dp(68),dp(48)));
         ScrollView scroll=(ScrollView)root.getChildAt(1);
         scroll.setPadding(0,0,dp(7),0);
         scroll.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);

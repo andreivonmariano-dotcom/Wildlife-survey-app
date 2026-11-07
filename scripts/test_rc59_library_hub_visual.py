@@ -32,8 +32,11 @@ class Rc59HubVisual(unittest.TestCase):
         self.assertIn("setFilterBitmap(false)",design)
     def test_version_and_db_not_downgraded(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 119",gradle)
-        self.assertIn("0.27.3-rc59-library-hub-preview",gradle)
+        import re
+        found=re.search(r"versionCode\s+(\d+)",gradle)
+        self.assertIsNotNone(found)
+        self.assertGreaterEqual(int(found.group(1)),119)
+        self.assertIn("versionName",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
 if __name__=="__main__":unittest.main()

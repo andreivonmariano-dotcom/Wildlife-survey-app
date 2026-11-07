@@ -413,7 +413,9 @@ public final class OfflinePhotoEvidence {
         String author=entry.optString("author").trim();
         String license=entry.optString("license").trim();
         TextView credit=new TextView(a);
-        credit.setText("Photo: "+author+" · "+license+"  ·  Details");
+        String visibleRights="owner_direct_private_research_permission".equals(
+            entry.optString("rightsBasis"))?"Used with permission":license;
+        credit.setText("Photo: "+author+" · "+visibleRights+"  ·  Details");
         credit.setTextSize(11);
         credit.setTextColor(UiKit.MUTED);
         credit.setGravity(android.view.Gravity.CENTER_VERTICAL);

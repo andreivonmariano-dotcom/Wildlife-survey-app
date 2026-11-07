@@ -11,7 +11,7 @@ from pathlib import Path
 import sys
 p=Path("emulator-qa")/sys.argv[1]
 b=p.read_bytes()
-assert len(b)>5000 and b[:8]==b"\\x89PNG\\r\\n\\x1a\\n",p
+assert len(b)>5000 and b[:8]==bytes([137,80,78,71,13,10,26,10]),p
 PY
 }
 for setting in "p360f100 360x800 1.0" "p320f200 320x720 2.0"; do

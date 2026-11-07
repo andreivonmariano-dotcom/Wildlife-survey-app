@@ -102,12 +102,12 @@ public final class PhLibraryDirectoryActivity extends Activity {
         root.addView(title);
         TextView subtitle=text("Browse the complete offline encyclopedia",13,UiKit.MUTED,false);
         subtitle.setPadding(dp(1),0,0,dp(13));
-        root.addView(subtitle);
+        if(getResources().getConfiguration().fontScale<1.6f)root.addView(subtitle);
 
         search=new EditText(this);
         search.setSingleLine(true);
         search.setTextSize(16);
-        search.setHint("Search species or family");
+        search.setHint(getResources().getConfiguration().fontScale>=1.6f?\n            "Search":"Search species or family");
         search.setContentDescription("Search Greater Mindanao species, scientific names and families");
         UiKit.fieldInput(this,search);
         root.addView(search,new LinearLayout.LayoutParams(-1,-2));

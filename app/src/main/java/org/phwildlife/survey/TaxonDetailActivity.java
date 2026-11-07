@@ -29,6 +29,7 @@ import java.util.Locale;
 public final class TaxonDetailActivity extends Activity {
     private FieldDb db;
     private LinearLayout content;
+    private TextView phLibraryHeaderTitle;
     private ScrollView phLibraryScroll;
     private AutoCompleteTextView search;
     private LinearLayout searchRow;
@@ -67,7 +68,9 @@ public final class TaxonDetailActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(18),dp(15),dp(18),dp(15));
-        root.addView(UiKit.navigationHeader(this,"Species Library","previous screen",this::finish));
+        LinearLayout nav=UiKit.navigationHeader(this,"Species Library","previous screen",this::finish);
+        phLibraryHeaderTitle=(TextView)nav.getChildAt(1);
+        root.addView(nav);
         screenCaption=text("Identification, habitat and research sources",12,false);
         screenCaption.setTextColor(UiKit.MUTED);
         root.addView(screenCaption);
@@ -261,6 +264,7 @@ public final class TaxonDetailActivity extends Activity {
         });
     }
     private void showSearchControls(){
+        if(phLibraryHeaderTitle!=null)phLibraryHeaderTitle.setText("Species Library");
         if(searchRow!=null)searchRow.setVisibility(View.VISIBLE);
         if(groupFilter!=null)groupFilter.setVisibility(View.VISIBLE);
         if(conservation!=null)conservation.setVisibility(View.VISIBLE);
@@ -308,6 +312,7 @@ public final class TaxonDetailActivity extends Activity {
     }
 
     private void showPhLibraryBook(String scientific) {
+        if(phLibraryHeaderTitle!=null)phLibraryHeaderTitle.setText("PHLibrary");
         searchRow.setVisibility(View.GONE);
         groupFilter.setVisibility(View.GONE);
         conservation.setVisibility(View.GONE);

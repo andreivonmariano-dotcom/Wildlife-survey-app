@@ -26,11 +26,13 @@ class Rc47DesignSystem(unittest.TestCase):
                                ("LikasSettingsActivity.java","Settings")]:
             c=read(filename)
             self.assertIn(f'UiKit.page(this,"{label}","Home",this::finish,body)',c)
-            self.assertIn("FieldVisuals.section(this,",c)
+            self.assertIn("PhLibraryStyle.section" if label=="PHLibrary"
+                          else "FieldVisuals.section(this,",c)
         library=read("LikasLibraryActivity.java")
-        for name in ("LikasDiscoveryActivity.class","Rc9DifferentialActivity.class",
-                     "Rc8PhotoComparisonActivity.class","HabitatSpeciesEvidenceActivity.class"):
+        for name in ("PhLibraryDirectoryActivity.class","Rc9DifferentialActivity.class",
+                     "HabitatSpeciesEvidenceActivity.class"):
             self.assertIn(name,library)
+        self.assertNotIn("Rc8PhotoComparisonActivity.class",library)
         settings=read("LikasSettingsActivity.java")
         for name in ("FieldBackupActivity.class","DataManagementActivity.class",
                      "ImportActivity.class","AuditActivity.class",

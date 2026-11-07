@@ -13,16 +13,22 @@ class Rc45LayoutContract(unittest.TestCase):
         policy = source("FieldLayoutPolicy.java")
         self.assertIn("stackPortalPair(int availableWidthDp,float fontScale)", policy)
         self.assertIn("LikasDesignSystem.useSingleColumn(availableWidthDp,fontScale)", policy)
-        for screen in ("WelcomeActivity.java", "LikasLibraryActivity.java",
-                       "LikasSettingsActivity.java"):
-            text = source(screen)
-            self.assertIn("FieldLayoutPolicy.stackPortalPair(" if screen=="LikasLibraryActivity.java" else "FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale)",text)
+        for screen in ("WelcomeActivity.java", "LikasSettingsActivity.java"):
+            code=source(screen)
+            self.assertIn("FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale)",code)
             if screen=="WelcomeActivity.java":
-                self.assertIn("surveyTile(main,",text)
-                self.assertIn("new LinearLayout.LayoutParams(-1,-2)",text)
+                self.assertIn("surveyTile(main,",code)
+                self.assertIn("new LinearLayout.LayoutParams(-1,-2)",code)
             else:
-                self.assertTrue("stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in text
-                                or "stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in text)
+                self.assertTrue("stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in code
+                                or "stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in code)
+        # RC97 deliberately keeps the bibliography hub one-column and text-only.
+        library=source("LikasLibraryActivity.java")
+        self.assertIn("PhLibraryStyle.row",library)
+        self.assertIn("UiKit.page",library)
+        directory=source("PhLibraryDirectoryActivity.java")
+        self.assertIn("HorizontalScrollView",directory)
+        self.assertIn("PhLibraryStyle.touch",directory)
 
     def test_picker_has_a_readable_search_field_and_unidentified_action(self):
         picker=source("SpeciesPickerActivity.java")

@@ -17,9 +17,10 @@ class Rc64PhoneIcons(unittest.TestCase):
         library=(JAVA/"LikasLibraryActivity.java").read_text()
         for row in ('"Conservation evidence","IUCN and Philippine assessments"',
                     '"Habitat associations","Cited species and habitat links"',
-                    '"Photo comparisons","Offline wildlife photographs"',
-                    '"Source checklists","Taxonomic provenance and imports"'):
+                    '"Source collections","Taxonomic checklists and provenance"'):
             self.assertIn(row,library)
+        self.assertNotIn('"Photo comparisons"',library)
+        self.assertIn("PhLibraryStyle.bookCover",library)
         self.assertEqual(18,len(list((ROOT/"app/src/main/res/drawable-nodpi").glob("likas_approved_*.png"))))
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)

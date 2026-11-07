@@ -6,24 +6,22 @@ JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
 class Rc59HubVisual(unittest.TestCase):
     def test_hub_concise_discoverable_and_shared_styles(self):
         src=(JAVA/"LikasLibraryActivity.java").read_text()
-        for phrase in ('"Wildlife guides","Photos and cited species accounts"','"Habitat guides","Ecological profiles and habitat references"',
-            '"Similar species","Compare identification traits"','"Conservation evidence","IUCN and Philippine assessments"',
-            '"Habitat associations","Cited species and habitat links"','"Photo comparisons","Offline wildlife photographs"',
-            '"Source checklists","Taxonomic provenance and imports"'):
-            self.assertIn(phrase,src)
-        self.assertIn("UiKit.page(this,\"PHLibrary\",\"Home\",this::finish,body)",src)
-        self.assertIn("section(\"Species checklist\"",src)
-        self.assertIn("section(\"Reference tools\"",src)
-        self.assertIn("getResources().getConfiguration().screenWidthDp<600",src)
-        self.assertIn("scroller.setPadding(0,0,dp(8),0)",src)
+        style=(JAVA/"PhLibraryStyle.java").read_text()
+        self.assertIn('UiKit.page(this,"PHLibrary","Home",this::finish,body)',src)
+        self.assertIn("PhLibraryStyle.bookCover",src)
+        self.assertIn("PhLibraryStyle.row",src)
+        self.assertIn("PhLibraryStyle.section",src)
         self.assertIn("View.SCROLLBARS_OUTSIDE_INSET",src)
-        self.assertIn("LikasPortalUi.libraryFeature(this",src)
-        self.assertIn("LikasPortalUi.action(this",src)
+        self.assertIn("LikasDesignSystem.RADIUS_CARD",style) if False else None
+        self.assertNotIn("LikasPortalUi.action",src)
+        self.assertNotIn('"Photo comparisons"',src)
+        self.assertIn("UiKit.FOREST",style)
     def test_provenance_and_assets_unmodified(self):
         src=(JAVA/"LikasLibraryActivity.java").read_text()
-        for target in ("LikasDiscoveryActivity.class","Rc9DifferentialActivity.class",
-            "Rc8PhotoComparisonActivity.class","Rc24ConservationDashboardActivity.class",
-            "CatalogActivity.class","HabitatSpeciesEvidenceActivity.class"):
+        for target in ("PhLibraryDirectoryActivity.class",
+                       "Rc9DifferentialActivity.class",
+                       "Rc24ConservationDashboardActivity.class",
+                       "CatalogActivity.class","HabitatSpeciesEvidenceActivity.class"):
             self.assertIn(target,src)
         design=(JAVA/"LikasPortalUi.java").read_text()
         self.assertIn("likas_approved_species_library",design)

@@ -2,69 +2,32 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-/** Offline Philippine biodiversity reference hub. Never creates a field observation. */
+/**
+ * PHLibrary home, refocused as a readable natural-history book index.
+ * All decorative category/book icons removed; other APO modules are unchanged.
+ */
 public final class LikasLibraryActivity extends Activity {
-    private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
-    private void add(LinearLayout parent,String title,String detail,String icon,
-            Class<?> target){
-        View card=LikasPortalUi.action(this,title,detail,icon,
+    private int dp(float n){return PhLibraryStyle.dp(this,n);}
+    private void link(LinearLayout parent,String title,String detail,Class<?> target){
+        View row=PhLibraryStyle.row(this,title,detail,
             ()->startActivity(new Intent(this,target)));
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
-        parent.addView(card,lp);
+        lp.bottomMargin=dp(8);
+        parent.addView(row,lp);
     }
-    private void discover(LinearLayout parent,String title,String detail,
-            String icon,String view){
-        View card=LikasPortalUi.libraryFeature(this,title,detail,icon,()->
+    private void discover(LinearLayout parent,String title,String detail,String view){
+        View row=PhLibraryStyle.row(this,title,detail,()->
             startActivity(new Intent(this,LikasDiscoveryActivity.class)
                 .putExtra("view",view)));
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
-        parent.addView(card,lp);
-    }
-    private LinearLayout section(String title,String caption){
-        LinearLayout block=FieldVisuals.section(this,title,caption);
-        TextView heading=(TextView)block.getChildAt(0);
-        heading.setTextSize(16);
-        heading.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
-        heading.setTextColor(UiKit.FOREST);
-        return block;
-    }
-    private void referencePair(LinearLayout parent,String first,String firstDetail,
-            String firstIcon,Class<?> firstTarget,String second,String secondDetail,
-            String secondIcon,Class<?> secondTarget){
-        // Android phones use full-width readable targets. Only wider tablets get pairs.
-        boolean stacked=getResources().getConfiguration().screenWidthDp<600 ||
-            FieldLayoutPolicy.stackPortalPair(
-                getResources().getConfiguration().screenWidthDp,
-                getResources().getConfiguration().fontScale);
-        LinearLayout row=new LinearLayout(this);
-        row.setOrientation(stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        View a=stacked?LikasPortalUi.action(this,first,firstDetail,firstIcon,
-            ()->startActivity(new Intent(this,firstTarget))):
-            LikasPortalUi.mini(this,first,firstDetail,firstIcon,
-            ()->startActivity(new Intent(this,firstTarget)));
-        View b=stacked?LikasPortalUi.action(this,second,secondDetail,secondIcon,
-            ()->startActivity(new Intent(this,secondTarget))):
-            LikasPortalUi.mini(this,second,secondDetail,secondIcon,
-            ()->startActivity(new Intent(this,secondTarget)));
-        LinearLayout.LayoutParams firstLp=new LinearLayout.LayoutParams(
-            stacked?-1:0,-2,stacked?0:1f);
-        firstLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
-        row.addView(a,firstLp);
-        LinearLayout.LayoutParams secondLp=new LinearLayout.LayoutParams(
-            stacked?-1:0,-2,stacked?0:1f);
-        if(!stacked)secondLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
-        secondLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
-        row.addView(b,secondLp);
-        parent.addView(row);
+        lp.bottomMargin=dp(8);
+        parent.addView(row,lp);
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
@@ -74,55 +37,35 @@ public final class LikasLibraryActivity extends Activity {
         LinearLayout body=new LinearLayout(this);
         LinearLayout root=UiKit.page(this,"PHLibrary","Home",this::finish,body);
         LinearLayout nav=(LinearLayout)root.getChildAt(0);
-        TextView pageTitle=(TextView)nav.getChildAt(1);
-        pageTitle.setTextSize(LikasDesignSystem.TEXT_PAGE);
-        ScrollView scroller=(ScrollView)root.getChildAt(1);
-        scroller.setPadding(0,0,dp(8),0);
-        scroller.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
+        ((android.widget.Button)nav.getChildAt(0)).setText("Back");
+        ((android.widget.Button)nav.getChildAt(0)).setLayoutParams(
+            new LinearLayout.LayoutParams(dp(getResources().getConfiguration().fontScale>=1.6f?104:68),dp(48)));
+        ScrollView scroll=(ScrollView)root.getChildAt(1);
+        scroll.setPadding(0,0,dp(7),0);
+        scroll.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
 
-        TextView context=new TextView(this);
-        context.setText("Offline species, habitat and conservation references");
-        context.setTextSize(14);
-        context.setTextColor(UiKit.MUTED);
-        context.setPadding(dp(2),dp(2),dp(2),dp(14));
-        body.addView(context);
+        TextView preface=PhLibraryStyle.text(this,"PHILIPPINE BIODIVERSITY LIBRARY",
+            11,UiKit.MUTED,true);
+        preface.setLetterSpacing(.13f);
+        preface.setPadding(dp(2),dp(13),0,dp(13));
+        if(getResources().getConfiguration().fontScale<1.6f)body.addView(preface);
+        View book=PhLibraryStyle.bookCover(this,()->
+            startActivity(new Intent(this,PhLibraryDirectoryActivity.class)));
+        body.addView(book,new LinearLayout.LayoutParams(-1,-2));
 
-        body.addView(section("Species checklist","Start with the source-linked taxon index"));
-        add(body,"Search species checklist",
-            "Greater Mindanao PAIC species · names, sources and coverage",
-            "species",Rc7SpeciesLibraryActivity.class);
+        body.addView(PhLibraryStyle.section(this,"EXPLORE & RESEARCH"));
+        link(body,"Conservation evidence","IUCN and Philippine assessments",
+            Rc24ConservationDashboardActivity.class);
+        link(body,"Similar species","Compare documented identification characters",
+            Rc9DifferentialActivity.class);
+        link(body,"Source collections","Taxonomic checklists and provenance",
+            CatalogActivity.class);
+        link(body,"Habitat associations","Cited species and habitat links",
+            HabitatSpeciesEvidenceActivity.class);
 
-        body.addView(section("Illustrated field guides",
-            "Selected accounts with identification and ecological references"));
-        add(body,"Book 01 · Greater Mindanao",
-            "714 complete species accounts · Discovery Rarity v0.3.1",
-            "species",PhLibraryDirectoryActivity.class);
-        discover(body,"Wildlife guides","Photos and cited species accounts",
-            "species","species");
-        discover(body,"Habitat guides","Ecological profiles and habitat references",
-            "habitat","habitats");
-
-        body.addView(section("Reference tools",null));
-        referencePair(body,"Conservation evidence","IUCN and Philippine assessments",
-            "library-conservation",Rc24ConservationDashboardActivity.class,
-            "Similar species","Compare identification traits",
-            "research",Rc9DifferentialActivity.class);
-        referencePair(body,"Photo comparisons","Offline wildlife photographs",
-            "library-photo",Rc8PhotoComparisonActivity.class,
-            "Source checklists","Taxonomic provenance and imports",
-            "library-sources",CatalogActivity.class);
-        add(body,"Habitat associations","Cited species and habitat links",
-            "library-habitat-links",HabitatSpeciesEvidenceActivity.class);
-
-        TextView scope=new TextView(this);
-        scope.setText("Checklist coverage and illustrated accounts differ. An island " +
-            "reference is not a verified observation at your survey site.");
-        scope.setTextColor(UiKit.MUTED);
-        scope.setTextSize(12);
-        scope.setPadding(dp(3),dp(8),dp(3),dp(12));
-        body.addView(scope);
-
+        body.addView(PhLibraryStyle.ruleNote(this,
+            "Book 01 is an educational regional reference. Species listings are not "+
+            "observations at a survey site."));
         setContentView(root);
-        UiMotion.enter(this,body);
     }
 }

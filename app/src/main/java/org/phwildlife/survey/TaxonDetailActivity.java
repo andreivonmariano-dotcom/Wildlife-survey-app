@@ -30,6 +30,8 @@ public final class TaxonDetailActivity extends Activity {
     private FieldDb db;
     private LinearLayout content;
     private TextView phLibraryHeaderTitle;
+    private Button phLibraryBack;
+    private LinearLayout phLibraryPage;
     private ScrollView phLibraryScroll;
     private AutoCompleteTextView search;
     private LinearLayout searchRow;
@@ -65,11 +67,13 @@ public final class TaxonDetailActivity extends Activity {
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         db=new FieldDb(this);
         LinearLayout root=new LinearLayout(this);
+        phLibraryPage=root;
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(18),dp(15),dp(18),dp(15));
         LinearLayout nav=UiKit.navigationHeader(this,"Species Library","previous screen",this::finish);
         phLibraryHeaderTitle=(TextView)nav.getChildAt(1);
+        phLibraryBack=(Button)nav.getChildAt(0);
         root.addView(nav);
         screenCaption=text("Identification, habitat and research sources",12,false);
         screenCaption.setTextColor(UiKit.MUTED);
@@ -312,7 +316,14 @@ public final class TaxonDetailActivity extends Activity {
     }
 
     private void showPhLibraryBook(String scientific) {
-        if(phLibraryHeaderTitle!=null)phLibraryHeaderTitle.setText("PHLibrary");
+        if(phLibraryHeaderTitle!=null)phLibraryHeaderTitle.setText("Book 01");
+        if(phLibraryBack!=null){
+            phLibraryBack.setText("Back");
+            phLibraryBack.setTextSize(14);
+            phLibraryBack.setLayoutParams(new LinearLayout.LayoutParams(
+                dp(getResources().getConfiguration().fontScale>=1.6f?104:68),dp(48)));
+        }
+        if(phLibraryPage!=null)phLibraryPage.setPadding(dp(16),dp(10),dp(16),dp(8));
         searchRow.setVisibility(View.GONE);
         groupFilter.setVisibility(View.GONE);
         conservation.setVisibility(View.GONE);

@@ -50,7 +50,7 @@ class MethodCompletionReviewContracts(unittest.TestCase):
             self.assertIn(text,main)
         self.assertIn('super(context,NAME,null,29)',src("FieldDb.java"))
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 156",build)
-        self.assertIn("versionName '0.27.3-rc96-phlibrary-reader'",build)
+        self.assertIn("versionCode 157",build)
+        self.assertIn("versionName '0.27.3-rc97-phlibrary-visual'",build)
 
 if __name__=="__main__":unittest.main()

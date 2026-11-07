@@ -9,17 +9,21 @@ def read(name):
     return (SRC/name).read_text(encoding="utf-8")
 
 class PHLibraryScreenContract(unittest.TestCase):
-    def test_full_source_checklist_direct_from_hub(self):
+    def test_phlibrary_home_is_one_primary_book_without_photo_navigation(self):
         hub=read("LikasLibraryActivity.java")
+        style=read("PhLibraryStyle.java")
         self.assertIn('"PHLibrary","Home"',hub)
-        self.assertIn('"Search species checklist"',hub)
-        self.assertIn("Rc7SpeciesLibraryActivity.class",hub)
-        self.assertIn("LikasDiscoveryActivity.class",hub)
-        self.assertIn('"view",view',hub)
-        self.assertLess(hub.index('"Search species checklist"'),
-                        hub.index('"Wildlife guides"'))
-        self.assertIn("island",hub.lower())
-        self.assertNotIn("Full Philippine species checklist",hub)
+        self.assertIn("PhLibraryStyle.bookCover",hub)
+        self.assertIn("PhLibraryDirectoryActivity.class",hub)
+        self.assertIn("Conservation evidence",hub)
+        self.assertIn("Source collections",hub)
+        self.assertNotIn('"Photo comparisons"',hub)
+        self.assertNotIn('"Wildlife field guides"',hub)
+        self.assertNotIn('"Search book species"',hub)
+        self.assertNotIn("LikasPortalUi.action",hub)
+        self.assertNotIn("addApprovedIcon",style)
+        self.assertIn("species listings",hub.lower())
+        self.assertIn("class LikasDiscoveryActivity",read("LikasDiscoveryActivity.java"))
 
     def test_discovery_separates_account_scope_from_source_catalog(self):
         source=read("LikasDiscoveryActivity.java")
@@ -51,8 +55,8 @@ class PHLibraryScreenContract(unittest.TestCase):
 
     def test_app_identity_biology_and_schema_remain(self):
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 156",gradle)
-        self.assertIn("0.27.3-rc96-phlibrary-reader",gradle)
+        self.assertIn("versionCode 157",gradle)
+        self.assertIn("0.27.3-rc97-phlibrary-visual",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn('manifest.put("sqliteSchema",snapshotSchema)',

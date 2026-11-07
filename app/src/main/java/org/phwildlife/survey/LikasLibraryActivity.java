@@ -39,7 +39,7 @@ public final class LikasLibraryActivity extends Activity {
         LinearLayout nav=(LinearLayout)root.getChildAt(0);
         ((android.widget.Button)nav.getChildAt(0)).setText("Back");
         ((android.widget.Button)nav.getChildAt(0)).setLayoutParams(
-            new LinearLayout.LayoutParams(dp(68),dp(48)));
+            new LinearLayout.LayoutParams(dp(getResources().getConfiguration().fontScale>=1.6f?104:68),dp(48)));
         ScrollView scroll=(ScrollView)root.getChildAt(1);
         scroll.setPadding(0,0,dp(7),0);
         scroll.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
@@ -48,7 +48,7 @@ public final class LikasLibraryActivity extends Activity {
             11,UiKit.MUTED,true);
         preface.setLetterSpacing(.13f);
         preface.setPadding(dp(2),dp(13),0,dp(13));
-        body.addView(preface);
+        if(getResources().getConfiguration().fontScale<1.6f)body.addView(preface);
         View book=PhLibraryStyle.bookCover(this,()->
             startActivity(new Intent(this,PhLibraryDirectoryActivity.class)));
         body.addView(book,new LinearLayout.LayoutParams(-1,-2));

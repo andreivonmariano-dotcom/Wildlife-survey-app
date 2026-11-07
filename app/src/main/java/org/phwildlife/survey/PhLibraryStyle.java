@@ -47,7 +47,8 @@ public final class PhLibraryStyle {
         Button back=(Button)rail.getChildAt(0);
         back.setText("Back");
         back.setTextSize(14);
-        back.setLayoutParams(new LinearLayout.LayoutParams(dp(a,\n            a.getResources().getConfiguration().fontScale>=1.6f?104:68),dp(a,48)));
+        back.setLayoutParams(new LinearLayout.LayoutParams(dp(a,
+            a.getResources().getConfiguration().fontScale>=1.6f?104:68),dp(a,48)));
         return rail;
     }
     public static TextView section(Activity a,String label){
@@ -92,7 +93,8 @@ public final class PhLibraryStyle {
         TextView title=text(a,large?"Greater Mindanao":"Wildlife of Greater Mindanao",23,Color.WHITE,true);
         title.setPadding(0,dp(a,9),0,dp(a,5));
         card.addView(title);
-        TextView summary=text(a,large?"714 species  ·  Four wildlife groups":\n            "714 species  ·  Birds, amphibians, reptiles and mammals",
+        TextView summary=text(a,large?"714 species  ·  Four wildlife groups":
+            "714 species  ·  Birds, amphibians, reptiles and mammals",
             13,Color.rgb(229,240,224),false);
         summary.setLineSpacing(dp(a,2),1f);
         card.addView(summary);

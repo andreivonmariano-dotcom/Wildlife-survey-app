@@ -94,6 +94,9 @@ public final class LikasLibraryActivity extends Activity {
 
         body.addView(section("Illustrated field guides",
             "Selected accounts with identification and ecological references"));
+        add(body,"Book 01 · Greater Mindanao",
+            "714 complete species accounts · Discovery Rarity v0.3.1",
+            "species",PhLibraryDirectoryActivity.class);
         discover(body,"Wildlife guides","Photos and cited species accounts",
             "species","species");
         discover(body,"Habitat guides","Ecological profiles and habitat references",

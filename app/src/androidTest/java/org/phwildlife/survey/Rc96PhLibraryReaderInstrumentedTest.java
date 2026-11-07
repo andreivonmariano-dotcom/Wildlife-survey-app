@@ -95,7 +95,7 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
             scenario.onActivity(a->{
                 assertTrue("Complete edition",PhLibraryBook01.ready(a));
                 assertEquals(714,PhLibraryBook01.entries(a).size());
-                assertNotNull(findText(a.getWindow().getDecorView(),"Greater Mindanao"));
+                assertNotNull(findText(a.getWindow().getDecorView(),"GREATER MINDANAO"));
                 assertNotNull(findText(a.getWindow().getDecorView(),"714 species"));
                 capture(a,"rc96-"+preset()+"-directory.png");
             });

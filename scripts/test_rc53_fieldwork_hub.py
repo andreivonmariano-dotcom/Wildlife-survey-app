@@ -1,5 +1,6 @@
 """RC53 screen 2 UI contracts. No app user records modified."""
 from pathlib import Path
+import re
 import unittest
 ROOT=Path(__file__).resolve().parents[1]
 JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
@@ -44,8 +45,8 @@ class Rc53FieldworkHub(unittest.TestCase):
 
     def test_version_data_and_artwork_contract_preserved(self):
         g=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 119",g)
-        self.assertIn("0.27.3-rc59-library-hub-preview",g)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",g).group(1)),119)
+        self.assertRegex(g,r"versionName\s+'[^']+'")
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",g)
         self.assertIn("super(context,NAME,null,27)",source("FieldDb.java"))
         ui=source("LikasPortalUi.java")

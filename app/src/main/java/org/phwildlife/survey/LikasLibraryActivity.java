@@ -71,6 +71,8 @@ public final class LikasLibraryActivity extends Activity {
         body.addView(FieldVisuals.section(this,"Species & habitats","Offline field guides"));
         discover(body,"Species","Illustrated accounts","species","species");
         discover(body,"Habitats","Habitat profiles","habitat","habitats");
+        add(body,"PHLibrary Book 01","Greater Mindanao · 714 species","species",
+            PhLibraryDirectoryActivity.class);
         body.addView(FieldVisuals.section(this,"Reference tools",null));
         toolPair(body,"Similar species","Compare traits","research",
             Rc9DifferentialActivity.class,"Photos","Offline images","photo",

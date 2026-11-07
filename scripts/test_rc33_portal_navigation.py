@@ -49,9 +49,9 @@ class PortalNavigation(unittest.TestCase):
             self.assertIn(f'android:name=".{a}"',manifest)
             self.assertIn('android:exported="false"',manifest)
         library=read("LikasLibraryActivity.java")
-        for c in ("LikasDiscoveryActivity.class",
+        for c in ("PhLibraryDirectoryActivity.class",
                   "Rc24ConservationDashboardActivity.class","Rc9DifferentialActivity.class",
-                  "Rc8PhotoComparisonActivity.class"):
+                  "HabitatSpeciesEvidenceActivity.class"):
             self.assertIn(c,library)
         discovery=read("LikasDiscoveryActivity.java")
         self.assertIn("Rc7SpeciesLibraryActivity.class",discovery)

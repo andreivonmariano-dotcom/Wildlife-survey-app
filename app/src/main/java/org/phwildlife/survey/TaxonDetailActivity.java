@@ -29,6 +29,7 @@ import java.util.Locale;
 public final class TaxonDetailActivity extends Activity {
     private FieldDb db;
     private LinearLayout content;
+    private ScrollView phLibraryScroll;
     private AutoCompleteTextView search;
     private LinearLayout searchRow;
     private Button groupFilter;
@@ -154,6 +155,7 @@ public final class TaxonDetailActivity extends Activity {
             lookup(search.getText().toString());return true;
         });
         ScrollView scroll=new ScrollView(this);
+        phLibraryScroll=scroll;
         content=new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
         content.setPadding(0,dp(8),0,dp(30));
@@ -164,7 +166,9 @@ public final class TaxonDetailActivity extends Activity {
         UiMotion.enter(this,root);
         String query=getIntent().getStringExtra("taxon_query");
         String key=getIntent().getStringExtra("taxon_key");
-        if(key!=null&&!key.isEmpty())loadKey(key);
+        String phLibraryName=getIntent().getStringExtra("phlibrary_scientific_name");
+        if(phLibraryName!=null&&!phLibraryName.isEmpty())showPhLibraryBook(phLibraryName);
+        else if(key!=null&&!key.isEmpty())loadKey(key);
         else if(query!=null&&!query.trim().isEmpty()){
             search.setText(query);
             lookup(query);
@@ -303,6 +307,18 @@ public final class TaxonDetailActivity extends Activity {
             "Unverified / not supplied":value;
     }
 
+    private void showPhLibraryBook(String scientific) {
+        searchRow.setVisibility(View.GONE);
+        groupFilter.setVisibility(View.GONE);
+        conservation.setVisibility(View.GONE);
+        screenCaption.setVisibility(View.GONE);
+        content.removeAllViews();
+        if(!PhLibraryBook01.render(this,content,scientific,this::showPhLibraryBook)) {
+            showMessage("This PHLibrary species account is unavailable.");
+            return;
+        }
+        if(phLibraryScroll!=null)phLibraryScroll.post(()->phLibraryScroll.scrollTo(0,0));
+    }
     private void loadKey(String key){
         SQLiteDatabase database=db.getReadableDatabase();
         boolean prior=false;
@@ -324,6 +340,12 @@ public final class TaxonDetailActivity extends Activity {
             "SELECT * FROM "+catalog+" WHERE taxon_key=? LIMIT 1",new String[]{key})){
             if(!c.moveToFirst()){showMessage("Species record unavailable.");return;}
             String scientific=col(c,"scientific_name");
+            // Current Greater Mindanao taxa open the complete one-paragraph
+            // educational account. Archived profile data retain their original view.
+            if(!prior && PhLibraryBook01.has(this,scientific)) {
+                showPhLibraryBook(scientific);
+                return;
+            }
             content.removeAllViews();
             searchRow.setVisibility(View.GONE);
             groupFilter.setVisibility(View.GONE);

@@ -189,7 +189,6 @@ public final class PhLibraryBook01 {
         parent.setPadding(0,dp(a,9),0,dp(a,18));
         // This helper checks the approved offline photo manifest and includes
         // its photographer, source and license only when a real asset exists.
-        OfflinePhotoEvidence.addCompactForTaxon(a,parent,scientific);
         TextView kicker=label(a,"PHLIBRARY  ·  GREATER MINDANAO  ·  BOOK 01",11,UiKit.MUTED,true);
         kicker.setLetterSpacing(0.04f);
         kicker.setPadding(0,dp(a,13),0,dp(a,8));
@@ -213,6 +212,7 @@ public final class PhLibraryBook01 {
         badges.setPadding(dp(a,10),dp(a,8),dp(a,10),dp(a,8));
         badges.setBackground(UiKit.surface(a));
         parent.addView(badges);
+        OfflinePhotoEvidence.addPhLibraryPlate(a,parent,scientific);
         View separator=new View(a);
         separator.setBackgroundColor(UiKit.BORDER);
         LinearLayout.LayoutParams separatorLp=new LinearLayout.LayoutParams(-1,dp(a,1));

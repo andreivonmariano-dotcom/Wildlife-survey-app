@@ -92,7 +92,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(16),dp(10),dp(16),dp(8));
-        root.addView(UiKit.navigationHeader(this,"Book 01","PHLibrary",this::finish));
+        root.addView(PhLibraryStyle.navigation(this,"Book 01","PHLibrary",this::finish));
         TextView eyebrow=text("GREATER MINDANAO",11,UiKit.MUTED,true);
         eyebrow.setLetterSpacing(.13f);
         eyebrow.setPadding(dp(2),dp(14),0,dp(4));

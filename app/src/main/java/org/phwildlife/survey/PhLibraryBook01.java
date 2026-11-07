@@ -210,7 +210,7 @@ public final class PhLibraryBook01 {
         badges.setBackground(UiKit.surface(a));
         parent.addView(badges);
         View separator=new View(a);
-        separator.setBackgroundColor(UiKit.OUTLINE);
+        separator.setBackgroundColor(UiKit.BORDER);
         LinearLayout.LayoutParams separatorLp=new LinearLayout.LayoutParams(-1,dp(a,1));
         separatorLp.topMargin=dp(a,17);
         separatorLp.bottomMargin=dp(a,17);
@@ -223,7 +223,7 @@ public final class PhLibraryBook01 {
         JSONArray refs=record.optJSONArray("r");
         if(refs!=null && refs.length()>0) {
             View line=new View(a);
-            line.setBackgroundColor(UiKit.OUTLINE);
+            line.setBackgroundColor(UiKit.BORDER);
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,1));
             lp.topMargin=dp(a,20); lp.bottomMargin=dp(a,12);
             parent.addView(line,lp);

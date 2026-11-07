@@ -9,6 +9,7 @@ import android.graphics.drawable.RippleDrawable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.TextView;
 
 /** Icon-free editorial components shared by the PHLibrary hub and Book 01 index.
@@ -38,6 +39,16 @@ public final class PhLibraryStyle {
         return new RippleDrawable(ColorStateList.valueOf(
             Color.argb(44,42,111,69)),shape(a,fill,edge,radius),
             shape(a,Color.WHITE,Color.TRANSPARENT,radius));
+    }
+    /** Text Back action instead of arrow icon; matches the APO page hierarchy. */
+    public static LinearLayout navigation(Activity a,String title,String destination,
+                                         Runnable onBack){
+        LinearLayout rail=UiKit.navigationHeader(a,title,destination,onBack);
+        Button back=(Button)rail.getChildAt(0);
+        back.setText("Back");
+        back.setTextSize(14);
+        back.setLayoutParams(new LinearLayout.LayoutParams(dp(a,68),dp(a,48)));
+        return rail;
     }
     public static TextView section(Activity a,String label){
         TextView t=text(a,label,13,UiKit.FOREST,true);

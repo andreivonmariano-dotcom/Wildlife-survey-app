@@ -133,7 +133,7 @@ public final class Rc97PhLibraryVisualInstrumentedTest {
                 assertNotNull(find(root,"714 species"));
                 assertNotNull(find(root,"Greater Mindanao"));
                 assertNotNull(find(root,"Jerdon's Baza"));
-                assertNotNull(find(root,"All rarity tiers"));
+                assertNotNull(find(root,"Rarity: All"));
                 assertFalse("No species thumbnails",hasImage(root));
                 capture(a,"rc97-"+preset()+"-directory.png");
                 View birds=find(root,"Birds");

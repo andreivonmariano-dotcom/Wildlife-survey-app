@@ -57,7 +57,7 @@ class PhLibraryBook01(unittest.TestCase):
         self.assertIn('label(a,"REFERENCES",12',text)
         self.assertIn('record.optString("p"),16.5f',text)
         self.assertIn("referenceDialog(a,refs)",text)
-        self.assertIn("addCompactForTaxon",text)
+        self.assertIn("addPhLibraryPlate",text)
         self.assertIn("this::showPhLibraryBook",(JAVA/"TaxonDetailActivity.java").read_text())
         self.assertIn('getStringExtra("phlibrary_scientific_name")',
             (JAVA/"TaxonDetailActivity.java").read_text())

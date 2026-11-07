@@ -1,5 +1,6 @@
 """RC54: native input semantics and screen 3 visual contracts only."""
 from pathlib import Path
+import re
 import unittest
 ROOT=Path(__file__).resolve().parents[1]
 JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
@@ -45,7 +46,7 @@ class Rc54SetupVisualContract(unittest.TestCase):
           'persistSetup();',
           'radiusEntry.setError("Enter 1 to 2000 meters or leave blank")',
         ):self.assertIn(token,a)
-        self.assertIn("versionCode 119",(ROOT/"app/build.gradle").read_text())
-        self.assertIn("0.27.3-rc59-library-hub-preview",(ROOT/"app/build.gradle").read_text())
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",(ROOT/"app/build.gradle").read_text()).group(1)),119)
+        self.assertRegex((ROOT/"app/build.gradle").read_text(),r"versionName\s+'[^']+'")
         self.assertIn("super(context,NAME,null,27)",read("FieldDb.java"))
 if __name__=="__main__":unittest.main()

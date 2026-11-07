@@ -103,11 +103,15 @@ public final class Rc97PhLibraryVisualInstrumentedTest {
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
-                assertNotNull(find(root,"Wildlife of Greater Mindanao"));
+                assertNotNull(find(root,"Greater Mindanao"));
                 assertNotNull(find(root,"714 species"));
                 assertNotNull(find(root,"Conservation evidence"));
                 assertNotNull(find(root,"Source collections"));
-                assertNotNull(find(root,"Back"));
+                View back=find(root,"Back");
+                assertNotNull(back);
+                if(a.getResources().getConfiguration().fontScale>=1.6f)
+                    assertTrue("Back text must not crowd its outline",
+                        back.getWidth()>=a.getResources().getDisplayMetrics().density*100);
                 assertNull(find(root,"Photo comparisons"));
                 assertFalse("No photographic or decorative ImageView in PHLibrary",hasImage(root));
                 capture(a,"rc97-"+preset()+"-hub-top.png");

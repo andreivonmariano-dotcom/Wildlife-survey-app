@@ -49,21 +49,16 @@ public final class LikasLibraryActivity extends Activity {
             startActivity(new Intent(this,PhLibraryDirectoryActivity.class)));
         body.addView(book,new LinearLayout.LayoutParams(-1,-2));
 
-        body.addView(PhLibraryStyle.section(this,"EXPLORE"));
-        link(body,"Species checklist","Search taxonomic names and source records",
-            Rc7SpeciesLibraryActivity.class);
-        discover(body,"Wildlife field guides","Photographs and cited identification accounts",
-            "species");
-        discover(body,"Habitat field guides","Habitats and ecological profiles","habitats");
+        body.addView(PhLibraryStyle.section(this,"EXPLORE THE BOOK"));
+        link(body,"Search book species","Search 714 names, families and rarity tiers",
+            PhLibraryDirectoryActivity.class);
 
-        body.addView(PhLibraryStyle.section(this,"REFERENCE DESK"));
+        body.addView(PhLibraryStyle.section(this,"REFERENCE TOOLS"));
         link(body,"Conservation evidence","IUCN and Philippine assessments",
             Rc24ConservationDashboardActivity.class);
         link(body,"Similar species","Compare documented identification characters",
             Rc9DifferentialActivity.class);
-        link(body,"Photo comparisons","Compare approved offline photographs",
-            Rc8PhotoComparisonActivity.class);
-        link(body,"Source collections","Checklist provenance and imports",
+        link(body,"Source collections","Taxonomic checklists and provenance",
             CatalogActivity.class);
         link(body,"Habitat associations","Cited species and habitat links",
             HabitatSpeciesEvidenceActivity.class);

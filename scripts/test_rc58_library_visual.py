@@ -19,9 +19,12 @@ class Rc58LibraryVisual(unittest.TestCase):
             "Search complete species checklist","Habitat reference index and site records","statusIndex.get"):
             self.assertIn(label,d)
         hub=(JAVA/"LikasLibraryActivity.java").read_text()
-        for label in ('"Wildlife guides"','"Habitat guides"','"Similar species"','"Photo comparisons"',
-            '"Conservation evidence"','"Source checklists"','"Habitat associations"'):
+        self.assertIn("PhLibraryStyle.bookCover",hub)
+        for label in ('"Similar species"','"Conservation evidence"',
+                      '"Source collections"','"Habitat associations"'):
             self.assertIn(label,hub)
+        self.assertNotIn('"Photo comparisons"',hub)
+
     def test_version_and_data_identity(self):
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)

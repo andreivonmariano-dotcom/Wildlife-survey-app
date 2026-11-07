@@ -131,7 +131,7 @@ public final class Rc97PhLibraryVisualInstrumentedTest {
                 View root=a.getWindow().getDecorView();
                 assertEquals(714,PhLibraryBook01.entries(a).size());
                 assertNotNull(find(root,"714 species"));
-                assertNotNull(find(root,"Greater Mindanao"));
+                assertNotNull(find(root,"GREATER MINDANAO"));
                 assertNotNull(find(root,"Jerdon's Baza"));
                 assertNotNull(find(root,"Rarity: All"));
                 assertFalse("No species thumbnails",hasImage(root));

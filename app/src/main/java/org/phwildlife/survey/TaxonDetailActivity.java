@@ -28,6 +28,7 @@ import java.util.Locale;
 public final class TaxonDetailActivity extends Activity {
     private FieldDb db;
     private LinearLayout content;
+    private ScrollView bookScroll;
     private AutoCompleteTextView search;
     private LinearLayout searchRow;
     private Button groupFilter;
@@ -130,6 +131,7 @@ public final class TaxonDetailActivity extends Activity {
             lookup(search.getText().toString());return true;
         });
         ScrollView scroll=new ScrollView(this);
+        bookScroll=scroll;
         content=new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
         content.setPadding(0,dp(8),0,dp(30));
@@ -140,7 +142,9 @@ public final class TaxonDetailActivity extends Activity {
         UiMotion.enter(this,root);
         String query=getIntent().getStringExtra("taxon_query");
         String key=getIntent().getStringExtra("taxon_key");
-        if(key!=null&&!key.isEmpty())loadKey(key);
+        String bookName=getIntent().getStringExtra("phlibrary_scientific_name");
+        if(bookName!=null && !bookName.isEmpty())showBook(bookName);
+        else if(key!=null&&!key.isEmpty())loadKey(key);
         else if(query!=null&&!query.trim().isEmpty()){
             search.setText(query);
             lookup(query);
@@ -240,12 +244,29 @@ public final class TaxonDetailActivity extends Activity {
         content.removeAllViews();
         content.addView(text(message,15,false));
     }
+    private void showBook(String scientific) {
+        searchRow.setVisibility(View.GONE);
+        groupFilter.setVisibility(View.GONE);
+        screenCaption.setVisibility(View.GONE);
+        content.removeAllViews();
+        if(!PhLibraryBook01.render(this,content,scientific,this::showBook)) {
+            showMessage("This PHLibrary species account is unavailable.");
+            return;
+        }
+        if(bookScroll!=null)bookScroll.post(()->bookScroll.scrollTo(0,0));
+    }
     private void loadKey(String key){
         SQLiteDatabase database=db.getReadableDatabase();
         try(Cursor c=database.rawQuery(
             "SELECT * FROM taxon_catalog WHERE taxon_key=? LIMIT 1",new String[]{key})){
             if(!c.moveToFirst()){showMessage("Species record unavailable.");return;}
             String scientific=col(c,"scientific_name");
+            // Greater Mindanao book accounts use the owner-selected one-paragraph
+            // reader. Other catalog species retain their existing scientific view.
+            if(PhLibraryBook01.has(this,scientific)) {
+                showBook(scientific);
+                return;
+            }
             content.removeAllViews();
             searchRow.setVisibility(View.GONE);
             groupFilter.setVisibility(View.GONE);

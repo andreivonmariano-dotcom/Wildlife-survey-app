@@ -31,6 +31,7 @@
         <activity android:name=".Rc9PhotoAnnotationReviewActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".HabitatSpeciesEvidenceActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".TaxonDetailActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".PhLibraryDirectoryActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".Rc7SpeciesLibraryActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".SpeciesPickerActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".RegionalChecklistActivity" android:exported="false" android:screenOrientation="portrait" />

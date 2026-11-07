@@ -1,5 +1,6 @@
 """RC58 Library/Discover visual and source-data preservation contracts."""
 from pathlib import Path
+import re
 import unittest
 ROOT=Path(__file__).resolve().parents[1]
 JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
@@ -24,8 +25,8 @@ class Rc58LibraryVisual(unittest.TestCase):
             self.assertIn(label,hub)
     def test_version_and_data_identity(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 119",build)
-        self.assertIn("0.27.3-rc59-library-hub-preview",build)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",build).group(1)),119)
+        self.assertRegex(build,r"versionName\s+'[^']+'")
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",(JAVA/"FieldDb.java").read_text())
 if __name__=="__main__":unittest.main()

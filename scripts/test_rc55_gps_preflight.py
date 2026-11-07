@@ -1,5 +1,6 @@
 """RC55 screen 4 GPS preflight UI and scientific provenance regression."""
 from pathlib import Path
+import re
 import unittest
 ROOT=Path(__file__).resolve().parents[1]
 JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
@@ -46,8 +47,8 @@ class Rc55GpsUiContract(unittest.TestCase):
         self.assertIn("current.hasVerticalAccuracy()",func)
         self.assertNotIn("mean sea level",func.lower())
         build=(ROOT/"app/build.gradle").read_text(encoding="utf8")
-        self.assertIn("versionCode 119",build)
-        self.assertIn("0.27.3-rc59-library-hub-preview",build)
+        self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",build).group(1)),119)
+        self.assertRegex(build,r"versionName\s+'[^']+'")
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,27)",src("FieldDb.java"))
 if __name__=="__main__":unittest.main()

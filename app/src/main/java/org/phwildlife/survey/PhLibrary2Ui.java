@@ -78,7 +78,8 @@ public final class PhLibrary2Ui {
     }
     public static View hero(Activity a,String eyebrow,String title,String subtitle,boolean compact){
         FrameLayout frame=new FrameLayout(a);
-        int height=dp(a,compact?154:282);
+        boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
+        int height=dp(a,compact?(large?226:154):282);
         frame.setMinimumHeight(height);
         frame.setBackground(bg(a,DEEP,Color.TRANSPARENT,18));
         frame.setClipToOutline(true);
@@ -88,10 +89,12 @@ public final class PhLibrary2Ui {
         content.setGravity(Gravity.TOP);content.setPadding(dp(a,22),dp(a,compact?18:24),dp(a,20),dp(a,16));
         TextView meta=text(a,eyebrow,11,0xFFE5E8CF,false,true);
         meta.setLetterSpacing(.095f);content.addView(meta);
-        TextView heading=text(a,title,compact?27:36,Color.WHITE,true,false);
+        TextView heading=text(a,title,compact?(large?20:27):(large?27:36),
+            Color.WHITE,true,false);
         heading.setLineSpacing(dp(a,1),.98f);
         LinearLayout.LayoutParams hp=new LinearLayout.LayoutParams(-1,-2);hp.topMargin=dp(a,11);content.addView(heading,hp);
-        TextView caption=text(a,subtitle,compact?13:15,0xFFE4EEDB,false,false);
+        TextView caption=text(a,subtitle,large?12:(compact?13:15),
+            0xFFE4EEDB,false,false);
         caption.setLineSpacing(dp(a,2),1.05f);
         LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(-1,-2);cp.topMargin=dp(a,8);content.addView(caption,cp);
         frame.addView(content,new FrameLayout.LayoutParams(-1,-2,Gravity.TOP));

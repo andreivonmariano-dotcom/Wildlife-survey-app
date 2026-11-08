@@ -15,9 +15,9 @@ class Rc64PhoneIcons(unittest.TestCase):
         self.assertIn("frame.setClipToOutline(true)",portal)
     def test_original_assets_and_navigation_still_present(self):
         library=(JAVA/"LikasLibraryActivity.java").read_text()
-        for row in ('"Conservation evidence","IUCN and Philippine assessments"',
-                    '"Habitat associations","Cited species and habitat links"',
-                    '"Source collections","Taxonomic checklists and provenance"'):
+        for row in ('"Browse wildlife groups"',
+                    '"Habitat associations"',
+                    '"Discovery Rarity"'):
             self.assertIn(row,library)
         self.assertNotIn('"Photo comparisons"',library)
         self.assertIn("PhLibraryStyle.bookCover",library)

@@ -29,7 +29,7 @@ class Rc47DesignSystem(unittest.TestCase):
             self.assertIn("PhLibraryStyle.section" if label=="PHLibrary"
                           else "FieldVisuals.section(this,",c)
         library=read("LikasLibraryActivity.java")
-        for name in ("PhLibraryDirectoryActivity.class","Rc9DifferentialActivity.class",
+        for name in ("PhLibraryDirectoryActivity.class",
                      "HabitatSpeciesEvidenceActivity.class"):
             self.assertIn(name,library)
         self.assertNotIn("Rc8PhotoComparisonActivity.class",library)

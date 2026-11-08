@@ -9,8 +9,8 @@ class Rc60VisualDecisions(unittest.TestCase):
         library=(JAVA/"LikasLibraryActivity.java").read_text()
         self.assertIn("R.drawable.likas_library_conservation_display",portal)
         self.assertIn("R.drawable.likas_library_habitat_links_display",portal)
-        self.assertIn('"Conservation evidence","IUCN and Philippine assessments"',library)
-        self.assertIn('"Habitat associations","Cited species and habitat links"',library)
+        self.assertIn('"Browse wildlife groups"',library)
+        self.assertIn('"Habitat associations"',library)
         self.assertNotIn("class PixelShield",portal)
         self.assertIn("likas_approved_species_library",portal)
         self.assertIn("likas_approved_research",portal)
@@ -29,9 +29,8 @@ class Rc60VisualDecisions(unittest.TestCase):
         self.assertIn("public static View libraryFeature(",portal)
         self.assertIn("PhLibraryStyle.bookCover",library)
         self.assertNotIn("LikasPortalUi.libraryFeature(this",library)
-        for target in ["PhLibraryDirectoryActivity.class","Rc9DifferentialActivity.class",
-                       "Rc24ConservationDashboardActivity.class",
-                       "CatalogActivity.class","HabitatSpeciesEvidenceActivity.class"]:
+        for target in ["PhLibraryDirectoryActivity.class",
+                       "HabitatSpeciesEvidenceActivity.class"]:
             self.assertIn(target,library)
         self.assertNotIn("Rc8PhotoComparisonActivity.class",library)
         build=(ROOT/"app/build.gradle").read_text()

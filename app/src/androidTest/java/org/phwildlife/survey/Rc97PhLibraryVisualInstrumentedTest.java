@@ -105,8 +105,8 @@ public final class Rc97PhLibraryVisualInstrumentedTest {
                 View root=a.getWindow().getDecorView();
                 assertNotNull(find(root,"Greater Mindanao"));
                 assertNotNull(find(root,"714 species"));
-                assertNotNull(find(root,"Conservation evidence"));
-                assertNotNull(find(root,"Source collections"));
+                assertNotNull(find(root,"Browse wildlife groups"));
+                assertNotNull(find(root,"Discovery Rarity"));
                 View back=find(root,"Back");
                 assertNotNull(back);
                 if(a.getResources().getConfiguration().fontScale>=1.6f)

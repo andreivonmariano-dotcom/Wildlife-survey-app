@@ -89,8 +89,8 @@ public final class Rc94PhLibraryInstrumentedTest {
             scenario.onActivity(activity->{
                 View view=activity.getWindow().getDecorView();
                 for(String target:new String[]{"PHLibrary","Greater Mindanao",
-                        "Conservation evidence","Similar species",
-                        "Source collections","Habitat associations"}){
+                        "Browse wildlife groups","Discovery Rarity",
+                        "Habitat associations"}){
                     TextView title=text(view,target);
                     assertNotNull("Missing reference destination: "+target,title);
                 }

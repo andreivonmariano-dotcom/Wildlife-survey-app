@@ -1,6 +1,7 @@
 package org.phwildlife.survey;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,26 +9,35 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-/**
- * PHLibrary home, refocused as a readable natural-history book index.
- * All decorative category/book icons removed; other APO modules are unchanged.
- */
+/** PHLibrary: one featured encyclopedia and three distinct discovery actions.
+ *  Text only. The actual Book 01 profiles remain read-only. */
 public final class LikasLibraryActivity extends Activity {
-    private int dp(float n){return PhLibraryStyle.dp(this,n);}
-    private void link(LinearLayout parent,String title,String detail,Class<?> target){
-        View row=PhLibraryStyle.row(this,title,detail,
-            ()->startActivity(new Intent(this,target)));
+    private static final String[] GROUPS={"Birds","Amphibians","Reptiles","Mammals"};
+    private static final String[] TIERS={"Common","Uncommon","Rare","Exceptionally rare","Legendary"};
+    private int dp(float value){return PhLibraryStyle.dp(this,value);}
+    private void add(LinearLayout parent,String title,String subtitle,Runnable action){
+        View item=PhLibraryStyle.row(this,title,subtitle,action);
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
         lp.bottomMargin=dp(8);
-        parent.addView(row,lp);
+        parent.addView(item,lp);
     }
-    private void discover(LinearLayout parent,String title,String detail,String view){
-        View row=PhLibraryStyle.row(this,title,detail,()->
-            startActivity(new Intent(this,LikasDiscoveryActivity.class)
-                .putExtra("view",view)));
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.bottomMargin=dp(8);
-        parent.addView(row,lp);
+    private void openBook(String filter,String value){
+        Intent intent=new Intent(this,PhLibraryDirectoryActivity.class);
+        if(filter!=null && value!=null)intent.putExtra(filter,value);
+        startActivity(intent);
+    }
+    private void chooseGroup(){
+        new AlertDialog.Builder(this).setTitle("Browse wildlife groups")
+            .setItems(GROUPS,(dialog,index)->openBook(
+                "phlibrary_group",GROUPS[index]))
+            .setNegativeButton("Close",null).show();
+    }
+    private void chooseRarity(){
+        new AlertDialog.Builder(this).setTitle("Discover by rarity")
+            .setMessage("An educational estimate of how unusual a species may be to encounter.")
+            .setItems(TIERS,(dialog,index)->openBook(
+                "phlibrary_rarity",TIERS[index]))
+            .setNegativeButton("Close",null).show();
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
@@ -37,9 +47,10 @@ public final class LikasLibraryActivity extends Activity {
         LinearLayout body=new LinearLayout(this);
         LinearLayout root=UiKit.page(this,"PHLibrary","Home",this::finish,body);
         LinearLayout nav=(LinearLayout)root.getChildAt(0);
-        ((android.widget.Button)nav.getChildAt(0)).setText("Back");
-        ((android.widget.Button)nav.getChildAt(0)).setLayoutParams(
-            new LinearLayout.LayoutParams(dp(getResources().getConfiguration().fontScale>=1.6f?104:68),dp(48)));
+        android.widget.Button back=(android.widget.Button)nav.getChildAt(0);
+        back.setText("Back");
+        back.setLayoutParams(new LinearLayout.LayoutParams(dp(
+            getResources().getConfiguration().fontScale>=1.6f?104:68),dp(48)));
         ScrollView scroll=(ScrollView)root.getChildAt(1);
         scroll.setPadding(0,0,dp(7),0);
         scroll.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
@@ -48,24 +59,21 @@ public final class LikasLibraryActivity extends Activity {
             11,UiKit.MUTED,true);
         preface.setLetterSpacing(.13f);
         preface.setPadding(dp(2),dp(13),0,dp(13));
-        if(getResources().getConfiguration().fontScale<1.6f)body.addView(preface);
-        View book=PhLibraryStyle.bookCover(this,()->
-            startActivity(new Intent(this,PhLibraryDirectoryActivity.class)));
-        body.addView(book,new LinearLayout.LayoutParams(-1,-2));
+        if(getResources().getConfiguration().fontScale<1.6f)
+            body.addView(preface);
 
-        body.addView(PhLibraryStyle.section(this,"EXPLORE & RESEARCH"));
-        link(body,"Conservation evidence","IUCN and Philippine assessments",
-            Rc24ConservationDashboardActivity.class);
-        link(body,"Similar species","Compare documented identification characters",
-            Rc9DifferentialActivity.class);
-        link(body,"Source collections","Taxonomic checklists and provenance",
-            CatalogActivity.class);
-        link(body,"Habitat associations","Cited species and habitat links",
-            HabitatSpeciesEvidenceActivity.class);
+        body.addView(PhLibraryStyle.bookCover(this,()->openBook(null,null)),
+            new LinearLayout.LayoutParams(-1,-2));
 
-        body.addView(PhLibraryStyle.ruleNote(this,
-            "Book 01 is an educational regional reference. Species listings are not "+
-            "observations at a survey site."));
+        body.addView(PhLibraryStyle.section(this,"EXPLORE THE VOLUME"));
+        add(body,"Browse wildlife groups",
+            "Birds · Amphibians · Reptiles · Mammals",this::chooseGroup);
+        add(body,"Discovery Rarity",
+            "Explore Common through Legendary species",this::chooseRarity);
+        add(body,"Habitat associations",
+            "Explore sourced habitat and species links",()->
+            startActivity(new Intent(this,HabitatSpeciesEvidenceActivity.class)));
+
         setContentView(root);
     }
 }

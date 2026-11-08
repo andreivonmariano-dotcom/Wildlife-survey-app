@@ -48,7 +48,7 @@ class DetectionFirstContracts(unittest.TestCase):
         self.assertIn('if(hasUnsavedObservation())',main)
         self.assertIn('markedAt>0||count!=1',main)
         self.assertIn("versionCode 162",(ROOT/"app/build.gradle").read_text())
-        self.assertIn('0.27.3-rc101-phlibrary-book-v182',(ROOT/"app/build.gradle").read_text())
+        self.assertIn('0.27.3-rc102-startup-centered-motion',(ROOT/"app/build.gradle").read_text())
 
 if __name__=="__main__":
     unittest.main()

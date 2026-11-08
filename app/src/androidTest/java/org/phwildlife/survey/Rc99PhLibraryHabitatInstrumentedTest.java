@@ -41,7 +41,7 @@ public final class Rc99PhLibraryHabitatInstrumentedTest {
         assertTrue(indexed.get("Draco mindanensis").getString("p")
             .contains("trunks around 5–10 m high"));
         assertTrue(indexed.get("Acerodon jubatus").getString("p")
-            .contains("communal tree roosts may lie in a different land-cover"));
+            .contains("most tracked foraging locations were in closed forest"));
         assertTrue(indexed.get("Acerodon jubatus").getJSONArray("r").length()>0);
     }
 }

@@ -84,14 +84,20 @@ class IntegratedHabitatReader(unittest.TestCase):
             if x['s']==name:p=p.replace(x['old'],x['revised'])
         return p
 
-    def test_android_loader_runs_after_all_original_layers(self):
+    def test_historical_overlay_is_preserved_but_new_loader_is_atomic(self):
+        # The RC100 source overlay remains in assets as an archived audit input.
+        self.assertEqual(read('phlibrary_habitat_integration_v180.json')['speciesCount'],714)
         root=ASSETS.parent/'java/org/phwildlife/survey/PhLibraryBook01.java'
-        src=root.read_text()
-        names=['applyEditorial(context,rows,index);','applyReaderRefinements(context,rows,index);','applyHabitatCues(context,rows,index);','applyReaderPolish(context,rows,index);','applyHabitatIntegration(context,rows,index);']
-        indexes=[src.index(n) for n in names]
-        self.assertEqual(indexes,sorted(indexes))
-        self.assertIn('Text v1.80',src)
-        self.assertIn('Reader v1.80',src)
-        self.assertIn('habitat_integration_v180.json',src)
+        src=root.read_text(encoding='utf-8')
+        self.assertIn('phlibrary_book01_v182.json.gz.b64',src)
+        self.assertIn('EXPECTED_COUNT=715',src)
+        self.assertIn('rarityModel',src)
+        self.assertIn('Text v1.82',src)
+        for obsolete in ('applyEditorial(context,rows,index);',
+                         'applyReaderRefinements(context,rows,index);',
+                         'applyHabitatCues(context,rows,index);',
+                         'applyReaderPolish(context,rows,index);',
+                         'applyHabitatIntegration(context,rows,index);'):
+            self.assertNotIn(obsolete,src)
 
 if __name__=='__main__':unittest.main()

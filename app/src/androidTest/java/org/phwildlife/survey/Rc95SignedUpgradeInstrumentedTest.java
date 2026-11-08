@@ -20,7 +20,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import static org.junit.Assert.*;
 
-/** Two separate instrumentations around a real, signed v152 -> v160 adb install -r. */
+/** Two separate instrumentations around a real, signed v152 -> v161 adb install -r. */
 @RunWith(AndroidJUnit4.class)
 public final class Rc95SignedUpgradeInstrumentedTest {
     static final String EXCLUDED="QA_RC92_UPGRADE_EXCLUDED";
@@ -114,7 +114,7 @@ public final class Rc95SignedUpgradeInstrumentedTest {
         assertEquals(244,file.length());
     }
     @Test public void bSignedRc95UpgradePreservesRowsMediaAndExport()throws Exception{
-        assertEquals("Upgrade must install signed RC100 over RC92, no data reset",160,version());
+        assertEquals("Upgrade must install signed RC101 over RC92, no data reset",161,version());
         try(FieldDb helper=new FieldDb(app())){
             SQLiteDatabase db=helper.getReadableDatabase();
             assertEquals(29,db.getVersion());

@@ -61,16 +61,16 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertIn("mossy",self.edited["Baletemys kampalili"]["p"])
         self.assertIn("nest",self.edited["Pithecophaga jefferyi"]["p"])
 
-    def test_reader_applies_overlay_without_touching_field_database(self):
+    def test_reader_uses_canonical_book_without_touching_field_database(self):
         java=(JAVA/"PhLibraryBook01.java").read_text(encoding="utf-8")
-        self.assertIn('phlibrary_editorial_v176.json',java)
-        self.assertIn("applyEditorial(context,rows,index)",java)
-        self.assertIn('target.put("p",paragraph)',java)
-        self.assertIn('target.put("r",sources)',java)
-        self.assertIn('getString("short")',java)
+        self.assertIn('phlibrary_book01_v182.json.gz.b64',java)
+        self.assertIn("verify(root,source)",java)
+        self.assertIn('EXPECTED_COUNT=715',java)
+        self.assertIn('rarityModel',java)
+        self.assertIn('optString("short")',java)
         self.assertNotIn("getWritableDatabase",java)
         self.assertNotIn("execSQL(",java)
-        self.assertIn("Text v1.80",java)
+        self.assertIn("Text v1.82",java)
         self.assertIn("super(context,NAME,null,29)",
                       (JAVA/"FieldDb.java").read_text(encoding="utf-8"))
 
@@ -90,8 +90,8 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertNotIn("ImageView",hub)
         self.assertNotIn("ImageView",directory)
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 160",gradle)
-        self.assertIn("0.27.3-rc100-integrated-habitats",gradle)
+        self.assertIn("versionCode 161",gradle)
+        self.assertIn("0.27.3-rc101-phlibrary-book-v182",gradle)
 
 if __name__=="__main__":
     unittest.main()

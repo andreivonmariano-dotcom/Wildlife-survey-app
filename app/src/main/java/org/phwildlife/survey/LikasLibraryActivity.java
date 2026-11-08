@@ -13,7 +13,7 @@ import android.widget.TextView;
  *  Text only. The actual Book 01 profiles remain read-only. */
 public final class LikasLibraryActivity extends Activity {
     private static final String[] GROUPS={"Birds","Amphibians","Reptiles","Mammals"};
-    private static final String[] TIERS={"Common","Uncommon","Rare","Exceptionally rare","Legendary"};
+    private static final String[] TIERS={"Common","Uncommon","Rare","Exceptionally rare","Legendary","Unranked"};
     private int dp(float value){return PhLibraryStyle.dp(this,value);}
     private void add(LinearLayout parent,String title,String subtitle,Runnable action){
         View item=PhLibraryStyle.row(this,title,subtitle,action);
@@ -34,7 +34,7 @@ public final class LikasLibraryActivity extends Activity {
     }
     private void chooseRarity(){
         new AlertDialog.Builder(this).setTitle("Discover by rarity")
-            .setMessage("An educational estimate of how unusual a species may be to encounter.")
+            .setMessage("Educational rarity categories; provisional identifications remain unranked.")
             .setItems(TIERS,(dialog,index)->openBook(
                 "phlibrary_rarity",TIERS[index]))
             .setNegativeButton("Close",null).show();
@@ -69,7 +69,7 @@ public final class LikasLibraryActivity extends Activity {
         add(body,"Browse wildlife groups",
             "Birds · Amphibians · Reptiles · Mammals",this::chooseGroup);
         add(body,"Discovery Rarity",
-            "Explore Common through Legendary species",this::chooseRarity);
+            "Explore the five rarity tiers and provisional entries",this::chooseRarity);
         add(body,"Habitat associations",
             "Explore sourced habitat and species links",()->
             startActivity(new Intent(this,HabitatSpeciesEvidenceActivity.class)));

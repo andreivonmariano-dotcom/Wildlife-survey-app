@@ -55,14 +55,14 @@ public final class Rc98PhLibraryEditorialInstrumentedTest {
         try(ActivityScenario<PhLibraryDirectoryActivity> session=ActivityScenario.launch(book)){
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             session.onActivity(activity->assertNotNull(find(
-                activity.getWindow().getDecorView(),"408 species found")));
+                activity.getWindow().getDecorView(),"409 accounts found")));
         }
         Intent rarity=new Intent(ApplicationProvider.getApplicationContext(),
             PhLibraryDirectoryActivity.class).putExtra("phlibrary_rarity","Legendary");
         try(ActivityScenario<PhLibraryDirectoryActivity> session=ActivityScenario.launch(rarity)){
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             session.onActivity(activity->assertNotNull(find(
-                activity.getWindow().getDecorView(),"3 species found")));
+                activity.getWindow().getDecorView(),"3 accounts found")));
         }
         Intent profile=new Intent(ApplicationProvider.getApplicationContext(),
             TaxonDetailActivity.class).putExtra(
@@ -72,13 +72,13 @@ public final class Rc98PhLibraryEditorialInstrumentedTest {
             session.onActivity(activity->{
                 View root=activity.getWindow().getDecorView();
                 assertNotNull(find(root,"Philippine Eagle"));
-                assertNotNull(find(root,"nest in large trees"));
-                assertNotNull(find(root,"Philippine Eagle Foundation, n.d."));
-                assertNotNull(find(root,"Text v1.80"));
+                assertNotNull(find(root,"nesting platforms"));
+                assertNotNull(find(root,"Ibañez et al., 2003"));
+                assertNotNull(find(root,"Text v1.82"));
                 assertNotNull(find(root,"REFERENCES"));
                 assertTrue(PhLibraryBook01.ready(activity));
                 List<JSONObject> entries=PhLibraryBook01.entries(activity);
-                assertEquals(714,entries.size());
+                assertEquals(715,entries.size());
             });
         }
     }

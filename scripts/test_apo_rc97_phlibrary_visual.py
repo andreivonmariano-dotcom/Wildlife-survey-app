@@ -33,8 +33,8 @@ class Rc97PHLibraryVisual(unittest.TestCase):
     def test_single_paragraph_unmodified_and_no_badge_symbols_or_photo(self):
         book=(JAVA/"PhLibraryBook01.java").read_text()
         self.assertIn('record.optString("p"),16.5f',book)
-        self.assertIn("referenceDialog(a,refs)",book)
-        self.assertIn('label(a,"REFERENCES",12',book)
+        self.assertIn("referencesDialog(a,refs)",book)
+        self.assertIn('REFERENCES ·',book)
         self.assertIn('replace("✦","")',book)
         self.assertNotIn("OfflinePhotoEvidence.addPhLibraryPlate",book)
         self.assertNotIn("ImageView",book)
@@ -55,8 +55,8 @@ class Rc97PHLibraryVisual(unittest.TestCase):
                           "Exceptionally rare":37,"Legendary":3})
     def test_existing_apk_identity_and_science_schema_preserved(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 160",gradle)
-        self.assertIn("0.27.3-rc100-integrated-habitats",gradle)
+        self.assertIn("versionCode 161",gradle)
+        self.assertIn("0.27.3-rc101-phlibrary-book-v182",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,29)",
                       (JAVA/"FieldDb.java").read_text())

@@ -3,18 +3,25 @@ package org.phwildlife.survey;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.text.util.Linkify;
 import android.text.method.LinkMovementMethod;
-import android.view.Gravity;
+import android.util.Base64;
+import android.util.Base64InputStream;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,544 +29,212 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.zip.GZIPInputStream;
 
-/**
- * Read-only companion to PHLibrary Book 01 v1.75 and the source-audited
- * editorial overlay v1.76, retaining Discovery Rarity v0.3.1.
- * Species narratives and badges come directly from the owner-supplied edition.
- * Never writes survey/taxon data and does not infer station occurrence.
- */
+/** PHLibrary Book 01: atomic, read-only, offline v1.82 source loader.
+ *  Original older v1.75–v1.80 assets remain packaged for audit/rollback but are
+ *  never used as the canonical reader's runtime account data. */
 public final class PhLibraryBook01 {
-    private static final ArrayList<JSONObject> ENTRIES = new ArrayList<>();
-    private static final Map<String,Integer> BY_NAME = new HashMap<>();
-    private static boolean initialized = false;
-    private static String problem = "";
-    private PhLibraryBook01() {}
+    public static final int EXPECTED_COUNT=715;
+    private static final String PACK="phlibrary_book01_v182.json.gz.b64";
+    private static final String EXPECTED_SHA256="a87021a615a93f64b56cb3c8974e57deaf69bdd7f0ca7478b70068bad533e885";
+    private static final String BIB="phlibrary_book01_bibliography_v182.json.gz.b64";
+    private static final String BIB_SHA256="cb597385f1fc10bcca5f3f9aa5ddafd64b37d762f481816ca479e26df3a9751e";
+    private static final String[] GROUPS={"Birds","Amphibians","Reptiles","Mammals"};
+    private static final int[] GROUP_COUNTS={409,53,154,99};
+    private static final String[] TIERS={"Common","Uncommon","Rare","Exceptionally rare","Legendary","Unranked"};
+    private static final int[] TIER_COUNTS={124,336,214,37,3,1};
+    private static final ArrayList<JSONObject> ENTRIES=new ArrayList<>();
+    private static final Map<String,Integer> BY_NAME=new HashMap<>();
+    private static boolean attempted=false;
+    private static String problem="";
 
-    private static int dp(Activity a,float value) {
-        return Math.round(value*a.getResources().getDisplayMetrics().density);
+    private PhLibraryBook01(){}
+    private static int dp(Activity a,float size){return PhLibraryStyle.dp(a,size);}
+    private static TextView label(Activity a,String value,float size,int color,boolean strong){
+        TextView v=PhLibraryStyle.text(a,value,size,color,strong);
+        return v;
     }
-    private static TextView label(Activity a,String value,float sp,int color,boolean strong) {
-        TextView text = new TextView(a);
-        text.setText(value);
-        text.setTextSize(sp);
-        text.setTextColor(color);
-        if(strong)text.setTypeface(null,Typeface.BOLD);
-        return text;
+    private static String key(String s){return s==null?"":s.trim().toLowerCase(Locale.ROOT);}
+    private static String hex(byte[] input){
+        StringBuilder b=new StringBuilder(input.length*2);
+        for(byte n:input){int value=n&255;b.append("0123456789abcdef".charAt(value>>>4));b.append("0123456789abcdef".charAt(value&15));}
+        return b.toString();
     }
-    private static String key(String value) {
-        return value==null?"":value.trim().toLowerCase(Locale.ROOT);
-    }
-    private static JSONObject readPart(Context context,int part) throws Exception {
-        String path=String.format(Locale.ROOT,"phlibrary_book01_v175_%02d.json",part);
-        try(InputStream input=context.getAssets().open(path);
-            ByteArrayOutputStream bytes=new ByteArrayOutputStream()) {
-            byte[] buffer=new byte[8192];
-            int length;
-            while((length=input.read(buffer))!=-1) {
-                if(bytes.size()+length>350000)throw new IllegalStateException("Book asset exceeds limit");
-                bytes.write(buffer,0,length);
+    private static String readCompressedJson(Context ctx,String name,String expectedSha,int maxBytes)throws Exception{
+        byte[] bytes;
+        try(InputStream in=ctx.getAssets().open(name);
+            Base64InputStream decoder=new Base64InputStream(in,Base64.DEFAULT);
+            GZIPInputStream gz=new GZIPInputStream(decoder);
+            ByteArrayOutputStream result=new ByteArrayOutputStream()){
+            byte[] buf=new byte[8192];int n;
+            while((n=gz.read(buf))!=-1){
+                if(result.size()+n>maxBytes)throw new IllegalStateException("PHLibrary source pack too large");
+                result.write(buf,0,n);
             }
-            return new JSONObject(bytes.toString("UTF-8"));
+            bytes=result.toByteArray();
+        }
+        String digest=hex(MessageDigest.getInstance("SHA-256").digest(bytes));
+        if(!expectedSha.equals(digest))throw new IllegalStateException("PHLibrary source checksum mismatch");
+        return new String(bytes,StandardCharsets.UTF_8);
+    }
+    private static void verify(JSONObject root,JSONArray entries)throws Exception{
+        if(!"1.82".equals(root.getString("edition")) ||
+           !"0.3.4".equals(root.getString("rarityModel")) ||
+           root.getInt("speciesCount")!=EXPECTED_COUNT || entries.length()!=EXPECTED_COUNT)
+            throw new IllegalStateException("Incorrect PHLibrary source edition or count");
+        HashSet<String> names=new HashSet<>();
+        int[] groupCounts=new int[GROUPS.length],tierCounts=new int[TIERS.length];
+        int frogs=0,north=0,south=0;
+        for(int i=0;i<entries.length();i++){
+            JSONObject r=entries.getJSONObject(i);
+            String scientific=r.getString("s"),paragraph=r.getString("p"),tier=r.getString("t");
+            if(!names.add(key(scientific))|| paragraph.trim().isEmpty() || paragraph.contains("\n") ||
+               r.getString("c").trim().isEmpty() ||r.getString("o").trim().isEmpty() ||
+               r.getString("f").trim().isEmpty() ||r.getString("b").trim().isEmpty())
+                throw new IllegalStateException("Invalid PHLibrary account "+scientific);
+            int g=-1,t=-1;
+            for(int j=0;j<GROUPS.length;j++)if(GROUPS[j].equals(r.getString("g")))g=j;
+            for(int j=0;j<TIERS.length;j++)if(TIERS[j].equals(tier))t=j;
+            if(g<0||t<0)throw new IllegalStateException("Unknown group or rarity "+scientific);
+            groupCounts[g]++;tierCounts[t]++;
+            if("Oreophryne cf. nana".equals(scientific)){
+                frogs++;if(!"Unranked".equals(tier)||!r.isNull("iucn"))
+                    throw new IllegalStateException("Tentative frog has inherited assessment");
+            }
+            if("Ceyx melanurus".equals(scientific))north++;
+            if("Ceyx mindanensis".equals(scientific))south++;
+        }
+        for(int i=0;i<GROUPS.length;i++)if(groupCounts[i]!=GROUP_COUNTS[i])
+            throw new IllegalStateException("Unexpected "+GROUPS[i]+" count");
+        for(int i=0;i<TIERS.length;i++)if(tierCounts[i]!=TIER_COUNTS[i])
+            throw new IllegalStateException("Unexpected "+TIERS[i]+" count");
+        if(frogs!=1||north!=1||south!=1||names.contains(key("Aphantophryne nana")))
+            throw new IllegalStateException("PHLibrary species split/identity mismatch");
+    }
+    private static synchronized void load(Context context){
+        if(attempted)return;
+        attempted=true;
+        try{
+            String content=readCompressedJson(context,PACK,EXPECTED_SHA256,1800000);
+            JSONObject root=new JSONObject(content);
+            JSONArray source=root.getJSONArray("records");
+            verify(root,source);
+            ArrayList<JSONObject> draft=new ArrayList<>(EXPECTED_COUNT);
+            HashMap<String,Integer> nameIndex=new HashMap<>();
+            for(int i=0;i<source.length();i++){
+                JSONObject r=source.getJSONObject(i);
+                draft.add(r);nameIndex.put(key(r.getString("s")),i);
+            }
+            ENTRIES.clear();ENTRIES.addAll(draft);
+            BY_NAME.clear();BY_NAME.putAll(nameIndex);
+            problem="";
+        }catch(Exception e){
+            ENTRIES.clear();BY_NAME.clear();
+            problem="Book 01 content could not be verified. Reopen or retry the offline reference pack.";
         }
     }
-    /** Apply a validated, reversible text-only editorial layer on top of the
-     *  original, unchanged Book 01 accounts. Scientific names, status labels,
-     *  geographic fields, group and rarity classifications are never overridden. */
-    private static void applyEditorial(Context context,
-            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
-            throws Exception {
-        JSONObject file;
-        try(InputStream input=context.getAssets().open("phlibrary_editorial_v176.json");
-            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
-            byte[] buffer=new byte[8192];
-            int count;
-            while((count=input.read(buffer))!=-1){
-                if(bytes.size()+count>900000)
-                    throw new IllegalStateException("Editorial source pack exceeds limit");
-                bytes.write(buffer,0,count);
-            }
-            file=new JSONObject(bytes.toString("UTF-8"));
-        }
-        if(!"1.76-editorial".equals(file.optString("edition")) ||
-           !"1.75".equals(file.optString("baseEdition")) ||
-           !"0.3.1".equals(file.optString("rarityModel")) ||
-           file.getInt("speciesCount")!=714)
-            throw new IllegalStateException("Unexpected PHLibrary editorial edition");
-        JSONArray revised=file.getJSONArray("records");
-        if(revised.length()!=file.getInt("changed") || revised.length()<400)
-            throw new IllegalStateException("Incomplete editorial overlay");
-        HashSet<String> updated=new HashSet<>();
-        for(int i=0;i<revised.length();i++){
-            JSONObject fix=revised.getJSONObject(i);
-            String scientific=fix.getString("s");
-            String normalized=key(scientific);
-            Integer position=index.get(normalized);
-            String paragraph=fix.getString("p").trim();
-            JSONArray sources=fix.getJSONArray("r");
-            if(position==null || !updated.add(normalized) ||
-                !rows.get(position).optString("s").equals(scientific) ||
-                paragraph.length()<100 || paragraph.contains("\\n") ||
-                sources.length()==0)
-                throw new IllegalStateException("Invalid editorial account "+scientific);
-            for(int j=0;j<sources.length();j++){
-                JSONObject citation=sources.getJSONObject(j);
-                if(!paragraph.contains(citation.getString("short")))
-                    throw new IllegalStateException("Source citation missing in "+scientific);
-            }
-            JSONObject target=rows.get(position);
-            target.put("p",paragraph);
-            target.put("r",sources);
-        }
+    public static synchronized boolean reload(Context context){attempted=false;return ready(context);}
+    public static synchronized boolean ready(Context context){load(context);return ENTRIES.size()==EXPECTED_COUNT;}
+    public static synchronized String availabilityMessage(Context context){load(context);return problem.isEmpty()?"Book 01 · Greater Mindanao · Text v1.82":problem;}
+    public static synchronized int count(Context context){load(context);return ENTRIES.size();}
+    public static synchronized List<JSONObject> entries(Context context){load(context);return new ArrayList<>(ENTRIES);}
+    public static synchronized boolean has(Context context,String scientific){load(context);return BY_NAME.containsKey(key(scientific));}
+    private static synchronized JSONObject find(Context context,String scientific){load(context);Integer i=BY_NAME.get(key(scientific));return i==null?null:ENTRIES.get(i);}
+    public static JSONArray bibliography(Context context){
+        try{
+            JSONObject book=new JSONObject(readCompressedJson(context,BIB,BIB_SHA256,500000));
+            if(!"1.82".equals(book.getString("edition")))throw new IllegalStateException("Wrong bibliography version");
+            JSONArray refs=book.getJSONArray("bibliography");
+            if(refs.length()!=1159)throw new IllegalStateException("Wrong bibliography count");
+            return refs;
+        }catch(Exception ex){return new JSONArray();}
     }
-    /** Readability edits retain each account's taxon, source list, and status. */
-    private static void applyReaderRefinements(Context context,
-            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
-            throws Exception {
-        JSONObject pack;
-        try(InputStream input=context.getAssets().open("phlibrary_reader_refinements_v178.json");
-            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
-            byte[] buffer=new byte[8192]; int n;
-            while((n=input.read(buffer))!=-1){
-                if(bytes.size()+n>120000)throw new IllegalStateException("Reader pack exceeds limit");
-                bytes.write(buffer,0,n);
-            }
-            pack=new JSONObject(bytes.toString("UTF-8"));
-        }
-        if(!"1.78-fluent-reader".equals(pack.optString("edition")) ||
-           !"1.75".equals(pack.optString("baseEdition")) ||
-           !"1.76-editorial".equals(pack.optString("editorialEdition")) ||
-           !"0.3.1".equals(pack.optString("rarityModel")) ||
-           pack.getInt("speciesCount")!=714)
-            throw new IllegalStateException("Unexpected reader refinement edition");
-        JSONArray edits=pack.getJSONArray("records");
-        if(edits.length()!=pack.getInt("changed") || edits.length()<40)
-            throw new IllegalStateException("Incomplete reader refinements");
-        HashSet<String> touched=new HashSet<>();
-        for(int i=0;i<edits.length();i++){
-            JSONObject entry=edits.getJSONObject(i);
-            String scientific=entry.getString("s");
-            Integer at=index.get(key(scientific));
-            String old=entry.getString("old");
-            String revised=entry.getString("revised");
-            if(at==null || !touched.add(scientific) ||
-               old.length()<30 || revised.length()<25 ||
-               revised.contains("rather than") || revised.contains("\\n"))
-                throw new IllegalStateException("Invalid reader correction "+scientific);
-            JSONObject target=rows.get(at);
-            if(!scientific.equals(target.optString("s")))
-                throw new IllegalStateException("Reader taxon mismatch "+scientific);
-            String before=target.getString("p");
-            int pos=before.indexOf(old);
-            if(pos<0 || before.indexOf(old,pos+old.length())>=0)
-                throw new IllegalStateException("Reader correction anchor mismatch "+scientific);
-            String after=before.substring(0,pos)+revised+before.substring(pos+old.length());
-            JSONArray sources=target.getJSONArray("r");
-            for(int j=0;j<sources.length();j++){
-                String cited=sources.getJSONObject(j).getString("short");
-                if(before.contains(cited) && !after.contains(cited))
-                    throw new IllegalStateException("Lost citation in "+scientific);
-            }
-            target.put("p",after);
-        }
-    }
+    public static String sourceEdition(){return "Book 01 · Text v1.82 · Rarity v0.3.4";}
 
-    /** Educational field-search cues are independent of the research source paragraph.
-     *  Read-only, species-keyed and never used to calculate Discovery Rarity.
-     *  Each inference is phrased as field guidance, not confirmed habitat selection. */
-    private static void applyHabitatCues(Context context,
-            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
-            throws Exception {
-        JSONObject file;
-        try(InputStream input=context.getAssets().open("phlibrary_habitat_cues_v177.json");
-            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
-            byte[] buffer=new byte[8192];
-            int count;
-            while((count=input.read(buffer))!=-1){
-                if(bytes.size()+count>150000)
-                    throw new IllegalStateException("Habitat cue pack exceeds limit");
-                bytes.write(buffer,0,count);
-            }
-            file=new JSONObject(bytes.toString("UTF-8"));
+    private static void referencesDialog(Activity a,JSONArray refs){
+        if(refs==null||refs.length()==0){
+            new AlertDialog.Builder(a).setMessage("This account preserves its author–date citations in the article. Use the full book bibliography to inspect sources.")
+                .setPositiveButton("Browse bibliography",(d,w)->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class)))
+                .setNegativeButton("Close",null).show();return;
         }
-        if(!"1.77-habitat-cues".equals(file.optString("edition")) ||
-           !"1.75".equals(file.optString("baseEdition")) ||
-           !"1.76-editorial".equals(file.optString("editorialEdition")) ||
-           !"0.3.1".equals(file.optString("rarityModel")) ||
-           file.getInt("speciesCount")!=714)
-            throw new IllegalStateException("Unexpected PHLibrary habitat pack");
-        JSONArray details=file.getJSONArray("records");
-        if(details.length()!=file.getInt("changed") ||
-           details.length()<100 || details.length()>714)
-            throw new IllegalStateException("Incomplete habitat field notes");
-        HashSet<String> updated=new HashSet<>();
-        for(int i=0;i<details.length();i++){
-            JSONObject detail=details.getJSONObject(i);
-            String scientific=detail.getString("s");
-            String normalized=key(scientific);
-            Integer position=index.get(normalized);
-            String cue=detail.getString("fieldCue").trim();
-            String basis=detail.getString("basis");
-            if(position==null || !updated.add(normalized) ||
-               cue.length()<45 || cue.length()>450 ||
-               cue.contains("\\n") || cue.contains("\\r") ||
-               !("source_summary".equals(basis) ||
-                 "field_guide_inference_or_prior-account-synthesis".equals(basis)))
-                throw new IllegalStateException("Invalid habitat cue for "+scientific);
-            JSONObject target=rows.get(position);
-            if(!scientific.equals(target.optString("s")) ||
-               !detail.getString("group").equals(target.optString("g")))
-                throw new IllegalStateException("Taxon mismatch in habitat cue");
-            String narrative=target.getString("p").trim();
-            String anchor=detail.getString("anchor").trim();
-            String mode=detail.getString("mode");
-            int insertion=narrative.indexOf(anchor);
-            if(anchor.length()<35 || insertion<0 ||
-                narrative.indexOf(anchor,insertion+anchor.length())>=0 ||
-                !("insert".equals(mode) || "replace".equals(mode) ||
-                  "retain".equals(mode)))
-                throw new IllegalStateException("Habitat placement mismatch "+scientific);
-            String expanded="retain".equals(mode)?narrative:
-                narrative.substring(0,insertion)+
-                ("replace".equals(mode)?cue:anchor+" "+cue)+
-                narrative.substring(insertion+anchor.length());
-            if(detail.has("newReference")){
-                JSONObject source=detail.getJSONObject("newReference");
-                String shortCitation=source.getString("short");
-                if(!cue.contains("("+shortCitation+")") ||
-                   source.getString("full").trim().isEmpty() ||
-                   source.getString("url").trim().isEmpty())
-                    throw new IllegalStateException("Habitat source missing "+scientific);
-                JSONArray bibliography=target.getJSONArray("r");
-                boolean alreadyPresent=false;
-                for(int j=0;j<bibliography.length();j++){
-                    if(shortCitation.equals(bibliography.getJSONObject(j).optString("short"))){
-                        alreadyPresent=true; break;
-                    }
-                }
-                if(!alreadyPresent)bibliography.put(source);
-            }
-            target.put("p",expanded);
-        }
-    }
-    /** Final positive-prose pass, applied after source-specific habitat integration. */
-    private static void applyReaderPolish(Context context,
-            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
-            throws Exception {
-        JSONObject pack;
-        try(InputStream input=context.getAssets().open("phlibrary_reader_polish_v179.json");
-            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
-            byte[] buffer=new byte[8192]; int n;
-            while((n=input.read(buffer))!=-1){
-                if(bytes.size()+n>130000)throw new IllegalStateException("Final prose pack exceeds limit");
-                bytes.write(buffer,0,n);
-            }
-            pack=new JSONObject(bytes.toString("UTF-8"));
-        }
-        if(!"1.79-reader-polish".equals(pack.optString("edition")) ||
-           !"1.75".equals(pack.optString("baseEdition")) ||
-           !"1.78-fluent-reader".equals(pack.optString("readerEdition")) ||
-           !"1.77-habitat-cues".equals(pack.optString("habitatEdition")) ||
-           !"0.3.1".equals(pack.optString("rarityModel")) ||
-           pack.getInt("speciesCount")!=714)
-            throw new IllegalStateException("Unexpected final PHLibrary prose pack");
-        JSONArray edits=pack.getJSONArray("records");
-        if(edits.length()!=pack.getInt("changed") || edits.length()<70)
-            throw new IllegalStateException("Incomplete final prose edit");
-        HashSet<String> changed=new HashSet<>();
-        for(int i=0;i<edits.length();i++){
-            JSONObject entry=edits.getJSONObject(i);
-            String scientific=entry.getString("s");
-            Integer at=index.get(key(scientific));
-            String old=entry.getString("old");
-            String revised=entry.getString("revised");
-            if(at==null || !changed.add(scientific+"::"+old) ||
-               old.length()<30 || revised.length()<25 ||
-               revised.contains("rather than") || revised.contains("\\n"))
-                throw new IllegalStateException("Invalid final prose correction "+scientific);
-            JSONObject target=rows.get(at);
-            if(!scientific.equals(target.optString("s")))
-                throw new IllegalStateException("Final prose taxon mismatch "+scientific);
-            String before=target.getString("p");
-            int pos=before.indexOf(old);
-            if(pos<0 || before.indexOf(old,pos+old.length())>=0)
-                throw new IllegalStateException("Final prose anchor mismatch "+scientific);
-            String after=before.substring(0,pos)+revised+before.substring(pos+old.length());
-            JSONArray sources=target.getJSONArray("r");
-            for(int j=0;j<sources.length();j++){
-                String cited=sources.getJSONObject(j).getString("short");
-                if(before.contains(cited) && !after.contains(cited))
-                    throw new IllegalStateException("Lost final prose citation "+scientific);
-            }
-            target.put("p",after);
-        }
-    }
-
-    /** Document-reviewed habitat passages merge into continuous natural-history
-     *  prose without changing source taxonomy, conservation data, or rarity. */
-    private static void applyHabitatIntegration(Context context,
-            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
-            throws Exception {
-        JSONObject pack;
-        try(InputStream input=context.getAssets().open("phlibrary_habitat_integration_v180.json");
-            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
-            byte[] buffer=new byte[8192]; int n;
-            while((n=input.read(buffer))!=-1){
-                if(bytes.size()+n>85000)
-                    throw new IllegalStateException("Integrated habitat pack exceeds limit");
-                bytes.write(buffer,0,n);
-            }
-            pack=new JSONObject(bytes.toString("UTF-8"));
-        }
-        if(!"1.80-integrated-habitats".equals(pack.optString("edition")) ||
-           !"1.75".equals(pack.optString("baseEdition")) ||
-           !"1.76-editorial".equals(pack.optString("editorialEdition")) ||
-           !"1.79-reader-polish".equals(pack.optString("readerEdition")) ||
-           !"1.77-habitat-cues".equals(pack.optString("habitatEdition")) ||
-           !"0.3.1".equals(pack.optString("rarityModel")) ||
-           pack.getInt("speciesCount")!=714 ||
-           pack.getInt("reviewedSpecies")!=100 ||
-           pack.getInt("integratedSpecies")!=47)
-            throw new IllegalStateException("Unexpected PHLibrary integration edition");
-        JSONArray edits=pack.getJSONArray("records");
-        if(edits.length()!=pack.getInt("changed") || edits.length()!=48)
-            throw new IllegalStateException("Incomplete habitat integration");
-        HashSet<String> uniqueEdits=new HashSet<>();
-        HashSet<String> touchedSpecies=new HashSet<>();
-        for(int i=0;i<edits.length();i++){
-            JSONObject change=edits.getJSONObject(i);
-            String scientific=change.getString("s");
-            Integer at=index.get(key(scientific));
-            String old=change.getString("old");
-            String revised=change.getString("revised");
-            if(at==null || old.length()<35 || revised.length()<35 ||
-               revised.contains("rather than") || revised.contains("\\n") ||
-               !uniqueEdits.add(scientific+"::"+old))
-                throw new IllegalStateException("Invalid habitat integration "+scientific);
-            JSONObject target=rows.get(at);
-            if(!scientific.equals(target.optString("s")))
-                throw new IllegalStateException("Integration taxon mismatch "+scientific);
-            String before=target.getString("p");
-            int pos=before.indexOf(old);
-            if(pos<0 || before.indexOf(old,pos+old.length())>=0)
-                throw new IllegalStateException("Integration anchor mismatch "+scientific);
-            String after=before.substring(0,pos)+revised+before.substring(pos+old.length());
-            JSONArray sources=target.getJSONArray("r");
-            for(int j=0;j<sources.length();j++){
-                String citation=sources.getJSONObject(j).getString("short");
-                if(before.contains(citation) && !after.contains(citation))
-                    throw new IllegalStateException("Lost integration citation "+scientific);
-            }
-            target.put("p",after);
-            touchedSpecies.add(scientific);
-        }
-        if(touchedSpecies.size()!=47)
-            throw new IllegalStateException("Integration taxon coverage mismatch");
-    }
-
-    private static synchronized void load(Context context) {
-        if(initialized)return;
-        initialized=true;
-        ArrayList<JSONObject> rows=new ArrayList<>();
-        HashMap<String,Integer> index=new HashMap<>();
-        try {
-            for(int part=1;part<=8;part++) {
-                JSONObject source=readPart(context,part);
-                if(!"1.75".equals(source.optString("edition")) ||
-                   !"0.3.1".equals(source.optString("rarityModel")))
-                    throw new IllegalStateException("Unexpected PHLibrary source edition");
-                JSONArray batch=source.getJSONArray("records");
-                for(int i=0;i<batch.length();i++) {
-                    JSONObject row=batch.getJSONObject(i);
-                    String scientific=row.optString("s").trim();
-                    if(scientific.isEmpty() || row.optString("p").trim().isEmpty() ||
-                       row.optString("t").trim().isEmpty() ||
-                       index.containsKey(key(scientific)))
-                        throw new IllegalStateException("Incomplete or duplicate book record");
-                    index.put(key(scientific),rows.size());
-                    rows.add(row);
-                }
-            }
-            if(rows.size()!=714)throw new IllegalStateException("Incomplete PHLibrary edition");
-            applyEditorial(context,rows,index);
-            applyReaderRefinements(context,rows,index);
-            applyHabitatCues(context,rows,index);
-            applyReaderPolish(context,rows,index);
-            applyHabitatIntegration(context,rows,index);
-            // The source PAIC714 checklist retains an older combination for
-            // this bat. The Book 01 account documents the named transfer.
-            Integer formerBat=index.get(key("Mops plicatus"));
-            if(formerBat!=null)index.put(key("Chaerephon plicata"),formerBat);
-            ENTRIES.addAll(rows);
-            BY_NAME.putAll(index);
-        } catch(Exception ex) {
-            problem="PHLibrary Book 01 data is unavailable. Please use the source catalog.";
-            ENTRIES.clear();
-            BY_NAME.clear();
-        }
-    }
-    public static boolean ready(Context context) {
-        load(context);
-        return ENTRIES.size()==714;
-    }
-    public static String availabilityMessage(Context context) {
-        load(context);
-        return problem.isEmpty()?"Book 01 · Greater Mindanao · Reader v1.80":problem;
-    }
-    public static List<JSONObject> entries(Context context) {
-        load(context);
-        return new ArrayList<>(ENTRIES);
-    }
-    public static boolean has(Context context,String scientific) {
-        load(context);
-        return BY_NAME.containsKey(key(scientific));
-    }
-    private static JSONObject find(Context context,String scientific) {
-        load(context);
-        Integer position=BY_NAME.get(key(scientific));
-        return position==null?null:ENTRIES.get(position);
-    }
-    private static void referenceDialog(Activity a,JSONArray refs) {
-        if(refs==null || refs.length()==0)return;
         String[] titles=new String[refs.length()];
-        for(int i=0;i<refs.length();i++) {
-            JSONObject row=refs.optJSONObject(i);
-            titles[i]=row==null?"Source":row.optString("short","Source");
+        for(int i=0;i<refs.length();i++){
+            JSONObject r=refs.optJSONObject(i);
+            titles[i]=r==null?"Unresolved citation":r.optString("short","Source");
         }
-        new AlertDialog.Builder(a)
-            .setTitle("Account references")
-            .setItems(titles,(dialog,selected)->{
-                JSONObject selectedRef=refs.optJSONObject(selected);
-                if(selectedRef==null)return;
-                String brief=selectedRef.optString("short");
-                String full=selectedRef.optString("full");
-                String detail=full.trim().isEmpty()?brief:full;
-                TextView text=label(a,detail,14,UiKit.INK,false);
-                text.setPadding(dp(a,22),dp(a,14),dp(a,22),dp(a,8));
-                text.setTextIsSelectable(true);
-                text.setAutoLinkMask(Linkify.WEB_URLS);
-                text.setMovementMethod(LinkMovementMethod.getInstance());
-                new AlertDialog.Builder(a).setTitle("Reference")
-                    .setView(text).setPositiveButton("Close",null).show();
+        new AlertDialog.Builder(a).setTitle("Account citations")
+            .setItems(titles,(dialog,index)->{
+                JSONObject source=refs.optJSONObject(index);if(source==null)return;
+                String full=source.optString("full");
+                String shortRef=source.optString("short");
+                String text=full.trim().isEmpty()?shortRef:full;
+                TextView body=label(a,text,15,UiKit.INK,false);
+                body.setPadding(dp(a,20),dp(a,14),dp(a,20),dp(a,10));
+                body.setTextIsSelectable(true);body.setAutoLinkMask(Linkify.WEB_URLS);
+                body.setMovementMethod(LinkMovementMethod.getInstance());
+                new AlertDialog.Builder(a).setTitle("Citation")
+                    .setView(body)
+                    .setNeutralButton("Full bibliography",(d,w)->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class).putExtra("phlibrary_bib_search",shortRef)))
+                    .setPositiveButton("Close",null).show();
             })
+            .setNeutralButton("Full bibliography",(d,w)->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class)))
             .setNegativeButton("Close",null).show();
     }
-    private static void addNav(Activity a,LinearLayout parent,int position,
-                               Consumer<String> navigate) {
-        boolean stacked=a.getResources().getConfiguration().screenWidthDp<350 ||
-            a.getResources().getConfiguration().fontScale>=1.6f;
-        LinearLayout bar=new LinearLayout(a);
-        bar.setOrientation(stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        bar.setPadding(0,dp(a,12),0,dp(a,8));
-        if(position>0) {
-            JSONObject before=ENTRIES.get(position-1);
-            Button previous=UiKit.button(a,"Previous species","quiet");
-            previous.setContentDescription("Previous: "+before.optString("c")+" ("+
-                before.optString("s")+")");
-            previous.setOnClickListener(v->navigate.accept(before.optString("s")));
-            bar.addView(previous,stacked?new LinearLayout.LayoutParams(-1,dp(a,52)):
-                new LinearLayout.LayoutParams(0,dp(a,52),1));
-        }
-        if(position<ENTRIES.size()-1) {
-            JSONObject after=ENTRIES.get(position+1);
-            Button next=UiKit.button(a,"Next species","quiet");
-            next.setContentDescription("Next: "+after.optString("c")+" ("+
-                after.optString("s")+")");
-            next.setOnClickListener(v->navigate.accept(after.optString("s")));
-            LinearLayout.LayoutParams lp=stacked?
-                new LinearLayout.LayoutParams(-1,dp(a,52)):
-                new LinearLayout.LayoutParams(0,dp(a,52),1);
-            if(!stacked && position>0)lp.leftMargin=dp(a,8);
-            else if(stacked && position>0)lp.topMargin=dp(a,8);
-            bar.addView(next,lp);
-        }
-        parent.addView(bar);
+    private static void addNavigation(Activity a,LinearLayout target,int index,Consumer<String> onName){
+        boolean vertical=a.getResources().getConfiguration().screenWidthDp<350 || a.getResources().getConfiguration().fontScale>=1.6f;
+        LinearLayout nav=new LinearLayout(a);nav.setOrientation(vertical?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        nav.setPadding(0,dp(a,14),0,dp(a,8));
+        if(index>0){JSONObject prev=ENTRIES.get(index-1);
+            Button b=UiKit.button(a,"Previous species","quiet");
+            b.setContentDescription("Previous: "+prev.optString("s"));
+            b.setOnClickListener(v->onName.accept(prev.optString("s")));
+            nav.addView(b,vertical?new LinearLayout.LayoutParams(-1,dp(a,52)):new LinearLayout.LayoutParams(0,dp(a,52),1));}
+        if(index<ENTRIES.size()-1){JSONObject next=ENTRIES.get(index+1);
+            Button b=UiKit.button(a,"Next species","quiet");
+            b.setContentDescription("Next: "+next.optString("s"));
+            b.setOnClickListener(v->onName.accept(next.optString("s")));
+            LinearLayout.LayoutParams lp=vertical?new LinearLayout.LayoutParams(-1,dp(a,52)):new LinearLayout.LayoutParams(0,dp(a,52),1);
+            if(index>0){if(vertical)lp.topMargin=dp(a,8);else lp.leftMargin=dp(a,8);}
+            nav.addView(b,lp);}
+        target.addView(nav);
     }
-    /**
-     * The entire body is exactly one continuous native TextView paragraph.
-     * Author-year source strings remain unchanged in that paragraph; the
-     * compact reference strip at the bottom allows bibliography inspection.
-     */
-    public static boolean render(Activity a,LinearLayout parent,String scientific,
-                                 Consumer<String> navigate) {
+    /** One continuous narrative paragraph, preserving author–year citation text. */
+    public static boolean render(Activity a,LinearLayout parent,String scientific,Consumer<String> navigate){
         JSONObject record=find(a,scientific);
         if(record==null)return false;
-        Integer pos=BY_NAME.get(key(scientific));
-        if(pos==null)return false;
-        parent.removeAllViews();
-        parent.setPadding(0,dp(a,9),0,dp(a,18));
-        // Text-only educational book reading; photographs are deliberately omitted.
-        TextView kicker=label(a,
-            a.getResources().getConfiguration().fontScale>=1.6f?
-            "GREATER MINDANAO":"PHLIBRARY  ·  GREATER MINDANAO  ·  BOOK 01",
-            11,UiKit.MUTED,true);
-        kicker.setLetterSpacing(0.04f);
-        kicker.setPadding(0,dp(a,13),0,dp(a,8));
-        parent.addView(kicker);
-        String common=record.optString("c").trim();
-        TextView title=label(a,common.isEmpty()?scientific:common,23,UiKit.INK,true);
-        title.setPadding(0,0,0,dp(a,3));
-        parent.addView(title);
+        Integer pos=BY_NAME.get(key(scientific));if(pos==null)return false;
+        parent.removeAllViews();parent.setPadding(0,dp(a,9),0,dp(a,18));
+        TextView kicker=label(a,"PHLIBRARY  ·  GREATER MINDANAO  ·  BOOK 01",11,UiKit.MUTED,true);
+        kicker.setLetterSpacing(.04f);kicker.setPadding(0,dp(a,12),0,dp(a,8));parent.addView(kicker);
+        String common=record.optString("c");
+        TextView heading=label(a,common.isEmpty()?scientific:common,23,UiKit.INK,true);
+        heading.setPadding(0,0,0,dp(a,3));parent.addView(heading);
         TextView latin=label(a,record.optString("s"),17,UiKit.INK,false);
-        latin.setTypeface(null,Typeface.ITALIC);
-        latin.setPadding(0,0,0,dp(a,5));
-        parent.addView(latin);
-        TextView taxonomy=label(a,record.optString("o")+"  ·  "+
-            record.optString("f"),13,UiKit.MUTED,false);
-        taxonomy.setPadding(0,0,0,dp(a,9));
-        parent.addView(taxonomy);
-        // Rarity, IUCN and origin retain their separate source-defined labels.
-        // Original Word edition badge order and wording are preserved.
-        String badgeLine=record.optString("b")
-            .replace("↝","").replace("◉","").replace("◆","").replace("✦","")
+        latin.setTypeface(null,Typeface.ITALIC);latin.setPadding(0,0,0,dp(a,5));parent.addView(latin);
+        TextView taxonomy=label(a,record.optString("o")+" · "+record.optString("f"),13,UiKit.MUTED,false);
+        taxonomy.setPadding(0,0,0,dp(a,9));parent.addView(taxonomy);
+        String badges=record.optString("b").replace("↝","").replace("◉","").replace("◆","").replace("✦","")
             .replace("     •     ","   ·   ").replaceAll(" +"," ").trim();
-        TextView badges=label(a,badgeLine,13,UiKit.FOREST,true);
-        badges.setPadding(dp(a,1),dp(a,8),dp(a,1),dp(a,9));
-        badges.setLineSpacing(dp(a,3),1.08f);
-        parent.addView(badges);
-        View separator=new View(a);
-        separator.setBackgroundColor(UiKit.BORDER);
-        LinearLayout.LayoutParams separatorLp=new LinearLayout.LayoutParams(-1,dp(a,1));
-        separatorLp.topMargin=dp(a,17);
-        separatorLp.bottomMargin=dp(a,17);
-        parent.addView(separator,separatorLp);
+        if("Unranked".equals(record.optString("t")))badges=(badges.isEmpty()?"":badges+" · ")+"Rarity unranked · Provisional identification";
+        TextView status=label(a,badges,13,UiKit.FOREST,true);
+        status.setLineSpacing(dp(a,3),1.08f);status.setPadding(dp(a,1),dp(a,8),dp(a,1),dp(a,9));parent.addView(status);
+        View rule=new View(a);rule.setBackgroundColor(UiKit.BORDER);
+        LinearLayout.LayoutParams ruleLp=new LinearLayout.LayoutParams(-1,dp(a,1));ruleLp.topMargin=dp(a,17);ruleLp.bottomMargin=dp(a,17);
+        parent.addView(rule,ruleLp);
         TextView article=label(a,record.optString("p"),16.5f,UiKit.INK,false);
-        article.setLineSpacing(dp(a,4),1.1f);
-        article.setTextIsSelectable(true);
+        article.setLineSpacing(dp(a,4),1.1f);article.setTextIsSelectable(true);
         parent.addView(article,new LinearLayout.LayoutParams(-1,-2));
-
         JSONArray refs=record.optJSONArray("r");
-        if(refs!=null && refs.length()>0) {
-            View line=new View(a);
-            line.setBackgroundColor(UiKit.BORDER);
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(a,1));
-            lp.topMargin=dp(a,20); lp.bottomMargin=dp(a,12);
-            parent.addView(line,lp);
-            TextView heading=label(a,"REFERENCES",12,UiKit.MUTED,true);
-            heading.setLetterSpacing(.08f);
-            parent.addView(heading);
-            StringBuilder listing=new StringBuilder();
-            for(int i=0;i<refs.length();i++) {
-                JSONObject ref=refs.optJSONObject(i);
-                if(ref==null)continue;
-                if(listing.length()>0)listing.append("  ·  ");
-                listing.append(ref.optString("short"));
-            }
-            TextView small=label(a,listing.toString(),12,UiKit.MUTED,false);
-            small.setLineSpacing(dp(a,3),1.03f);
-            small.setPadding(0,dp(a,6),0,dp(a,7));
-            small.setContentDescription("Account references. Tap for bibliographic details. "+
-                listing);
-            small.setClickable(true);
-            small.setFocusable(true);
-            small.setOnClickListener(v->referenceDialog(a,refs));
-            parent.addView(small);
+        if(refs!=null&&refs.length()>0){
+            TextView sources=label(a,"REFERENCES · "+refs.length()+" citation"+(refs.length()==1?"":"s")+" · Open",12,UiKit.FOREST,true);
+            sources.setPadding(0,dp(a,23),0,dp(a,17));sources.setClickable(true);sources.setFocusable(true);
+            sources.setContentDescription("Open source citations and full bibliography");
+            sources.setOnClickListener(v->referencesDialog(a,refs));parent.addView(sources);
         }
-        TextView edition=label(a,"PHLibrary Book 01 · Text v1.80 · Rarity v0.3.1",
-            11,UiKit.MUTED,false);
-        edition.setPadding(0,dp(a,5),0,dp(a,5));
-        parent.addView(edition);
-        addNav(a,parent,pos,navigate);
+        TextView edition=label(a,sourceEdition(),11,UiKit.MUTED,false);
+        edition.setPadding(0,dp(a,5),0,dp(a,6));parent.addView(edition);
+        addNavigation(a,parent,pos,navigate);
         return true;
     }
 }

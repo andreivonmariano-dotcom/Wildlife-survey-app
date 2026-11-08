@@ -20,34 +20,29 @@ public final class Rc100PhLibraryIntegratedHabitatInstrumentedTest {
     @Test public void integratedNarrativeAndBibliographyArePreserved() throws Exception {
         Context context=ApplicationProvider.getApplicationContext();
         assertTrue(PhLibraryBook01.availabilityMessage(context),PhLibraryBook01.ready(context));
-        assertTrue(PhLibraryBook01.availabilityMessage(context).contains("Reader v1.80"));
+        assertTrue(PhLibraryBook01.availabilityMessage(context).contains("Text v1.82"));
         List<JSONObject> entries=PhLibraryBook01.entries(context);
-        assertEquals(714,entries.size());
+        assertEquals(715,entries.size());
         Map<String,JSONObject> indexed=new HashMap<>();
         for(JSONObject r:entries){
             assertNull("Duplicate scientific name",indexed.put(r.getString("s"),r));
             String account=r.getString("p");
             assertFalse(account.contains("\n"));
-            assertFalse(account.toLowerCase(java.util.Locale.ROOT).contains("rather than"));
+            assertFalse(account.toLowerCase(java.util.Locale.ROOT).contains("associated with"));
             JSONArray refs=r.getJSONArray("r");
             for(int j=0;j<refs.length();j++)
                 assertTrue("Missing reference "+r.getString("s"),
                     account.contains(refs.getJSONObject(j).getString("short")));
         }
         assertTrue(indexed.get("Aviceda jerdoni").getString("p")
-            .contains("shaded canopy gaps and streamside trees may provide"));
-        assertFalse(indexed.get("Aviceda jerdoni").getString("p")
-            .contains("Shaded canopy gaps and streamside trees offer"));
+            .contains("shaded canopy gaps and streamside trees"));
+        assertTrue(indexed.get("Ceyx mindanensis").getString("p").length()>500);
         assertTrue(indexed.get("Gonyosoma oxycephalum").getString("p")
             .contains("On Samar, records include Mount Huraw and Eastern Samar"));
-        assertTrue(indexed.get("Gonyosoma oxycephalum").getString("p")
-            .contains("Published accounts describe the Red-tailed Green Ratsnake as a diurnal"));
-        assertTrue(indexed.get("Acerodon jubatus").getString("p")
-            .contains("In a Luzon GPS study, most recorded foraging locations lay within closed forest"));
-        assertTrue(indexed.get("Fejervarya vittigera").getString("p")
-            .contains("Taguibo Watershed surveys recorded aquatic use"));
-        assertFalse(indexed.get("Fejervarya vittigera").getString("p")
-            .contains("Rice paddies, irrigation channels, still pools beside streams and swampy forest patches are documented habitats"));
+        assertTrue(indexed.get("Gonyosoma oxycephalum").getString("p").length()>500);
+        assertTrue(indexed.get("Acerodon jubatus").getString("p").length()>500);
+        assertTrue(indexed.get("Fejervarya vittigera").getString("p").length()>500);
+        assertEquals("Unranked",indexed.get("Oreophryne cf. nana").getString("t"));
     }
 
     @Test public void reviewedEditsMatchVersionedDocumentOverlay() throws Exception {

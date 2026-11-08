@@ -39,6 +39,17 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
         }
         return null;
     }
+    private static android.widget.ListView findList(View view){
+        if(view instanceof android.widget.ListView)return (android.widget.ListView)view;
+        if(view instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)view;
+            for(int i=0;i<group.getChildCount();i++){
+                android.widget.ListView match=findList(group.getChildAt(i));
+                if(match!=null)return match;
+            }
+        }
+        return null;
+    }
     private static ScrollView findScroll(View view){
         if(view instanceof ScrollView)return (ScrollView)view;
         if(view instanceof ViewGroup){
@@ -77,7 +88,7 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
         }catch(Exception error){throw new IllegalStateException(error);}
         bitmap.recycle();
     }
-    @Test public void offlineDirectoryHas714Entries() {
+    @Test public void offlineDirectoryHas715Entries() {
         Intent intent=new Intent(ApplicationProvider.getApplicationContext(),
             PhLibraryDirectoryActivity.class);
         try(ActivityScenario<PhLibraryDirectoryActivity> scenario=ActivityScenario.launch(intent)) {
@@ -85,8 +96,13 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
             scenario.onActivity(a->{
                 assertTrue("Complete edition",PhLibraryBook01.ready(a));
                 assertEquals(715,PhLibraryBook01.entries(a).size());
-                assertNotNull(findText(a.getWindow().getDecorView(),"GREATER MINDANAO"));
-                assertNotNull(findText(a.getWindow().getDecorView(),"715 accounts"));
+                // At 200% font, the adaptive explorer intentionally hides the
+                // decorative region kicker and shortens the title to "Species".
+                // Validate the actual 715-item virtualized source catalogue instead.
+                assertNotNull(findText(a.getWindow().getDecorView(),"SPECIES ATLAS"));
+                android.widget.ListView results=findList(a.getWindow().getDecorView());
+                assertNotNull("Searchable source list visible",results);
+                assertEquals("Complete book catalogue",715,results.getAdapter().getCount());
                 capture(a,"rc96-"+preset()+"-directory.png");
             });
         }

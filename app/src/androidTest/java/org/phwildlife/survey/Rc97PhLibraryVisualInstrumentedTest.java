@@ -61,7 +61,7 @@ public final class Rc97PhLibraryVisualInstrumentedTest {
     }
     private static View references(View root){
         CharSequence description=root.getContentDescription();
-        if(description!=null && description.toString().startsWith("Account references."))
+        if(description!=null && description.toString().startsWith("Open source citations"))
             return root;
         if(root instanceof ViewGroup){
             ViewGroup group=(ViewGroup)root;
@@ -94,7 +94,7 @@ public final class Rc97PhLibraryVisualInstrumentedTest {
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
                 assertNotNull(find(root,"Greater Mindanao"));
-                assertNotNull(find(root,"714 species"));
+                assertNotNull(find(root,"715 accounts"));
                 assertNotNull(find(root,"Browse wildlife groups"));
                 assertNotNull(find(root,"Discovery Rarity"));
                 View back=find(root,"Back");
@@ -123,8 +123,8 @@ public final class Rc97PhLibraryVisualInstrumentedTest {
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
-                assertEquals(714,PhLibraryBook01.entries(a).size());
-                assertNotNull(find(root,"714 species"));
+                assertEquals(715,PhLibraryBook01.entries(a).size());
+                assertNotNull(find(root,"715 accounts"));
                 assertNotNull(find(root,"GREATER MINDANAO"));
                 assertNotNull(find(root,"Jerdon's Baza"));
                 assertNotNull(find(root,"Rarity: All"));
@@ -137,7 +137,7 @@ public final class Rc97PhLibraryVisualInstrumentedTest {
             });
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             scenario.onActivity(a->{
-                assertNotNull(find(a.getWindow().getDecorView(),"408 species found"));
+                assertNotNull(find(a.getWindow().getDecorView(),"409 accounts found"));
             });
         }
     }

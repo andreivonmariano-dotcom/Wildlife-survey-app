@@ -98,7 +98,9 @@ public final class PhLibrary2Ui {
         caption.setLineSpacing(dp(a,2),1.05f);
         LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(-1,-2);cp.topMargin=dp(a,8);content.addView(caption,cp);
         frame.addView(content,new FrameLayout.LayoutParams(-1,-2,Gravity.TOP));
-        frame.setLayoutParams(new LinearLayout.LayoutParams(-1,height));
+        // At 200% text scaling, let the hero grow with its real text content.
+        // A fixed height clipped the description below the forest illustration.
+        frame.setLayoutParams(new LinearLayout.LayoutParams(-1,-2));
         return frame;
     }
     /** Layered Philippine rainforest atmosphere, not a species-specific habitat illustration. */

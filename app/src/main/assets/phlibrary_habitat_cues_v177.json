@@ -592,8 +592,13 @@
     {
       "s": "Acerodon jubatus",
       "group": "Mammals",
-      "fieldCue": "Foraging observations concentrate in closed forest with fruiting trees, while communal tree roosts may lie in a different land-cover setting.",
-      "basis": "field_guide_inference_or_prior-account-synthesis"
+      "fieldCue": "In one Luzon GPS study, most tracked foraging locations were in closed forest, although roost locations could occur in other settings (de Jong et al., 2013).",
+      "basis": "source_summary",
+      "newReference": {
+        "short": "de Jong et al., 2013",
+        "full": "de Jong, C., Field, H., Tagtag, A., Hughes, T., Dechmann, D., Jayme, S., et al. (2013). Foraging behaviour and landscape utilisation by the endangered golden-crowned flying fox (Acerodon jubatus), the Philippines. PLOS ONE, 8(11), e79665. https://doi.org/10.1371/journal.pone.0079665",
+        "url": "https://doi.org/10.1371/journal.pone.0079665"
+      }
     },
     {
       "s": "Alionycteris paucidentata",

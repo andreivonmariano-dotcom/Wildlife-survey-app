@@ -6,8 +6,8 @@
   "habitatEdition": "1.77-habitat-cues",
   "rarityModel": "0.3.1",
   "speciesCount": 714,
-  "changed": 82,
-  "scope": "Neutral, source-preserving revision of defensive metadata and taxonomic wording for an educational field guide.",
+  "changed": 94,
+  "scope": "Reader-oriented corrections to contrast, meta-caveat, identification, and habitat prose, retaining source references and actual evidentiary limits.",
   "records": [
     {
       "s": "Anas zonorhyncha",
@@ -418,6 +418,66 @@
       "s": "Sundasciurus mindanensis",
       "old": "EltonTraits describes mainly daytime foraging and a diet of fruit, other plant matter and some invertebrates; the compilation does not determine how frequently the species uses either habitat in Greater Mindanao (Wilman et al., 2014).",
       "revised": "EltonTraits describes daytime foraging on fruit, other plant matter and some invertebrates; habitat-use frequencies in Greater Mindanao remain unmeasured (Wilman et al., 2014)."
+    },
+    {
+      "s": "Aerodramus amelis",
+      "old": "Kitanglad review warns that many A. amelis and A. mearnsi observations cannot be separated reliably while birds are in flight.",
+      "revised": "At Mount Kitanglad, similar swiftlets, including A. amelis and A. mearnsi, can be difficult to identify during brief flights."
+    },
+    {
+      "s": "Grus monacha",
+      "old": "The isolated historical Siargao record does not demonstrate regular local habitat use.",
+      "revised": "The historical Siargao sighting is an isolated observation, with regular local habitat use still sparsely documented."
+    },
+    {
+      "s": "Corvus philippinus",
+      "old": "Historical Philippine records under C. macrorhynchos need assessment before reassignment to C. philippinus, especially when they do not preserve identifying subspecies or specimen information (Cornell Lab of Ornithology, 2024).",
+      "revised": "Older Philippine records under C. macrorhynchos require specimen and subspecies comparison before assignment to C. philippinus (Cornell Lab of Ornithology, 2024)."
+    },
+    {
+      "s": "Platymantis jagorii",
+      "old": "It was formerly confused with populations identified as P. dorsalis, so historical records under that name are not necessarily attributable to this species (Pitogo et al., 2026).",
+      "revised": "Historical records under P. dorsalis include frogs now recognized in several related species (Pitogo et al., 2026)."
+    },
+    {
+      "s": "Aphantophryne nana",
+      "old": "The accepted species is currently confirmed from Camiguin Island, outside the Greater Mindanao PAIC; matching a single superficial character does not establish a new mainland record.",
+      "revised": "Confirmed specimens of Aphantophryne nana come from Camiguin, while mainland look-alikes await further taxonomic study."
+    },
+    {
+      "s": "Boiga dendrophila",
+      "old": "A multilocus analysis found that sampled members of the Boiga dendrophila complex, including B. d. melanota and B. tanahjampeana, do not form a single evolutionary lineage (Weinell et al., 2021).",
+      "revised": "A multilocus analysis recovered several evolutionary lineages among members of the Boiga dendrophila complex, including B. d. melanota and B. tanahjampeana (Weinell et al., 2021)."
+    },
+    {
+      "s": "Emoia ruficauda",
+      "old": "A golden stripe runs along the dark back but does not continue onto the conspicuously reddish-orange tail (Sanguila et al., 2026).",
+      "revised": "A golden stripe crosses the dark back and ends before the conspicuously reddish-orange tail (Sanguila et al., 2026)."
+    },
+    {
+      "s": "Parvoscincus kitangladensis",
+      "old": "The small anterior loreal scale is triangular and does not meet the upper lip scales (Uetz et al., 2026).",
+      "revised": "The small triangular anterior loreal scale is separated from the upper lip scales (Uetz et al., 2026)."
+    },
+    {
+      "s": "Pinoyscincus coxi",
+      "old": "When the hindlimb is pressed forward it does not reach beyond the forelimb elbow.",
+      "revised": "When the hindlimb is pressed forward, its tip reaches the forelimb elbow or a shorter position."
+    },
+    {
+      "s": "Ramphotyphlops olivaceus",
+      "old": "The broad classification does not establish soil, litter, or other retreat sites at named Greater Mindanao localities.",
+      "revised": "The forest classification gives a broad ecological setting, with shelter and foraging substrates sparsely recorded."
+    },
+    {
+      "s": "Ramphotyphlops suluensis",
+      "old": "Records of the species from Basilan should be distinguished from those in the Sulu Archipelago, and the broad forest category does not document where it shelters or forages.",
+      "revised": "Basilan records and those from the Sulu Archipelago belong to separate island groups, while detailed shelter and foraging microhabitats remain sparsely described."
+    },
+    {
+      "s": "Batomys russatus",
+      "old": "The cited original description does not establish its occurrence on mainland Mindanao (Musser et al., 1998).",
+      "revised": "The original species description concerns specimen localities outside mainland Mindanao (Musser et al., 1998)."
     }
   ]
 }

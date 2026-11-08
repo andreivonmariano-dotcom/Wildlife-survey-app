@@ -50,9 +50,9 @@ class Rc98BookEditorial(unittest.TestCase):
                     self.assertTrue(not cite["url"] or cite["url"].startswith("https://"))
 
     def test_habitat_edits_are_not_confused_with_new_field_evidence(self):
-        self.assertEqual(self.overlay["enriched"],7)
+        self.assertEqual(self.overlay["enriched"],9)
         self.assertEqual(sum(f["kind"]=="source-enriched"
-                             for f in self.edited.values()),7)
+                             for f in self.edited.values()),9)
         self.assertEqual(self.overlay["summary"]["habitatPhraseSpeciesBefore"],427)
         self.assertLess(self.overlay["summary"]["habitatPhraseSpeciesAfter"],30)
         self.assertGreater(self.overlay["summary"]["contrastSpeciesAfter"],30)

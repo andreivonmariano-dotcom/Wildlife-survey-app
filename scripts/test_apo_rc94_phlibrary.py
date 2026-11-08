@@ -23,7 +23,7 @@ class PHLibraryScreenContract(unittest.TestCase):
         self.assertNotIn('"Search book species"',hub)
         self.assertNotIn("LikasPortalUi.action",hub)
         self.assertNotIn("addApprovedIcon",style)
-        self.assertIn("species listings",hub.lower())
+        self.assertIn("HabitatSpeciesEvidenceActivity.class",hub)
         self.assertIn("class LikasDiscoveryActivity",read("LikasDiscoveryActivity.java"))
 
     def test_discovery_separates_account_scope_from_source_catalog(self):
@@ -56,8 +56,8 @@ class PHLibraryScreenContract(unittest.TestCase):
 
     def test_app_identity_biology_and_schema_remain(self):
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 157",gradle)
-        self.assertIn("0.27.3-rc97-phlibrary-visual",gradle)
+        self.assertIn("versionCode 158",gradle)
+        self.assertIn("0.27.3-rc98-phlibrary-editorial",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn('manifest.put("sqliteSchema",snapshotSchema)',

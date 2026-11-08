@@ -79,8 +79,8 @@ class Rc98BookEditorial(unittest.TestCase):
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text(encoding="utf-8")
         self.assertEqual(hub.count("PhLibrary2Ui.hero(this"),1)
         self.assertEqual(hub.count("sectionCard(body,"),4)
-        for title in ('"Browse wildlife groups"','"Discovery Rarity"',
-                      '"Habitat associations"'):
+        for title in ('"THE FOUR WILDLIFE GROUPS"','"Discovery Rarity"',
+                      '"Habitat atlas"'):
             self.assertIn(title,hub)
         for old in ('"Conservation evidence"','"Similar species"',
                     '"Source collections"','"Photo comparisons"'):

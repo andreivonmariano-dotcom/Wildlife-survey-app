@@ -518,3 +518,8 @@ The RC99 fluent species reader and habitat expansion passed two independent GitH
 ### 2026-11-08 | Habitat-first documentation gate before further PHLibrary implementation
 
 The owner requested that detailed species habitat information be assembled in a reviewable document **before** further app work. The approved workflow is to maintain the 714-species habitat working manuscript at `docs/APO_PHLIBRARY_HABITAT_MANUSCRIPT_2026_11_08.md`, distinguishing existing recorded habitat passages, six source-cited first-pass summaries, 94 field-guide interpretations/account syntheses, and the 614 taxa awaiting separate ecological review. The user-facing Word copy was rendered in the present conversation. Cited entries must preserve uncertainty and locality scope, and missing full bibliographies remain open. No new app changes are authorized by this documentation task alone; the signed RC99 code159 development preview remains the baseline until later instructions.
+
+
+### 2026-11-08 | Seamless habitat paragraphs adopted as working manuscript format
+
+For the **100 currently reviewed species**, weave relevant source habitat context and additional field-guide detail into a single paragraph without repeated label blocks or generic/expanded duplicate sentences. Retain a separate editorial evidence and reference record for scientific traceability. The other 614 species retain their original excerpt and research status. Documentation-only implementation saved in `docs/APO_PHLIBRARY_HABITAT_MANUSCRIPT_2026_11_08.md` at `088974fd84e2d5fa80d5ea08fe8d4f8aa4db2503`, with a rendered 49-page Word handoff in the current chat. The next Android integration remains deferred.

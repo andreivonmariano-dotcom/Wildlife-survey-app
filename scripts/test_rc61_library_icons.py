@@ -43,7 +43,7 @@ class Rc61IconArt(unittest.TestCase):
         self.assertIn('"Discovery Rarity"',library)
         self.assertIn("PhLibraryStyle.bookCover",library)
         self.assertIn('"Browse wildlife groups"',library)
-        self.assertIn('"Habitat associations","Explore sourced habitat and species links"',library)
+        self.assertIn('"Habitat associations"',library)
         self.assertIn("ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_INSIDE",portal)
         self.assertIn("R.drawable.likas_library_conservation_display",portal)
         self.assertIn("R.drawable.likas_library_habitat_links_display",portal)

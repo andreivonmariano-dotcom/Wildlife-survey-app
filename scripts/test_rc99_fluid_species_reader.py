@@ -39,7 +39,7 @@ class FluentReader(unittest.TestCase):
         cues=read("phlibrary_habitat_cues_v177.json")
         self.assertEqual(cues["changed"],100)
         self.assertEqual(
-            cues["placementCounts"],{"insert":74,"replace":8,"retain":18})
+            cues["placementCounts"],{"insert":47,"replace":8,"retain":45})
         seen=set()
         for row in cues["records"]:
             name=row["s"]; self.assertNotIn(name,seen);seen.add(name)

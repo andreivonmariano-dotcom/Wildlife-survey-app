@@ -295,6 +295,68 @@ public final class PhLibraryBook01 {
         }
     }
 
+    /** Document-reviewed habitat passages merge into continuous natural-history
+     *  prose without changing source taxonomy, conservation data, or rarity. */
+    private static void applyHabitatIntegration(Context context,
+            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
+            throws Exception {
+        JSONObject pack;
+        try(InputStream input=context.getAssets().open("phlibrary_habitat_integration_v180.json");
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
+            byte[] buffer=new byte[8192]; int n;
+            while((n=input.read(buffer))!=-1){
+                if(bytes.size()+n>85000)
+                    throw new IllegalStateException("Integrated habitat pack exceeds limit");
+                bytes.write(buffer,0,n);
+            }
+            pack=new JSONObject(bytes.toString("UTF-8"));
+        }
+        if(!"1.80-integrated-habitats".equals(pack.optString("edition")) ||
+           !"1.75".equals(pack.optString("baseEdition")) ||
+           !"1.76-editorial".equals(pack.optString("editorialEdition")) ||
+           !"1.79-reader-polish".equals(pack.optString("readerEdition")) ||
+           !"1.77-habitat-cues".equals(pack.optString("habitatEdition")) ||
+           !"0.3.1".equals(pack.optString("rarityModel")) ||
+           pack.getInt("speciesCount")!=714 ||
+           pack.getInt("reviewedSpecies")!=100 ||
+           pack.getInt("integratedSpecies")!=47)
+            throw new IllegalStateException("Unexpected PHLibrary integration edition");
+        JSONArray edits=pack.getJSONArray("records");
+        if(edits.length()!=pack.getInt("changed") || edits.length()!=48)
+            throw new IllegalStateException("Incomplete habitat integration");
+        HashSet<String> uniqueEdits=new HashSet<>();
+        HashSet<String> touchedSpecies=new HashSet<>();
+        for(int i=0;i<edits.length();i++){
+            JSONObject change=edits.getJSONObject(i);
+            String scientific=change.getString("s");
+            Integer at=index.get(key(scientific));
+            String old=change.getString("old");
+            String revised=change.getString("revised");
+            if(at==null || old.length()<35 || revised.length()<35 ||
+               revised.contains("rather than") || revised.contains("\\n") ||
+               !uniqueEdits.add(scientific+"::"+old))
+                throw new IllegalStateException("Invalid habitat integration "+scientific);
+            JSONObject target=rows.get(at);
+            if(!scientific.equals(target.optString("s")))
+                throw new IllegalStateException("Integration taxon mismatch "+scientific);
+            String before=target.getString("p");
+            int pos=before.indexOf(old);
+            if(pos<0 || before.indexOf(old,pos+old.length())>=0)
+                throw new IllegalStateException("Integration anchor mismatch "+scientific);
+            String after=before.substring(0,pos)+revised+before.substring(pos+old.length());
+            JSONArray sources=target.getJSONArray("r");
+            for(int j=0;j<sources.length();j++){
+                String citation=sources.getJSONObject(j).getString("short");
+                if(before.contains(citation) && !after.contains(citation))
+                    throw new IllegalStateException("Lost integration citation "+scientific);
+            }
+            target.put("p",after);
+            touchedSpecies.add(scientific);
+        }
+        if(touchedSpecies.size()!=47)
+            throw new IllegalStateException("Integration taxon coverage mismatch");
+    }
+
     private static synchronized void load(Context context) {
         if(initialized)return;
         initialized=true;
@@ -323,6 +385,7 @@ public final class PhLibraryBook01 {
             applyReaderRefinements(context,rows,index);
             applyHabitatCues(context,rows,index);
             applyReaderPolish(context,rows,index);
+            applyHabitatIntegration(context,rows,index);
             // The source PAIC714 checklist retains an older combination for
             // this bat. The Book 01 account documents the named transfer.
             Integer formerBat=index.get(key("Mops plicatus"));
@@ -341,7 +404,7 @@ public final class PhLibraryBook01 {
     }
     public static String availabilityMessage(Context context) {
         load(context);
-        return problem.isEmpty()?"Book 01 · Greater Mindanao · Reader v1.79":problem;
+        return problem.isEmpty()?"Book 01 · Greater Mindanao · Reader v1.80":problem;
     }
     public static List<JSONObject> entries(Context context) {
         load(context);
@@ -492,7 +555,7 @@ public final class PhLibraryBook01 {
             small.setOnClickListener(v->referenceDialog(a,refs));
             parent.addView(small);
         }
-        TextView edition=label(a,"PHLibrary Book 01 · Text v1.79 · Rarity v0.3.1",
+        TextView edition=label(a,"PHLibrary Book 01 · Text v1.80 · Rarity v0.3.1",
             11,UiKit.MUTED,false);
         edition.setPadding(0,dp(a,5),0,dp(a,5));
         parent.addView(edition);

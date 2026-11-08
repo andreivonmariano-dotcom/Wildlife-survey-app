@@ -1,7 +1,7 @@
 # LIKAS
 ## Master Project Charter, Product Requirements, and Scientific Standards
 
-**Version:** 1.0.8 (8 November 2026 centered APO startup and one-time animation amendment; canonical filename retained)  
+**Version:** 1.0.9 (9 November 2026 native PHLibrary 2.0 reader and atlas amendment; canonical filename retained)  
 **Date:** 27 October 2026  
 **Product:** LIKAS, a Philippines-first biodiversity field and knowledge platform  
 **Status:** Proposed authoritative project specification, pending adoption into Project instructions and the development repository  
@@ -417,3 +417,14 @@ The APO launcher screen uses the existing immutable mountain-emblem splash deriv
 The owner's requested visual correction is implemented as **RC102 draft** on `feature/apo-rc102-centered-startup-motion-v162` (PR #107) based on the previously signed RC101 app. A code change is not itself a shipped APK. Version code162, package identity `org.phwildlife.survey.beta08`, original signer, SQLite29, and canonical PHLibrary 715-account v1.82 source remain preserved. See the branch's `docs/APO_RC102_CENTERED_STARTUP_MOTION_QA_2026_11_08.md` and run status for evidence.
 
 **v1.0.8, 8 November 2026:** Added U-13 for exact splash centering and small, finite motion with reduced-motion and skip behavior. The original APO artwork lock and app scientific/data invariants remain effective.
+
+
+### U-14 | PHLibrary 2.0 native editorial atlas (owner-directed implementation 9 November 2026)
+
+PHLibrary is the app's offline natural-history encyclopedia and wildlife discovery surface. The owner explicitly requested a major design overhaul following review of the three-screen Concept 02. The approved **implementation direction** uses native Android screens with an original, decorative forest illustration for the landing page; restrained forest-green and parchment typography; a searchable and filterable 715-account species explorer; a legible single-paragraph Book 01 v1.82 reader; separate educational Discovery Rarity and source IUCN status; a reference and habitat explorer; and device-local reading bookmarks stored apart from survey data. This supersedes **the U-12 prohibition on decorative graphics within PHLibrary**, without authorizing unverified species photographs, invented ecological links, decorative species-identification art or changes to the locked 715 source entries.
+
+Article prose stays exact. Habitat and place word hits are **textual mentions only**, never confirmation of local occupancy or habitat selection. Habitat association evidence must preserve provenance; missing links must not imply surveyed absence. Individual bibliographic citations remain unresolved until a verifiable crosswalk exists. Keep taxon concepts and historical survey identifications stable, even across species splits. Bookmarks must not rewrite field records. The earlier startup art U-13 stays unchanged.
+
+The implementation is **RC103**, branch `feature/apo-rc103-phlibrary-2-native-v163`, draft PR #108, versionCode 163, package `org.phwildlife.survey.beta08`, original signing identity and SQLite29. Verified signed Android Actions run `42509673962` and digest evidence are in `docs/APO_RC103_PHLIBRARY2_NATIVE_REDESIGN_AUDIT_2026_11_09.md`. Emulator tests cover 100% and 200% text, but actual device/TalkBack/performance acceptance, complete bibliography citation mapping and expanded habitat facets remain outstanding. This approval authorizes a user-reviewable preview, not an automatic stable/public release or merge.
+
+**v1.0.9, 9 November 2026:** Added U-14 for native PHLibrary 2.0 source-faithful visual implementation, clarified the newer graphic treatment versus U-12's older text-only restriction, and retained source/provenance, no-data-loss, offline and release verification gates.

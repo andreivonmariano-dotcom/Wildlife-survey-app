@@ -17,13 +17,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Read-only companion to PHLibrary Book 01, edition 1.75, Discovery Rarity 0.3.1.
+ * Read-only companion to PHLibrary Book 01 v1.75 and the source-audited
+ * editorial overlay v1.76, retaining Discovery Rarity v0.3.1.
  * Species narratives and badges come directly from the owner-supplied edition.
  * Never writes survey/taxon data and does not infer station occurrence.
  */
@@ -61,6 +63,55 @@ public final class PhLibraryBook01 {
             return new JSONObject(bytes.toString("UTF-8"));
         }
     }
+    /** Apply a validated, reversible text-only editorial layer on top of the
+     *  original, unchanged Book 01 accounts. Scientific names, status labels,
+     *  geographic fields, group and rarity classifications are never overridden. */
+    private static void applyEditorial(Context context,
+            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
+            throws Exception {
+        JSONObject file;
+        try(InputStream input=context.getAssets().open("phlibrary_editorial_v176.json");
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
+            byte[] buffer=new byte[8192];
+            int count;
+            while((count=input.read(buffer))!=-1){
+                if(bytes.size()+count>900000)
+                    throw new IllegalStateException("Editorial source pack exceeds limit");
+                bytes.write(buffer,0,count);
+            }
+            file=new JSONObject(bytes.toString("UTF-8"));
+        }
+        if(!"1.76-editorial".equals(file.optString("edition")) ||
+           !"1.75".equals(file.optString("baseEdition")) ||
+           !"0.3.1".equals(file.optString("rarityModel")) ||
+           file.getInt("speciesCount")!=714)
+            throw new IllegalStateException("Unexpected PHLibrary editorial edition");
+        JSONArray revised=file.getJSONArray("records");
+        if(revised.length()!=file.getInt("changed") || revised.length()<400)
+            throw new IllegalStateException("Incomplete editorial overlay");
+        HashSet<String> updated=new HashSet<>();
+        for(int i=0;i<revised.length();i++){
+            JSONObject fix=revised.getJSONObject(i);
+            String scientific=fix.getString("s");
+            String normalized=key(scientific);
+            Integer position=index.get(normalized);
+            String paragraph=fix.getString("p").trim();
+            JSONArray sources=fix.getJSONArray("r");
+            if(position==null || !updated.add(normalized) ||
+                !rows.get(position).optString("s").equals(scientific) ||
+                paragraph.length()<100 || paragraph.contains("\\n") ||
+                sources.length()==0)
+                throw new IllegalStateException("Invalid editorial account "+scientific);
+            for(int j=0;j<sources.length();j++){
+                JSONObject citation=sources.getJSONObject(j);
+                if(!paragraph.contains(citation.getString("short")))
+                    throw new IllegalStateException("Source citation missing in "+scientific);
+            }
+            JSONObject target=rows.get(position);
+            target.put("p",paragraph);
+            target.put("r",sources);
+        }
+    }
     private static synchronized void load(Context context) {
         if(initialized)return;
         initialized=true;
@@ -85,6 +136,7 @@ public final class PhLibraryBook01 {
                 }
             }
             if(rows.size()!=714)throw new IllegalStateException("Incomplete PHLibrary edition");
+            applyEditorial(context,rows,index);
             // The source PAIC714 checklist retains an older combination for
             // this bat. The Book 01 account documents the named transfer.
             Integer formerBat=index.get(key("Mops plicatus"));
@@ -103,7 +155,7 @@ public final class PhLibraryBook01 {
     }
     public static String availabilityMessage(Context context) {
         load(context);
-        return problem.isEmpty()?"Book 01 · Greater Mindanao · Edition 1.75":problem;
+        return problem.isEmpty()?"Book 01 · Greater Mindanao · Edited v1.76":problem;
     }
     public static List<JSONObject> entries(Context context) {
         load(context);
@@ -254,7 +306,7 @@ public final class PhLibraryBook01 {
             small.setOnClickListener(v->referenceDialog(a,refs));
             parent.addView(small);
         }
-        TextView edition=label(a,"PHLibrary Book 01 · Edition 1.75 · Rarity v0.3.1",
+        TextView edition=label(a,"PHLibrary Book 01 · Text v1.76 · Rarity v0.3.1",
             11,UiKit.MUTED,false);
         edition.setPadding(0,dp(a,5),0,dp(a,5));
         parent.addView(edition);

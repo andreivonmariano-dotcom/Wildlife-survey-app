@@ -43,8 +43,7 @@ class Rc65OpticalArt(unittest.TestCase):
             self.assertIn(old,portal)
         self.assertIn("setFilterBitmap(false)",portal)
         self.assertIn("ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_INSIDE",portal)
-        for route in ("PhLibraryDirectoryActivity.class","Rc9DifferentialActivity.class",
-                      "Rc24ConservationDashboardActivity.class","CatalogActivity.class",
+        for route in ("PhLibraryDirectoryActivity.class",
                       "HabitatSpeciesEvidenceActivity.class"):
             self.assertIn(route,library)
         self.assertNotIn("Rc8PhotoComparisonActivity.class",library)

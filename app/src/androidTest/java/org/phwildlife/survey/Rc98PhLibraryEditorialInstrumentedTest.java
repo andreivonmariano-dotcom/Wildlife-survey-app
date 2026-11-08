@@ -55,14 +55,14 @@ public final class Rc98PhLibraryEditorialInstrumentedTest {
         try(ActivityScenario<PhLibraryDirectoryActivity> session=ActivityScenario.launch(book)){
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             session.onActivity(activity->assertNotNull(find(
-                activity.getWindow().getDecorView(),"408 species found")));
+                activity.getWindow().getDecorView(),"409 accounts found")));
         }
         Intent rarity=new Intent(ApplicationProvider.getApplicationContext(),
             PhLibraryDirectoryActivity.class).putExtra("phlibrary_rarity","Legendary");
         try(ActivityScenario<PhLibraryDirectoryActivity> session=ActivityScenario.launch(rarity)){
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             session.onActivity(activity->assertNotNull(find(
-                activity.getWindow().getDecorView(),"3 species found")));
+                activity.getWindow().getDecorView(),"3 accounts found")));
         }
         Intent profile=new Intent(ApplicationProvider.getApplicationContext(),
             TaxonDetailActivity.class).putExtra(

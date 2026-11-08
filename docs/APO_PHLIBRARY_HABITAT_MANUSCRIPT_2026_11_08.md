@@ -1,4 +1,4 @@
-# APO PHLibrary: Detailed habitat working manuscript
+# APO PHLibrary: Integrated habitat working manuscript
 
 **Working draft:** 8 November 2026 · 714 Greater Mindanao PAIC taxa · reader v1.79 · source commit `a8addd5be7ffd3fd6215bb19639a19da4570ffec`.
 
@@ -6,261 +6,211 @@
 
 **Evidence boundary.** Six of the 100 cue drafts are explicitly source-summarizing with citations; 94 are field-guide interpretations or syntheses of existing accounts. These describe possible field-search settings, not independently demonstrated habitat selection, new locality evidence or suitability modelling. References listed under each species belong to its full PHLibrary account; a citation there is not proof that it independently supports the habitat excerpt. The owner-supplied bibliography has **2,572 short-citation entries without a complete reference among 2,765 entries**, pending verification.
 
-**Reading convention.** “Existing habitat context” is an extracted selection of ecological sentences from the versioned account before the additional RC99 cue. “Reviewed habitat detail” reproduces the editorial cue exactly. Extractions are keyword-assisted, may include locality sentences, and require biologist review. A missing extracted sentence is not evidence of species absence from a habitat.
+**Reading convention.** Each reviewed species has a single continuous habitat account with source-extracted context and relevant first-pass detail integrated. The evidence annotation tracks the editorial decision separately. Extractions are keyword-assisted, may include locality sentences, and require biologist review. A missing extracted sentence is not evidence of species absence from a habitat.
 
 **Review fields for future source additions:** setting and forest/wetland type; substrate, vegetation layer and microhabitat; life stage and relevant activity; season or elevation where measured; locality, method and source; evidence grade and uncertainty. Keep geographic occurrence, habitat use, habitat selection and field-guide inference distinct.
 
-## Reviewed habitat accounts (100)
+## Integrated habitat accounts (100)
 
 ### Birds · 25 reviewed species
 
 #### *Aviceda jerdoni* · Jerdon's Baza
 
-**Existing habitat context.** The Jerdon's Baza is reported from forests, rivers and streams, as well as grasslands and other open areas.
+**Integrated habitat account.** The Jerdon's Baza is reported from forests, rivers and streams, as well as grasslands and other open areas. Shaded canopy gaps and streamside trees offer concealed hunting perches for this baza.
 
-**Reviewed habitat detail.** Shaded canopy gaps and streamside trees offer concealed hunting perches for this baza.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Bird Society of Singapore, n.d.; Lint & Stott, 1948; GIZ, 2013; GBIF.org, 2026.
 
 #### *Butastur indicus* · Grey-faced Buzzard
 
-**Existing habitat context.** The Grey-faced Buzzard is reported from forests.
+**Integrated habitat account.** During seasonal movements, wooded ridgelines and openings along forest margins can bring passing Grey-faced Buzzards into view.
 
-**Reviewed habitat detail.** During seasonal movements, wooded ridgelines and openings along forest margins can bring passing Grey-faced Buzzards into view.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Used in place of a broad habitat sentence.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; refined broad habitat wording.
 
 **Account citations.** McGregor, 1909–1910; GBIF.org, 2026; Gamalo et al., 2023; Pitogo et al., 2024.
 
 #### *Circus melanoleucos* · Pied Harrier
 
-**Existing habitat context.** Historical field observations also documented the species on Mindanao and Leyte (GBIF.org, 2026; GIZ, 2013; Lint & Stott, 1948). The Pied Harrier is reported from freshwater wetlands, grasslands and other open areas, as well as agricultural land.
+**Integrated habitat account.** Historical field observations also documented the species on Mindanao and Leyte (GBIF.org, 2026; GIZ, 2013; Lint & Stott, 1948). The Pied Harrier is reported from freshwater wetlands, grasslands and other open areas, as well as agricultural land. Pied Harriers search low over wet grassland, marsh margins and fallow fields.
 
-**Reviewed habitat detail.** Pied Harriers search low over wet grassland, marsh margins and fallow fields.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Bird Society of Singapore, n.d.; McGregor, 1909–1910; GBIF.org, 2026; GIZ, 2013; Lint & Stott, 1948.
 
 #### *Circus spilonotus* · Eastern Marsh Harrier
 
-**Existing habitat context.** The Eastern Marsh Harrier hunts low over grasslands and marshes, alternating low flight with long glides (Bird Society of Singapore, n.d.).
+**Integrated habitat account.** The Eastern Marsh Harrier hunts low over grasslands and marshes, alternating low flight with long glides (Bird Society of Singapore, n.d.).
 
-**Reviewed habitat detail.** Reedbeds, flooded grassland and marsh edges provide hunting space for Eastern Marsh Harriers quartering over wetland vegetation.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Bird Society of Singapore, n.d.; Lint & Stott, 1948; GBIF.org, 2026; GIZ, 2013.
 
 #### *Elanus caeruleus* · Black-winged Kite
 
-**Existing habitat context.** The Black-winged Kite is reported from grasslands and other open areas, shrublands, agricultural areas, as well as settlements and disturbed habitats.
+**Integrated habitat account.** The Black-winged Kite is reported from grasslands and other open areas, shrublands, agricultural areas, as well as settlements and disturbed habitats. Open fields with isolated trees and poles provide hunting perches for Black-winged Kites, which also hover while searching for prey.
 
-**Reviewed habitat detail.** Open fields with isolated trees and poles provide hunting perches for Black-winged Kites, which also hover while searching for prey.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** BirdLife South Africa, n.d.; GBIF.org, 2026.
 
 #### *Haliastur indus* · Brahminy Kite
 
-**Existing habitat context.** The Brahminy Kite occurs along coasts, especially mangroves and estuaries, and is sometimes seen over forests and inland rivers (Australian Museum, 2024).
+**Integrated habitat account.** The Brahminy Kite occurs along coasts, especially mangroves and estuaries, and is sometimes seen over forests and inland rivers (Australian Museum, 2024).
 
-**Reviewed habitat detail.** Along estuaries, Brahminy Kites patrol mangrove margins, tidal flats and channels, taking food from the water and exposed shoreline.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Australian Museum, 2024; GBIF.org, 2026; Senarillos et al., 2021; Pitogo et al., 2024; Gamalo et al., 2023.
 
 #### *Icthyophaga ichthyaetus* · Grey-headed Fish Eagle
 
-**Existing habitat context.** Immature birds are more brown and streaked, with a brownish tail bearing a darker terminal band (Forest Department Sarawak, 2026). The Grey-headed Fish Eagle inhabits freshwater environments, particularly large slow rivers, reservoirs and wetlands (BirdLife International, 2024). Fish constitute much of its recorded diet, with aquatic reptiles also taken (BirdLife International, 2024).
+**Integrated habitat account.** Immature birds are more brown and streaked, with a brownish tail bearing a darker terminal band (Forest Department Sarawak, 2026). The Grey-headed Fish Eagle inhabits freshwater environments, particularly large slow rivers, reservoirs and wetlands (BirdLife International, 2024). Fish constitute much of its recorded diet, with aquatic reptiles also taken (BirdLife International, 2024). Large, slow-moving rivers and wetlands with tall bankside trees provide perches overlooking the water for Grey-headed Fish Eagles.
 
-**Reviewed habitat detail.** Large, slow-moving rivers and wetlands with tall bankside trees provide perches overlooking the water for Grey-headed Fish Eagles.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Forest Department Sarawak, 2026; GBIF.org, 2026; BirdLife International, 2024; Tobias et al., 2022.
 
 #### *Icthyophaga leucogaster* · White-bellied Sea Eagle
 
-**Existing habitat context.** The White-bellied Sea Eagle occurs around coastal and inland waterways, using elevated tree perches and soaring over water and adjacent land (Australian Museum, 2022).
+**Integrated habitat account.** The White-bellied Sea Eagle occurs around coastal and inland waterways, using elevated tree perches and soaring over water and adjacent land (Australian Museum, 2022).
 
-**Reviewed habitat detail.** Coastal inlets, sheltered bays and broad river mouths combine open hunting water with elevated perches used by White-bellied Sea Eagles.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Australian Museum, 2022; GBIF.org, 2026.
 
 #### *Lophospiza trivirgata* · Crested Goshawk
 
-**Existing habitat context.** A prominent crest, barred underparts and rounded wings with six visible primary fingers distinguish this forest goshawk from smaller sparrowhawks (Bird Society of Singapore, n.d.). Hunts from concealed canopy or mid-storey perches, making rapid attacks on birds, lizards and large insects (Bird Society of Singapore, n.d.).
+**Integrated habitat account.** A prominent crest, barred underparts and rounded wings with six visible primary fingers distinguish this forest goshawk from smaller sparrowhawks (Bird Society of Singapore, n.d.). Hunts from concealed canopy or mid-storey perches, making rapid attacks on birds, lizards and large insects (Bird Society of Singapore, n.d.).
 
-**Reviewed habitat detail.** Shaded forest tracks and small canopy openings provide glimpses into the mid-storey where this goshawk hunts from cover.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Bird Society of Singapore, n.d.; GBIF.org, 2026.
 
 #### *Lophotriorchis kienerii* · Rufous-bellied Eagle
 
-**Existing habitat context.** The Rufous-bellied Eagle is reported from forests.
+**Integrated habitat account.** Wooded slopes and openings in the upper forest canopy offer views of Rufous-bellied Eagles moving above the trees.
 
-**Reviewed habitat detail.** Wooded slopes and openings in the upper forest canopy offer views of Rufous-bellied Eagles moving above the trees.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Used in place of a broad habitat sentence.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; refined broad habitat wording.
 
 **Account citations.** Bird Society of Singapore, n.d.; GBIF.org, 2026; Pitogo et al., 2024.
 
 #### *Nisaetus cirrhatus* · Changeable Hawk-Eagle
 
-**Existing habitat context.** Other listed habitat categories include wetlands, rivers, grassland and open country (Bird Society of Singapore, n.d.).
+**Integrated habitat account.** Other listed habitat categories include wetlands, rivers, grassland and open country (Bird Society of Singapore, n.d.).
 
-**Reviewed habitat detail.** Changeable Hawk-Eagles soar above wooded hills and forest margins and hunt from concealed tree perches.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Bird Society of Singapore, n.d.; GBIF.org, 2026.
 
 #### *Nisaetus pinskeri* · Pinsker's Hawk-Eagle
 
-**Existing habitat context.** A crested forest eagle with feathered legs. Pinsker’s Hawk-Eagle inhabits lowland and lower-montane forest, including selectively logged or otherwise disturbed stands. It may be seen flying over open areas, but its ecological association is with forest (BirdLife International, 2024).
+**Integrated habitat account.** A crested forest eagle with feathered legs. Pinsker’s Hawk-Eagle inhabits lowland and lower-montane forest, including selectively logged or otherwise disturbed stands. It may be seen flying over open areas, but its ecological association is with forest (BirdLife International, 2024).
 
-**Reviewed habitat detail.** Lowland and lower-montane forest, including mature wooded slopes and some selectively disturbed stands, form the main setting for Pinsker's Hawk-Eagle.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** BirdLife International, 2016; GBIF.org, 2026; Senarillos et al., 2021; Pitogo et al., 2024; BirdLife International, 2024; Tobias et al., 2022.
 
 #### *Pernis ptilorhynchus* · Crested Honey Buzzard
 
-**Existing habitat context.** Keyword extraction found no habitat passage. Examine the full source article.
+**Integrated habitat account.** Keyword extraction found no habitat passage. Examine the full source article. Wooded ridge crests and canopy openings provide broad views of Crested Honey Buzzards during seasonal movements.
 
-**Reviewed habitat detail.** Wooded ridge crests and canopy openings provide broad views of Crested Honey Buzzards during seasonal movements.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Bird Society of Singapore, n.d.; GBIF.org, 2026; Pitogo et al., 2024; Huang et al., 2004.
 
 #### *Pernis steerei* · Philippine Honey Buzzard
 
-**Existing habitat context.** The Philippine Honey Buzzard is reported from forests.
+**Integrated habitat account.** The Philippine Honey Buzzard uses wooded landscapes, including upper-canopy perches and gaps between tree crowns.
 
-**Reviewed habitat detail.** The Philippine Honey Buzzard uses wooded landscapes, including upper-canopy perches and gaps between tree crowns.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Used in place of a broad habitat sentence.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; refined broad habitat wording.
 
 **Account citations.** Gamauf et al., 1998; GBIF.org, 2026; Senarillos et al., 2021; Pitogo et al., 2024; Tobias et al., 2022.
 
 #### *Pithecophaga jefferyi* · Philippine Eagle
 
-**Existing habitat context.** On Mindanao, Philippine Eagles nest in large trees within lowland dipterocarp and upper hill forest, and some nests occur near the transition to montane or mossy forest. Studied nest trees often stood on steep slopes and ravines (Philippine Eagle Foundation, n.d.). Tracking of six adults found varied use of forest vegetation around nesting areas (Sutton et al., 2024). A nesting study at Mount Sinaka documented a diet that included civets and Philippine colugos (Ibañez et al., 2003). An eastern Mindanao habitat model also found overlap between predicted nesting habitat and areas designated for mining or ancestral domains (Sutton et al., 2026; University of Michigan Museum of Zoology, n.d.).
+**Integrated habitat account.** On Mindanao, Philippine Eagles nest in large trees within lowland dipterocarp and upper hill forest, and some nests occur near the transition to montane or mossy forest. Studied nest trees often stood on steep slopes and ravines (Philippine Eagle Foundation, n.d.). Tracking of six adults found varied use of forest vegetation around nesting areas (Sutton et al., 2024). A nesting study at Mount Sinaka documented a diet that included civets and Philippine colugos (Ibañez et al., 2003). An eastern Mindanao habitat model also found overlap between predicted nesting habitat and areas designated for mining or ancestral domains (Sutton et al., 2026; University of Michigan Museum of Zoology, n.d.).
 
-**Reviewed habitat detail.** On Mindanao, Philippine Eagle nesting landscapes include large emergent trees above wooded slopes and ravines in lowland and upper hill forest.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** University of Michigan Museum of Zoology, n.d.; Lint & Stott, 1948; GBIF.org, 2026; Senarillos et al., 2021; Pitogo et al., 2024; Luczon et al., 2014; Sutton et al., 2024; Ibañez et al., 2003; Sutton et al., 2026; Pascual et al., 2026; Bacus et al., 2025; Philippine Eagle Foundation, n.d..
 
 #### *Spilornis holospilus* · Philippine Serpent Eagle
 
-**Existing habitat context.** The Philippine Serpent Eagle is reported from forest edges, riparian forest, foothills and wooded agricultural country (Department of Environment and Natural Resources, n.d.).
+**Integrated habitat account.** The Philippine Serpent Eagle is reported from forest edges, riparian forest, foothills and wooded agricultural country (Department of Environment and Natural Resources, n.d.). Philippine Serpent Eagles use forest edges, wooded foothills and riparian corridors, where their calls carry across canopy openings.
 
-**Reviewed habitat detail.** Philippine Serpent Eagles use forest edges, wooded foothills and riparian corridors, where their calls carry across canopy openings.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Department of Environment and Natural Resources, n.d.; McGregor, 1909–1910; GBIF.org, 2026; Senarillos et al., 2021; Pitogo et al., 2024; Gamalo et al., 2023.
 
 #### *Tachyspiza gularis* · Japanese Sparrowhawk
 
-**Existing habitat context.** The Japanese Sparrowhawk is reported from forests, grasslands and other open habitats.
+**Integrated habitat account.** The Japanese Sparrowhawk is reported from forests, grasslands and other open habitats. Narrow gaps in wooded hillsides and forest margins offer brief views of Japanese Sparrowhawks during passage.
 
-**Reviewed habitat detail.** Narrow gaps in wooded hillsides and forest margins offer brief views of Japanese Sparrowhawks during passage.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** McGregor, 1909–1910; GBIF.org, 2026.
 
 #### *Tachyspiza soloensis* · Chinese Sparrowhawk
 
-**Existing habitat context.** The Chinese Sparrowhawk is reported from forests, grasslands and other open habitats.
+**Integrated habitat account.** The Chinese Sparrowhawk is reported from forests, grasslands and other open habitats. During migration, Chinese Sparrowhawks may appear over wooded valleys and forest margins.
 
-**Reviewed habitat detail.** During migration, Chinese Sparrowhawks may appear over wooded valleys and forest margins.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Bird Society of Singapore, n.d.; GBIF.org, 2026.
 
 #### *Tachyspiza virgata* · Besra
 
-**Existing habitat context.** The Besra is reported from forests, grasslands and other open habitats.
+**Integrated habitat account.** The Besra is reported from forests, grasslands and other open habitats. Within shaded forest, the Besra may perch in the mid-canopy before flying through narrow gaps between trees.
 
-**Reviewed habitat detail.** Within shaded forest, the Besra may perch in the mid-canopy before flying through narrow gaps between trees.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Bird Society of Singapore, n.d.; GBIF.org, 2026.
 
 #### *Pandion haliaetus* · Osprey
 
-**Existing habitat context.** The Osprey is reported from rivers and streams as well as coastal and intertidal habitats.
+**Integrated habitat account.** The Osprey is reported from rivers and streams as well as coastal and intertidal habitats. Over reservoirs, river reaches and coastal shallows, Ospreys search open water and dive to seize fish.
 
-**Reviewed habitat detail.** Over reservoirs, river reaches and coastal shallows, Ospreys search open water and dive to seize fish.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Bird Society of Singapore, n.d.; GBIF.org, 2026; Pitogo et al., 2024; Gamalo et al., 2023.
 
 #### *Anas acuta* · Northern Pintail
 
-**Existing habitat context.** The Northern Pintail is reported from freshwater wetlands.
+**Integrated habitat account.** The Northern Pintail is reported from freshwater wetlands. Shallow marshes and seasonally flooded grasslands offer open water and vegetated edges used by Northern Pintails.
 
-**Reviewed habitat detail.** Shallow marshes and seasonally flooded grasslands offer open water and vegetated edges used by Northern Pintails.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** McGregor, 1909–1910; GBIF.org, 2026.
 
 #### *Anas luzonica* · Philippine Duck
 
-**Existing habitat context.** The Philippine Duck uses inland and coastal wetlands throughout its Philippine range (BirdLife International, 2016). Early observers recorded this duck in pairs on small ponds and tidal creeks, as well as locally large flocks near Masbate (McGregor, 1909–1910). Reported threats include hunting, wetland conversion and agricultural pollution (BirdLife International, 2016).
+**Integrated habitat account.** The Philippine Duck uses inland and coastal wetlands throughout its Philippine range (BirdLife International, 2016). Early observers recorded this duck in pairs on small ponds and tidal creeks, as well as locally large flocks near Masbate (McGregor, 1909–1910). Reported threats include hunting, wetland conversion and agricultural pollution (BirdLife International, 2016).
 
-**Reviewed habitat detail.** Philippine Ducks use inland and coastal wetlands, including small ponds, tidal creeks and larger open-water areas.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Hong Kong Bird Watching Society, n.d.; McGregor, 1909–1910; Tobias et al., 2022; GBIF.org, 2026; BirdLife International, 2016.
 
 #### *Anas zonorhyncha* · Eastern Spot-billed Duck
 
-**Existing habitat context.** The Eastern Spot-billed Duck is reported from freshwater and coastal wetland habitats.
+**Integrated habitat account.** The Eastern Spot-billed Duck is reported from freshwater and coastal wetland habitats. Sheltered wetland backwaters and flooded vegetation may provide feeding and resting areas for Eastern Spot-billed Ducks.
 
-**Reviewed habitat detail.** Sheltered wetland backwaters and flooded vegetation may provide feeding and resting areas for Eastern Spot-billed Ducks.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Tobias et al., 2022; Hornskov, 1995; Birds of the World, n.d..
 
 #### *Dendrocygna arcuata* · Wandering Whistling Duck
 
-**Existing habitat context.** The Wandering Whistling Duck gathers in flocks on lakes and freshwater marshes and is associated with other open wetland habitats.
+**Integrated habitat account.** The Wandering Whistling Duck gathers in flocks on lakes and freshwater marshes and is associated with other open wetland habitats.
 
-**Reviewed habitat detail.** Wandering Whistling Ducks gather on freshwater marshes and lakes, often among patches of emergent vegetation.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** McGregor, 1909–1910; GBIF.org, 2026; Gamalo et al., 2023; Bird Society of Singapore, n.d..
 
 #### *Dendrocygna guttata* · Spotted Whistling Duck
 
-**Existing habitat context.** The Spotted Whistling Duck is reported from forest and freshwater wetlands, with a historical record from coastal marsh near Zamboanga. The coastal-marsh observation near Zamboanga is historical, with few recent regional reports.
+**Integrated habitat account.** The Spotted Whistling Duck is reported from forest and freshwater wetlands, with a historical record from coastal marsh near Zamboanga. The coastal-marsh observation near Zamboanga is historical, with few recent regional reports.
 
-**Reviewed habitat detail.** Spotted Whistling Ducks use tree-bordered wetlands and freshwater marshes, with historical Philippine observations also extending to coastal marsh.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** McGregor, 1909–1910; Lint & Stott, 1948; Tobias et al., 2022.
 
@@ -268,251 +218,201 @@
 
 #### *Ansonia mcgregori* · McGregor's Slender Stream Toad
 
-**Existing habitat context.** McGregor’s Stream Toad is associated with mountain forests and streams in central and western Mindanao. Compiled ecological profiles describe the species as terrestrial, aquatic and arboreal, with larval development (Oliveira et al., 2017).
+**Integrated habitat account.** McGregor’s Stream Toad is associated with mountain forests and streams in central and western Mindanao. Compiled ecological profiles describe the species as terrestrial, aquatic and arboreal, with larval development (Oliveira et al., 2017). Forested mountain streams provide wet rock surfaces and nearby vegetation that may shelter McGregor's Slender Stream Toad.
 
-**Reviewed habitat detail.** Forested mountain streams provide wet rock surfaces and nearby vegetation that may shelter McGregor's Slender Stream Toad.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Sanguila et al., 2011; Oliveira et al., 2017; GBIF.org, 2026; Beukema, 2011; AMNH Amphibian Species of the World, n.d.; AMNH, n.d.; Nuñeza et al., 2010; Frost, 2026.
 
 #### *Ansonia muelleri* · Müller's Slender Stream Toad
 
-**Existing habitat context.** Its stream-dwelling larvae require fast-flowing water, linking populations to mountain torrents and nearby forest (Sanguila et al., 2016). Mt. Hilong-hilong surveys documented specimens on forest-floor leaf litter, in rocky crevices and along stream banks between about 700 and 1,300 m (Sanguila et al., 2016). Historical and recent voucher-based records from the Taguibo Watershed in Butuan City place this toad on ground surfaces in the sampled riparian and terrestrial zones (Sanguila et al., 2021). A stomach-content study of stream-associated amphibians in northeastern Mindanao found that ants predominated in the diet of Müller’s Slender Stream Toad (Plaza et al., 2021).
+**Integrated habitat account.** Its stream-dwelling larvae require fast-flowing water, linking populations to mountain torrents and nearby forest (Sanguila et al., 2016). Mt. Hilong-hilong surveys documented specimens on forest-floor leaf litter, in rocky crevices and along stream banks between about 700 and 1,300 m (Sanguila et al., 2016). Historical and recent voucher-based records from the Taguibo Watershed in Butuan City place this toad on ground surfaces in the sampled riparian and terrestrial zones (Sanguila et al., 2021). A stomach-content study of stream-associated amphibians in northeastern Mindanao found that ants predominated in the diet of Müller’s Slender Stream Toad (Plaza et al., 2021).
 
-**Reviewed habitat detail.** Shaded stream corridors with boulders and shallow riffles may provide refuge and activity sites for Müller's Slender Stream Toad.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Oliveira et al., 2017; GBIF.org, 2026; Sanguila et al., 2016; Sanguila et al., 2021; Plaza et al., 2021.
 
 #### *Pelophryne brevipes* · Western Mindanao Toadlet
 
-**Existing habitat context.** The Western Mindanao Toadlet has been observed on leaves of saplings and shrubs near streams, including forest edges and other moderately disturbed areas.
+**Integrated habitat account.** The Western Mindanao Toadlet has been observed on leaves of saplings and shrubs near streams, including forest edges and other moderately disturbed areas.
 
-**Reviewed habitat detail.** Western Mindanao Toadlets have been observed on sapling and shrub leaves near streams, including moderately disturbed forest edges.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Plaza et al., 2025; GBIF.org, 2026; Sanguila et al., 2016; Oliveira et al., 2017.
 
 #### *Pelophryne lighti* · Eastern Mindanao Toadlet
 
-**Existing habitat context.** The Eastern Mindanao Toadlet has been observed on low ferns and shrub leaves in montane forest in the Leyte Cordillera (Decena et al., 2023). Compiled ecological profiles describe this toad as using both ground-level and arboreal habitats and undergoing larval development (Oliveira et al., 2017).
+**Integrated habitat account.** The Eastern Mindanao Toadlet has been observed on low ferns and shrub leaves in montane forest in the Leyte Cordillera (Decena et al., 2023). Compiled ecological profiles describe this toad as using both ground-level and arboreal habitats and undergoing larval development (Oliveira et al., 2017).
 
-**Reviewed habitat detail.** Low ferns and shrub leaves form recorded perches for the Eastern Mindanao Toadlet in montane forest.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Decena et al., 2023; GBIF.org, 2026; AMNH, n.d.; Diesmos et al., 2026; Frost, 2026; Oliveira et al., 2017.
 
 #### *Rhinella marina* · Marine Toad
 
-**Existing habitat context.** In Agusan Marsh it was recorded around agricultural margins and mixed freshwater-swamp vegetation (Sanguila et al., 2026). Compiled ecological profiles describe the Cane Toad as using terrestrial and aquatic habitats, undergoing larval development, and feeding on arthropods and some vertebrates.
+**Integrated habitat account.** In Agusan Marsh it was recorded around agricultural margins and mixed freshwater-swamp vegetation (Sanguila et al., 2026). Compiled ecological profiles describe the Cane Toad as using terrestrial and aquatic habitats, undergoing larval development, and feeding on arthropods and some vertebrates. Marine Toads often occupy disturbed lowland areas, including yards, drainage edges and temporary pools that fill after rain.
 
-**Reviewed habitat detail.** Marine Toads often occupy disturbed lowland areas, including yards, drainage edges and temporary pools that fill after rain.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Sanguila et al., 2026; GBIF.org, 2026; Sanguila et al., 2016; Maglangit et al., 2022; Beukema, 2011; Decena et al., 2023; Oliveira et al., 2017.
 
 #### *Platymantis bayani* · Walter's Limestone Forest Frog
 
-**Existing habitat context.** The Walter's Limestone Forest Frog has been documented on Samar, including Eastern Samar (GBIF.org, 2026; Frost, 2026). Walter’s Limestone Forest Frog inhabits the forest floor and terrestrial limestone habitats of eastern Samar (Siler et al., 2009). The name is based on an eastern Samar type series from Taft Forest at about 140 m, and was originally placed in the Platymantis guentheri group.
+**Integrated habitat account.** The Walter's Limestone Forest Frog has been documented on Samar, including Eastern Samar (GBIF.org, 2026; Frost, 2026). Walter’s Limestone Forest Frog inhabits the forest floor and terrestrial limestone habitats of eastern Samar (Siler et al., 2009). The name is based on an eastern Samar type series from Taft Forest at about 140 m, and was originally placed in the Platymantis guentheri group. Within limestone forest, shaded leaf litter and sheltered rock crevices may provide moist refuges for Walter's Limestone Forest Frog.
 
-**Reviewed habitat detail.** Within limestone forest, shaded leaf litter and sheltered rock crevices may provide moist refuges for Walter's Limestone Forest Frog.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Siler et al., 2009; GBIF.org, 2026; Frost, 2026.
 
 #### *Platymantis corrugatus* · Masked Wrinkled Ground Frog
 
-**Existing habitat context.** In the Taguibo Watershed survey, specimens identified as Platymantis corrugatus were recorded on ground-level habitats in the terrestrial zone away from immediate stream margins. This is a site-specific habitat-use record (Sanguila et al., 2021). In northeastern Leyte, males called from leaf litter and ground surfaces at night; their calls were sometimes heard from concealed sites during the day after rain (Decena et al., 2023). Compiled ecological profiles describe the species as terrestrial, and indicate direct development without a free-living larval stage (Oliveira et al., 2017).
+**Integrated habitat account.** In the Taguibo Watershed survey, specimens identified as Platymantis corrugatus were recorded on ground-level habitats in the terrestrial zone away from immediate stream margins. This is a site-specific habitat-use record (Sanguila et al., 2021). In northeastern Leyte, males called from leaf litter and ground surfaces at night; their calls were sometimes heard from concealed sites during the day after rain (Decena et al., 2023). Compiled ecological profiles describe the species as terrestrial, and indicate direct development without a free-living larval stage (Oliveira et al., 2017).
 
-**Reviewed habitat detail.** The forest floor is a documented habitat of the Masked Wrinkled Ground Frog, including terrestrial sites away from immediate stream margins.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Plaza et al., 2025; Decena et al., 2023; GBIF.org, 2026; Supsup et al., 2017; Beukema, 2011; Sanguila et al., 2021; Sanguila et al., 2016; Oliveira et al., 2017.
 
 #### *Platymantis guentheri* · Günther's Wrinkled Tree Frog
 
-**Existing habitat context.** In Agusan peat-swamp forest, calling frogs perched 1–3 m above the ground, while a northeastern Leyte survey recorded calling males on ferns, small branches and other low vegetation (Sanguila et al., 2026; Decena et al., 2023). Compiled ecological profiles describe the species as terrestrial and arboreal, and indicate direct development without a free-living larval stage (Oliveira et al., 2017).
+**Integrated habitat account.** In Agusan peat-swamp forest, calling frogs perched 1–3 m above the ground, while a northeastern Leyte survey recorded calling males on ferns, small branches and other low vegetation (Sanguila et al., 2026; Decena et al., 2023). Compiled ecological profiles describe the species as terrestrial and arboreal, and indicate direct development without a free-living larval stage (Oliveira et al., 2017).
 
-**Reviewed habitat detail.** Broad leaves and low branches in humid forest may offer sheltered perches for Günther's Wrinkled Tree Frog.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Oliveira et al., 2017; GBIF.org, 2026; Tirona et al., 2026; Sanguila et al., 2026; Decena et al., 2023.
 
 #### *Platymantis habagatan* · Mindanao Variable Forest Frog
 
-**Existing habitat context.** The 2026 original species treatment diagnoses a moderate-sized, broad-headed, terrestrial forest frog (reported specimen snout–vent length 26.7–39.9 mm; mean 33.9 mm), with unexpanded finger and toe tips, conspicuously raised subarticular tubercles, and rugose dorsal skin bearing rounded tubercles or short, irregular ridges. The 2026 diagnosis combines body measurements, morphology and advertisement calls to distinguish this forest frog. The Mindanao Variable Forest Frog is recognized from Mindanao, including the Mount Hilong-Hilong area of Agusan del Norte. The Mindanao Variable Forest Frog has been recorded on the forest floor of mature forest on Mount Hilong-hilong (Frost, 2026). Platymantis habagatan was described in 2026 from the southern Philippine forest-frog complex using comparative morphology, advertisement calls and genetic evidence.
+**Integrated habitat account.** The 2026 original species treatment diagnoses a moderate-sized, broad-headed, terrestrial forest frog (reported specimen snout–vent length 26.7–39.9 mm; mean 33.9 mm), with unexpanded finger and toe tips, conspicuously raised subarticular tubercles, and rugose dorsal skin bearing rounded tubercles or short, irregular ridges. The 2026 diagnosis combines body measurements, morphology and advertisement calls to distinguish this forest frog. The Mindanao Variable Forest Frog is recognized from Mindanao, including the Mount Hilong-Hilong area of Agusan del Norte. The Mindanao Variable Forest Frog has been recorded on the forest floor of mature forest on Mount Hilong-hilong (Frost, 2026). Platymantis habagatan was described in 2026 from the southern Philippine forest-frog complex using comparative morphology, advertisement calls and genetic evidence.
 
-**Reviewed habitat detail.** The Mindanao Variable Forest Frog has been recorded on the floor of mature forest at Mount Hilong-Hilong.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Pitogo et al., 2026; Frost, 2026.
 
 #### *Platymantis jagorii* · Jagor's Variable Forest Frog
 
-**Existing habitat context.** Jagor’s Variable Forest Frog is documented from Samar, Leyte, Bohol and Siargao. Jagor’s Variable Forest Frog is associated with terrestrial forest habitats in the southern Philippines. A 2026 revision reinstated Platymantis jagorii as a distinct species within the southern Philippine forest-frog complex, drawing on morphology, advertisement calls and molecular data (Pitogo et al., 2026).
+**Integrated habitat account.** Jagor’s Variable Forest Frog is documented from Samar, Leyte, Bohol and Siargao. Jagor’s Variable Forest Frog is associated with terrestrial forest habitats in the southern Philippines. A 2026 revision reinstated Platymantis jagorii as a distinct species within the southern Philippine forest-frog complex, drawing on morphology, advertisement calls and molecular data (Pitogo et al., 2026). Shaded ground cover and deep leaf litter in terrestrial forest may shelter Jagor's Variable Forest Frog.
 
-**Reviewed habitat detail.** Shaded ground cover and deep leaf litter in terrestrial forest may shelter Jagor's Variable Forest Frog.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Pitogo et al., 2026; Frost, 2026.
 
 #### *Platymantis laticeps* · Broad-headed Variable Forest Frog
 
-**Existing habitat context.** A relatively large, broad-headed terrestrial forest frog with rough, strongly tuberculate dorsal skin, unexpanded finger and toe tips, prominent subarticular tubercles and no long longitudinal dorsal ridges in the 2026 diagnosis. The Broad-headed Variable Forest Frog is documented in northeastern Mindanao, including the Mount Hilong-Hilong, Mount Balatukan, Mount Lumot and Mount Magdiwata landscapes of Caraga and Northern Mindanao (Pitogo et al., 2026; Frost, 2026). The Broad-headed Variable Forest Frog inhabits terrestrial forest habitats in northeastern Mindanao. Its recognition from formerly broad P. dorsalis identifications affects the interpretation of older habitat records (Pitogo et al., 2026). Platymantis laticeps was reinstated in the 2026 revision of southern Philippine forest frogs formerly classified within P. dorsalis.
+**Integrated habitat account.** A relatively large, broad-headed terrestrial forest frog with rough, strongly tuberculate dorsal skin, unexpanded finger and toe tips, prominent subarticular tubercles and no long longitudinal dorsal ridges in the 2026 diagnosis. The Broad-headed Variable Forest Frog is documented in northeastern Mindanao, including the Mount Hilong-Hilong, Mount Balatukan, Mount Lumot and Mount Magdiwata landscapes of Caraga and Northern Mindanao (Pitogo et al., 2026; Frost, 2026). The Broad-headed Variable Forest Frog inhabits terrestrial forest habitats in northeastern Mindanao. Its recognition from formerly broad P. dorsalis identifications affects the interpretation of older habitat records (Pitogo et al., 2026). Platymantis laticeps was reinstated in the 2026 revision of southern Philippine forest frogs formerly classified within P. dorsalis. In northeastern Mindanao, fallen wood and leaf litter may create sheltered spaces for this broad-headed forest frog.
 
-**Reviewed habitat detail.** In northeastern Mindanao, fallen wood and leaf litter may create sheltered spaces for this broad-headed forest frog.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Pitogo et al., 2026; Frost, 2026.
 
 #### *Platymantis navjoti* · Navjot Sodhi's Cloud Frog
 
-**Existing habitat context.** Navjot Sodhi’s Cloud Frog inhabits montane forest on Leyte and has also been recorded from northern Leyte and north-central Samar (Diesmos et al., 2020; Frost, 2026).
+**Integrated habitat account.** Navjot Sodhi’s Cloud Frog inhabits montane forest on Leyte and has also been recorded from northern Leyte and north-central Samar (Diesmos et al., 2020; Frost, 2026). Cloudy montane forest provides a cool, damp setting for Navjot Sodhi's Cloud Frog, with shaded vegetation offering possible activity sites after rain.
 
-**Reviewed habitat detail.** Cloudy montane forest provides a cool, damp setting for Navjot Sodhi's Cloud Frog, with shaded vegetation offering possible activity sites after rain.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Diesmos et al., 2020; GBIF.org, 2026; Frost, 2026.
 
 #### *Platymantis rabori* · Rabor's Horned Tree Frog
 
-**Existing habitat context.** Rabor’s Horned Tree Frog often calls high in the forest canopy, producing slowly repeated pulsed notes; Taguibo Watershed surveys also document it on vegetation (Sanguila et al., 2016; Sanguila et al., 2021). Compiled profiles describe activity on the ground and in vegetation, with froglets developing directly inside terrestrial eggs (Oliveira et al., 2017).
+**Integrated habitat account.** Rabor’s Horned Tree Frog often calls high in the forest canopy, producing slowly repeated pulsed notes; Taguibo Watershed surveys also document it on vegetation (Sanguila et al., 2016; Sanguila et al., 2021). Compiled profiles describe activity on the ground and in vegetation, with froglets developing directly inside terrestrial eggs (Oliveira et al., 2017).
 
-**Reviewed habitat detail.** Rabor's Horned Tree Frog calls high in the forest canopy and has also been recorded on vegetation in Mindanao surveys.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Sanguila et al., 2016; GBIF.org, 2026; Tirona et al., 2026; Diesmos et al., 2026; AMNH, n.d.; Sanguila et al., 2021; Oliveira et al., 2017.
 
 #### *Fejervarya moodiei* · Asian Mangrove Frog
 
-**Existing habitat context.** The Hijo Forest account describes dark markings on the upper surfaces of both forelimbs and hindlimbs and skin folds that are not arranged in regular parallel series; the features are part of a multi-character identification (Gamalo et al., 2023). The Asian Mangrove Frog has been recorded in ground-level and aquatic habitats on northeastern Leyte (Decena et al., 2023). At Hijo Forest, these frogs were frequently found in water, particularly during wet weather (Gamalo et al., 2023). Compiled ecological profiles also describe aquatic habitat use and larval development (Oliveira et al., 2017).
+**Integrated habitat account.** The Hijo Forest account describes dark markings on the upper surfaces of both forelimbs and hindlimbs and skin folds that are not arranged in regular parallel series; the features are part of a multi-character identification (Gamalo et al., 2023). The Asian Mangrove Frog has been recorded in ground-level and aquatic habitats on northeastern Leyte (Decena et al., 2023). At Hijo Forest, these frogs were frequently found in water, particularly during wet weather (Gamalo et al., 2023). Compiled ecological profiles also describe aquatic habitat use and larval development (Oliveira et al., 2017). Asian Mangrove Frogs may occupy shallow pools and muddy backwaters along mangrove margins, including brackish edges.
 
-**Reviewed habitat detail.** Asian Mangrove Frogs may occupy shallow pools and muddy backwaters along mangrove margins, including brackish edges.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Gamalo et al., 2023; GBIF.org, 2026; Decena et al., 2023; Oliveira et al., 2017.
 
 #### *Fejervarya vittigera* · Philippine Field Frog
 
-**Existing habitat context.** Philippine accounts report this frog from low-elevation ponds, flooded rice fields and irrigation channels, including still pools beside streams at Agusan Marsh. In the Taguibo Watershed analysis, sampled animals occupied aquatic habitats; northeastern Leyte inventories recorded both terrestrial and aquatic observations. At Hijo Forest, survey teams encountered the species frequently in swampy portions of the forest patch (American Museum of Natural History, n.d.; Sanguila et al., 2026; Sanguila et al., 2021; Decena et al., 2023; Gamalo et al., 2023).
+**Integrated habitat account.** Philippine accounts report this frog from low-elevation ponds, flooded rice fields and irrigation channels, including still pools beside streams at Agusan Marsh. In the Taguibo Watershed analysis, sampled animals occupied aquatic habitats; northeastern Leyte inventories recorded both terrestrial and aquatic observations. At Hijo Forest, survey teams encountered the species frequently in swampy portions of the forest patch (American Museum of Natural History, n.d.; Sanguila et al., 2026; Sanguila et al., 2021; Decena et al., 2023; Gamalo et al., 2023). Rice paddies, irrigation channels, still pools beside streams and swampy forest patches are documented habitats of the Philippine Field Frog.
 
-**Reviewed habitat detail.** Rice paddies, irrigation channels, still pools beside streams and swampy forest patches are documented habitats of the Philippine Field Frog.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Sanguila et al., 2026; Oliveira et al., 2017; GBIF.org, 2026; Maglangit et al., 2022; American Museum of Natural History, n.d.; Sanguila et al., 2021; Decena et al., 2023; Gamalo et al., 2023.
 
 #### *Hoplobatrachus chinensis* · East Asian Bullfrog
 
-**Existing habitat context.** Keyword extraction found no habitat passage. Examine the full source article.
+**Integrated habitat account.** Keyword extraction found no habitat passage. Examine the full source article. Large pools, wetland margins and flooded cultivated ground provide potential shallow-water habitat for the East Asian Bullfrog.
 
-**Reviewed habitat detail.** Large pools, wetland margins and flooded cultivated ground provide potential shallow-water habitat for the East Asian Bullfrog.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Frost, 2026; GBIF.org, 2026.
 
 #### *Limnonectes diuatus* · White-spined Fanged Frog
 
-**Existing habitat context.** The species has been reported from higher-elevation riparian forest in Mindanao, including mountain streams above 900 m (Frost, 2026). The Taguibo analysis assigned historical Limnonectes diuatus records to aquatic habitats (Sanguila et al., 2021). Two individuals were observed by day beneath leaf litter and rocks in a steep rocky stream at the lower Mt. Kitanglad study site (Beukema, 2011). Compiled ecological profiles describe the species as terrestrial and aquatic, with larval development (Oliveira et al., 2017).
+**Integrated habitat account.** The species has been reported from higher-elevation riparian forest in Mindanao, including mountain streams above 900 m (Frost, 2026). The Taguibo analysis assigned historical Limnonectes diuatus records to aquatic habitats (Sanguila et al., 2021). Two individuals were observed by day beneath leaf litter and rocks in a steep rocky stream at the lower Mt. Kitanglad study site (Beukema, 2011). Compiled ecological profiles describe the species as terrestrial and aquatic, with larval development (Oliveira et al., 2017).
 
-**Reviewed habitat detail.** White-spined Fanged Frogs have been recorded beside rocky mountain streams, including riparian sites above 900 m.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Beukema, 2011; GBIF.org, 2026; Supsup et al., 2017; Sanguila et al., 2021; Frost, 2026; Oliveira et al., 2017.
 
 #### *Limnonectes leytensis* · Philippine Swamp Frog
 
-**Existing habitat context.** At Tinuy-an Falls, this species was found on fallen logs, the forest floor, and stream margins. Taguibo Watershed records included terrestrial and vegetation and trees, while a northeastern Leyte inventory described observations in aquatic habitats (Plaza et al., 2025; Sanguila et al., 2021; Decena et al., 2023). At two lower Mount Kitanglad sites, frogs of several life stages were found under rocks by day, and night activity was noted at one site (Beukema, 2011). In the Hijo Forest survey, L. leytensis was the most frequently encountered frog species (Gamalo et al., 2023).
+**Integrated habitat account.** At Tinuy-an Falls, this species was found on fallen logs, the forest floor, and stream margins. Taguibo Watershed records included terrestrial and vegetation and trees, while a northeastern Leyte inventory described observations in aquatic habitats (Plaza et al., 2025; Sanguila et al., 2021; Decena et al., 2023). At two lower Mount Kitanglad sites, frogs of several life stages were found under rocks by day, and night activity was noted at one site (Beukema, 2011). In the Hijo Forest survey, L. leytensis was the most frequently encountered frog species (Gamalo et al., 2023).
 
-**Reviewed habitat detail.** Fallen logs, rocks, stream margins and the adjoining forest floor provide shelter and activity sites for the Philippine Swamp Frog.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Plaza et al., 2025; Beukema, 2011; Oliveira et al., 2017; GBIF.org, 2026; Maglangit et al., 2022; Supsup et al., 2017; Sanguila et al., 2021; Decena et al., 2023; Gamalo et al., 2023.
 
 #### *Limnonectes magnus* · Mindanao Fanged Frog
 
-**Existing habitat context.** A 2025 anuran survey along Miral River in Bansalan, Davao del Sur, reports the species in a six-species field assemblage (Ubat, 2025). At Tinuy-an Falls Protected Landscape, individuals were observed in small, shallow forest streams and along their banks. The Taguibo Watershed study reported this frog from ground, arboreal and aquatic habitats, drawing on both historical and recent records (Sanguila et al., 2021). In northeastern Leyte, the species was recorded in terrestrial and aquatic habitats (Decena et al., 2023). Stomach-content and stable-isotope analyses in a northeast Mindanao stream study supported generalist feeding on locally available invertebrate prey in the sampled Limnonectes magnus (Plaza et al., 2021). Compiled ecological profiles describe the species as terrestrial and aquatic, with larval development.
+**Integrated habitat account.** A 2025 anuran survey along Miral River in Bansalan, Davao del Sur, reports the species in a six-species field assemblage (Ubat, 2025). At Tinuy-an Falls Protected Landscape, individuals were observed in small, shallow forest streams and along their banks. The Taguibo Watershed study reported this frog from ground, arboreal and aquatic habitats, drawing on both historical and recent records (Sanguila et al., 2021). In northeastern Leyte, the species was recorded in terrestrial and aquatic habitats (Decena et al., 2023). Stomach-content and stable-isotope analyses in a northeast Mindanao stream study supported generalist feeding on locally available invertebrate prey in the sampled Limnonectes magnus (Plaza et al., 2021). Compiled ecological profiles describe the species as terrestrial and aquatic, with larval development. Mindanao Fanged Frogs occupy small, shallow forest streams and nearby banks, ground surfaces and low vegetation.
 
-**Reviewed habitat detail.** Mindanao Fanged Frogs occupy small, shallow forest streams and nearby banks, ground surfaces and low vegetation.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Abraham et al., 2021; Plaza et al., 2025; GBIF.org, 2026; Maglangit et al., 2022; Supsup et al., 2017; Nuñeza et al., 2010; Diesmos et al., 2026; Ubat, 2025; Sanguila et al., 2021; Decena et al., 2023; Plaza et al., 2021; Oliveira et al., 2017.
 
 #### *Limnonectes micrixalus* · Western Mindanao Fanged Frog
 
-**Existing habitat context.** Compiled ecological information describes the Western Mindanao Fanged Frog as using terrestrial and aquatic environments and having a larval stage (Oliveira et al., 2017).
+**Integrated habitat account.** Compiled ecological information describes the Western Mindanao Fanged Frog as using terrestrial and aquatic environments and having a larval stage (Oliveira et al., 2017). Shaded stream margins and damp ground in riparian forest may provide activity sites for the Western Mindanao Fanged Frog.
 
-**Reviewed habitat detail.** Shaded stream margins and damp ground in riparian forest may provide activity sites for the Western Mindanao Fanged Frog.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Oliveira et al., 2017; Evans et al., 2003; Frost, 2026.
 
 #### *Limnonectes parvus* · Philippine Guardian Frog
 
-**Existing habitat context.** Records from Mindanao include secondary-growth and nursery forests with retained vegetation cover (Sanguila et al., 2016). Reported around streams in undisturbed lowland and lower montane forests of Mindanao (Frost, 2026).
+**Integrated habitat account.** Records from Mindanao include secondary-growth and nursery forests with retained vegetation cover (Sanguila et al., 2016). Reported around streams in undisturbed lowland and lower montane forests of Mindanao (Frost, 2026).
 
-**Reviewed habitat detail.** Streams through lowland and lower-montane forest are reported habitats of the Philippine Guardian Frog.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Lama & Senarillos, 2023; GBIF.org, 2026; Sanguila et al., 2016; Frost, 2026; Oliveira et al., 2017.
 
 #### *Limnonectes visayanus* · Visayan Fanged Frog
 
-**Existing habitat context.** Compiled traits describe the Visayan Fanged Frog as nocturnal and associated with both terrestrial and aquatic environments, with larval development (Oliveira et al., 2017).
+**Integrated habitat account.** Compiled traits describe the Visayan Fanged Frog as nocturnal and associated with both terrestrial and aquatic environments, with larval development (Oliveira et al., 2017). The Visayan Fanged Frog may use saturated ground and shallow edges of forest streams within its island range.
 
-**Reviewed habitat detail.** The Visayan Fanged Frog may use saturated ground and shallow edges of forest streams within its island range.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Oliveira et al., 2017; GBIF.org, 2026; GIZ, 2013.
 
 #### *Occidozyga diminutiva* · Tiny Puddle Frog
 
-**Existing habitat context.** Compiled ecological information places the Tiny Puddle Frog in terrestrial and aquatic environments, with a larval stage (Oliveira et al., 2017).
+**Integrated habitat account.** Compiled ecological information places the Tiny Puddle Frog in terrestrial and aquatic environments, with a larval stage (Oliveira et al., 2017). Small puddles and shallow standing water may provide activity sites for this tiny aquatic frog during wet periods.
 
-**Reviewed habitat detail.** Small puddles and shallow standing water may provide activity sites for this tiny aquatic frog during wet periods.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Ninh et al., 2026, comparing Taylor, 1922; GBIF.org, 2026; Frost, 2026; Oliveira et al., 2017.
 
 #### *Occidozyga laevis* · Common Puddle Frog
 
-**Existing habitat context.** The Common Puddle Frog has been recorded in aquatic habitats on northeastern Leyte (Decena et al., 2023). A northeastern Mindanao stream-food-web study characterized the species as an opportunistic generalist predator on locally available insects, using stomach contents and stable isotope analysis (Plaza et al., 2021). At northeastern Leyte sites, frogs sat immersed in narrow shallow streams or isolated pools and sometimes sheltered beneath deep leaf litter by day (Decena et al., 2023). Compiled ecological profiles describe the species as fossorial and aquatic, with larval development.
+**Integrated habitat account.** The Common Puddle Frog has been recorded in aquatic habitats on northeastern Leyte (Decena et al., 2023). A northeastern Mindanao stream-food-web study characterized the species as an opportunistic generalist predator on locally available insects, using stomach contents and stable isotope analysis (Plaza et al., 2021). At northeastern Leyte sites, frogs sat immersed in narrow shallow streams or isolated pools and sometimes sheltered beneath deep leaf litter by day (Decena et al., 2023). Compiled ecological profiles describe the species as fossorial and aquatic, with larval development. Common Puddle Frogs occupy shallow water and muddy margins, including small pools and waterlogged ground along lowland tracks.
 
-**Reviewed habitat detail.** Common Puddle Frogs occupy shallow water and muddy margins, including small pools and waterlogged ground along lowland tracks.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Oliveira et al., 2017; GBIF.org, 2026; Decena et al., 2023; Plaza et al., 2021.
 
 #### *Eleutherodactylus planirostris* · Greenhouse Frog
 
-**Existing habitat context.** Direct development occurs within terrestrial eggs, with small froglets hatching without an aquatic tadpole stage (Animal Diversity Web, n.d.). Compiled ecological profiles describe the species as terrestrial, aquatic and arboreal, and indicate direct development without a free-living larval stage.
+**Integrated habitat account.** Direct development occurs within terrestrial eggs, with small froglets hatching without an aquatic tadpole stage (Animal Diversity Web, n.d.). Compiled ecological profiles describe the species as terrestrial, aquatic and arboreal, and indicate direct development without a free-living larval stage. In villages and gardens, damp leaf litter, planted beds and sheltered ground cover can support the small terrestrial Greenhouse Frog.
 
-**Reviewed habitat detail.** In villages and gardens, damp leaf litter, planted beds and sheltered ground cover can support the small terrestrial Greenhouse Frog.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Animal Diversity Web, n.d.; GBIF.org, 2026; Maglangit et al., 2022; Oliveira et al., 2017.
 
@@ -520,41 +420,33 @@
 
 #### *Crocodylus mindorensis* · Philippine Crocodile
 
-**Existing habitat context.** The Philippine Crocodile is documented in central Mindanao, including Ligawasan Marsh and the Muleta River system of Bukidnon (IUCN SSC and Secretariat, 2025). The Philippine Crocodile inhabits freshwater rivers, creeks, ponds, lakes and marshes. Published habitat accounts describe both riverine and wetland settings; northern Sierra Madre surveys in Luzon also reported animals in coastal river reaches with saline conditions (DENR Protected Areas and Wildlife Bureau / Royal Melbourne, 2005; Smithsonian National Zoo, n.d.; Brown et al., 2013).
+**Integrated habitat account.** The Philippine Crocodile is documented in central Mindanao, including Ligawasan Marsh and the Muleta River system of Bukidnon (IUCN SSC and Secretariat, 2025). The Philippine Crocodile inhabits freshwater rivers, creeks, ponds, lakes and marshes. Published habitat accounts describe both riverine and wetland settings; northern Sierra Madre surveys in Luzon also reported animals in coastal river reaches with saline conditions (DENR Protected Areas and Wildlife Bureau / Royal Melbourne, 2005; Smithsonian National Zoo, n.d.; Brown et al., 2013). Philippine Crocodiles inhabit freshwater marsh channels, vegetated pond margins and calmer river reaches, where basking and shelter sites occur near water.
 
-**Reviewed habitat detail.** Philippine Crocodiles inhabit freshwater marsh channels, vegetated pond margins and calmer river reaches, where basking and shelter sites occur near water.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** DENR Protected Areas and Wildlife Bureau / Royal Melbourne, 2005; Ross & Alcala, 1983, as reviewed in later crocodile literature; IUCN SSC and Secretariat, 2025; Smithsonian National Zoo, n.d.; Brown et al., 2013.
 
 #### *Crocodylus porosus* · Saltwater Crocodile
 
-**Existing habitat context.** Saltwater Crocodiles use tidal rivers, estuaries, mangrove swamps and coastal waters, and may also occupy freshwater rivers and lakes well inland. Females build mound nests near water, including sheltered banks along suitable river and estuarine systems (Carpenter & Niem, 2001). The Saltwater Crocodile is an egg-laying species (Uetz et al., 2026).
+**Integrated habitat account.** Saltwater Crocodiles use tidal rivers, estuaries, mangrove swamps and coastal waters, and may also occupy freshwater rivers and lakes well inland. Females build mound nests near water, including sheltered banks along suitable river and estuarine systems (Carpenter & Niem, 2001). The Saltwater Crocodile is an egg-laying species (Uetz et al., 2026). Saltwater Crocodiles move through tidal channels, estuarine banks and mangrove creeks and can travel far into freshwater river reaches.
 
-**Reviewed habitat detail.** Saltwater Crocodiles move through tidal channels, estuarine banks and mangrove creeks and can travel far into freshwater river reaches.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Ross & Alcala, 1983, as reviewed in subsequent crocodile literature; GBIF.org, 2026; Carpenter & Niem, 2001; Uetz et al., 2026.
 
 #### *Bronchocela philippina* · Philippine Bloodsucker
 
-**Existing habitat context.** The Philippine Bloodsucker is reported from forests and shrublands.
+**Integrated habitat account.** The Philippine Bloodsucker is reported from forests and shrublands. Sunlit branches, forest-edge saplings and adjoining shrub vegetation may offer perches for the Philippine Bloodsucker.
 
-**Reviewed habitat detail.** Sunlit branches, forest-edge saplings and adjoining shrub vegetation may offer perches for the Philippine Bloodsucker.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Supsup et al., 2026; Tirona et al., 2026.
 
 #### *Draco bimaculatus* · Two-spotted Flying Lizard
 
-**Existing habitat context.** Agusan Marsh records include peat-swamp forest and relatively low perches in regenerating vegetation (Sanguila et al., 2026). In northeastern Leyte, the species was recorded in vegetation and trees (Decena et al., 2023). A single individual at the northeastern Leyte study site was observed on a tree trunk about 4 m above ground by day in riparian vegetation within selectively logged dipterocarp forest (Decena et al., 2023).
+**Integrated habitat account.** Agusan Marsh records include peat-swamp forest and relatively low perches in regenerating vegetation (Sanguila et al., 2026). In northeastern Leyte, the species was recorded in vegetation and trees (Decena et al., 2023). A single individual at the northeastern Leyte study site was observed on a tree trunk about 4 m above ground by day in riparian vegetation within selectively logged dipterocarp forest (Decena et al., 2023). In northeastern Mindanao, Two-spotted Flying Lizards have been recorded on trunks near forest edges and adjoining coconut groves (Sanguila et al., 2016).
 
-**Reviewed habitat detail.** In northeastern Mindanao, Two-spotted Flying Lizards have been recorded on trunks near forest edges and adjoining coconut groves (Sanguila et al., 2016).
-
-**Evidence / disposition.** Source-cited synopsis; Integrated after the habitat anchor.
+**Editorial evidence.** Source-cited synopsis; integrated additional habitat context.
 
 **Account citations.** Sanguila et al., 2026; GBIF.org, 2026; Maglangit et al., 2022; Supsup et al., 2017; Decena et al., 2023; Uetz et al., 2026; Sanguila et al., 2016.
 
@@ -562,11 +454,9 @@
 
 #### *Draco cyanopterus* · Chartreuse-spotted Flying Lizard
 
-**Existing habitat context.** Recent survey records from Taguibo Watershed placed Draco cyanopterus in vegetation and trees of the sampled terrestrial zone (Sanguila et al., 2021). At Mt. Hamiguitan, one female was observed burying four eggs in sand along a riverbank, providing a site-specific record of nesting behavior (Supsup et al., 2017).
+**Integrated habitat account.** Recent survey records from Taguibo Watershed placed Draco cyanopterus in vegetation and trees of the sampled terrestrial zone (Sanguila et al., 2021). At Mt. Hamiguitan, one female was observed burying four eggs in sand along a riverbank, providing a site-specific record of nesting behavior (Supsup et al., 2017). Northeastern Mindanao records place Chartreuse-spotted Flying Lizards on coconut palms and exposed trunks adjoining forest (Sanguila et al., 2016).
 
-**Reviewed habitat detail.** Northeastern Mindanao records place Chartreuse-spotted Flying Lizards on coconut palms and exposed trunks adjoining forest (Sanguila et al., 2016).
-
-**Evidence / disposition.** Source-cited synopsis; Integrated after the habitat anchor.
+**Editorial evidence.** Source-cited synopsis; integrated additional habitat context.
 
 **Account citations.** Supsup et al., 2017; GBIF.org, 2026; Beukema, 2011; Sanguila et al., 2021; Uetz et al., 2026; Sanguila et al., 2016.
 
@@ -574,201 +464,161 @@
 
 #### *Draco guentheri* · Günther's Flying Lizard
 
-**Existing habitat context.** Fieldworkers recorded Günther's Flying Lizard in secondary-growth forest and on coconut trees beside the forest near Malagos, Mindanao (McGuire & Alcala, 2000).
+**Integrated habitat account.** Fieldworkers recorded Günther's Flying Lizard in secondary-growth forest and on coconut trees beside the forest near Malagos, Mindanao (McGuire & Alcala, 2000).
 
-**Reviewed habitat detail.** Near Malagos, Mindanao, Günther's Flying Lizards used trees in secondary forest and coconut palms beside the forest (McGuire & Alcala, 2000).
-
-**Evidence / disposition.** Source-cited synopsis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Source-cited synopsis; existing detailed habitat wording retained.
 
 **Account citations.** Beukema, 2011; GBIF.org, 2026; Uetz et al., 2026; McGuire & Alcala, 2000.
 
 #### *Draco mindanensis* · Mindanao Flying Lizard
 
-**Existing habitat context.** Mindanao Flying Lizards have been observed on tree trunks in primary and mature secondary rainforest; field accounts describe daytime activity several metres above the ground, commonly around 5–10 m (Sanguila et al., 2016). Like other Draco, it glides between trees using laterally extended, rib-supported patagial membranes (Siler, n.d.). In Smith’s 1982 eastern Mindanao field series, a female from primary forest around 650 m elevation carried two oviductal eggs measuring 17.5 and 18.4 mm.
+**Integrated habitat account.** Mindanao Flying Lizards have been observed on tree trunks in primary and mature secondary rainforest; field accounts describe daytime activity several metres above the ground, commonly around 5–10 m (Sanguila et al., 2016). Like other Draco, it glides between trees using laterally extended, rib-supported patagial membranes (Siler, n.d.). In Smith’s 1982 eastern Mindanao field series, a female from primary forest around 650 m elevation carried two oviductal eggs measuring 17.5 and 18.4 mm.
 
-**Reviewed habitat detail.** Daytime observations place Mindanao Flying Lizards on trunks several metres above ground in primary and mature secondary rainforest (Sanguila et al., 2016).
-
-**Evidence / disposition.** Source-cited synopsis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Source-cited synopsis; existing detailed habitat wording retained.
 
 **Account citations.** Siler, n.d.; GBIF.org, 2026; GIZ, 2013; Uetz et al., 2026; Smith, 1993; Sanguila et al., 2016.
 
 #### *Draco ornatus* · Ornate Flying Lizard
 
-**Existing habitat context.** Four individuals of this flying lizard were seen on a single occasion in coconut-plantation vegetation in the lowlands of the Babatngon Range, Leyte (Decena et al., 2023).
+**Integrated habitat account.** Four individuals of this flying lizard were seen on a single occasion in coconut-plantation vegetation in the lowlands of the Babatngon Range, Leyte (Decena et al., 2023).
 
-**Reviewed habitat detail.** Ornate Flying Lizards have been recorded on trunks in primary and secondary forest and coconut stands close to wooded areas (Sanguila et al., 2016).
-
-**Evidence / disposition.** Source-cited synopsis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Source-cited synopsis; existing detailed habitat wording retained.
 
 **Account citations.** Uetz et al., 2026; GBIF.org, 2026; Decena et al., 2023; Sanguila et al., 2016.
 
 #### *Draco reticulatus* · Reticulated Flying Lizard
 
-**Existing habitat context.** In the revision’s field observations, Draco reticulatus occurred mainly in open coconut plantations and was observed using well-sunlit trees on Bohol in sympatry with D. bimaculatus and D. ornatus.
+**Integrated habitat account.** In the revision’s field observations, Draco reticulatus occurred mainly in open coconut plantations and was observed using well-sunlit trees on Bohol in sympatry with D. bimaculatus and D. ornatus.
 
-**Reviewed habitat detail.** Brightly lit coconut palms and exposed tree trunks are documented perches for Reticulated Flying Lizards in plantation landscapes.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** The Reptile Database, 2026, after Musters 1983; GBIF.org, 2026; Uetz et al., 2026.
 
 #### *Gonocephalus semperi* · Anglehead Lizard
 
-**Existing habitat context.** In Agusan Marsh, lizards identified as Gonocephalus semperi were encountered in Katigbok peat-swamp forest. They are active by day and have been observed sleeping head-up on sapling trunks near streams and rivers (Sanguila et al., 2026).
+**Integrated habitat account.** In Agusan Marsh, lizards identified as Gonocephalus semperi were encountered in Katigbok peat-swamp forest. They are active by day and have been observed sleeping head-up on sapling trunks near streams and rivers (Sanguila et al., 2026).
 
-**Reviewed habitat detail.** At Agusan Marsh, Anglehead Lizards have been recorded in peat-swamp forest, where shaded trunks and nearby vegetation provide potential perches.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Sanguila et al., 2026; Del Prado et al., 2026; recent Gonocephalus revision, 2026; GBIF.org, 2026; Uetz et al., 2026; Smith, 1993; Welton et al., 2017.
 
 #### *Hydrosaurus pustulatus* · Philippine Sailfin Lizard
 
-**Existing habitat context.** A juvenile from the Agusan River measured 95 mm snout–vent length (Sanguila et al., 2026). Recorded on overhanging trees beside streams and riverbanks near Agusan Marsh agricultural land (Sanguila et al., 2026). The Taguibo study associated the sampled sailfin lizards with ground-level habitats in its riparian and terrestrial survey-zone analysis (Sanguila et al., 2021). In northeastern Leyte, the species was recorded in aquatic habitats (Decena et al., 2023). In northeastern Mindanao, sailfin lizards were observed active by day and resting in rock crevices along rivers at night at sampled sites between 170 and 420 m elevation (Sanguila et al., 2016). At Hijo Forest in Tagum City, observers found one lizard on a pandan plant and another crossing a coastal road near beach forest (Gamalo et al., 2023). In northeastern Leyte, individuals were observed sleeping on stream boulders or low shrubs at night and running across water in daylight (Decena et al., 2023).
+**Integrated habitat account.** A juvenile from the Agusan River measured 95 mm snout–vent length (Sanguila et al., 2026). Recorded on overhanging trees beside streams and riverbanks near Agusan Marsh agricultural land (Sanguila et al., 2026). The Taguibo study associated the sampled sailfin lizards with ground-level habitats in its riparian and terrestrial survey-zone analysis (Sanguila et al., 2021). In northeastern Leyte, the species was recorded in aquatic habitats (Decena et al., 2023). In northeastern Mindanao, sailfin lizards were observed active by day and resting in rock crevices along rivers at night at sampled sites between 170 and 420 m elevation (Sanguila et al., 2016). At Hijo Forest in Tagum City, observers found one lizard on a pandan plant and another crossing a coastal road near beach forest (Gamalo et al., 2023). In northeastern Leyte, individuals were observed sleeping on stream boulders or low shrubs at night and running across water in daylight (Decena et al., 2023).
 
-**Reviewed habitat detail.** Streams and rivers offer escape water and raised bankside perches for Philippine Sailfin Lizards, including branches and exposed trunks.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Sanguila et al., 2026; GBIF.org, 2026; Sanguila et al., 2021; Maglangit et al., 2022; Gamalo et al., 2023; Diesmos et al., 2026; Decena et al., 2023; Sanguila et al., 2016; Uetz et al., 2026.
 
 #### *Ahaetulla prasina* · Asian Vine Snake
 
-**Existing habitat context.** Taguibo Watershed records place this vine snake in trees and other vegetation (Sanguila et al., 2021). Sleeping snakes were seen on low shrubs beside forest edges (Sanguila et al., 2016). This diurnal, arboreal snake gives birth to live young (Uetz et al., 2026).
+**Integrated habitat account.** Taguibo Watershed records place this vine snake in trees and other vegetation (Sanguila et al., 2021). Sleeping snakes were seen on low shrubs beside forest edges (Sanguila et al., 2016). This diurnal, arboreal snake gives birth to live young (Uetz et al., 2026). Asian Vine Snakes use slender branches, vines and shrubs along wooded edges, where their narrow green bodies blend with foliage.
 
-**Reviewed habitat detail.** Asian Vine Snakes use slender branches, vines and shrubs along wooded edges, where their narrow green bodies blend with foliage.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Uetz et al., 2026; GBIF.org, 2026; GIZ, 2013; Sanguila et al., 2021; Sanguila et al., 2016.
 
 #### *Boiga angulata* · Philippine Blunt-headed Cat Snake
 
-**Existing habitat context.** The species has been characterized as fully arboreal in comparative snake-habitat literature summarized by Uetz et al (2026). This phylogenetic placement provides no diagnostic field characters or Philippine island-level occurrence records by itself (Weinell et al., 2021).
+**Integrated habitat account.** The species has been characterized as fully arboreal in comparative snake-habitat literature summarized by Uetz et al (2026). This phylogenetic placement provides no diagnostic field characters or Philippine island-level occurrence records by itself (Weinell et al., 2021). Intertwined branches and lower-canopy vegetation may provide nighttime activity sites for the Philippine Blunt-headed Cat Snake.
 
-**Reviewed habitat detail.** Intertwined branches and lower-canopy vegetation may provide nighttime activity sites for the Philippine Blunt-headed Cat Snake.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Weinell et al., 2019; GBIF.org, 2026; GIZ, 2013; Uetz et al., 2026; Weinell et al., 2021.
 
 #### *Boiga cynodon* · Dog-toothed Cat Snake
 
-**Existing habitat context.** Keyword extraction found no habitat passage. Examine the full source article.
+**Integrated habitat account.** Keyword extraction found no habitat passage. Examine the full source article.
 
-**Reviewed habitat detail.** Tree limbs and dense climbing vegetation may offer nighttime hunting routes for the Dog-toothed Cat Snake.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Weinell et al., 2019; GBIF.org, 2026; Maglangit et al., 2022; Supsup et al., 2017; Sanguila et al., 2016; Decena et al., 2023; Weinell et al., 2021.
 
 #### *Boiga dendrophila* · Mangrove Snake
 
-**Existing habitat context.** Climbing and use of aboveground vegetation are documented; a comparative review characterizes this species as partly arboreal (Uetz et al., 2026). An adult was documented swimming through a shallow stream at Tinuy-an Falls (Plaza et al., 2025).
+**Integrated habitat account.** Climbing and use of aboveground vegetation are documented; a comparative review characterizes this species as partly arboreal (Uetz et al., 2026). An adult was documented swimming through a shallow stream at Tinuy-an Falls (Plaza et al., 2025). Mangrove branches and creekside trees above tidal water offer sheltered climbing habitat for the Mangrove Snake.
 
-**Reviewed habitat detail.** Mangrove branches and creekside trees above tidal water offer sheltered climbing habitat for the Mangrove Snake.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Plaza et al., 2025; GBIF.org, 2026; Supsup et al., 2017; Uetz et al., 2026; Weinell et al., 2021.
 
 #### *Boiga drapiezii* · White-spotted Cat Snake
 
-**Existing habitat context.** The White-spotted Cat Snake is reported from forests.
+**Integrated habitat account.** In shaded forest, slender branches and hanging vegetation may provide nighttime perches for the White-spotted Cat Snake.
 
-**Reviewed habitat detail.** In shaded forest, slender branches and hanging vegetation may provide nighttime perches for the White-spotted Cat Snake.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Used in place of a broad habitat sentence.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; refined broad habitat wording.
 
 **Account citations.** Uetz et al., 2026; Leviton et al., 2018.
 
 #### *Calamaria gervaisii* · Philippine Reed Snake
 
-**Existing habitat context.** This species was recorded in soil and beneath forest-floor debris (Sanguila et al., 2016).
+**Integrated habitat account.** This species was recorded in soil and beneath forest-floor debris (Sanguila et al., 2016).
 
-**Reviewed habitat detail.** Philippine Reed Snakes have been recorded in soil and beneath forest-floor debris, moving through sheltered ground.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Weinell et al., 2019; GBIF.org, 2026; Beukema, 2011; GIZ, 2013; Sanguila et al., 2016; Uetz et al., 2026.
 
 #### *Calamaria lumbricoidea* · Variable Reed Snake
 
-**Existing habitat context.** A single animal was encountered in daylight among leaf litter and riparian boulders within dipterocarp forest in northeastern Leyte.
+**Integrated habitat account.** A single animal was encountered in daylight among leaf litter and riparian boulders within dipterocarp forest in northeastern Leyte.
 
-**Reviewed habitat detail.** In northeastern Leyte, Variable Reed Snakes have been recorded among riparian boulders and leaf litter in dipterocarp forest.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Weinell et al., 2019; GBIF.org, 2026; Beukema, 2011; Sanguila et al., 2016; Decena et al., 2023; Uetz et al., 2026.
 
 #### *Chrysopelea paradisi* · Paradise Flying Snake
 
-**Existing habitat context.** This snake is fully arboreal and uses the tree canopy and branches (Uetz et al., 2026). A tree-dwelling gliding snake, observed resting high in vegetation at night (Sanguila et al., 2016).
+**Integrated habitat account.** This snake is fully arboreal and uses the tree canopy and branches (Uetz et al., 2026). A tree-dwelling gliding snake, observed resting high in vegetation at night (Sanguila et al., 2016).
 
-**Reviewed habitat detail.** Paradise Flying Snakes move between tree crowns by day, using trunks and connected canopy branches.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Sanguila et al., 2026; GBIF.org, 2026; Gamalo et al., 2023; Uetz et al., 2026; Sanguila et al., 2016.
 
 #### *Coelognathus erythrurus* · Philippine Red-tailed Ratsnake
 
-**Existing habitat context.** In the Leyte Cordillera and Babatngon ranges, the species was encountered in aquatic habitats (Decena et al., 2023).
+**Integrated habitat account.** In the Leyte Cordillera and Babatngon ranges, the species was encountered in aquatic habitats (Decena et al., 2023). Fallen wood, ground cover and vegetated forest edges may provide retreat and movement sites for the Philippine Red-tailed Ratsnake.
 
-**Reviewed habitat detail.** Fallen wood, ground cover and vegetated forest edges may provide retreat and movement sites for the Philippine Red-tailed Ratsnake.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Weinell et al., 2019; Sanguila et al., 2026; GBIF.org, 2026; Sanguila et al., 2016; Decena et al., 2023; Uetz et al., 2026.
 
 #### *Dendrelaphis marenae* · Maren's Bronzeback Snake
 
-**Existing habitat context.** Tree-dwelling specimens were recorded from the Agusan region (Sanguila et al., 2016). Two catalogued recent specimens from Taguibo Watershed (MBS 475 and MBS 481) were assigned to vegetation and trees in the field-record analysis (Sanguila et al., 2021). Described as an active daytime snake that forages and moves among trees (Uetz et al., 2026).
+**Integrated habitat account.** Tree-dwelling specimens were recorded from the Agusan region (Sanguila et al., 2016). Two catalogued recent specimens from Taguibo Watershed (MBS 475 and MBS 481) were assigned to vegetation and trees in the field-record analysis (Sanguila et al., 2021). Described as an active daytime snake that forages and moves among trees (Uetz et al., 2026). The sunlit shrub layer and lower trees around forest openings may provide activity sites for Maren's Bronzeback Snake.
 
-**Reviewed habitat detail.** The sunlit shrub layer and lower trees around forest openings may provide activity sites for Maren's Bronzeback Snake.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Uetz et al., 2026; GBIF.org, 2026; Supsup et al., 2017; GIZ, 2013; Sanguila et al., 2016; Sanguila et al., 2021.
 
 #### *Dendrelaphis philippinensis* · Philippine Bronzeback Snake
 
-**Existing habitat context.** The Philippine Bronzeback Snake is reported from forests.
+**Integrated habitat account.** Philippine Bronzeback Snakes may move through shrubs and connected branches around forest gaps.
 
-**Reviewed habitat detail.** Philippine Bronzeback Snakes may move through shrubs and connected branches around forest gaps.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Used in place of a broad habitat sentence.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; refined broad habitat wording.
 
 **Account citations.** Sanguila et al., 2026; GBIF.org, 2026; Maglangit et al., 2022.
 
 #### *Dryophiops philippina* · Philippine Whip Snake
 
-**Existing habitat context.** The Philippine Whip Snake is reported from forests.
+**Integrated habitat account.** The Philippine Whip Snake is reported from forests. Fine branches, suspended vines and dense shrubs offer likely climbing routes for the Philippine Whip Snake.
 
-**Reviewed habitat detail.** Fine branches, suspended vines and dense shrubs offer likely climbing routes for the Philippine Whip Snake.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Weinell et al., 2019; GBIF.org, 2026; Uetz et al., 2026.
 
 #### *Gonyosoma oxycephalum* · Red-tailed Green Ratsnake
 
-**Existing habitat context.** A long, slender tree snake usually green or yellow-green over the body, with a tail that may be reddish, brown or gray. Published behavior records describe a primarily tree-dwelling snake, active during daylight and using forest vegetation (Uetz et al., 2026).
+**Integrated habitat account.** A long, slender tree snake usually green or yellow-green over the body, with a tail that may be reddish, brown or gray. Published behavior records describe a primarily tree-dwelling snake, active during daylight and using forest vegetation (Uetz et al., 2026). Trees and climbing plants at wooded edges create connected aboveground pathways for the Red-tailed Green Ratsnake.
 
-**Reviewed habitat detail.** Trees and climbing plants at wooded edges create connected aboveground pathways for the Red-tailed Green Ratsnake.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Wallach et al., 2024; GBIF.org, 2026; Supsup et al., 2017; Sanguila et al., 2016; Gamalo et al., 2023; Uetz et al., 2026.
 
 #### *Lycodon capucinus* · Common Wolf Snake
 
-**Existing habitat context.** The Common Wolf Snake has been recorded near residences and other heavily modified lowland sites (Sanguila et al., 2016).
+**Integrated habitat account.** The Common Wolf Snake has been recorded near residences and other heavily modified lowland sites (Sanguila et al., 2016). Common Wolf Snakes use sheltered ground, rock crevices and modified lowland surroundings, including areas near houses.
 
-**Reviewed habitat detail.** Common Wolf Snakes use sheltered ground, rock crevices and modified lowland surroundings, including areas near houses.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Lanza, 1999; GBIF.org, 2026; Gamalo et al., 2023; Sanguila et al., 2016; Uetz et al., 2026.
 
@@ -776,201 +626,161 @@
 
 #### *Rusa marianna* · Philippine Brown Deer
 
-**Existing habitat context.** The Philippine Brown Deer browses shoots, foliage and fruit and may graze in forest clearings and adjacent grassland.
+**Integrated habitat account.** The Philippine Brown Deer browses shoots, foliage and fruit and may graze in forest clearings and adjacent grassland. Philippine Brown Deer browse shoots and foliage in forest clearings and adjoining grassland, often moving along sheltered vegetated paths.
 
-**Reviewed habitat detail.** Philippine Brown Deer browse shoots and foliage in forest clearings and adjoining grassland, often moving along sheltered vegetated paths.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Jones et al., 2009; GBIF.org, 2026; GIZ, 2013; Ali et al., 2021; Wilman et al., 2014; American Society of Mammalogists, 2026; A. G. Desmarest, 1822.
 
 #### *Sus philippensis* · Philippine Warty Pig
 
-**Existing habitat context.** The Philippine Warty Pig inhabits forests and adjoining vegetated habitats, including montane and mossy forest in some areas. It eats fallen fruit, underground plant parts and invertebrates and may become more nocturnal in disturbed landscapes (IUCN SSC Wild Pig Specialist Group, n.d.; Wilman et al., 2014).
+**Integrated habitat account.** The Philippine Warty Pig inhabits forests and adjoining vegetated habitats, including montane and mossy forest in some areas. It eats fallen fruit, underground plant parts and invertebrates and may become more nocturnal in disturbed landscapes (IUCN SSC Wild Pig Specialist Group, n.d.; Wilman et al., 2014). On the forest floor, rooted soil, wallows and disturbed leaf litter may reveal movements of Philippine Warty Pigs.
 
-**Reviewed habitat detail.** On the forest floor, rooted soil, wallows and disturbed leaf litter may reveal movements of Philippine Warty Pigs.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** IUCN SSC Wild Pig Specialist Group, n.d.; GBIF.org, 2026; Gamalo et al., 2023; Wilman et al., 2014; Nehring, 1886; American Society of Mammalogists, 2026.
 
 #### *Paradoxurus philippinensis* · Philippine Palm Civet
 
-**Existing habitat context.** The Philippine Palm Civet is reported from forests.
+**Integrated habitat account.** Fruiting trees and connecting branches in woodland provide likely nighttime feeding and movement routes for the Philippine Palm Civet.
 
-**Reviewed habitat detail.** Fruiting trees and connecting branches in woodland provide likely nighttime feeding and movement routes for the Philippine Palm Civet.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Used in place of a broad habitat sentence.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; refined broad habitat wording.
 
 **Account citations.** WildAlert, n.d.; GBIF.org, 2026; Jourdan, 1837; American Society of Mammalogists, 2026.
 
 #### *Viverra tangalunga* · Malay Civet
 
-**Existing habitat context.** The Malay Civet uses forest, cultivated land and other modified terrestrial habitats. It usually travels on the ground, but can climb trees, and shelters in dense vegetation during daylight (Animal Diversity Web, n.d.).
+**Integrated habitat account.** The Malay Civet uses forest, cultivated land and other modified terrestrial habitats. It usually travels on the ground, but can climb trees, and shelters in dense vegetation during daylight (Animal Diversity Web, n.d.). Malay Civets travel along ground-level routes through secondary woodland, cultivated edges and other vegetated mosaics.
 
-**Reviewed habitat detail.** Malay Civets travel along ground-level routes through secondary woodland, cultivated edges and other vegetated mosaics.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Animal Diversity Web, n.d.; GBIF.org, 2026; GIZ, 2013; Wilman et al., 2014; Jones et al., 2009; J. E. Gray, 1832; American Society of Mammalogists, 2026.
 
 #### *Emballonura alecto* · Small Asian Sheath-tailed Bat
 
-**Existing habitat context.** The Small Asian Sheath-tailed Bat roosts in caves, including partly lit cavities, on Siargao and in the Agusan provinces of Mindanao.
+**Integrated habitat account.** The Small Asian Sheath-tailed Bat roosts in caves, including partly lit cavities, on Siargao and in the Agusan provinces of Mindanao.
 
-**Reviewed habitat detail.** Small Asian Sheath-tailed Bats roost in caves and partly lit rock cavities, including recorded sites on Siargao and in the Agusan region.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Ingle et al., n.d.; GBIF.org, 2026; Nuñeza & Galorio, 2014; Perez & Nuñeza, 2020; Warguez et al., 2013; Wilman et al., 2014; Eydoux & P. Gervais, 1836; American Society of Mammalogists, 2026.
 
 #### *Saccolaimus saccolaimus* · Bare-rumped Sheath-tailed Bat
 
-**Existing habitat context.** The Field Museum Mindanao bat guide lists adult forearm length as 66–71 mm for Saccolaimus saccolaimus (Ingle et al., Rapid Color Guide No. 49, v1.2). The Bare-rumped Sheath-tailed Bat roosts in hollow trees, rock crevices and buildings.
+**Integrated habitat account.** The Field Museum Mindanao bat guide lists adult forearm length as 66–71 mm for Saccolaimus saccolaimus (Ingle et al., Rapid Color Guide No. 49, v1.2). The Bare-rumped Sheath-tailed Bat roosts in hollow trees, rock crevices and buildings.
 
-**Reviewed habitat detail.** Bare-rumped Sheath-tailed Bats shelter in hollow trees, rock cracks and buildings and emerge after dusk to forage over nearby landscapes.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** National Parks Board, 2019; Ingle et al., n.d.; Jones et al., 2009; GBIF.org, 2026; Wilman et al., 2014; Temminck, 1838; American Society of Mammalogists, 2026.
 
 #### *Taphozous melanopogon* · Black-bearded Tomb Bat
 
-**Existing habitat context.** The Black-bearded Tomb Bat roosts in cave crevices and cavities, sometimes forming maternity groups.
+**Integrated habitat account.** The Black-bearded Tomb Bat roosts in cave crevices and cavities, sometimes forming maternity groups.
 
-**Reviewed habitat detail.** Black-bearded Tomb Bats shelter in cave recesses and narrow rock crevices, sometimes gathering in maternity groups.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** National Parks Board, 2019; Ingle et al., n.d.; GBIF.org, 2026; Warguez et al., 2013; Galorio & Nuñeza, 2014; Wilman et al., 2014; Temminck, 1841; American Society of Mammalogists, 2026.
 
 #### *Coelops hirsutus* · Philippine Tailless Roundleaf Bat
 
-**Existing habitat context.** The Philippine Tailless Roundleaf Bat is reported from forests, rivers, streams, caves and karst landscapes. Its historical type locality is Alag River, opposite mouth of Egbert River, Mindoro, Philippines (American Society of Mammalogists, 2026).
+**Integrated habitat account.** The Philippine Tailless Roundleaf Bat is reported from forests, rivers, streams, caves and karst landscapes. Its historical type locality is Alag River, opposite mouth of Egbert River, Mindoro, Philippines (American Society of Mammalogists, 2026). Caves and karst may provide daytime shelter for Philippine Tailless Roundleaf Bats, with adjoining forest and waterways offering possible flight corridors.
 
-**Reviewed habitat detail.** Caves and karst may provide daytime shelter for Philippine Tailless Roundleaf Bats, with adjoining forest and waterways offering possible flight corridors.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Heaney et al., 2006; Ingle et al., n.d.; Mammal Diversity Database, 2026; BatNames, 2026; G. S. Miller, 1910; American Society of Mammalogists, 2026.
 
 #### *Hipposideros antricola* · Philippine Dusky Roundleaf Bat
 
-**Existing habitat context.** The Philippine Dusky Roundleaf Bat is reported from forests, caves, and karst areas.
+**Integrated habitat account.** The Philippine Dusky Roundleaf Bat is reported from forests, caves, and karst areas.
 
-**Reviewed habitat detail.** In forested karst country, cave chambers may provide daytime roosts for Philippine Dusky Roundleaf Bats.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Hollister, 1913; W. C. H. Peters, 1861; American Society of Mammalogists, 2026.
 
 #### *Hipposideros cervinus* · Fawn-colored Roundleaf Bat
 
-**Existing habitat context.** Keyword extraction found no habitat passage. Examine the full source article.
+**Integrated habitat account.** Keyword extraction found no habitat passage. Examine the full source article.
 
-**Reviewed habitat detail.** Fawn-colored Roundleaf Bats have been recorded in caves on Siargao and in Agusan del Sur, where sheltered chambers provide roosting space.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Ingle et al., n.d.; GBIF.org, 2026; Nuñeza & Galorio, 2014; Perez & Nuñeza, 2020; Wilman et al., 2014; J. Gould, 1854; American Society of Mammalogists, 2026.
 
 #### *Hipposideros coronatus* · Large Mindanao Roundleaf Bat
 
-**Existing habitat context.** The Large Mindanao Roundleaf Bat is reported from forests, caves and karst landscapes.
+**Integrated habitat account.** The Large Mindanao Roundleaf Bat is reported from forests, caves and karst landscapes.
 
-**Reviewed habitat detail.** Large Mindanao Roundleaf Bats are reported from forested karst landscapes, where sheltered cave spaces may be used for roosting.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Ingle et al., n.d.; GBIF.org, 2026; Wilman et al., 2014; W. C. H. Peters, 1871; American Society of Mammalogists, 2026.
 
 #### *Hipposideros diadema* · Diadem Roundleaf Bat
 
-**Existing habitat context.** The Diadem Roundleaf Bat roosts in caves on Siargao and Mindanao.
+**Integrated habitat account.** The Diadem Roundleaf Bat roosts in caves on Siargao and Mindanao.
 
-**Reviewed habitat detail.** Diadem Roundleaf Bats have documented cave roosts on Mindanao and Siargao amid wooded landscapes.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Wilson & Mittermeier, 2019; Ingle et al., n.d.; GBIF.org, 2026; Heaney et al., 2006; Nuñeza & Galorio, 2014; Perez & Nuñeza, 2020; Galorio & Nuñeza, 2014; Wilman et al., 2014; É. Geoffroy Saint-Hilaire, 1813; American Society of Mammalogists, 2026.
 
 #### *Hipposideros obscurus* · Philippine Forest Roundleaf Bat
 
-**Existing habitat context.** On Mindanao, the Philippine Forest Roundleaf Bat occurs in primary and disturbed lowland forest and has been documented in montane forest to about 1,100 m. It often roosts in caves, with additional day roost records from mine shafts, hollow trees and sheltered cavities among tree buttresses (Alviola et al., 2019; Heaney et al., 2006).
+**Integrated habitat account.** On Mindanao, the Philippine Forest Roundleaf Bat occurs in primary and disturbed lowland forest and has been documented in montane forest to about 1,100 m. It often roosts in caves, with additional day roost records from mine shafts, hollow trees and sheltered cavities among tree buttresses (Alviola et al., 2019; Heaney et al., 2006).
 
-**Reviewed habitat detail.** Philippine Forest Roundleaf Bats occur from lowland to montane forest on Mindanao, with records reaching about 1,100 m elevation.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Ingle et al., n.d.; GBIF.org, 2026; GIZ, 2013; Heaney et al., 2006; Wilman et al., 2014; W. C. H. Peters, 1861; American Society of Mammalogists, 2026; Alviola et al., 2019.
 
 #### *Megaderma spasma* · Lesser Asian False-vampire
 
-**Existing habitat context.** The Lesser Asian False-vampire roosts in caves, hollow trees and sometimes buildings. Mindanao observations include roosts in large dao trees.
+**Integrated habitat account.** The Lesser Asian False-vampire roosts in caves, hollow trees and sometimes buildings. Mindanao observations include roosts in large dao trees.
 
-**Reviewed habitat detail.** Large hollow trees, including dao, provide recorded shelters for Lesser Asian False-vampires, which also roost in caves and buildings.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Animal Diversity Web, n.d.; Ingle et al., n.d.; GBIF.org, 2026; Gamalo et al., 2023; Nuñeza & Galorio, 2014; Wilman et al., 2014; American Society of Mammalogists, 2026.
 
 #### *Miniopterus australis* · Little Long-fingered Bat
 
-**Existing habitat context.** The Little Long-fingered Bat uses caves, abandoned mines, tunnels and other cavities as day roosts. Day roosts include caves and tunnels, while feeding flights extend through the surrounding landscape. Day roosts have been reported in caves, abandoned mines, tunnels and other cavities. Nursery sites often occur in limestone caves; the cited observations include populations outside the Philippines (Animal Diversity Web, n.d.).
+**Integrated habitat account.** The Little Long-fingered Bat uses caves, abandoned mines, tunnels and other cavities as day roosts. Day roosts include caves and tunnels, while feeding flights extend through the surrounding landscape. Day roosts have been reported in caves, abandoned mines, tunnels and other cavities. Nursery sites often occur in limestone caves; the cited observations include populations outside the Philippines (Animal Diversity Web, n.d.).
 
-**Reviewed habitat detail.** Little Long-fingered Bats shelter by day in caves, tunnels and abandoned mines before moving through nearby airspace after dusk.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Animal Diversity Web, n.d.; Ingle et al., n.d.; GBIF.org, 2026; GIZ, 2013; Heaney et al., 2006; Wilman et al., 2014; Jones et al., 2009; Tomes, 1858; American Society of Mammalogists, 2026.
 
 #### *Miniopterus tristis* · Great Long-fingered Bat
 
-**Existing habitat context.** The Great Long-fingered Bat is reported from forests, caves and karst landscapes.
+**Integrated habitat account.** The Great Long-fingered Bat is reported from forests, caves and karst landscapes. Caves within forested karst may provide roosting spaces for Great Long-fingered Bats, with wooded corridors forming possible flight routes.
 
-**Reviewed habitat detail.** Caves within forested karst may provide roosting spaces for Great Long-fingered Bats, with wooded corridors forming possible flight routes.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Ingle et al., n.d.; GBIF.org, 2026; GIZ, 2013; Wilman et al., 2014; G. R. Waterhouse, 1845; American Society of Mammalogists, 2026.
 
 #### *Cheiromeles parvidens* · Lesser Naked Bat
 
-**Existing habitat context.** The Lesser Naked Bat has an adult forearm length of 73–78 mm in the Field Museum guide to the bats of Mindanao (Ingle et al., n.d.). In the Philippines, the Lesser Naked Bat has been found roosting in hollow trees and coconut palms, as well as occasionally in caves (IUCN, 2019).
+**Integrated habitat account.** The Lesser Naked Bat has an adult forearm length of 73–78 mm in the Field Museum guide to the bats of Mindanao (Ingle et al., n.d.). In the Philippines, the Lesser Naked Bat has been found roosting in hollow trees and coconut palms, as well as occasionally in caves (IUCN, 2019).
 
-**Reviewed habitat detail.** Philippine records include Lesser Naked Bats roosting in hollow trees and coconut palms, with occasional cave use.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Ingle et al., n.d.; IUCN, 2019; Wilman et al., 2014; G. S. Miller & Hollister, 1921; American Society of Mammalogists, 2026.
 
 #### *Mops plicatus* · Wrinkle-lipped Free-tailed Bat
 
-**Existing habitat context.** The Wrinkle-lipped Free-tailed Bat roosts in caves, sometimes in large colonies, and also uses rock crevices and buildings.
+**Integrated habitat account.** The Wrinkle-lipped Free-tailed Bat roosts in caves, sometimes in large colonies, and also uses rock crevices and buildings.
 
-**Reviewed habitat detail.** Wrinkle-lipped Free-tailed Bats form colonies in caves and can also occupy rock crevices and buildings.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Ingle et al., n.d.; GIZ, 2013; IUCN, 2020; Srilopan et al., 2026; Buchanan, 1800; Mammal Diversity Database, 2026.
 
 #### *Mops sarasinorum* · Sulawesian Free-tailed Bat
 
-**Existing habitat context.** The Sulawesian Free-tailed Bat is reported from forests, rivers and streams, and cultivated areas. Its historical type locality is "Batulappa, nördlich vom See von Tempe [= north of Lake Tempe], SW Central Celébes [= Sulawesi]," Indonesia (American Society of Mammalogists, 2026).
+**Integrated habitat account.** The Sulawesian Free-tailed Bat is reported from forests, rivers and streams, and cultivated areas. Its historical type locality is "Batulappa, nördlich vom See von Tempe [= north of Lake Tempe], SW Central Celébes [= Sulawesi]," Indonesia (American Society of Mammalogists, 2026). Openings above wooded waterways and cultivated land may provide flight corridors for Sulawesian Free-tailed Bats.
 
-**Reviewed habitat detail.** Openings above wooded waterways and cultivated land may provide flight corridors for Sulawesian Free-tailed Bats.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Integrated after the habitat anchor.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; integrated additional habitat context.
 
 **Account citations.** Ingle et al., n.d.; GBIF.org, 2026; Wilman et al., 2014; A. B. Meyer, 1899; American Society of Mammalogists, 2026.
 
 #### *Acerodon jubatus* · Golden-capped Flying Fox
 
-**Existing habitat context.** The Golden-capped Flying Fox roosts in trees, sometimes alongside other large flying foxes, and feeds heavily on figs in mature lowland forest. The Bat Conservation International account notes forest loss, hunting and roost disturbance as central concerns (Bat Conservation International, n.d.).
+**Integrated habitat account.** The Golden-capped Flying Fox roosts in trees, sometimes alongside other large flying foxes, and feeds heavily on figs in mature lowland forest. The Bat Conservation International account notes forest loss, hunting and roost disturbance as central concerns (Bat Conservation International, n.d.). A Luzon GPS study found most recorded foraging locations of Golden-capped Flying Foxes in closed forest, with roosting trees occurring across a wider landscape (de Jong et al., 2013).
 
-**Reviewed habitat detail.** A Luzon GPS study found most recorded foraging locations of Golden-capped Flying Foxes in closed forest, with roosting trees occurring across a wider landscape (de Jong et al., 2013).
-
-**Evidence / disposition.** Source-cited synopsis; Integrated after the habitat anchor.
+**Editorial evidence.** Source-cited synopsis; integrated additional habitat context.
 
 **Account citations.** Ramos & Calica, 2025; Bat Conservation International, n.d.; Ingle et al., n.d.; Jones et al., 2009; GBIF.org, 2026; GIZ, 2013; Constantino et al., 2026; Wilman et al., 2014; Ramos & Nemenzo-Calica, 2025; von Eschscholtz, 1831; American Society of Mammalogists, 2026; de Jong et al., 2013.
 
@@ -978,51 +788,41 @@
 
 #### *Alionycteris paucidentata* · Mindanao Pygmy Fruit Bat
 
-**Existing habitat context.** The Mindanao Pygmy Fruit Bat occurs in montane forest, with Mount Kitanglad records particularly numerous in high-elevation mossy forest. Compiled traits describe nocturnal fruit-feeding in trees (Heaney et al., 2006; Wilman et al., 2014).
+**Integrated habitat account.** The Mindanao Pygmy Fruit Bat occurs in montane forest, with Mount Kitanglad records particularly numerous in high-elevation mossy forest. Compiled traits describe nocturnal fruit-feeding in trees (Heaney et al., 2006; Wilman et al., 2014).
 
-**Reviewed habitat detail.** High-elevation mossy forest on Mount Kitanglad is a documented habitat of the Mindanao Pygmy Fruit Bat.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Ingle et al., n.d.; GBIF.org, 2026; Lama et al., 2024; Heaney et al., 2006; Wilman et al., 2014; Kock, 1969; American Society of Mammalogists, 2026.
 
 #### *Cynopterus brachyotis* · Lesser Short-nosed Fruit Bat
 
-**Existing habitat context.** The Lesser Short-nosed Fruit Bat feeds on fruit and nectar and may roost under leaves, in trees or in buildings. Mindanao field studies recorded it at lower-elevation sites and identified fig seeds among sampled food remains (Heaney et al., 2006; National Parks Board, 2019; Galorio & Nuñeza, 2014; Wilman et al., 2014). Its historical type locality is Dewei (= Dewai) River, Borneo (American Society of Mammalogists, 2026).
+**Integrated habitat account.** The Lesser Short-nosed Fruit Bat feeds on fruit and nectar and may roost under leaves, in trees or in buildings. Mindanao field studies recorded it at lower-elevation sites and identified fig seeds among sampled food remains (Heaney et al., 2006; National Parks Board, 2019; Galorio & Nuñeza, 2014; Wilman et al., 2014). Its historical type locality is Dewei (= Dewai) River, Borneo (American Society of Mammalogists, 2026).
 
-**Reviewed habitat detail.** Fruiting and flowering vegetation provides food for Lesser Short-nosed Fruit Bats, while leaves, trees and buildings offer daytime roosts.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** National Parks Board, 2019; Ingle et al., n.d.; GBIF.org, 2026; Yangurin et al., 2025; Heaney et al., 2006; Galorio & Nuñeza, 2014; Wilman et al., 2014; S. Müller, 1838; American Society of Mammalogists, 2026.
 
 #### *Desmalopex leucoptera* · White-winged Flying Fox
 
-**Existing habitat context.** The White-winged Flying Fox is reported from forests.
+**Integrated habitat account.** Fruiting trees in the forest canopy may provide feeding opportunities for the White-winged Flying Fox.
 
-**Reviewed habitat detail.** Fruiting trees in the forest canopy may provide feeding opportunities for the White-winged Flying Fox.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Used in place of a broad habitat sentence.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; refined broad habitat wording.
 
 **Account citations.** Waldien & Duya, 2020, summarizing Heaney et al., 2010; Waldien & Duya, 2020; DENR-BMB, 2018; Temminck, 1853; American Society of Mammalogists, 2026.
 
 #### *Dyacopterus rickarti* · Philippine Large-headed Fruit Bat
 
-**Existing habitat context.** The Philippine Large-headed Fruit Bat is reported from forests.
+**Integrated habitat account.** Philippine Large-headed Fruit Bats may forage among fruiting trees and connected upper-canopy vegetation in forest.
 
-**Reviewed habitat detail.** Philippine Large-headed Fruit Bats may forage among fruiting trees and connected upper-canopy vegetation in forest.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Used in place of a broad habitat sentence.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; refined broad habitat wording.
 
 **Account citations.** Helgen et al., 2007; GBIF.org, 2026; K. M. Helgen, Kock, Gomez, & Ingle in K. M. Helgen, Kock, Gomez, Ingle, & M. H. Sinaga, 2007; American Society of Mammalogists, 2026.
 
 #### *Eonycteris robusta* · Philippine Dawn Bat
 
-**Existing habitat context.** The Philippine Dawn Bat feeds on nectar and can pollinate forest trees, linking its foraging ecology to flowering plants (Roño et al., 2021). Compiled traits describe nectar feeding, arboreal foraging and nocturnal activity (Wilman et al., 2014). Its historical type locality is "cave at Montalban [Rizal Province], Luzon, Philippine Islands." (American Society of Mammalogists, 2026).
+**Integrated habitat account.** The Philippine Dawn Bat feeds on nectar and can pollinate forest trees, linking its foraging ecology to flowering plants (Roño et al., 2021). Compiled traits describe nectar feeding, arboreal foraging and nocturnal activity (Wilman et al., 2014). Its historical type locality is "cave at Montalban [Rizal Province], Luzon, Philippine Islands." (American Society of Mammalogists, 2026).
 
-**Reviewed habitat detail.** Flowering forest plants provide nectar-feeding opportunities for the Philippine Dawn Bat during nighttime activity.
-
-**Evidence / disposition.** Field-guide interpretation / prior-account synthesis; Held from display; existing account had sufficient similar detail.
+**Editorial evidence.** Field-guide interpretation / prior-account synthesis; existing detailed habitat wording retained.
 
 **Account citations.** Wilson & Mittermeier, 2019; Ingle et al., n.d.; GBIF.org, 2026; Roño et al., 2021; Wilman et al., 2014; G. S. Miller, 1913; American Society of Mammalogists, 2026.
 

@@ -84,6 +84,14 @@ public final class PhLibraryDirectoryActivity extends Activity {
         getWindow().getDecorView().setSystemUiVisibility(
             View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        if(saved==null){
+            String groupExtra=getIntent().getStringExtra("phlibrary_group");
+            String rarityExtra=getIntent().getStringExtra("phlibrary_rarity");
+            for(int i=1;i<GROUPS.length;i++)
+                if(GROUPS[i].equals(groupExtra)){selectedGroup=i;break;}
+            for(int i=1;i<TIERS.length;i++)
+                if(TIERS[i].equals(rarityExtra)){selectedRarity=i;break;}
+        }
         if(saved!=null){
             selectedGroup=Math.min(GROUPS.length-1,Math.max(0,saved.getInt("group",0)));
             selectedRarity=Math.min(TIERS.length-1,Math.max(0,saved.getInt("rarity",0)));

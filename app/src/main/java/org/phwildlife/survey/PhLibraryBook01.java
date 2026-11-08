@@ -112,6 +112,58 @@ public final class PhLibraryBook01 {
             target.put("r",sources);
         }
     }
+    /** Readability edits retain each account's taxon, source list, and status. */
+    private static void applyReaderRefinements(Context context,
+            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
+            throws Exception {
+        JSONObject pack;
+        try(InputStream input=context.getAssets().open("phlibrary_reader_refinements_v178.json");
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
+            byte[] buffer=new byte[8192]; int n;
+            while((n=input.read(buffer))!=-1){
+                if(bytes.size()+n>120000)throw new IllegalStateException("Reader pack exceeds limit");
+                bytes.write(buffer,0,n);
+            }
+            pack=new JSONObject(bytes.toString("UTF-8"));
+        }
+        if(!"1.78-fluent-reader".equals(pack.optString("edition")) ||
+           !"1.75".equals(pack.optString("baseEdition")) ||
+           !"1.76-editorial".equals(pack.optString("editorialEdition")) ||
+           !"0.3.1".equals(pack.optString("rarityModel")) ||
+           pack.getInt("speciesCount")!=714)
+            throw new IllegalStateException("Unexpected reader refinement edition");
+        JSONArray edits=pack.getJSONArray("records");
+        if(edits.length()!=pack.getInt("changed") || edits.length()<40)
+            throw new IllegalStateException("Incomplete reader refinements");
+        HashSet<String> touched=new HashSet<>();
+        for(int i=0;i<edits.length();i++){
+            JSONObject entry=edits.getJSONObject(i);
+            String scientific=entry.getString("s");
+            Integer at=index.get(key(scientific));
+            String old=entry.getString("old");
+            String revised=entry.getString("revised");
+            if(at==null || !touched.add(scientific) ||
+               old.length()<30 || revised.length()<25 ||
+               revised.contains("rather than") || revised.contains("\\n"))
+                throw new IllegalStateException("Invalid reader correction "+scientific);
+            JSONObject target=rows.get(at);
+            if(!scientific.equals(target.optString("s")))
+                throw new IllegalStateException("Reader taxon mismatch "+scientific);
+            String before=target.getString("p");
+            int pos=before.indexOf(old);
+            if(pos<0 || before.indexOf(old,pos+old.length())>=0)
+                throw new IllegalStateException("Reader correction anchor mismatch "+scientific);
+            String after=before.substring(0,pos)+revised+before.substring(pos+old.length());
+            JSONArray sources=target.getJSONArray("r");
+            for(int j=0;j<sources.length();j++){
+                String cited=sources.getJSONObject(j).getString("short");
+                if(before.contains(cited) && !after.contains(cited))
+                    throw new IllegalStateException("Lost citation in "+scientific);
+            }
+            target.put("p",after);
+        }
+    }
+
     /** Educational field-search cues are independent of the research source paragraph.
      *  Read-only, species-keyed and never used to calculate Discovery Rarity.
      *  Each inference is phrased as field guidance, not confirmed habitat selection. */
@@ -159,11 +211,18 @@ public final class PhLibraryBook01 {
                !detail.getString("group").equals(target.optString("g")))
                 throw new IllegalStateException("Taxon mismatch in habitat cue");
             String narrative=target.getString("p").trim();
-            String status="Its listed Philippine DENR category";
-            int at=narrative.lastIndexOf(status);
-            String expanded=at>=0
-                ? narrative.substring(0,at)+cue+" "+narrative.substring(at)
-                : narrative+" "+cue;
+            String anchor=detail.getString("anchor").trim();
+            String mode=detail.getString("mode");
+            int insertion=narrative.indexOf(anchor);
+            if(anchor.length()<35 || insertion<0 ||
+                narrative.indexOf(anchor,insertion+anchor.length())>=0 ||
+                !("insert".equals(mode) || "replace".equals(mode) ||
+                  "retain".equals(mode)))
+                throw new IllegalStateException("Habitat placement mismatch "+scientific);
+            String expanded="retain".equals(mode)?narrative:
+                narrative.substring(0,insertion)+
+                ("replace".equals(mode)?cue:anchor+" "+cue)+
+                narrative.substring(insertion+anchor.length());
             if(detail.has("newReference")){
                 JSONObject source=detail.getJSONObject("newReference");
                 String shortCitation=source.getString("short");
@@ -208,6 +267,7 @@ public final class PhLibraryBook01 {
             }
             if(rows.size()!=714)throw new IllegalStateException("Incomplete PHLibrary edition");
             applyEditorial(context,rows,index);
+            applyReaderRefinements(context,rows,index);
             applyHabitatCues(context,rows,index);
             // The source PAIC714 checklist retains an older combination for
             // this bat. The Book 01 account documents the named transfer.
@@ -227,7 +287,7 @@ public final class PhLibraryBook01 {
     }
     public static String availabilityMessage(Context context) {
         load(context);
-        return problem.isEmpty()?"Book 01 · Greater Mindanao · Habitat v1.77":problem;
+        return problem.isEmpty()?"Book 01 · Greater Mindanao · Reader v1.78":problem;
     }
     public static List<JSONObject> entries(Context context) {
         load(context);
@@ -378,7 +438,7 @@ public final class PhLibraryBook01 {
             small.setOnClickListener(v->referenceDialog(a,refs));
             parent.addView(small);
         }
-        TextView edition=label(a,"PHLibrary Book 01 · Text v1.76 · Rarity v0.3.1",
+        TextView edition=label(a,"PHLibrary Book 01 · Text v1.78 · Rarity v0.3.1",
             11,UiKit.MUTED,false);
         edition.setPadding(0,dp(a,5),0,dp(a,5));
         parent.addView(edition);

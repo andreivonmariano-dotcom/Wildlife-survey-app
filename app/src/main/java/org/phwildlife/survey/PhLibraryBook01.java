@@ -164,6 +164,22 @@ public final class PhLibraryBook01 {
             String expanded=at>=0
                 ? narrative.substring(0,at)+cue+" "+narrative.substring(at)
                 : narrative+" "+cue;
+            if(detail.has("newReference")){
+                JSONObject source=detail.getJSONObject("newReference");
+                String shortCitation=source.getString("short");
+                if(!cue.contains("("+shortCitation+")") ||
+                   source.getString("full").trim().isEmpty() ||
+                   source.getString("url").trim().isEmpty())
+                    throw new IllegalStateException("Habitat source missing "+scientific);
+                JSONArray bibliography=target.getJSONArray("r");
+                boolean alreadyPresent=false;
+                for(int j=0;j<bibliography.length();j++){
+                    if(shortCitation.equals(bibliography.getJSONObject(j).optString("short"))){
+                        alreadyPresent=true; break;
+                    }
+                }
+                if(!alreadyPresent)bibliography.put(source);
+            }
             target.put("p",expanded);
         }
     }

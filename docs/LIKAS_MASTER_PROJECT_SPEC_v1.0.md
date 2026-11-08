@@ -1,7 +1,7 @@
 # LIKAS
 ## Master Project Charter, Product Requirements, and Scientific Standards
 
-**Version:** 1.0.7 (8 November 2026 PHLibrary canonical Book 01 content-reference amendment; canonical filename retained)  
+**Version:** 1.0.8 (8 November 2026 centered APO startup and one-time animation amendment; canonical filename retained)  
 **Date:** 27 October 2026  
 **Product:** LIKAS, a Philippines-first biodiversity field and knowledge platform  
 **Status:** Proposed authoritative project specification, pending adoption into Project instructions and the development repository  
@@ -408,3 +408,12 @@ The canonical Word and companion workbook are kept in the user's Library under `
 Retain the approved PHLibrary interface direction: one prominent Book 01 entrance, text-only and icon-free/photo-free presentation, a single flowing species narrative, compact clearly separated rarity/IUCN/national labels and source links, restrained hierarchy and fully accessible enlarged text. This latest PHLibrary-specific decision supersedes earlier U-09/U-11 photograph and decorated-card concepts **within PHLibrary**, without deleting licensed media or changing unrelated app features. Proposed future search, habitat discovery, reader tools and content architecture remain proposals until separately accepted by the owner. Do not confuse an educational **Discovery Rarity** editorial label with conservation status or an observed encounter frequency.
 
 **v1.0.7, 8 November 2026:** Added T-07 and U-12 to pin the owner's 715-account Book 01 v1.82 and companion rarity v0.3.4 as future PHLibrary content references, preserve historical taxonomic crosswalks and explicitly retain the latest text-only reader style. These amendments change documentation and future import acceptance criteria only. RC100 Android code and APK remain unchanged; redesigned UI features are still proposals.
+
+
+### U-13 | Centered APO startup identity and one-time motion (owner accepted 8 November 2026)
+
+The APO launcher screen uses the existing immutable mountain-emblem splash derivative and deep-green gradient. Center the combined emblem, wordmark and optional restrained accent precisely within the available content area, with no ad hoc top-margin bias. Animate the emblem in once using a gentle, short scale-settle in addition to the entrance fade; optional wordmark letter-spacing and one outward-expanding centered line are permitted. Avoid repeating pulses, rotating scenes, long delays, continuous background work or any interference with fieldwork navigation. Tapping skips motion and restores the completed visual state. System-disabled animators and the user's reduced-motion preference must show the final static state immediately. Reference-bootstrap loading and graceful errors remain independent. Screenshot-check the actual top-to-bottom geometry at standard and 200% text, including a narrow Android device, and test a signed app upgrade without deleting data.
+
+The owner's requested visual correction is implemented as **RC102 draft** on `feature/apo-rc102-centered-startup-motion-v162` (PR #107) based on the previously signed RC101 app. A code change is not itself a shipped APK. Version code162, package identity `org.phwildlife.survey.beta08`, original signer, SQLite29, and canonical PHLibrary 715-account v1.82 source remain preserved. See the branch's `docs/APO_RC102_CENTERED_STARTUP_MOTION_QA_2026_11_08.md` and run status for evidence.
+
+**v1.0.8, 8 November 2026:** Added U-13 for exact splash centering and small, finite motion with reduced-motion and skip behavior. The original APO artwork lock and app scientific/data invariants remain effective.

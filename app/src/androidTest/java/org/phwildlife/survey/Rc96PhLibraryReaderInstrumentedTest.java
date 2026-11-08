@@ -1,13 +1,10 @@
 package org.phwildlife.survey;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
@@ -19,6 +16,8 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.json.JSONObject;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import static org.junit.Assert.*;
 
@@ -70,21 +69,12 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
         Bitmap bitmap=Bitmap.createBitmap(decor.getWidth(),decor.getHeight(),
             Bitmap.Config.ARGB_8888);
         decor.draw(new Canvas(bitmap));
-        ContentValues values=new ContentValues();
-        values.put(MediaStore.Images.Media.DISPLAY_NAME,name);
-        values.put(MediaStore.Images.Media.MIME_TYPE,"image/png");
-        values.put(MediaStore.Images.Media.RELATIVE_PATH,
-            Environment.DIRECTORY_PICTURES+"/LIKAS_RC96");
-        values.put(MediaStore.Images.Media.IS_PENDING,1);
-        Uri target=activity.getContentResolver().insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
-        assertNotNull(target);
-        try(OutputStream out=activity.getContentResolver().openOutputStream(target)){
-            assertNotNull(out);
+        File folder=new File(a.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"LIKAS_RC96");
+        assertTrue(folder.isDirectory() || folder.mkdirs());
+        File target=new File(folder,name);
+        try(OutputStream out=new FileOutputStream(target)){
             assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG,100,out));
-        } catch(Exception error){throw new IllegalStateException(error);}
-        ContentValues done=new ContentValues();done.put(MediaStore.Images.Media.IS_PENDING,0);
-        activity.getContentResolver().update(target,done,null,null);
+        }catch(Exception error){throw new IllegalStateException(error);}
         bitmap.recycle();
     }
     @Test public void offlineDirectoryHas714Entries() {

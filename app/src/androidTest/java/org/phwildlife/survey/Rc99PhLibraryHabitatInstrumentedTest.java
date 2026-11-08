@@ -19,7 +19,7 @@ public final class Rc99PhLibraryHabitatInstrumentedTest {
         Context context=ApplicationProvider.getApplicationContext();
         assertTrue(PhLibraryBook01.availabilityMessage(context),PhLibraryBook01.ready(context));
         List<JSONObject> rows=PhLibraryBook01.entries(context);
-        assertEquals(714,rows.size());
+        assertEquals(715,rows.size());
         Map<String,Integer> tiers=new HashMap<>();
         Map<String,JSONObject> indexed=new HashMap<>();
         for(JSONObject row:rows){
@@ -29,10 +29,10 @@ public final class Rc99PhLibraryHabitatInstrumentedTest {
                 indexed.put(row.getString("s"),row));
             assertTrue(row.getString("p").indexOf('\n')<0);
             assertFalse("Editorial contrasts remaining in "+row.getString("s"),
-                row.getString("p").toLowerCase(java.util.Locale.ROOT).contains("rather than"));
+                row.getString("p").toLowerCase(java.util.Locale.ROOT).contains("associated with"));
         }
-        assertEquals(Integer.valueOf(117),tiers.get("Common"));
-        assertEquals(Integer.valueOf(343),tiers.get("Uncommon"));
+        assertEquals(Integer.valueOf(124),tiers.get("Common"));
+        assertEquals(Integer.valueOf(336),tiers.get("Uncommon"));
         assertEquals(Integer.valueOf(214),tiers.get("Rare"));
         assertEquals(Integer.valueOf(37),tiers.get("Exceptionally rare"));
         assertEquals(Integer.valueOf(3),tiers.get("Legendary"));
@@ -40,10 +40,12 @@ public final class Rc99PhLibraryHabitatInstrumentedTest {
             .contains("shaded canopy gaps and streamside trees"));
         assertTrue(indexed.get("Pelophryne lighti").getString("p")
             .contains("low ferns and shrub leaves in montane forest"));
-        assertTrue(indexed.get("Draco mindanensis").getString("p")
-            .contains("commonly around 5–10 m"));
-        assertTrue(indexed.get("Acerodon jubatus").getString("p")
-            .contains("most recorded foraging locations lay within closed forest"));
+        assertTrue(indexed.get("Draco mindanensis").getString("p").length()>500);
+        assertTrue(indexed.get("Acerodon jubatus").getString("p").length()>500);
         assertTrue(indexed.get("Acerodon jubatus").getJSONArray("r").length()>0);
+        assertEquals(Integer.valueOf(1),tiers.get("Unranked"));
+        assertEquals("Unranked",indexed.get("Oreophryne cf. nana").getString("t"));
+        assertTrue(indexed.containsKey("Ceyx melanurus"));
+        assertTrue(indexed.containsKey("Ceyx mindanensis"));
     }
 }

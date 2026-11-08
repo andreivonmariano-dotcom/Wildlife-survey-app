@@ -42,3 +42,10 @@ Current Book v1.82 record counts: **715** (409 Birds, 53 Amphibian entries incl.
 1. Complete RC101 CI/Android/source test corrections without deleting historical science or survey tests.
 2. Check signed APK artifact SHA256, package, signer, code161, on-device upgrade integrity; deliver direct file to ChatGPT when verified.
 3. Only after acceptance implement second-phase integrated habitat discovery and advanced filtering/bookmarks. Do not merge draft PR without review.
+
+
+## 2026-11-08 23:41 PHT continuation: signed upgrade assertion fix
+
+- Exact PR #106 head before correction `38ae179ff3a8a60df64fafc4c16436b2b2170be9` produced Actions run **42495260907**: source/JVM/build/signature and Android14 reader checks passed; signed RC92→RC101 upgrade instrumentation **failed** on inherited assertion `expected:<160> but was:<161>`. Both `adb install` operations returned Success. At this point the failure was test-version expectation, **not proof of user-data loss**. CI nevertheless failed and did not export an APK.
+- Corrected `Rc95SignedUpgradeInstrumentedTest.java` on the **RC101 branch only**: assertion now expects versionCode **161** and explicitly names RC101, with updated code160→code161 comment. Commit `f53cea77c55770494296507ba09bb9931e378730`; no production app logic, source data or schema modified.
+- New workflow **42496200691** was triggered on this commit. Final conclusion and independent artifact checks must be verified before claiming successful RC101 signing or distributing an APK.

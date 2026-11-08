@@ -67,7 +67,7 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertIn("verify(root,source)",java)
         self.assertIn('EXPECTED_COUNT=715',java)
         self.assertIn('rarityModel',java)
-        self.assertIn('getString("short")',java)
+        self.assertIn('optString("short")',java)
         self.assertNotIn("getWritableDatabase",java)
         self.assertNotIn("execSQL(",java)
         self.assertIn("Text v1.82",java)

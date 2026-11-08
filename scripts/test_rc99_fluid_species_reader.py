@@ -93,9 +93,9 @@ class FluentReader(unittest.TestCase):
         c=java.index("applyHabitatCues(context,rows,index);")
         d=java.index("applyReaderPolish(context,rows,index);")
         self.assertTrue(a<b<c<d)
-        self.assertIn("1.78-fluent-reader",java)
-        self.assertIn("1.79-reader-polish",java)
-        self.assertIn("String anchor=detail.getString(\"anchor\")",java)
+        self.assertIn("phlibrary_book01_v182.json.gz.b64",java)
+        self.assertIn("EXPECTED_COUNT=715",java)
+        self.assertIn("verify(root,source)",java)
 
 if __name__=="__main__":
     unittest.main()

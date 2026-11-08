@@ -273,7 +273,7 @@ public final class PhLibraryBook01 {
             Integer at=index.get(key(scientific));
             String old=entry.getString("old");
             String revised=entry.getString("revised");
-            if(at==null || !changed.add(scientific) ||
+            if(at==null || !changed.add(scientific+"::"+old) ||
                old.length()<30 || revised.length()<25 ||
                revised.contains("rather than") || revised.contains("\\n"))
                 throw new IllegalStateException("Invalid final prose correction "+scientific);

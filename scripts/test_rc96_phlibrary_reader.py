@@ -54,9 +54,9 @@ class PhLibraryBook01(unittest.TestCase):
 
     def test_reader_routing_and_compact_references(self):
         text=(JAVA/"PhLibraryBook01.java").read_text()
-        self.assertIn('label(a,"REFERENCES",12',text)
+        self.assertIn('REFERENCES ·',text)
         self.assertIn('record.optString("p"),16.5f',text)
-        self.assertIn("referenceDialog(a,refs)",text)
+        self.assertIn("referencesDialog(a,refs)",text)
         self.assertNotIn("addPhLibraryPlate(a,parent",text)
         self.assertIn("this::showPhLibraryBook",(JAVA/"TaxonDetailActivity.java").read_text())
         self.assertIn('getStringExtra("phlibrary_scientific_name")',

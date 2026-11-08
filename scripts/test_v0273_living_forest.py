@@ -44,7 +44,7 @@ class LikasLivingForestTest(unittest.TestCase):
     def test_minimal_startup_auto_enters_home_and_respects_motion_accessibility(self):
         self.assertIn('wordmark.setText("APO")',START)
         self.assertIn('ValueAnimator.areAnimatorsEnabled()',START)
-        self.assertIn('setDuration(380)',START)
+        self.assertIn('setDuration(540)',START)
         self.assertIn('setDuration(190)',START)
         self.assertIn('overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out)',START)
         self.assertIn('root.setOnClickListener(v->{',START)

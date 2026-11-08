@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 161
-        versionName '0.27.3-rc101-phlibrary-book-v182'
+        versionCode 162
+        versionName '0.27.3-rc102-startup-centered-motion'
     }
     signingConfigs {
         debug {

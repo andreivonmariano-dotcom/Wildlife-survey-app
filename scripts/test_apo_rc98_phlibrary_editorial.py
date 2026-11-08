@@ -77,8 +77,8 @@ class Rc98BookEditorial(unittest.TestCase):
     def test_home_has_only_one_book_and_three_distinct_actions(self):
         hub=(JAVA/"LikasLibraryActivity.java").read_text(encoding="utf-8")
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text(encoding="utf-8")
-        self.assertEqual(hub.count("PhLibraryStyle.bookCover(this"),1)
-        self.assertEqual(hub.count("add(body,"),3)
+        self.assertEqual(hub.count("PhLibrary2Ui.hero(this"),1)
+        self.assertEqual(hub.count("sectionCard(body,"),4)
         for title in ('"Browse wildlife groups"','"Discovery Rarity"',
                       '"Habitat associations"'):
             self.assertIn(title,hub)

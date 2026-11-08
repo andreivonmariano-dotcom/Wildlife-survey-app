@@ -40,9 +40,9 @@ class Rc99PhLibraryHabitatTest(unittest.TestCase):
 
     def test_app_uses_separate_habitat_layer(self):
         code = (ROOT.parent / "java/org/phwildlife/survey/PhLibraryBook01.java").read_text()
-        self.assertIn("applyEditorial(context,rows,index);", code)
-        self.assertIn("applyHabitatCues(context,rows,index);", code)
-        self.assertIn("phlibrary_habitat_cues_v177.json", code)
+        self.assertNotIn("applyEditorial(context,rows,index);", code)
+        self.assertNotIn("applyHabitatCues(context,rows,index);", code)
+        self.assertIn("phlibrary_book01_v182.json.gz.b64", code)
 
 if __name__ == "__main__":
     unittest.main()

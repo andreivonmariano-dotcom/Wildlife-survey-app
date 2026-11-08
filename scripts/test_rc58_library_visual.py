@@ -20,8 +20,8 @@ class Rc58LibraryVisual(unittest.TestCase):
             self.assertIn(label,d)
         hub=(JAVA/"LikasLibraryActivity.java").read_text()
         self.assertIn("PhLibraryStyle.bookCover",hub)
-        for label in ('"Similar species"','"Conservation evidence"',
-                      '"Source collections"','"Habitat associations"'):
+        for label in ('"Browse wildlife groups"','"Discovery Rarity"',
+                      '"Habitat associations"'):
             self.assertIn(label,hub)
         self.assertNotIn('"Photo comparisons"',hub)
 

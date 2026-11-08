@@ -3,6 +3,9 @@ set -euo pipefail
 # RC103 replaces the obsolete RC94–RC100 text-only visual contracts. Verify
 # the current source-faithful reader, startup and all three native screens instead.
 # Prior signed database preservation remains independently gated in the workflow.
+# RC92 installs the app and test APKs, checks device/audio/GPS persistence and
+# backup restoration without requiring superseded PHLibrary visual assertions.
+bash scripts/rc92_unverified_device_qa.sh
 PKG=org.phwildlife.survey.beta08
 RUNNER="${PKG}.test/androidx.test.runner.AndroidJUnitRunner"
 mkdir -p rc103-phlibrary-evidence

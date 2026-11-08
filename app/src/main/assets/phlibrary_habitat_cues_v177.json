@@ -13,7 +13,7 @@
   },
   "scope": "One-paragraph educational field notes. The sentences are habitat-search guidance or source-reported synthesis, not a habitat suitability model, preference study, confirmed new locality, or rarity-tier input.",
   "displayRule": "One paragraph per species; insert field cue before trailing DENR status where present.",
-  "reviewStatus": "editorial_draft_pending_specialist_and_device_review",
+  "reviewStatus": "editorial_draft_paired_citation_audit_completed_remaining_species_and_phone_review",
   "records": [
     {
       "s": "Aviceda jerdoni",
@@ -337,13 +337,23 @@
       "s": "Draco bimaculatus",
       "group": "Reptiles",
       "fieldCue": "Daytime watches of trunks at forest edges and adjoining coconut groves match published northeastern Mindanao observations (Sanguila et al., 2016).",
-      "basis": "source_summary"
+      "basis": "source_summary",
+      "newReference": {
+        "short": "Sanguila et al., 2016",
+        "full": "Sanguila, M. B., Cobb, K. A., Siler, C. D., Diesmos, A. C., Alcala, A. C., & Brown, R. M. (2016). The amphibians and reptiles of Mindanao Island, southern Philippines, II: The herpetofauna of northeast Mindanao and adjacent islands. ZooKeys, 624, 1–132. https://doi.org/10.3897/zookeys.624.9814",
+        "url": "https://doi.org/10.3897/zookeys.624.9814"
+      }
     },
     {
       "s": "Draco cyanopterus",
       "group": "Reptiles",
       "fieldCue": "Coconut palms and other exposed trunks outside closed forest are reported sites in northeastern Mindanao (Sanguila et al., 2016).",
-      "basis": "source_summary"
+      "basis": "source_summary",
+      "newReference": {
+        "short": "Sanguila et al., 2016",
+        "full": "Sanguila, M. B., Cobb, K. A., Siler, C. D., Diesmos, A. C., Alcala, A. C., & Brown, R. M. (2016). The amphibians and reptiles of Mindanao Island, southern Philippines, II: The herpetofauna of northeast Mindanao and adjacent islands. ZooKeys, 624, 1–132. https://doi.org/10.3897/zookeys.624.9814",
+        "url": "https://doi.org/10.3897/zookeys.624.9814"
+      }
     },
     {
       "s": "Draco guentheri",

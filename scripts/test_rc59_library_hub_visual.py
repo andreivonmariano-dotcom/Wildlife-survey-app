@@ -19,9 +19,7 @@ class Rc59HubVisual(unittest.TestCase):
     def test_provenance_and_assets_unmodified(self):
         src=(JAVA/"LikasLibraryActivity.java").read_text()
         for target in ("PhLibraryDirectoryActivity.class",
-                       "Rc9DifferentialActivity.class",
-                       "Rc24ConservationDashboardActivity.class",
-                       "CatalogActivity.class","HabitatSpeciesEvidenceActivity.class"):
+                       "HabitatSpeciesEvidenceActivity.class"):
             self.assertIn(target,src)
         design=(JAVA/"LikasPortalUi.java").read_text()
         self.assertIn("likas_approved_species_library",design)

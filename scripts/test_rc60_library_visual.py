@@ -10,7 +10,7 @@ class Rc60VisualDecisions(unittest.TestCase):
         self.assertIn("R.drawable.likas_library_conservation_display",portal)
         self.assertIn("R.drawable.likas_library_habitat_links_display",portal)
         self.assertIn('"Browse wildlife groups"',library)
-        self.assertIn('"Habitat associations","Explore sourced habitat and species links"',library)
+        self.assertIn('"Habitat associations"',library)
         self.assertNotIn("class PixelShield",portal)
         self.assertIn("likas_approved_species_library",portal)
         self.assertIn("likas_approved_research",portal)

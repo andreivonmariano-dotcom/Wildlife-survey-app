@@ -93,8 +93,8 @@ public final class PhLibraryStyle {
         TextView title=text(a,large?"Greater Mindanao":"Wildlife of Greater Mindanao",23,Color.WHITE,true);
         title.setPadding(0,dp(a,9),0,dp(a,5));
         card.addView(title);
-        TextView summary=text(a,large?"714 species  ·  Four wildlife groups":
-            "714 species  ·  Birds, amphibians, reptiles and mammals",
+        TextView summary=text(a,large?"715 accounts  ·  Four wildlife groups":
+            "715 accounts  ·  Birds, amphibians, reptiles and mammals",
             13,Color.rgb(229,240,224),false);
         summary.setLineSpacing(dp(a,2),1f);
         card.addView(summary);
@@ -102,7 +102,7 @@ public final class PhLibraryStyle {
         action.setLetterSpacing(.06f);
         action.setPadding(0,dp(a,17),0,0);
         card.addView(action);
-        card.setContentDescription("Open Book 01, Greater Mindanao. 714 complete species accounts.");
+        card.setContentDescription("Open Book 01, Greater Mindanao. 715 complete wildlife accounts.");
         card.setFocusable(true);
         card.setClickable(true);
         card.setOnClickListener(v->open.run());

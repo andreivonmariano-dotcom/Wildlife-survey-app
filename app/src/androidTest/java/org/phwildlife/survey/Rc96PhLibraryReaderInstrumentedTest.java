@@ -69,7 +69,7 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
         Bitmap bitmap=Bitmap.createBitmap(decor.getWidth(),decor.getHeight(),
             Bitmap.Config.ARGB_8888);
         decor.draw(new Canvas(bitmap));
-        File folder=new File(a.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"LIKAS_RC96");
+        File folder=new File(activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"LIKAS_RC96");
         assertTrue(folder.isDirectory() || folder.mkdirs());
         File target=new File(folder,name);
         try(OutputStream out=new FileOutputStream(target)){

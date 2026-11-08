@@ -31,8 +31,8 @@ class IllustratedUiContract(unittest.TestCase):
         self.assertNotIn("LikasPortalUi.action(this,title,detail,art,tap)",welcome)
     def test_library_is_separate_and_visual(self):
         library=src("LikasLibraryActivity.java")
-        self.assertIn("PhLibraryStyle.bookCover(this",library)
-        self.assertIn("PhLibraryStyle.row(this",library)
+        self.assertIn("PhLibrary2Ui.hero(this",library)
+        self.assertIn("PhLibrary2Ui.panel(this",library)
         self.assertNotIn("LikasPortalUi.libraryFeature",library)
         self.assertNotIn('"Photo comparisons"',library)
         self.assertIn("HabitatSpeciesEvidenceActivity.class",library)

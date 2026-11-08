@@ -51,6 +51,6 @@ class MethodCompletionReviewContracts(unittest.TestCase):
         self.assertIn('super(context,NAME,null,29)',src("FieldDb.java"))
         build=(ROOT/"app/build.gradle").read_text()
         self.assertIn("versionCode 162",build)
-        self.assertIn("versionName '0.27.3-rc101-phlibrary-book-v182'",build)
+        self.assertIn("versionName '0.27.3-rc102-startup-centered-motion'",build)
 
 if __name__=="__main__":unittest.main()

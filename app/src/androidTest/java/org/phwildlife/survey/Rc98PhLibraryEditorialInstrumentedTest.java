@@ -74,11 +74,11 @@ public final class Rc98PhLibraryEditorialInstrumentedTest {
                 assertNotNull(find(root,"Philippine Eagle"));
                 assertNotNull(find(root,"nest in large trees"));
                 assertNotNull(find(root,"Philippine Eagle Foundation, n.d."));
-                assertNotNull(find(root,"Text v1.80"));
+                assertNotNull(find(root,"Text v1.82"));
                 assertNotNull(find(root,"REFERENCES"));
                 assertTrue(PhLibraryBook01.ready(activity));
                 List<JSONObject> entries=PhLibraryBook01.entries(activity);
-                assertEquals(714,entries.size());
+                assertEquals(715,entries.size());
             });
         }
     }

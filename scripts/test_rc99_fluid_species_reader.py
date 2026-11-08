@@ -59,6 +59,16 @@ class FluentReader(unittest.TestCase):
                 bibliographies[name].append(ref)
             self.assertEqual(len(paragraphs[name].splitlines()),1)
             self.assertNotIn("rather than",row["fieldCue"].lower())
+        polished=read("phlibrary_reader_polish_v179.json")
+        self.assertEqual(polished["changed"],94)
+        for row in polished["records"]:
+            name=row["s"];old=row["old"];new=row["revised"]
+            self.assertEqual(paragraphs[name].count(old),1,name)
+            before=paragraphs[name]
+            paragraphs[name]=before.replace(old,new)
+            for source in bibliographies[name]:
+                if source["short"] in before:
+                    self.assertIn(source["short"],paragraphs[name],name)
         self.assertEqual(len(paragraphs),714)
         remaining=[s for s,p in paragraphs.items() if "rather than" in p.lower()]
         self.assertEqual(remaining,[])
@@ -81,8 +91,10 @@ class FluentReader(unittest.TestCase):
         a=java.index("applyEditorial(context,rows,index);")
         b=java.index("applyReaderRefinements(context,rows,index);")
         c=java.index("applyHabitatCues(context,rows,index);")
-        self.assertTrue(a<b<c)
+        d=java.index("applyReaderPolish(context,rows,index);")
+        self.assertTrue(a<b<c<d)
         self.assertIn("1.78-fluent-reader",java)
+        self.assertIn("1.79-reader-polish",java)
         self.assertIn("String anchor=detail.getString(\"anchor\")",java)
 
 if __name__=="__main__":

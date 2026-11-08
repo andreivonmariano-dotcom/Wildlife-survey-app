@@ -99,7 +99,9 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
                 // At 200% font, the adaptive explorer intentionally hides the
                 // decorative region kicker and shortens the title to "Species".
                 // Validate the actual 715-item virtualized source catalogue instead.
-                assertNotNull(findText(a.getWindow().getDecorView(),"SPECIES ATLAS"));
+                boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
+                assertNotNull(findText(a.getWindow().getDecorView(),
+                    large?"Atlas":"SPECIES ATLAS"));
                 android.widget.ListView results=findList(a.getWindow().getDecorView());
                 assertNotNull("Searchable source list visible",results);
                 assertEquals("Complete book catalogue",715,results.getAdapter().getCount());

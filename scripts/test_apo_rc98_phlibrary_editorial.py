@@ -91,7 +91,7 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertNotIn("ImageView",directory)
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
         self.assertIn("versionCode 162",gradle)
-        self.assertIn("0.27.3-rc101-phlibrary-book-v182",gradle)
+        self.assertIn("0.27.3-rc102-startup-centered-motion",gradle)
 
 if __name__=="__main__":
     unittest.main()

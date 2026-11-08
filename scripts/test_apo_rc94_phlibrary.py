@@ -12,7 +12,7 @@ class PHLibraryScreenContract(unittest.TestCase):
     def test_phlibrary_home_is_one_primary_book_without_photo_navigation(self):
         hub=read("LikasLibraryActivity.java")
         style=read("PhLibraryStyle.java")
-        self.assertIn('"PHLIBRARY"',hub)
+        self.assertIn('"PHLibrary"',hub)
         self.assertIn("PhLibrary2Ui.hero",hub)
         self.assertIn("PhLibraryDirectoryActivity.class",hub)
         self.assertIn("THE FOUR WILDLIFE GROUPS",hub)

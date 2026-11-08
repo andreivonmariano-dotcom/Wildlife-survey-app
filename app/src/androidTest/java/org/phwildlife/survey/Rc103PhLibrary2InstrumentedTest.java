@@ -76,7 +76,8 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     assertNotNull(text(root,"Habitat atlas"));
                     assertNotNull(text(root,"My collection"));
                     assertNotNull(text(root,"Full bibliography"));
-                    View title=text(root,"Wildlife of");
+                    boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
+                    View title=text(root,large?"Greater Mindanao":"Wildlife of");
                     assertNotNull(title);
                     ViewGroup content=(ViewGroup)title.getParent();
                     ViewGroup hero=(ViewGroup)content.getParent();

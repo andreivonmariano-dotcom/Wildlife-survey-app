@@ -1,7 +1,9 @@
 package org.phwildlife.survey;
 
 import android.animation.ValueAnimator;
+import android.content.pm.ApplicationInfo;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,6 +40,9 @@ public final class LikasLaunchActivity extends Activity {
     private TextView status;
     private TextView wordmark;
     private FrameLayout root;
+    private View underline;
+    private ValueAnimator letterReveal;
+    private boolean qaHoldSplash;
 
     private int dp(float n) {
         return Math.round(getResources().getDisplayMetrics().density*n);
@@ -51,6 +56,9 @@ public final class LikasLaunchActivity extends Activity {
 
     @Override public void onCreate(Bundle saved) {
         super.onCreate(saved);
+        // A held preview is available only to instrumentation inside a debug build.
+        qaHoldSplash=(getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)!=0 &&
+            getIntent().getBooleanExtra("qa_hold_splash",false);
         getWindow().setStatusBarColor(FOREST);
         getWindow().setNavigationBarColor(DARK_FOREST);
 
@@ -70,7 +78,7 @@ public final class LikasLaunchActivity extends Activity {
             Gravity.CENTER);
         identityParams.leftMargin=dp(12);
         identityParams.rightMargin=dp(12);
-        identityParams.topMargin=dp(80);
+        // Gravity.CENTER is the optical baseline: do not bias the splash downward.
         root.addView(identity,identityParams);
 
         mark=new ImageView(this);
@@ -98,6 +106,17 @@ public final class LikasLaunchActivity extends Activity {
         wordParams.topMargin=dp(16);
         identity.addView(wordmark,wordParams);
 
+        // One quiet pond-line accent expands from the center as the mark settles.
+        // It is decorative and deliberately hidden from accessibility services.
+        underline=new View(this);
+        underline.setBackgroundColor(SAGE);
+        underline.setAlpha(0.88f);
+        underline.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        LinearLayout.LayoutParams underlineParams=new LinearLayout.LayoutParams(
+            dp(72),dp(2));
+        underlineParams.topMargin=dp(14);
+        identity.addView(underline,underlineParams);
+
         status=new TextView(this);
         status.setText("Preparing offline references");
         status.setTextSize(14);
@@ -122,29 +141,56 @@ public final class LikasLaunchActivity extends Activity {
         startReferenceBootstrap();
 
         if(reducedMotion()) {
+            // Keep the fully composed identity static when motion is disabled.
             animationDone=true;
             maybeEnterHome();
         } else {
             mark.setAlpha(0f);
-            mark.setTranslationY(dp(9));
+            mark.setTranslationY(dp(6));
+            mark.setScaleX(0.93f);
+            mark.setScaleY(0.93f);
             wordmark.setAlpha(0f);
-            wordmark.setTranslationY(dp(5));
-            mark.animate().alpha(1f).translationY(0f)
-                .setInterpolator(new DecelerateInterpolator(1.5f))
-                .setDuration(380).start();
+            wordmark.setTranslationY(dp(4));
+            wordmark.setLetterSpacing(.24f);
+            underline.setScaleX(0f);
+            underline.setAlpha(0f);
+
+            // A single, restrained scale-settle complements the existing fade.
+            mark.animate().alpha(1f).translationY(0f).scaleX(1f).scaleY(1f)
+                .setInterpolator(new OvershootInterpolator(0.48f))
+                .setDuration(540).start();
             wordmark.animate().alpha(1f).translationY(0f)
                 .setInterpolator(new DecelerateInterpolator(1.4f))
-                .setStartDelay(90).setDuration(320).withEndAction(()->{
+                .setStartDelay(90).setDuration(370).start();
+            letterReveal=ValueAnimator.ofFloat(.24f,.12f);
+            letterReveal.setStartDelay(90);
+            letterReveal.setDuration(370);
+            letterReveal.setInterpolator(new DecelerateInterpolator(1.5f));
+            letterReveal.addUpdateListener(a->
+                wordmark.setLetterSpacing((Float)a.getAnimatedValue()));
+            letterReveal.start();
+            underline.animate().scaleX(1f).alpha(.88f)
+                .setStartDelay(150).setDuration(460)
+                .setInterpolator(new DecelerateInterpolator(1.5f))
+                .withEndAction(()->{
                     animationDone=true;
                     maybeEnterHome();
                 }).start();
+            // Tap skips every effect, including letter spacing and line expansion.
             root.setOnClickListener(v->{
                 mark.animate().cancel();
                 wordmark.animate().cancel();
+                underline.animate().cancel();
+                if(letterReveal!=null)letterReveal.cancel();
                 mark.setAlpha(1f);
-                wordmark.setAlpha(1f);
                 mark.setTranslationY(0f);
+                mark.setScaleX(1f);
+                mark.setScaleY(1f);
+                wordmark.setAlpha(1f);
                 wordmark.setTranslationY(0f);
+                wordmark.setLetterSpacing(.12f);
+                underline.setAlpha(.88f);
+                underline.setScaleX(1f);
                 animationDone=true;
                 maybeEnterHome();
             });
@@ -174,7 +220,7 @@ public final class LikasLaunchActivity extends Activity {
     }
 
     private void maybeEnterHome() {
-        if(entered||exitStarted||isFinishing()||isDestroyed()||!animationDone)
+        if(entered||exitStarted||qaHoldSplash||isFinishing()||isDestroyed()||!animationDone)
             return;
         if(loadingReferences) {
             status.setVisibility(View.VISIBLE);
@@ -223,6 +269,8 @@ public final class LikasLaunchActivity extends Activity {
         if(identity!=null) identity.animate().cancel();
         if(mark!=null) mark.animate().cancel();
         if(wordmark!=null) wordmark.animate().cancel();
+        if(underline!=null) underline.animate().cancel();
+        if(letterReveal!=null) letterReveal.cancel();
         super.onDestroy();
     }
 }

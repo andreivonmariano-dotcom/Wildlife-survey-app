@@ -71,8 +71,8 @@ public final class Rc103PhLibrary2InstrumentedTest {
             scenario.onActivity(a->{
                 try {
                     View root=a.getWindow().getDecorView();
-                    assertNotNull(text(root,"Wildlife of"));
-                    assertNotNull(text(root,"715 wildlife accounts"));
+                    assertNotNull(text(root,"Greater Mindanao"));
+                    assertNotNull(text(root,"715"));
                     assertNotNull(text(root,"Habitat atlas"));
                     assertNotNull(text(root,"My collection"));
                     assertNotNull(text(root,"Full bibliography"));

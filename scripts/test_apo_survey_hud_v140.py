@@ -31,7 +31,7 @@ class Rc80SurveyLayout(unittest.TestCase):
             self.assertIn(label,s)
         g=read("app/build.gradle")
         self.assertIn("versionCode 159",g)
-        self.assertIn("versionName '0.27.3-rc98-phlibrary-editorial'",g)
+        self.assertIn("versionName '0.27.3-rc99-phlibrary-habitats'",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 if __name__=="__main__":unittest.main()

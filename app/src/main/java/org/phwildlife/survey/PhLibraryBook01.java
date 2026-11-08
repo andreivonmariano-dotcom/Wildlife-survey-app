@@ -242,6 +242,59 @@ public final class PhLibraryBook01 {
             target.put("p",expanded);
         }
     }
+    /** Final positive-prose pass, applied after source-specific habitat integration. */
+    private static void applyReaderPolish(Context context,
+            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
+            throws Exception {
+        JSONObject pack;
+        try(InputStream input=context.getAssets().open("phlibrary_reader_polish_v179.json");
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
+            byte[] buffer=new byte[8192]; int n;
+            while((n=input.read(buffer))!=-1){
+                if(bytes.size()+n>130000)throw new IllegalStateException("Final prose pack exceeds limit");
+                bytes.write(buffer,0,n);
+            }
+            pack=new JSONObject(bytes.toString("UTF-8"));
+        }
+        if(!"1.79-reader-polish".equals(pack.optString("edition")) ||
+           !"1.75".equals(pack.optString("baseEdition")) ||
+           !"1.78-fluent-reader".equals(pack.optString("readerEdition")) ||
+           !"1.77-habitat-cues".equals(pack.optString("habitatEdition")) ||
+           !"0.3.1".equals(pack.optString("rarityModel")) ||
+           pack.getInt("speciesCount")!=714)
+            throw new IllegalStateException("Unexpected final PHLibrary prose pack");
+        JSONArray edits=pack.getJSONArray("records");
+        if(edits.length()!=pack.getInt("changed") || edits.length()<70)
+            throw new IllegalStateException("Incomplete final prose edit");
+        HashSet<String> changed=new HashSet<>();
+        for(int i=0;i<edits.length();i++){
+            JSONObject entry=edits.getJSONObject(i);
+            String scientific=entry.getString("s");
+            Integer at=index.get(key(scientific));
+            String old=entry.getString("old");
+            String revised=entry.getString("revised");
+            if(at==null || !changed.add(scientific) ||
+               old.length()<30 || revised.length()<25 ||
+               revised.contains("rather than") || revised.contains("\\n"))
+                throw new IllegalStateException("Invalid final prose correction "+scientific);
+            JSONObject target=rows.get(at);
+            if(!scientific.equals(target.optString("s")))
+                throw new IllegalStateException("Final prose taxon mismatch "+scientific);
+            String before=target.getString("p");
+            int pos=before.indexOf(old);
+            if(pos<0 || before.indexOf(old,pos+old.length())>=0)
+                throw new IllegalStateException("Final prose anchor mismatch "+scientific);
+            String after=before.substring(0,pos)+revised+before.substring(pos+old.length());
+            JSONArray sources=target.getJSONArray("r");
+            for(int j=0;j<sources.length();j++){
+                String cited=sources.getJSONObject(j).getString("short");
+                if(before.contains(cited) && !after.contains(cited))
+                    throw new IllegalStateException("Lost final prose citation "+scientific);
+            }
+            target.put("p",after);
+        }
+    }
+
     private static synchronized void load(Context context) {
         if(initialized)return;
         initialized=true;
@@ -269,6 +322,7 @@ public final class PhLibraryBook01 {
             applyEditorial(context,rows,index);
             applyReaderRefinements(context,rows,index);
             applyHabitatCues(context,rows,index);
+            applyReaderPolish(context,rows,index);
             // The source PAIC714 checklist retains an older combination for
             // this bat. The Book 01 account documents the named transfer.
             Integer formerBat=index.get(key("Mops plicatus"));
@@ -287,7 +341,7 @@ public final class PhLibraryBook01 {
     }
     public static String availabilityMessage(Context context) {
         load(context);
-        return problem.isEmpty()?"Book 01 · Greater Mindanao · Reader v1.78":problem;
+        return problem.isEmpty()?"Book 01 · Greater Mindanao · Reader v1.79":problem;
     }
     public static List<JSONObject> entries(Context context) {
         load(context);
@@ -438,7 +492,7 @@ public final class PhLibraryBook01 {
             small.setOnClickListener(v->referenceDialog(a,refs));
             parent.addView(small);
         }
-        TextView edition=label(a,"PHLibrary Book 01 · Text v1.78 · Rarity v0.3.1",
+        TextView edition=label(a,"PHLibrary Book 01 · Text v1.79 · Rarity v0.3.1",
             11,UiKit.MUTED,false);
         edition.setPadding(0,dp(a,5),0,dp(a,5));
         parent.addView(edition);

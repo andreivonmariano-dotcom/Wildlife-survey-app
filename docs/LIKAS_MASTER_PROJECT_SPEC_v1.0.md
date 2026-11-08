@@ -1,7 +1,7 @@
 # LIKAS
 ## Master Project Charter, Product Requirements, and Scientific Standards
 
-**Version:** 1.0.6 (29 October 2026 academic field-guide and reference amendment; canonical filename retained)  
+**Version:** 1.0.7 (8 November 2026 PHLibrary canonical Book 01 content-reference amendment; canonical filename retained)  
 **Date:** 27 October 2026  
 **Product:** LIKAS, a Philippines-first biodiversity field and knowledge platform  
 **Status:** Proposed authoritative project specification, pending adoption into Project instructions and the development repository  
@@ -395,3 +395,16 @@ Do not show a public "Priority species" tier, "Priority species (96)" filter, or
 The Habitat Library uses horizontal cards organized by documented formations (e.g. Terrestrial, Edaphic, Aquatic, Coastal and Human-modified). It uses neutral group palettes and opens source-linked habitat details with field characters, measurements, ecological limitations and citations. Never assign an IUCN species category to a habitat. The IUCN Red List of Ecosystems is a distinct assessment system, requiring separate evidence before it appears.
 
 All card transitions respect the user's reduced-motion preference. Favor a one-time soft fade and native swipe over continuous shimmer, glow, pulsing or animated "rarity" effects. Keep large-touch surfaces, 200% type and offline accessibility. Keep source citations and photograph rights available from expanded details. **RC34 first implementation** is not full device, upgrade or scientific-completeness acceptance.
+
+
+### T-07 | PHLibrary Book 01 canonical editorial reference (owner accepted 8 November 2026)
+
+For future **PHLibrary reader content**, use the exact verified Word `PHLibrary_Book_01_Greater_Mindanao_v1.82_Final_Habitat_Language_715.docx` (SHA-256 `a35f0a53e0586a071c1bd9ff807150643313982503693cd06ea8905f7aeaa279`), with companion `PHLibrary_Discovery_Rarity_v0.3.4_Taxonomic_Reconciliation_715.xlsx` (SHA-256 `2f0756f5a662e1ea33ac069cf3d7c805949d5568f164198807cb615c1ccd87cc`). The 715 account entries consist of 409 birds, 53 amphibian entries including one provisional determination, 154 reptiles and 99 mammals; rarity distribution 124 Common, 336 Uncommon, 214 Rare, 37 Exceptionally rare, 3 Legendary, one Unranked. The former `Aphantophryne nana` regional account is represented by tentative `Oreophryne cf. nana`; retain the historic Camiguin source identity. The North/South Philippine Dwarf-kingfishers `Ceyx melanurus` and `C. mindanensis` are distinct current reader taxa, with old pre-split records held for taxonomic crosswalk review.
+
+The canonical Word and companion workbook are kept in the user's Library under `/PHLibrary/Locked References/`. The repository's `docs/PHLIBRARY_CANONICAL_BOOK_V182_REFERENCE_LOCK_2026_11_08.md` records the exact retrieval/hashes. This content-reference decision **does not rewrite field observation names, taxon keys, existing survey records, or the underlying imported PAIC checklist**. All app migrations must use stable reviewed keys, source/version metadata, exact text checks and no-data-loss gates. Previously packaged Book 01 v1.75/reader v1.80 and their overlays are historical versions, not the new approved default.
+
+### U-12 | PHLibrary text-only reader contract (latest owner visual decision, reaffirmed 8 November 2026)
+
+Retain the approved PHLibrary interface direction: one prominent Book 01 entrance, text-only and icon-free/photo-free presentation, a single flowing species narrative, compact clearly separated rarity/IUCN/national labels and source links, restrained hierarchy and fully accessible enlarged text. This latest PHLibrary-specific decision supersedes earlier U-09/U-11 photograph and decorated-card concepts **within PHLibrary**, without deleting licensed media or changing unrelated app features. Proposed future search, habitat discovery, reader tools and content architecture remain proposals until separately accepted by the owner. Do not confuse an educational **Discovery Rarity** editorial label with conservation status or an observed encounter frequency.
+
+**v1.0.7, 8 November 2026:** Added T-07 and U-12 to pin the owner's 715-account Book 01 v1.82 and companion rarity v0.3.4 as future PHLibrary content references, preserve historical taxonomic crosswalks and explicitly retain the latest text-only reader style. These amendments change documentation and future import acceptance criteria only. RC100 Android code and APK remain unchanged; redesigned UI features are still proposals.

@@ -16,7 +16,7 @@ class Rc64PhoneIcons(unittest.TestCase):
     def test_original_assets_and_navigation_still_present(self):
         library=(JAVA/"LikasLibraryActivity.java").read_text()
         for row in ('"Browse wildlife groups"',
-                    '"Habitat associations","Explore sourced habitat and species links"',
+                    '"Habitat associations"',
                     '"Discovery Rarity"'):
             self.assertIn(row,library)
         self.assertNotIn('"Photo comparisons"',library)

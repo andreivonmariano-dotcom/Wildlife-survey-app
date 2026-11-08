@@ -112,6 +112,61 @@ public final class PhLibraryBook01 {
             target.put("r",sources);
         }
     }
+    /** Educational field-search cues are independent of the research source paragraph.
+     *  Read-only, species-keyed and never used to calculate Discovery Rarity.
+     *  Each inference is phrased as field guidance, not confirmed habitat selection. */
+    private static void applyHabitatCues(Context context,
+            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
+            throws Exception {
+        JSONObject file;
+        try(InputStream input=context.getAssets().open("phlibrary_habitat_cues_v177.json");
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
+            byte[] buffer=new byte[8192];
+            int count;
+            while((count=input.read(buffer))!=-1){
+                if(bytes.size()+count>150000)
+                    throw new IllegalStateException("Habitat cue pack exceeds limit");
+                bytes.write(buffer,0,count);
+            }
+            file=new JSONObject(bytes.toString("UTF-8"));
+        }
+        if(!"1.77-habitat-cues".equals(file.optString("edition")) ||
+           !"1.75".equals(file.optString("baseEdition")) ||
+           !"1.76-editorial".equals(file.optString("editorialEdition")) ||
+           !"0.3.1".equals(file.optString("rarityModel")) ||
+           file.getInt("speciesCount")!=714)
+            throw new IllegalStateException("Unexpected PHLibrary habitat pack");
+        JSONArray details=file.getJSONArray("records");
+        if(details.length()!=file.getInt("changed") ||
+           details.length()<100 || details.length()>714)
+            throw new IllegalStateException("Incomplete habitat field notes");
+        HashSet<String> updated=new HashSet<>();
+        for(int i=0;i<details.length();i++){
+            JSONObject detail=details.getJSONObject(i);
+            String scientific=detail.getString("s");
+            String normalized=key(scientific);
+            Integer position=index.get(normalized);
+            String cue=detail.getString("fieldCue").trim();
+            String basis=detail.getString("basis");
+            if(position==null || !updated.add(normalized) ||
+               cue.length()<45 || cue.length()>450 ||
+               cue.contains("\\n") || cue.contains("\\r") ||
+               !("source_summary".equals(basis) ||
+                 "field_guide_inference_or_prior-account-synthesis".equals(basis)))
+                throw new IllegalStateException("Invalid habitat cue for "+scientific);
+            JSONObject target=rows.get(position);
+            if(!scientific.equals(target.optString("s")) ||
+               !detail.getString("group").equals(target.optString("g")))
+                throw new IllegalStateException("Taxon mismatch in habitat cue");
+            String narrative=target.getString("p").trim();
+            String status="Its listed Philippine DENR category";
+            int at=narrative.lastIndexOf(status);
+            String expanded=at>=0
+                ? narrative.substring(0,at)+cue+" "+narrative.substring(at)
+                : narrative+" "+cue;
+            target.put("p",expanded);
+        }
+    }
     private static synchronized void load(Context context) {
         if(initialized)return;
         initialized=true;
@@ -137,6 +192,7 @@ public final class PhLibraryBook01 {
             }
             if(rows.size()!=714)throw new IllegalStateException("Incomplete PHLibrary edition");
             applyEditorial(context,rows,index);
+            applyHabitatCues(context,rows,index);
             // The source PAIC714 checklist retains an older combination for
             // this bat. The Book 01 account documents the named transfer.
             Integer formerBat=index.get(key("Mops plicatus"));
@@ -155,7 +211,7 @@ public final class PhLibraryBook01 {
     }
     public static String availabilityMessage(Context context) {
         load(context);
-        return problem.isEmpty()?"Book 01 · Greater Mindanao · Edited v1.76":problem;
+        return problem.isEmpty()?"Book 01 · Greater Mindanao · Habitat v1.77":problem;
     }
     public static List<JSONObject> entries(Context context) {
         load(context);

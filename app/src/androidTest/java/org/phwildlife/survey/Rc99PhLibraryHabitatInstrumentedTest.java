@@ -28,6 +28,8 @@ public final class Rc99PhLibraryHabitatInstrumentedTest {
             assertNull("Duplicate species "+row.getString("s"),
                 indexed.put(row.getString("s"),row));
             assertTrue(row.getString("p").indexOf('\n')<0);
+            assertFalse("Editorial contrasts remaining in "+row.getString("s"),
+                row.getString("p").toLowerCase(java.util.Locale.ROOT).contains("rather than"));
         }
         assertEquals(Integer.valueOf(117),tiers.get("Common"));
         assertEquals(Integer.valueOf(343),tiers.get("Uncommon"));
@@ -37,7 +39,7 @@ public final class Rc99PhLibraryHabitatInstrumentedTest {
         assertTrue(indexed.get("Aviceda jerdoni").getString("p")
             .contains("Shaded canopy gaps and streamside trees"));
         assertTrue(indexed.get("Pelophryne lighti").getString("p")
-            .contains("Low ferns and shrub leaves form recorded perches"));
+            .contains("low ferns and shrub leaves in montane forest"));
         assertTrue(indexed.get("Draco mindanensis").getString("p")
             .contains("commonly around 5–10 m"));
         assertTrue(indexed.get("Acerodon jubatus").getString("p")

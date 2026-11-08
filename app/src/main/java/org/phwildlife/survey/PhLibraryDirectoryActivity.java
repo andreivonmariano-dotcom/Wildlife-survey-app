@@ -28,7 +28,7 @@ import java.util.Locale;
 public final class PhLibraryDirectoryActivity extends Activity {
     private static final String[] GROUPS={"All","Birds","Amphibians","Reptiles","Mammals"};
     private static final String[] TIERS={"All rarity tiers","Common","Uncommon","Rare",
-        "Exceptionally rare","Legendary"};
+        "Exceptionally rare","Legendary","Unranked"};
     private static final int PAGE=24;
     private EditText search;
     private Button rarityButton;
@@ -105,7 +105,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
         eyebrow.setLetterSpacing(.13f);
         eyebrow.setPadding(dp(2),dp(14),0,dp(4));
         root.addView(eyebrow);
-        TextView title=text("714 species",25,UiKit.INK,true);
+        TextView title=text(PhLibraryBook01.EXPECTED_COUNT+" accounts",25,UiKit.INK,true);
         title.setPadding(dp(1),0,0,dp(5));
         root.addView(title);
         TextView subtitle=text("Browse the complete offline encyclopedia",13,UiKit.MUTED,false);
@@ -116,8 +116,8 @@ public final class PhLibraryDirectoryActivity extends Activity {
         search.setSingleLine(true);
         search.setTextSize(16);
         search.setHint(getResources().getConfiguration().fontScale>=1.6f?
-            "Search":"Search species or family");
-        search.setContentDescription("Search Greater Mindanao species, scientific names and families");
+            "Search":"Search species, habitats or places");
+        search.setContentDescription("Search Book 01 scientific names, common names, families and article text");
         UiKit.fieldInput(this,search);
         root.addView(search,new LinearLayout.LayoutParams(-1,-2));
 
@@ -151,7 +151,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
         rows=new LinearLayout(this);
         rows.setOrientation(LinearLayout.VERTICAL);
         content.addView(rows);
-        showMore=UiKit.button(this,"Show more species","quiet");
+        showMore=UiKit.button(this,"Show more accounts","quiet");
         LinearLayout.LayoutParams more=new LinearLayout.LayoutParams(-1,-2);
         more.topMargin=dp(7);more.bottomMargin=dp(12);
         showMore.setMinHeight(dp(48));
@@ -176,6 +176,9 @@ public final class PhLibraryDirectoryActivity extends Activity {
         rows.removeAllViews();matches.clear();shown=0;
         if(!PhLibraryBook01.ready(this)){
             resultsCount.setText(PhLibraryBook01.availabilityMessage(this));
+            Button retry=UiKit.button(this,"Retry offline book","secondary");
+            retry.setOnClickListener(v->{PhLibraryBook01.reload(this);filter();});
+            rows.addView(retry);
             showMore.setVisibility(View.GONE);return;
         }
         String term=search.getText().toString().trim().toLowerCase(Locale.ROOT);
@@ -185,13 +188,15 @@ public final class PhLibraryDirectoryActivity extends Activity {
             if(selectedRarity!=0 && !TIERS[selectedRarity].equals(record.optString("t")))
                 continue;
             if(!term.isEmpty()){
-                String haystack=(record.optString("s")+" "+record.optString("c")+" "+
+                String names=(record.optString("s")+" "+record.optString("c")+" "+
                     record.optString("o")+" "+record.optString("f")).toLowerCase(Locale.ROOT);
-                if(!haystack.contains(term))continue;
+                String account=record.optString("p").toLowerCase(Locale.ROOT);
+                // Full-text matches are references to an account, not claims of local presence.
+                if(!names.contains(term) && !account.contains(term))continue;
             }
             matches.add(record);
         }
-        resultsCount.setText(matches.size()+" species found");
+        resultsCount.setText(matches.size()+" accounts found");
         nextPage();
         if(listScroll!=null)listScroll.post(()->listScroll.scrollTo(0,0));
     }
@@ -227,7 +232,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
         shown=end;
         showMore.setVisibility(shown<matches.size()?View.VISIBLE:View.GONE);
         if(matches.isEmpty()){
-            TextView empty=text("No matching species. Try another name or filter.",
+            TextView empty=text("No matching accounts. Try another search term or clear a filter.",
                 14,UiKit.MUTED,false);
             empty.setPadding(dp(2),dp(14),0,dp(16));
             rows.addView(empty);

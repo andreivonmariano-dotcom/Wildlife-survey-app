@@ -58,7 +58,7 @@ public final class LikasLibraryActivity extends Activity {
         TextView back=PhLibrary2Ui.action(this,"Back",this::finish,false);
         top.addView(back,new LinearLayout.LayoutParams(dp(
             getResources().getConfiguration().fontScale>=1.6f?104:74),dp(48)));
-        TextView label=PhLibrary2Ui.text(this,"PHLIBRARY",14,PhLibrary2Ui.FOREST,false,true);
+        TextView label=PhLibrary2Ui.text(this,"PHLibrary",14,PhLibrary2Ui.FOREST,false,true);
         label.setLetterSpacing(.12f);label.setGravity(Gravity.CENTER);
         top.addView(label,new LinearLayout.LayoutParams(0,dp(48),1));
         TextView offline=PhLibrary2Ui.text(this,"OFFLINE",11,PhLibrary2Ui.MUTED,false,true);

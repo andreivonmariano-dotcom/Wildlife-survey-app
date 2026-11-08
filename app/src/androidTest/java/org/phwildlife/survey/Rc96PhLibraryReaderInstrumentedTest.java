@@ -52,7 +52,7 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
     }
     private static View findRefs(View view){
         CharSequence description=view.getContentDescription();
-        if(description!=null && description.toString().startsWith("Account references."))
+        if(description!=null && description.toString().startsWith("Open source citations"))
             return view;
         if(view instanceof ViewGroup){
             ViewGroup group=(ViewGroup)view;
@@ -84,9 +84,9 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             scenario.onActivity(a->{
                 assertTrue("Complete edition",PhLibraryBook01.ready(a));
-                assertEquals(714,PhLibraryBook01.entries(a).size());
+                assertEquals(715,PhLibraryBook01.entries(a).size());
                 assertNotNull(findText(a.getWindow().getDecorView(),"GREATER MINDANAO"));
-                assertNotNull(findText(a.getWindow().getDecorView(),"714 species"));
+                assertNotNull(findText(a.getWindow().getDecorView(),"715 accounts"));
                 capture(a,"rc96-"+preset()+"-directory.png");
             });
         }

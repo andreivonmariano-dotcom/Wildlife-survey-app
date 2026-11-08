@@ -45,7 +45,7 @@ class AdaptivePanels(unittest.TestCase):
         m=read("MainActivity.java")
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn("versionCode 159",(ROOT/"app/build.gradle").read_text())
-        self.assertIn("0.27.3-rc98-phlibrary-editorial",
+        self.assertIn("0.27.3-rc99-phlibrary-habitats",
             (ROOT/"app/build.gradle").read_text())
         for marker in ("SurveyClosePolicy.resolve(","Finish Complete",
             "End Incomplete","Cancel Survey · Not Counted",

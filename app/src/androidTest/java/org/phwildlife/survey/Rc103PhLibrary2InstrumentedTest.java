@@ -76,6 +76,12 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     assertNotNull(text(root,"Habitat atlas"));
                     assertNotNull(text(root,"My collection"));
                     assertNotNull(text(root,"Full bibliography"));
+                    View title=text(root,"Wildlife of");
+                    assertNotNull(title);
+                    ViewGroup content=(ViewGroup)title.getParent();
+                    ViewGroup hero=(ViewGroup)content.getParent();
+                    assertTrue("Atlas forest hero must grow to contain its text at this font scale",
+                        content.getBottom()<=hero.getHeight()+2);
                     shot(a,"home");
                 }catch(Exception x){err[0]=x;}
             });

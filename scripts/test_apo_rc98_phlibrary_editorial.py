@@ -70,7 +70,7 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertIn('getString("short")',java)
         self.assertNotIn("getWritableDatabase",java)
         self.assertNotIn("execSQL(",java)
-        self.assertIn("Text v1.79",java)
+        self.assertIn("Text v1.80",java)
         self.assertIn("super(context,NAME,null,29)",
                       (JAVA/"FieldDb.java").read_text(encoding="utf-8"))
 

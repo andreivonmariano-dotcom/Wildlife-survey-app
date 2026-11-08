@@ -53,17 +53,19 @@ public final class LikasLibraryActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(PhLibrary2Ui.PAPER);
         root.setPadding(dp(16),dp(9),dp(16),0);
+        boolean largeText=getResources().getConfiguration().fontScale>=1.6f;
         LinearLayout top=new LinearLayout(this);
         top.setGravity(Gravity.CENTER_VERTICAL);
         TextView back=PhLibrary2Ui.action(this,"Back",this::finish,false);
-        top.addView(back,new LinearLayout.LayoutParams(dp(
-            getResources().getConfiguration().fontScale>=1.6f?104:74),dp(48)));
+        if(largeText){back.setTextSize(12);back.setPadding(dp(8),dp(8),dp(8),dp(8));}
+        top.addView(back,new LinearLayout.LayoutParams(dp(largeText?100:74),dp(48)));
         TextView label=PhLibrary2Ui.text(this,"PHLibrary",14,PhLibrary2Ui.FOREST,false,true);
-        label.setLetterSpacing(.12f);label.setGravity(Gravity.CENTER);
+        label.setTextSize(largeText?12:14);
+        label.setLetterSpacing(largeText?.02f:.12f);label.setGravity(Gravity.CENTER);
         top.addView(label,new LinearLayout.LayoutParams(0,dp(48),1));
         TextView offline=PhLibrary2Ui.text(this,"OFFLINE",11,PhLibrary2Ui.MUTED,false,true);
         offline.setGravity(Gravity.CENTER_VERTICAL);
-        top.addView(offline);
+        if(!largeText)top.addView(offline);
         root.addView(top);
         ScrollView scroll=new ScrollView(this);
         scroll.setFillViewport(true);
@@ -74,9 +76,11 @@ public final class LikasLibraryActivity extends Activity {
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         setContentView(root);
 
-        body.addView(PhLibrary2Ui.hero(this,"BOOK 01  /  GREATER MINDANAO",
-            "Wildlife of\nGreater Mindanao",
-            "715 wildlife accounts. Four groups. One connected natural-history library.",false));
+        body.addView(PhLibrary2Ui.hero(this,
+            largeText?"BOOK 01":"BOOK 01  /  GREATER MINDANAO",
+            largeText?"Greater Mindanao":"Wildlife of\nGreater Mindanao",
+            largeText?"715 accounts · Four wildlife groups":
+                "715 wildlife accounts. Four groups. One connected natural-history library.",false));
 
         TextView findLabel=PhLibrary2Ui.eyebrow(this,"FIND IN THE ENCYCLOPEDIA");
         LinearLayout.LayoutParams flp=new LinearLayout.LayoutParams(-1,-2);
@@ -84,7 +88,7 @@ public final class LikasLibraryActivity extends Activity {
         LinearLayout searchRow=new LinearLayout(this);searchRow.setGravity(Gravity.CENTER_VERTICAL);
         EditText search=new EditText(this);
         search.setSingleLine(true);search.setTextSize(16);
-        search.setHint("Species, habitats, or places");
+        search.setHint(largeText?"Search":"Species, habitats, or places");
         search.setContentDescription("Search 715 wildlife accounts");
         search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         UiKit.fieldInput(this,search);

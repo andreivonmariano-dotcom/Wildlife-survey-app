@@ -77,10 +77,10 @@ class Rc98BookEditorial(unittest.TestCase):
     def test_home_has_only_one_book_and_three_distinct_actions(self):
         hub=(JAVA/"LikasLibraryActivity.java").read_text(encoding="utf-8")
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text(encoding="utf-8")
-        self.assertEqual(hub.count("PhLibraryStyle.bookCover(this"),1)
-        self.assertEqual(hub.count("add(body,"),3)
-        for title in ('"Browse wildlife groups"','"Discovery Rarity"',
-                      '"Habitat associations"'):
+        self.assertEqual(hub.count("PhLibrary2Ui.hero(this"),1)
+        self.assertEqual(hub.count("sectionCard(body,"),4)
+        for title in ('"THE FOUR WILDLIFE GROUPS"','"Discovery Rarity"',
+                      '"Habitat atlas"'):
             self.assertIn(title,hub)
         for old in ('"Conservation evidence"','"Similar species"',
                     '"Source collections"','"Photo comparisons"'):
@@ -90,8 +90,8 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertNotIn("ImageView",hub)
         self.assertNotIn("ImageView",directory)
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 162",gradle)
-        self.assertIn("0.27.3-rc102-startup-centered-motion",gradle)
+        self.assertIn("versionCode 163",gradle)
+        self.assertIn("0.27.3-rc103-phlibrary-2-native",gradle)
 
 if __name__=="__main__":
     unittest.main()

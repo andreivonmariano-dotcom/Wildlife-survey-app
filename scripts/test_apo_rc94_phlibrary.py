@@ -12,12 +12,12 @@ class PHLibraryScreenContract(unittest.TestCase):
     def test_phlibrary_home_is_one_primary_book_without_photo_navigation(self):
         hub=read("LikasLibraryActivity.java")
         style=read("PhLibraryStyle.java")
-        self.assertIn('"PHLibrary","Home"',hub)
-        self.assertIn("PhLibraryStyle.bookCover",hub)
+        self.assertIn('"PHLibrary"',hub)
+        self.assertIn("PhLibrary2Ui.hero",hub)
         self.assertIn("PhLibraryDirectoryActivity.class",hub)
-        self.assertIn("Browse wildlife groups",hub)
+        self.assertIn("THE FOUR WILDLIFE GROUPS",hub)
         self.assertIn("Discovery Rarity",hub)
-        self.assertIn("Habitat associations",hub)
+        self.assertIn("Habitat atlas",hub)
         self.assertNotIn('"Photo comparisons"',hub)
         self.assertNotIn('"Wildlife field guides"',hub)
         self.assertNotIn('"Search book species"',hub)
@@ -56,8 +56,8 @@ class PHLibraryScreenContract(unittest.TestCase):
 
     def test_app_identity_biology_and_schema_remain(self):
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 162",gradle)
-        self.assertIn("0.27.3-rc102-startup-centered-motion",gradle)
+        self.assertIn("versionCode 163",gradle)
+        self.assertIn("0.27.3-rc103-phlibrary-2-native",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn('manifest.put("sqliteSchema",snapshotSchema)',

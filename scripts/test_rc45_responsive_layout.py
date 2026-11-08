@@ -24,11 +24,11 @@ class Rc45LayoutContract(unittest.TestCase):
                                 or "stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in code)
         # RC97 deliberately keeps the bibliography hub one-column and text-only.
         library=source("LikasLibraryActivity.java")
-        self.assertIn("PhLibraryStyle.row",library)
-        self.assertIn("UiKit.page",library)
+        self.assertIn("PhLibrary2Ui.panel",library)
+        self.assertIn("new ScrollView(this)",library)
         directory=source("PhLibraryDirectoryActivity.java")
         self.assertIn("HorizontalScrollView",directory)
-        self.assertIn("PhLibraryStyle.touch",directory)
+        self.assertIn("PhLibrary2Ui.touch",directory)
 
     def test_picker_has_a_readable_search_field_and_unidentified_action(self):
         picker=source("SpeciesPickerActivity.java")

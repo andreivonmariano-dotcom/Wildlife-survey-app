@@ -74,7 +74,7 @@ class ConservationCardQA(unittest.TestCase):
         self.assertIn('"Sources"',habitat)
         library=(CODE/"LikasLibraryActivity.java").read_text()
         self.assertIn("PhLibraryDirectoryActivity.class",library)
-        self.assertIn("PhLibraryStyle.row",library)
+        self.assertIn("PhLibrary2Ui.panel",library)
         self.assertNotIn('"Photo comparisons"',library)
         catalog=(CODE/"Rc7SpeciesLibraryActivity.java").read_text()
         self.assertNotIn('"Priority species (96)"',catalog)

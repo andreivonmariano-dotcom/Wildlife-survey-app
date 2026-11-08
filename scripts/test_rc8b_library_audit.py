@@ -69,8 +69,8 @@ class Rc8bScientificAudit(unittest.TestCase):
 
     def test_habitat_link_view_does_not_infer_absence(self):
         text=(CODE/"HabitatSpeciesEvidenceActivity.java").read_text()
-        self.assertIn("Literature associations · Local occurrence unassessed",text)
-        self.assertIn("No reviewed species links for this habitat.",text)
+        self.assertIn("not evidence that a species occurs at your site",text)
+        self.assertIn("No source-reviewed species links",text)
         self.assertIn('edge.optString("sourceTitle")',text)
         self.assertNotIn("getWritableDatabase",text)
         self.assertIn("HabitatSpeciesEvidenceActivity.class",

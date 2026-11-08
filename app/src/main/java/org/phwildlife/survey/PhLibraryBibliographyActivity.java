@@ -2,77 +2,135 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.ListView;
 import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Locale;
 
-/** Full original 1,159-entry bibliography, independent of unresolved citation matching. */
+/** Complete offline original bibliography with virtualized, accessible rows. */
 public final class PhLibraryBibliographyActivity extends Activity {
-    private JSONArray refs;
+    private final ArrayList<JSONObject> refs=new ArrayList<>();
+    private final ArrayList<JSONObject> matches=new ArrayList<>();
     private EditText search;
-    private LinearLayout list;
     private TextView count;
-    private int dp(float value){return PhLibraryStyle.dp(this,value);}
-    @Override public void onCreate(Bundle state){
-        super.onCreate(state);
+    private ListView list;
+    private BaseAdapter adapter;
+    private int dp(float v){return PhLibrary2Ui.dp(this,v);}
+    private void refresh(){
+        matches.clear();
+        String q=search.getText().toString().trim().toLowerCase(Locale.ROOT);
+        for(JSONObject item:refs){
+            if(q.isEmpty()||item.optString("text").toLowerCase(Locale.ROOT).contains(q))
+                matches.add(item);
+        }
+        count.setText(matches.size()+" of "+refs.size()+" original references"+
+            (matches.isEmpty()&&q.length()>0?" · No exact text match":""));
+        adapter.notifyDataSetChanged();
+        list.setSelection(0);
+    }
+    @Override public void onCreate(Bundle saved){
+        super.onCreate(saved);
+        getWindow().setStatusBarColor(PhLibrary2Ui.PAPER);
+        getWindow().setNavigationBarColor(PhLibrary2Ui.PAPER);
+        getWindow().getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        JSONArray items=PhLibraryBook01.bibliography(this);
+        for(int i=0;i<items.length();i++){
+            JSONObject ref=items.optJSONObject(i);if(ref!=null)refs.add(ref);
+        }
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
-        root.setBackgroundColor(UiKit.BG);root.setPadding(dp(16),dp(10),dp(16),dp(8));
-        root.addView(PhLibraryStyle.navigation(this,"Bibliography","Book 01",this::finish));
-        TextView title=PhLibraryStyle.text(this,"Book 01 references",23,UiKit.INK,true);
-        title.setPadding(0,dp(15),0,dp(6));root.addView(title);
-        TextView subtitle=PhLibraryStyle.text(this,"Original source bibliography · Offline",13,UiKit.MUTED,false);
-        root.addView(subtitle);
-        search=new EditText(this);search.setSingleLine(true);search.setTextSize(16);
-        search.setHint("Search author, year, title or DOI");UiKit.fieldInput(this,search);
-        root.addView(search);
-        count=PhLibraryStyle.text(this,"",13,UiKit.MUTED,false);count.setPadding(0,dp(12),0,dp(9));root.addView(count);
-        ScrollView scroll=new ScrollView(this);list=new LinearLayout(this);list.setOrientation(LinearLayout.VERTICAL);
-        scroll.addView(list);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        refs=PhLibraryBook01.bibliography(this);
-        search.setText(state==null?getIntent().getStringExtra("phlibrary_bib_search"):state.getString("q",""));
+        root.setPadding(dp(16),dp(7),dp(16),dp(4));root.setBackgroundColor(PhLibrary2Ui.PAPER);
+        LinearLayout nav=new LinearLayout(this);nav.setGravity(Gravity.CENTER_VERTICAL);
+        nav.addView(PhLibrary2Ui.action(this,"Back",this::finish,false),
+            new LinearLayout.LayoutParams(dp(75),dp(48)));
+        TextView navTitle=PhLibrary2Ui.text(this,"REFERENCE LIBRARY",14,PhLibrary2Ui.FOREST,false,true);
+        navTitle.setGravity(Gravity.CENTER);
+        nav.addView(navTitle,new LinearLayout.LayoutParams(0,dp(48),1));
+        root.addView(nav);
+        root.addView(PhLibrary2Ui.eyebrow(this,"BOOK 01  /  ORIGINAL BIBLIOGRAPHY"));
+        TextView heading=PhLibrary2Ui.text(this,"Research sources",31,PhLibrary2Ui.INK,true,false);
+        root.addView(heading);
+        TextView intro=PhLibrary2Ui.text(this,
+            "1,159 full original bibliography records, searchable offline. "+
+            "Individual author–year account citations are not yet completely reconciled.",
+            14,PhLibrary2Ui.MUTED,false,false);
+        intro.setLineSpacing(dp(3),1.05f);intro.setPadding(0,dp(7),0,dp(14));
+        root.addView(intro);
+        search=new EditText(this);search.setSingleLine(true);
+        search.setTextSize(16);search.setHint("Author, title, year or DOI");
+        UiKit.fieldInput(this,search);root.addView(search,new LinearLayout.LayoutParams(-1,dp(56)));
+        count=PhLibrary2Ui.text(this,"",14,PhLibrary2Ui.FOREST,false,true);
+        count.setPadding(0,dp(14),0,dp(8));root.addView(count);
+
+        list=new ListView(this);list.setDividerHeight(dp(7));
+        list.setDivider(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+        list.setBackgroundColor(PhLibrary2Ui.PAPER);
+        adapter=new BaseAdapter(){
+            public int getCount(){return matches.size();}
+            public Object getItem(int index){return matches.get(index);}
+            public long getItemId(int index){return index;}
+            public View getView(int position,View existing,ViewGroup parent){
+                TextView row=existing instanceof TextView?(TextView)existing:
+                    PhLibrary2Ui.text(PhLibraryBibliographyActivity.this,"",15,
+                        PhLibrary2Ui.INK,false,false);
+                row.setText(matches.get(position).optString("text"));
+                row.setLineSpacing(dp(3),1.06f);
+                row.setPadding(dp(14),dp(13),dp(14),dp(13));
+                row.setBackground(PhLibrary2Ui.touch(PhLibraryBibliographyActivity.this,
+                    PhLibrary2Ui.IVORY,PhLibrary2Ui.LINE,13));
+                row.setTextIsSelectable(false);
+                row.setMinHeight(dp(70));
+                return row;
+            }
+        };
+        list.setAdapter(adapter);
+        list.setOnItemClickListener((parent,view,position,id)->{
+            String full=matches.get(position).optString("text");
+            TextView detail=PhLibrary2Ui.text(this,full,16,PhLibrary2Ui.INK,false,false);
+            detail.setPadding(dp(20),dp(15),dp(20),dp(15));
+            detail.setTextIsSelectable(true);
+            detail.setAutoLinkMask(Linkify.WEB_URLS);
+            detail.setMovementMethod(LinkMovementMethod.getInstance());
+            new AlertDialog.Builder(this).setTitle("Source reference")
+                .setView(detail).setPositiveButton("Close",null).show();
+        });
+        root.addView(list,new LinearLayout.LayoutParams(-1,0,1));
+        setContentView(root);
+        String q=saved==null?getIntent().getStringExtra("phlibrary_bib_search"):
+            saved.getString("q","");
+        search.setText(q==null?"":q);
         search.addTextChangedListener(new TextWatcher(){
             public void beforeTextChanged(CharSequence s,int start,int count,int after){}
-            public void onTextChanged(CharSequence s,int start,int before,int count){render();}
+            public void onTextChanged(CharSequence s,int start,int before,int count){refresh();}
             public void afterTextChanged(Editable e){}
         });
-        setContentView(root);render();
-    }
-    private void render(){
-        list.removeAllViews();String term=search.getText().toString().toLowerCase(Locale.ROOT).trim();
-        int found=0;
-        for(int i=0;i<refs.length();i++){
-            JSONObject item=refs.optJSONObject(i);if(item==null)continue;
-            String full=item.optString("text");
-            if(!term.isEmpty()&&!full.toLowerCase(Locale.ROOT).contains(term))continue;
-            found++;
-            if(found>45)continue; // avoid materializing hundreds of views
-            TextView row=PhLibraryStyle.text(this,full,14,UiKit.INK,false);
-            row.setTextIsSelectable(true);row.setLineSpacing(dp(3),1.04f);
-            row.setPadding(dp(10),dp(9),dp(10),dp(9));
-            row.setBackground(PhLibraryStyle.touch(this,android.graphics.Color.WHITE,UiKit.BORDER,12));
-            row.setClickable(true);row.setFocusable(true);
-            row.setOnClickListener(v->{
-                TextView body=PhLibraryStyle.text(this,full,15,UiKit.INK,false);
-                body.setPadding(dp(18),dp(12),dp(18),dp(12));
-                body.setAutoLinkMask(Linkify.WEB_URLS);body.setMovementMethod(LinkMovementMethod.getInstance());
-                body.setTextIsSelectable(true);
-                new AlertDialog.Builder(this).setTitle("Source reference")
-                    .setView(body).setPositiveButton("Close",null).show();
-            });
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(8);list.addView(row,lp);
+        refresh();
+        if(saved!=null){
+            int first=saved.getInt("first");
+            int offset=saved.getInt("offset");
+            list.post(()->list.setSelectionFromTop(first,offset));
         }
-        count.setText(refs.length()==0?"Reference package unavailable":found+" references"+(found>45?" · First 45 shown. Refine search.":""));
     }
-    @Override protected void onSaveInstanceState(Bundle out){out.putString("q",search.getText().toString());super.onSaveInstanceState(out);}
+    @Override protected void onSaveInstanceState(Bundle out){
+        out.putString("q",search.getText().toString());
+        out.putInt("first",list.getFirstVisiblePosition());
+        View child=list.getChildAt(0);out.putInt("offset",child==null?0:child.getTop());
+        super.onSaveInstanceState(out);
+    }
 }

@@ -22,12 +22,12 @@ class Rc47DesignSystem(unittest.TestCase):
         self.assertIn("public static LinearLayout page(Activity a,String name,String parent",ui)
         self.assertIn("scroll.setFillViewport(true)",ui)
         self.assertIn("root.addView(navigationHeader(a,name,parent,onBack))",ui)
-        for filename,label in [("LikasLibraryActivity.java","PHLibrary"),
-                               ("LikasSettingsActivity.java","Settings")]:
-            c=read(filename)
-            self.assertIn(f'UiKit.page(this,"{label}","Home",this::finish,body)',c)
-            self.assertIn("PhLibraryStyle.section" if label=="PHLibrary"
-                          else "FieldVisuals.section(this,",c)
+        library=read("LikasLibraryActivity.java")
+        self.assertIn("PhLibrary2Ui.hero",library)
+        self.assertIn("scroll.setFillViewport(true)",library)
+        settings_page=read("LikasSettingsActivity.java")
+        self.assertIn('UiKit.page(this,"Settings","Home",this::finish,body)',settings_page)
+        self.assertIn("FieldVisuals.section(this,",settings_page)
         library=read("LikasLibraryActivity.java")
         for name in ("PhLibraryDirectoryActivity.class",
                      "HabitatSpeciesEvidenceActivity.class"):

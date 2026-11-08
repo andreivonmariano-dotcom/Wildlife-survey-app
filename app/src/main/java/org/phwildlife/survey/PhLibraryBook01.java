@@ -199,42 +199,182 @@ public final class PhLibraryBook01 {
             nav.addView(b,lp);}
         target.addView(nav);
     }
-    /** One continuous narrative paragraph, preserving author–year citation text. */
+    /** One continuous, verbatim Edition 1.82 narrative in an editorial reader. */
     public static boolean render(Activity a,LinearLayout parent,String scientific,Consumer<String> navigate){
         JSONObject record=find(a,scientific);
         if(record==null)return false;
         Integer pos=BY_NAME.get(key(scientific));if(pos==null)return false;
-        parent.removeAllViews();parent.setPadding(0,dp(a,9),0,dp(a,18));
-        TextView kicker=label(a,"PHLIBRARY  ·  GREATER MINDANAO  ·  BOOK 01",11,UiKit.MUTED,true);
-        kicker.setLetterSpacing(.04f);kicker.setPadding(0,dp(a,12),0,dp(a,8));parent.addView(kicker);
+        boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
+        int edge=PhLibrary2Ui.dp(a,16);
+        parent.removeAllViews();parent.setPadding(0,PhLibrary2Ui.dp(a,10),0,PhLibrary2Ui.dp(a,24));
         String common=record.optString("c");
-        TextView heading=label(a,common.isEmpty()?scientific:common,23,UiKit.INK,true);
-        heading.setPadding(0,0,0,dp(a,3));parent.addView(heading);
-        TextView latin=label(a,record.optString("s"),17,UiKit.INK,false);
-        latin.setTypeface(null,Typeface.ITALIC);latin.setPadding(0,0,0,dp(a,5));parent.addView(latin);
-        TextView taxonomy=label(a,record.optString("o")+" · "+record.optString("f"),13,UiKit.MUTED,false);
-        taxonomy.setPadding(0,0,0,dp(a,9));parent.addView(taxonomy);
-        String badges=record.optString("b").replace("↝","").replace("◉","").replace("◆","").replace("✦","")
-            .replace("     •     ","   ·   ").replaceAll(" +"," ").trim();
-        if("Unranked".equals(record.optString("t")))badges=(badges.isEmpty()?"":badges+" · ")+"Rarity unranked · Provisional identification";
-        TextView status=label(a,badges,13,UiKit.FOREST,true);
-        status.setLineSpacing(dp(a,3),1.08f);status.setPadding(dp(a,1),dp(a,8),dp(a,1),dp(a,9));parent.addView(status);
-        View rule=new View(a);rule.setBackgroundColor(UiKit.BORDER);
-        LinearLayout.LayoutParams ruleLp=new LinearLayout.LayoutParams(-1,dp(a,1));ruleLp.topMargin=dp(a,17);ruleLp.bottomMargin=dp(a,17);
-        parent.addView(rule,ruleLp);
-        TextView article=label(a,record.optString("p"),16.5f,UiKit.INK,false);
-        article.setLineSpacing(dp(a,4),1.1f);article.setTextIsSelectable(true);
-        parent.addView(article,new LinearLayout.LayoutParams(-1,-2));
-        JSONArray refs=record.optJSONArray("r");
-        if(refs!=null&&refs.length()>0){
-            TextView sources=label(a,"REFERENCES · "+refs.length()+" citation"+(refs.length()==1?"":"s")+" · Open",12,UiKit.FOREST,true);
-            sources.setPadding(0,dp(a,23),0,dp(a,17));sources.setClickable(true);sources.setFocusable(true);
-            sources.setContentDescription("Open source citations and full bibliography");
-            sources.setOnClickListener(v->referencesDialog(a,refs));parent.addView(sources);
+        String headingText=common.isEmpty()?scientific:common;
+
+        LinearLayout hero=new LinearLayout(a);hero.setOrientation(LinearLayout.VERTICAL);
+        hero.setPadding(PhLibrary2Ui.dp(a,large?14:20),
+            PhLibrary2Ui.dp(a,large?12:18),
+            PhLibrary2Ui.dp(a,large?14:20),
+            PhLibrary2Ui.dp(a,large?13:19));
+        hero.setBackground(PhLibrary2Ui.bg(a,PhLibrary2Ui.DEEP,
+            android.graphics.Color.TRANSPARENT,18));
+        TextView kicker=PhLibrary2Ui.text(a,"BOOK 01  /  "+record.optString("g").toUpperCase(Locale.ROOT),
+            12,0xFFD9E8D4,false,true);
+        kicker.setLetterSpacing(.085f);hero.addView(kicker);
+        TextView heading=PhLibrary2Ui.text(a,headingText,
+            large?20:30,android.graphics.Color.WHITE,true,false);
+        heading.setLineSpacing(PhLibrary2Ui.dp(a,1),1.02f);
+        LinearLayout.LayoutParams h=new LinearLayout.LayoutParams(-1,-2);
+        h.topMargin=PhLibrary2Ui.dp(a,12);hero.addView(heading,h);
+        TextView latin=PhLibrary2Ui.text(a,record.optString("s"),
+            large?15:18,0xFFE2EBD7,true,false);
+        latin.setTypeface(Typeface.create("serif",Typeface.ITALIC));
+        LinearLayout.LayoutParams l=new LinearLayout.LayoutParams(-1,-2);
+        l.topMargin=PhLibrary2Ui.dp(a,6);hero.addView(latin,l);
+        TextView taxonomy=PhLibrary2Ui.text(a,
+            record.optString("o")+" · "+record.optString("f"),
+            large?12:14,0xFFDEE9D8,false,false);
+        LinearLayout.LayoutParams tx=new LinearLayout.LayoutParams(-1,-2);
+        tx.topMargin=PhLibrary2Ui.dp(a,10);hero.addView(taxonomy,tx);
+        parent.addView(hero,new LinearLayout.LayoutParams(-1,-2));
+
+        boolean stack=a.getResources().getConfiguration().fontScale>=1.6f ||
+            a.getResources().getConfiguration().screenWidthDp<350;
+        LinearLayout statusRow=new LinearLayout(a);
+        statusRow.setOrientation(stack?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        statusRow.setPadding(0,PhLibrary2Ui.dp(a,12),0,PhLibrary2Ui.dp(a,6));
+        String global=record.isNull("iucn")?"Unassessed":record.optString("iucn","Unassessed");
+        String tier=record.optString("t");
+        LinearLayout rarity=statusCard(a,"DISCOVERY RARITY",tier);
+        LinearLayout iucn=statusCard(a,"IUCN GLOBAL",global);
+        LinearLayout.LayoutParams rlp=new LinearLayout.LayoutParams(stack?-1:0,-2,1);
+        statusRow.addView(rarity,rlp);
+        LinearLayout.LayoutParams ilp=new LinearLayout.LayoutParams(stack?-1:0,-2,1);
+        if(stack)ilp.topMargin=PhLibrary2Ui.dp(a,8);
+        else ilp.leftMargin=PhLibrary2Ui.dp(a,8);
+        statusRow.addView(iucn,ilp);
+        parent.addView(statusRow);
+        if("Unranked".equals(tier)){
+            TextView note=PhLibrary2Ui.text(a,"Provisional identification · No assigned Discovery Rarity tier",
+                13,PhLibrary2Ui.MUTED,false,false);
+            note.setPadding(PhLibrary2Ui.dp(a,2),PhLibrary2Ui.dp(a,3),0,PhLibrary2Ui.dp(a,8));
+            parent.addView(note);
         }
-        TextView edition=label(a,sourceEdition(),11,UiKit.MUTED,false);
-        edition.setPadding(0,dp(a,5),0,dp(a,6));parent.addView(edition);
+        String badges=record.optString("b").replace("↝","").replace("◆","")
+            .replace("◉","").replace("✦","");
+        int dot=badges.indexOf('•');
+        String context=(dot>=0?badges.substring(0,dot):"").trim();
+        if(!context.isEmpty()){
+            TextView natural=PhLibrary2Ui.text(a,context,13,PhLibrary2Ui.FOREST,false,true);
+            natural.setPadding(PhLibrary2Ui.dp(a,2),PhLibrary2Ui.dp(a,4),0,PhLibrary2Ui.dp(a,6));
+            parent.addView(natural);
+        }
+
+        TextView section=PhLibrary2Ui.eyebrow(a,"NATURAL HISTORY  /  EDITION 1.82");
+        LinearLayout.LayoutParams sec=new LinearLayout.LayoutParams(-1,-2);
+        sec.topMargin=PhLibrary2Ui.dp(a,8);parent.addView(section,sec);
+        TextView sectionTitle=PhLibrary2Ui.text(a,"Life in its habitat",26,PhLibrary2Ui.INK,true,false);
+        sectionTitle.setPadding(0,0,0,PhLibrary2Ui.dp(a,9));parent.addView(sectionTitle);
+
+        LinearLayout tools=new LinearLayout(a);tools.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        TextView original=PhLibrary2Ui.text(a,"Original Book 01 narrative",13,
+            PhLibrary2Ui.MUTED,false,false);
+        tools.addView(original,new LinearLayout.LayoutParams(0,-2,1));
+        TextView smaller=PhLibrary2Ui.action(a,"A−",()->{},false);
+        TextView larger=PhLibrary2Ui.action(a,"A+",()->{},false);
+        tools.addView(smaller,new LinearLayout.LayoutParams(PhLibrary2Ui.dp(a,51),
+            PhLibrary2Ui.dp(a,48)));
+        LinearLayout.LayoutParams plus=new LinearLayout.LayoutParams(PhLibrary2Ui.dp(a,51),
+            PhLibrary2Ui.dp(a,48));plus.leftMargin=PhLibrary2Ui.dp(a,7);
+        tools.addView(larger,plus);parent.addView(tools);
+
+        TextView article=PhLibrary2Ui.text(a,record.optString("p"),17.5f,
+            PhLibrary2Ui.INK,false,false);
+        article.setLineSpacing(PhLibrary2Ui.dp(a,5),1.12f);
+        article.setTextIsSelectable(true);
+        article.setPadding(0,PhLibrary2Ui.dp(a,14),0,PhLibrary2Ui.dp(a,17));
+        android.content.SharedPreferences prefs=a.getSharedPreferences("phlibrary_reader_v2",
+            Context.MODE_PRIVATE);
+        int initial=Math.max(-2,Math.min(4,prefs.getInt("font_step",0)));
+        article.setTextSize(17.5f+initial);
+        smaller.setOnClickListener(v->changeFont(a,prefs,article,-1));
+        larger.setOnClickListener(v->changeFont(a,prefs,article,1));
+        parent.addView(article,new LinearLayout.LayoutParams(-1,-2));
+
+        TextView save=PhLibrary2Ui.action(a,
+            PhLibraryBookmarks.saved(a,scientific)?"Saved in my collection":"Save to my collection",
+            ()->{},false);
+        save.setOnClickListener(v->{
+            boolean selected=PhLibraryBookmarks.toggle(a,scientific);
+            save.setText(selected?"Saved in my collection":"Save to my collection");
+            save.announceForAccessibility(selected?"Species saved":"Species removed from collection");
+        });
+        LinearLayout.LayoutParams saveLp=new LinearLayout.LayoutParams(-1,PhLibrary2Ui.dp(a,50));
+        saveLp.bottomMargin=PhLibrary2Ui.dp(a,10);parent.addView(save,saveLp);
+
+        JSONArray refs=record.optJSONArray("r");
+        TextView refHead=PhLibrary2Ui.text(a,"Source notes",24,
+            PhLibrary2Ui.INK,true,false);
+        refHead.setPadding(0,PhLibrary2Ui.dp(a,13),0,PhLibrary2Ui.dp(a,7));
+        parent.addView(refHead);
+        TextView refsAction=PhLibrary2Ui.action(a,
+            "REFERENCES · "+(refs==null?0:refs.length())+" citations · Open",
+            ()->referencesDialog(a,refs),false);
+        refsAction.setContentDescription("Open source citations and full bibliography");
+        parent.addView(refsAction);
+        TextView sourceNote=PhLibrary2Ui.text(a,
+            "The original author–date citations are retained. Full reference matching is incomplete.",
+            13,PhLibrary2Ui.MUTED,false,false);
+        sourceNote.setPadding(0,PhLibrary2Ui.dp(a,9),0,PhLibrary2Ui.dp(a,8));
+        parent.addView(sourceNote);
+
+        TextView related=PhLibrary2Ui.text(a,"More in "+record.optString("f"),
+            24,PhLibrary2Ui.INK,true,false);
+        related.setPadding(0,PhLibrary2Ui.dp(a,19),0,PhLibrary2Ui.dp(a,8));
+        parent.addView(related);
+        int listed=0;
+        for(JSONObject r:ENTRIES){
+            if(listed>=3)break;
+            if(r.optString("s").equals(scientific) ||
+                !r.optString("f").equals(record.optString("f")))continue;
+            final String name=r.optString("s");
+            TextView more=PhLibrary2Ui.action(a,r.optString("c")+
+                " · "+name,()->navigate.accept(name),false);
+            LinearLayout.LayoutParams mlp=new LinearLayout.LayoutParams(-1,-2);
+            mlp.bottomMargin=PhLibrary2Ui.dp(a,7);parent.addView(more,mlp);
+            listed++;
+        }
+        TextView note=PhLibrary2Ui.text(a,
+            "Same-family links are taxonomic, not evidence of ecological similarity.",
+            12,PhLibrary2Ui.MUTED,false,false);
+        note.setPadding(0,PhLibrary2Ui.dp(a,4),0,PhLibrary2Ui.dp(a,14));
+        if(listed>0)parent.addView(note);
+
+        TextView edition=PhLibrary2Ui.text(a,sourceEdition(),12,
+            PhLibrary2Ui.MUTED,false,false);
+        edition.setPadding(0,PhLibrary2Ui.dp(a,10),0,PhLibrary2Ui.dp(a,8));
+        parent.addView(edition);
         addNavigation(a,parent,pos,navigate);
         return true;
+    }
+
+    private static LinearLayout statusCard(Activity a,String label,String value){
+        LinearLayout card=new LinearLayout(a);card.setOrientation(LinearLayout.VERTICAL);
+        card.setPadding(PhLibrary2Ui.dp(a,14),PhLibrary2Ui.dp(a,13),
+            PhLibrary2Ui.dp(a,13),PhLibrary2Ui.dp(a,13));
+        card.setBackground(PhLibrary2Ui.bg(a,PhLibrary2Ui.IVORY,PhLibrary2Ui.LINE,13));
+        TextView category=PhLibrary2Ui.text(a,label,11,PhLibrary2Ui.MUTED,false,true);
+        category.setLetterSpacing(.08f);card.addView(category);
+        TextView data=PhLibrary2Ui.text(a,value,18,PhLibrary2Ui.INK,true,true);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.topMargin=PhLibrary2Ui.dp(a,5);card.addView(data,lp);
+        return card;
+    }
+
+    private static void changeFont(Activity a,android.content.SharedPreferences prefs,
+                                   TextView article,int delta){
+        int old=prefs.getInt("font_step",0);
+        int now=Math.max(-2,Math.min(4,old+delta));
+        article.setTextSize(17.5f+now);
+        prefs.edit().putInt("font_step",now).apply();
     }
 }

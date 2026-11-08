@@ -7,11 +7,11 @@ class Rc59HubVisual(unittest.TestCase):
     def test_hub_concise_discoverable_and_shared_styles(self):
         src=(JAVA/"LikasLibraryActivity.java").read_text()
         style=(JAVA/"PhLibraryStyle.java").read_text()
-        self.assertIn('UiKit.page(this,"PHLibrary","Home",this::finish,body)',src)
-        self.assertIn("PhLibraryStyle.bookCover",src)
-        self.assertIn("PhLibraryStyle.row",src)
-        self.assertIn("PhLibraryStyle.section",src)
-        self.assertIn("View.SCROLLBARS_OUTSIDE_INSET",src)
+        self.assertIn('new ScrollView(this)',src)
+        self.assertIn("PhLibrary2Ui.hero",src)
+        self.assertIn("PhLibrary2Ui.panel",src)
+        self.assertIn("PhLibrary2Ui.eyebrow",src)
+        self.assertIn("scroll.setFillViewport(true)",src)
         self.assertIn("LikasDesignSystem.RADIUS_CARD",style) if False else None
         self.assertNotIn("LikasPortalUi.action",src)
         self.assertNotIn('"Photo comparisons"',src)

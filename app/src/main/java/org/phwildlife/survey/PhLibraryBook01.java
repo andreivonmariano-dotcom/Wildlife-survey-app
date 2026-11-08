@@ -158,8 +158,8 @@ public final class PhLibraryBook01 {
                 .setPositiveButton("Browse bibliography",(d,w)->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class)))
                 .setNegativeButton("Close",null).show();return;
         }
-        String[] titles=new String[refs.length];
-        for(int i=0;i<refs.length;i++){
+        String[] titles=new String[refs.length()];
+        for(int i=0;i<refs.length();i++){
             JSONObject r=refs.optJSONObject(i);
             titles[i]=r==null?"Unresolved citation":r.optString("short","Source");
         }

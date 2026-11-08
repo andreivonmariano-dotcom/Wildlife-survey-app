@@ -47,7 +47,7 @@ class Rc84HabitatChecklist(unittest.TestCase):
             self.assertIn(t,wf)
         g=read("app/build.gradle")
         self.assertIn("versionCode 162",g)
-        self.assertIn("0.27.3-rc101-phlibrary-book-v182",g)
+        self.assertIn("0.27.3-rc102-startup-centered-motion",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn("super(context,NAME,null,29)",
                       read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))

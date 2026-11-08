@@ -204,29 +204,35 @@ public final class PhLibraryBook01 {
         JSONObject record=find(a,scientific);
         if(record==null)return false;
         Integer pos=BY_NAME.get(key(scientific));if(pos==null)return false;
+        boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
         int edge=PhLibrary2Ui.dp(a,16);
         parent.removeAllViews();parent.setPadding(0,PhLibrary2Ui.dp(a,10),0,PhLibrary2Ui.dp(a,24));
         String common=record.optString("c");
         String headingText=common.isEmpty()?scientific:common;
 
         LinearLayout hero=new LinearLayout(a);hero.setOrientation(LinearLayout.VERTICAL);
-        hero.setPadding(PhLibrary2Ui.dp(a,20),PhLibrary2Ui.dp(a,18),
-            PhLibrary2Ui.dp(a,20),PhLibrary2Ui.dp(a,19));
+        hero.setPadding(PhLibrary2Ui.dp(a,large?14:20),
+            PhLibrary2Ui.dp(a,large?12:18),
+            PhLibrary2Ui.dp(a,large?14:20),
+            PhLibrary2Ui.dp(a,large?13:19));
         hero.setBackground(PhLibrary2Ui.bg(a,PhLibrary2Ui.DEEP,
             android.graphics.Color.TRANSPARENT,18));
         TextView kicker=PhLibrary2Ui.text(a,"BOOK 01  /  "+record.optString("g").toUpperCase(Locale.ROOT),
             12,0xFFD9E8D4,false,true);
         kicker.setLetterSpacing(.085f);hero.addView(kicker);
-        TextView heading=PhLibrary2Ui.text(a,headingText,30,android.graphics.Color.WHITE,true,false);
+        TextView heading=PhLibrary2Ui.text(a,headingText,
+            large?20:30,android.graphics.Color.WHITE,true,false);
         heading.setLineSpacing(PhLibrary2Ui.dp(a,1),1.02f);
         LinearLayout.LayoutParams h=new LinearLayout.LayoutParams(-1,-2);
         h.topMargin=PhLibrary2Ui.dp(a,12);hero.addView(heading,h);
-        TextView latin=PhLibrary2Ui.text(a,record.optString("s"),18,0xFFE2EBD7,true,false);
+        TextView latin=PhLibrary2Ui.text(a,record.optString("s"),
+            large?15:18,0xFFE2EBD7,true,false);
         latin.setTypeface(Typeface.create("serif",Typeface.ITALIC));
         LinearLayout.LayoutParams l=new LinearLayout.LayoutParams(-1,-2);
         l.topMargin=PhLibrary2Ui.dp(a,6);hero.addView(latin,l);
         TextView taxonomy=PhLibrary2Ui.text(a,
-            record.optString("o")+" · "+record.optString("f"),14,0xFFDEE9D8,false,false);
+            record.optString("o")+" · "+record.optString("f"),
+            large?12:14,0xFFDEE9D8,false,false);
         LinearLayout.LayoutParams tx=new LinearLayout.LayoutParams(-1,-2);
         tx.topMargin=PhLibrary2Ui.dp(a,10);hero.addView(taxonomy,tx);
         parent.addView(hero,new LinearLayout.LayoutParams(-1,-2));

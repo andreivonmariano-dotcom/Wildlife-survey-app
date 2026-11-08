@@ -1,13 +1,10 @@
 package org.phwildlife.survey;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,6 +16,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import static org.junit.Assert.*;
 
@@ -79,21 +78,12 @@ public final class Rc97PhLibraryVisualInstrumentedTest {
         Bitmap image=Bitmap.createBitmap(decor.getWidth(),decor.getHeight(),
             Bitmap.Config.ARGB_8888);
         decor.draw(new Canvas(image));
-        ContentValues values=new ContentValues();
-        values.put(MediaStore.Images.Media.DISPLAY_NAME,name);
-        values.put(MediaStore.Images.Media.MIME_TYPE,"image/png");
-        values.put(MediaStore.Images.Media.RELATIVE_PATH,
-            Environment.DIRECTORY_PICTURES+"/APO_RC97");
-        values.put(MediaStore.Images.Media.IS_PENDING,1);
-        Uri target=a.getContentResolver().insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
-        assertNotNull(target);
-        try(OutputStream out=a.getContentResolver().openOutputStream(target)){
-            assertNotNull(out);
+        File folder=new File(a.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"APO_RC97");
+        assertTrue(folder.isDirectory() || folder.mkdirs());
+        File target=new File(folder,name);
+        try(OutputStream out=new FileOutputStream(target)){
             assertTrue(image.compress(Bitmap.CompressFormat.PNG,100,out));
         }catch(Exception error){throw new IllegalStateException(error);}
-        ContentValues done=new ContentValues();done.put(MediaStore.Images.Media.IS_PENDING,0);
-        a.getContentResolver().update(target,done,null,null);
         image.recycle();
     }
     @Test public void hubHasSingleBookAndNoDecorativeMedia(){

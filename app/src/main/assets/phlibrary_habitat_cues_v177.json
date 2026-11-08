@@ -13,330 +13,330 @@
   },
   "scope": "One-paragraph educational field notes. The sentences are habitat-search guidance or source-reported synthesis, not a habitat suitability model, preference study, confirmed new locality, or rarity-tier input.",
   "displayRule": "One paragraph per species; insert field cue before trailing DENR status where present.",
-  "reviewStatus": "editorial_draft_paired_citation_audit_completed_remaining_species_and_phone_review",
+  "reviewStatus": "reader_prose_revision_pending_integration_and_ci",
   "records": [
     {
       "s": "Aviceda jerdoni",
       "group": "Birds",
-      "fieldCue": "Check shaded canopy openings and streamside tree perches for a baza making short flights into nearby vegetation.",
+      "fieldCue": "Shaded canopy gaps and streamside trees offer concealed hunting perches for this baza.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Butastur indicus",
       "group": "Birds",
-      "fieldCue": "For seasonal searches, wooded ridges and open views across forest margins offer places to watch for passing buzzards.",
+      "fieldCue": "During seasonal movements, wooded ridgelines and openings along forest margins can bring passing Grey-faced Buzzards into view.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Circus melanoleucos",
       "group": "Birds",
-      "fieldCue": "Scan low over wet grassland, fallow fields and marsh margins, where a quartering harrier is easier to detect.",
+      "fieldCue": "Pied Harriers search low over wet grassland, marsh margins and fallow fields.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Circus spilonotus",
       "group": "Birds",
-      "fieldCue": "Open reedbeds, marsh edges and flooded grassland are useful starting points for watching a harrier hunting low over vegetation.",
+      "fieldCue": "Reedbeds, flooded grassland and marsh edges provide hunting space for Eastern Marsh Harriers quartering over wetland vegetation.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Elanus caeruleus",
       "group": "Birds",
-      "fieldCue": "Watch open fields from a distance for hovering flight and exposed hunting perches on isolated trees or poles.",
+      "fieldCue": "Open fields with isolated trees and poles provide hunting perches for Black-winged Kites, which also hover while searching for prey.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Haliastur indus",
       "group": "Birds",
-      "fieldCue": "Estuary channels, mangrove edges and tidal flats offer a useful view of kites searching water surfaces and shorelines.",
+      "fieldCue": "Along estuaries, Brahminy Kites patrol mangrove margins, tidal flats and channels, taking food from the water and exposed shoreline.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Icthyophaga ichthyaetus",
       "group": "Birds",
-      "fieldCue": "Focus observations on large, slow freshwater channels and wetlands with tall riverside perches overlooking open water.",
+      "fieldCue": "Large, slow-moving rivers and wetlands with tall bankside trees provide perches overlooking the water for Grey-headed Fish Eagles.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Icthyophaga leucogaster",
       "group": "Birds",
-      "fieldCue": "Scan coastal inlets and broad river mouths from clear viewpoints, including trees overlooking channels and sheltered bays.",
+      "fieldCue": "Coastal inlets, sheltered bays and broad river mouths combine open hunting water with elevated perches used by White-bellied Sea Eagles.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Lophospiza trivirgata",
       "group": "Birds",
-      "fieldCue": "A patient search along shaded wooded tracks and small canopy gaps is more useful than a scan of open grassland.",
+      "fieldCue": "Shaded forest tracks and small canopy openings provide glimpses into the mid-storey where this goshawk hunts from cover.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Lophotriorchis kienerii",
       "group": "Birds",
-      "fieldCue": "For forest surveys, watch across breaks in the upper canopy on wooded slopes, without treating a flyover as nesting evidence.",
+      "fieldCue": "Wooded slopes and openings in the upper forest canopy offer views of Rufous-bellied Eagles moving above the trees.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Nisaetus cirrhatus",
       "group": "Birds",
-      "fieldCue": "Use open views across wooded hills and forest margins to detect soaring birds before attempting a closer identification.",
+      "fieldCue": "Changeable Hawk-Eagles soar above wooded hills and forest margins and hunt from concealed tree perches.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Nisaetus pinskeri",
       "group": "Birds",
-      "fieldCue": "Prioritize lowland and lower-montane forest, including wooded slopes with mature canopy and some selectively disturbed stands.",
+      "fieldCue": "Lowland and lower-montane forest, including mature wooded slopes and some selectively disturbed stands, form the main setting for Pinsker's Hawk-Eagle.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Pernis ptilorhynchus",
       "group": "Birds",
-      "fieldCue": "Ridge viewpoints and forest-edge canopy gaps can aid observation of a soaring honey-buzzard during seasonal movements.",
+      "fieldCue": "Wooded ridge crests and canopy openings provide broad views of Crested Honey Buzzards during seasonal movements.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Pernis steerei",
       "group": "Birds",
-      "fieldCue": "In wooded areas, scan exposed canopy perches and gaps between tree crowns rather than relying on forest cover alone.",
+      "fieldCue": "The Philippine Honey Buzzard uses wooded landscapes, including upper-canopy perches and gaps between tree crowns.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Pithecophaga jefferyi",
       "group": "Birds",
-      "fieldCue": "On nesting landscapes, large emergent trees above steep forested ravines and upper hill slopes deserve careful, nonintrusive observation.",
+      "fieldCue": "On Mindanao, Philippine Eagle nesting landscapes include large emergent trees above wooded slopes and ravines in lowland and upper hill forest.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Spilornis holospilus",
       "group": "Birds",
-      "fieldCue": "Forest-edge viewpoints and openings above wooded slopes offer a practical place to listen and watch for serpent eagles.",
+      "fieldCue": "Philippine Serpent Eagles use forest edges, wooded foothills and riparian corridors, where their calls carry across canopy openings.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Tachyspiza gularis",
       "group": "Birds",
-      "fieldCue": "Wooded margins and narrow gaps in the tree canopy are reasonable observation points for a fast-moving sparrowhawk.",
+      "fieldCue": "Narrow gaps in wooded hillsides and forest margins offer brief views of Japanese Sparrowhawks during passage.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Tachyspiza soloensis",
       "group": "Birds",
-      "fieldCue": "During passage, scanning the airspace above forest margins and open valleys may reveal this small, quick-flying raptor.",
+      "fieldCue": "During migration, Chinese Sparrowhawks may appear over wooded valleys and forest margins.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Tachyspiza virgata",
       "group": "Birds",
-      "fieldCue": "Try quiet watches beside shaded forest tracks and mid-canopy openings where a concealed accipiter might change perches.",
+      "fieldCue": "Within shaded forest, the Besra may perch in the mid-canopy before flying through narrow gaps between trees.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Pandion haliaetus",
       "group": "Birds",
-      "fieldCue": "Open water beside rivers, reservoirs and coastal shallows is most useful for spotting a fishing raptor and its plunge dives.",
+      "fieldCue": "Over reservoirs, river reaches and coastal shallows, Ospreys search open water and dive to seize fish.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Anas acuta",
       "group": "Birds",
-      "fieldCue": "Survey the open-water portions of shallow marshes and seasonally flooded grasslands, keeping distant ducks within scope.",
+      "fieldCue": "Shallow marshes and seasonally flooded grasslands offer open water and vegetated edges used by Northern Pintails.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Anas luzonica",
       "group": "Birds",
-      "fieldCue": "Include small freshwater ponds and tidal creeks as well as larger wetlands; both settings appear in Philippine accounts.",
+      "fieldCue": "Philippine Ducks use inland and coastal wetlands, including small ponds, tidal creeks and larger open-water areas.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Anas zonorhyncha",
       "group": "Birds",
-      "fieldCue": "In wetland searches, inspect sheltered backwaters and the edges of flooded vegetation before treating open lakes as exhaustive.",
+      "fieldCue": "Sheltered wetland backwaters and flooded vegetation may provide feeding and resting areas for Eastern Spot-billed Ducks.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Dendrocygna arcuata",
       "group": "Birds",
-      "fieldCue": "Shallow freshwater marshes with scattered emergent plants are useful places to scan for resting or feeding whistling ducks.",
+      "fieldCue": "Wandering Whistling Ducks gather on freshwater marshes and lakes, often among patches of emergent vegetation.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Dendrocygna guttata",
       "group": "Birds",
-      "fieldCue": "Include tree-bordered wetlands and coastal marsh edges when surveying this whistling duck, rather than searching only open lakes.",
+      "fieldCue": "Spotted Whistling Ducks use tree-bordered wetlands and freshwater marshes, with historical Philippine observations also extending to coastal marsh.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Ansonia mcgregori",
       "group": "Amphibians",
-      "fieldCue": "Along forested mountain streams, a careful search of spray-wet rocks and adjoining vegetation is a sensible field approach.",
+      "fieldCue": "Forested mountain streams provide wet rock surfaces and nearby vegetation that may shelter McGregor's Slender Stream Toad.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Ansonia muelleri",
       "group": "Amphibians",
-      "fieldCue": "Shaded stream corridors with wet boulders and small riffles are a reasonable first search area for a slender stream toad.",
+      "fieldCue": "Shaded stream corridors with boulders and shallow riffles may provide refuge and activity sites for Müller's Slender Stream Toad.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Pelophryne brevipes",
       "group": "Amphibians",
-      "fieldCue": "Check leaves of saplings and shrubs beside forest streams, including disturbed edges where the toadlet has been reported.",
+      "fieldCue": "Western Mindanao Toadlets have been observed on sapling and shrub leaves near streams, including moderately disturbed forest edges.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Pelophryne lighti",
       "group": "Amphibians",
-      "fieldCue": "Low ferns and shrub leaves in montane forest are documented perches; inspect them gently during suitable conditions.",
+      "fieldCue": "Low ferns and shrub leaves form recorded perches for the Eastern Mindanao Toadlet in montane forest.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Rhinella marina",
       "group": "Amphibians",
-      "fieldCue": "Check illuminated yards, drainage edges, open disturbed ground and temporary pools, particularly after rainfall.",
+      "fieldCue": "Marine Toads often occupy disturbed lowland areas, including yards, drainage edges and temporary pools that fill after rain.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Platymantis bayani",
       "group": "Amphibians",
-      "fieldCue": "For limestone-forest surveys, examine shaded ground cover and sheltered rock crevices as search hypotheses, not confirmed local microhabitats.",
+      "fieldCue": "Within limestone forest, shaded leaf litter and sheltered rock crevices may provide moist refuges for Walter's Limestone Forest Frog.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Platymantis corrugatus",
       "group": "Amphibians",
-      "fieldCue": "Include the forest floor away from stream edges; a Mindanao watershed survey recorded individuals in terrestrial ground-level sites.",
+      "fieldCue": "The forest floor is a documented habitat of the Masked Wrinkled Ground Frog, including terrestrial sites away from immediate stream margins.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Platymantis guentheri",
       "group": "Amphibians",
-      "fieldCue": "Inspect broad leaves and low branches within humid forest understorey as a working search strategy for this tree-frog group.",
+      "fieldCue": "Broad leaves and low branches in humid forest may offer sheltered perches for Günther's Wrinkled Tree Frog.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Platymantis habagatan",
       "group": "Amphibians",
-      "fieldCue": "Mature-forest floor habitats on Mount Hilong-Hilong provide a documented starting point for this newly distinguished forest frog.",
+      "fieldCue": "The Mindanao Variable Forest Frog has been recorded on the floor of mature forest at Mount Hilong-Hilong.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Platymantis jagorii",
       "group": "Amphibians",
-      "fieldCue": "Quiet leaf-litter searches under shaded terrestrial forest cover are a reasonable starting strategy for this variable forest frog.",
+      "fieldCue": "Shaded ground cover and deep leaf litter in terrestrial forest may shelter Jagor's Variable Forest Frog.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Platymantis laticeps",
       "group": "Amphibians",
-      "fieldCue": "In northeastern Mindanao forest, examine the ground layer near fallen wood and sheltered litter, treating those substrates as provisional.",
+      "fieldCue": "In northeastern Mindanao, fallen wood and leaf litter may create sheltered spaces for this broad-headed forest frog.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Platymantis navjoti",
       "group": "Amphibians",
-      "fieldCue": "On cloud-forest walks, examine shaded vegetation and ground cover after rain; these are suggested search sites, not verified preferences.",
+      "fieldCue": "Cloudy montane forest provides a cool, damp setting for Navjot Sodhi's Cloud Frog, with shaded vegetation offering possible activity sites after rain.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Platymantis rabori",
       "group": "Amphibians",
-      "fieldCue": "Search low foliage and sheltered forest vegetation after dark, allowing for uncertainty about the height of actual perches.",
+      "fieldCue": "Rabor's Horned Tree Frog calls high in the forest canopy and has also been recorded on vegetation in Mindanao surveys.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Fejervarya moodiei",
       "group": "Amphibians",
-      "fieldCue": "At mangrove margins, sample shallow pools and muddy backwaters, distinguishing brackish-water expectations from site-confirmed records.",
+      "fieldCue": "Asian Mangrove Frogs may occupy shallow pools and muddy backwaters along mangrove margins, including brackish edges.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Fejervarya vittigera",
       "group": "Amphibians",
-      "fieldCue": "Rice paddies, irrigation channels, lowland pools and still margins beside streams all appear in reported Philippine habitats.",
+      "fieldCue": "Rice paddies, irrigation channels, still pools beside streams and swampy forest patches are documented habitats of the Philippine Field Frog.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Hoplobatrachus chinensis",
       "group": "Amphibians",
-      "fieldCue": "Open wetland margins, ponds and flooded cultivated ground are practical starting points for a survey of this large aquatic frog.",
+      "fieldCue": "Large pools, wetland margins and flooded cultivated ground provide potential shallow-water habitat for the East Asian Bullfrog.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Limnonectes diuatus",
       "group": "Amphibians",
-      "fieldCue": "Higher-elevation rocky streams and the litter beneath adjoining stones are recorded microhabitats, including sites above 900 m.",
+      "fieldCue": "White-spined Fanged Frogs have been recorded beside rocky mountain streams, including riparian sites above 900 m.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Limnonectes leytensis",
       "group": "Amphibians",
-      "fieldCue": "In shallow forest streams, inspect banks, fallen logs and exposed ground, with rocks providing daytime shelter in some studies.",
+      "fieldCue": "Fallen logs, rocks, stream margins and the adjoining forest floor provide shelter and activity sites for the Philippine Swamp Frog.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Limnonectes magnus",
       "group": "Amphibians",
-      "fieldCue": "Small shallow streams and their banks are documented, with individuals also using adjacent ground and low vegetation.",
+      "fieldCue": "Mindanao Fanged Frogs occupy small, shallow forest streams and nearby banks, ground surfaces and low vegetation.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Limnonectes micrixalus",
       "group": "Amphibians",
-      "fieldCue": "Shaded stream banks and adjoining damp ground offer a provisional search area for this fanged frog; local substrates remain unverified.",
+      "fieldCue": "Shaded stream margins and damp ground in riparian forest may provide activity sites for the Western Mindanao Fanged Frog.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Limnonectes parvus",
       "group": "Amphibians",
-      "fieldCue": "Streams through lowland and lower-montane forest form a reported setting, especially for careful night searches along their margins.",
+      "fieldCue": "Streams through lowland and lower-montane forest are reported habitats of the Philippine Guardian Frog.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Limnonectes visayanus",
       "group": "Amphibians",
-      "fieldCue": "For aquatic surveys, examine shallow edges of forest streams and nearby saturated ground as an informed, unconfirmed field expectation.",
+      "fieldCue": "The Visayan Fanged Frog may use saturated ground and shallow edges of forest streams within its island range.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Occidozyga diminutiva",
       "group": "Amphibians",
-      "fieldCue": "Small stagnant pools and puddled ground are reasonable targets for searches, with the precise breeding setting still unresolved.",
+      "fieldCue": "Small puddles and shallow standing water may provide activity sites for this tiny aquatic frog during wet periods.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Occidozyga laevis",
       "group": "Amphibians",
-      "fieldCue": "Inspect muddy pools, shallow standing water and waterlogged margins along lowland tracks instead of treating the whole forest as uniform.",
+      "fieldCue": "Common Puddle Frogs occupy shallow water and muddy margins, including small pools and waterlogged ground along lowland tracks.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Eleutherodactylus planirostris",
       "group": "Amphibians",
-      "fieldCue": "In disturbed settlements, check damp leaf litter, planted beds and sheltered ground cover where small terrestrial frogs can conceal themselves.",
+      "fieldCue": "In villages and gardens, damp leaf litter, planted beds and sheltered ground cover can support the small terrestrial Greenhouse Frog.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Crocodylus mindorensis",
       "group": "Reptiles",
-      "fieldCue": "Freshwater marsh channels, vegetated pond margins and quieter river reaches are more useful survey units than a general wetland label.",
+      "fieldCue": "Philippine Crocodiles inhabit freshwater marsh channels, vegetated pond margins and calmer river reaches, where basking and shelter sites occur near water.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Crocodylus porosus",
       "group": "Reptiles",
-      "fieldCue": "Survey tidal channels, estuarine banks and mangrove creek mouths, while recognizing that the species can move far into fresh water.",
+      "fieldCue": "Saltwater Crocodiles move through tidal channels, estuarine banks and mangrove creeks and can travel far into freshwater river reaches.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Bronchocela philippina",
       "group": "Reptiles",
-      "fieldCue": "For a visual search, inspect sunlit branches and saplings at forest margins and in adjoining shrub vegetation.",
+      "fieldCue": "Sunlit branches, forest-edge saplings and adjoining shrub vegetation may offer perches for the Philippine Bloodsucker.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Draco bimaculatus",
       "group": "Reptiles",
-      "fieldCue": "Daytime watches of trunks at forest edges and adjoining coconut groves match published northeastern Mindanao observations (Sanguila et al., 2016).",
+      "fieldCue": "In northeastern Mindanao, Two-spotted Flying Lizards have been recorded on trunks near forest edges and adjoining coconut groves (Sanguila et al., 2016).",
       "basis": "source_summary",
       "newReference": {
         "short": "Sanguila et al., 2016",
@@ -347,7 +347,7 @@
     {
       "s": "Draco cyanopterus",
       "group": "Reptiles",
-      "fieldCue": "Coconut palms and other exposed trunks outside closed forest are reported sites in northeastern Mindanao (Sanguila et al., 2016).",
+      "fieldCue": "Northeastern Mindanao records place Chartreuse-spotted Flying Lizards on coconut palms and exposed trunks adjoining forest (Sanguila et al., 2016).",
       "basis": "source_summary",
       "newReference": {
         "short": "Sanguila et al., 2016",
@@ -358,241 +358,241 @@
     {
       "s": "Draco guentheri",
       "group": "Reptiles",
-      "fieldCue": "Secondary forest trees and coconut palms immediately beside forest were recorded near Malagos, Mindanao (McGuire & Alcala, 2000).",
+      "fieldCue": "Near Malagos, Mindanao, Günther's Flying Lizards used trees in secondary forest and coconut palms beside the forest (McGuire & Alcala, 2000).",
       "basis": "source_summary"
     },
     {
       "s": "Draco mindanensis",
       "group": "Reptiles",
-      "fieldCue": "Unlike some other flying lizards, documented animals used trunks around 5–10 m high in primary and mature secondary forest (Sanguila et al., 2016).",
+      "fieldCue": "Daytime observations place Mindanao Flying Lizards on trunks several metres above ground in primary and mature secondary rainforest (Sanguila et al., 2016).",
       "basis": "source_summary"
     },
     {
       "s": "Draco ornatus",
       "group": "Reptiles",
-      "fieldCue": "Search tree trunks across primary and secondary forest and adjacent coconut stands; these habitats occur in published field accounts (Sanguila et al., 2016).",
+      "fieldCue": "Ornate Flying Lizards have been recorded on trunks in primary and secondary forest and coconut stands close to wooded areas (Sanguila et al., 2016).",
       "basis": "source_summary"
     },
     {
       "s": "Draco reticulatus",
       "group": "Reptiles",
-      "fieldCue": "Well-lit coconut trees and other exposed trunks offer a documented search setting, particularly where plantations border wooded areas.",
+      "fieldCue": "Brightly lit coconut palms and exposed tree trunks are documented perches for Reticulated Flying Lizards in plantation landscapes.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Gonocephalus semperi",
       "group": "Reptiles",
-      "fieldCue": "Include shaded vegetation and tree trunks within peat-swamp forest, where Agusan Marsh surveys have recorded this lizard.",
+      "fieldCue": "At Agusan Marsh, Anglehead Lizards have been recorded in peat-swamp forest, where shaded trunks and nearby vegetation provide potential perches.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Hydrosaurus pustulatus",
       "group": "Reptiles",
-      "fieldCue": "Branches, banks and exposed trunks near streams and rivers are reasonable observation points for a water-associated sailfin lizard.",
+      "fieldCue": "Streams and rivers offer escape water and raised bankside perches for Philippine Sailfin Lizards, including branches and exposed trunks.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Ahaetulla prasina",
       "group": "Reptiles",
-      "fieldCue": "Search eye-level vines, shrub branches and thin foliage along wooded edges for an exceptionally slender, concealed snake.",
+      "fieldCue": "Asian Vine Snakes use slender branches, vines and shrubs along wooded edges, where their narrow green bodies blend with foliage.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Boiga angulata",
       "group": "Reptiles",
-      "fieldCue": "A careful night search of intertwined branches and lower canopy vegetation is a plausible approach for this cat snake.",
+      "fieldCue": "Intertwined branches and lower-canopy vegetation may provide nighttime activity sites for the Philippine Blunt-headed Cat Snake.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Boiga cynodon",
       "group": "Reptiles",
-      "fieldCue": "Tree limbs and thick climbing vegetation are sensible night-search substrates for this arboreal cat snake, pending local verification.",
+      "fieldCue": "Tree limbs and dense climbing vegetation may offer nighttime hunting routes for the Dog-toothed Cat Snake.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Boiga dendrophila",
       "group": "Reptiles",
-      "fieldCue": "Mangrove branches and creekside trees above tidal water are useful search targets, with local forest contexts varying among records.",
+      "fieldCue": "Mangrove branches and creekside trees above tidal water offer sheltered climbing habitat for the Mangrove Snake.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Boiga drapiezii",
       "group": "Reptiles",
-      "fieldCue": "For nocturnal searches, inspect narrow branches and hanging vegetation in shaded forest; specific local perch heights remain unknown.",
+      "fieldCue": "In shaded forest, slender branches and hanging vegetation may provide nighttime perches for the White-spotted Cat Snake.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Calamaria gervaisii",
       "group": "Reptiles",
-      "fieldCue": "Sample shaded leaf litter and loose cover on the forest floor as a provisional search method for a small, secretive reed snake.",
+      "fieldCue": "Philippine Reed Snakes have been recorded in soil and beneath forest-floor debris, moving through sheltered ground.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Calamaria lumbricoidea",
       "group": "Reptiles",
-      "fieldCue": "Riparian boulders and leaf litter in dipterocarp forest are documented encounter sites in northeastern Leyte.",
+      "fieldCue": "In northeastern Leyte, Variable Reed Snakes have been recorded among riparian boulders and leaf litter in dipterocarp forest.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Chrysopelea paradisi",
       "group": "Reptiles",
-      "fieldCue": "In daylight, watch trunks and connected branches at tree gaps where a gliding snake could pass between crowns.",
+      "fieldCue": "Paradise Flying Snakes move between tree crowns by day, using trunks and connected canopy branches.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Coelognathus erythrurus",
       "group": "Reptiles",
-      "fieldCue": "Ground cover, fallen wood and vegetated forest margins are reasonable survey targets for a largely terrestrial ratsnake.",
+      "fieldCue": "Fallen wood, ground cover and vegetated forest edges may provide retreat and movement sites for the Philippine Red-tailed Ratsnake.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Dendrelaphis marenae",
       "group": "Reptiles",
-      "fieldCue": "Inspect the sunlit shrub and low-tree layer at forest openings as a working search approach for this bronzeback.",
+      "fieldCue": "The sunlit shrub layer and lower trees around forest openings may provide activity sites for Maren's Bronzeback Snake.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Dendrelaphis philippinensis",
       "group": "Reptiles",
-      "fieldCue": "Tree branches and shrubs bordering forest gaps are useful field-search targets, beyond the broad forest category in the checklist.",
+      "fieldCue": "Philippine Bronzeback Snakes may move through shrubs and connected branches around forest gaps.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Dryophiops philippina",
       "group": "Reptiles",
-      "fieldCue": "Fine branches, hanging vines and dense shrubs are likely observation substrates for a whip-shaped arboreal snake.",
+      "fieldCue": "Fine branches, suspended vines and dense shrubs offer likely climbing routes for the Philippine Whip Snake.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Gonyosoma oxycephalum",
       "group": "Reptiles",
-      "fieldCue": "Scan trees and climbing vegetation at wooded edges, especially connected branches above the ground layer.",
+      "fieldCue": "Trees and climbing plants at wooded edges create connected aboveground pathways for the Red-tailed Green Ratsnake.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Lycodon capucinus",
       "group": "Reptiles",
-      "fieldCue": "Night searches around ground cover, walls, crevices and disturbed vegetation can be more informative than forest-only surveys.",
+      "fieldCue": "Common Wolf Snakes use sheltered ground, rock crevices and modified lowland surroundings, including areas near houses.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Rusa marianna",
       "group": "Mammals",
-      "fieldCue": "In forest clearings and adjoining grassland, watch browsing vegetation and trails rather than assuming sightings are evenly distributed through forest.",
+      "fieldCue": "Philippine Brown Deer browse shoots and foliage in forest clearings and adjoining grassland, often moving along sheltered vegetated paths.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Sus philippensis",
       "group": "Mammals",
-      "fieldCue": "Survey the forest-floor layer, including rooted soil, wallows and vegetated edges, as possible signs of warty-pig activity.",
+      "fieldCue": "On the forest floor, rooted soil, wallows and disturbed leaf litter may reveal movements of Philippine Warty Pigs.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Paradoxurus philippinensis",
       "group": "Mammals",
-      "fieldCue": "Fruiting trees and connecting branches in wooded landscapes are sensible nighttime observation points for this palm civet.",
+      "fieldCue": "Fruiting trees and connecting branches in woodland provide likely nighttime feeding and movement routes for the Philippine Palm Civet.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Viverra tangalunga",
       "group": "Mammals",
-      "fieldCue": "Ground trails through secondary woodland, cultivated edges and other vegetated mosaics are practical survey routes for a terrestrial civet.",
+      "fieldCue": "Malay Civets travel along ground-level routes through secondary woodland, cultivated edges and other vegetated mosaics.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Emballonura alecto",
       "group": "Mammals",
-      "fieldCue": "Cave entrances and partly lit rock cavities deserve separate roost checks, distinct from the habitats where bats feed after dusk.",
+      "fieldCue": "Small Asian Sheath-tailed Bats roost in caves and partly lit rock cavities, including recorded sites on Siargao and in the Agusan region.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Saccolaimus saccolaimus",
       "group": "Mammals",
-      "fieldCue": "Inspect hollow-tree entrances, rock cracks and roof cavities for roost evidence without assuming that daytime shelter describes night foraging.",
+      "fieldCue": "Bare-rumped Sheath-tailed Bats shelter in hollow trees, rock cracks and buildings and emerge after dusk to forage over nearby landscapes.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Taphozous melanopogon",
       "group": "Mammals",
-      "fieldCue": "Cave recesses and narrow rock crevices are reported roost substrates; colony surveys should minimize disturbance.",
+      "fieldCue": "Black-bearded Tomb Bats shelter in cave recesses and narrow rock crevices, sometimes gathering in maternity groups.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Coelops hirsutus",
       "group": "Mammals",
-      "fieldCue": "Separate possible cave or karst roosts from feeding routes over adjacent forest and waterways; the latter are field expectations.",
+      "fieldCue": "Caves and karst may provide daytime shelter for Philippine Tailless Roundleaf Bats, with adjoining forest and waterways offering possible flight corridors.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Hipposideros antricola",
       "group": "Mammals",
-      "fieldCue": "In karst country, treat cave chambers as possible roost sites and nearby forest as a separate nighttime survey setting.",
+      "fieldCue": "In forested karst country, cave chambers may provide daytime roosts for Philippine Dusky Roundleaf Bats.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Hipposideros cervinus",
       "group": "Mammals",
-      "fieldCue": "Caves on Siargao and in the Agusan area provide documented roost contexts, not proof that every nearby cave is occupied.",
+      "fieldCue": "Fawn-colored Roundleaf Bats have been recorded in caves on Siargao and in Agusan del Sur, where sheltered chambers provide roosting space.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Hipposideros coronatus",
       "group": "Mammals",
-      "fieldCue": "Target forested karst and possible cave entrances for exploratory roost surveys, with specific roost chambers still unconfirmed.",
+      "fieldCue": "Large Mindanao Roundleaf Bats are reported from forested karst landscapes, where sheltered cave spaces may be used for roosting.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Hipposideros diadema",
       "group": "Mammals",
-      "fieldCue": "Documented cave roosts in Mindanao and Siargao provide more precise habitat context than a general forest label.",
+      "fieldCue": "Diadem Roundleaf Bats have documented cave roosts on Mindanao and Siargao amid wooded landscapes.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Hipposideros obscurus",
       "group": "Mammals",
-      "fieldCue": "Survey forest interiors from lowlands into montane conditions; Mindanao records extend to approximately 1,100 m.",
+      "fieldCue": "Philippine Forest Roundleaf Bats occur from lowland to montane forest on Mindanao, with records reaching about 1,100 m elevation.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Megaderma spasma",
       "group": "Mammals",
-      "fieldCue": "Large hollow trees, including dao, and caves are reported shelter types; examine their surrounding forest separately for feeding ecology.",
+      "fieldCue": "Large hollow trees, including dao, provide recorded shelters for Lesser Asian False-vampires, which also roost in caves and buildings.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Miniopterus australis",
       "group": "Mammals",
-      "fieldCue": "Day roosts can occur in caves, abandoned mines and tunnels, while flight activity should be assessed outside the roost itself.",
+      "fieldCue": "Little Long-fingered Bats shelter by day in caves, tunnels and abandoned mines before moving through nearby airspace after dusk.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Miniopterus tristis",
       "group": "Mammals",
-      "fieldCue": "Cave systems and connected wooded flyways are reasonable survey targets, but roost use and feeding habitat require separate observations.",
+      "fieldCue": "Caves within forested karst may provide roosting spaces for Great Long-fingered Bats, with wooded corridors forming possible flight routes.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Cheiromeles parvidens",
       "group": "Mammals",
-      "fieldCue": "Hollow trees and coconut palms are known Philippine roost settings, alongside occasional cave use.",
+      "fieldCue": "Philippine records include Lesser Naked Bats roosting in hollow trees and coconut palms, with occasional cave use.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Mops plicatus",
       "group": "Mammals",
-      "fieldCue": "Rock crevices, buildings and caves can hold roosting colonies; broad open-air feeding habitat should not be inferred from roost location.",
+      "fieldCue": "Wrinkle-lipped Free-tailed Bats form colonies in caves and can also occupy rock crevices and buildings.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Mops sarasinorum",
       "group": "Mammals",
-      "fieldCue": "Openings along wooded waterways and cultivated mosaics are sensible bat-detector survey lines, pending species-level habitat confirmation.",
+      "fieldCue": "Openings above wooded waterways and cultivated land may provide flight corridors for Sulawesian Free-tailed Bats.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Acerodon jubatus",
       "group": "Mammals",
-      "fieldCue": "In one Luzon GPS study, most tracked foraging locations were in closed forest, although roost locations could occur in other settings (de Jong et al., 2013).",
+      "fieldCue": "A Luzon GPS study found most recorded foraging locations of Golden-capped Flying Foxes in closed forest, with roosting trees occurring across a wider landscape (de Jong et al., 2013).",
       "basis": "source_summary",
       "newReference": {
         "short": "de Jong et al., 2013",
@@ -603,32 +603,33 @@
     {
       "s": "Alionycteris paucidentata",
       "group": "Mammals",
-      "fieldCue": "High-elevation mossy forest on Mount Kitanglad is a documented habitat, so search strategies should reflect the mountain forest zone.",
+      "fieldCue": "High-elevation mossy forest on Mount Kitanglad is a documented habitat of the Mindanao Pygmy Fruit Bat.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Cynopterus brachyotis",
       "group": "Mammals",
-      "fieldCue": "Fruiting or flowering vegetation and leaf-based or building roosts represent different resource types and should be mapped separately.",
+      "fieldCue": "Fruiting and flowering vegetation provides food for Lesser Short-nosed Fruit Bats, while leaves, trees and buildings offer daytime roosts.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Desmalopex leucoptera",
       "group": "Mammals",
-      "fieldCue": "Fruiting canopy trees provide a plausible starting point for observations, but no island-wide feeding preference follows from the forest label.",
+      "fieldCue": "Fruiting trees in the forest canopy may provide feeding opportunities for the White-winged Flying Fox.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Dyacopterus rickarti",
       "group": "Mammals",
-      "fieldCue": "Target fruiting trees and connected upper-canopy vegetation in forest surveys as an ecological expectation, not a documented preference.",
+      "fieldCue": "Philippine Large-headed Fruit Bats may forage among fruiting trees and connected upper-canopy vegetation in forest.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     },
     {
       "s": "Eonycteris robusta",
       "group": "Mammals",
-      "fieldCue": "Night watches near flowering trees or climbing flowers are a reasonable nectar-feeding search hypothesis, pending species-specific site records.",
+      "fieldCue": "Flowering forest plants provide nectar-feeding opportunities for the Philippine Dawn Bat during nighttime activity.",
       "basis": "field_guide_inference_or_prior-account-synthesis"
     }
-  ]
+  ],
+  "styleNote": "Habitat detail written as flowing, declarative natural-history prose. Inferences remain qualified without repetitive disclaimers."
 }

@@ -17,7 +17,7 @@ for setting in "p360f100 360x800 160 1.0" "p320f200 320x720 160 2.0"; do
   grep -Fq 'OK (2 tests)' "rc96-phlibrary-evidence/${preset}.txt"
   for name in directory profile-top profile-bottom; do
     file="rc96-${preset}-${name}.png"
-    adb pull "/sdcard/Pictures/LIKAS_RC96/${file}" "rc96-phlibrary-evidence/${file}" > /dev/null
+    adb pull "/sdcard/Android/data/${PKG}/files/Pictures/LIKAS_RC96/${file}" "rc96-phlibrary-evidence/${file}" > /dev/null
   done
 done
 python3 - <<'PY'

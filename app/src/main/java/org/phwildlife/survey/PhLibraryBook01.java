@@ -112,6 +112,189 @@ public final class PhLibraryBook01 {
             target.put("r",sources);
         }
     }
+    /** Readability edits retain each account's taxon, source list, and status. */
+    private static void applyReaderRefinements(Context context,
+            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
+            throws Exception {
+        JSONObject pack;
+        try(InputStream input=context.getAssets().open("phlibrary_reader_refinements_v178.json");
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
+            byte[] buffer=new byte[8192]; int n;
+            while((n=input.read(buffer))!=-1){
+                if(bytes.size()+n>120000)throw new IllegalStateException("Reader pack exceeds limit");
+                bytes.write(buffer,0,n);
+            }
+            pack=new JSONObject(bytes.toString("UTF-8"));
+        }
+        if(!"1.78-fluent-reader".equals(pack.optString("edition")) ||
+           !"1.75".equals(pack.optString("baseEdition")) ||
+           !"1.76-editorial".equals(pack.optString("editorialEdition")) ||
+           !"0.3.1".equals(pack.optString("rarityModel")) ||
+           pack.getInt("speciesCount")!=714)
+            throw new IllegalStateException("Unexpected reader refinement edition");
+        JSONArray edits=pack.getJSONArray("records");
+        if(edits.length()!=pack.getInt("changed") || edits.length()<40)
+            throw new IllegalStateException("Incomplete reader refinements");
+        HashSet<String> touched=new HashSet<>();
+        for(int i=0;i<edits.length();i++){
+            JSONObject entry=edits.getJSONObject(i);
+            String scientific=entry.getString("s");
+            Integer at=index.get(key(scientific));
+            String old=entry.getString("old");
+            String revised=entry.getString("revised");
+            if(at==null || !touched.add(scientific) ||
+               old.length()<30 || revised.length()<25 ||
+               revised.contains("rather than") || revised.contains("\\n"))
+                throw new IllegalStateException("Invalid reader correction "+scientific);
+            JSONObject target=rows.get(at);
+            if(!scientific.equals(target.optString("s")))
+                throw new IllegalStateException("Reader taxon mismatch "+scientific);
+            String before=target.getString("p");
+            int pos=before.indexOf(old);
+            if(pos<0 || before.indexOf(old,pos+old.length())>=0)
+                throw new IllegalStateException("Reader correction anchor mismatch "+scientific);
+            String after=before.substring(0,pos)+revised+before.substring(pos+old.length());
+            JSONArray sources=target.getJSONArray("r");
+            for(int j=0;j<sources.length();j++){
+                String cited=sources.getJSONObject(j).getString("short");
+                if(before.contains(cited) && !after.contains(cited))
+                    throw new IllegalStateException("Lost citation in "+scientific);
+            }
+            target.put("p",after);
+        }
+    }
+
+    /** Educational field-search cues are independent of the research source paragraph.
+     *  Read-only, species-keyed and never used to calculate Discovery Rarity.
+     *  Each inference is phrased as field guidance, not confirmed habitat selection. */
+    private static void applyHabitatCues(Context context,
+            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
+            throws Exception {
+        JSONObject file;
+        try(InputStream input=context.getAssets().open("phlibrary_habitat_cues_v177.json");
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
+            byte[] buffer=new byte[8192];
+            int count;
+            while((count=input.read(buffer))!=-1){
+                if(bytes.size()+count>150000)
+                    throw new IllegalStateException("Habitat cue pack exceeds limit");
+                bytes.write(buffer,0,count);
+            }
+            file=new JSONObject(bytes.toString("UTF-8"));
+        }
+        if(!"1.77-habitat-cues".equals(file.optString("edition")) ||
+           !"1.75".equals(file.optString("baseEdition")) ||
+           !"1.76-editorial".equals(file.optString("editorialEdition")) ||
+           !"0.3.1".equals(file.optString("rarityModel")) ||
+           file.getInt("speciesCount")!=714)
+            throw new IllegalStateException("Unexpected PHLibrary habitat pack");
+        JSONArray details=file.getJSONArray("records");
+        if(details.length()!=file.getInt("changed") ||
+           details.length()<100 || details.length()>714)
+            throw new IllegalStateException("Incomplete habitat field notes");
+        HashSet<String> updated=new HashSet<>();
+        for(int i=0;i<details.length();i++){
+            JSONObject detail=details.getJSONObject(i);
+            String scientific=detail.getString("s");
+            String normalized=key(scientific);
+            Integer position=index.get(normalized);
+            String cue=detail.getString("fieldCue").trim();
+            String basis=detail.getString("basis");
+            if(position==null || !updated.add(normalized) ||
+               cue.length()<45 || cue.length()>450 ||
+               cue.contains("\\n") || cue.contains("\\r") ||
+               !("source_summary".equals(basis) ||
+                 "field_guide_inference_or_prior-account-synthesis".equals(basis)))
+                throw new IllegalStateException("Invalid habitat cue for "+scientific);
+            JSONObject target=rows.get(position);
+            if(!scientific.equals(target.optString("s")) ||
+               !detail.getString("group").equals(target.optString("g")))
+                throw new IllegalStateException("Taxon mismatch in habitat cue");
+            String narrative=target.getString("p").trim();
+            String anchor=detail.getString("anchor").trim();
+            String mode=detail.getString("mode");
+            int insertion=narrative.indexOf(anchor);
+            if(anchor.length()<35 || insertion<0 ||
+                narrative.indexOf(anchor,insertion+anchor.length())>=0 ||
+                !("insert".equals(mode) || "replace".equals(mode) ||
+                  "retain".equals(mode)))
+                throw new IllegalStateException("Habitat placement mismatch "+scientific);
+            String expanded="retain".equals(mode)?narrative:
+                narrative.substring(0,insertion)+
+                ("replace".equals(mode)?cue:anchor+" "+cue)+
+                narrative.substring(insertion+anchor.length());
+            if(detail.has("newReference")){
+                JSONObject source=detail.getJSONObject("newReference");
+                String shortCitation=source.getString("short");
+                if(!cue.contains("("+shortCitation+")") ||
+                   source.getString("full").trim().isEmpty() ||
+                   source.getString("url").trim().isEmpty())
+                    throw new IllegalStateException("Habitat source missing "+scientific);
+                JSONArray bibliography=target.getJSONArray("r");
+                boolean alreadyPresent=false;
+                for(int j=0;j<bibliography.length();j++){
+                    if(shortCitation.equals(bibliography.getJSONObject(j).optString("short"))){
+                        alreadyPresent=true; break;
+                    }
+                }
+                if(!alreadyPresent)bibliography.put(source);
+            }
+            target.put("p",expanded);
+        }
+    }
+    /** Final positive-prose pass, applied after source-specific habitat integration. */
+    private static void applyReaderPolish(Context context,
+            ArrayList<JSONObject> rows,HashMap<String,Integer> index)
+            throws Exception {
+        JSONObject pack;
+        try(InputStream input=context.getAssets().open("phlibrary_reader_polish_v179.json");
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream()){
+            byte[] buffer=new byte[8192]; int n;
+            while((n=input.read(buffer))!=-1){
+                if(bytes.size()+n>130000)throw new IllegalStateException("Final prose pack exceeds limit");
+                bytes.write(buffer,0,n);
+            }
+            pack=new JSONObject(bytes.toString("UTF-8"));
+        }
+        if(!"1.79-reader-polish".equals(pack.optString("edition")) ||
+           !"1.75".equals(pack.optString("baseEdition")) ||
+           !"1.78-fluent-reader".equals(pack.optString("readerEdition")) ||
+           !"1.77-habitat-cues".equals(pack.optString("habitatEdition")) ||
+           !"0.3.1".equals(pack.optString("rarityModel")) ||
+           pack.getInt("speciesCount")!=714)
+            throw new IllegalStateException("Unexpected final PHLibrary prose pack");
+        JSONArray edits=pack.getJSONArray("records");
+        if(edits.length()!=pack.getInt("changed") || edits.length()<70)
+            throw new IllegalStateException("Incomplete final prose edit");
+        HashSet<String> changed=new HashSet<>();
+        for(int i=0;i<edits.length();i++){
+            JSONObject entry=edits.getJSONObject(i);
+            String scientific=entry.getString("s");
+            Integer at=index.get(key(scientific));
+            String old=entry.getString("old");
+            String revised=entry.getString("revised");
+            if(at==null || !changed.add(scientific+"::"+old) ||
+               old.length()<30 || revised.length()<25 ||
+               revised.contains("rather than") || revised.contains("\\n"))
+                throw new IllegalStateException("Invalid final prose correction "+scientific);
+            JSONObject target=rows.get(at);
+            if(!scientific.equals(target.optString("s")))
+                throw new IllegalStateException("Final prose taxon mismatch "+scientific);
+            String before=target.getString("p");
+            int pos=before.indexOf(old);
+            if(pos<0 || before.indexOf(old,pos+old.length())>=0)
+                throw new IllegalStateException("Final prose anchor mismatch "+scientific);
+            String after=before.substring(0,pos)+revised+before.substring(pos+old.length());
+            JSONArray sources=target.getJSONArray("r");
+            for(int j=0;j<sources.length();j++){
+                String cited=sources.getJSONObject(j).getString("short");
+                if(before.contains(cited) && !after.contains(cited))
+                    throw new IllegalStateException("Lost final prose citation "+scientific);
+            }
+            target.put("p",after);
+        }
+    }
+
     private static synchronized void load(Context context) {
         if(initialized)return;
         initialized=true;
@@ -137,6 +320,9 @@ public final class PhLibraryBook01 {
             }
             if(rows.size()!=714)throw new IllegalStateException("Incomplete PHLibrary edition");
             applyEditorial(context,rows,index);
+            applyReaderRefinements(context,rows,index);
+            applyHabitatCues(context,rows,index);
+            applyReaderPolish(context,rows,index);
             // The source PAIC714 checklist retains an older combination for
             // this bat. The Book 01 account documents the named transfer.
             Integer formerBat=index.get(key("Mops plicatus"));
@@ -155,7 +341,7 @@ public final class PhLibraryBook01 {
     }
     public static String availabilityMessage(Context context) {
         load(context);
-        return problem.isEmpty()?"Book 01 · Greater Mindanao · Edited v1.76":problem;
+        return problem.isEmpty()?"Book 01 · Greater Mindanao · Reader v1.79":problem;
     }
     public static List<JSONObject> entries(Context context) {
         load(context);
@@ -306,7 +492,7 @@ public final class PhLibraryBook01 {
             small.setOnClickListener(v->referenceDialog(a,refs));
             parent.addView(small);
         }
-        TextView edition=label(a,"PHLibrary Book 01 · Text v1.76 · Rarity v0.3.1",
+        TextView edition=label(a,"PHLibrary Book 01 · Text v1.79 · Rarity v0.3.1",
             11,UiKit.MUTED,false);
         edition.setPadding(0,dp(a,5),0,dp(a,5));
         parent.addView(edition);

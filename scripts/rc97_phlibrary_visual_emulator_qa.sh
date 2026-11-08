@@ -16,7 +16,7 @@ for setting in "p360f100 360x800 160 1.0" "p412f130 412x892 160 1.3" "p320f200 3
   grep -Fq 'OK (3 tests)' "rc97-phlibrary-evidence/$preset.txt"
   for name in hub-top hub-bottom directory profile-top profile-bottom; do
     file="rc97-$preset-$name.png"
-    adb pull "/sdcard/Pictures/APO_RC97/$file" "rc97-phlibrary-evidence/$file" >/dev/null
+    adb pull "/sdcard/Android/data/${PKG}/files/Pictures/APO_RC97/$file" "rc97-phlibrary-evidence/$file" >/dev/null
   done
 done
 python3 - <<'PY'

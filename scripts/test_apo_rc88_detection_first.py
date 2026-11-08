@@ -47,8 +47,8 @@ class DetectionFirstContracts(unittest.TestCase):
         self.assertIn('UiKit.button(this,"End Survey","outline-danger")',main)
         self.assertIn('if(hasUnsavedObservation())',main)
         self.assertIn('markedAt>0||count!=1',main)
-        self.assertIn("versionCode 158",(ROOT/"app/build.gradle").read_text())
-        self.assertIn('0.27.3-rc98-phlibrary-editorial',(ROOT/"app/build.gradle").read_text())
+        self.assertIn("versionCode 159",(ROOT/"app/build.gradle").read_text())
+        self.assertIn('0.27.3-rc99-phlibrary-habitats',(ROOT/"app/build.gradle").read_text())
 
 if __name__=="__main__":
     unittest.main()

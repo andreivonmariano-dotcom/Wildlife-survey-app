@@ -63,7 +63,7 @@ class IntegratedHabitatReader(unittest.TestCase):
             self.assertEqual(paragraphs[name],
                 # Reconstruct unchanged overlay order to ensure merger only affects 47 species.
                 self._before_integration(name),name)
-        self.assertIn('Zamboanga del Sur (GBIF.org, 2026;',paragraphs['Gonyosoma oxycephalum'])
+        self.assertIn('On Samar, records include Mount Huraw and Eastern Samar (GBIF.org, 2026;',paragraphs['Gonyosoma oxycephalum'])
         self.assertIn('Published accounts describe the Red-tailed Green Ratsnake as a diurnal',paragraphs['Gonyosoma oxycephalum'])
         self.assertNotIn('Rice paddies, irrigation channels, still pools beside streams and swampy forest patches are documented habitats',paragraphs['Fejervarya vittigera'])
         self.assertIn('In a Luzon GPS study',paragraphs['Acerodon jubatus'])

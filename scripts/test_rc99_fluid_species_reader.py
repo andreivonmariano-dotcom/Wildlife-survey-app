@@ -86,16 +86,16 @@ class FluentReader(unittest.TestCase):
         self.assertEqual(tiers,{
           "Common":117,"Uncommon":343,"Rare":214,
           "Exceptionally rare":37,"Legendary":3})
-    def test_java_applies_readability_before_context_placement(self):
+    def test_historical_layers_are_archived_not_applied_at_runtime(self):
         java=(ROOT.parent/"java/org/phwildlife/survey/PhLibraryBook01.java").read_text()
-        a=java.index("applyEditorial(context,rows,index);")
-        b=java.index("applyReaderRefinements(context,rows,index);")
-        c=java.index("applyHabitatCues(context,rows,index);")
-        d=java.index("applyReaderPolish(context,rows,index);")
-        self.assertTrue(a<b<c<d)
-        self.assertIn("phlibrary_book01_v182.json.gz.b64",java)
-        self.assertIn("EXPECTED_COUNT=715",java)
-        self.assertIn("verify(root,source)",java)
+        for old in ('applyEditorial(context,rows,index);',
+                    'applyReaderRefinements(context,rows,index);',
+                    'applyHabitatCues(context,rows,index);',
+                    'applyReaderPolish(context,rows,index);'):
+            self.assertNotIn(old,java)
+        self.assertIn('phlibrary_book01_v182.json.gz.b64',java)
+        self.assertIn('EXPECTED_COUNT=715',java)
+        self.assertIn('verify(root,source)',java)
 
 if __name__=="__main__":
     unittest.main()

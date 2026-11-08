@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 160
-        versionName '0.27.3-rc100-integrated-habitats'
+        versionCode 161
+        versionName '0.27.3-rc101-phlibrary-book-v182'
     }
     signingConfigs {
         debug {

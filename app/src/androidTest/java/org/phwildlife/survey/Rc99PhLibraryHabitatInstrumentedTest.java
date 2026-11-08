@@ -37,13 +37,13 @@ public final class Rc99PhLibraryHabitatInstrumentedTest {
         assertEquals(Integer.valueOf(37),tiers.get("Exceptionally rare"));
         assertEquals(Integer.valueOf(3),tiers.get("Legendary"));
         assertTrue(indexed.get("Aviceda jerdoni").getString("p")
-            .contains("Shaded canopy gaps and streamside trees"));
+            .contains("shaded canopy gaps and streamside trees"));
         assertTrue(indexed.get("Pelophryne lighti").getString("p")
             .contains("low ferns and shrub leaves in montane forest"));
         assertTrue(indexed.get("Draco mindanensis").getString("p")
             .contains("commonly around 5–10 m"));
         assertTrue(indexed.get("Acerodon jubatus").getString("p")
-            .contains("most recorded foraging locations of Golden-capped Flying Foxes in closed forest"));
+            .contains("most recorded foraging locations lay within closed forest"));
         assertTrue(indexed.get("Acerodon jubatus").getJSONArray("r").length()>0);
     }
 }

@@ -35,7 +35,7 @@ class IllustratedUiContract(unittest.TestCase):
         self.assertIn("PhLibraryStyle.row(this",library)
         self.assertNotIn("LikasPortalUi.libraryFeature",library)
         self.assertNotIn('"Photo comparisons"',library)
-        self.assertIn("Rc24ConservationDashboardActivity.class",library)
+        self.assertIn("HabitatSpeciesEvidenceActivity.class",library)
         self.assertNotIn("MainActivity.class",library)
         settings=src("LikasSettingsActivity.java")
         self.assertIn("LikasPortalUi.mini(this,first,firstHint,firstArt",settings)

@@ -1,0 +1,232 @@
+{
+  "edition": "1.78-fluent-reader",
+  "baseEdition": "1.75",
+  "editorialEdition": "1.76-editorial",
+  "habitatEdition": "1.77-habitat-cues",
+  "rarityModel": "0.3.1",
+  "speciesCount": 714,
+  "changed": 44,
+  "scope": "Stylistic revisions to defensive or contrast-heavy prose. Preserve biological comparisons, geographic limits, citations and measured evidence.",
+  "records": [
+    {
+      "s": "Aerodramus salangana",
+      "old": "Records should therefore rely on independently reviewed diagnostic photographs, a specimen or compelling documented breeding evidence rather than assigning every moss-lined cave nest or dark flying swiftlet to A. salangana.",
+      "revised": "Reliable swiftlet identification draws on diagnostic photographs, examined specimens and documented breeding records, especially where several cave-nesting species occur together."
+    },
+    {
+      "s": "Aerodramus whiteheadi",
+      "old": "Because identification of Philippine swiftlets is difficult, the size and forked tail are clues rather than a substitute for examined voucher or other corroboration.",
+      "revised": "Size and a forked tail provide useful identification clues, strengthened by voucher material and other diagnostic characters."
+    },
+    {
+      "s": "Gallinago megala",
+      "old": "Best separated from Pin-tailed Snipe by its spread tail, in which outer feathers widen gradually toward the middle rather than forming numerous needle-like pins (Bird Society of Singapore, n.d.).",
+      "revised": "The spread tail has outer feathers that widen gradually toward the center, separating this snipe from the needle-tipped tail feathers of Pin-tailed Snipe (Bird Society of Singapore, n.d.)."
+    },
+    {
+      "s": "Limosa lapponica",
+      "old": "A long, slightly upturned bicoloured bill, black legs, and finely barred rather than solid-black tail distinguish it from Black-tailed Godwit (Bird Society of Singapore, n.d.).",
+      "revised": "A long, slightly upturned bicoloured bill, black legs and finely barred tail distinguish it from the solid-black-tailed Black-tailed Godwit (Bird Society of Singapore, n.d.)."
+    },
+    {
+      "s": "Ceyx margarethae",
+      "old": "The lores and moustachial area are orange rather than the blue or black shown by several similar dwarf kingfishers; a white throat grades into the orange upper breast (BirdLife International, 2016).",
+      "revised": "Orange lores and a moustachial area of the same colour distinguish this kingfisher from similar blue- or black-faced dwarf kingfishers; its white throat grades into an orange upper breast (BirdLife International, 2016)."
+    },
+    {
+      "s": "Orthotomus samarensis",
+      "old": "In the original comparison with Orthotomus nigriceps, the black breast patch is confined to the center rather than extending broadly onto the sides (McGregor, 1909–1910).",
+      "revised": "In the original comparison with Orthotomus nigriceps, its black breast patch is confined to the center of the chest (McGregor, 1909–1910)."
+    },
+    {
+      "s": "Dicrurus hottentottus",
+      "old": "The 2025 WBCP checklist places Philippine Hair-crested Drongo populations in the Sulu Archipelago rather than these Greater Mindanao islands (WBCP, 2025; Avibase, 2026).",
+      "revised": "The 2025 WBCP checklist places Philippine Hair-crested Drongo populations in the Sulu Archipelago (WBCP, 2025; Avibase, 2026)."
+    },
+    {
+      "s": "Anthus gustavi",
+      "old": "Historical accounts describe migrants skulking alone on forested ground rather than gathering in flocks (McGregor, 1909–1910).",
+      "revised": "Historical accounts describe migrants moving alone through forested ground cover (McGregor, 1909–1910)."
+    },
+    {
+      "s": "Arachnothera clarae",
+      "old": "Because this edition retains the pre-revision composite account, these characters distinguish its regional forms rather than confirm a single species across all listed islands.",
+      "revised": "These characters describe regional forms grouped under the earlier composite species treatment; geographic origin remains useful when interpreting them."
+    },
+    {
+      "s": "Cinnyris jugularis",
+      "old": "This description refers to the Philippine Garden Sunbird rather than the Australian sunbirds historically included under the broader name (Pranada, 2023).",
+      "revised": "This account describes the Philippine Garden Sunbird, whose modern treatment is distinct from the Australian sunbirds once included under the broader name (Pranada, 2023)."
+    },
+    {
+      "s": "Oriolus steerii",
+      "old": "The historical forms are now commonly treated within O. steerii, and the described markings must be interpreted geographically rather than as fixed traits of all populations (McGregor, 1909–1910).",
+      "revised": "The historical forms are now commonly treated within O. steerii, with plumage markings varying geographically among populations (McGregor, 1909–1910)."
+    },
+    {
+      "s": "Ptilocichla mindanensis",
+      "old": "Steere’s original comparative description separated it from the Basilan Ground Babbler by the more uniformly fulvous back and head rather than differences in overall size (McGregor, 1909–1910).",
+      "revised": "Steere’s comparison with the Basilan Ground Babbler emphasized the more uniformly fulvous back and head (McGregor, 1909–1910)."
+    },
+    {
+      "s": "Phylloscopus nigrorum",
+      "old": "The authors raised a taxonomic question rather than formally naming a new taxon (Pitogo et al., 2024).",
+      "revised": "The authors identified a possible taxonomic distinction for future study (Pitogo et al., 2024)."
+    },
+    {
+      "s": "Rhabdornis inornatus",
+      "old": "The Stripe-sided Rhabdornis differs from some Philippine congeners in its relatively plain grey-brown or brown crown and nape rather than extensive white head streaking.",
+      "revised": "The Stripe-sided Rhabdornis has a relatively plain grey-brown or brown crown and nape, distinguishing it from congeners with extensive white head streaking."
+    },
+    {
+      "s": "Rhabdornis mystacalis",
+      "old": "In the Greater Mindanao islands, the form historically called Rhabdornis minor has a brownish rather than greyish back and a comparatively short bill.",
+      "revised": "In Greater Mindanao, the form historically called Rhabdornis minor has a brownish back and comparatively short bill."
+    },
+    {
+      "s": "Turdus nigrorum",
+      "old": "The species account therefore requires attention to the bird’s island and subspecies rather than one uniform plumage description (Clements Checklist, 2024).",
+      "revised": "Plumage varies among the islands and subspecies recognized in this thrush complex (Clements Checklist, 2024)."
+    },
+    {
+      "s": "Prioniturus waterstradti",
+      "old": "Unlike the Blue-crowned Racket-tail, the blue is concentrated around the face rather than forming an extensive deep-blue crown; juveniles lack the fully formed tail racquets (World Parrot Trust, n.d.).",
+      "revised": "Blue coloration is concentrated around the face, distinguishing the Mindanao Racket-tail from the broad deep-blue crown of the Blue-crowned Racket-tail; juveniles have developing tail racquets (World Parrot Trust, n.d.)."
+    },
+    {
+      "s": "Otus everetti",
+      "old": "The lower plumage is ruddier brown with irregular dark markings rather than regularly barred abdominal feathers in the historical comparison.",
+      "revised": "The lower plumage is ruddier brown with irregular dark markings, a feature highlighted in historical comparisons with barred owls."
+    },
+    {
+      "s": "Platymantis habagatan",
+      "old": "The original 2026 diagnosis, measurements and call comparisons should be used together rather than interpreting color alone as diagnostic.",
+      "revised": "The 2026 diagnosis combines body measurements, morphology and advertisement calls to distinguish this forest frog."
+    },
+    {
+      "s": "Platymantis jagorii",
+      "old": "These diagnostic comparisons do not justify labeling an unvouchered individual from mainland Mindanao as P. jagorii because the authors treat its occurrence there as possible rather than securely confirmed.",
+      "revised": "The 2026 revision treats mainland Mindanao occurrence of P. jagorii as possible, with voucher-supported records centered on other southern Philippine islands."
+    },
+    {
+      "s": "Platymantis rabori",
+      "old": "Compiled profiles describe activity on the ground and in vegetation, with direct development rather than a free-living larval stage (Oliveira et al., 2017).",
+      "revised": "Compiled profiles describe activity on the ground and in vegetation, with froglets developing directly inside terrestrial eggs (Oliveira et al., 2017)."
+    },
+    {
+      "s": "Aphantophryne nana",
+      "old": "These measurements and characters apply to the original Camiguin specimens, rather than an established range-wide population.",
+      "revised": "The reported measurements and diagnostic characters come from the original Camiguin specimens."
+    },
+    {
+      "s": "Hylarana guttmani",
+      "old": "Current specialist taxonomy places confirmed populations in elevated parts of the Mount Parker–Busa region of southern Mindanao, rather than throughout all the island’s streams.",
+      "revised": "Current specialist taxonomy recognizes confirmed populations in the elevated Mount Parker–Busa region of southern Mindanao."
+    },
+    {
+      "s": "Philautus poecilius",
+      "old": "The AmphiBIO trait compilation codes the species as terrestrial and arboreal, with direct development rather than a free-living larval stage (Oliveira et al., 2017).",
+      "revised": "The AmphiBIO compilation describes terrestrial and arboreal activity and direct development of froglets inside eggs (Oliveira et al., 2017)."
+    },
+    {
+      "s": "Ahaetulla prasina",
+      "old": "A diurnal, fully arboreal snake that gives birth to live young rather than laying external eggs (Uetz et al., 2026).",
+      "revised": "This diurnal, arboreal snake gives birth to live young (Uetz et al., 2026)."
+    },
+    {
+      "s": "Opisthotropis alcalai",
+      "old": "A stream-associated aquatic snake recorded in flowing water rather than an exclusively terrestrial setting (Uetz et al., 2026).",
+      "revised": "This aquatic snake inhabits flowing streams (Uetz et al., 2026)."
+    },
+    {
+      "s": "Hydrophis curtus",
+      "old": "The species is live-bearing, rather than laying eggs on land (Uetz et al., 2026).",
+      "revised": "This sea snake gives birth to live young (Uetz et al., 2026)."
+    },
+    {
+      "s": "Laticauda laticaudata",
+      "old": "This sea krait lays eggs on land rather than bearing its young in seawater (Uetz et al., 2026).",
+      "revised": "This sea krait returns to land to lay eggs (Uetz et al., 2026)."
+    },
+    {
+      "s": "Gehyra mutilata",
+      "old": "It frequents darker tree surfaces and structures rather than gathering around artificial lights (Sanguila et al., 2026).",
+      "revised": "It frequents shaded tree surfaces and dark structures, including sites away from artificial lighting (Sanguila et al., 2026)."
+    },
+    {
+      "s": "Gekko gecko",
+      "old": "This records an observed perch and the survey’s limited coverage of settlements, rather than an estimate of urban abundance (Decena et al., 2023).",
+      "revised": "The Leyte survey documents a specific perch encounter and includes limited sampling in settlements (Decena et al., 2023)."
+    },
+    {
+      "s": "Psammodynastes pulverulentus",
+      "old": "The study reported sites between approximately 145 and 1,101 m elevation; these observations describe encounter habitats rather than an experimentally demonstrated habitat preference (Decena et al., 2023).",
+      "revised": "The study recorded this snake at sites ranging from approximately 145 to 1,101 m elevation (Decena et al., 2023)."
+    },
+    {
+      "s": "Sphenomorphus acutus",
+      "old": "A forest skink that can be assessed through scale counts rather than coloration alone.",
+      "revised": "Scale counts provide useful diagnostic characters for this forest skink alongside its coloration."
+    },
+    {
+      "s": "Tropidophorus grayi",
+      "old": "The Leyte field account describes prominent, dark, spiny scales along the dorsum, rather than the smoother body surface of some other sympatric skinks (Decena et al., 2023).",
+      "revised": "The Leyte account describes prominent, dark, spiny dorsal scales that distinguish it from smoother-bodied sympatric skinks (Decena et al., 2023)."
+    },
+    {
+      "s": "Tytthoscincus atrigularis",
+      "old": "The original holotype was collected at the base of the Malindang Mountains in 1906, providing an anchored historic Mindanao record rather than recent survey evidence (Uetz et al., 2026).",
+      "revised": "The original holotype was collected at the base of the Malindang Mountains in 1906, establishing a historical Mindanao specimen record (Uetz et al., 2026)."
+    },
+    {
+      "s": "Tropidolaemus subannulatus",
+      "old": "Its only Hijo record in the paper was management-reported rather than a survey capture (Gamalo et al., 2023).",
+      "revised": "At Hijo Forest, site managers reported this pitviper to researchers (Gamalo et al., 2023)."
+    },
+    {
+      "s": "Trachemys scripta",
+      "old": "The familiar red-orange patch behind the eye is characteristic of the Red-eared Slider subspecies, T. s. elegans, rather than the entire species.",
+      "revised": "The familiar red-orange patch behind the eye identifies the Red-eared Slider subspecies, T. s. elegans."
+    },
+    {
+      "s": "Paradoxurus philippinensis",
+      "old": "The long, stocky body bears three rows of dark dorsal markings, while the lower legs and the long tail are dark rather than conspicuously ringed.",
+      "revised": "The stocky body carries three rows of dark dorsal markings, while the lower legs and long tail are dark and largely unringed."
+    },
+    {
+      "s": "Desmalopex leucoptera",
+      "old": "Mammal Diversity Database v2.5 notes the transfer from Pteropus to Desmalopex and the feminine adjectival ending leucoptera rather than historical leucopterus.",
+      "revised": "Mammal Diversity Database v2.5 records its transfer from Pteropus to Desmalopex and uses the feminine epithet leucoptera, historically written leucopterus."
+    },
+    {
+      "s": "Macroglossus minimus",
+      "old": "Roosting context and floral foraging habitat should be distinguished rather than equating the cave category with feeding habitat.",
+      "revised": "Flowers provide nectar and pollen for this bat, while sheltered cavities can serve as daytime roosts."
+    },
+    {
+      "s": "Ptenochirus wetmorei",
+      "old": "Mammal Diversity Database v2.5 places wetmorei in Ptenochirus, rather than the historical genus Megaerops, following Almeida and colleagues (2020).",
+      "revised": "Mammal Diversity Database v2.5 places wetmorei in Ptenochirus following Almeida and colleagues (2020); the older genus name Megaerops remains common in historical records."
+    },
+    {
+      "s": "Murina cyclotis",
+      "old": "Some observations come from mainland Southeast Asia rather than the Philippines (Animal Diversity Web, n.d.).",
+      "revised": "Natural-history observations from mainland Southeast Asia describe aspects of this bat's ecology (Animal Diversity Web, n.d.)."
+    },
+    {
+      "s": "Crunomys melanius",
+      "old": "Its dorsal coat has stiff, spiny hairs rather than the softer pelage of the sympatric Katanglad Shrew Mouse, C. suncoides.",
+      "revised": "Its dorsal coat has stiff, spiny hairs, distinguishing it from the softer-coated Katanglad Shrew Mouse, C. suncoides."
+    },
+    {
+      "s": "Crunomys suncoides",
+      "old": "Its coat is soft rather than spiny, in contrast to the Mindanao Shrew Mouse, C. melanius (Giarla et al., 2025).",
+      "revised": "The Katanglad Shrew Mouse has a soft dorsal coat, a useful distinction from the stiffer fur of C. melanius (Giarla et al., 2025)."
+    },
+    {
+      "s": "Petinomys mindanensis",
+      "old": "Historical comparative material distinguishes its larger skull and round, rather than strongly flattened, tail from P. crinitus.",
+      "revised": "Historical comparative material describes its relatively large skull and rounded tail, distinguishing it from the flattened-tailed P. crinitus."
+    }
+  ]
+}

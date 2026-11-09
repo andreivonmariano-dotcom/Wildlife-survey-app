@@ -13,7 +13,7 @@ class Rc104LargeText(unittest.TestCase):
         reader=(JAVA/'PhLibraryBook01.java').read_text()
         tests=(ANDROID/'Rc103PhLibrary2InstrumentedTest.java').read_text()
         self.assertIn('dp(compactFilters?82:71)',explorer)
-        self.assertIn('savedButton.setTextSize(12);sortButton.setTextSize(12)',explorer)
+        self.assertIn('filterButton.setTextSize(12);sortButton.setTextSize(12)',explorer)
         self.assertIn('large?16.5f:30',reader)
         self.assertIn('text must fit vertically at 200% scale',tests)
         self.assertIn('Clear must fit within its button',tests)

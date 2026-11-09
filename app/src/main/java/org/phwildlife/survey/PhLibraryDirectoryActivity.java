@@ -262,7 +262,6 @@ public final class PhLibraryDirectoryActivity extends Activity {
         private final class Holder {
             TextView common,latin,family,snippet;
             LinearLayout badges;
-            FrameLayout photo;
         }
         @Override public int getCount(){return matches.size();}
         @Override public Object getItem(int i){return matches.get(i);}
@@ -287,12 +286,10 @@ public final class PhLibraryDirectoryActivity extends Activity {
                 LinearLayout header=new LinearLayout(PhLibraryDirectoryActivity.this);
                 header.setOrientation(LinearLayout.HORIZONTAL);
                 header.setGravity(Gravity.CENTER_VERTICAL);
-                h.photo=new FrameLayout(PhLibraryDirectoryActivity.this);
-                header.addView(h.photo,new LinearLayout.LayoutParams(dp(74),dp(78)));
                 LinearLayout names=new LinearLayout(PhLibraryDirectoryActivity.this);
                 names.setOrientation(LinearLayout.VERTICAL);
-                LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(0,-2,1f);
-                nameLp.leftMargin=dp(12);header.addView(names,nameLp);
+                LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(-1,-2);
+                header.addView(names,nameLp);
                 names.addView(h.common);
                 LinearLayout.LayoutParams ln=new LinearLayout.LayoutParams(-1,-2);
                 ln.topMargin=dp(2);names.addView(h.latin,ln);
@@ -311,10 +308,6 @@ public final class PhLibraryDirectoryActivity extends Activity {
             h.common.setText(emphasis(common,q));
             h.latin.setText(emphasis(row.optString("s"),q));
             h.family.setText(row.optString("f")+" · "+row.optString("g"));
-            h.photo.removeAllViews();
-            View image=PhLibrarySpeciesMedia.photoOrPlaceholder(
-                PhLibraryDirectoryActivity.this,row.optString("s"));
-            h.photo.addView(image,new FrameLayout.LayoutParams(-1,-1));
             h.badges.removeAllViews();
             TextView rarity=PhLibraryStatusBadge.make(PhLibraryDirectoryActivity.this,
                 row.optString("t"),true);

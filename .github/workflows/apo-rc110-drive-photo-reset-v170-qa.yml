@@ -1,0 +1,83 @@
+name: APO RC110 Drive-only photo reset QA
+on:
+  push:
+    branches:
+      - feature/apo-rc110-drive-only-species-photo-reset-v170
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: apo-rc110-drive-photo-reset-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  signed-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+      - run: sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0' 'platform-tools'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - uses: actions/cache@v4
+        with:
+          path: .taxonomy-cache/mdd-v2.5.csv
+          key: mdd-v2.5-533e662fd5b8f66a5f56c191e7efac44
+      - uses: actions/cache/restore@v4
+        with:
+          path: .signing/wildlife-beta08.keystore
+          key: wildlife-v08-beta-debug-signing-v1
+      - name: Restore locked original APO artwork
+        run: |
+          echo '1eebf91314a3ead7038da98866f21c7582ffcfcf4f8da3f3c20e1d2723a69dfa  app/locked/apo_v132_assets.zip' | sha256sum -c -
+          unzip -oq app/locked/apo_v132_assets.zip 'app/src/main/assets/apo_official_master.png' 'app/src/main/res/drawable-nodpi/apo_splash_mark.png' 'app/src/main/res/drawable-nodpi/apo_launcher_foreground.png' -d .
+      - name: Check retained signer
+        run: |
+          test -s .signing/wildlife-beta08.keystore
+          keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/apo-original-cert.der
+          echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/apo-original-cert.der' | sha256sum -c -
+      - name: Verify exclusive Drive species-photo policy at source
+        run: |
+          python3 scripts/test_rc110_drive_photo_reset.py
+          test ! -e app/src/main/assets/offline_owner_photo_manifest_v1.json
+          test ! -d app/photo_sources/owner_native
+      - name: Scientific source regressions
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_*.py'
+          python3 scripts/prepare_mdd_mammals.py
+      - name: Gradle tests and Android build
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Verify no species photographs in signed APK
+        run: |
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='170'"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
+          unzip -t "$APK" >/dev/null
+          python3 - <<'PY'
+          import json,zipfile
+          from pathlib import Path
+          p=Path('app/build/outputs/apk/debug/app-debug.apk')
+          with zipfile.ZipFile(p) as z:
+              names=z.namelist()
+              species=[n for n in names if n.startswith('assets/offline_photos/species_') or n.startswith('assets/offline_photos/inat_') or n.startswith('assets/offline_owner_photo_manifest')]
+              assert not species,species
+              manifest=json.loads(z.read('assets/offline_photo_manifest_v1.json'))
+              assert all(x['category']=='habitat' for x in manifest['items'])
+              assert 'assets/phlibrary_book01_v182.json.gz.b64' in names
+              print('No bundled species photographs; habitat references and PHLibrary preserved.')
+          PY
+          sha256sum "$APK"
+      - name: Upload signed RC110 candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: LIKAS-RC110-signed-code170-no-species-photos
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7

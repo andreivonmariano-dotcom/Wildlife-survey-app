@@ -70,7 +70,7 @@ class Rc105CleanAtlas(unittest.TestCase):
         self.assertNotIn('getWritableDatabase',book)
         self.assertNotIn('getWritableDatabase',habitat)
         build=(ROOT/'app/build.gradle').read_text()
-        self.assertIn('versionCode 165',build)
+        self.assertIn('versionCode 166',build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn('super(context,NAME,null,29)',(JAVA/'FieldDb.java').read_text())
 

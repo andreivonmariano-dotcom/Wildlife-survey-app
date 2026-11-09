@@ -22,6 +22,8 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
     private final ArrayList<JSONObject> habitats=new ArrayList<>();
     private JSONArray links;
     private String currentHabitat=null;
+    private ScrollView pageScroll;
+    private int indexScrollY=0;
     private int dp(float n){return PhLibrary2Ui.dp(this,n);}
     private static JSONObject read(Activity a,String file)throws Exception{
         try(InputStream in=a.getAssets().open(file);
@@ -58,6 +60,7 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         nav.addView(label,new LinearLayout.LayoutParams(0,dp(48),1));
         root.addView(nav);
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
+        pageScroll=scroll;
         LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);
         body.setPadding(dp(1),dp(10),dp(1),dp(28));
         scroll.addView(body);
@@ -82,6 +85,7 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
             body.addView(text("Habitat reference data are unavailable offline.",17,false));
             return;
         }
+        if(state!=null)indexScrollY=state.getInt("index_scroll",0);
         String requested=state==null?getIntent().getStringExtra("habitat_id"):
             state.getString("habitat");
         if(requested!=null&&!requested.isEmpty())showHabitat(requested);
@@ -98,6 +102,8 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
     private void showIndex(){
         currentHabitat=null;
         LinearLayout body=shell("HABITAT ATLAS",this::finish);
+        if(indexScrollY>0 && pageScroll!=null)
+            pageScroll.post(()->pageScroll.scrollTo(0,indexScrollY));
         TextView heading=PhLibrary2Ui.text(this,"Mindanao landscapes",28,
             PhLibrary2Ui.INK,true,false);
         heading.setPadding(0,dp(12),0,dp(14));
@@ -162,6 +168,7 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         JSONObject profile=null;
         for(JSONObject r:habitats)if(id.equals(r.optString("id"))){profile=r;break;}
         if(profile==null){showIndex();return;}
+        if(currentHabitat==null&&pageScroll!=null)indexScrollY=pageScroll.getScrollY();
         currentHabitat=id;
         LinearLayout body=shell("HABITAT PROFILE",this::showIndex);
         TextView title=PhLibrary2Ui.text(this,profile.optString("name"),27,
@@ -265,7 +272,10 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         }
     }
     @Override protected void onSaveInstanceState(Bundle out){
-        out.putString("habitat",currentHabitat);super.onSaveInstanceState(out);
+        out.putString("habitat",currentHabitat);
+        out.putInt("index_scroll",currentHabitat==null&&pageScroll!=null?
+            pageScroll.getScrollY():indexScrollY);
+        super.onSaveInstanceState(out);
     }
     @Override public void onBackPressed(){
         if(currentHabitat!=null)showIndex();else super.onBackPressed();

@@ -286,9 +286,11 @@ public final class PhLibraryDirectoryActivity extends Activity {
             // Keep ListView rows tappable; status explanations live on the species profile.
             rarity.setClickable(false);rarity.setFocusable(false);
             conservation.setClickable(false);conservation.setFocusable(false);
-            rarity.setTextSize(11);conservation.setTextSize(11);
-            rarity.setPadding(dp(8),dp(5),dp(8),dp(5));
-            conservation.setPadding(dp(8),dp(5),dp(8),dp(5));
+            boolean enlarged=getResources().getConfiguration().fontScale>=1.6f;
+            // Keep a complete readable rarity name on a 320dp/200%-font result row.
+            rarity.setTextSize(enlarged?9:11);conservation.setTextSize(enlarged?9:11);
+            rarity.setPadding(dp(enlarged?5:8),dp(5),dp(enlarged?5:8),dp(5));
+            conservation.setPadding(dp(enlarged?5:8),dp(5),dp(enlarged?5:8),dp(5));
             LinearLayout.LayoutParams rp=new LinearLayout.LayoutParams(0,-2,1);
             h.badges.addView(rarity,rp);
             LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(0,-2,1);

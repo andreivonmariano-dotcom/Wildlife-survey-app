@@ -109,8 +109,12 @@ def prepare():
         target.parent.mkdir(parents=True, exist_ok=True)
         try:
             with Image.open(source) as image:
-                if image.format not in ("JPEG", "PNG"):
+                # Several .jpg originals are MPO multi-picture captures.
+                # Preserve one primary photographic frame per Drive file.
+                if image.format not in ("JPEG", "PNG", "MPO"):
                     raise ValueError("Unexpected image format")
+                if image.format == "MPO":
+                    image.seek(0)
                 # Downsample the JPEG decoder first to avoid decoding the
                 # original 20+ megapixel frame at full size on every build.
                 image.draft("RGB", (1920, 1920))

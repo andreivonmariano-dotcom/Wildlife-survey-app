@@ -76,7 +76,7 @@ class CanonicalBook01V182(unittest.TestCase):
         self.assertNotIn('getWritableDatabase',source)
         self.assertNotIn('execSQL(',source)
         self.assertIn('super(context,NAME,null,29)',(JAVA/'FieldDb.java').read_text())
-        self.assertIn('versionCode 163',(ROOT/'app/build.gradle').read_text())
+        self.assertIn('versionCode 164',(ROOT/'app/build.gradle').read_text())
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",(ROOT/'app/build.gradle').read_text())
         self.assertIn('.PhLibraryBibliographyActivity',(ROOT/'app/src/main/AndroidManifest.xml').read_text())
 

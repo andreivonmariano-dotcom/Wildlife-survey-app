@@ -23,7 +23,13 @@ class SpeciesMediaDailyTests(unittest.TestCase):
         self.assertGreaterEqual(len(eligible), 3)
         for p in eligible:
             self.assertTrue(p.get("license"))
-            self.assertTrue(p.get("sourceUrl"))
+            if p.get("rightsBasis") == "owner_requested_in_app_preview":
+                self.assertEqual(
+                    "Source filename only; species identification unverified",
+                    p.get("identificationReview"))
+                self.assertFalse(p.get("sourceUrl"))
+            else:
+                self.assertTrue(p.get("sourceUrl"))
             record = rows[p["taxon"]]
             self.assertIn(record["t"],
                           ("Common", "Uncommon", "Rare", "Exceptionally rare",

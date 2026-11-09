@@ -1134,3 +1134,16 @@ Update after any important decision, code change, bug discovery, user-approved a
 - **Unresolved and not renamed:** Birds: `eurasian swallow.JPG`. Herpetofauna: `D. philippensis.JPG`, `P. corrugatus whitelip.JPG`, `D. ornatus male.JPG`, `D. ornatus female.JPG`, `O.annulata.JPG`, and `Trimeresurus cf flavomaculatus.jpg`. Retain sex, descriptive marks, provisional `cf`, and uncertain initials until a lossless naming/metadata convention and species determination are confirmed.
 - **Scope and limitations:** This task standardized Drive filenames only. No photo identities were independently verified against the image contents; no photographer, rights, license, locality-sensitivity, duplication-by-bytes, or app-ingestion audit was performed. Original names containing incidental metadata were not copied into a public repository. Do not treat these image files as cleared for redistribution in the LIKAS app.
 - **Next action:** Resolve the seven exceptions without discarding existing filename information, then assess individual image attribution and redistribution permission before PHLibrary app integration.
+
+## 10 November 2026 | All 333 wildlife photo filenames standardized after owner determination
+
+- **Completed:** Owner supplied the taxon determinations for the seven exceptions from the earlier 326/333 inventory. Google Drive metadata-only renames were applied in place and verified by listing all three folders. **Birds 163/163, reptiles and amphibians 149/149, mammals 21/21; total 333/333** follow the existing scientific-name + optional numbered `__NN` convention, with no duplicate exact filenames in a folder.
+- **Original → new names (original descriptive notes preserved here):**
+  - `eurasian swallow.JPG` → `Passer_montanus.jpg` (owner identifies `Passer montanus`; previous common-name label refers to a swallow, so identity based on owner, not image review).
+  - `D. philippensis.JPG` → `Dendrelaphis_philippensis.jpg`.
+  - `O.annulata.JPG` → `Oreophryne_anulata.jpg` (single `n` in `anulata`, matching canonical Book 1 v1.82 source).
+  - `D. ornatus male.JPG` → `Draco_ornatus__01.jpg` (original **male** label).
+  - `D. ornatus female.JPG` → `Draco_ornatus__02.jpg` (original **female** label).
+  - `P. corrugatus whitelip.JPG` → `Platymantis_corrugatus__04.jpg` (original **whitelip** description).
+  - `Trimeresurus cf flavomaculatus.jpg` → `Trimeresurus_flavomaculatus.jpg` (former **cf.** qualifier retained here; owner now gives species-level determination).
+- **Data safety:** No media bytes were replaced, no files moved/deleted, and no APK was rebuilt. The new names reflect user-provided IDs, not independent visual taxonomic confirmation. Image rights, source attribution and app-bundling permission remain unverified. Preserve any original descriptive labels when future image metadata is generated.

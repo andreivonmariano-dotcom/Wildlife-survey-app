@@ -268,6 +268,8 @@ public final class PhLibraryBook01 {
         TextView save=PhLibrary2Ui.action(a,
             PhLibraryBookmarks.saved(a,scientific)?"✓  Saved":"☆  Save",
             ()->{},false);
+        if(large){save.setTextSize(12);save.setPadding(PhLibrary2Ui.dp(a,8),
+            PhLibrary2Ui.dp(a,5),PhLibrary2Ui.dp(a,8),PhLibrary2Ui.dp(a,5));}
         save.setContentDescription(PhLibraryBookmarks.saved(a,scientific)?
             "Remove species from saved collection":"Save species to collection");
         save.setOnClickListener(v->{
@@ -289,6 +291,13 @@ public final class PhLibraryBook01 {
             PhLibrary2Ui.dp(a,48)));
         LinearLayout.LayoutParams plus=new LinearLayout.LayoutParams(PhLibrary2Ui.dp(a,51),
             PhLibrary2Ui.dp(a,48));plus.leftMargin=PhLibrary2Ui.dp(a,7);
+        if(large){
+            for(TextView adjust:new TextView[]{smaller,larger}){
+                adjust.setTextSize(12);
+                adjust.setPadding(PhLibrary2Ui.dp(a,7),PhLibrary2Ui.dp(a,5),
+                    PhLibrary2Ui.dp(a,7),PhLibrary2Ui.dp(a,5));
+            }
+        }
         tools.addView(larger,plus);parent.addView(tools);
 
         TextView article=PhLibrary2Ui.text(a,record.optString("p"),17.5f,
@@ -311,6 +320,8 @@ public final class PhLibraryBook01 {
             "Citations ("+(refs==null?0:refs.length())+")",
             ()->referencesDialog(a,refs),false);
         refsAction.setContentDescription("Open account citations and bibliography");
+        if(large){refsAction.setTextSize(12);refsAction.setPadding(PhLibrary2Ui.dp(a,8),
+            PhLibrary2Ui.dp(a,5),PhLibrary2Ui.dp(a,8),PhLibrary2Ui.dp(a,5));}
         LinearLayout.LayoutParams citationLp=new LinearLayout.LayoutParams(-1,
             PhLibrary2Ui.dp(a,52));
         citationLp.topMargin=PhLibrary2Ui.dp(a,14);

@@ -1,0 +1,1674 @@
+{
+  "edition": "2026-11-10",
+  "source": "Owner-authorized APO WILDLIFE PHOTOS Google Drive collection",
+  "rights": "Owner states all photographs are theirs and authorizes LIKAS app use.",
+  "note": "Filenames are user-provided determinations, not independent visual taxon verification. Optimized sidecar ZIP uses photo names in this inventory.",
+  "count": 333,
+  "items": [
+    {
+      "name": "Acerodon_jubatus__01.jpg",
+      "group": "Mammals",
+      "bytes": 1821575
+    },
+    {
+      "name": "Acerodon_jubatus__02.jpg",
+      "group": "Mammals",
+      "bytes": 3413852
+    },
+    {
+      "name": "Acerodon_jubatus__03.jpg",
+      "group": "Mammals",
+      "bytes": 10945956
+    },
+    {
+      "name": "Acerodon_jubatus__04.jpg",
+      "group": "Mammals",
+      "bytes": 19628117
+    },
+    {
+      "name": "Aethopyga_bella.jpg",
+      "group": "Birds",
+      "bytes": 3501494
+    },
+    {
+      "name": "Ahaetulla_prasina__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5175773
+    },
+    {
+      "name": "Ahaetulla_prasina__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 2801946
+    },
+    {
+      "name": "Ahaetulla_prasina_preocularis.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7951740
+    },
+    {
+      "name": "Ansonia_muelleri.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6156950
+    },
+    {
+      "name": "Anthreptes_griseigularis.jpg",
+      "group": "Birds",
+      "bytes": 5348277
+    },
+    {
+      "name": "Aplopeltura_boa__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3155967
+    },
+    {
+      "name": "Aplopeltura_boa__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8987788
+    },
+    {
+      "name": "Arachnothera_flammifera.jpg",
+      "group": "Birds",
+      "bytes": 4705702
+    },
+    {
+      "name": "Ardea_alba__01.jpg",
+      "group": "Birds",
+      "bytes": 10391055
+    },
+    {
+      "name": "Ardea_alba__02.jpg",
+      "group": "Birds",
+      "bytes": 8255894
+    },
+    {
+      "name": "Ardea_alba__03.jpg",
+      "group": "Birds",
+      "bytes": 5637513
+    },
+    {
+      "name": "Ardea_intermedia.jpg",
+      "group": "Birds",
+      "bytes": 11090830
+    },
+    {
+      "name": "Ardeola_speciosa__01.jpg",
+      "group": "Birds",
+      "bytes": 6144976
+    },
+    {
+      "name": "Ardeola_speciosa__02.jpg",
+      "group": "Birds",
+      "bytes": 6432250
+    },
+    {
+      "name": "Artamus_leucorynchus.jpg",
+      "group": "Birds",
+      "bytes": 4789631
+    },
+    {
+      "name": "Batrachostomus_septimus__01.jpg",
+      "group": "Birds",
+      "bytes": 18639435
+    },
+    {
+      "name": "Batrachostomus_septimus__02.jpg",
+      "group": "Birds",
+      "bytes": 2804716
+    },
+    {
+      "name": "Batrachostomus_septimus__03.jpg",
+      "group": "Birds",
+      "bytes": 9559649
+    },
+    {
+      "name": "Boiga_cynodon.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4276584
+    },
+    {
+      "name": "Boiga_dendrophila_latifasciata.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8142140
+    },
+    {
+      "name": "Bolbopsittacus_lunulatus__01.jpg",
+      "group": "Birds",
+      "bytes": 2413419
+    },
+    {
+      "name": "Bolbopsittacus_lunulatus__02.jpg",
+      "group": "Birds",
+      "bytes": 6493313
+    },
+    {
+      "name": "Bolbopsittacus_lunulatus__03.jpg",
+      "group": "Birds",
+      "bytes": 3911773
+    },
+    {
+      "name": "Brachymeles_gracilis.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5957268
+    },
+    {
+      "name": "Brachymeles_hilong.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 1886698
+    },
+    {
+      "name": "Brachymeles_samad.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5046272
+    },
+    {
+      "name": "Brachypteryx_poliogyna.jpg",
+      "group": "Birds",
+      "bytes": 13548733
+    },
+    {
+      "name": "Bronchocela_philippina__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4587520
+    },
+    {
+      "name": "Bronchocela_philippina__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 494759
+    },
+    {
+      "name": "Buceros_hydrocorax.jpg",
+      "group": "Birds",
+      "bytes": 3304748
+    },
+    {
+      "name": "Bullimus_bagobus.jpg",
+      "group": "Mammals",
+      "bytes": 22666412
+    },
+    {
+      "name": "Butastur_indicus__01.jpg",
+      "group": "Birds",
+      "bytes": 4193719
+    },
+    {
+      "name": "Butastur_indicus__02.jpg",
+      "group": "Birds",
+      "bytes": 4197586
+    },
+    {
+      "name": "Cacomantis_merulinus__01.jpg",
+      "group": "Birds",
+      "bytes": 4590734
+    },
+    {
+      "name": "Cacomantis_merulinus__02.jpg",
+      "group": "Birds",
+      "bytes": 9159063
+    },
+    {
+      "name": "Cacomantis_variolosus.jpg",
+      "group": "Birds",
+      "bytes": 3356122
+    },
+    {
+      "name": "Centropus_melanops__01.jpg",
+      "group": "Birds",
+      "bytes": 2721710
+    },
+    {
+      "name": "Centropus_melanops__02.jpg",
+      "group": "Birds",
+      "bytes": 9686919
+    },
+    {
+      "name": "Centropus_viridis__01.jpg",
+      "group": "Birds",
+      "bytes": 6942222
+    },
+    {
+      "name": "Centropus_viridis__02.jpg",
+      "group": "Birds",
+      "bytes": 5497871
+    },
+    {
+      "name": "Ceyx_argentatus.jpg",
+      "group": "Birds",
+      "bytes": 4511857
+    },
+    {
+      "name": "Chalcophaps_indica.jpg",
+      "group": "Birds",
+      "bytes": 4031758
+    },
+    {
+      "name": "Chlidonias_hybrida.jpg",
+      "group": "Birds",
+      "bytes": 2021031
+    },
+    {
+      "name": "Chrysopelea_paradisi.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5341184
+    },
+    {
+      "name": "Cincloramphus_timoriensis.jpg",
+      "group": "Birds",
+      "bytes": 3890740
+    },
+    {
+      "name": "Cinnyris_jugularis__01.jpg",
+      "group": "Birds",
+      "bytes": 2847617
+    },
+    {
+      "name": "Cinnyris_jugularis__02.jpg",
+      "group": "Birds",
+      "bytes": 9790380
+    },
+    {
+      "name": "Cinnyris_jugularis__03.jpg",
+      "group": "Birds",
+      "bytes": 6699130
+    },
+    {
+      "name": "Corvus_philippinus.jpg",
+      "group": "Birds",
+      "bytes": 5804065
+    },
+    {
+      "name": "Crocodylus_porosus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 28668514
+    },
+    {
+      "name": "Cuora_philippinensis.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4489216
+    },
+    {
+      "name": "Cynocephalus_volans__01.jpg",
+      "group": "Mammals",
+      "bytes": 12041777
+    },
+    {
+      "name": "Cynocephalus_volans__02.jpg",
+      "group": "Mammals",
+      "bytes": 19643113
+    },
+    {
+      "name": "Cynocephalus_volans__03.jpg",
+      "group": "Mammals",
+      "bytes": 9772477
+    },
+    {
+      "name": "Cynocephalus_volans__04.jpg",
+      "group": "Mammals",
+      "bytes": 14111052
+    },
+    {
+      "name": "Cynopterus_brachyotis.jpg",
+      "group": "Mammals",
+      "bytes": 3211242
+    },
+    {
+      "name": "Cyornis_ruficauda.jpg",
+      "group": "Birds",
+      "bytes": 16730321
+    },
+    {
+      "name": "Cyrtodactylus_annulatus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7036621
+    },
+    {
+      "name": "Cyrtodactylus_annulatus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6189316
+    },
+    {
+      "name": "Cyrtodactylus_annulatus__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4685824
+    },
+    {
+      "name": "Cyrtodactylus_gubaot.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4194304
+    },
+    {
+      "name": "Dasycrotapha_plateni__01.jpg",
+      "group": "Birds",
+      "bytes": 2900968
+    },
+    {
+      "name": "Dasycrotapha_plateni__02.jpg",
+      "group": "Birds",
+      "bytes": 2771484
+    },
+    {
+      "name": "Dasycrotapha_plateni__03.jpg",
+      "group": "Birds",
+      "bytes": 2512261
+    },
+    {
+      "name": "Dendrelaphis_philippensis.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3571712
+    },
+    {
+      "name": "Dendrelaphis_philippinensis__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 11572429
+    },
+    {
+      "name": "Dendrelaphis_philippinensis__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 19970728
+    },
+    {
+      "name": "Dicaeum_australe__01.jpg",
+      "group": "Birds",
+      "bytes": 6552799
+    },
+    {
+      "name": "Dicaeum_australe__02.jpg",
+      "group": "Birds",
+      "bytes": 3128147
+    },
+    {
+      "name": "Dicaeum_hypoleucum__01.jpg",
+      "group": "Birds",
+      "bytes": 11023392
+    },
+    {
+      "name": "Dicaeum_hypoleucum__02.jpg",
+      "group": "Birds",
+      "bytes": 6469128
+    },
+    {
+      "name": "Dicaeum_nigrilore.jpg",
+      "group": "Birds",
+      "bytes": 4946057
+    },
+    {
+      "name": "Dicaeum_trigonostigma__01.jpg",
+      "group": "Birds",
+      "bytes": 3841245
+    },
+    {
+      "name": "Dicaeum_trigonostigma__02.jpg",
+      "group": "Birds",
+      "bytes": 6051668
+    },
+    {
+      "name": "Dicrurus_striatus.jpg",
+      "group": "Birds",
+      "bytes": 5392201
+    },
+    {
+      "name": "Draco_bimaculatus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5438934
+    },
+    {
+      "name": "Draco_bimaculatus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 11502756
+    },
+    {
+      "name": "Draco_cyanopterus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 17776437
+    },
+    {
+      "name": "Draco_cyanopterus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4931489
+    },
+    {
+      "name": "Draco_cyanopterus__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6631034
+    },
+    {
+      "name": "Draco_ornatus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5439488
+    },
+    {
+      "name": "Draco_ornatus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 9413717
+    },
+    {
+      "name": "Dryocopus_javensis.jpg",
+      "group": "Birds",
+      "bytes": 4433666
+    },
+    {
+      "name": "Egretta_garzetta.jpg",
+      "group": "Birds",
+      "bytes": 9302703
+    },
+    {
+      "name": "Egretta_sacra.jpg",
+      "group": "Birds",
+      "bytes": 5547737
+    },
+    {
+      "name": "Elanus_caeruleus.jpg",
+      "group": "Birds",
+      "bytes": 765290
+    },
+    {
+      "name": "Emoia_ruficauda__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8502398
+    },
+    {
+      "name": "Emoia_ruficauda__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 10045970
+    },
+    {
+      "name": "Emoia_ruficauda__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7037361
+    },
+    {
+      "name": "Eonycteris_spelaea.jpg",
+      "group": "Mammals",
+      "bytes": 3619712
+    },
+    {
+      "name": "Eumyias_panayensis.jpg",
+      "group": "Birds",
+      "bytes": 2454207
+    },
+    {
+      "name": "Eutropis_caraga__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7051336
+    },
+    {
+      "name": "Eutropis_caraga__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5056923
+    },
+    {
+      "name": "Eutropis_caraga__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8467830
+    },
+    {
+      "name": "Eutropis_multicarinata__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5878230
+    },
+    {
+      "name": "Eutropis_multicarinata__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4358144
+    },
+    {
+      "name": "Eutropis_multicarinata__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 2459581
+    },
+    {
+      "name": "Eutropis_multicarinata__04.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 10142103
+    },
+    {
+      "name": "Eutropis_multifasciata__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8786581
+    },
+    {
+      "name": "Eutropis_multifasciata__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5489388
+    },
+    {
+      "name": "Exilisciurus_concinnus.jpg",
+      "group": "Mammals",
+      "bytes": 2424290
+    },
+    {
+      "name": "Falco_peregrinus__01.jpg",
+      "group": "Birds",
+      "bytes": 10430701
+    },
+    {
+      "name": "Falco_peregrinus__02.jpg",
+      "group": "Birds",
+      "bytes": 5050003
+    },
+    {
+      "name": "Fejervarya_vittigera.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5544602
+    },
+    {
+      "name": "Gallinula_chloropus.jpg",
+      "group": "Birds",
+      "bytes": 13776546
+    },
+    {
+      "name": "Gehyra_mutilata.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 148156
+    },
+    {
+      "name": "Gekko_gecko__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3538944
+    },
+    {
+      "name": "Gekko_gecko__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7020398
+    },
+    {
+      "name": "Gekko_intermedium__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4492507
+    },
+    {
+      "name": "Gekko_intermedium__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 11043285
+    },
+    {
+      "name": "Gekko_monarchus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3013847
+    },
+    {
+      "name": "Geopelia_striata__01.jpg",
+      "group": "Birds",
+      "bytes": 17182667
+    },
+    {
+      "name": "Geopelia_striata__02.jpg",
+      "group": "Birds",
+      "bytes": 9874400
+    },
+    {
+      "name": "Geopelia_striata__03.jpg",
+      "group": "Birds",
+      "bytes": 1146567
+    },
+    {
+      "name": "Gonocephalus_semperi__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3068599
+    },
+    {
+      "name": "Gonocephalus_semperi__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 2904880
+    },
+    {
+      "name": "Gonocephalus_semperi__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6306359
+    },
+    {
+      "name": "Gonocephalus_semperi__04.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6772377
+    },
+    {
+      "name": "Gonyosoma_oxycephalum.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3232162
+    },
+    {
+      "name": "Goodfellowia_miranda__01.jpg",
+      "group": "Birds",
+      "bytes": 3055122
+    },
+    {
+      "name": "Goodfellowia_miranda__02.jpg",
+      "group": "Birds",
+      "bytes": 3776024
+    },
+    {
+      "name": "Goodfellowia_miranda__03.jpg",
+      "group": "Birds",
+      "bytes": 3278492
+    },
+    {
+      "name": "Halcyon_gularis.jpg",
+      "group": "Birds",
+      "bytes": 2035219
+    },
+    {
+      "name": "Haliastur_indus__01.jpg",
+      "group": "Birds",
+      "bytes": 3824250
+    },
+    {
+      "name": "Haliastur_indus__02.jpg",
+      "group": "Birds",
+      "bytes": 2704254
+    },
+    {
+      "name": "Haliastur_indus__03.jpg",
+      "group": "Birds",
+      "bytes": 4478181
+    },
+    {
+      "name": "Heleia_goodfellowi.jpg",
+      "group": "Birds",
+      "bytes": 2759858
+    },
+    {
+      "name": "Hemidactylus_frenatus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4259840
+    },
+    {
+      "name": "Hemiprocne_comata.jpg",
+      "group": "Birds",
+      "bytes": 15008283
+    },
+    {
+      "name": "Hierococcyx_pectoralis.jpg",
+      "group": "Birds",
+      "bytes": 6377138
+    },
+    {
+      "name": "Hipposideros_obscurus.jpg",
+      "group": "Mammals",
+      "bytes": 5453733
+    },
+    {
+      "name": "Hirundo_javanica.jpg",
+      "group": "Birds",
+      "bytes": 4529917
+    },
+    {
+      "name": "Hoplobatrachus_chinensis.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8159865
+    },
+    {
+      "name": "Hydrosaurus_pustulatus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3589601
+    },
+    {
+      "name": "Hydrosaurus_pustulatus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6571114
+    },
+    {
+      "name": "Hylarana_erythraea.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4521984
+    },
+    {
+      "name": "Hypocryptadius_cinnamomeus__01.jpg",
+      "group": "Birds",
+      "bytes": 3163021
+    },
+    {
+      "name": "Hypocryptadius_cinnamomeus__02.jpg",
+      "group": "Birds",
+      "bytes": 2243086
+    },
+    {
+      "name": "Hypotaenidia_philippensis.jpg",
+      "group": "Birds",
+      "bytes": 9044766
+    },
+    {
+      "name": "Hypothymis_azurea.jpg",
+      "group": "Birds",
+      "bytes": 6844218
+    },
+    {
+      "name": "Hypsipetes_everetti.jpg",
+      "group": "Birds",
+      "bytes": 7525775
+    },
+    {
+      "name": "Hypsipetes_philippinus__01.jpg",
+      "group": "Birds",
+      "bytes": 2404501
+    },
+    {
+      "name": "Hypsipetes_philippinus__02.jpg",
+      "group": "Birds",
+      "bytes": 4501230
+    },
+    {
+      "name": "Icthyophaga_leucogaster.jpg",
+      "group": "Birds",
+      "bytes": 5351930
+    },
+    {
+      "name": "Kalophrynus_sinensis.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5094280
+    },
+    {
+      "name": "Kaloula_pulchra.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7076731
+    },
+    {
+      "name": "Kurixalus_appendiculatus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 1360712
+    },
+    {
+      "name": "Lamprolepis_smaragdina__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 13059705
+    },
+    {
+      "name": "Lamprolepis_smaragdina__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4390912
+    },
+    {
+      "name": "Lanius_schach__01.jpg",
+      "group": "Birds",
+      "bytes": 2455188
+    },
+    {
+      "name": "Lanius_schach__02.jpg",
+      "group": "Birds",
+      "bytes": 2498544
+    },
+    {
+      "name": "Lanius_schach__03.jpg",
+      "group": "Birds",
+      "bytes": 3780507
+    },
+    {
+      "name": "Lanius_schach__04.jpg",
+      "group": "Birds",
+      "bytes": 4857755
+    },
+    {
+      "name": "Leonardina_woodi.jpg",
+      "group": "Birds",
+      "bytes": 4187254
+    },
+    {
+      "name": "Leptobrachium_lumadorum.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6780735
+    },
+    {
+      "name": "Leptocoma_sperata__01.jpg",
+      "group": "Birds",
+      "bytes": 5304674
+    },
+    {
+      "name": "Leptocoma_sperata__02.jpg",
+      "group": "Birds",
+      "bytes": 14806252
+    },
+    {
+      "name": "Leptocoma_sperata__03.jpg",
+      "group": "Birds",
+      "bytes": 6545889
+    },
+    {
+      "name": "Leptomantis_bimaculatus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6680836
+    },
+    {
+      "name": "Limnonectes_diuatus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7247547
+    },
+    {
+      "name": "Limnonectes_leytensis__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5541524
+    },
+    {
+      "name": "Limnonectes_leytensis__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3866624
+    },
+    {
+      "name": "Limnonectes_magnus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5373952
+    },
+    {
+      "name": "Limnonectes_magnus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 9689000
+    },
+    {
+      "name": "Limnonectes_magnus__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6759019
+    },
+    {
+      "name": "Lipinia_pulchella_pulchella.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3932826
+    },
+    {
+      "name": "Lipinia_quadrivittata.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5000245
+    },
+    {
+      "name": "Lonchura_atricapilla__01.jpg",
+      "group": "Birds",
+      "bytes": 7556508
+    },
+    {
+      "name": "Lonchura_atricapilla__02.jpg",
+      "group": "Birds",
+      "bytes": 8329334
+    },
+    {
+      "name": "Lophospiza_trivirgata.jpg",
+      "group": "Birds",
+      "bytes": 9233418
+    },
+    {
+      "name": "Lophotriorchis_kienerii.jpg",
+      "group": "Birds",
+      "bytes": 8876865
+    },
+    {
+      "name": "Loriculus_philippensis__01.jpg",
+      "group": "Birds",
+      "bytes": 3186081
+    },
+    {
+      "name": "Loriculus_philippensis__02.jpg",
+      "group": "Birds",
+      "bytes": 5200079
+    },
+    {
+      "name": "Loriculus_philippensis_apicalis.jpg",
+      "group": "Birds",
+      "bytes": 1965400
+    },
+    {
+      "name": "Macaca_fascicularis__01.jpg",
+      "group": "Mammals",
+      "bytes": 8006910
+    },
+    {
+      "name": "Macaca_fascicularis__02.jpg",
+      "group": "Mammals",
+      "bytes": 3905808
+    },
+    {
+      "name": "Macaca_fascicularis__03.jpg",
+      "group": "Mammals",
+      "bytes": 6802121
+    },
+    {
+      "name": "Macaca_fascicularis__04.jpg",
+      "group": "Mammals",
+      "bytes": 5857980
+    },
+    {
+      "name": "Macronus_striaticeps.jpg",
+      "group": "Birds",
+      "bytes": 10512429
+    },
+    {
+      "name": "Malayopython_reticulatus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8557850
+    },
+    {
+      "name": "Malayopython_reticulatus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6910856
+    },
+    {
+      "name": "Malindangia_mcgregori.jpg",
+      "group": "Birds",
+      "bytes": 2621017
+    },
+    {
+      "name": "Merops_americanus__01.jpg",
+      "group": "Birds",
+      "bytes": 6548847
+    },
+    {
+      "name": "Merops_americanus__02.jpg",
+      "group": "Birds",
+      "bytes": 6458557
+    },
+    {
+      "name": "Merops_americanus__03.jpg",
+      "group": "Birds",
+      "bytes": 8484783
+    },
+    {
+      "name": "Microhierax_erythrogenys.jpg",
+      "group": "Birds",
+      "bytes": 2426496
+    },
+    {
+      "name": "Nisaetus_pinskeri.jpg",
+      "group": "Birds",
+      "bytes": 3109843
+    },
+    {
+      "name": "Nycticorax_caledonicus.jpg",
+      "group": "Birds",
+      "bytes": 8287031
+    },
+    {
+      "name": "Nycticorax_nycticorax__01.jpg",
+      "group": "Birds",
+      "bytes": 8516066
+    },
+    {
+      "name": "Nycticorax_nycticorax__02.jpg",
+      "group": "Birds",
+      "bytes": 5767399
+    },
+    {
+      "name": "Nyctixalus_spinosus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8183066
+    },
+    {
+      "name": "Occidozyga_laevis__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3313472
+    },
+    {
+      "name": "Occidozyga_laevis__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4092797
+    },
+    {
+      "name": "Occidozyga_laevis__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 9833229
+    },
+    {
+      "name": "Oligodon_maculatus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5836200
+    },
+    {
+      "name": "Oligodon_modestum.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4980736
+    },
+    {
+      "name": "Oreophryne_anulata.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7614431
+    },
+    {
+      "name": "Orthotomus_nigriceps.jpg",
+      "group": "Birds",
+      "bytes": 7149015
+    },
+    {
+      "name": "Otus_everetti__01.jpg",
+      "group": "Birds",
+      "bytes": 9939045
+    },
+    {
+      "name": "Otus_everetti__02.jpg",
+      "group": "Birds",
+      "bytes": 3006204
+    },
+    {
+      "name": "Otus_gurneyi.jpg",
+      "group": "Birds",
+      "bytes": 3071801
+    },
+    {
+      "name": "Otus_mirus.jpg",
+      "group": "Birds",
+      "bytes": 5178769
+    },
+    {
+      "name": "Oxyrhabdium_modestum__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3899392
+    },
+    {
+      "name": "Oxyrhabdium_modestum.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5292946
+    },
+    {
+      "name": "Pachyglossa_olivacea.jpg",
+      "group": "Birds",
+      "bytes": 3046027
+    },
+    {
+      "name": "Padda_oryzivora.jpg",
+      "group": "Birds",
+      "bytes": 4486828
+    },
+    {
+      "name": "Pardaliparus_elegans.jpg",
+      "group": "Birds",
+      "bytes": 4501335
+    },
+    {
+      "name": "Parvoscincus_steerei.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4001707
+    },
+    {
+      "name": "Passer_montanus.jpg",
+      "group": "Birds",
+      "bytes": 15708604
+    },
+    {
+      "name": "Pelobatrachus_stejnegeri__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6209722
+    },
+    {
+      "name": "Pelobatrachus_stejnegeri__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8927614
+    },
+    {
+      "name": "Pelobatrachus_stejnegeri__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3866624
+    },
+    {
+      "name": "Pelobatrachus_stejnegeri__04.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 12444415
+    },
+    {
+      "name": "Pelophryne_brevipes.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3267046
+    },
+    {
+      "name": "Pelophryne_lighti.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7677462
+    },
+    {
+      "name": "Penelopides_affinis.jpg",
+      "group": "Birds",
+      "bytes": 1415535
+    },
+    {
+      "name": "Pericrocotus_speciosus.jpg",
+      "group": "Birds",
+      "bytes": 8010228
+    },
+    {
+      "name": "Pernis_ptilorhynchus__01.jpg",
+      "group": "Birds",
+      "bytes": 3093648
+    },
+    {
+      "name": "Pernis_ptilorhynchus__02.jpg",
+      "group": "Birds",
+      "bytes": 4303351
+    },
+    {
+      "name": "Pernis_steerei__01.jpg",
+      "group": "Birds",
+      "bytes": 1389072
+    },
+    {
+      "name": "Pernis_steerei__02.jpg",
+      "group": "Birds",
+      "bytes": 6270315
+    },
+    {
+      "name": "Pernis_steerei__03.jpg",
+      "group": "Birds",
+      "bytes": 5022887
+    },
+    {
+      "name": "Pernis_steerei__04.jpg",
+      "group": "Birds",
+      "bytes": 4699557
+    },
+    {
+      "name": "Phapitreron_amethystinus.jpg",
+      "group": "Birds",
+      "bytes": 16472125
+    },
+    {
+      "name": "Philautus_acutirostris.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4307521
+    },
+    {
+      "name": "Philautus_leitensis.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7981626
+    },
+    {
+      "name": "Philautus_surdus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 2983678
+    },
+    {
+      "name": "Philautus_surrufus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3079832
+    },
+    {
+      "name": "Philautus_worcesteri__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 2924626
+    },
+    {
+      "name": "Philautus_worcesteri__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 10671163
+    },
+    {
+      "name": "Phyllergates_heterolaemus.jpg",
+      "group": "Birds",
+      "bytes": 1702830
+    },
+    {
+      "name": "Phylloscopus_olivaceus.jpg",
+      "group": "Birds",
+      "bytes": 2699496
+    },
+    {
+      "name": "Pinoyscincus_abdictus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3833856
+    },
+    {
+      "name": "Pinoyscincus_jagori__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4063232
+    },
+    {
+      "name": "Pinoyscincus_jagori__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 23586094
+    },
+    {
+      "name": "Pinoyscincus_jagori__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 19673860
+    },
+    {
+      "name": "Pithecophaga_jefferyi__01.jpg",
+      "group": "Birds",
+      "bytes": 15219428
+    },
+    {
+      "name": "Pithecophaga_jefferyi__02.jpg",
+      "group": "Birds",
+      "bytes": 12862230
+    },
+    {
+      "name": "Pithecophaga_jefferyi__03.jpg",
+      "group": "Birds",
+      "bytes": 4958944
+    },
+    {
+      "name": "Pithecophaga_jefferyi__04.jpg",
+      "group": "Birds",
+      "bytes": 4672515
+    },
+    {
+      "name": "Pithecophaga_jefferyi__05.jpg",
+      "group": "Birds",
+      "bytes": 5511770
+    },
+    {
+      "name": "Pithecophaga_jefferyi__06.jpg",
+      "group": "Birds",
+      "bytes": 4298149
+    },
+    {
+      "name": "Pithecophaga_jefferyi__07.jpg",
+      "group": "Birds",
+      "bytes": 1915776
+    },
+    {
+      "name": "Pithecophaga_jefferyi__08.jpg",
+      "group": "Birds",
+      "bytes": 4230492
+    },
+    {
+      "name": "Pithecophaga_jefferyi__09.jpg",
+      "group": "Birds",
+      "bytes": 11081237
+    },
+    {
+      "name": "Platymantis_corrugatus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 1376181
+    },
+    {
+      "name": "Platymantis_corrugatus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 1552121
+    },
+    {
+      "name": "Platymantis_corrugatus__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3637248
+    },
+    {
+      "name": "Platymantis_corrugatus__04.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4554752
+    },
+    {
+      "name": "Platymantis_grandocula.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4521984
+    },
+    {
+      "name": "Platymantis_guentheri.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3489478
+    },
+    {
+      "name": "Platymantis_llanosi.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4685824
+    },
+    {
+      "name": "Platymantis_rabori__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 1826097
+    },
+    {
+      "name": "Platymantis_rabori__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3128401
+    },
+    {
+      "name": "Platymantis_rabori__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4292608
+    },
+    {
+      "name": "Poliolophus_urostictus.jpg",
+      "group": "Birds",
+      "bytes": 3550875
+    },
+    {
+      "name": "Polypedates_leucomystax__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8761063
+    },
+    {
+      "name": "Polypedates_leucomystax__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4278460
+    },
+    {
+      "name": "Psammodynastes_pulverulentus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 5210112
+    },
+    {
+      "name": "Psammodynastes_pulverulentus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 1295630
+    },
+    {
+      "name": "Pseudogekko_pungkaypinit__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4227072
+    },
+    {
+      "name": "Pseudogekko_pungkaypinit__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 1421601
+    },
+    {
+      "name": "Pseudogekko_pungkaypinit__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3083185
+    },
+    {
+      "name": "Pseudogekko_pungkaypinit__04.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 9733432
+    },
+    {
+      "name": "Psilopogon_haemacephalus.jpg",
+      "group": "Birds",
+      "bytes": 4351321
+    },
+    {
+      "name": "Ptilinopus_occipitalis__01.jpg",
+      "group": "Birds",
+      "bytes": 6846569
+    },
+    {
+      "name": "Ptilinopus_occipitalis__02.jpg",
+      "group": "Birds",
+      "bytes": 11357651
+    },
+    {
+      "name": "Ptilinopus_occipitalis__03.jpg",
+      "group": "Birds",
+      "bytes": 2022900
+    },
+    {
+      "name": "Rattus_everetti__01.jpg",
+      "group": "Mammals",
+      "bytes": 13929802
+    },
+    {
+      "name": "Rattus_everetti__02.jpg",
+      "group": "Mammals",
+      "bytes": 14337397
+    },
+    {
+      "name": "Rhabdophis_auriculatus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6442058
+    },
+    {
+      "name": "Rhabdophis_lineatus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8211855
+    },
+    {
+      "name": "Rhabdophis_lineatus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 1997810
+    },
+    {
+      "name": "Rhabdophis_lineatus__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 12166342
+    },
+    {
+      "name": "Rhabdophis_lineatus__04.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 9399661
+    },
+    {
+      "name": "Rhabdornis_mystacalis.jpg",
+      "group": "Birds",
+      "bytes": 20970951
+    },
+    {
+      "name": "Rhabdotorrhinus_leucocephalus__01.jpg",
+      "group": "Birds",
+      "bytes": 7856481
+    },
+    {
+      "name": "Rhabdotorrhinus_leucocephalus__02.jpg",
+      "group": "Birds",
+      "bytes": 9632085
+    },
+    {
+      "name": "Rhacophorus_pardalis__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 2093418
+    },
+    {
+      "name": "Rhacophorus_pardalis__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4108335
+    },
+    {
+      "name": "Rhacophorus_pardalis__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 2830592
+    },
+    {
+      "name": "Rhacophorus_pardalis__04.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3276800
+    },
+    {
+      "name": "Rhinella_marina.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7732139
+    },
+    {
+      "name": "Rhipidura_nigritorquis.jpg",
+      "group": "Birds",
+      "bytes": 3932877
+    },
+    {
+      "name": "Rhipidura_nigrocinnamomea__01.jpg",
+      "group": "Birds",
+      "bytes": 2620764
+    },
+    {
+      "name": "Rhipidura_nigrocinnamomea__02.jpg",
+      "group": "Birds",
+      "bytes": 3107047
+    },
+    {
+      "name": "Rhipidura_superciliaris.jpg",
+      "group": "Birds",
+      "bytes": 5442830
+    },
+    {
+      "name": "Rusa_marianna.jpg",
+      "group": "Mammals",
+      "bytes": 24024172
+    },
+    {
+      "name": "Sanguirana_mearnsi__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8812768
+    },
+    {
+      "name": "Sanguirana_mearnsi__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7760943
+    },
+    {
+      "name": "Saudareos_johnstoniae__01.jpg",
+      "group": "Birds",
+      "bytes": 3533462
+    },
+    {
+      "name": "Saudareos_johnstoniae__02.jpg",
+      "group": "Birds",
+      "bytes": 5722825
+    },
+    {
+      "name": "Saxicola_caprata__01.jpg",
+      "group": "Birds",
+      "bytes": 3267820
+    },
+    {
+      "name": "Saxicola_caprata__02.jpg",
+      "group": "Birds",
+      "bytes": 6262122
+    },
+    {
+      "name": "Saxicola_caprata__03.jpg",
+      "group": "Birds",
+      "bytes": 1577186
+    },
+    {
+      "name": "Scolopax_bukidnonensis.jpg",
+      "group": "Birds",
+      "bytes": 3742683
+    },
+    {
+      "name": "Sitta_oenochlamys.jpg",
+      "group": "Birds",
+      "bytes": 1643750
+    },
+    {
+      "name": "Sphenomorphus_acutus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7824736
+    },
+    {
+      "name": "Sphenomorphus_variegatus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 2234239
+    },
+    {
+      "name": "Sphenomorphus_variegatus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3768320
+    },
+    {
+      "name": "Sphenomorphus_variegatus__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7391353
+    },
+    {
+      "name": "Spilopelia_chinensis.jpg",
+      "group": "Birds",
+      "bytes": 7058532
+    },
+    {
+      "name": "Spilornis_holospilus__01.jpg",
+      "group": "Birds",
+      "bytes": 3120516
+    },
+    {
+      "name": "Spilornis_holospilus__02.jpg",
+      "group": "Birds",
+      "bytes": 1478951
+    },
+    {
+      "name": "Spilornis_holospilus__03.jpg",
+      "group": "Birds",
+      "bytes": 12265729
+    },
+    {
+      "name": "Spilornis_holospilus__04.jpg",
+      "group": "Birds",
+      "bytes": 5762236
+    },
+    {
+      "name": "Staurois_natator__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 1854448
+    },
+    {
+      "name": "Staurois_natator__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 7294525
+    },
+    {
+      "name": "Staurois_natator__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 13290559
+    },
+    {
+      "name": "Stegonotus_muelleri.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 14527657
+    },
+    {
+      "name": "Surniculus_velutinus.jpg",
+      "group": "Birds",
+      "bytes": 4291664
+    },
+    {
+      "name": "Tachyspiza_soloensis.jpg",
+      "group": "Birds",
+      "bytes": 3011700
+    },
+    {
+      "name": "Tachyspiza_virgata__01.jpg",
+      "group": "Birds",
+      "bytes": 1769394
+    },
+    {
+      "name": "Tachyspiza_virgata__02.jpg",
+      "group": "Birds",
+      "bytes": 1392234
+    },
+    {
+      "name": "Trimeresurus_flavomaculatus.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 3044764
+    },
+    {
+      "name": "Tropidolaemus_subannulatus__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6120794
+    },
+    {
+      "name": "Tropidolaemus_subannulatus__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 4726097
+    },
+    {
+      "name": "Tropidolaemus_subannulatus__03.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8643681
+    },
+    {
+      "name": "Tropidolaemus_subannulatus__04.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 6196436
+    },
+    {
+      "name": "Tropidonophis_dendrophiops.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 8129495
+    },
+    {
+      "name": "Tropidophorus_misaminius__01.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 20273956
+    },
+    {
+      "name": "Tropidophorus_misaminius__02.jpg",
+      "group": "Reptiles and Amphibians",
+      "bytes": 718647
+    },
+    {
+      "name": "Tupaia_everetti.jpg",
+      "group": "Mammals",
+      "bytes": 21976129
+    },
+    {
+      "name": "Turdus_nigrorum.jpg",
+      "group": "Birds",
+      "bytes": 5282102
+    },
+    {
+      "name": "Turdus_obscurus.jpg",
+      "group": "Birds",
+      "bytes": 1806016
+    },
+    {
+      "name": "Varanus_cumingi.png",
+      "group": "Reptiles and Amphibians",
+      "bytes": 2285767
+    },
+    {
+      "name": "Yungipicus_maculatus.jpg",
+      "group": "Birds",
+      "bytes": 8458040
+    },
+    {
+      "name": "Zosterops_everetti.jpg",
+      "group": "Birds",
+      "bytes": 6689255
+    }
+  ]
+}

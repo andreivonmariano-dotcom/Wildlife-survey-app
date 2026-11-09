@@ -211,20 +211,17 @@ public final class PhLibraryBook01 {
         String headingText=common.isEmpty()?scientific:common;
 
         LinearLayout hero=new LinearLayout(a);hero.setOrientation(LinearLayout.VERTICAL);
-        hero.setPadding(PhLibrary2Ui.dp(a,large?14:20),
+        hero.setPadding(PhLibrary2Ui.dp(a,large?12:18),
+            PhLibrary2Ui.dp(a,large?10:15),
             PhLibrary2Ui.dp(a,large?12:18),
-            PhLibrary2Ui.dp(a,large?14:20),
-            PhLibrary2Ui.dp(a,large?13:19));
+            PhLibrary2Ui.dp(a,large?11:15));
         hero.setBackground(PhLibrary2Ui.bg(a,PhLibrary2Ui.DEEP,
             android.graphics.Color.TRANSPARENT,18));
-        TextView kicker=PhLibrary2Ui.text(a,"BOOK 01  /  "+record.optString("g").toUpperCase(Locale.ROOT),
-            12,0xFFD9E8D4,false,true);
-        kicker.setLetterSpacing(.085f);hero.addView(kicker);
         TextView heading=PhLibrary2Ui.text(a,headingText,
             large?16.5f:30,android.graphics.Color.WHITE,true,false);
         heading.setLineSpacing(PhLibrary2Ui.dp(a,1),1.02f);
         LinearLayout.LayoutParams h=new LinearLayout.LayoutParams(-1,-2);
-        h.topMargin=PhLibrary2Ui.dp(a,12);hero.addView(heading,h);
+        h.topMargin=0;hero.addView(heading,h);
         TextView latin=PhLibrary2Ui.text(a,record.optString("s"),
             large?15:18,0xFFE2EBD7,true,false);
         latin.setTypeface(Typeface.create("serif",Typeface.ITALIC));

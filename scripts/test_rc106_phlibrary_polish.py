@@ -78,7 +78,7 @@ class Rc106UiContracts(unittest.TestCase):
 
     def test_identity_and_locked_data_invariants(self):
         gradle=(ROOT/'app/build.gradle').read_text()
-        self.assertIn('versionCode 167',gradle)
+        self.assertIn('versionCode 168',gradle)
         self.assertIn("0.27.3-rc107-habitat-reader-saved",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn('super(context,NAME,null,29)',read('FieldDb.java'))

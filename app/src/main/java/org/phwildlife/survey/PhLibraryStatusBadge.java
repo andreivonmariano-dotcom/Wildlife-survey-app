@@ -52,12 +52,12 @@ public final class PhLibraryStatusBadge {
         GradientDrawable d=PhLibrary2Ui.bg(a,bg,stroke,20);
         t.setBackground(d);
         final String intro=rarity?
-            "Discovery Rarity is an educational book category, not an IUCN or DENR assessment.":
+            "Rarity is an educational book category, not an IUCN or DENR assessment.":
             "IUCN global category shown in the original reference account. This is not a Philippine national threat assessment.";
-        t.setContentDescription((rarity?"Discovery Rarity: ":"IUCN global status: ")+name+". Tap for explanation.");
+        t.setContentDescription((rarity?"Rarity: ":"IUCN global status: ")+name+". Tap for explanation.");
         t.setClickable(true);t.setFocusable(true);
         t.setOnClickListener(v->new AlertDialog.Builder(a)
-            .setTitle((rarity?"Discovery Rarity":"IUCN global status")+" · "+name)
+            .setTitle((rarity?"Rarity":"IUCN global status")+" · "+name)
             .setMessage(intro).setPositiveButton("Close",null).show());
         return t;
     }

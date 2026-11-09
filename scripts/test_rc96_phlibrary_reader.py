@@ -68,8 +68,8 @@ class PhLibraryBook01(unittest.TestCase):
 
     def test_no_database_or_signing_identity_change(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 166",gradle)
-        self.assertIn("0.27.3-rc106-phlibrary-polish",gradle)
+        self.assertIn("versionCode 167",gradle)
+        self.assertIn("0.27.3-rc107-habitat-reader-saved",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         db=(JAVA/"FieldDb.java").read_text()
         self.assertIn("super(context,NAME,null,29)",db)

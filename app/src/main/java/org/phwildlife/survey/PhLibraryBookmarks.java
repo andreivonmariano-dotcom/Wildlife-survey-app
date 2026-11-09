@@ -19,6 +19,14 @@ public final class PhLibraryBookmarks {
     public static Set<String> all(Context c){
         return new HashSet<>(store(c).getStringSet(KEY,new HashSet<>()));
     }
+    /** Clear reading bookmarks only. Never touches survey records or taxon data. */
+    public static int clear(Context c){
+        Set<String> existing=all(c);
+        if(existing.isEmpty())return 0;
+        if(!store(c).edit().remove(KEY).commit())
+            return 0;
+        return existing.size();
+    }
     public static boolean toggle(Context c,String name){
         if(name==null||name.trim().isEmpty())return false;
         Set<String> values=all(c);

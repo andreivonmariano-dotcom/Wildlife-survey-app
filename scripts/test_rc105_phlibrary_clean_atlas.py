@@ -43,13 +43,13 @@ class Rc105CleanAtlas(unittest.TestCase):
         explorer=(JAVA/'PhLibraryDirectoryActivity.java').read_text()
         for required in ('new ListView(this)','setOnItemClickListener',
                          'chooseString("Family",true)','chooseString("Genus",false)',
-                         'HABITAT_PHRASES[selectedHabitat]','site',
+                         'PhLibraryHabitatFilter.mentions(r,selectedHabitat)','site',
                          'selectedHabitat','setSelectionFromTop'):
             # A term match is a literal search in the canonical article, not a verified habitat record.
             if required=='site':
                 continue
             self.assertIn(required,explorer)
-        self.assertIn('A habitat filter searches the original account wording.',explorer)
+        self.assertIn('"Habitat: "',explorer)
         self.assertIn('matches.size()==1?" account":" accounts"',explorer)
         self.assertIn('h.badges.setOrientation(enlarged?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL)',explorer)
         self.assertNotIn('Show more species',explorer)
@@ -64,13 +64,13 @@ class Rc105CleanAtlas(unittest.TestCase):
         self.assertIn('PhLibraryStatusBadge.make(a,global,false)',book)
         self.assertIn('case "CR":bg=0xFF7A2431',status)
         self.assertIn('case "Legendary":bg=0xFF54236F',status)
-        self.assertIn('sourceUrl',habitat)
-        self.assertIn('No reviewed species links added yet.',habitat)
-        self.assertIn('provisional',habitat)
+        self.assertIn('phlibrary_habitat_reader_v1.json',habitat)
+        self.assertNotIn('Literature-linked species',habitat)
+        self.assertIn('Browse species',habitat)
         self.assertNotIn('getWritableDatabase',book)
         self.assertNotIn('getWritableDatabase',habitat)
         build=(ROOT/'app/build.gradle').read_text()
-        self.assertIn('versionCode 166',build)
+        self.assertIn('versionCode 167',build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn('super(context,NAME,null,29)',(JAVA/'FieldDb.java').read_text())
 

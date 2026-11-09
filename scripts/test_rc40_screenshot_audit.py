@@ -99,9 +99,12 @@ class Rc40ScreenAudit(unittest.TestCase):
     def test_direct_reference_copy_keeps_citations(self):
         habitat=source("HabitatSpeciesEvidenceActivity.java")
         self.assertNotIn("Published species–habitat context is not",habitat)
-        self.assertIn('edge.optString("evidenceText")',habitat)
-        self.assertIn('edge.optString("sourceTitle")',habitat)
-        self.assertIn('putExtra("taxon_key",taxonKey)',habitat)
+        self.assertIn('phlibrary_habitat_reader_v1.json',habitat)
+        self.assertNotIn('Literature-linked species',habitat)
+        links=json.loads((ROOT/"app/src/main/assets/rc8_species_habitat_links_v1.json").read_text())["edges"]
+        self.assertEqual(len(links),21)
+        self.assertTrue(all(edge.get("evidenceText") and edge.get("sourceTitle")
+                            for edge in links))
         card=source("Rc11PrioritySpeciesView.java")
         self.assertIn("ResearchCitationFormatter.citeClaim(",card)
         accounts=json.loads((ROOT/"app/src/main/assets/rc18_unified_96_priority_accounts_v1.json").read_text())

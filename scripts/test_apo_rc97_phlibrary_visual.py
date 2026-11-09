@@ -24,7 +24,7 @@ class Rc97PHLibraryVisual(unittest.TestCase):
         self.assertIn("PhLibraryBook01.entries(this)",directory)
         self.assertIn("PHLibrary",directory)
         self.assertIn("UiKit.fieldInput(this,search)",directory)
-        self.assertIn("Discovery Rarity:",directory)
+        self.assertIn("Rarity: ",directory)
         self.assertIn("new ListView(this)",directory)
         self.assertIn("phlibrary_scientific_name",directory)
         for unwanted in ("ImageView","AsyncImage","OfflinePhotoEvidence",
@@ -55,8 +55,8 @@ class Rc97PHLibraryVisual(unittest.TestCase):
                           "Exceptionally rare":37,"Legendary":3})
     def test_existing_apk_identity_and_science_schema_preserved(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 166",gradle)
-        self.assertIn("0.27.3-rc106-phlibrary-polish",gradle)
+        self.assertIn("versionCode 167",gradle)
+        self.assertIn("0.27.3-rc107-habitat-reader-saved",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,29)",
                       (JAVA/"FieldDb.java").read_text())

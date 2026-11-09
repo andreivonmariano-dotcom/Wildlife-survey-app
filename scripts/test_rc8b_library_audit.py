@@ -69,9 +69,9 @@ class Rc8bScientificAudit(unittest.TestCase):
 
     def test_habitat_link_view_does_not_infer_absence(self):
         text=(CODE/"HabitatSpeciesEvidenceActivity.java").read_text()
-        self.assertIn("do not establish presence",text)
-        self.assertIn("No reviewed species links added yet",text)
-        self.assertIn('edge.optString("sourceTitle")',text)
+        self.assertIn("Habitat Atlas",text)
+        self.assertNotIn("Literature-linked species",text)
+        self.assertIn('phlibrary_habitat_reader_v1.json',text)
         self.assertNotIn("getWritableDatabase",text)
         self.assertIn("HabitatSpeciesEvidenceActivity.class",
             (CODE/"HabitatRecordsActivity.java").read_text())

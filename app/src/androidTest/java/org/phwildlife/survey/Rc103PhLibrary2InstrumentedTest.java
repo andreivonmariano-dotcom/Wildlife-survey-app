@@ -121,7 +121,10 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     EditText input=(EditText)find(root,EditText.class);
                     assertNotNull(lv);assertNotNull(input);
                     assertEquals(715,lv.getAdapter().getCount());
-                    assertNull("Clear should appear only when needed",text(root,"Clear"));
+                    TextView reset=(TextView)text(root,"Clear");
+                    assertNotNull("Reset control remains available when needed",reset);
+                    assertEquals("Clear is hidden until a filter or search is active",
+                        View.GONE,reset.getVisibility());
                     if(a.getResources().getConfiguration().fontScale>=1.6f){
                         for(String action:new String[]{"Sort","Filters"}){
                             TextView control=(TextView)text(root,action);
@@ -144,6 +147,7 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     assertNotNull(text(root,"1 account"));
                     TextView clear=(TextView)text(root,"Clear");
                     assertNotNull("Clear shown with an active search",clear);
+                    assertEquals(View.VISIBLE,clear.getVisibility());
                     float clearWidth=clear.getPaint().measureText("Clear");
                     int innerWidth=clear.getWidth()-clear.getPaddingLeft()-clear.getPaddingRight();
                     assertTrue("Clear must fit within its button",clearWidth<=innerWidth);
@@ -151,7 +155,7 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     assertEquals(1,lv.getAdapter().getCount());
                     input.setText("");
                     assertEquals(715,lv.getAdapter().getCount());
-                    assertNull("Clear hidden after reset",text(root,"Clear"));
+                    assertEquals("Clear hidden after reset",View.GONE,reset.getVisibility());
                 }catch(Exception x){err[0]=x;}
             });
             if(err[0]!=null)throw err[0];

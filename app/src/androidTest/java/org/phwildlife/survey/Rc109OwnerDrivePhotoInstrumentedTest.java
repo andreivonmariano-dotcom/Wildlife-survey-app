@@ -71,7 +71,6 @@ public final class Rc109OwnerDrivePhotoInstrumentedTest {
         }
     }
     @Test public void cDailyTaxonUsesOnlyOwnedPhotographs()throws Exception{
-        android.app.Activity activity=new android.app.Activity();
         // The daily selector requires the full Activity asset/Book context.
         try(androidx.test.core.app.ActivityScenario<WelcomeActivity> scenario=
             androidx.test.core.app.ActivityScenario.launch(WelcomeActivity.class)){
@@ -93,8 +92,11 @@ public final class Rc109OwnerDrivePhotoInstrumentedTest {
         }
     }
     @Test public void dThirdPartyPhotosAreAbsentFromApk(){
-        assertFalse(OfflinePhotoEvidence.hasOfflineTaxon(
-            new android.app.Activity(),"Pithecophaga jefferyi"));
+        try(androidx.test.core.app.ActivityScenario<WelcomeActivity> scenario=
+            androidx.test.core.app.ActivityScenario.launch(WelcomeActivity.class)){
+            scenario.onActivity(a->assertFalse(
+                OfflinePhotoEvidence.hasOfflineTaxon(a,"Pithecophaga jefferyi")));
+        }
     }
     @Test public void eSeedSignedRc107Workspace()throws Exception{
         assertEquals(167,version());

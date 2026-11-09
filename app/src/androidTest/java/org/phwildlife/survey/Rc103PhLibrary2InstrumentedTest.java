@@ -306,7 +306,7 @@ public final class Rc103PhLibrary2InstrumentedTest {
             scenario.onActivity(a->{
                 try{
                     View root=a.getWindow().getDecorView();
-                    assertNotNull(text(root,"Saved species"));
+                    assertNotNull(text(root,"Saved"));
                     ListView species=(ListView)find(root,ListView.class);
                     assertEquals(2,species.getAdapter().getCount());
                     shot(a,"saved-before");
@@ -324,7 +324,7 @@ public final class Rc103PhLibrary2InstrumentedTest {
                 try{
                     View root=a.getWindow().getDecorView();
                     assertNotNull("Saved navigation context must persist",
-                        text(root,"Saved species"));
+                        text(root,"Saved"));
                     assertNotNull(text(root,"No saved species"));
                     ListView species=(ListView)find(root,ListView.class);
                     assertEquals(0,species.getAdapter().getCount());

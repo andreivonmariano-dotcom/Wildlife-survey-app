@@ -10,7 +10,7 @@ class Rc59HubVisual(unittest.TestCase):
         self.assertIn('new ScrollView(this)',src)
         self.assertIn("PhLibraryPhotoHero.create",src)
         self.assertIn("tile(body,",src)
-        self.assertIn("TextView browse",src)
+        self.assertIn("View tileGap",src)
         self.assertIn("scroll.setFillViewport(true)",src)
         self.assertIn("LikasDesignSystem.RADIUS_CARD",style) if False else None
         self.assertNotIn("LikasPortalUi.action",src)

@@ -82,15 +82,30 @@ public final class PhLibraryDriveGallery {
         List<JSONObject> items=byTaxon.get(key(scientific));
         return items==null?Collections.emptyList():items;
     }
+    /** Keep adjacent full-resolution frames decoded for smooth gallery swipes. */
+    private static final android.util.LruCache<String,Bitmap> frameCache=
+        new android.util.LruCache<String,Bitmap>(24*1024*1024){
+            @Override protected int sizeOf(String key,Bitmap bitmap){
+                return bitmap.getByteCount();
+            }
+        };
     private static Bitmap decode(Activity a,JSONObject item){
         if(item==null)return null;
         String asset=item.optString("offlineAsset");
         if(!asset.matches("offline_photos/drive_[0-9]{4}\\.jpg"))return null;
+        synchronized(frameCache){
+            Bitmap cached=frameCache.get(asset);
+            if(cached!=null&&!cached.isRecycled())return cached;
+        }
         try(InputStream stream=a.getAssets().open(asset)){
             BitmapFactory.Options options=new BitmapFactory.Options();
             options.inPreferredConfig=Bitmap.Config.ARGB_8888;
-            options.inSampleSize=1; // 1920px EXIF-free derivatives, never 1/4 thumbnails
-            return BitmapFactory.decodeStream(stream,null,options);
+            options.inSampleSize=1; // 1920px EXIF-free derivatives
+            Bitmap bitmap=BitmapFactory.decodeStream(stream,null,options);
+            if(bitmap!=null){
+                synchronized(frameCache){frameCache.put(asset,bitmap);}
+            }
+            return bitmap;
         }catch(Exception ignored){return null;}
     }
     public static ImageView coverForTaxon(Activity a,String scientific){

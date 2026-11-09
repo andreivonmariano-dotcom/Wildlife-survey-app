@@ -48,12 +48,15 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         root.setBackgroundColor(PhLibrary2Ui.PAPER);
         root.setPadding(dp(15),dp(7),dp(15),0);
         LinearLayout nav=new LinearLayout(this);nav.setGravity(Gravity.CENTER_VERTICAL);
+        boolean large=getResources().getConfiguration().fontScale>=1.6f;
         TextView back=PhLibrary2Ui.action(this,"Back",onBack,false);
-        nav.addView(back,new LinearLayout.LayoutParams(dp(80),dp(48)));
-        TextView label=PhLibrary2Ui.text(this,title,14,PhLibrary2Ui.FOREST,false,true);
-        label.setGravity(Gravity.CENTER);nav.addView(label,new LinearLayout.LayoutParams(0,dp(48),1));
-        TextView count=PhLibrary2Ui.text(this,"15",13,PhLibrary2Ui.MUTED,false,true);
-        nav.addView(count);root.addView(nav);
+        if(large){back.setTextSize(12);back.setPadding(dp(6),dp(5),dp(6),dp(5));}
+        nav.addView(back,new LinearLayout.LayoutParams(dp(large?99:80),dp(48)));
+        TextView label=PhLibrary2Ui.text(this,title,large?11:14,
+            PhLibrary2Ui.FOREST,false,true);
+        label.setGravity(Gravity.CENTER);
+        nav.addView(label,new LinearLayout.LayoutParams(0,dp(48),1));
+        root.addView(nav);
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
         LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);
         body.setPadding(dp(1),dp(10),dp(1),dp(28));

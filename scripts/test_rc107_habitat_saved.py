@@ -51,6 +51,8 @@ class Rc107HabitatSaved(unittest.TestCase):
         self.assertIn('"Rarity: "',directory)
         self.assertIn('choose("Habitat",PhLibraryHabitatFilter.NAMES',directory)
         self.assertIn('PhLibraryHabitatFilter.mentions(r,selectedHabitat)',directory)
+        self.assertIn('PhLibraryHabitatFilter.SHORT_NAMES[selectedHabitat]',directory)
+        self.assertIn('public static final String[] SHORT_NAMES',habitat)
         self.assertIn('getIntent().getStringExtra("phlibrary_habitat_id")',directory)
         self.assertIn('{"riparian","streamside"',habitat)
         self.assertIn('"lowland-forest"',habitat)

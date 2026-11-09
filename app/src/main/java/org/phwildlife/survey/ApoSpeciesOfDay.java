@@ -68,40 +68,38 @@ public final class ApoSpeciesOfDay {
 
         LinearLayout card=new LinearLayout(a);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(dp(a,15),dp(a,16),dp(a,15),dp(a,16));
+        card.setPadding(dp(a,15),dp(a,15),dp(a,15),dp(a,16));
         card.setBackground(PhLibrary2Ui.touch(a,PhLibrary2Ui.IVORY,PhLibrary2Ui.LINE,17));
         card.setTag("apo_species_of_the_day");
         TextView eyebrow=PhLibrary2Ui.text(a,"SPECIES OF THE DAY",11,
             PhLibrary2Ui.FOREST,false,true);
         eyebrow.setLetterSpacing(.1f);
         card.addView(eyebrow);
-        LinearLayout head=new LinearLayout(a);
-        head.setOrientation(stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        head.setGravity(Gravity.CENTER_VERTICAL);
-        LinearLayout.LayoutParams hp=new LinearLayout.LayoutParams(-1,-2);
-        hp.topMargin=dp(a,10);card.addView(head,hp);
+        // Full-width letterboxed owner photo: no thumbnail enlargement or forced square crop.
         View photo=PhLibrarySpeciesMedia.photoOrPlaceholder(a,latin);
-        int size=stacked?144:106;
-        head.addView(photo,new LinearLayout.LayoutParams(stacked?-1:dp(a,size),dp(a,size)));
-        LinearLayout names=new LinearLayout(a);names.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams np=new LinearLayout.LayoutParams(stacked?-1:0,-2,
-            stacked?0:1f);
-        if(stacked)np.topMargin=dp(a,11);else np.leftMargin=dp(a,13);
-        head.addView(names,np);
-        TextView title=PhLibrary2Ui.text(a,common,stacked?19:20,PhLibrary2Ui.INK,true,false);
-        names.addView(title);
-        TextView scientific=PhLibrary2Ui.text(a,latin,13,PhLibrary2Ui.MUTED,true,false);
+        LinearLayout.LayoutParams image=new LinearLayout.LayoutParams(-1,dp(a,stacked?200:224));
+        image.topMargin=dp(a,11);card.addView(photo,image);
+        TextView title=PhLibrary2Ui.text(a,common,stacked?19:21,
+            PhLibrary2Ui.INK,true,false);
+        LinearLayout.LayoutParams tp=new LinearLayout.LayoutParams(-1,-2);
+        tp.topMargin=dp(a,12);card.addView(title,tp);
+        TextView scientific=PhLibrary2Ui.text(a,latin,14,
+            PhLibrary2Ui.MUTED,true,false);
         scientific.setTypeface(Typeface.create("serif",Typeface.ITALIC));
         LinearLayout.LayoutParams slp=new LinearLayout.LayoutParams(-1,-2);
-        slp.topMargin=dp(a,4);names.addView(scientific,slp);
+        slp.topMargin=dp(a,3);card.addView(scientific,slp);
+        TextView source=PhLibrary2Ui.text(a,"Owner's Drive photograph",
+            11,PhLibrary2Ui.MUTED,false,false);
+        LinearLayout.LayoutParams sop=new LinearLayout.LayoutParams(-1,-2);
+        sop.topMargin=dp(a,5);card.addView(source,sop);
         TextView factText=PhLibrary2Ui.text(a,fact,13,PhLibrary2Ui.INK,false,false);
         factText.setLineSpacing(dp(a,2),1.08f);
         LinearLayout.LayoutParams fp=new LinearLayout.LayoutParams(-1,-2);
-        fp.topMargin=dp(a,12);card.addView(factText,fp);
+        fp.topMargin=dp(a,11);card.addView(factText,fp);
         LinearLayout badges=new LinearLayout(a);
         badges.setOrientation(stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams bp=new LinearLayout.LayoutParams(-1,-2);
-        bp.topMargin=dp(a,11);card.addView(badges,bp);
+        bp.topMargin=dp(a,12);card.addView(badges,bp);
         TextView rank=PhLibraryStatusBadge.make(a,rarity,true);
         TextView global=PhLibraryStatusBadge.make(a,status,false);
         rank.setClickable(false);rank.setFocusable(false);
@@ -114,7 +112,11 @@ public final class ApoSpeciesOfDay {
         TextView end=PhLibrary2Ui.text(a,"Endemicity · "+endemic,12,
             PhLibrary2Ui.MUTED,false,true);
         LinearLayout.LayoutParams ep=new LinearLayout.LayoutParams(-1,-2);
-        ep.topMargin=dp(a,12);card.addView(end,ep);
+        ep.topMargin=dp(a,10);card.addView(end,ep);
+        TextView openText=PhLibrary2Ui.text(a,"Read species account",
+            12,PhLibrary2Ui.FOREST,false,true);
+        LinearLayout.LayoutParams op=new LinearLayout.LayoutParams(-1,-2);
+        op.topMargin=dp(a,12);card.addView(openText,op);
 
         card.setFocusable(true);card.setClickable(true);
         card.setContentDescription("Species of the day. "+common+", "+latin+

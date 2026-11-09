@@ -17,10 +17,11 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -29,6 +30,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.Arrays;
+import android.text.InputType;
 
 /** PHLibrary 2.0: virtualized, filterable source-faithful species explorer. */
 public final class PhLibraryDirectoryActivity extends Activity {
@@ -36,6 +40,16 @@ public final class PhLibraryDirectoryActivity extends Activity {
     private static final String[] TIERS={"All rarity tiers","Common","Uncommon","Rare","Exceptionally rare","Legendary","Unranked"};
     private static final String[] STATUSES={"All IUCN statuses","CR","EN","VU","NT","LC","DD","NE","Unassessed"};
     private static final String[] SORT={"Source order","Common name A–Z","Scientific name A–Z"};
+    private static final String[] HABITATS={"Any habitat mention","Lowland forest","Montane forest",
+        "Mossy forest","Limestone and karst","Ultramafic forest","Mangrove",
+        "Freshwater wetland","Riparian forest","Secondary forest","Subalpine forest",
+        "Beach forest","Swamp forest","Peat swamp forest","Semi-evergreen forest","Deciduous forest"};
+    private static final String[] HABITAT_PHRASES={"","lowland forest","montane forest",
+        "mossy forest","limestone","ultramafic","mangrove",
+        "wetland","riparian","secondary forest","subalpine",
+        "beach forest","swamp forest","peat swamp","semi-evergreen","deciduous forest"};
+    private String family="",genus="";
+    private int selectedHabitat=0;
     private final ArrayList<JSONObject> matches=new ArrayList<>();
     private EditText search;
     private TextView resultsCount,rarityButton,iucnButton,sortButton,savedButton;
@@ -60,8 +74,8 @@ public final class PhLibraryDirectoryActivity extends Activity {
         for(int i=0;i<GROUPS.length;i++){
             final int j=i;boolean active=i==selectedGroup;
             TextView chip=text(GROUPS[i],14,active?Color.WHITE:PhLibrary2Ui.FOREST,false,true);
-            chip.setGravity(Gravity.CENTER);chip.setMinHeight(dp(48));
-            chip.setPadding(dp(15),dp(9),dp(15),dp(9));
+            chip.setGravity(Gravity.CENTER);chip.setMinHeight(dp(44));
+            chip.setPadding(dp(12),dp(7),dp(12),dp(7));
             chip.setBackground(PhLibrary2Ui.touch(this,
                 active?PhLibrary2Ui.FOREST:PhLibrary2Ui.IVORY,
                 active?Color.TRANSPARENT:PhLibrary2Ui.LINE,18));
@@ -78,27 +92,78 @@ public final class PhLibraryDirectoryActivity extends Activity {
                 select.accept(which);d.dismiss();filter();
             }).setNegativeButton("Close",null).show();
     }
+    private void chooseString(String title,boolean byFamily){
+        TreeSet<String> terms=new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        for(JSONObject row:PhLibraryBook01.entries(this)){
+            String name=byFamily?row.optString("f"):row.optString("s").split(" ")[0];
+            if(!name.isEmpty())terms.add(name);
+        }
+        ArrayList<String> items=new ArrayList<>();items.add("Any");
+        items.addAll(terms);
+        LinearLayout content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(dp(14),dp(6),dp(14),dp(6));
+        EditText find=new EditText(this);find.setSingleLine(true);
+        find.setTextSize(16);find.setHint("Search "+title.toLowerCase(Locale.ROOT));
+        find.setInputType(InputType.TYPE_CLASS_TEXT);
+        content.addView(find,new LinearLayout.LayoutParams(-1,dp(52)));
+        ListView options=new ListView(this);
+        ArrayAdapter<String> values=new ArrayAdapter<>(this,
+            android.R.layout.simple_list_item_1,new ArrayList<>(items));
+        options.setAdapter(values);
+        content.addView(options,new LinearLayout.LayoutParams(-1,dp(340)));
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle(title)
+            .setView(content).setNegativeButton("Close",null).create();
+        find.addTextChangedListener(new TextWatcher(){
+            public void beforeTextChanged(CharSequence s,int start,int count,int after){}
+            public void onTextChanged(CharSequence s,int start,int before,int count){
+                values.getFilter().filter(s);
+            }
+            public void afterTextChanged(Editable e){}
+        });
+        options.setOnItemClickListener((parent,view,position,id)->{
+            String chosen=String.valueOf(parent.getItemAtPosition(position));
+            if("Any".equals(chosen))chosen="";
+            if(byFamily)family=chosen;else genus=chosen;
+            dialog.dismiss();filter();
+        });
+        dialog.getWindow();
+        dialog.show();
+    }
+    private void clearFilters(){
+        selectedGroup=0;selectedRarity=0;selectedIucn=0;selectedSort=0;
+        family="";genus="";selectedHabitat=0;savedOnly=false;
+        search.setText("");setGroup(0);filter();
+    }
     private void chooseCompactFilters(){
         String[] options={
-            "Discovery Rarity: "+(selectedRarity==0?"All":TIERS[selectedRarity]),
-            "IUCN status: "+(selectedIucn==0?"All":STATUSES[selectedIucn]),
-            savedOnly?"Show all species (saved filter on)":"Show saved species only",
+            "Family: "+(family.isEmpty()?"Any":family),
+            "Genus: "+(genus.isEmpty()?"Any":genus),
+            "Habitat mention: "+(selectedHabitat==0?"Any":HABITATS[selectedHabitat]),
+            "Discovery Rarity: "+(selectedRarity==0?"Any":TIERS[selectedRarity]),
+            "IUCN: "+(selectedIucn==0?"Any":PhLibraryStatusBadge.status(STATUSES[selectedIucn])),
+            savedOnly?"Saved species: Only saved":"Saved species: All",
             "Clear all filters"
         };
         new AlertDialog.Builder(this).setTitle("Filter species")
-            .setItems(options,(dialog,which)->{
-                switch(which){
-                    case 0:choose("Discovery Rarity",TIERS,selectedRarity,
-                        choice->selectedRarity=choice);break;
-                    case 1:choose("IUCN global status",STATUSES,selectedIucn,
-                        choice->selectedIucn=choice);break;
-                    case 2:savedOnly=!savedOnly;filter();break;
-                    case 3:
-                        selectedRarity=0;selectedIucn=0;savedOnly=false;
-                        setGroup(0);filter();break;
+            .setItems(options,(d,index)->{
+                switch(index){
+                    case 0:chooseString("Family",true);break;
+                    case 1:chooseString("Genus",false);break;
+                    case 2:choose("Habitat mentions in Book 01",HABITATS,
+                        selectedHabitat,i->selectedHabitat=i);break;
+                    case 3:choose("Discovery Rarity",TIERS,selectedRarity,
+                        i->selectedRarity=i);break;
+                    case 4:choose("IUCN global status",STATUSES,selectedIucn,
+                        i->selectedIucn=i);break;
+                    case 5:savedOnly=!savedOnly;filter();break;
+                    case 6:clearFilters();break;
                     default:break;
                 }
-            }).setNegativeButton("Close",null).show();
+            }).setNegativeButton("Close",null)
+            .setNeutralButton("About habitat mentions",(d,w)->
+                new AlertDialog.Builder(this).setTitle("Habitat text search")
+                    .setMessage("A habitat filter searches the original account wording. A text match does not establish occupancy, habitat selection, or occurrence at a survey site.")
+                    .setPositiveButton("Close",null).show()).show();
     }
     private void filter(){
         if(adapter==null)return;
@@ -115,6 +180,10 @@ public final class PhLibraryDirectoryActivity extends Activity {
             if(selectedIucn!=0 && !STATUSES[selectedIucn].equals(
                     r.isNull("iucn")?"Unassessed":r.optString("iucn","Unassessed")))continue;
             if(savedOnly && !bookmarks.contains(r.optString("s")))continue;
+            if(!family.isEmpty()&&!family.equalsIgnoreCase(r.optString("f")))continue;
+            if(!genus.isEmpty()&&!genus.equalsIgnoreCase(r.optString("s").split(" ")[0]))continue;
+            if(selectedHabitat>0&&!lower(r.optString("p")).contains(
+                HABITAT_PHRASES[selectedHabitat]))continue;
             if(!query.isEmpty()&&!lower(r.optString("s")+" "+r.optString("c")+" "+
                     r.optString("f")+" "+r.optString("o")+" "+r.optString("p")).contains(query))
                 continue;
@@ -126,14 +195,13 @@ public final class PhLibraryDirectoryActivity extends Activity {
             (a,b)->a.optString("s").compareToIgnoreCase(b.optString("s")));
         else if(!query.isEmpty())Collections.sort(matches,
             Comparator.comparingInt(r->rank(r,query)));
-        resultsCount.setText(matches.size()+" accounts found"+
+        resultsCount.setText(matches.size()+(matches.size()==1?" account":" accounts")+" found"+
             (savedOnly?" · Saved collection":""));
-        savedButton.setText(compactFilters ? "Filters"+(savedOnly?" · Saved":"") :
-            (savedOnly?"Saved only · On":"Saved only · Off"));
-        rarityButton.setText("Rarity: "+(selectedRarity==0?"All":TIERS[selectedRarity]));
-        iucnButton.setText("IUCN: "+(selectedIucn==0?"All":STATUSES[selectedIucn]));
-        sortButton.setText(compactFilters?"Sort":
-            (selectedSort==0?"Sort: Source":"Sort: "+SORT[selectedSort]));
+        int active=(selectedRarity!=0?1:0)+(selectedIucn!=0?1:0)+
+            (selectedHabitat!=0?1:0)+(family.isEmpty()?0:1)+
+            (genus.isEmpty()?0:1)+(savedOnly?1:0);
+        savedButton.setText(active==0?"Filters":"Filters · "+active);
+        sortButton.setText("Sort");
         adapter.notifyDataSetChanged();
         if(!restoring)list.setSelection(0);
     }
@@ -234,6 +302,9 @@ public final class PhLibraryDirectoryActivity extends Activity {
             selectedGroup=saved.getInt("group");selectedRarity=saved.getInt("rarity");
             selectedIucn=saved.getInt("iucn");selectedSort=saved.getInt("sort");
             savedOnly=saved.getBoolean("savedOnly");restoring=true;
+            family=saved.getString("family","");genus=saved.getString("genus","");
+            selectedHabitat=saved.getInt("habitat",0);
+            if(selectedHabitat<0||selectedHabitat>=HABITATS.length)selectedHabitat=0;
             restoreRow=saved.getInt("first");restoreOffset=saved.getInt("offset");
         }
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
@@ -248,21 +319,13 @@ public final class PhLibraryDirectoryActivity extends Activity {
             compactFilters?13:14,PhLibrary2Ui.FOREST,false,true);
         title.setGravity(Gravity.CENTER);title.setLetterSpacing(.11f);
         headingBar.addView(title,new LinearLayout.LayoutParams(0,dp(48),1));
-        TextView reset=PhLibrary2Ui.action(this,"Clear",()->{
-            selectedRarity=0;selectedIucn=0;selectedSort=0;savedOnly=false;
-            search.setText("");setGroup(0);filter();
-        },false);
+        TextView reset=PhLibrary2Ui.action(this,"Clear",this::clearFilters,false);
         if(compactFilters){reset.setTextSize(12);reset.setPadding(dp(6),dp(5),dp(6),dp(5));}
         headingBar.addView(reset,new LinearLayout.LayoutParams(dp(compactFilters?82:71),dp(48)));
         root.addView(headingBar);
-        TextView eyebrow=PhLibrary2Ui.eyebrow(this,"GREATER MINDANAO  /  BOOK 01");
-        if(!compactFilters)root.addView(eyebrow);
-        TextView heading=text(compactFilters?"Species":"Explore all 715 accounts",
-            compactFilters?23:29,PhLibrary2Ui.INK,true,false);
-        heading.setPadding(0,0,0,dp(5));root.addView(heading);
-        TextView sub=text("Search names, taxonomy or full article text",14,
-            PhLibrary2Ui.MUTED,false,false);
-        sub.setPadding(0,0,0,dp(12));if(!compactFilters)root.addView(sub);
+        TextView heading=text("Species atlas",compactFilters?17:22,
+            PhLibrary2Ui.INK,true,false);
+        heading.setPadding(0,dp(3),0,dp(8));root.addView(heading);
 
         search=new EditText(this);search.setSingleLine(true);
         search.setHint(compactFilters?"Search":"Search species, habitats or places");
@@ -274,44 +337,26 @@ public final class PhLibraryDirectoryActivity extends Activity {
         chips.setHorizontalScrollBarEnabled(true);
         chips.setContentDescription("Wildlife groups. Swipe horizontally for additional groups.");
         groupChips=new LinearLayout(this);groupChips.setOrientation(LinearLayout.HORIZONTAL);
-        groupChips.setPadding(0,dp(11),0,dp(6));
+        groupChips.setPadding(0,dp(6),0,dp(3));
         chips.addView(groupChips);root.addView(chips);
         setGroup(selectedGroup);
 
-        boolean stacked=getResources().getConfiguration().screenWidthDp<360 ||
-            getResources().getConfiguration().fontScale>=1.6f;
-        LinearLayout filters=new LinearLayout(this);
-        filters.setOrientation(stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        filters.setPadding(0,dp(4),0,dp(3));
-        rarityButton=PhLibrary2Ui.action(this,"Rarity",()->choose("Discovery Rarity",
-            TIERS,selectedRarity,which->selectedRarity=which),false);
-        iucnButton=PhLibrary2Ui.action(this,"IUCN",()->choose("IUCN global status",
-            STATUSES,selectedIucn,which->selectedIucn=which),false);
-        LinearLayout.LayoutParams fp1=new LinearLayout.LayoutParams(stacked?-1:0,dp(48),1);
-        filters.addView(rarityButton,fp1);
-        LinearLayout.LayoutParams fp2=new LinearLayout.LayoutParams(stacked?-1:0,dp(48),1);
-        if(stacked)fp2.topMargin=dp(6);else fp2.leftMargin=dp(7);
-        filters.addView(iucnButton,fp2);
-        if(!compactFilters)root.addView(filters);
-
+        // All advanced filters stay in one searchable sheet.
+        rarityButton=PhLibrary2Ui.text(this,"",12,PhLibrary2Ui.MUTED,false,false);
+        iucnButton=PhLibrary2Ui.text(this,"",12,PhLibrary2Ui.MUTED,false,false);
         LinearLayout tools=new LinearLayout(this);tools.setGravity(Gravity.CENTER_VERTICAL);
-        sortButton=PhLibrary2Ui.action(this,"Sort: Source",
-            ()->choose("Order species",SORT,selectedSort,which->selectedSort=which),false);
-        savedButton=PhLibrary2Ui.action(this,compactFilters?"Filters":"Saved only · Off",()->{
-            if(compactFilters)chooseCompactFilters();
-            else {savedOnly=!savedOnly;filter();}
-        },false);
-        if(compactFilters){
-            sortButton.setTextSize(12);savedButton.setTextSize(12);
-            sortButton.setPadding(dp(7),dp(5),dp(7),dp(5));
-            savedButton.setPadding(dp(7),dp(5),dp(7),dp(5));
-        }
-        LinearLayout.LayoutParams sl=new LinearLayout.LayoutParams(0,dp(48),1);tools.addView(sortButton,sl);
-        LinearLayout.LayoutParams bl=new LinearLayout.LayoutParams(0,dp(48),1);bl.leftMargin=dp(7);
-        tools.addView(savedButton,bl);root.addView(tools);
+        savedButton=PhLibrary2Ui.action(this,"Filters",this::chooseCompactFilters,false);
+        sortButton=PhLibrary2Ui.action(this,"Sort",
+            ()->choose("Sort species",SORT,selectedSort,i->selectedSort=i),false);
+        if(compactFilters){savedButton.setTextSize(12);sortButton.setTextSize(12);}
+        LinearLayout.LayoutParams fl=new LinearLayout.LayoutParams(0,dp(48),1);
+        tools.addView(savedButton,fl);
+        LinearLayout.LayoutParams sl=new LinearLayout.LayoutParams(0,dp(48),1);
+        sl.leftMargin=dp(8);tools.addView(sortButton,sl);
+        tools.setPadding(0,dp(2),0,0);root.addView(tools);
 
         resultsCount=text("",14,PhLibrary2Ui.FOREST,false,true);
-        resultsCount.setPadding(dp(1),dp(11),0,dp(8));root.addView(resultsCount);
+        resultsCount.setPadding(dp(1),dp(7),0,dp(7));root.addView(resultsCount);
         list=new ListView(this);list.setDividerHeight(dp(8));
         list.setDivider(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
         list.setCacheColorHint(Color.TRANSPARENT);
@@ -340,6 +385,8 @@ public final class PhLibraryDirectoryActivity extends Activity {
         out.putInt("group",selectedGroup);out.putInt("rarity",selectedRarity);
         out.putInt("iucn",selectedIucn);out.putInt("sort",selectedSort);
         out.putBoolean("savedOnly",savedOnly);
+        out.putString("family",family);out.putString("genus",genus);
+        out.putInt("habitat",selectedHabitat);
         out.putString("query",search.getText().toString());
         out.putInt("first",list.getFirstVisiblePosition());
         View first=list.getChildAt(0);out.putInt("offset",first==null?0:first.getTop());

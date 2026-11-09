@@ -34,7 +34,7 @@ class Rc97PHLibraryVisual(unittest.TestCase):
         book=(JAVA/"PhLibraryBook01.java").read_text()
         self.assertIn('record.optString("p"),17.5f',book)
         self.assertIn("referencesDialog(a,refs)",book)
-        self.assertIn('REFERENCES ·',book)
+        self.assertIn('Citations (',book)
         self.assertIn('replace("✦","")',book)
         self.assertNotIn("OfflinePhotoEvidence.addPhLibraryPlate",book)
         self.assertNotIn("ImageView",book)

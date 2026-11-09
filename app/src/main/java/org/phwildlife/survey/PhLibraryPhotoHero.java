@@ -1,6 +1,7 @@
 package org.phwildlife.survey;
 
 import android.app.Activity;
+import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -36,7 +37,11 @@ public final class PhLibraryPhotoHero {
         }
         final boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
         FrameLayout frame=new FrameLayout(a);
-        frame.setMinimumHeight(PhLibrary2Ui.dp(a,large?240:194));
+        // A minimum alone lets the full-height ScrollView stretch the cover and
+        // hide Home navigation beneath it after neighboring headings are removed.
+        int coverHeight=PhLibrary2Ui.dp(a,large?240:194);
+        frame.setMinimumHeight(coverHeight);
+        frame.setLayoutParams(new LinearLayout.LayoutParams(-1,coverHeight));
         frame.setBackground(PhLibrary2Ui.bg(a,PhLibrary2Ui.DEEP,
             android.graphics.Color.TRANSPARENT,17));
         frame.setClipToOutline(true);
@@ -60,21 +65,37 @@ public final class PhLibraryPhotoHero {
     private static final class PhotoLayer extends View {
         private static final long SLOT=600000L,FADE=950L;
         private final Bitmap sheet;
+        private final boolean reducedMotion;
         private final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
         private final Runnable tick=new Runnable(){public void run(){
             int next=slot();
-            if(next!=current){previous=current;current=next;fadeStart=SystemClock.uptimeMillis();}
+            if(next!=current){
+                previous=reducedMotion?next:current;
+                current=next;
+                fadeStart=reducedMotion?0:SystemClock.uptimeMillis();
+            }
             invalidate(); schedule();
         }};
         private int current,previous;private long fadeStart=0;
         private final Paint overlay=new Paint(Paint.ANTI_ALIAS_FLAG);
         PhotoLayer(Activity a,Bitmap b){
             super(a);sheet=b;current=slot();previous=current;
+            reducedMotion=a.getSharedPreferences("likas_ui",Activity.MODE_PRIVATE)
+                    .getBoolean("reduced_motion",false) ||
+                !ValueAnimator.areAnimatorsEnabled() ||
+                a.getResources().getConfiguration().fontScale>=1.6f;
             setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         }
         private int slot(){return (int)((System.currentTimeMillis()/SLOT)%4);}
         private void schedule(){removeCallbacks(tick);postDelayed(tick,Math.max(1000L,SLOT-System.currentTimeMillis()%SLOT));}
         @Override protected void onAttachedToWindow(){super.onAttachedToWindow();schedule();}
+        @Override protected void onWindowVisibilityChanged(int visibility){
+            super.onWindowVisibilityChanged(visibility);
+            if(visibility==VISIBLE){
+                current=slot();previous=current;fadeStart=0;
+                invalidate();schedule();
+            }else removeCallbacks(tick);
+        }
         @Override protected void onDetachedFromWindow(){removeCallbacks(tick);super.onDetachedFromWindow();}
         private void paintImage(Canvas canvas,int number,int alpha){
             if(alpha<=0)return;

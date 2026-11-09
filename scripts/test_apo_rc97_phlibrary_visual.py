@@ -34,7 +34,7 @@ class Rc97PHLibraryVisual(unittest.TestCase):
         book=(JAVA/"PhLibraryBook01.java").read_text()
         self.assertIn('record.optString("p"),17.5f',book)
         self.assertIn("referencesDialog(a,refs)",book)
-        self.assertIn('REFERENCES ·',book)
+        self.assertIn('Citations (',book)
         self.assertIn('replace("✦","")',book)
         self.assertNotIn("OfflinePhotoEvidence.addPhLibraryPlate",book)
         self.assertNotIn("ImageView",book)
@@ -55,8 +55,8 @@ class Rc97PHLibraryVisual(unittest.TestCase):
                           "Exceptionally rare":37,"Legendary":3})
     def test_existing_apk_identity_and_science_schema_preserved(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 165",gradle)
-        self.assertIn("0.27.3-rc105-phlibrary-clean-atlas",gradle)
+        self.assertIn("versionCode 166",gradle)
+        self.assertIn("0.27.3-rc106-phlibrary-polish",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,29)",
                       (JAVA/"FieldDb.java").read_text())

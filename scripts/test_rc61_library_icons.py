@@ -42,7 +42,7 @@ class Rc61IconArt(unittest.TestCase):
         self.assertNotIn('"Photo comparisons"',library)
         self.assertIn('"Saved species"',library)
         self.assertIn("PhLibraryPhotoHero.create",library)
-        self.assertIn('"Wildlife groups"',library)
+        self.assertIn('"Species Atlas"',library)
         self.assertIn('"Habitat Atlas"',library)
         self.assertIn("ImageView.ScaleType.FIT_CENTER:ImageView.ScaleType.CENTER_INSIDE",portal)
         self.assertIn("R.drawable.likas_library_conservation_display",portal)

@@ -64,16 +64,22 @@ public final class PhLibrary2Ui {
         return v;
     }
     public static LinearLayout panel(Activity a,String title,String description,Runnable action){
+        boolean hasDetail=description!=null&&!description.trim().isEmpty();
         LinearLayout p=new LinearLayout(a);p.setOrientation(LinearLayout.VERTICAL);
-        p.setPadding(dp(a,17),dp(a,14),dp(a,17),dp(a,14));
-        p.setBackground(touch(a,IVORY,LINE,17));p.setMinimumHeight(dp(a,91));
-        TextView head=text(a,title,21,INK,true,false);
+        p.setPadding(dp(a,16),dp(a,12),dp(a,16),dp(a,12));
+        p.setBackground(touch(a,IVORY,LINE,15));
+        p.setMinimumHeight(dp(a,hasDetail?82:62));
+        TextView head=text(a,title,20,INK,true,false);
         p.addView(head);
-        TextView sub=text(a,description,13,MUTED,false,false);sub.setLineSpacing(dp(a,2),1.03f);
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.topMargin=dp(a,5);p.addView(sub,lp);
-        p.setClickable(true);p.setFocusable(true);p.setOnClickListener(v->action.run());
-        p.setContentDescription(title+". "+description);
+        if(hasDetail){
+            TextView sub=text(a,description,12,MUTED,false,false);
+            sub.setLineSpacing(dp(a,2),1.03f);
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+            lp.topMargin=dp(a,4);p.addView(sub,lp);
+        }
+        p.setClickable(true);p.setFocusable(true);
+        p.setOnClickListener(v->action.run());
+        p.setContentDescription(hasDetail?title+". "+description:title);
         return p;
     }
     public static View hero(Activity a,String eyebrow,String title,String subtitle,boolean compact){

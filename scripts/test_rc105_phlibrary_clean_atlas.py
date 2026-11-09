@@ -51,7 +51,7 @@ class Rc105CleanAtlas(unittest.TestCase):
             self.assertIn(required,explorer)
         self.assertIn('A habitat filter searches the original account wording.',explorer)
         self.assertIn('matches.size()==1?" account":" accounts"',explorer)
-        self.assertIn('rarity.setTextSize(enlarged?9:11)',explorer)
+        self.assertIn('h.badges.setOrientation(enlarged?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL)',explorer)
         self.assertNotIn('Show more species',explorer)
 
     def test_reader_and_habitats_remain_source_faithful(self):
@@ -70,7 +70,7 @@ class Rc105CleanAtlas(unittest.TestCase):
         self.assertNotIn('getWritableDatabase',book)
         self.assertNotIn('getWritableDatabase',habitat)
         build=(ROOT/'app/build.gradle').read_text()
-        self.assertIn('versionCode 165',build)
+        self.assertIn('versionCode 166',build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn('super(context,NAME,null,29)',(JAVA/'FieldDb.java').read_text())
 

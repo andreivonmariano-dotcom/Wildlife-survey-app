@@ -22,6 +22,8 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
     private final ArrayList<JSONObject> habitats=new ArrayList<>();
     private JSONArray links;
     private String currentHabitat=null;
+    private ScrollView pageScroll;
+    private int indexScrollY=0;
     private int dp(float n){return PhLibrary2Ui.dp(this,n);}
     private static JSONObject read(Activity a,String file)throws Exception{
         try(InputStream in=a.getAssets().open(file);
@@ -58,6 +60,7 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         nav.addView(label,new LinearLayout.LayoutParams(0,dp(48),1));
         root.addView(nav);
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
+        pageScroll=scroll;
         LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);
         body.setPadding(dp(1),dp(10),dp(1),dp(28));
         scroll.addView(body);
@@ -82,6 +85,7 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
             body.addView(text("Habitat reference data are unavailable offline.",17,false));
             return;
         }
+        if(state!=null)indexScrollY=state.getInt("index_scroll",0);
         String requested=state==null?getIntent().getStringExtra("habitat_id"):
             state.getString("habitat");
         if(requested!=null&&!requested.isEmpty())showHabitat(requested);
@@ -98,6 +102,8 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
     private void showIndex(){
         currentHabitat=null;
         LinearLayout body=shell("HABITAT ATLAS",this::finish);
+        if(indexScrollY>0 && pageScroll!=null)
+            pageScroll.post(()->pageScroll.scrollTo(0,indexScrollY));
         TextView heading=PhLibrary2Ui.text(this,"Mindanao landscapes",28,
             PhLibrary2Ui.INK,true,false);
         heading.setPadding(0,dp(12),0,dp(14));
@@ -115,8 +121,8 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
                 }
                 String id=h.optString("id"),name=h.optString("name");
                 int count=countLinks(id);
-                String subtitle=count==0?"Habitat profile":
-                    count+(count==1?" literature link":" literature links");
+                String subtitle=count==0?"":
+                    count+(count==1?" source link":" source links");
                 LinearLayout panel=PhLibrary2Ui.panel(this,name,subtitle,()->showHabitat(id));
                 LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
                 lp.bottomMargin=dp(8);body.addView(panel,lp);
@@ -125,7 +131,7 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
     }
     private void line(LinearLayout body,String title,String value){
         if(value==null||value.trim().isEmpty())return;
-        boolean initiallyOpen="THE ENVIRONMENT".equals(title);
+        boolean initiallyOpen="Overview".equals(title);
         LinearLayout part=new LinearLayout(this);
         part.setOrientation(LinearLayout.VERTICAL);
         TextView toggle=PhLibrary2Ui.action(this,
@@ -162,6 +168,7 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         JSONObject profile=null;
         for(JSONObject r:habitats)if(id.equals(r.optString("id"))){profile=r;break;}
         if(profile==null){showIndex();return;}
+        if(currentHabitat==null&&pageScroll!=null)indexScrollY=pageScroll.getScrollY();
         currentHabitat=id;
         LinearLayout body=shell("HABITAT PROFILE",this::showIndex);
         TextView title=PhLibrary2Ui.text(this,profile.optString("name"),27,
@@ -170,20 +177,23 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         TextView group=PhLibrary2Ui.text(this,profile.optString("group"),14,
             PhLibrary2Ui.MUTED,false,true);
         group.setPadding(0,0,0,dp(12));body.addView(group);
-        line(body,"THE ENVIRONMENT",profile.optString("overview"));
-        line(body,"FIELD INDICATORS",profile.optString("fieldIndicators"));
-        line(body,"WATER AND SUBSTRATE",profile.optString("waterAndSubstrate"));
-        line(body,"VEGETATION AND WILDLIFE",profile.optString("vegetationAndWildlife"));
+        line(body,"Overview",profile.optString("overview"));
+        line(body,"Field indicators",profile.optString("fieldIndicators"));
+        line(body,"Water and substrate",profile.optString("waterAndSubstrate"));
+        line(body,"Vegetation and wildlife",profile.optString("vegetationAndWildlife"));
         JSONArray measurements=profile.optJSONArray("measurements");
         if(measurements!=null){
             StringBuilder terms=new StringBuilder();
             for(int i=0;i<measurements.length();i++){
                 if(i>0)terms.append(" · ");terms.append(measurements.optString(i));
             }
-            line(body,"POSSIBLE FIELD MEASUREMENTS",terms.toString());
+            line(body,"Field measurements",terms.toString());
         }
-        line(body,"INTERPRETIVE LIMITS",profile.optString("limitations"));
-        body.addView(PhLibrary2Ui.eyebrow(this,"LITERATURE-LINKED SPECIES"));
+        line(body,"Interpretive limits",profile.optString("limitations"));
+        TextView linkedTitle=PhLibrary2Ui.text(this,"Literature-linked species",18,
+            PhLibrary2Ui.FOREST,true,true);
+        linkedTitle.setPadding(0,dp(14),0,dp(8));
+        body.addView(linkedTitle);
         int count=0;
         for(int i=0;i<links.length();i++){
             JSONObject edge=links.optJSONObject(i);
@@ -224,14 +234,22 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
             TextView empty=text("No reviewed species links added yet.",14,false);
             empty.setTextColor(PhLibrary2Ui.MUTED);body.addView(empty);
         }
-        TextView provenance=text("Literature links are provisional and do not establish occurrence at your survey site.",13,false);
-        provenance.setPadding(0,dp(14),0,dp(12));provenance.setTextColor(PhLibrary2Ui.MUTED);
-        body.addView(provenance);
-        TextView find=PhLibrary2Ui.action(this,"Find textual mentions in Book 01",()->{
+        if(count>0){
+            TextView about=PhLibrary2Ui.action(this,"About these links",()->
+                new AlertDialog.Builder(this).setTitle("Literature links")
+                    .setMessage("These are provisional links to published sources. They do not establish presence, habitat selection or a detection at your survey site.")
+                    .setPositiveButton("Close",null).show(),false);
+            LinearLayout.LayoutParams aboutParams=new LinearLayout.LayoutParams(-1,dp(48));
+            aboutParams.topMargin=dp(8);
+            body.addView(about,aboutParams);
+        }
+        TextView find=PhLibrary2Ui.action(this,"Search account text",()->{
             startActivity(new Intent(this,PhLibraryDirectoryActivity.class).putExtra(
                 "phlibrary_query",profileTextQuery(id)));
         },false);
-        body.addView(find);
+        find.setContentDescription("Search habitat words in Book 01 account text, not confirmed occurrence");
+        LinearLayout.LayoutParams findLp=new LinearLayout.LayoutParams(-1,dp(52));
+        findLp.topMargin=dp(9);body.addView(find,findLp);
     }
     private String profileTextQuery(String id){
         switch(id){
@@ -254,7 +272,10 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         }
     }
     @Override protected void onSaveInstanceState(Bundle out){
-        out.putString("habitat",currentHabitat);super.onSaveInstanceState(out);
+        out.putString("habitat",currentHabitat);
+        out.putInt("index_scroll",currentHabitat==null&&pageScroll!=null?
+            pageScroll.getScrollY():indexScrollY);
+        super.onSaveInstanceState(out);
     }
     @Override public void onBackPressed(){
         if(currentHabitat!=null)showIndex();else super.onBackPressed();

@@ -15,7 +15,7 @@ class PHLibraryScreenContract(unittest.TestCase):
         self.assertIn('"PHLibrary"',hub)
         self.assertIn("PhLibraryPhotoHero.create",hub)
         self.assertIn("PhLibraryDirectoryActivity.class",hub)
-        self.assertIn("Wildlife groups",hub)
+        self.assertNotIn('"Wildlife groups"',hub)
         self.assertIn("Saved species",hub)
         self.assertIn("Habitat Atlas",hub)
         self.assertNotIn('"Photo comparisons"',hub)
@@ -56,8 +56,8 @@ class PHLibraryScreenContract(unittest.TestCase):
 
     def test_app_identity_biology_and_schema_remain(self):
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 165",gradle)
-        self.assertIn("0.27.3-rc105-phlibrary-clean-atlas",gradle)
+        self.assertIn("versionCode 166",gradle)
+        self.assertIn("0.27.3-rc106-phlibrary-polish",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn('manifest.put("sqliteSchema",snapshotSchema)',

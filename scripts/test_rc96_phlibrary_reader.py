@@ -54,7 +54,7 @@ class PhLibraryBook01(unittest.TestCase):
 
     def test_reader_routing_and_compact_references(self):
         text=(JAVA/"PhLibraryBook01.java").read_text()
-        self.assertIn('REFERENCES ·',text)
+        self.assertIn('Citations (',text)
         self.assertIn('record.optString("p"),17.5f',text)
         self.assertIn("referencesDialog(a,refs)",text)
         self.assertNotIn("addPhLibraryPlate(a,parent",text)
@@ -68,8 +68,8 @@ class PhLibraryBook01(unittest.TestCase):
 
     def test_no_database_or_signing_identity_change(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 165",gradle)
-        self.assertIn("0.27.3-rc105-phlibrary-clean-atlas",gradle)
+        self.assertIn("versionCode 166",gradle)
+        self.assertIn("0.27.3-rc106-phlibrary-polish",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         db=(JAVA/"FieldDb.java").read_text()
         self.assertIn("super(context,NAME,null,29)",db)

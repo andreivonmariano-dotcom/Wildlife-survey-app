@@ -21,7 +21,7 @@ for config in "p360f100 360x800 160 1.0" "p320f200 320x720 160 2.0"; do
     "Rc101PhLibraryV182InstrumentedTest 2" \
     "Rc96PhLibraryReaderInstrumentedTest 2" \
     "Rc102StartupMotionInstrumentedTest 2" \
-    "Rc103PhLibrary2InstrumentedTest 4"; do
+    "Rc103PhLibrary2InstrumentedTest 5"; do
     read -r cls expected <<< "$spec"
     adb shell am instrument -w -r -e preset "$preset" -e class \
       "org.phwildlife.survey.${cls}" "$RUNNER" \
@@ -29,7 +29,7 @@ for config in "p360f100 360x800 160 1.0" "p320f200 320x720 160 2.0"; do
     grep -Fq "OK (${expected} tests)" \
       "rc103-phlibrary-evidence/${preset}-${cls}.txt"
   done
-  for view in home explorer profile habitat-index habitat-detail; do
+  for view in home explorer profile habitat-index habitat-detail references reference-candidates; do
     item="${preset}-${view}.png"
     adb pull "/sdcard/Android/data/${PKG}/files/Pictures/RC103/${item}" \
       "rc103-phlibrary-evidence/${item}" >/dev/null
@@ -46,10 +46,10 @@ python3 - <<'PY'
 from pathlib import Path
 folder=Path("rc103-phlibrary-evidence")
 for preset in ("p360f100","p320f200"):
-    for view in ("home","explorer","profile","habitat-index","habitat-detail","reduced","animated"):
+    for view in ("home","explorer","profile","habitat-index","habitat-detail","references","reference-candidates","reduced","animated"):
         b=(folder/f"{preset}-{view}.png").read_bytes()
         assert len(b)>3000 and b[:8]==bytes([137,80,78,71,13,10,26,10]),(preset,view)
-print("Fourteen native screenshot PNGs passed integrity checks.")
+print("Eighteen native screenshot PNGs passed integrity checks.")
 PY
 adb logcat -d -s AndroidRuntime:E > rc103-phlibrary-evidence/android_runtime_errors.txt
 test ! -s rc103-phlibrary-evidence/android_runtime_errors.txt

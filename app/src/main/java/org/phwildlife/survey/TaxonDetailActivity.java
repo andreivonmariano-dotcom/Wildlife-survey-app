@@ -20,6 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.net.Uri;
 import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Locale;
 
 /**
@@ -42,6 +43,8 @@ public final class TaxonDetailActivity extends Activity {
     private boolean archivedProfileScope=false;
     private SpeciesReferenceSuggestionAdapter detailSuggestions;
     private boolean stackedSearch;
+    private final ArrayDeque<String> phLibraryHistory=new ArrayDeque<>();
+    private String currentPhLibraryName=null;
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size,boolean bold){
         TextView v=new TextView(this);
@@ -71,7 +74,7 @@ public final class TaxonDetailActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(UiKit.BG);
         root.setPadding(dp(18),dp(15),dp(18),dp(15));
-        LinearLayout nav=UiKit.navigationHeader(this,"Species Library","previous screen",this::finish);
+        LinearLayout nav=UiKit.navigationHeader(this,"Species Library","previous screen",this::backWithinBook);
         phLibraryHeaderTitle=(TextView)nav.getChildAt(1);
         phLibraryBack=(Button)nav.getChildAt(0);
         root.addView(nav);
@@ -173,8 +176,20 @@ public final class TaxonDetailActivity extends Activity {
         UiMotion.enter(this,root);
         String query=getIntent().getStringExtra("taxon_query");
         String key=getIntent().getStringExtra("taxon_key");
-        String phLibraryName=getIntent().getStringExtra("phlibrary_scientific_name");
-        if(phLibraryName!=null&&!phLibraryName.isEmpty())showPhLibraryBook(phLibraryName);
+        String phLibraryName=state!=null?
+            state.getString("phlibrary_current"):
+            getIntent().getStringExtra("phlibrary_scientific_name");
+        if(state!=null){
+            ArrayList<String> previous=state.getStringArrayList("phlibrary_history");
+            if(previous!=null)phLibraryHistory.addAll(previous);
+        }
+        if(phLibraryName!=null&&!phLibraryName.isEmpty()){
+            showPhLibraryBook(phLibraryName);
+            if(state!=null){
+                int scrollY=state.getInt("phlibrary_scroll",0);
+                if(phLibraryScroll!=null)phLibraryScroll.post(()->phLibraryScroll.scrollTo(0,scrollY));
+            }
+        }
         else if(key!=null&&!key.isEmpty())loadKey(key);
         else if(query!=null&&!query.trim().isEmpty()){
             search.setText(query);
@@ -315,8 +330,18 @@ public final class TaxonDetailActivity extends Activity {
             "Unverified / not supplied":value;
     }
 
+    private void backWithinBook(){
+        if(currentPhLibraryName!=null&&!phLibraryHistory.isEmpty()){
+            String back=phLibraryHistory.removeLast();
+            currentPhLibraryName=null; // Back navigates rather than adding a new forward-history entry.
+            showPhLibraryBook(back);
+        }else finish();
+    }
     private void showPhLibraryBook(String scientific) {
-        if(phLibraryHeaderTitle!=null)phLibraryHeaderTitle.setText("Book 01");
+        if(currentPhLibraryName!=null&&!currentPhLibraryName.equalsIgnoreCase(scientific))
+            phLibraryHistory.addLast(currentPhLibraryName);
+        currentPhLibraryName=scientific;
+        if(phLibraryHeaderTitle!=null)phLibraryHeaderTitle.setText("Species");
         if(phLibraryBack!=null){
             phLibraryBack.setText("Back");
             phLibraryBack.setTextSize(14);
@@ -516,6 +541,19 @@ public final class TaxonDetailActivity extends Activity {
                 paragraph("Regional occurrence evidence",regional.toString());
             else paragraph("Regional occurrence evidence","No regional record in this catalog");
         }catch(Exception ex){showMessage("Unable to read this species record.");}
+    }
+    @Override public void onBackPressed(){
+        if(currentPhLibraryName!=null&&!phLibraryHistory.isEmpty())backWithinBook();
+        else super.onBackPressed();
+    }
+    @Override protected void onSaveInstanceState(Bundle out){
+        if(currentPhLibraryName!=null){
+            out.putString("phlibrary_current",currentPhLibraryName);
+            out.putStringArrayList("phlibrary_history",new ArrayList<>(phLibraryHistory));
+            if(phLibraryScroll!=null)
+                out.putInt("phlibrary_scroll",phLibraryScroll.getScrollY());
+        }
+        super.onSaveInstanceState(out);
     }
     @Override protected void onDestroy(){db.close();super.onDestroy();}
 }

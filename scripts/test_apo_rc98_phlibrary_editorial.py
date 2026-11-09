@@ -79,7 +79,7 @@ class Rc98BookEditorial(unittest.TestCase):
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text(encoding="utf-8")
         self.assertEqual(hub.count("PhLibraryPhotoHero.create(this"),1)
         self.assertEqual(hub.count('tile(body,"'),4)
-        for title in ('"Wildlife groups"','"Saved species"',
+        for title in ('"Species Atlas"','"Saved species"',
                       '"Habitat Atlas"'):
             self.assertIn(title,hub)
         for old in ('"Conservation evidence"','"Similar species"',
@@ -90,8 +90,8 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertNotIn("ImageView",hub)
         self.assertNotIn("ImageView",directory)
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 165",gradle)
-        self.assertIn("0.27.3-rc105-phlibrary-clean-atlas",gradle)
+        self.assertIn("versionCode 166",gradle)
+        self.assertIn("0.27.3-rc106-phlibrary-polish",gradle)
 
 if __name__=="__main__":
     unittest.main()

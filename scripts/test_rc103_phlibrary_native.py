@@ -53,7 +53,7 @@ class PhLibrary2Native(unittest.TestCase):
         self.assertIn('PhLibraryBook01.has',habitat)
         self.assertIn('new ListView(this)',bib)
         self.assertNotIn('if(found>45)',bib)
-        self.assertIn('are not yet completely reconciled',bib)
+        self.assertIn('candidateMode',bib)
     def test_release_identity_and_data_scope(self):
         build=(ROOT/'app/build.gradle').read_text()
         self.assertIn('versionCode 166',build)

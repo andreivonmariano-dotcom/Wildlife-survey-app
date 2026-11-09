@@ -130,7 +130,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
         int count=PhLibraryBookmarks.all(this).size();
         if(count==0)return;
         new AlertDialog.Builder(this).setTitle("Clear saved species?")
-            .setMessage("Remove all "+count+" saved species? Your field survey records and species accounts will remain unchanged.")
+            .setMessage("Remove all "+count+" species from your saved collection?")
             .setNegativeButton("Cancel",null)
             .setPositiveButton("Clear saved",(d,w)->{
                 int removed=PhLibraryBookmarks.clear(this);
@@ -168,11 +168,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
                         break;
                     default:break;
                 }
-            }).setNegativeButton("Close",null)
-            .setNeutralButton("About Habitat",(d,w)->
-                new AlertDialog.Builder(this).setTitle("Habitat filter")
-                    .setMessage("This filter finds habitat words in species accounts, including common alternative terms. Text mentions are not verified habitat use, selection or occurrence at a survey site.")
-                    .setPositiveButton("Close",null).show()).show();
+            }).setNegativeButton("Close",null).show();
     }
     private void filter(){
         if(adapter==null)return;
@@ -207,7 +203,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
         resultsCount.setText(matches.isEmpty()?(
             savedCollectionMode&&PhLibraryBookmarks.all(this).isEmpty()?
                 "No saved species":
-            selectedHabitat>0?"No account text matches this habitat":
+            selectedHabitat>0?"No matching species for this habitat":
             savedOnly?"No saved matches":"No matching accounts"):
             matches.size()+(matches.size()==1?" account":" accounts")+
                 (savedOnly?" · Saved":""));
@@ -251,7 +247,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
         int match=lower(text).indexOf(q);
         if(match>=0){
             int start=Math.max(0,match-26),end=Math.min(text.length(),match+q.length()+54);
-            return "Text mention · "+(start>0?"…":"")+text.substring(start,end).trim()+
+            return "Excerpt · "+(start>0?"…":"")+text.substring(start,end).trim()+
                 (end<text.length()?"…":"");
         }
         return "Name or taxonomy match · "+row.optString("f");

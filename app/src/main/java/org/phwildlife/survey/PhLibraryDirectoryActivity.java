@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Arrays;
 import android.text.InputType;
 
 /** PHLibrary 2.0: virtualized, filterable source-faithful species explorer. */
@@ -52,7 +51,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
     private int selectedHabitat=0;
     private final ArrayList<JSONObject> matches=new ArrayList<>();
     private EditText search;
-    private TextView resultsCount,rarityButton,iucnButton,sortButton,savedButton;
+    private TextView resultsCount,sortButton,filterButton,resetButton;
     private LinearLayout groupChips;
     private ListView list;
     private SpeciesAdapter adapter;
@@ -141,8 +140,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
             "Habitat mention: "+(selectedHabitat==0?"Any":HABITATS[selectedHabitat]),
             "Discovery Rarity: "+(selectedRarity==0?"Any":TIERS[selectedRarity]),
             "IUCN: "+(selectedIucn==0?"Any":PhLibraryStatusBadge.status(STATUSES[selectedIucn])),
-            savedOnly?"Saved species: Only saved":"Saved species: All",
-            "Clear all filters"
+            savedOnly?"Saved species: Only saved":"Saved species: All"
         };
         new AlertDialog.Builder(this).setTitle("Filter species")
             .setItems(options,(d,index)->{
@@ -156,7 +154,6 @@ public final class PhLibraryDirectoryActivity extends Activity {
                     case 4:choose("IUCN global status",STATUSES,selectedIucn,
                         i->selectedIucn=i);break;
                     case 5:savedOnly=!savedOnly;filter();break;
-                    case 6:clearFilters();break;
                     default:break;
                 }
             }).setNegativeButton("Close",null)
@@ -195,13 +192,18 @@ public final class PhLibraryDirectoryActivity extends Activity {
             (a,b)->a.optString("s").compareToIgnoreCase(b.optString("s")));
         else if(!query.isEmpty())Collections.sort(matches,
             Comparator.comparingInt(r->rank(r,query)));
-        resultsCount.setText(matches.size()+(matches.size()==1?" account":" accounts")+" found"+
-            (savedOnly?" · Saved collection":""));
+        resultsCount.setText(matches.isEmpty()?(savedOnly?"No saved matches":"No matching accounts"):
+            matches.size()+(matches.size()==1?" account":" accounts")+
+                (savedOnly?" · Saved":""));
         int active=(selectedRarity!=0?1:0)+(selectedIucn!=0?1:0)+
             (selectedHabitat!=0?1:0)+(family.isEmpty()?0:1)+
             (genus.isEmpty()?0:1)+(savedOnly?1:0);
-        savedButton.setText(active==0?"Filters":"Filters · "+active);
+        filterButton.setText(active==0?"Filters":"Filters · "+active);
         sortButton.setText("Sort");
+        if(resetButton!=null)resetButton.setVisibility(
+            selectedGroup!=0||selectedRarity!=0||selectedIucn!=0||
+            selectedSort!=0||selectedHabitat!=0||!family.isEmpty()||
+            !genus.isEmpty()||savedOnly||!query.isEmpty()?View.VISIBLE:View.GONE);
         adapter.notifyDataSetChanged();
         if(!restoring)list.setSelection(0);
     }
@@ -291,9 +293,9 @@ public final class PhLibraryDirectoryActivity extends Activity {
             rarity.setTextSize(enlarged?9:11);conservation.setTextSize(enlarged?9:11);
             rarity.setPadding(dp(enlarged?5:8),dp(5),dp(enlarged?5:8),dp(5));
             conservation.setPadding(dp(enlarged?5:8),dp(5),dp(enlarged?5:8),dp(5));
-            LinearLayout.LayoutParams rp=new LinearLayout.LayoutParams(0,-2,1);
+            LinearLayout.LayoutParams rp=new LinearLayout.LayoutParams(0,-2,enlarged?.44f:1f);
             h.badges.addView(rarity,rp);
-            LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(0,-2,1);
+            LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(0,-2,enlarged?.56f:1f);
             cp.leftMargin=dp(7);h.badges.addView(conservation,cp);
             if(q.isEmpty())h.snippet.setVisibility(View.GONE);
             else {
@@ -341,17 +343,16 @@ public final class PhLibraryDirectoryActivity extends Activity {
         if(compactFilters){back.setTextSize(12);back.setPadding(dp(6),dp(5),dp(6),dp(5));}
         headingBar.addView(back,new LinearLayout.LayoutParams(dp(
             compactFilters?83:74),dp(48)));
-        TextView title=text(compactFilters?"Atlas":"SPECIES ATLAS",
-            compactFilters?13:14,PhLibrary2Ui.FOREST,false,true);
+        TextView title=text(compactFilters?"Species":"Species Atlas",
+            compactFilters?12:14,PhLibrary2Ui.FOREST,false,true);
         title.setGravity(Gravity.CENTER);title.setLetterSpacing(.11f);
         headingBar.addView(title,new LinearLayout.LayoutParams(0,dp(48),1));
-        TextView reset=PhLibrary2Ui.action(this,"Clear",this::clearFilters,false);
-        if(compactFilters){reset.setTextSize(12);reset.setPadding(dp(6),dp(5),dp(6),dp(5));}
-        headingBar.addView(reset,new LinearLayout.LayoutParams(dp(compactFilters?82:71),dp(48)));
+        resetButton=PhLibrary2Ui.action(this,"Clear",this::clearFilters,false);
+        if(compactFilters){resetButton.setTextSize(12);resetButton.setPadding(dp(6),dp(5),dp(6),dp(5));}
+        headingBar.addView(resetButton,new LinearLayout.LayoutParams(dp(compactFilters?82:71),dp(48)));
         root.addView(headingBar);
-        TextView heading=text("Species atlas",compactFilters?17:22,
-            PhLibrary2Ui.INK,true,false);
-        heading.setPadding(0,dp(3),0,dp(8));root.addView(heading);
+        View searchGap=new View(this);
+        root.addView(searchGap,new LinearLayout.LayoutParams(-1,dp(8)));
 
         search=new EditText(this);search.setSingleLine(true);
         search.setHint(compactFilters?"Search":"Search species, habitats or places");
@@ -368,20 +369,18 @@ public final class PhLibraryDirectoryActivity extends Activity {
         setGroup(selectedGroup);
 
         // All advanced filters stay in one searchable sheet.
-        rarityButton=PhLibrary2Ui.text(this,"",12,PhLibrary2Ui.MUTED,false,false);
-        iucnButton=PhLibrary2Ui.text(this,"",12,PhLibrary2Ui.MUTED,false,false);
         LinearLayout tools=new LinearLayout(this);tools.setGravity(Gravity.CENTER_VERTICAL);
-        savedButton=PhLibrary2Ui.action(this,"Filters",this::chooseCompactFilters,false);
+        filterButton=PhLibrary2Ui.action(this,"Filters",this::chooseCompactFilters,false);
         sortButton=PhLibrary2Ui.action(this,"Sort",
             ()->choose("Sort species",SORT,selectedSort,i->selectedSort=i),false);
         if(compactFilters){
-            savedButton.setTextSize(12);sortButton.setTextSize(12);
+            filterButton.setTextSize(12);sortButton.setTextSize(12);
             // 200% system font must fit inside the 48dp toolbar height.
-            savedButton.setPadding(dp(6),dp(5),dp(6),dp(5));
+            filterButton.setPadding(dp(6),dp(5),dp(6),dp(5));
             sortButton.setPadding(dp(6),dp(5),dp(6),dp(5));
         }
         LinearLayout.LayoutParams fl=new LinearLayout.LayoutParams(0,dp(48),1);
-        tools.addView(savedButton,fl);
+        tools.addView(filterButton,fl);
         LinearLayout.LayoutParams sl=new LinearLayout.LayoutParams(0,dp(48),1);
         sl.leftMargin=dp(8);tools.addView(sortButton,sl);
         tools.setPadding(0,dp(2),0,0);root.addView(tools);

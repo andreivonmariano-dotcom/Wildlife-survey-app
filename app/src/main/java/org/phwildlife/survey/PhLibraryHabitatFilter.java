@@ -57,6 +57,20 @@ public final class PhLibraryHabitatFilter {
         if(index>=TERMS.length||accountText==null)return false;
         String text=accountText.toLowerCase(Locale.ROOT);
         for(String term:TERMS[index])if(text.contains(term))return true;
+        // Educationally related vegetation and elevation descriptions can
+        // suggest species for formations rarely named word-for-word in Book 01.
+        // These suggestions exist only in browsing, never in survey observations.
+        if(index==10)
+            return text.contains("mossy")||text.contains("upper montane")||
+                text.contains("high-elevation")||text.contains("summit");
+        if(index==14)
+            return (text.contains("lowland")||text.contains("evergreen"))&&
+                (text.contains("forest")||text.contains("woodland"))&&
+                (text.contains("seasonal")||text.contains("evergreen"));
+        if(index==15)
+            return (text.contains("woodland")||text.contains("lowland"))&&
+                (text.contains("seasonal")||text.contains("dry season")||
+                 text.contains("dry woodland"));
         return false;
     }
     public static boolean mentions(JSONObject record,int index){

@@ -63,7 +63,7 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
     }
     private static View findRefs(View view){
         CharSequence description=view.getContentDescription();
-        if(description!=null && description.toString().startsWith("Open source citations"))
+        if(description!=null && description.toString().startsWith("Open account citations"))
             return view;
         if(view instanceof ViewGroup){
             ViewGroup group=(ViewGroup)view;
@@ -101,7 +101,7 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
                 // Validate the actual 715-item virtualized source catalogue instead.
                 boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
                 assertNotNull(findText(a.getWindow().getDecorView(),
-                    large?"Atlas":"SPECIES ATLAS"));
+                    large?"Species":"Species Atlas"));
                 android.widget.ListView results=findList(a.getWindow().getDecorView());
                 assertNotNull("Searchable source list visible",results);
                 assertEquals("Complete book catalogue",715,results.getAdapter().getCount());
@@ -120,7 +120,7 @@ public final class Rc96PhLibraryReaderInstrumentedTest {
                 assertNotNull(findText(decor,"Philippine Eagle"));
                 assertNotNull(findText(decor,"Legendary"));
                 assertNotNull(findText(decor,"In flight, the Philippine Eagle"));
-                assertNotNull(findText(decor,"REFERENCES"));
+                assertNotNull(findText(decor,"Citations ("));
                 View refs=findRefs(decor);
                 assertNotNull("Tappable compact references",refs);
                 assertTrue("Reference list is clickable",refs.isClickable());

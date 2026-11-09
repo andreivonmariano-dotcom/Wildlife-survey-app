@@ -556,9 +556,9 @@ public final class TaxonDetailActivity extends Activity {
         if(!PhLibraryBook01.has(this,scientific))return;
         new AlertDialog.Builder(this)
             .setTitle("Add photograph")
-            .setMessage("Select only a photograph you own or have permission to use. "+
-                "The app keeps a private offline copy, removes embedded location metadata, "+
-                "and does not verify species identification. The source file is unchanged.")
+            .setMessage("Choose a photograph from the approved 333-file Google Drive collection. "+
+                "The filename must match this account. LIKAS keeps a high-detail "+
+                "offline JPEG with embedded GPS metadata removed. The source is unchanged.")
             .setNegativeButton("Cancel",null)
             .setPositiveButton("Choose photo",(dialog,which)->{
                 pendingPhotoTaxon=scientific;
@@ -576,7 +576,7 @@ public final class TaxonDetailActivity extends Activity {
     }
     public void confirmRemovePrivateSpeciesPhoto(String scientific){
         if(!PhLibrarySpeciesMedia.hasPersonalPhoto(this,scientific))return;
-        new AlertDialog.Builder(this).setTitle("Remove device photograph?")
+        new AlertDialog.Builder(this).setTitle("Remove Drive photos from account?")
             .setMessage("Remove this species' private app copy? The source photograph in "+
                 "Drive or your device will not be touched.")
             .setNegativeButton("Cancel",null)

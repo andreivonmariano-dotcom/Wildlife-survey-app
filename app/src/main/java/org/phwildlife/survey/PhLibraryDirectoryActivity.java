@@ -237,48 +237,72 @@ public final class PhLibraryDirectoryActivity extends Activity {
         return "Name or taxonomy match · "+row.optString("f");
     }
     private final class SpeciesAdapter extends BaseAdapter {
+        private final class Holder {
+            TextView common,latin,family,snippet;
+            LinearLayout badges;
+        }
         @Override public int getCount(){return matches.size();}
         @Override public Object getItem(int i){return matches.get(i);}
         @Override public long getItemId(int i){return i;}
         @Override public View getView(int position,View reused,ViewGroup parent){
-            LinearLayout card;
-            TextView common,latin,meta,detail;
-            if(reused instanceof LinearLayout && reused.getTag() instanceof TextView[]){
-                card=(LinearLayout)reused;
-                TextView[] v=(TextView[])card.getTag();
-                common=v[0];latin=v[1];meta=v[2];detail=v[3];
+            LinearLayout card;Holder h;
+            if(reused instanceof LinearLayout && reused.getTag() instanceof Holder){
+                card=(LinearLayout)reused;h=(Holder)card.getTag();
             }else{
                 card=new LinearLayout(PhLibraryDirectoryActivity.this);
                 card.setOrientation(LinearLayout.VERTICAL);
-                card.setPadding(dp(15),dp(13),dp(15),dp(12));
-                common=text("",20,PhLibrary2Ui.INK,true,false);
-                latin=text("",15,PhLibrary2Ui.MUTED,true,false);
-                latin.setTypeface(Typeface.create("serif",Typeface.ITALIC));
-                meta=text("",13,PhLibrary2Ui.FOREST,false,true);
-                detail=text("",13,PhLibrary2Ui.MUTED,false,false);
-                detail.setMaxLines(2);
-                detail.setLineSpacing(dp(1),1.05f);
-                LinearLayout.LayoutParams mid=new LinearLayout.LayoutParams(-1,-2);
-                mid.topMargin=dp(4);
-                card.addView(common);card.addView(latin,mid);
-                LinearLayout.LayoutParams mp=new LinearLayout.LayoutParams(-1,-2);
-                mp.topMargin=dp(5);card.addView(meta,mp);
-                LinearLayout.LayoutParams sp=new LinearLayout.LayoutParams(-1,-2);
-                sp.topMargin=dp(5);card.addView(detail,sp);
-                card.setTag(new TextView[]{common,latin,meta,detail});
+                card.setPadding(dp(14),dp(11),dp(14),dp(10));
+                h=new Holder();
+                h.common=text("",18,PhLibrary2Ui.INK,true,false);
+                h.latin=text("",14,PhLibrary2Ui.MUTED,true,false);
+                h.latin.setTypeface(Typeface.create("serif",Typeface.ITALIC));
+                h.family=text("",12,PhLibrary2Ui.MUTED,false,false);
+                h.badges=new LinearLayout(PhLibraryDirectoryActivity.this);
+                h.badges.setOrientation(LinearLayout.HORIZONTAL);
+                h.snippet=text("",12,PhLibrary2Ui.MUTED,false,false);
+                h.snippet.setMaxLines(2);
+                card.addView(h.common);
+                LinearLayout.LayoutParams ln=new LinearLayout.LayoutParams(-1,-2);
+                ln.topMargin=dp(2);card.addView(h.latin,ln);
+                LinearLayout.LayoutParams fm=new LinearLayout.LayoutParams(-1,-2);
+                fm.topMargin=dp(3);card.addView(h.family,fm);
+                LinearLayout.LayoutParams bp=new LinearLayout.LayoutParams(-1,-2);
+                bp.topMargin=dp(7);card.addView(h.badges,bp);
+                LinearLayout.LayoutParams sn=new LinearLayout.LayoutParams(-1,-2);
+                sn.topMargin=dp(6);card.addView(h.snippet,sn);
+                card.setTag(h);
             }
-            JSONObject r=matches.get(position);
+            JSONObject row=matches.get(position);
             String q=search.getText().toString().trim();
-            String name=r.optString("c").isEmpty()?r.optString("s"):r.optString("c");
-            common.setText(emphasis(name,q));
-            latin.setText(emphasis(r.optString("s"),q));
-            meta.setText(r.optString("g")+" · "+r.optString("t")+
-                " · IUCN "+(r.isNull("iucn")?"Unassessed":r.optString("iucn")));
-            detail.setText(emphasis(snippet(r,lower(q)),q));
+            String common=row.optString("c").isEmpty()?row.optString("s"):row.optString("c");
+            h.common.setText(emphasis(common,q));
+            h.latin.setText(emphasis(row.optString("s"),q));
+            h.family.setText(row.optString("f")+" · "+row.optString("g"));
+            h.badges.removeAllViews();
+            TextView rarity=PhLibraryStatusBadge.make(PhLibraryDirectoryActivity.this,
+                row.optString("t"),true);
+            TextView conservation=PhLibraryStatusBadge.make(PhLibraryDirectoryActivity.this,
+                row.isNull("iucn")?"Unassessed":row.optString("iucn"),false);
+            // Keep ListView rows tappable; status explanations live on the species profile.
+            rarity.setClickable(false);rarity.setFocusable(false);
+            conservation.setClickable(false);conservation.setFocusable(false);
+            rarity.setTextSize(11);conservation.setTextSize(11);
+            rarity.setPadding(dp(8),dp(5),dp(8),dp(5));
+            conservation.setPadding(dp(8),dp(5),dp(8),dp(5));
+            LinearLayout.LayoutParams rp=new LinearLayout.LayoutParams(0,-2,1);
+            h.badges.addView(rarity,rp);
+            LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(0,-2,1);
+            cp.leftMargin=dp(7);h.badges.addView(conservation,cp);
+            if(q.isEmpty())h.snippet.setVisibility(View.GONE);
+            else {
+                h.snippet.setVisibility(View.VISIBLE);
+                h.snippet.setText(emphasis(snippet(row,lower(q)),q));
+            }
             card.setBackground(PhLibrary2Ui.touch(PhLibraryDirectoryActivity.this,
                 PhLibrary2Ui.IVORY,PhLibrary2Ui.LINE,13));
-            card.setContentDescription("Read "+name+", "+r.optString("s")+
-                ", "+r.optString("t")+", "+r.optString("g"));
+            card.setContentDescription("Read "+common+", "+row.optString("s")+
+                ", "+row.optString("t")+", IUCN "+
+                PhLibraryStatusBadge.status(row.isNull("iucn")?"Unassessed":row.optString("iucn")));
             return card;
         }
     }

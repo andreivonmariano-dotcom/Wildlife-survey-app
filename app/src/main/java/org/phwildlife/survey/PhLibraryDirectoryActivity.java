@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.EditText;
@@ -261,6 +262,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
         private final class Holder {
             TextView common,latin,family,snippet;
             LinearLayout badges;
+            FrameLayout photo;
         }
         @Override public int getCount(){return matches.size();}
         @Override public Object getItem(int i){return matches.get(i);}
@@ -282,11 +284,21 @@ public final class PhLibraryDirectoryActivity extends Activity {
                 h.badges.setOrientation(LinearLayout.HORIZONTAL);
                 h.snippet=text("",12,PhLibrary2Ui.MUTED,false,false);
                 h.snippet.setMaxLines(2);
-                card.addView(h.common);
+                LinearLayout header=new LinearLayout(PhLibraryDirectoryActivity.this);
+                header.setOrientation(LinearLayout.HORIZONTAL);
+                header.setGravity(Gravity.CENTER_VERTICAL);
+                h.photo=new FrameLayout(PhLibraryDirectoryActivity.this);
+                header.addView(h.photo,new LinearLayout.LayoutParams(dp(74),dp(78)));
+                LinearLayout names=new LinearLayout(PhLibraryDirectoryActivity.this);
+                names.setOrientation(LinearLayout.VERTICAL);
+                LinearLayout.LayoutParams nameLp=new LinearLayout.LayoutParams(0,-2,1f);
+                nameLp.leftMargin=dp(12);header.addView(names,nameLp);
+                names.addView(h.common);
                 LinearLayout.LayoutParams ln=new LinearLayout.LayoutParams(-1,-2);
-                ln.topMargin=dp(2);card.addView(h.latin,ln);
+                ln.topMargin=dp(2);names.addView(h.latin,ln);
                 LinearLayout.LayoutParams fm=new LinearLayout.LayoutParams(-1,-2);
-                fm.topMargin=dp(3);card.addView(h.family,fm);
+                fm.topMargin=dp(3);names.addView(h.family,fm);
+                card.addView(header);
                 LinearLayout.LayoutParams bp=new LinearLayout.LayoutParams(-1,-2);
                 bp.topMargin=dp(7);card.addView(h.badges,bp);
                 LinearLayout.LayoutParams sn=new LinearLayout.LayoutParams(-1,-2);
@@ -299,6 +311,10 @@ public final class PhLibraryDirectoryActivity extends Activity {
             h.common.setText(emphasis(common,q));
             h.latin.setText(emphasis(row.optString("s"),q));
             h.family.setText(row.optString("f")+" · "+row.optString("g"));
+            h.photo.removeAllViews();
+            View image=PhLibrarySpeciesMedia.photoOrPlaceholder(
+                PhLibraryDirectoryActivity.this,row.optString("s"));
+            h.photo.addView(image,new FrameLayout.LayoutParams(-1,-1));
             h.badges.removeAllViews();
             TextView rarity=PhLibraryStatusBadge.make(PhLibraryDirectoryActivity.this,
                 row.optString("t"),true);

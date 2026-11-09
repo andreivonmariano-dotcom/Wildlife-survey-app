@@ -44,8 +44,8 @@ class AdaptivePanels(unittest.TestCase):
     def test_draft_schema_and_survey_completion_are_not_modified(self):
         m=read("MainActivity.java")
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
-        self.assertIn("versionCode 167",(ROOT/"app/build.gradle").read_text())
-        self.assertIn("0.27.3-rc107-habitat-reader-saved",
+        self.assertIn("versionCode 168",(ROOT/"app/build.gradle").read_text())
+        self.assertIn("0.27.3-rc108-species-media-daily",
             (ROOT/"app/build.gradle").read_text())
         for marker in ("SurveyClosePolicy.resolve(","Finish Complete",
             "End Incomplete","Cancel Survey · Not Counted",

@@ -78,7 +78,7 @@ class Rc98BookEditorial(unittest.TestCase):
         hub=(JAVA/"LikasLibraryActivity.java").read_text(encoding="utf-8")
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text(encoding="utf-8")
         self.assertEqual(hub.count("PhLibraryPhotoHero.create(this"),1)
-        self.assertEqual(hub.count('tile(body,"'),4)
+        self.assertEqual(hub.count('tile(body,"'),5)
         for title in ('"Species Atlas"','"Saved species"',
                       '"Habitat Atlas"'):
             self.assertIn(title,hub)
@@ -90,8 +90,8 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertNotIn("ImageView",hub)
         self.assertNotIn("ImageView",directory)
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 167",gradle)
-        self.assertIn("0.27.3-rc107-habitat-reader-saved",gradle)
+        self.assertIn("versionCode 168",gradle)
+        self.assertIn("0.27.3-rc108-species-media-daily",gradle)
 
 if __name__=="__main__":
     unittest.main()

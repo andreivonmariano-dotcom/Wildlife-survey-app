@@ -45,6 +45,9 @@ public final class TaxonDetailActivity extends Activity {
     private boolean stackedSearch;
     private final ArrayDeque<String> phLibraryHistory=new ArrayDeque<>();
     private String currentPhLibraryName=null;
+    private static final int REQUEST_PERSONAL_SPECIES_PHOTO=8413;
+    private String pendingPhotoTaxon=null;
+
     private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size,boolean bold){
         TextView v=new TextView(this);
@@ -66,6 +69,7 @@ public final class TaxonDetailActivity extends Activity {
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
+        if(state!=null)pendingPhotoTaxon=state.getString("pending_photo_taxon");
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN |
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         db=new FieldDb(this);
@@ -546,7 +550,71 @@ public final class TaxonDetailActivity extends Activity {
         if(currentPhLibraryName!=null&&!phLibraryHistory.isEmpty())backWithinBook();
         else super.onBackPressed();
     }
+
+    /** The system document picker can open local files or connected Drive documents. */
+    public void choosePrivateSpeciesPhoto(String scientific){
+        if(!PhLibraryBook01.has(this,scientific))return;
+        new AlertDialog.Builder(this)
+            .setTitle("Add photograph")
+            .setMessage("Select only a photograph you own or have permission to use. "+
+                "The app keeps a private offline copy, removes embedded location metadata, "+
+                "and does not verify species identification. The source file is unchanged.")
+            .setNegativeButton("Cancel",null)
+            .setPositiveButton("Choose photo",(dialog,which)->{
+                pendingPhotoTaxon=scientific;
+                Intent select=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                select.addCategory(Intent.CATEGORY_OPENABLE);
+                select.setType("image/*");
+                try{startActivityForResult(select,REQUEST_PERSONAL_SPECIES_PHOTO);}
+                catch(Exception ex){
+                    pendingPhotoTaxon=null;
+                    new AlertDialog.Builder(this).setMessage(
+                        "No photo picker is available on this device.")
+                        .setPositiveButton("Close",null).show();
+                }
+            }).show();
+    }
+    public void confirmRemovePrivateSpeciesPhoto(String scientific){
+        if(!PhLibrarySpeciesMedia.hasPersonalPhoto(this,scientific))return;
+        new AlertDialog.Builder(this).setTitle("Remove device photograph?")
+            .setMessage("Remove this species' private app copy? The source photograph in "+
+                "Drive or your device will not be touched.")
+            .setNegativeButton("Cancel",null)
+            .setPositiveButton("Remove",(d,w)->{
+                boolean removed=PhLibrarySpeciesMedia.removePrivate(this,scientific);
+                if(removed&&scientific.equalsIgnoreCase(currentPhLibraryName))
+                    showPhLibraryBook(scientific);
+                else if(!removed)new AlertDialog.Builder(this)
+                    .setMessage("Unable to remove the private photograph.")
+                    .setPositiveButton("Close",null).show();
+            }).show();
+    }
+    @Override protected void onActivityResult(int request,int result,Intent data){
+        super.onActivityResult(request,result,data);
+        if(request!=REQUEST_PERSONAL_SPECIES_PHOTO)return;
+        String scientific=pendingPhotoTaxon;pendingPhotoTaxon=null;
+        if(result!=RESULT_OK||data==null||data.getData()==null||
+            scientific==null||!PhLibraryBook01.has(this,scientific))return;
+        android.net.Uri chosen=data.getData();
+        new Thread(()->{
+            String failure=null;
+            try{PhLibrarySpeciesMedia.importPrivate(this,scientific,chosen);}
+            catch(Exception ex){failure=ex.getMessage();}
+            final String error=failure;
+            runOnUiThread(()->{
+                if(isFinishing()||isDestroyed())return;
+                if(error==null){
+                    if(scientific.equalsIgnoreCase(currentPhLibraryName))
+                        showPhLibraryBook(scientific);
+                }else{
+                    new AlertDialog.Builder(this).setTitle("Photo not imported")
+                        .setMessage(error).setPositiveButton("Close",null).show();
+                }
+            });
+        },"phlibrary-private-photo-copy").start();
+    }
     @Override protected void onSaveInstanceState(Bundle out){
+        out.putString("pending_photo_taxon",pendingPhotoTaxon);
         if(currentPhLibraryName!=null){
             out.putString("phlibrary_current",currentPhLibraryName);
             out.putStringArrayList("phlibrary_history",new ArrayList<>(phLibraryHistory));

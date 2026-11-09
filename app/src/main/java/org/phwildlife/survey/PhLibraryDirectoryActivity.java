@@ -253,7 +253,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
             search.setText("");setGroup(0);filter();
         },false);
         if(compactFilters){reset.setTextSize(12);reset.setPadding(dp(6),dp(5),dp(6),dp(5));}
-        headingBar.addView(reset,new LinearLayout.LayoutParams(dp(compactFilters?66:71),dp(48)));
+        headingBar.addView(reset,new LinearLayout.LayoutParams(dp(compactFilters?82:71),dp(48)));
         root.addView(headingBar);
         TextView eyebrow=PhLibrary2Ui.eyebrow(this,"GREATER MINDANAO  /  BOOK 01");
         if(!compactFilters)root.addView(eyebrow);
@@ -301,6 +301,11 @@ public final class PhLibraryDirectoryActivity extends Activity {
             if(compactFilters)chooseCompactFilters();
             else {savedOnly=!savedOnly;filter();}
         },false);
+        if(compactFilters){
+            sortButton.setTextSize(12);savedButton.setTextSize(12);
+            sortButton.setPadding(dp(7),dp(5),dp(7),dp(5));
+            savedButton.setPadding(dp(7),dp(5),dp(7),dp(5));
+        }
         LinearLayout.LayoutParams sl=new LinearLayout.LayoutParams(0,dp(48),1);tools.addView(sortButton,sl);
         LinearLayout.LayoutParams bl=new LinearLayout.LayoutParams(0,dp(48),1);bl.leftMargin=dp(7);
         tools.addView(savedButton,bl);root.addView(tools);

@@ -101,6 +101,22 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     EditText input=(EditText)find(root,EditText.class);
                     assertNotNull(lv);assertNotNull(input);
                     assertEquals(715,lv.getAdapter().getCount());
+                    TextView clear=(TextView)text(root,"Clear");
+                    assertNotNull(clear);
+                    float clearWidth=clear.getPaint().measureText("Clear");
+                    int innerWidth=clear.getWidth()-clear.getPaddingLeft()-clear.getPaddingRight();
+                    assertTrue("Clear label must fit inside its button at this text scale",
+                        clearWidth<=innerWidth);
+                    if(a.getResources().getConfiguration().fontScale>=1.6f){
+                        for(String action:new String[]{"Sort","Filters"}){
+                            TextView control=(TextView)text(root,action);
+                            assertNotNull("Missing "+action+" action",control);
+                            float needed=control.getPaint().getFontSpacing();
+                            int available=control.getHeight()-control.getPaddingTop()-control.getPaddingBottom();
+                            assertTrue(action+" text must fit vertically at 200% scale",
+                                needed<=available);
+                        }
+                    }
                     shot(a,"explorer");
                     input.setText("Ceyx mindanensis");
                     assertEquals(1,lv.getAdapter().getCount());
@@ -123,7 +139,21 @@ public final class Rc103PhLibrary2InstrumentedTest {
             scenario.onActivity(a->{
                 try {
                     View root=a.getWindow().getDecorView();
-                    assertNotNull(text(root,"South Philippine Dwarf-kingfisher"));
+                    TextView name=(TextView)text(root,"South Philippine Dwarf-kingfisher");
+                    assertNotNull(name);
+                    if(a.getResources().getConfiguration().fontScale>=1.6f){
+                        android.text.Layout layout=name.getLayout();
+                        assertNotNull(layout);
+                        for(int ln=0;ln<layout.getLineCount()-1;ln++){
+                            int cut=layout.getLineEnd(ln);
+                            if(cut>0 && cut<name.getText().length()){
+                                char left=name.getText().charAt(cut-1);
+                                char right=name.getText().charAt(cut);
+                                assertFalse("Reader heading breaks in the middle of a word",
+                                    Character.isLetter(left)&&Character.isLetter(right));
+                            }
+                        }
+                    }
                     assertNotNull(text(root,"Ceyx mindanensis"));
                     assertNotNull(text(root,"DISCOVERY RARITY"));
                     assertNotNull(text(root,"IUCN GLOBAL"));

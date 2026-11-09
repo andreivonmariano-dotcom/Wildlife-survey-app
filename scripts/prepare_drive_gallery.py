@@ -35,7 +35,7 @@ def load_entries():
         name = entry["fileName"]
         asset = entry["offlineAsset"]
         drive_id = entry["driveFileId"]
-        if not re.fullmatch(r"[A-Z][a-z]+_[A-Za-z0-9_]+\\.(jpg|png)", name):
+        if not re.fullmatch(r"[A-Z][a-z]+_[A-Za-z0-9_]+\.(jpg|png)", name):
             raise SystemExit("Unexpected source photo name: " + name)
         if asset != f"offline_photos/drive_{index:04d}.jpg":
             raise SystemExit("Offline gallery index mismatch: " + name)
@@ -83,6 +83,14 @@ def ensure_download(entry):
     return target
 
 
+def validate_jpeg_bytes(data, asset_name):
+    """Reject malformed JPEG payloads and embedded EXIF metadata."""
+    if not data.startswith(b"\xff\xd8\xff") or not data.endswith(b"\xff\xd9"):
+        raise SystemExit("Invalid packaged JPEG: " + asset_name)
+    if b"Exif\x00\x00" in data:
+        raise SystemExit("EXIF retained in packaged JPEG: " + asset_name)
+
+
 def prepare():
     entries = load_entries()
     digest = hashlib.sha256()
@@ -128,10 +136,7 @@ def prepare():
             raise SystemExit("Failed to process " + entry["fileName"] +
                              ": " + str(ex)) from ex
         data = target.read_bytes()
-        if data[:3] != b"\\xff\\xd8\\xff" or data[-2:] != b"\\xff\\xd9":
-            raise SystemExit("Invalid packaged JPEG: " + entry["offlineAsset"])
-        if b"Exif\\x00\\x00" in data:
-            raise SystemExit("EXIF retained in packaged JPEG: " + entry["offlineAsset"])
+        validate_jpeg_bytes(data, entry["offlineAsset"])
         total += len(data)
         if index % 40 == 0:
             print(f"Prepared {index}/333 JPEGs, {total//1_000_000} MB", flush=True)

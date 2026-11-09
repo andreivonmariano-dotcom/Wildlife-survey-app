@@ -214,6 +214,14 @@ public class WelcomeActivity extends Activity {
             resumeLp.bottomMargin=dp(LikasDesignSystem.SPACE_LG);
             main.addView(resume,resumeLp);
         }
+        View daily=ApoSpeciesOfDay.create(this,scientific->
+            startActivity(new Intent(this,TaxonDetailActivity.class)
+                .putExtra("phlibrary_scientific_name",scientific)));
+        if(daily!=null){
+            LinearLayout.LayoutParams spotlight=new LinearLayout.LayoutParams(-1,-2);
+            spotlight.bottomMargin=dp(LikasDesignSystem.SPACE_MD);
+            main.addView(daily,spotlight);
+        }
         main.addView(ApoHomeUi.module(this,"01","BioTools",
             "Fieldwork, surveys and data analysis",this::bioToolsHub));
         main.addView(ApoHomeUi.module(this,"02","PHLibrary",

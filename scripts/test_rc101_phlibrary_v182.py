@@ -84,7 +84,7 @@ class CanonicalBook01V182(unittest.TestCase):
         directory=(JAVA/'PhLibraryDirectoryActivity.java').read_text(encoding='utf-8')
         self.assertIn('r.optString("p")',directory)
         self.assertIn('"Legendary","Unranked"',directory)
-        self.assertIn('715 accounts',directory)
+        self.assertIn('matches.size()',directory)
         self.assertIn('PhLibraryBook01.ready(this)',directory)
         self.assertIn('"phlibrary_scientific_name"',directory)
 

@@ -145,12 +145,25 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     input.setText("Ceyx mindanensis");
                     assertEquals(1,lv.getAdapter().getCount());
                     assertNotNull(text(root,"1 account"));
-                    TextView clear=(TextView)text(root,"Clear");
-                    assertNotNull("Clear shown with an active search",clear);
-                    assertEquals(View.VISIBLE,clear.getVisibility());
-                    float clearWidth=clear.getPaint().measureText("Clear");
-                    int innerWidth=clear.getWidth()-clear.getPaddingLeft()-clear.getPaddingRight();
-                    assertTrue("Clear must fit within its button",clearWidth<=innerWidth);
+                }catch(Exception x){err[0]=x;}
+            });
+            if(err[0]!=null)throw err[0];
+            // A formerly GONE button has no valid measured width until the next
+            // UI traversal. Test the *rendered* visible control, not its stale size.
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            scenario.onActivity(a->{
+                try{
+                    View root=a.getWindow().getDecorView();
+                    ListView lv=(ListView)find(root,ListView.class);
+                    EditText input=(EditText)find(root,EditText.class);
+                    TextView reset=(TextView)text(root,"Clear");
+                    assertNotNull("Clear shown with an active search",reset);
+                    assertEquals(View.VISIBLE,reset.getVisibility());
+                    assertTrue("Clear must be laid out",reset.getWidth()>0);
+                    float clearWidth=reset.getPaint().measureText("Clear");
+                    int innerWidth=reset.getWidth()-reset.getPaddingLeft()-reset.getPaddingRight();
+                    assertTrue("Clear must fit within its button: label="+clearWidth+
+                        ", content="+innerWidth,clearWidth<=innerWidth);
                     input.setText("Oreophryne cf. nana");
                     assertEquals(1,lv.getAdapter().getCount());
                     input.setText("");

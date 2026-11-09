@@ -111,13 +111,15 @@ def prepare():
             with Image.open(source) as image:
                 if image.format not in ("JPEG", "PNG"):
                     raise ValueError("Unexpected image format")
-                image = ImageOps.exif_transpose(image)
-                image = image.convert("RGB")
-                image.thumbnail((1920, 1920), Image.Resampling.LANCZOS)
+                # Downsample the JPEG decoder first to avoid decoding the
+                # original 20+ megapixel frame at full size on every build.
+                image.draft("RGB", (1920, 1920))
+                image.thumbnail((1920, 1920), Image.Resampling.BICUBIC)
+                image = ImageOps.exif_transpose(image).convert("RGB")
                 if min(image.size) < 32:
                     raise ValueError("Image dimensions are too small")
-                image.save(target, format="JPEG", quality=84,
-                           optimize=True, progressive=True, exif=b"")
+                image.save(target, format="JPEG", quality=85,
+                           progressive=True, exif=b"")
         except Exception as ex:
             raise SystemExit("Failed to process " + entry["fileName"] +
                              ": " + str(ex)) from ex

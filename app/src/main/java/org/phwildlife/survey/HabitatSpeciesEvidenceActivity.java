@@ -158,8 +158,7 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
             startActivity(new Intent(this,PhLibraryDirectoryActivity.class)
                 .putExtra("phlibrary_habitat_id",id));
         },false);
-        browse.setContentDescription("Browse species accounts containing habitat words. "+
-            "These are text matches, not verified local habitat records.");
+        browse.setContentDescription("Browse species related to "+profile.optString("name"));
         body.addView(browse,new LinearLayout.LayoutParams(-1,dp(52)));
         if(detailScrollY>0 && pageScroll!=null){
             final int offset=detailScrollY;

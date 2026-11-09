@@ -156,6 +156,10 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
                 .putExtra("phlibrary_habitat_id",id));
         },false);
         browse.setContentDescription("Browse species related to "+profile.optString("name"));
+        if(getResources().getConfiguration().fontScale>=1.6f){
+            browse.setTextSize(12);
+            browse.setPadding(dp(8),dp(5),dp(8),dp(5));
+        }
         body.addView(browse,new LinearLayout.LayoutParams(-1,dp(52)));
         if(detailScrollY>0 && pageScroll!=null){
             final int offset=detailScrollY;

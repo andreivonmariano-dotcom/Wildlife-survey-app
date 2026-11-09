@@ -29,6 +29,12 @@ public final class PhLibraryHabitatFilter {
         "Peat swamp forest", "Tropical semi-evergreen rainforest",
         "Tropical moist deciduous forest"
     };
+    public static final String[] SHORT_NAMES={
+        "", "Lowland", "Montane", "Mossy forest", "Karst", "Ultramafic",
+        "Mangrove", "Wetland", "Riparian", "Secondary forest", "Subalpine",
+        "Beach forest", "Swamp forest", "Peat swamp", "Semi-evergreen",
+        "Deciduous"
+    };
     private static final String[][] TERMS={
         {}, {"lowland","lower-elevation forest","low-elevation forest"},
         {"montane","mountain forest","upland forest"},

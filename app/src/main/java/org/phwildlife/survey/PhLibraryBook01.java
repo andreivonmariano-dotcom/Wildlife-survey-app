@@ -155,7 +155,7 @@ public final class PhLibraryBook01 {
     private static void referencesDialog(Activity a,JSONArray refs){
         if(refs==null||refs.length()==0){
             new AlertDialog.Builder(a).setMessage("This account preserves its author–date citations in the article. Use the full book bibliography to inspect sources.")
-                .setPositiveButton("Browse bibliography",(d,w)->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class)))
+                .setPositiveButton("References",(d,w)->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class)))
                 .setNegativeButton("Close",null).show();return;
         }
         String[] titles=new String[refs.length()];
@@ -175,10 +175,10 @@ public final class PhLibraryBook01 {
                 body.setMovementMethod(LinkMovementMethod.getInstance());
                 new AlertDialog.Builder(a).setTitle("Citation")
                     .setView(body)
-                    .setNeutralButton("Full bibliography",(d,w)->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class).putExtra("phlibrary_bib_search",shortRef)))
+                    .setNeutralButton("Find in bibliography",(d,w)->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class).putExtra("phlibrary_bib_citation",shortRef)))
                     .setPositiveButton("Close",null).show();
             })
-            .setNeutralButton("Full bibliography",(d,w)->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class)))
+            .setNeutralButton("Bibliography",(d,w)->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class)))
             .setNegativeButton("Close",null).show();
     }
     private static void addNavigation(Activity a,LinearLayout target,int index,Consumer<String> onName){
@@ -266,20 +266,19 @@ public final class PhLibraryBook01 {
         }
 
         TextView save=PhLibrary2Ui.action(a,
-            PhLibraryBookmarks.saved(a,scientific)?"Saved in my collection":"Save to my collection",
+            PhLibraryBookmarks.saved(a,scientific)?"✓  Saved":"☆  Save",
             ()->{},false);
+        save.setContentDescription(PhLibraryBookmarks.saved(a,scientific)?
+            "Remove species from saved collection":"Save species to collection");
         save.setOnClickListener(v->{
             boolean selected=PhLibraryBookmarks.toggle(a,scientific);
-            save.setText(selected?"Saved in my collection":"Save to my collection");
+            save.setText(selected?"✓  Saved":"☆  Save");
+            save.setContentDescription(selected?
+                "Remove species from saved collection":"Save species to collection");
             save.announceForAccessibility(selected?"Species saved":"Species removed from collection");
         });
         LinearLayout.LayoutParams saveLp=new LinearLayout.LayoutParams(-1,PhLibrary2Ui.dp(a,50));
         saveLp.bottomMargin=PhLibrary2Ui.dp(a,10);parent.addView(save,saveLp);
-        TextView sectionTitle=PhLibrary2Ui.text(a,"Natural history",23,
-            PhLibrary2Ui.INK,true,false);
-        sectionTitle.setPadding(0,PhLibrary2Ui.dp(a,6),0,PhLibrary2Ui.dp(a,8));
-        parent.addView(sectionTitle);
-
         LinearLayout tools=new LinearLayout(a);tools.setGravity(android.view.Gravity.CENTER_VERTICAL);
         TextView original=PhLibrary2Ui.text(a,"Text size",13,
             PhLibrary2Ui.MUTED,false,false);
@@ -308,16 +307,15 @@ public final class PhLibraryBook01 {
 
 
         JSONArray refs=record.optJSONArray("r");
-        TextView refHead=PhLibrary2Ui.text(a,"Source notes",24,
-            PhLibrary2Ui.INK,true,false);
-        refHead.setPadding(0,PhLibrary2Ui.dp(a,13),0,PhLibrary2Ui.dp(a,7));
-        parent.addView(refHead);
         TextView refsAction=PhLibrary2Ui.action(a,
-            "REFERENCES · "+(refs==null?0:refs.length())+" citations · Open",
+            "Citations ("+(refs==null?0:refs.length())+")",
             ()->referencesDialog(a,refs),false);
-        refsAction.setContentDescription("Open source citations and full bibliography");
-        parent.addView(refsAction);
-        TextView related=PhLibrary2Ui.text(a,"More in "+record.optString("f"),
+        refsAction.setContentDescription("Open account citations and bibliography");
+        LinearLayout.LayoutParams citationLp=new LinearLayout.LayoutParams(-1,
+            PhLibrary2Ui.dp(a,52));
+        citationLp.topMargin=PhLibrary2Ui.dp(a,14);
+        parent.addView(refsAction,citationLp);
+        TextView related=PhLibrary2Ui.text(a,"Same family · "+record.optString("f"),
             24,PhLibrary2Ui.INK,true,false);
         related.setPadding(0,PhLibrary2Ui.dp(a,19),0,PhLibrary2Ui.dp(a,8));
         parent.addView(related);
@@ -333,12 +331,6 @@ public final class PhLibraryBook01 {
             mlp.bottomMargin=PhLibrary2Ui.dp(a,7);parent.addView(more,mlp);
             listed++;
         }
-        TextView note=PhLibrary2Ui.text(a,
-            "Same-family links are taxonomic, not evidence of ecological similarity.",
-            12,PhLibrary2Ui.MUTED,false,false);
-        note.setPadding(0,PhLibrary2Ui.dp(a,4),0,PhLibrary2Ui.dp(a,14));
-        if(listed>0)parent.addView(note);
-
         TextView edition=PhLibrary2Ui.text(a,sourceEdition(),12,
             PhLibrary2Ui.MUTED,false,false);
         edition.setPadding(0,PhLibrary2Ui.dp(a,10),0,PhLibrary2Ui.dp(a,8));

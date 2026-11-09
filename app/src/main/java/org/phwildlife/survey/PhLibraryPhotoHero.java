@@ -1,6 +1,9 @@
 package org.phwildlife.survey;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -20,14 +23,66 @@ import java.io.InputStream;
 public final class PhLibraryPhotoHero {
     private static final String ASSET="phlibrary_mindanao_forest_strip.webp";
     private PhLibraryPhotoHero(){}
+    private static Bitmap selectedPhotos(Activity a){
+        SharedPreferences prefs=a.getSharedPreferences("phlibrary_forest_photos_v1",
+            Context.MODE_PRIVATE);
+        int count=prefs.getInt("count",0);
+        if(count<1)return null;
+        final int width=640,height=360;
+        Bitmap sheet=Bitmap.createBitmap(width,height*4,Bitmap.Config.ARGB_8888);
+        Canvas canvas=new Canvas(sheet);
+        Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+        int good=0;
+        for(int i=0;i<4;i++){
+            String link=prefs.getString("uri_"+(i%count),null);
+            if(link==null)continue;
+            Bitmap photo=null;
+            try{
+                Uri uri=Uri.parse(link);
+                BitmapFactory.Options bounds=new BitmapFactory.Options();
+                bounds.inJustDecodeBounds=true;
+                try(InputStream input=a.getContentResolver().openInputStream(uri)){
+                    if(input!=null)BitmapFactory.decodeStream(input,null,bounds);
+                }
+                int sample=1;
+                while(bounds.outWidth/sample>1200 || bounds.outHeight/sample>1200)sample*=2;
+                BitmapFactory.Options opts=new BitmapFactory.Options();
+                opts.inSampleSize=sample;
+                try(InputStream input=a.getContentResolver().openInputStream(uri)){
+                    if(input!=null)photo=BitmapFactory.decodeStream(input,null,opts);
+                }
+                if(photo==null)continue;
+                int w=photo.getWidth(),h=photo.getHeight();
+                float srcRatio=w/(float)h,dstRatio=width/(float)height;
+                Rect src;
+                if(srcRatio>dstRatio){
+                    int crop=Math.round(h*dstRatio),x=(w-crop)/2;
+                    src=new Rect(x,0,x+crop,h);
+                }else{
+                    int crop=Math.round(w/dstRatio),y=(h-crop)/2;
+                    src=new Rect(0,y,w,y+crop);
+                }
+                canvas.drawBitmap(photo,src,new Rect(0,i*height,width,(i+1)*height),paint);
+                good++;
+            }catch(Exception ignore){
+                // A revoked document permission is handled by retaining a readable fallback.
+            }finally{
+                if(photo!=null&&!photo.isRecycled())photo.recycle();
+            }
+        }
+        if(good==0){sheet.recycle();return null;}
+        return sheet;
+    }
     public static View create(Activity a,String title,String subtitle){
-        Bitmap sheet=null;
-        try(InputStream input=a.getAssets().open(ASSET)){
-            sheet=BitmapFactory.decodeStream(input);
-            if(sheet==null||sheet.getHeight()<4||sheet.getWidth()<100)
-                throw new IllegalStateException("Invalid PHLibrary photo strip");
-        }catch(Exception ex){
-            return PhLibrary2Ui.hero(a,"PHLIBRARY",title,subtitle,false);
+        Bitmap sheet=selectedPhotos(a);
+        if(sheet==null){
+            try(InputStream input=a.getAssets().open(ASSET)){
+                sheet=BitmapFactory.decodeStream(input);
+                if(sheet==null||sheet.getHeight()<4||sheet.getWidth()<100)
+                    throw new IllegalStateException("Invalid PHLibrary photo strip");
+            }catch(Exception ex){
+                return PhLibrary2Ui.hero(a,"PHLIBRARY",title,subtitle,false);
+            }
         }
         final boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
         FrameLayout frame=new FrameLayout(a);

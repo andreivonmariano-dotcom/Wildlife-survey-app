@@ -289,14 +289,22 @@ public final class PhLibraryDirectoryActivity extends Activity {
             rarity.setClickable(false);rarity.setFocusable(false);
             conservation.setClickable(false);conservation.setFocusable(false);
             boolean enlarged=getResources().getConfiguration().fontScale>=1.6f;
-            // Keep a complete readable rarity name on a 320dp/200%-font result row.
-            rarity.setTextSize(enlarged?9:11);conservation.setTextSize(enlarged?9:11);
-            rarity.setPadding(dp(enlarged?5:8),dp(5),dp(enlarged?5:8),dp(5));
-            conservation.setPadding(dp(enlarged?5:8),dp(5),dp(enlarged?5:8),dp(5));
-            LinearLayout.LayoutParams rp=new LinearLayout.LayoutParams(0,-2,enlarged?.44f:1f);
+            // At 200% font, two half-width pills strand symbols and long IUCN names.
+            // Stack full-width badges instead of shrinking readable text.
+            h.badges.setOrientation(enlarged?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+            rarity.setTextSize(11);conservation.setTextSize(11);
+            rarity.setPadding(dp(8),dp(5),dp(8),dp(5));
+            conservation.setPadding(dp(8),dp(5),dp(8),dp(5));
+            LinearLayout.LayoutParams rp=enlarged?
+                new LinearLayout.LayoutParams(-1,-2):
+                new LinearLayout.LayoutParams(0,-2,1);
             h.badges.addView(rarity,rp);
-            LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(0,-2,enlarged?.56f:1f);
-            cp.leftMargin=dp(7);h.badges.addView(conservation,cp);
+            LinearLayout.LayoutParams cp=enlarged?
+                new LinearLayout.LayoutParams(-1,-2):
+                new LinearLayout.LayoutParams(0,-2,1);
+            if(enlarged)cp.topMargin=dp(5);
+            else cp.leftMargin=dp(7);
+            h.badges.addView(conservation,cp);
             if(q.isEmpty())h.snippet.setVisibility(View.GONE);
             else {
                 h.snippet.setVisibility(View.VISIBLE);

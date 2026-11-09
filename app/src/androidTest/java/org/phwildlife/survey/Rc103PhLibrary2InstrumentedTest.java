@@ -231,7 +231,7 @@ public final class Rc103PhLibrary2InstrumentedTest {
             if(err[0]!=null)throw err[0];
         }
     }
-    @Test public void sourceLinkedHabitatsRemainDiscoverableAndReadable() throws Exception {
+    @Test public void habitatAccountsReadAsOneParagraphWithoutSpeciesCards() throws Exception {
         try(ActivityScenario<HabitatSpeciesEvidenceActivity> scenario=ActivityScenario.launch(
             new Intent(ApplicationProvider.getApplicationContext(),
                 HabitatSpeciesEvidenceActivity.class))){
@@ -240,14 +240,13 @@ public final class Rc103PhLibrary2InstrumentedTest {
             scenario.onActivity(a->{
                 try{
                     View root=a.getWindow().getDecorView();
-                    assertNotNull(text(root,"Mindanao landscapes"));
+                    assertNotNull(text(root,"Habitat Atlas"));
                     assertNotNull(text(root,"Lowland tropical forest"));
-                    assertNotNull(text(root,"Terrestrial"));
+                    assertNull("No duplicate index heading",text(root,"Mindanao landscapes"));
                     shot(a,"habitat-index");
                     View name=text(root,"Lowland tropical forest");
                     assertNotNull(name);
-                    assertTrue("Habitat entry must remain tappable",
-                        ((View)name.getParent()).performClick());
+                    assertTrue(((View)name.getParent()).performClick());
                 }catch(Exception e){err[0]=e;}
             });
             if(err[0]!=null)throw err[0];
@@ -255,15 +254,86 @@ public final class Rc103PhLibrary2InstrumentedTest {
             scenario.onActivity(a->{
                 try{
                     View root=a.getWindow().getDecorView();
-                    assertNotNull(text(root,"Field indicators"));
-                    assertNotNull(text(root,"Literature-linked species"));
-                    assertNotNull(text(root,"Open source"));
-                    assertNotNull(text(root,"Search account text"));
+                    assertNotNull(text(root,"Lowland tropical forests occur"));
+                    assertNotNull(text(root,"Browse species"));
+                    assertNull("Legacy cards removed",text(root,"Literature-linked species"));
+                    assertNull("Fragmented accordion removed",text(root,"Field indicators"));
+                    assertNull("No source-card action",text(root,"Open source"));
                     shot(a,"habitat-detail");
                 }catch(Exception e){err[0]=e;}
             });
             if(err[0]!=null)throw err[0];
         }
+    }
+
+    @Test public void habitatSelectionUsesMoreAccountTermsAndStaysSelected() throws Exception{
+        Intent intent=new Intent(ApplicationProvider.getApplicationContext(),
+            PhLibraryDirectoryActivity.class)
+            .putExtra("phlibrary_habitat_id","riparian");
+        try(ActivityScenario<PhLibraryDirectoryActivity> scenario=ActivityScenario.launch(intent)){
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            final Exception[] err={null};
+            scenario.onActivity(a->{
+                try{
+                    int previous=0;
+                    for(org.json.JSONObject row:PhLibraryBook01.entries(a))
+                        if(row.optString("p").toLowerCase(java.util.Locale.ROOT).contains("riparian"))
+                            previous++;
+                    ListView species=(ListView)find(a.getWindow().getDecorView(),ListView.class);
+                    assertNotNull(species);
+                    assertTrue("Habitat finder must include alternate ecological terms",
+                        species.getAdapter().getCount()>previous);
+                    assertNotNull(text(a.getWindow().getDecorView(),"Filters"));
+                    shot(a,"habitat-species");
+                }catch(Exception e){err[0]=e;}
+            });
+            if(err[0]!=null)throw err[0];
+        }
+    }
+
+    @Test public void savedSpeciesClearDeletesBookmarksWithoutLeavingSavedScreen()
+        throws Exception{
+        android.content.Context app=ApplicationProvider.getApplicationContext();
+        PhLibraryBookmarks.clear(app);
+        PhLibraryBookmarks.toggle(app,"Ceyx mindanensis");
+        PhLibraryBookmarks.toggle(app,"Ceyx melanurus");
+        assertEquals(2,PhLibraryBookmarks.all(app).size());
+        Intent intent=new Intent(app,PhLibraryDirectoryActivity.class)
+            .putExtra("phlibrary_saved_only","true");
+        try(ActivityScenario<PhLibraryDirectoryActivity> scenario=ActivityScenario.launch(intent)){
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            final Exception[] err={null};
+            scenario.onActivity(a->{
+                try{
+                    View root=a.getWindow().getDecorView();
+                    assertNotNull(text(root,"Saved species"));
+                    ListView species=(ListView)find(root,ListView.class);
+                    assertEquals(2,species.getAdapter().getCount());
+                    shot(a,"saved-before");
+                }catch(Exception e){err[0]=e;}
+            });
+            if(err[0]!=null)throw err[0];
+            androidx.test.espresso.Espresso.onView(
+                androidx.test.espresso.matcher.ViewMatchers.withText("Clear"))
+                .perform(androidx.test.espresso.action.ViewActions.click());
+            androidx.test.espresso.Espresso.onView(
+                androidx.test.espresso.matcher.ViewMatchers.withText("Clear saved"))
+                .perform(androidx.test.espresso.action.ViewActions.click());
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            scenario.onActivity(a->{
+                try{
+                    View root=a.getWindow().getDecorView();
+                    assertNotNull("Saved navigation context must persist",
+                        text(root,"Saved species"));
+                    assertNotNull(text(root,"No saved species"));
+                    ListView species=(ListView)find(root,ListView.class);
+                    assertEquals(0,species.getAdapter().getCount());
+                    assertTrue(PhLibraryBookmarks.all(a).isEmpty());
+                    shot(a,"saved-after");
+                }catch(Exception e){err[0]=e;}
+            });
+            if(err[0]!=null)throw err[0];
+        }finally{PhLibraryBookmarks.clear(app);}
     }
 
     @Test public void bibliographyIsCleanAndCitationSearchReturnsUnverifiedCandidates()

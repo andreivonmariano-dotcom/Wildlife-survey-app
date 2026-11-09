@@ -16,7 +16,7 @@ class Rc104LargeText(unittest.TestCase):
         self.assertIn('savedButton.setTextSize(12);sortButton.setTextSize(12)',explorer)
         self.assertIn('large?16.5f:30',reader)
         self.assertIn('text must fit vertically at 200% scale',tests)
-        self.assertIn('Clear label must fit inside its button',tests)
+        self.assertIn('Clear must fit within its button',tests)
         self.assertIn('Reader heading breaks in the middle of a word',tests)
     def test_version_and_invariants(self):
         build=(ROOT/'app/build.gradle').read_text()

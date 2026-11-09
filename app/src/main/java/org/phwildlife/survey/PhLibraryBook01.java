@@ -233,6 +233,7 @@ public final class PhLibraryBook01 {
         LinearLayout.LayoutParams tx=new LinearLayout.LayoutParams(-1,-2);
         tx.topMargin=PhLibrary2Ui.dp(a,10);hero.addView(taxonomy,tx);
         parent.addView(hero,new LinearLayout.LayoutParams(-1,-2));
+        PhLibrarySpeciesMedia.addReaderPlate(a,parent,scientific);
 
         boolean stack=a.getResources().getConfiguration().fontScale>=1.6f ||
             a.getResources().getConfiguration().screenWidthDp<350;

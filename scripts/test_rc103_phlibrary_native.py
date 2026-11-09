@@ -39,7 +39,7 @@ class PhLibrary2Native(unittest.TestCase):
         self.assertIn('record.optString',explore) if False else None
         self.assertIn('r.optString("p")',explore)
         self.assertIn('IUCN: ',explore)
-        self.assertIn('Text mention · ',explore)
+        self.assertIn('Excerpt · ',explore)
         self.assertIn('setSelectionFromTop',explore)
         self.assertIn('phlibrary_saved_only',explore)
         self.assertNotIn('Show more accounts',explore)
@@ -47,10 +47,10 @@ class PhLibrary2Native(unittest.TestCase):
         habitat=source('HabitatSpeciesEvidenceActivity.java')
         bib=source('PhLibraryBibliographyActivity.java')
         self.assertIn('offline_habitat_profiles_v1.json',habitat)
-        self.assertIn('rc8_species_habitat_links_v1.json',habitat)
-        self.assertIn('at your survey site',habitat)
+        self.assertIn('phlibrary_habitat_reader_v1.json',habitat)
+        self.assertIn('Browse species',habitat)
         self.assertIn('published',habitat.lower()) if False else None
-        self.assertIn('PhLibraryBook01.has',habitat)
+        self.assertIn('PhLibraryHabitatFilter.indexOfId',habitat)
         self.assertIn('new ListView(this)',bib)
         self.assertNotIn('if(found>45)',bib)
         self.assertIn('candidateMode',bib)

@@ -3,7 +3,6 @@ import base64
 import gzip
 import json
 from pathlib import Path
-import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,8 +34,7 @@ class SpeciesMediaDailyTests(unittest.TestCase):
         daily = (JAVA / "ApoSpeciesOfDay.java").read_text()
         self.assertIn('row.optString("t"', daily)
         self.assertIn('row.optString("iucn"', daily)
-        self.assertIn('row.optString("b"', daily) if False else self.assertIn(
-            'account.optString("b"', daily)
+        self.assertIn('account.optString("b"', daily)
         self.assertIn('firstSourceSentence(row.optString("p"))', daily)
         self.assertIn('ZoneId.of("Asia/Manila")', daily)
         self.assertIn("hasApprovedPhoto", daily)

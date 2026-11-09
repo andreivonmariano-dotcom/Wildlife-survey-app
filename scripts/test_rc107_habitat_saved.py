@@ -77,7 +77,7 @@ class Rc107HabitatSaved(unittest.TestCase):
     def test_preserved_surveys_and_version(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertIn("versionCode 168",gradle)
-        self.assertIn("0.27.3-rc107-habitat-reader-saved",gradle)
+        self.assertIn("0.27.3-rc108-species-media-daily",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,29)",java("FieldDb.java"))
         self.assertIn('EXPECTED_COUNT=715',java("PhLibraryBook01.java"))

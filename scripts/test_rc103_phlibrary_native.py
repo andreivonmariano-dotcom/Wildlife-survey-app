@@ -57,7 +57,7 @@ class PhLibrary2Native(unittest.TestCase):
     def test_release_identity_and_data_scope(self):
         build=(ROOT/'app/build.gradle').read_text()
         self.assertIn('versionCode 168',build)
-        self.assertIn("versionName '0.27.3-rc107-habitat-reader-saved'",build)
+        self.assertIn("versionName '0.27.3-rc108-species-media-daily'",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn('super(context,NAME,null,29)',source('FieldDb.java'))
         self.assertNotIn('getWritableDatabase',source('PhLibraryBook01.java'))

@@ -51,7 +51,7 @@ class Rc102StartupMotion(unittest.TestCase):
         manifest=MANIFEST.read_text(encoding='utf-8')
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn('versionCode 168',build)
-        self.assertIn("versionName '0.27.3-rc107-habitat-reader-saved'",build)
+        self.assertIn("versionName '0.27.3-rc108-species-media-daily'",build)
         self.assertIn('android:name=".LikasLaunchActivity"',manifest)
         self.assertIn('android:exported="true"',manifest)
         self.assertIn('android:name=".WelcomeActivity"',manifest)

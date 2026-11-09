@@ -372,7 +372,12 @@ public final class PhLibraryDirectoryActivity extends Activity {
         savedButton=PhLibrary2Ui.action(this,"Filters",this::chooseCompactFilters,false);
         sortButton=PhLibrary2Ui.action(this,"Sort",
             ()->choose("Sort species",SORT,selectedSort,i->selectedSort=i),false);
-        if(compactFilters){savedButton.setTextSize(12);sortButton.setTextSize(12);}
+        if(compactFilters){
+            savedButton.setTextSize(12);sortButton.setTextSize(12);
+            // 200% system font must fit inside the 48dp toolbar height.
+            savedButton.setPadding(dp(6),dp(5),dp(6),dp(5));
+            sortButton.setPadding(dp(6),dp(5),dp(6),dp(5));
+        }
         LinearLayout.LayoutParams fl=new LinearLayout.LayoutParams(0,dp(48),1);
         tools.addView(savedButton,fl);
         LinearLayout.LayoutParams sl=new LinearLayout.LayoutParams(0,dp(48),1);

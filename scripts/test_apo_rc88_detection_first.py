@@ -48,7 +48,7 @@ class DetectionFirstContracts(unittest.TestCase):
         self.assertIn('if(hasUnsavedObservation())',main)
         self.assertIn('markedAt>0||count!=1',main)
         self.assertIn("versionCode 168",(ROOT/"app/build.gradle").read_text())
-        self.assertIn('0.27.3-rc107-habitat-reader-saved',(ROOT/"app/build.gradle").read_text())
+        self.assertIn('0.27.3-rc108-species-media-daily',(ROOT/"app/build.gradle").read_text())
 
 if __name__=="__main__":
     unittest.main()

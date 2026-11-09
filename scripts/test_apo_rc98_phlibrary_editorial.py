@@ -77,10 +77,10 @@ class Rc98BookEditorial(unittest.TestCase):
     def test_home_has_only_one_book_and_three_distinct_actions(self):
         hub=(JAVA/"LikasLibraryActivity.java").read_text(encoding="utf-8")
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text(encoding="utf-8")
-        self.assertEqual(hub.count("PhLibrary2Ui.hero(this"),1)
-        self.assertEqual(hub.count("sectionCard(body,"),4)
-        for title in ('"THE FOUR WILDLIFE GROUPS"','"Discovery Rarity"',
-                      '"Habitat atlas"'):
+        self.assertEqual(hub.count("PhLibraryPhotoHero.create(this"),1)
+        self.assertEqual(hub.count('tile(body,"'),4)
+        for title in ('"Wildlife groups"','"Saved species"',
+                      '"Habitat Atlas"'):
             self.assertIn(title,hub)
         for old in ('"Conservation evidence"','"Similar species"',
                     '"Source collections"','"Photo comparisons"'):
@@ -90,8 +90,8 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertNotIn("ImageView",hub)
         self.assertNotIn("ImageView",directory)
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 164",gradle)
-        self.assertIn("0.27.3-rc104-phlibrary-large-text",gradle)
+        self.assertIn("versionCode 165",gradle)
+        self.assertIn("0.27.3-rc105-phlibrary-clean-atlas",gradle)
 
 if __name__=="__main__":
     unittest.main()

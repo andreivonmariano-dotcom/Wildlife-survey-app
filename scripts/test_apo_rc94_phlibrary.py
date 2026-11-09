@@ -13,11 +13,11 @@ class PHLibraryScreenContract(unittest.TestCase):
         hub=read("LikasLibraryActivity.java")
         style=read("PhLibraryStyle.java")
         self.assertIn('"PHLibrary"',hub)
-        self.assertIn("PhLibrary2Ui.hero",hub)
+        self.assertIn("PhLibraryPhotoHero.create",hub)
         self.assertIn("PhLibraryDirectoryActivity.class",hub)
-        self.assertIn("THE FOUR WILDLIFE GROUPS",hub)
-        self.assertIn("Discovery Rarity",hub)
-        self.assertIn("Habitat atlas",hub)
+        self.assertIn("Wildlife groups",hub)
+        self.assertIn("Saved species",hub)
+        self.assertIn("Habitat Atlas",hub)
         self.assertNotIn('"Photo comparisons"',hub)
         self.assertNotIn('"Wildlife field guides"',hub)
         self.assertNotIn('"Search book species"',hub)
@@ -56,8 +56,8 @@ class PHLibraryScreenContract(unittest.TestCase):
 
     def test_app_identity_biology_and_schema_remain(self):
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 164",gradle)
-        self.assertIn("0.27.3-rc104-phlibrary-large-text",gradle)
+        self.assertIn("versionCode 165",gradle)
+        self.assertIn("0.27.3-rc105-phlibrary-clean-atlas",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn('manifest.put("sqliteSchema",snapshotSchema)',

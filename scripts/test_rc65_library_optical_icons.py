@@ -47,7 +47,7 @@ class Rc65OpticalArt(unittest.TestCase):
                       "HabitatSpeciesEvidenceActivity.class"):
             self.assertIn(route,library)
         self.assertNotIn("Rc8PhotoComparisonActivity.class",library)
-        self.assertIn("PhLibrary2Ui.hero",library)
+        self.assertIn("PhLibraryPhotoHero.create",library)
     def test_gradle_generates_before_resource_merge_and_keeps_identity(self):
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)

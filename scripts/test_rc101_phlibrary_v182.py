@@ -76,7 +76,7 @@ class CanonicalBook01V182(unittest.TestCase):
         self.assertNotIn('getWritableDatabase',source)
         self.assertNotIn('execSQL(',source)
         self.assertIn('super(context,NAME,null,29)',(JAVA/'FieldDb.java').read_text())
-        self.assertIn('versionCode 164',(ROOT/'app/build.gradle').read_text())
+        self.assertIn('versionCode 165',(ROOT/'app/build.gradle').read_text())
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",(ROOT/'app/build.gradle').read_text())
         self.assertIn('.PhLibraryBibliographyActivity',(ROOT/'app/src/main/AndroidManifest.xml').read_text())
 
@@ -84,7 +84,7 @@ class CanonicalBook01V182(unittest.TestCase):
         directory=(JAVA/'PhLibraryDirectoryActivity.java').read_text(encoding='utf-8')
         self.assertIn('r.optString("p")',directory)
         self.assertIn('"Legendary","Unranked"',directory)
-        self.assertIn('715 accounts',directory)
+        self.assertIn('matches.size()',directory)
         self.assertIn('PhLibraryBook01.ready(this)',directory)
         self.assertIn('"phlibrary_scientific_name"',directory)
 

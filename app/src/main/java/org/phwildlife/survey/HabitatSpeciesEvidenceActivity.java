@@ -2,6 +2,8 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -46,12 +48,15 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         root.setBackgroundColor(PhLibrary2Ui.PAPER);
         root.setPadding(dp(15),dp(7),dp(15),0);
         LinearLayout nav=new LinearLayout(this);nav.setGravity(Gravity.CENTER_VERTICAL);
+        boolean large=getResources().getConfiguration().fontScale>=1.6f;
         TextView back=PhLibrary2Ui.action(this,"Back",onBack,false);
-        nav.addView(back,new LinearLayout.LayoutParams(dp(80),dp(48)));
-        TextView label=PhLibrary2Ui.text(this,title,14,PhLibrary2Ui.FOREST,false,true);
-        label.setGravity(Gravity.CENTER);nav.addView(label,new LinearLayout.LayoutParams(0,dp(48),1));
-        TextView count=PhLibrary2Ui.text(this,"15",13,PhLibrary2Ui.MUTED,false,true);
-        nav.addView(count);root.addView(nav);
+        if(large){back.setTextSize(12);back.setPadding(dp(6),dp(5),dp(6),dp(5));}
+        nav.addView(back,new LinearLayout.LayoutParams(dp(large?99:80),dp(48)));
+        TextView label=PhLibrary2Ui.text(this,title,large?11:14,
+            PhLibrary2Ui.FOREST,false,true);
+        label.setGravity(Gravity.CENTER);
+        nav.addView(label,new LinearLayout.LayoutParams(0,dp(48),1));
+        root.addView(nav);
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
         LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);
         body.setPadding(dp(1),dp(10),dp(1),dp(28));
@@ -93,31 +98,65 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
     private void showIndex(){
         currentHabitat=null;
         LinearLayout body=shell("HABITAT ATLAS",this::finish);
-        body.addView(PhLibrary2Ui.hero(this,"THE ECOLOGICAL ATLAS",
-            "Habitats of the\nPhilippines",
-            "15 source-informed landscape profiles with published species links.",false));
-        TextView note=text("Profiles describe environments for field reference. Linked species " +
-            "records are literature excerpts, not evidence that a species occurs at your site.",14,false);
-        note.setTextColor(PhLibrary2Ui.MUTED);note.setPadding(dp(3),dp(15),dp(3),dp(8));body.addView(note);
-        body.addView(PhLibrary2Ui.eyebrow(this,"EXPLORE LANDSCAPES"));
-        for(JSONObject habitat:habitats){
-            final String id=habitat.optString("id");
-            String title=habitat.optString("name");
-            String overview=habitat.optString("overview");
-            String snippet=overview.length()>132?overview.substring(0,132).trim()+"…":overview;
-            String description=habitat.optString("group")+" · "+countLinks(id)+
-                " literature links\n"+snippet;
-            LinearLayout card=PhLibrary2Ui.panel(this,title,description,()->showHabitat(id));
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-            lp.bottomMargin=dp(10);body.addView(card,lp);
+        TextView heading=PhLibrary2Ui.text(this,"Mindanao landscapes",28,
+            PhLibrary2Ui.INK,true,false);
+        heading.setPadding(0,dp(12),0,dp(14));
+        body.addView(heading);
+        String[] categories={"Terrestrial","Edaphic","Aquatic","Coastal","Human-modified"};
+        for(String group:categories){
+            boolean first=true;
+            for(JSONObject h:habitats){
+                if(!group.equals(h.optString("group")))continue;
+                if(first){
+                    TextView label=PhLibrary2Ui.text(this,group,18,
+                        PhLibrary2Ui.FOREST,true,true);
+                    label.setPadding(0,dp(14),0,dp(8));body.addView(label);
+                    first=false;
+                }
+                String id=h.optString("id"),name=h.optString("name");
+                int count=countLinks(id);
+                String subtitle=count==0?"Habitat profile":
+                    count+(count==1?" literature link":" literature links");
+                LinearLayout panel=PhLibrary2Ui.panel(this,name,subtitle,()->showHabitat(id));
+                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+                lp.bottomMargin=dp(8);body.addView(panel,lp);
+            }
         }
     }
     private void line(LinearLayout body,String title,String value){
         if(value==null||value.trim().isEmpty())return;
-        TextView sub=PhLibrary2Ui.eyebrow(this,title);
-        body.addView(sub);
-        TextView paragraph=text(value,16,false);paragraph.setTextColor(PhLibrary2Ui.INK);
-        body.addView(paragraph);
+        boolean initiallyOpen="THE ENVIRONMENT".equals(title);
+        LinearLayout part=new LinearLayout(this);
+        part.setOrientation(LinearLayout.VERTICAL);
+        TextView toggle=PhLibrary2Ui.action(this,
+            (initiallyOpen?"−  ":"+  ")+title,()->{},false);
+        toggle.setGravity(Gravity.CENTER_VERTICAL);
+        toggle.setTextSize(14);
+        toggle.setContentDescription((initiallyOpen?"Collapse ":"Expand ")+title);
+        part.addView(toggle);
+        TextView paragraph=text(value,16,false);
+        paragraph.setPadding(dp(10),dp(8),dp(10),dp(13));
+        paragraph.setVisibility(initiallyOpen?View.VISIBLE:View.GONE);
+        part.addView(paragraph);
+        toggle.setOnClickListener(v->{
+            boolean show=paragraph.getVisibility()!=View.VISIBLE;
+            paragraph.setVisibility(show?View.VISIBLE:View.GONE);
+            toggle.setText((show?"−  ":"+  ")+title);
+            toggle.setContentDescription((show?"Collapse ":"Expand ")+title);
+        });
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.bottomMargin=dp(7);body.addView(part,lp);
+    }
+    private void openSource(String sourceUrl){
+        if(sourceUrl==null || !sourceUrl.startsWith("https://")){
+            new AlertDialog.Builder(this).setMessage("No verified public source URL supplied.")
+                .setPositiveButton("Close",null).show();return;
+        }
+        try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(sourceUrl)));}
+        catch(Exception e){
+            new AlertDialog.Builder(this).setMessage("A browser is unavailable on this device.")
+                .setPositiveButton("Close",null).show();
+        }
     }
     private void showHabitat(String id){
         JSONObject profile=null;
@@ -125,8 +164,12 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         if(profile==null){showIndex();return;}
         currentHabitat=id;
         LinearLayout body=shell("HABITAT PROFILE",this::showIndex);
-        body.addView(PhLibrary2Ui.hero(this,"HABITAT ATLAS  /  "+profile.optString("group"),
-            profile.optString("name"),"Source-informed habitat description",true));
+        TextView title=PhLibrary2Ui.text(this,profile.optString("name"),27,
+            PhLibrary2Ui.INK,true,false);
+        title.setPadding(0,dp(12),0,dp(6));body.addView(title);
+        TextView group=PhLibrary2Ui.text(this,profile.optString("group"),14,
+            PhLibrary2Ui.MUTED,false,true);
+        group.setPadding(0,0,0,dp(12));body.addView(group);
         line(body,"THE ENVIRONMENT",profile.optString("overview"));
         line(body,"FIELD INDICATORS",profile.optString("fieldIndicators"));
         line(body,"WATER AND SUBSTRATE",profile.optString("waterAndSubstrate"));
@@ -148,42 +191,67 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
             count++;
             final String latin=edge.optString("scientificName");
             final String taxonKey=edge.optString("sourceTaxonKey");
-            LinearLayout card=PhLibrary2Ui.panel(this,latin,
-                edge.optString("evidenceText")+"\nSource: "+edge.optString("sourceTitle"),
-                ()->{
-                    Intent intent=new Intent(this,TaxonDetailActivity.class);
-                    if(PhLibraryBook01.has(this,latin))
-                        intent.putExtra("phlibrary_scientific_name",latin);
-                    else intent.putExtra("taxon_key",taxonKey);
-                    startActivity(intent);
-                });
+            String evidence=edge.optString("evidenceText");
+            String source=edge.optString("sourceTitle");
+            String url=edge.optString("sourceUrl");
+            LinearLayout card=new LinearLayout(this);card.setOrientation(LinearLayout.VERTICAL);
+            card.setPadding(dp(13),dp(12),dp(13),dp(12));
+            card.setBackground(PhLibrary2Ui.bg(this,PhLibrary2Ui.IVORY,
+                PhLibrary2Ui.LINE,13));
+            TextView latinLabel=PhLibrary2Ui.text(this,latin,18,PhLibrary2Ui.FOREST,true,true);
+            latinLabel.setOnClickListener(v->{
+                Intent intent=new Intent(this,TaxonDetailActivity.class);
+                if(PhLibraryBook01.has(this,latin))
+                    intent.putExtra("phlibrary_scientific_name",latin);
+                else intent.putExtra("taxon_key",taxonKey);
+                startActivity(intent);
+            });
+            latinLabel.setClickable(true);latinLabel.setFocusable(true);
+            latinLabel.setContentDescription("Read species "+latin);
+            card.addView(latinLabel);
+            TextView explanation=text(evidence,14,false);
+            explanation.setPadding(0,dp(6),0,dp(8));card.addView(explanation);
+            TextView sourceLabel=PhLibrary2Ui.text(this,"Source: "+source,12,
+                PhLibrary2Ui.MUTED,false,false);
+            sourceLabel.setMaxLines(3);card.addView(sourceLabel);
+            TextView open=PhLibrary2Ui.action(this,"Open source",()->openSource(url),false);
+            LinearLayout.LayoutParams op=new LinearLayout.LayoutParams(-1,dp(48));
+            op.topMargin=dp(8);card.addView(open,op);
             LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(-1,-2);
             cp.bottomMargin=dp(8);body.addView(card,cp);
         }
         if(count==0){
-            TextView empty=text("No source-reviewed species links have been recorded for this profile.",14,false);
+            TextView empty=text("No reviewed species links added yet.",14,false);
             empty.setTextColor(PhLibrary2Ui.MUTED);body.addView(empty);
         }
-        TextView provenance=text("These "+count+" associations are provisional literature crosswalks. "+
-            "The source pack covers a reviewed subset, not all 715 Book 01 accounts.",13,false);
+        TextView provenance=text("Literature links are provisional and do not establish occurrence at your survey site.",13,false);
         provenance.setPadding(0,dp(14),0,dp(12));provenance.setTextColor(PhLibrary2Ui.MUTED);
         body.addView(provenance);
-        TextView find=PhLibrary2Ui.action(this,"Search mentions in Book 01",()->{
+        TextView find=PhLibrary2Ui.action(this,"Find textual mentions in Book 01",()->{
             startActivity(new Intent(this,PhLibraryDirectoryActivity.class).putExtra(
                 "phlibrary_query",profileTextQuery(id)));
         },false);
         body.addView(find);
     }
     private String profileTextQuery(String id){
-        if("lowland-forest".equals(id))return "lowland forest";
-        if("mossy-forest".equals(id))return "mossy forest";
-        if("riparian".equals(id))return "stream";
-        if("mangrove".equals(id))return "mangrove";
-        if("limestone-karst".equals(id))return "limestone";
-        if("freshwater-wetland".equals(id))return "wetland";
-        for(JSONObject x:habitats)if(id.equals(x.optString("id")))
-            return x.optString("name").split(" ")[0];
-        return "";
+        switch(id){
+            case "lowland-forest":return "lowland forest";
+            case "montane-forest":return "montane forest";
+            case "mossy-forest":return "mossy forest";
+            case "riparian":return "riparian";
+            case "mangrove":return "mangrove";
+            case "limestone-karst":return "limestone";
+            case "ultramafic-forest":return "ultramafic";
+            case "freshwater-wetland":return "wetland";
+            case "freshwater-swamp-forest":return "swamp forest";
+            case "peat-swamp-forest":return "peat swamp";
+            case "beach-forest":return "beach forest";
+            case "disturbed-secondary":return "secondary forest";
+            case "semi-evergreen-rainforest":return "semi-evergreen";
+            case "moist-deciduous-forest":return "deciduous forest";
+            case "tropical-subalpine":return "subalpine";
+            default:return "";
+        }
     }
     @Override protected void onSaveInstanceState(Bundle out){
         out.putString("habitat",currentHabitat);super.onSaveInstanceState(out);

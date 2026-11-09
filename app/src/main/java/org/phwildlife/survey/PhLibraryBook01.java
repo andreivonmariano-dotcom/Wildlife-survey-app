@@ -211,20 +211,17 @@ public final class PhLibraryBook01 {
         String headingText=common.isEmpty()?scientific:common;
 
         LinearLayout hero=new LinearLayout(a);hero.setOrientation(LinearLayout.VERTICAL);
-        hero.setPadding(PhLibrary2Ui.dp(a,large?14:20),
+        hero.setPadding(PhLibrary2Ui.dp(a,large?12:18),
+            PhLibrary2Ui.dp(a,large?10:15),
             PhLibrary2Ui.dp(a,large?12:18),
-            PhLibrary2Ui.dp(a,large?14:20),
-            PhLibrary2Ui.dp(a,large?13:19));
+            PhLibrary2Ui.dp(a,large?11:15));
         hero.setBackground(PhLibrary2Ui.bg(a,PhLibrary2Ui.DEEP,
             android.graphics.Color.TRANSPARENT,18));
-        TextView kicker=PhLibrary2Ui.text(a,"BOOK 01  /  "+record.optString("g").toUpperCase(Locale.ROOT),
-            12,0xFFD9E8D4,false,true);
-        kicker.setLetterSpacing(.085f);hero.addView(kicker);
         TextView heading=PhLibrary2Ui.text(a,headingText,
             large?16.5f:30,android.graphics.Color.WHITE,true,false);
         heading.setLineSpacing(PhLibrary2Ui.dp(a,1),1.02f);
         LinearLayout.LayoutParams h=new LinearLayout.LayoutParams(-1,-2);
-        h.topMargin=PhLibrary2Ui.dp(a,12);hero.addView(heading,h);
+        h.topMargin=0;hero.addView(heading,h);
         TextView latin=PhLibrary2Ui.text(a,record.optString("s"),
             large?15:18,0xFFE2EBD7,true,false);
         latin.setTypeface(Typeface.create("serif",Typeface.ITALIC));
@@ -241,13 +238,12 @@ public final class PhLibraryBook01 {
             a.getResources().getConfiguration().screenWidthDp<350;
         LinearLayout statusRow=new LinearLayout(a);
         statusRow.setOrientation(stack?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        statusRow.setPadding(0,PhLibrary2Ui.dp(a,12),0,PhLibrary2Ui.dp(a,6));
+        statusRow.setPadding(0,PhLibrary2Ui.dp(a,11),0,PhLibrary2Ui.dp(a,5));
         String global=record.isNull("iucn")?"Unassessed":record.optString("iucn","Unassessed");
         String tier=record.optString("t");
-        LinearLayout rarity=statusCard(a,"DISCOVERY RARITY",tier);
-        LinearLayout iucn=statusCard(a,"IUCN GLOBAL",global);
-        LinearLayout.LayoutParams rlp=new LinearLayout.LayoutParams(stack?-1:0,-2,1);
-        statusRow.addView(rarity,rlp);
+        TextView rarity=PhLibraryStatusBadge.make(a,tier,true);
+        TextView iucn=PhLibraryStatusBadge.make(a,global,false);
+        statusRow.addView(rarity,new LinearLayout.LayoutParams(stack?-1:0,-2,1));
         LinearLayout.LayoutParams ilp=new LinearLayout.LayoutParams(stack?-1:0,-2,1);
         if(stack)ilp.topMargin=PhLibrary2Ui.dp(a,8);
         else ilp.leftMargin=PhLibrary2Ui.dp(a,8);
@@ -269,14 +265,23 @@ public final class PhLibraryBook01 {
             parent.addView(natural);
         }
 
-        TextView section=PhLibrary2Ui.eyebrow(a,"NATURAL HISTORY  /  EDITION 1.82");
-        LinearLayout.LayoutParams sec=new LinearLayout.LayoutParams(-1,-2);
-        sec.topMargin=PhLibrary2Ui.dp(a,8);parent.addView(section,sec);
-        TextView sectionTitle=PhLibrary2Ui.text(a,"Life in its habitat",26,PhLibrary2Ui.INK,true,false);
-        sectionTitle.setPadding(0,0,0,PhLibrary2Ui.dp(a,9));parent.addView(sectionTitle);
+        TextView save=PhLibrary2Ui.action(a,
+            PhLibraryBookmarks.saved(a,scientific)?"Saved in my collection":"Save to my collection",
+            ()->{},false);
+        save.setOnClickListener(v->{
+            boolean selected=PhLibraryBookmarks.toggle(a,scientific);
+            save.setText(selected?"Saved in my collection":"Save to my collection");
+            save.announceForAccessibility(selected?"Species saved":"Species removed from collection");
+        });
+        LinearLayout.LayoutParams saveLp=new LinearLayout.LayoutParams(-1,PhLibrary2Ui.dp(a,50));
+        saveLp.bottomMargin=PhLibrary2Ui.dp(a,10);parent.addView(save,saveLp);
+        TextView sectionTitle=PhLibrary2Ui.text(a,"Natural history",23,
+            PhLibrary2Ui.INK,true,false);
+        sectionTitle.setPadding(0,PhLibrary2Ui.dp(a,6),0,PhLibrary2Ui.dp(a,8));
+        parent.addView(sectionTitle);
 
         LinearLayout tools=new LinearLayout(a);tools.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        TextView original=PhLibrary2Ui.text(a,"Original Book 01 narrative",13,
+        TextView original=PhLibrary2Ui.text(a,"Text size",13,
             PhLibrary2Ui.MUTED,false,false);
         tools.addView(original,new LinearLayout.LayoutParams(0,-2,1));
         TextView smaller=PhLibrary2Ui.action(a,"A−",()->{},false);
@@ -300,16 +305,7 @@ public final class PhLibraryBook01 {
         larger.setOnClickListener(v->changeFont(a,prefs,article,1));
         parent.addView(article,new LinearLayout.LayoutParams(-1,-2));
 
-        TextView save=PhLibrary2Ui.action(a,
-            PhLibraryBookmarks.saved(a,scientific)?"Saved in my collection":"Save to my collection",
-            ()->{},false);
-        save.setOnClickListener(v->{
-            boolean selected=PhLibraryBookmarks.toggle(a,scientific);
-            save.setText(selected?"Saved in my collection":"Save to my collection");
-            save.announceForAccessibility(selected?"Species saved":"Species removed from collection");
-        });
-        LinearLayout.LayoutParams saveLp=new LinearLayout.LayoutParams(-1,PhLibrary2Ui.dp(a,50));
-        saveLp.bottomMargin=PhLibrary2Ui.dp(a,10);parent.addView(save,saveLp);
+
 
         JSONArray refs=record.optJSONArray("r");
         TextView refHead=PhLibrary2Ui.text(a,"Source notes",24,
@@ -321,12 +317,6 @@ public final class PhLibraryBook01 {
             ()->referencesDialog(a,refs),false);
         refsAction.setContentDescription("Open source citations and full bibliography");
         parent.addView(refsAction);
-        TextView sourceNote=PhLibrary2Ui.text(a,
-            "The original author–date citations are retained. Full reference matching is incomplete.",
-            13,PhLibrary2Ui.MUTED,false,false);
-        sourceNote.setPadding(0,PhLibrary2Ui.dp(a,9),0,PhLibrary2Ui.dp(a,8));
-        parent.addView(sourceNote);
-
         TextView related=PhLibrary2Ui.text(a,"More in "+record.optString("f"),
             24,PhLibrary2Ui.INK,true,false);
         related.setPadding(0,PhLibrary2Ui.dp(a,19),0,PhLibrary2Ui.dp(a,8));
@@ -355,19 +345,6 @@ public final class PhLibraryBook01 {
         parent.addView(edition);
         addNavigation(a,parent,pos,navigate);
         return true;
-    }
-
-    private static LinearLayout statusCard(Activity a,String label,String value){
-        LinearLayout card=new LinearLayout(a);card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(PhLibrary2Ui.dp(a,14),PhLibrary2Ui.dp(a,13),
-            PhLibrary2Ui.dp(a,13),PhLibrary2Ui.dp(a,13));
-        card.setBackground(PhLibrary2Ui.bg(a,PhLibrary2Ui.IVORY,PhLibrary2Ui.LINE,13));
-        TextView category=PhLibrary2Ui.text(a,label,11,PhLibrary2Ui.MUTED,false,true);
-        category.setLetterSpacing(.08f);card.addView(category);
-        TextView data=PhLibrary2Ui.text(a,value,18,PhLibrary2Ui.INK,true,true);
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.topMargin=PhLibrary2Ui.dp(a,5);card.addView(data,lp);
-        return card;
     }
 
     private static void changeFont(Activity a,android.content.SharedPreferences prefs,

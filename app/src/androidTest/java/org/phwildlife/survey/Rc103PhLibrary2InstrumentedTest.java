@@ -48,6 +48,17 @@ public final class Rc103PhLibrary2InstrumentedTest {
         }
         return null;
     }
+    private static View named(View v,String simpleName){
+        if(v.getClass().getSimpleName().equals(simpleName))return v;
+        if(v instanceof ViewGroup){
+            ViewGroup g=(ViewGroup)v;
+            for(int i=0;i<g.getChildCount();i++){
+                View found=named(g.getChildAt(i),simpleName);
+                if(found!=null)return found;
+            }
+        }
+        return null;
+    }
     private static void shot(Activity a,String screen)throws Exception{
         View root=a.getWindow().getDecorView();
         assertTrue(root.getWidth()>0 && root.getHeight()>0);
@@ -73,16 +84,24 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     View root=a.getWindow().getDecorView();
                     assertNotNull(text(root,"Greater Mindanao"));
                     assertNotNull(text(root,"715"));
-                    assertNotNull(text(root,"Habitat atlas"));
-                    assertNotNull(text(root,"My collection"));
-                    assertNotNull(text(root,"Full bibliography"));
-                    boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
-                    View title=text(root,large?"Greater Mindanao":"Wildlife of");
-                    assertNotNull(title);
-                    ViewGroup content=(ViewGroup)title.getParent();
-                    ViewGroup hero=(ViewGroup)content.getParent();
-                    assertTrue("Atlas forest hero must grow to contain its text at this font scale",
-                        content.getBottom()<=hero.getHeight()+2);
+                    assertNotNull(text(root,"Habitat Atlas"));
+                    assertNotNull(text(root,"Saved species"));
+                    assertNotNull(text(root,"References"));
+                    assertNotNull(text(root,"Wildlife of"));
+                    assertNotNull(text(root,"Species Atlas"));
+                    assertNotNull("The bundled real Mindanao photo layer must decode",
+                        named(root,"PhotoLayer"));
+                    if(a.getResources().getConfiguration().fontScale>=1.6f){
+                        TextView back=(TextView)text(root,"Back");
+                        assertNotNull(back);
+                        assertTrue("Home Back text must fit at 200% font",
+                            back.getPaint().getFontSpacing()<=
+                            back.getHeight()-back.getPaddingTop()-back.getPaddingBottom());
+                        EditText search=(EditText)find(root,EditText.class);
+                        assertNotNull(search);
+                        assertTrue("Home search must be full width at 200% font",
+                            search.getWidth()>=root.getWidth()*.7f);
+                    }
                     shot(a,"home");
                 }catch(Exception x){err[0]=x;}
             });
@@ -117,10 +136,16 @@ public final class Rc103PhLibrary2InstrumentedTest {
                                 needed<=available);
                         }
                     }
+                    if(a.getResources().getConfiguration().fontScale>=1.6f){
+                        TextView badge=(TextView)text(root,"Uncommon");
+                        assertNotNull(badge);
+                        assertEquals("Uncommon badge must not wrap an isolated icon",
+                            1,badge.getLineCount());
+                    }
                     shot(a,"explorer");
                     input.setText("Ceyx mindanensis");
                     assertEquals(1,lv.getAdapter().getCount());
-                    assertNotNull(text(root,"1 accounts found"));
+                    assertNotNull(text(root,"1 account found"));
                     input.setText("Oreophryne cf. nana");
                     assertEquals(1,lv.getAdapter().getCount());
                     input.setText("");
@@ -155,9 +180,10 @@ public final class Rc103PhLibrary2InstrumentedTest {
                         }
                     }
                     assertNotNull(text(root,"Ceyx mindanensis"));
-                    assertNotNull(text(root,"DISCOVERY RARITY"));
-                    assertNotNull(text(root,"IUCN GLOBAL"));
+                    assertNull("Old display label must be removed",text(root,"DISCOVERY RARITY"));
+                    assertNull("Old display label must be removed",text(root,"IUCN GLOBAL"));
                     assertNotNull(text(root,"Uncommon"));
+                    assertNotNull(text(root,"Least Concern"));
                     assertNotNull(text(root,"Source notes"));
                     assertNotNull(text(root,"REFERENCES"));
                     assertNotNull(text(root,"More in Alcedinidae"));
@@ -168,4 +194,39 @@ public final class Rc103PhLibrary2InstrumentedTest {
             if(err[0]!=null)throw err[0];
         }
     }
+    @Test public void sourceLinkedHabitatsRemainDiscoverableAndReadable() throws Exception {
+        try(ActivityScenario<HabitatSpeciesEvidenceActivity> scenario=ActivityScenario.launch(
+            new Intent(ApplicationProvider.getApplicationContext(),
+                HabitatSpeciesEvidenceActivity.class))){
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            final Exception[] err={null};
+            scenario.onActivity(a->{
+                try{
+                    View root=a.getWindow().getDecorView();
+                    assertNotNull(text(root,"Mindanao landscapes"));
+                    assertNotNull(text(root,"Lowland tropical forest"));
+                    assertNotNull(text(root,"Terrestrial"));
+                    shot(a,"habitat-index");
+                    View name=text(root,"Lowland tropical forest");
+                    assertNotNull(name);
+                    assertTrue("Habitat entry must remain tappable",
+                        ((View)name.getParent()).performClick());
+                }catch(Exception e){err[0]=e;}
+            });
+            if(err[0]!=null)throw err[0];
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            scenario.onActivity(a->{
+                try{
+                    View root=a.getWindow().getDecorView();
+                    assertNotNull(text(root,"FIELD INDICATORS"));
+                    assertNotNull(text(root,"LITERATURE-LINKED SPECIES"));
+                    assertNotNull(text(root,"Open source"));
+                    assertNotNull(text(root,"Find textual mentions"));
+                    shot(a,"habitat-detail");
+                }catch(Exception e){err[0]=e;}
+            });
+            if(err[0]!=null)throw err[0];
+        }
+    }
+
 }

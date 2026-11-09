@@ -83,8 +83,8 @@ class Rc86InteractiveTest(unittest.TestCase):
         self.assertIn("'Not assessed'",src("ResearchExports.java"))
     def test_preview_metadata(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 164",gradle)
-        self.assertIn("0.27.3-rc104-phlibrary-large-text",gradle)
+        self.assertIn("versionCode 165",gradle)
+        self.assertIn("0.27.3-rc105-phlibrary-clean-atlas",gradle)
         wf=(ROOT/".github/workflows/apo-recorder-picker-v146-emulator-qa.yml").read_text()
         self.assertIn("versionCode='146'",wf)
         self.assertIn("RecorderPickerCompactEmulatorTest",wf)

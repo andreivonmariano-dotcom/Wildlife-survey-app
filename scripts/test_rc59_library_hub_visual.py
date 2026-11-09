@@ -8,9 +8,9 @@ class Rc59HubVisual(unittest.TestCase):
         src=(JAVA/"LikasLibraryActivity.java").read_text()
         style=(JAVA/"PhLibraryStyle.java").read_text()
         self.assertIn('new ScrollView(this)',src)
-        self.assertIn("PhLibrary2Ui.hero",src)
-        self.assertIn("PhLibrary2Ui.panel",src)
-        self.assertIn("PhLibrary2Ui.eyebrow",src)
+        self.assertIn("PhLibraryPhotoHero.create",src)
+        self.assertIn("tile(body,",src)
+        self.assertIn("TextView browse",src)
         self.assertIn("scroll.setFillViewport(true)",src)
         self.assertIn("LikasDesignSystem.RADIUS_CARD",style) if False else None
         self.assertNotIn("LikasPortalUi.action",src)

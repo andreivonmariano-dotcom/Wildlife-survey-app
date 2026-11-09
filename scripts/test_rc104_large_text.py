@@ -13,7 +13,9 @@ class Rc104LargeText(unittest.TestCase):
         reader=(JAVA/'PhLibraryBook01.java').read_text()
         tests=(ANDROID/'Rc103PhLibrary2InstrumentedTest.java').read_text()
         self.assertIn('dp(compactFilters?82:71)',explorer)
+        self.assertIn('sortButton.setTextSize(12);savedButton.setTextSize(12)',explorer)
         self.assertIn('large?16.5f:30',reader)
+        self.assertIn('text must fit vertically at 200% scale',tests)
         self.assertIn('Clear label must fit inside its button',tests)
         self.assertIn('Reader heading breaks in the middle of a word',tests)
     def test_version_and_invariants(self):

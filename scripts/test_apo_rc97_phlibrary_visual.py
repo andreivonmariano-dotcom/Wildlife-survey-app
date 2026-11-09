@@ -24,7 +24,7 @@ class Rc97PHLibraryVisual(unittest.TestCase):
         self.assertIn("PhLibraryBook01.entries(this)",directory)
         self.assertIn("PHLibrary",directory)
         self.assertIn("UiKit.fieldInput(this,search)",directory)
-        self.assertIn("Discovery Rarity:",directory)
+        self.assertIn("Rarity: ",directory)
         self.assertIn("new ListView(this)",directory)
         self.assertIn("phlibrary_scientific_name",directory)
         for unwanted in ("ImageView","AsyncImage","OfflinePhotoEvidence",

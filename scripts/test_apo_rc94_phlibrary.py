@@ -15,7 +15,7 @@ class PHLibraryScreenContract(unittest.TestCase):
         self.assertIn('"PHLibrary"',hub)
         self.assertIn("PhLibraryPhotoHero.create",hub)
         self.assertIn("PhLibraryDirectoryActivity.class",hub)
-        self.assertIn("Wildlife groups",hub)
+        self.assertNotIn('"Wildlife groups"',hub)
         self.assertIn("Saved species",hub)
         self.assertIn("Habitat Atlas",hub)
         self.assertNotIn('"Photo comparisons"',hub)

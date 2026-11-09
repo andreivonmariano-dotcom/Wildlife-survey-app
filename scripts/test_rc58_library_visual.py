@@ -19,7 +19,7 @@ class Rc58LibraryVisual(unittest.TestCase):
             "Search complete species checklist","Habitat reference index and site records","statusIndex.get"):
             self.assertIn(label,d)
         hub=(JAVA/"LikasLibraryActivity.java").read_text()
-        self.assertIn("PhLibrary2Ui.hero",hub)
+        self.assertIn("PhLibraryPhotoHero.create",hub)
         for label in ('"THE FOUR WILDLIFE GROUPS"','"Discovery Rarity"',
                       '"Habitat atlas"'):
             self.assertIn(label,hub)

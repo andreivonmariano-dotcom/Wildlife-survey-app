@@ -54,7 +54,7 @@ class RecorderPickerRC85(unittest.TestCase):
                       'wm size 960x2160','len(files)==6'):
             self.assertIn(value,wf)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 167",g)
+        self.assertIn("versionCode 168",g)
         self.assertIn("0.27.3-rc107-habitat-reader-saved",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn('super(context,NAME,null,29)',

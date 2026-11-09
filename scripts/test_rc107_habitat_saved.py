@@ -28,7 +28,6 @@ class Rc107HabitatSaved(unittest.TestCase):
         for label,paragraph in reader["profiles"].items():
             self.assertGreater(len(paragraph.split()),75,label)
             self.assertNotIn("\n",paragraph,label)
-            self.assertEqual(paragraph.count(". "),paragraph.count(". "),label)
 
     def test_saved_collection_is_stable_and_clear_deletes_bookmarks(self):
         directory=java("PhLibraryDirectoryActivity.java")
@@ -38,7 +37,7 @@ class Rc107HabitatSaved(unittest.TestCase):
         self.assertIn('confirmClearSaved()',directory)
         self.assertIn('PhLibraryBookmarks.clear(this)',directory)
         self.assertIn('out.putBoolean("collectionMode",savedCollectionMode)',directory)
-        self.assertIn('savedCollectionMode?"Saved":"Saved species"',directory)
+        self.assertIn('(compactFilters?"Saved":"Saved species")',directory)
         self.assertIn('PhLibraryBookmarks.all(this).isEmpty()',directory)
         self.assertIn('store(c).edit().remove(KEY).commit()',bookmarks)
         self.assertNotIn("FieldDb",bookmarks)

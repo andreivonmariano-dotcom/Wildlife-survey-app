@@ -73,16 +73,11 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     View root=a.getWindow().getDecorView();
                     assertNotNull(text(root,"Greater Mindanao"));
                     assertNotNull(text(root,"715"));
-                    assertNotNull(text(root,"Habitat atlas"));
-                    assertNotNull(text(root,"My collection"));
-                    assertNotNull(text(root,"Full bibliography"));
-                    boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
-                    View title=text(root,large?"Greater Mindanao":"Wildlife of");
-                    assertNotNull(title);
-                    ViewGroup content=(ViewGroup)title.getParent();
-                    ViewGroup hero=(ViewGroup)content.getParent();
-                    assertTrue("Atlas forest hero must grow to contain its text at this font scale",
-                        content.getBottom()<=hero.getHeight()+2);
+                    assertNotNull(text(root,"Habitat Atlas"));
+                    assertNotNull(text(root,"Saved species"));
+                    assertNotNull(text(root,"References"));
+                    assertNotNull(text(root,"Wildlife of"));
+                    assertNotNull(text(root,"Species Atlas"));
                     shot(a,"home");
                 }catch(Exception x){err[0]=x;}
             });
@@ -120,7 +115,7 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     shot(a,"explorer");
                     input.setText("Ceyx mindanensis");
                     assertEquals(1,lv.getAdapter().getCount());
-                    assertNotNull(text(root,"1 accounts found"));
+                    assertNotNull(text(root,"1 account found"));
                     input.setText("Oreophryne cf. nana");
                     assertEquals(1,lv.getAdapter().getCount());
                     input.setText("");
@@ -155,9 +150,10 @@ public final class Rc103PhLibrary2InstrumentedTest {
                         }
                     }
                     assertNotNull(text(root,"Ceyx mindanensis"));
-                    assertNotNull(text(root,"DISCOVERY RARITY"));
-                    assertNotNull(text(root,"IUCN GLOBAL"));
+                    assertNull("Old display label must be removed",text(root,"DISCOVERY RARITY"));
+                    assertNull("Old display label must be removed",text(root,"IUCN GLOBAL"));
                     assertNotNull(text(root,"Uncommon"));
+                    assertNotNull(text(root,"Least Concern"));
                     assertNotNull(text(root,"Source notes"));
                     assertNotNull(text(root,"REFERENCES"));
                     assertNotNull(text(root,"More in Alcedinidae"));

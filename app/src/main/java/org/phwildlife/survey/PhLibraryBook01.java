@@ -221,7 +221,7 @@ public final class PhLibraryBook01 {
             12,0xFFD9E8D4,false,true);
         kicker.setLetterSpacing(.085f);hero.addView(kicker);
         TextView heading=PhLibrary2Ui.text(a,headingText,
-            large?20:30,android.graphics.Color.WHITE,true,false);
+            large?16.5f:30,android.graphics.Color.WHITE,true,false);
         heading.setLineSpacing(PhLibrary2Ui.dp(a,1),1.02f);
         LinearLayout.LayoutParams h=new LinearLayout.LayoutParams(-1,-2);
         h.topMargin=PhLibrary2Ui.dp(a,12);hero.addView(heading,h);

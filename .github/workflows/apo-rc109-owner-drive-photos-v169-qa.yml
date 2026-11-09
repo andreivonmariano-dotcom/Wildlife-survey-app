@@ -1,0 +1,131 @@
+name: APO RC109 owner Drive-only photos and crisp species account QA
+
+on:
+  push:
+    branches:
+      - feature/apo-rc109-owner-gdrive-photos-v169
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: apo-rc109-owner-photos-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+      - run: sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0' 'platform-tools'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - uses: actions/cache/restore@v4
+        with:
+          path: .signing/wildlife-beta08.keystore
+          key: wildlife-v08-beta-debug-signing-v1
+      - name: Restore immutable approved APO branding and original signer
+        run: |
+          echo '1eebf91314a3ead7038da98866f21c7582ffcfcf4f8da3f3c20e1d2723a69dfa  app/locked/apo_v132_assets.zip' | sha256sum -c -
+          unzip -oq app/locked/apo_v132_assets.zip 'app/src/main/assets/apo_official_master.png' 'app/src/main/res/drawable-nodpi/apo_splash_mark.png' 'app/src/main/res/drawable-nodpi/apo_launcher_foreground.png' -d .
+          echo '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7  app/src/main/assets/apo_official_master.png' | sha256sum -c -
+          test -s .signing/wildlife-beta08.keystore
+          keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/original-cert.der
+          echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/original-cert.der' | sha256sum -c -
+      - name: Confirm 333 owner photos and no unapproved wildlife image assets
+        run: |
+          test ! -d app/src/main/assets/offline_photos
+          python3 scripts/test_rc109_owner_drive_photos.py
+          python3 -m py_compile scripts/test_rc109_owner_drive_photos.py
+          python3 -m unittest discover -s scripts -p 'test_rc109*.py'
+      - name: Compile signed code169 and Android tests
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Check app identity, signer, locked sources and no older wildlife photos
+        run: |
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='169'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc109-owner-drive-photos'"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
+          unzip -t "$APK" >/dev/null
+          unzip -Z1 "$APK" | grep -F 'assets/apo_owner_drive_photo_inventory_v1.json'
+          if unzip -Z1 "$APK" | grep -E '^assets/offline_photos/'; then
+            echo 'Old external photographs were packaged' >&2
+            exit 1
+          fi
+          unzip -p "$APK" assets/paic714_master.csv | sha256sum | grep -F '1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959'
+          unzip -p "$APK" assets/paic_worldcover2020_500m.txt | sha256sum | grep -F 'e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089'
+          sha256sum "$APK"
+      - name: Upload signed code169 candidate for direct delivery
+        uses: actions/upload-artifact@v4
+        with:
+          name: APO-RC109-owner-drive-only-signed-code169
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
+      - name: Prepare Android Emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Exercise owner ZIP, multi-photo account gallery and daily feature
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_4
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-boot-anim -camera-back none -no-snapshot
+          script: |
+            mkdir -p rc109-evidence
+            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+            adb shell am instrument -w -e class org.phwildlife.survey.Rc109OwnerDrivePhotoInstrumentedTest\#aOwnerFilenameInventoryIsStrict,org.phwildlife.survey.Rc109OwnerDrivePhotoInstrumentedTest\#bOwnerArchiveImportsAllAlternatesAndStripsUnapprovedImages,org.phwildlife.survey.Rc109OwnerDrivePhotoInstrumentedTest\#cDailyTaxonUsesOnlyOwnedPhotographs,org.phwildlife.survey.Rc109OwnerDrivePhotoInstrumentedTest\#dThirdPartyPhotosAreAbsentFromApk org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner | tee rc109-evidence/native_owner_photo_tests.txt
+            grep -Fq 'OK (4 tests)' rc109-evidence/native_owner_photo_tests.txt
+      - name: Retrieve signed RC107 upgrade baseline
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13652276706/zip" > /tmp/apo-rc107-artifact.zip
+          unzip -p /tmp/apo-rc107-artifact.zip app-debug.apk > /tmp/apo-rc107-signed.apk
+          echo '639a3677bf46d98d9aa1115a25ce296ab83fa0b2503d4ce28c4825bcb7ed441c  /tmp/apo-rc107-signed.apk' | sha256sum -c -
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging /tmp/apo-rc107-signed.apk | grep -F "versionCode='167'"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs /tmp/apo-rc107-signed.apk | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
+      - name: No-clear-data signed RC107 to RC109 survey preservation
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_4
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-boot-anim -camera-back none -no-snapshot
+          script: |
+            mkdir -p rc109-evidence
+            adb install /tmp/apo-rc107-signed.apk
+            adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+            adb shell am instrument -w -e class org.phwildlife.survey.Rc109OwnerDrivePhotoInstrumentedTest\#eSeedSignedRc107Workspace org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner | tee rc109-evidence/old_code167_seed.txt
+            grep -Fq 'OK (1 test)' rc109-evidence/old_code167_seed.txt
+            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            adb shell am instrument -w -e class org.phwildlife.survey.Rc109OwnerDrivePhotoInstrumentedTest\#fSignedRc109UpgradePreservesWorkspace org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner | tee rc109-evidence/new_code169_preservation.txt
+            grep -Fq 'OK (1 test)' rc109-evidence/new_code169_preservation.txt
+            adb logcat -d -s AndroidRuntime:E > rc109-evidence/android_runtime_errors.txt
+            test ! -s rc109-evidence/android_runtime_errors.txt
+      - name: Upload emulator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: APO-RC109-owner-drive-emulator-and-upgrade-evidence
+          path: rc109-evidence/
+          if-no-files-found: ignore
+          retention-days: 7

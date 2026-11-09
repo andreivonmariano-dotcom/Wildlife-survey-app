@@ -90,8 +90,13 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     assertNotNull(text(root,"Wildlife of"));
                     assertNotNull(text(root,"Species Atlas"));
                     assertNull("Duplicate wildlife shortcuts removed",text(root,"Wildlife groups"));
-                    assertNotNull("The bundled real Mindanao photo layer must decode",
-                        named(root,"PhotoLayer"));
+                    View photo=named(root,"PhotoLayer");
+                    assertNotNull("The bundled real Mindanao photo layer must decode",photo);
+                    View cover=(View)photo.getParent();
+                    int limit=PhLibrary2Ui.dp(a,
+                        a.getResources().getConfiguration().fontScale>=1.6f?248:202);
+                    assertTrue("The Home hero must not push navigation off-screen",
+                        cover.getHeight()>0&&cover.getHeight()<=limit);
                     if(a.getResources().getConfiguration().fontScale>=1.6f){
                         TextView back=(TextView)text(root,"Back");
                         assertNotNull(back);

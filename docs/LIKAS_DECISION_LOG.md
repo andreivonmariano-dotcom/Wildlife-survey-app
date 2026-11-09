@@ -533,3 +533,8 @@ Scientific limits: Match displayed photos to taxon accounts only after provenanc
 Use Book01 v1.82 text and rarity v0.3.4 as the only quick fact/rarity source. Keep educational rarity separate from IUCN global conservation status; explicitly marked `Philippine endemic` may be displayed but missing/ambiguous evidence becomes `Not specified`. Preserve all 715 source accounts, app identity, signing, schema29, historic survey data, current branding and 200% font accessibility.
 
 Implementation draft PR #113 in `feature/apo-rc108-species-media-daily-v168`, versionCode 168; no merge or release claims without signed CI, emulator, upgrade, and direct in-chat APK evidence.
+
+
+## 2026-11-09 | Native species photographs in LIKAS APK | Owner directive
+
+**Accepted:** Include supported species photographs directly in the signed LIKAS APK for immediate offline use; do not require the owner to manually download or import photographs from Drive after installation. Preserve licensed photo registry and display '?' where no bundled photograph is available. For the RC109 owner-review preview, stage only exact full scientific-name-labelled matches; photo filename alone is **not** expert verification and must not be presented as a documented research occurrence. Record unidentified photo rights and show the preview status transparently. Do not assume unverified photo reuse rights for a public release. Keep personal app photo copies and existing field data intact. Branch `feature/apo-rc109-native-species-photos-v169`, versionCode169, source-only until independently validated signed APK and QA; nine owner-supplied photographs staged in this initial pass, other Drive files awaiting review.

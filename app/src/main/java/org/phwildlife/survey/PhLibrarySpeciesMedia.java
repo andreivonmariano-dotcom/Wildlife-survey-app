@@ -101,12 +101,11 @@ public final class PhLibrarySpeciesMedia {
         if(a instanceof TaxonDetailActivity){
             TaxonDetailActivity detail=(TaxonDetailActivity)a;
             boolean personal=hasPersonalPhoto(a,scientific);
-            TextView importButton=PhLibrary2Ui.action(a,
-                personal?"Change device photo":"Add photo from device or Drive",
-                ()->detail.choosePrivateSpeciesPhoto(scientific),false);
-            LinearLayout.LayoutParams ap=new LinearLayout.LayoutParams(-1,dp(a,48));
-            ap.topMargin=dp(a,7);parent.addView(importButton,ap);
             if(personal){
+                TextView change=PhLibrary2Ui.action(a,"Change device photo",
+                    ()->detail.choosePrivateSpeciesPhoto(scientific),false);
+                LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(-1,dp(a,48));
+                cp.topMargin=dp(a,7);parent.addView(change,cp);
                 TextView remove=PhLibrary2Ui.action(a,"Remove device photo",()->
                     detail.confirmRemovePrivateSpeciesPhoto(scientific),false);
                 LinearLayout.LayoutParams rp=new LinearLayout.LayoutParams(-1,dp(a,48));

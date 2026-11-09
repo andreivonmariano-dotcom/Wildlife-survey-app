@@ -5,7 +5,7 @@ PKG=org.phwildlife.survey.beta08
 RUNNER=org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner
 adb shell wm size 1080x2280
 adb shell wm density 420
-adb install /tmp/apo-rc92-signed.apk
+adb install /tmp/apo-rc107-signed.apk
 adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 adb shell am instrument -w -r -e class org.phwildlife.survey.Rc95SignedUpgradeInstrumentedTest\#aSeedSignedRc92Workspace "$RUNNER" | tee rc95-upgrade-evidence/pre_upgrade_seed.txt
 grep -Fq 'OK (1 test)' rc95-upgrade-evidence/pre_upgrade_seed.txt

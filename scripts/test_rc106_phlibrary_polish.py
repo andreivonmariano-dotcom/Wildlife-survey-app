@@ -10,7 +10,7 @@ class Rc106UiContracts(unittest.TestCase):
         s=read('LikasLibraryActivity.java')
         for name in ('Species Atlas','Habitat Atlas','References','Saved species'):
             self.assertIn('tile(body,"'+name+'"',s)
-        self.assertEqual(s.count('tile(body,"'),5)
+        self.assertEqual(s.count('tile(body,"'),4)
         for old in ('Find a species','"Explore"','"Wildlife groups"',
                     'Discovery Rarity","', 'pickForests'):
             self.assertNotIn(old,s)
@@ -78,8 +78,8 @@ class Rc106UiContracts(unittest.TestCase):
 
     def test_identity_and_locked_data_invariants(self):
         gradle=(ROOT/'app/build.gradle').read_text()
-        self.assertIn('versionCode 168',gradle)
-        self.assertIn("0.27.3-rc108-species-media-daily",gradle)
+        self.assertIn('versionCode 169',gradle)
+        self.assertIn("0.27.3-rc109-native-species-photos",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn('super(context,NAME,null,29)',read('FieldDb.java'))
         self.assertIn('EXPECTED_COUNT=715',read('PhLibraryBook01.java'))

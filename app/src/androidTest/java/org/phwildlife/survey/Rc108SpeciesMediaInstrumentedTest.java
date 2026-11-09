@@ -73,6 +73,20 @@ public final class Rc108SpeciesMediaInstrumentedTest {
         assertEquals("Not specified",ApoSpeciesOfDay.endemicity(
             new JSONObject().put("b","↝ Migratory     •     ◉ IUCN LC")));
     }
+    @Test public void bulkImportUsesOnlyExactScientificNames()throws Exception{
+        try(ActivityScenario<LikasLibraryActivity> scenario=ActivityScenario.launch(
+            new Intent(ApplicationProvider.getApplicationContext(),LikasLibraryActivity.class))){
+            scenario.onActivity(a->{
+                assertEquals("Staurois natator",
+                    PhLibraryBulkPhotoImport.exactTaxon(a,"Staurois natator.jpg"));
+                assertEquals("Gekko gecko",
+                    PhLibraryBulkPhotoImport.exactTaxon(a,"Gekko gecko.JPG"));
+                assertNull(PhLibraryBulkPhotoImport.exactTaxon(a,"_DSC9787-Enhanced-NR.jpg"));
+                assertNull(PhLibraryBulkPhotoImport.exactTaxon(a,"S. natator.JPG"));
+                assertNull(PhLibraryBulkPhotoImport.exactTaxon(a,"Staurois natator - Copy.jpg"));
+            });
+        }
+    }
     @Test public void userPhotoCanBeCopiedPrivatelyAndRemovedWithoutChangingSource()throws Exception{
         try(ActivityScenario<TaxonDetailActivity> scenario=ActivityScenario.launch(
             new Intent(ApplicationProvider.getApplicationContext(),TaxonDetailActivity.class)

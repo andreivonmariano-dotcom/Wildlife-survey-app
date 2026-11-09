@@ -38,7 +38,11 @@ public final class LikasLibraryActivity extends Activity {
         root.setBackgroundColor(PhLibrary2Ui.PAPER);
         root.setPadding(dp(16),dp(8),dp(16),0);
         LinearLayout nav=new LinearLayout(this);nav.setGravity(Gravity.CENTER_VERTICAL);
+        boolean largeText=getResources().getConfiguration().fontScale>=1.6f;
         TextView back=PhLibrary2Ui.action(this,"Back",this::finish,false);
+        if(largeText){
+            back.setTextSize(12);back.setPadding(dp(7),dp(5),dp(7),dp(5));
+        }
         nav.addView(back,new LinearLayout.LayoutParams(dp(
             getResources().getConfiguration().fontScale>=1.6f?100:74),dp(48)));
         TextView title=PhLibrary2Ui.text(this,"PHLibrary",15,PhLibrary2Ui.FOREST,false,true);
@@ -56,17 +60,25 @@ public final class LikasLibraryActivity extends Activity {
         body.addView(PhLibraryPhotoHero.create(this,"Wildlife of\nGreater Mindanao","715 species accounts"));
         TextView searchTitle=PhLibrary2Ui.text(this,"Find a species",17,PhLibrary2Ui.INK,true,true);
         searchTitle.setPadding(0,dp(17),0,dp(9));body.addView(searchTitle);
-        LinearLayout bar=new LinearLayout(this);bar.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout bar=new LinearLayout(this);
+        bar.setOrientation(largeText?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        bar.setGravity(Gravity.CENTER_VERTICAL);
         EditText search=new EditText(this);search.setSingleLine(true);search.setTextSize(16);
-        search.setHint("Name, family or habitat");
+        search.setHint(largeText?"Search species":"Name, family or habitat");
         search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         search.setContentDescription("Search the 715-account species atlas");
         UiKit.fieldInput(this,search);
-        bar.addView(search,new LinearLayout.LayoutParams(0,dp(54),1));
+        bar.addView(search,largeText?
+            new LinearLayout.LayoutParams(-1,dp(58)):
+            new LinearLayout.LayoutParams(0,dp(54),1));
         TextView go=PhLibrary2Ui.action(this,"Search",()->
             openAtlas("phlibrary_query",search.getText().toString().trim()),true);
-        LinearLayout.LayoutParams gp=new LinearLayout.LayoutParams(-2,dp(54));
-        gp.leftMargin=dp(8);bar.addView(go,gp);body.addView(bar);
+        if(largeText){go.setTextSize(12);go.setPadding(dp(9),dp(5),dp(9),dp(5));}
+        LinearLayout.LayoutParams gp=new LinearLayout.LayoutParams(
+            largeText?-1:-2,dp(largeText?56:54));
+        if(largeText)gp.topMargin=dp(7);
+        else gp.leftMargin=dp(8);
+        bar.addView(go,gp);body.addView(bar);
         search.setOnEditorActionListener((v,action,event)->{
             if(action==EditorInfo.IME_ACTION_SEARCH){
                 openAtlas("phlibrary_query",search.getText().toString().trim());return true;

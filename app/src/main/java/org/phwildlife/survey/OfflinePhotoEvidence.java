@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 
-/** Displays locally approved CC or directly owner-authorized photographs; no field-time fetches. */
+/** Habitat photographs remain; all species photographs are disabled during owner-Drive-only reset. */
 public final class OfflinePhotoEvidence {
     private OfflinePhotoEvidence(){}
     private static JSONObject manifest;
@@ -64,49 +64,11 @@ public final class OfflinePhotoEvidence {
         }
         return inatManifest;
     }
-    private static JSONObject findForTaxon(Activity a,String scientific){
-        if(scientific==null||scientific.isEmpty())return null;
-        for(JSONArray list:new JSONArray[]{ownerNativeManifest(a).optJSONArray("items"),
-                inatManifest(a).optJSONArray("items"),
-                manifest(a).optJSONArray("items")}){
-            if(list==null)continue;
-            for(int i=0;i<list.length();i++){
-                JSONObject item=list.optJSONObject(i);
-                if(item==null||!scientific.equalsIgnoreCase(item.optString("taxon")))continue;
-                String file=item.optString("offlineAsset");
-                if(!file.matches("offline_photos/(species|habitat|inat)_[a-z0-9_]+\\.jpg"))continue;
-                try(InputStream stream=a.getAssets().open(file)){
-                    if(stream.read()!=-1)return item;
-                }catch(Exception ignored){}
-            }
-        }
-        return null;
-    }
+    /** Photo reset: no species images are permitted until matched to the owner Drive manifest. */
+    private static JSONObject findForTaxon(Activity a,String scientific){return null;}
     private static java.util.HashSet<String> availablePhotoTaxa;
     /** Cache actual APK media presence to keep offline 1,500-taxon filtering fast. */
-    public static synchronized boolean hasOfflineTaxon(Activity a,String scientific){
-        if(scientific==null)return false;
-        if(availablePhotoTaxa==null){
-            java.util.HashSet<String> names=new java.util.HashSet<>();
-            for(JSONArray list:new JSONArray[]{ownerNativeManifest(a).optJSONArray("items"),
-                inatManifest(a).optJSONArray("items"),
-                manifest(a).optJSONArray("items")}){
-                if(list==null)continue;
-                for(int i=0;i<list.length();i++){
-                    JSONObject image=list.optJSONObject(i);
-                    if(image==null||!image.has("taxon"))continue;
-                    String file=image.optString("offlineAsset");
-                    if(!file.matches("offline_photos/(species|habitat|inat)_[a-z0-9_]+\\.jpg"))continue;
-                    try(InputStream in=a.getAssets().open(file)){
-                        if(in.read()!=-1)names.add(image.optString("taxon")
-                            .toLowerCase(java.util.Locale.ROOT));
-                    }catch(Exception ignored){}
-                }
-            }
-            availablePhotoTaxa=names;
-        }
-        return availablePhotoTaxa.contains(scientific.toLowerCase(java.util.Locale.ROOT));
-    }
+    public static synchronized boolean hasOfflineTaxon(Activity a,String scientific){return false;}
     /** Only approved, bundled JPGs are eligible. Keep decoded previews memory-bounded. */
     private static final android.util.LruCache<String,Bitmap> previewCache=
         new android.util.LruCache<String,Bitmap>(4*1024*1024){

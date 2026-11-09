@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-/** Deterministic offline daily spotlight with photographed, source-backed taxa only. */
+/** Deterministic offline daily spotlight using source-backed taxa without photographs. */
 public final class ApoSpeciesOfDay {
     private ApoSpeciesOfDay(){}
     private static int dp(Activity a,float n){return PhLibrary2Ui.dp(a,n);}
@@ -46,7 +46,7 @@ public final class ApoSpeciesOfDay {
         ArrayList<JSONObject> candidate=new ArrayList<>();
         for(JSONObject row:PhLibraryBook01.entries(a)){
             String name=row.optString("s");
-            if(name.trim().isEmpty()||!PhLibrarySpeciesMedia.hasApprovedPhoto(a,name))continue;
+            if(name.trim().isEmpty())continue;
             if(firstSourceSentence(row.optString("p")).isEmpty())continue;
             candidate.add(row);
         }
@@ -80,13 +80,10 @@ public final class ApoSpeciesOfDay {
         head.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams hp=new LinearLayout.LayoutParams(-1,-2);
         hp.topMargin=dp(a,10);card.addView(head,hp);
-        View photo=PhLibrarySpeciesMedia.photoOrPlaceholder(a,latin);
-        int size=stacked?144:106;
-        head.addView(photo,new LinearLayout.LayoutParams(stacked?-1:dp(a,size),dp(a,size)));
         LinearLayout names=new LinearLayout(a);names.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams np=new LinearLayout.LayoutParams(stacked?-1:0,-2,
             stacked?0:1f);
-        if(stacked)np.topMargin=dp(a,11);else np.leftMargin=dp(a,13);
+        if(stacked)np.topMargin=dp(a,11);
         head.addView(names,np);
         TextView title=PhLibrary2Ui.text(a,common,stacked?19:20,PhLibrary2Ui.INK,true,false);
         names.addView(title);

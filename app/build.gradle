@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 169
-        versionName '0.27.3-rc109-native-species-photos'
+        versionCode 170
+        versionName '0.27.3-rc110-drive-photo-reset'
     }
     signingConfigs {
         debug {
@@ -127,15 +127,3 @@ tasks.register("verifyApoArtwork") {
 }
 tasks.named("preBuild") { dependsOn("verifyApoArtwork") }
 
-// RC109 native species thumbnails are generated from hash-locked owner-supplied
-// source JPEGs at build time. No device/Drive import or network is required.
-tasks.register('prepareOwnerNativeSpeciesPhotos', Exec) {
-    workingDir rootProject.projectDir
-    commandLine 'python3', 'scripts/prepare_owner_native_species_photos.py'
-}
-tasks.named('preBuild') { dependsOn('prepareOwnerNativeSpeciesPhotos') }
-tasks.configureEach { t ->
-    if (t.name.contains('Merge') && t.name.contains('Assets') ||
-        t.name.startsWith('merge') && t.name.endsWith('Assets'))
-        t.dependsOn tasks.named('prepareOwnerNativeSpeciesPhotos')
-}

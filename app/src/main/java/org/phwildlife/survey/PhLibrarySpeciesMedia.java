@@ -38,7 +38,7 @@ public final class PhLibrarySpeciesMedia {
         return privateFile(c,scientific)!=null;
     }
     public static boolean hasApprovedPhoto(Activity a,String scientific){
-        return OfflinePhotoEvidence.hasOfflineTaxon(a,scientific);
+        return false;
     }
     private static Bitmap privateBitmap(Context c,String scientific){
         File image=privateFile(c,scientific);
@@ -65,53 +65,16 @@ public final class PhLibrarySpeciesMedia {
         frame.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         return frame;
     }
+    /** No species photos are displayed during the owner Drive filename rebuild. */
     public static View photoOrPlaceholder(Activity a,String scientific){
-        Bitmap personal=privateBitmap(a,scientific);
-        if(personal!=null){
-            ImageView image=new ImageView(a);image.setImageBitmap(personal);
-            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            image.setContentDescription("Device-added photograph of "+scientific+
-                ". Identification has not been independently verified.");
-            return image;
-        }
-        ImageView bundled=OfflinePhotoEvidence.thumbnailForTaxon(a,scientific);
-        if(bundled!=null){
-            bundled.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            return bundled;
-        }
         return placeholder(a,scientific);
     }
     /** Reader plate, preserving approved Commons attribution and a simple missing-photo state. */
     public static void addReaderPlate(Activity a,LinearLayout parent,String scientific){
-        if(hasPersonalPhoto(a,scientific)){
-            View plate=photoOrPlaceholder(a,scientific);
-            LinearLayout.LayoutParams image=new LinearLayout.LayoutParams(-1,dp(a,188));
-            image.topMargin=dp(a,12);parent.addView(plate,image);
-            TextView source=PhLibrary2Ui.text(a,"Device photo · selected by user",12,
-                PhLibrary2Ui.MUTED,false,false);
-            source.setPadding(dp(a,3),dp(a,5),0,dp(a,7));
-            parent.addView(source);
-        }else if(hasApprovedPhoto(a,scientific)){
-            OfflinePhotoEvidence.addPhLibraryPlate(a,parent,scientific);
-        }else{
-            View missing=placeholder(a,scientific);
-            LinearLayout.LayoutParams mp=new LinearLayout.LayoutParams(-1,dp(a,158));
-            mp.topMargin=dp(a,12);parent.addView(missing,mp);
-        }
-        if(a instanceof TaxonDetailActivity){
-            TaxonDetailActivity detail=(TaxonDetailActivity)a;
-            boolean personal=hasPersonalPhoto(a,scientific);
-            if(personal){
-                TextView change=PhLibrary2Ui.action(a,"Change device photo",
-                    ()->detail.choosePrivateSpeciesPhoto(scientific),false);
-                LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(-1,dp(a,48));
-                cp.topMargin=dp(a,7);parent.addView(change,cp);
-                TextView remove=PhLibrary2Ui.action(a,"Remove device photo",()->
-                    detail.confirmRemovePrivateSpeciesPhoto(scientific),false);
-                LinearLayout.LayoutParams rp=new LinearLayout.LayoutParams(-1,dp(a,48));
-                rp.topMargin=dp(a,5);parent.addView(remove,rp);
-            }
-        }
+        View missing=placeholder(a,scientific);
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,dp(a,158));
+        p.topMargin=dp(a,12);
+        parent.addView(missing,p);
     }
     /** Decode a selected file with a bounded pixel size. Re-encoding strips EXIF/GPS. */
     public static void importPrivate(Context c,String scientific,Uri source)throws Exception{

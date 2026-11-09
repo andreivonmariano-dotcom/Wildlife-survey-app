@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 /** A short, image-led entry to the complete offline 715-account Book 01 atlas. */
 public final class LikasLibraryActivity extends Activity {
-    private static final String[] GROUPS={"Birds","Amphibians","Reptiles","Mammals"};
     private int dp(float n){return PhLibrary2Ui.dp(this,n);}
     private void openAtlas(String extra,String filter){
         Intent i=new Intent(this,PhLibraryDirectoryActivity.class);
@@ -58,13 +57,13 @@ public final class LikasLibraryActivity extends Activity {
         setContentView(root);
 
         body.addView(PhLibraryPhotoHero.create(this,"Wildlife of\nGreater Mindanao","715 species accounts"));
-        TextView searchTitle=PhLibrary2Ui.text(this,"Find a species",17,PhLibrary2Ui.INK,true,true);
-        searchTitle.setPadding(0,dp(17),0,dp(9));body.addView(searchTitle);
+        View searchGap=new View(this);
+        body.addView(searchGap,new LinearLayout.LayoutParams(-1,dp(17)));
         LinearLayout bar=new LinearLayout(this);
         bar.setOrientation(largeText?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         bar.setGravity(Gravity.CENTER_VERTICAL);
         EditText search=new EditText(this);search.setSingleLine(true);search.setTextSize(16);
-        search.setHint(largeText?"Search species":"Name, family or habitat");
+        search.setHint("Search species");
         search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         search.setContentDescription("Search the 715-account species atlas");
         UiKit.fieldInput(this,search);
@@ -86,8 +85,8 @@ public final class LikasLibraryActivity extends Activity {
             return false;
         });
 
-        TextView browse=PhLibrary2Ui.text(this,"Explore",22,PhLibrary2Ui.INK,true,false);
-        browse.setPadding(0,dp(20),0,dp(9));body.addView(browse);
+        View tileGap=new View(this);
+        body.addView(tileGap,new LinearLayout.LayoutParams(-1,dp(16)));
         tile(body,"Species Atlas",()->openAtlas(null,null));
         tile(body,"Habitat Atlas",()->startActivity(
             new Intent(this,HabitatSpeciesEvidenceActivity.class)));
@@ -95,9 +94,5 @@ public final class LikasLibraryActivity extends Activity {
             new Intent(this,PhLibraryBibliographyActivity.class)));
         tile(body,"Saved species",()->openAtlas("phlibrary_saved_only","true"));
 
-        TextView groups=PhLibrary2Ui.text(this,"Wildlife groups",21,PhLibrary2Ui.INK,true,false);
-        groups.setPadding(0,dp(14),0,dp(9));body.addView(groups);
-        for(String group:GROUPS)
-            tile(body,group,()->openAtlas("phlibrary_group",group));
     }
 }

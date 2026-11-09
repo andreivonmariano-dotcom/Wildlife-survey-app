@@ -5,6 +5,24 @@ import re
 from collections import Counter
 from pathlib import Path
 
+# Preflight checks run before downloading 2.13 GB of source photographs.
+from io import BytesIO
+from PIL import Image
+from prepare_drive_gallery import load_entries, validate_jpeg_bytes
+
+assert len(load_entries()) == 333
+sample=BytesIO()
+Image.new("RGB",(40,40),(0,128,50)).save(sample,format="JPEG")
+valid=sample.getvalue()
+validate_jpeg_bytes(valid,"synthetic.jpg")
+for malformed in (b"not-a-jpeg", valid[:-2], valid[:12]+b"Exif\x00\x00"+valid[12:]):
+    try:
+        validate_jpeg_bytes(malformed,"synthetic.jpg")
+    except SystemExit:
+        pass
+    else:
+        raise AssertionError("Invalid sample accepted by JPEG/EXIF validator")
+
 ROOT=Path(__file__).resolve().parents[1]
 MANIFEST=ROOT/"app/src/main/assets/offline_drive_gallery_manifest_v1.json"
 DATA=json.loads(MANIFEST.read_text(encoding="utf-8"))
@@ -51,8 +69,8 @@ if (assets/ITEMS[0]["offlineAsset"]).exists():
         p=assets/record["offlineAsset"]
         assert p.is_file(), str(p)
         data=p.read_bytes()
-        assert data.startswith(b"\\xff\\xd8\\xff") and data.endswith(b"\\xff\\xd9")
-        assert b"Exif\\x00\\x00" not in data
+        assert data.startswith(b"\xff\xd8\xff") and data.endswith(b"\xff\xd9")
+        assert b"Exif\x00\x00" not in data
         with Image.open(p) as im:
             assert im.format=="JPEG" and max(im.size)<=1920
             assert "exif" not in im.info, p

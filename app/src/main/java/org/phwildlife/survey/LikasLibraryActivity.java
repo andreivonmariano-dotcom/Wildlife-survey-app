@@ -2,6 +2,11 @@ package org.phwildlife.survey;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.Context;
+import android.content.ClipData;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.widget.Toast;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -13,12 +18,51 @@ import android.widget.TextView;
 
 /** A short, image-led entry to the complete offline 715-account Book 01 atlas. */
 public final class LikasLibraryActivity extends Activity {
+    private static final int PICK_FORESTS=105;
     private static final String[] GROUPS={"Birds","Amphibians","Reptiles","Mammals"};
     private int dp(float n){return PhLibrary2Ui.dp(this,n);}
     private void openAtlas(String extra,String filter){
         Intent i=new Intent(this,PhLibraryDirectoryActivity.class);
         if(extra!=null)i.putExtra(extra,filter);
         startActivity(i);
+    }
+    private void pickForests(){
+        Intent pick=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        pick.setType("image/*");
+        pick.addCategory(Intent.CATEGORY_OPENABLE);
+        pick.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+        pick.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|
+            Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        startActivityForResult(pick,PICK_FORESTS);
+    }
+    @Override protected void onActivityResult(int request,int result,Intent data){
+        super.onActivityResult(request,result,data);
+        if(request!=PICK_FORESTS||result!=RESULT_OK||data==null)return;
+        java.util.ArrayList<Uri> selected=new java.util.ArrayList<>();
+        ClipData clip=data.getClipData();
+        if(clip!=null){
+            for(int i=0;i<clip.getItemCount()&&selected.size()<4;i++)
+                if(clip.getItemAt(i).getUri()!=null)
+                    selected.add(clip.getItemAt(i).getUri());
+        }else if(data.getData()!=null)selected.add(data.getData());
+        if(selected.isEmpty())return;
+        SharedPreferences.Editor prefs=getSharedPreferences("phlibrary_forest_photos_v1",
+            Context.MODE_PRIVATE).edit();
+        for(int i=0;i<4;i++)prefs.remove("uri_"+i);
+        int stored=0;
+        for(Uri uri:selected){
+            try{
+                getContentResolver().takePersistableUriPermission(uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                prefs.putString("uri_"+stored++,uri.toString());
+            }catch(SecurityException ignored){
+                // Do not persist a URI that will become inaccessible after activity death.
+            }
+        }
+        if(stored==0){Toast.makeText(this,"Photo access was not retained",Toast.LENGTH_LONG).show();return;}
+        prefs.putInt("count",stored).apply();
+        Toast.makeText(this,stored+" forest photo"+(stored==1?"":"s")+" selected",Toast.LENGTH_SHORT).show();
+        recreate();
     }
     private void tile(LinearLayout body,String label,Runnable open){
         TextView v=PhLibrary2Ui.action(this,label,open,false);
@@ -43,7 +87,15 @@ public final class LikasLibraryActivity extends Activity {
             getResources().getConfiguration().fontScale>=1.6f?100:74),dp(48)));
         TextView title=PhLibrary2Ui.text(this,"PHLibrary",15,PhLibrary2Ui.FOREST,false,true);
         title.setGravity(Gravity.CENTER);
+        if(getResources().getConfiguration().fontScale>=1.6f)title.setTextSize(12);
         nav.addView(title,new LinearLayout.LayoutParams(0,dp(48),1));
+        TextView photos=PhLibrary2Ui.action(this,"Photos",this::pickForests,false);
+        photos.setContentDescription("Choose up to four local forest photos for the PHLibrary cover");
+        if(getResources().getConfiguration().fontScale>=1.6f){
+            photos.setTextSize(12);photos.setPadding(dp(6),dp(5),dp(6),dp(5));
+        }
+        nav.addView(photos,new LinearLayout.LayoutParams(dp(
+            getResources().getConfiguration().fontScale>=1.6f?86:79),dp(48)));
         root.addView(nav);
         ScrollView scroll=new ScrollView(this);
         scroll.setFillViewport(true);scroll.setVerticalScrollBarEnabled(false);

@@ -37,30 +37,33 @@ public final class LikasLibraryActivity extends Activity {
     }
 
     private static final int PHOTO_BULK_PICKER=8414;
+    private static final int PHOTO_PACK_PICKER=8415;
     private static final int MAX_BULK_SELECTION=400;
     private static final class PhotoMatch{
         final Uri uri;final String species;
         PhotoMatch(Uri uri,String species){this.uri=uri;this.species=species;}
     }
     private void selectSpeciesPhotos(){
-        new AlertDialog.Builder(this).setTitle("Import species photographs")
-            .setMessage("Choose photos from this device or a connected Drive account. "+
-                "Only filenames matching a full scientific name in this offline book "+
-                "(for example, Staurois natator.jpg) will be offered for import. "+
-                "Check the identification and permission for every photograph. "+
-                "The originals remain unchanged and no photos are uploaded to APO.")
-            .setNegativeButton("Cancel",null)
-            .setPositiveButton("Choose photos",(dialog,which)->{
+        new AlertDialog.Builder(this).setTitle("Owner's Drive photographs")
+            .setItems(new String[]{"Import LIKAS Drive photo ZIP",
+                "Select individual owner Drive photos"},(d,choice)->{
                 Intent picker=new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 picker.addCategory(Intent.CATEGORY_OPENABLE);
-                picker.setType("image/*");
-                picker.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
                 picker.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                try{startActivityForResult(picker,PHOTO_BULK_PICKER);}
+                if(choice==0){
+                    picker.setType("*/*");
+                    picker.putExtra(Intent.EXTRA_MIME_TYPES,
+                        new String[]{"application/zip","application/x-zip-compressed"});
+                }else{
+                    picker.setType("image/*");
+                    picker.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+                }
+                try{startActivityForResult(picker,
+                    choice==0?PHOTO_PACK_PICKER:PHOTO_BULK_PICKER);}
                 catch(Exception e){new AlertDialog.Builder(this)
-                    .setMessage("No photo document picker is available.")
+                    .setMessage("No document picker is available.")
                     .setPositiveButton("Close",null).show();}
-            }).show();
+            }).setNegativeButton("Close",null).show();
     }
     private String displayName(Uri selected){
         try(Cursor cursor=getContentResolver().query(selected,
@@ -72,76 +75,82 @@ public final class LikasLibraryActivity extends Activity {
         }catch(Exception ignored){}
         return "";
     }
+    private void importOwnerPack(Uri uri){
+        new AlertDialog.Builder(this).setTitle("Import owner's Drive photo pack?")
+            .setMessage("Import the LIKAS ZIP prepared from your 333 Google Drive photos. "+
+                "Every matched species gets its original set of photographs, stored "+
+                "offline at account-view resolution without GPS metadata. "+
+                "The source files remain unchanged. Only entries in the verified "+
+                "Drive filename inventory are accepted.")
+            .setNegativeButton("Cancel",null)
+            .setPositiveButton("Import",(d,w)->new Thread(()->{
+                String message;
+                try{message=PhLibraryDrivePackImport.importZip(this,uri).summary();}
+                catch(Exception e){message="Photo pack could not be imported: "+e.getMessage();}
+                final String finalMessage=message;
+                runOnUiThread(()->{
+                    if(isFinishing()||isDestroyed())return;
+                    new AlertDialog.Builder(this).setTitle("Drive photo import")
+                        .setMessage(finalMessage).setPositiveButton("Close",null).show();
+                });
+            },"phlibrary-drive-pack-import").start()).show();
+    }
     private void reviewBulkSelection(Intent chosen){
-        ArrayList<Uri> chosenFiles=new ArrayList<>();
+        ArrayList<Uri> selected=new ArrayList<>();
         ClipData clips=chosen.getClipData();
         if(clips!=null){
             for(int i=0;i<clips.getItemCount()&&i<=MAX_BULK_SELECTION;i++)
-                chosenFiles.add(clips.getItemAt(i).getUri());
-        }else if(chosen.getData()!=null)chosenFiles.add(chosen.getData());
-        if(chosenFiles.isEmpty())return;
-        if(chosenFiles.size()>MAX_BULK_SELECTION){
-            new AlertDialog.Builder(this).setMessage("Select up to "+
-                MAX_BULK_SELECTION+" photographs at a time.")
+                selected.add(clips.getItemAt(i).getUri());
+        }else if(chosen.getData()!=null)selected.add(chosen.getData());
+        if(selected.isEmpty())return;
+        if(selected.size()>MAX_BULK_SELECTION){
+            new AlertDialog.Builder(this).setMessage("Select up to 400 photos.")
                 .setPositiveButton("Close",null).show();return;
         }
-        LinkedHashMap<String,PhotoMatch> approved=new LinkedHashMap<>();
-        int unknown=0,alternates=0,alreadyImported=0;
-        for(Uri uri:chosenFiles){
-            String scientific=PhLibraryBulkPhotoImport.exactTaxon(this,displayName(uri));
-            if(scientific==null){unknown++;continue;}
-            if(PhLibrarySpeciesMedia.hasPersonalPhoto(this,scientific)){
-                alreadyImported++;continue;
-            }
-            if(approved.putIfAbsent(scientific,new PhotoMatch(uri,scientific))!=null)
-                alternates++;
+        ArrayList<PhotoMatch> approved=new ArrayList<>();
+        int ignored=0;
+        java.util.HashSet<String> species=new java.util.HashSet<>();
+        for(Uri uri:selected){
+            String name=displayName(uri);
+            String match=PhLibraryBulkPhotoImport.exactTaxon(this,name);
+            if(match==null){ignored++;continue;}
+            approved.add(new PhotoMatch(uri,match));
+            species.add(match);
         }
         if(approved.isEmpty()){
-            new AlertDialog.Builder(this).setTitle("No photographs matched")
-                .setMessage("Unmatched or already-imported files: "+chosenFiles.size()+
-                    ". To use camera-numbered photos, open the corresponding species "+
-                    "account and choose Add photo.")
+            new AlertDialog.Builder(this).setTitle("No owner Drive files matched")
+                .setMessage("Choose photographs with exact filenames from your "+
+                    "333-file LIKAS Drive collection. No files were changed.")
                 .setPositiveButton("Close",null).show();return;
         }
-        StringBuilder species=new StringBuilder();
-        int shown=0;
-        for(String latin:approved.keySet()){
-            if(shown++==15){species.append("\\n…");break;}
-            species.append("\\n").append(latin);
-        }
-        int ignored=unknown,duplicates=alternates,prior=alreadyImported;
-        new AlertDialog.Builder(this).setTitle("Review "+approved.size()+" species matches")
-            .setMessage("The match uses only the photo filename, not image identification. "+
-                "Confirm that the selected photographs actually show these species and "+
-                "that you can use them in this private app.\\n"+species+
-                "\\n\\nUnmatched: "+ignored+" · Repeat species: "+duplicates+
-                " · Already attached: "+prior)
+        final int rejected=ignored;
+        new AlertDialog.Builder(this).setTitle("Add "+approved.size()+" Drive photos?")
+            .setMessage("Files match "+species.size()+" Book 01 species accounts by filename. "+
+                "This does not independently verify the identifications. "+
+                rejected+" files were excluded. Other existing photos are preserved.")
             .setNegativeButton("Cancel",null)
-            .setPositiveButton("Import privately",(dialog,which)->{
-                ArrayList<PhotoMatch> imports=new ArrayList<>(approved.values());
-                new Thread(()->{
-                    int done=0,failed=0;
-                    for(PhotoMatch match:imports){
-                        try{PhLibrarySpeciesMedia.importPrivate(this,match.species,match.uri);
-                            done++;
-                        }catch(Exception e){failed++;}
-                    }
-                    final int success=done,errors=failed;
-                    runOnUiThread(()->{
-                        if(isFinishing()||isDestroyed())return;
-                        new AlertDialog.Builder(this).setTitle("Photo import finished")
-                            .setMessage(success+" species photos added to this device. "+
-                                errors+" files could not be imported. "+
-                                "Original files in Drive/device were not changed.")
-                            .setPositiveButton("Close",null).show();
-                    });
-                },"phlibrary-private-bulk-media").start();
-            }).show();
+            .setPositiveButton("Import",(d,w)->new Thread(()->{
+                int done=0,failed=0;
+                for(PhotoMatch item:approved){
+                    try{PhLibrarySpeciesMedia.importPrivate(this,item.species,item.uri);done++;}
+                    catch(Exception e){failed++;}
+                }
+                final int ok=done,bad=failed;
+                runOnUiThread(()->{
+                    if(isFinishing()||isDestroyed())return;
+                    new AlertDialog.Builder(this).setTitle("Drive photographs added")
+                        .setMessage(ok+" owner photographs saved to species accounts. "+
+                            bad+" files failed. No source files were modified.")
+                        .setPositiveButton("Close",null).show();
+                });
+            },"phlibrary-private-bulk-media").start()).show();
     }
     @Override protected void onActivityResult(int request,int result,Intent data){
         super.onActivityResult(request,result,data);
-        if(request==PHOTO_BULK_PICKER&&result==RESULT_OK&&data!=null)
-            reviewBulkSelection(data);
+        if(result!=RESULT_OK||data==null)return;
+        if(request==PHOTO_BULK_PICKER)reviewBulkSelection(data);
+        else if(request==PHOTO_PACK_PICKER&&data.getData()!=null)
+            importOwnerPack(data.getData());
     }
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);
@@ -209,7 +218,7 @@ public final class LikasLibraryActivity extends Activity {
         tile(body,"References",()->startActivity(
             new Intent(this,PhLibraryBibliographyActivity.class)));
         tile(body,"Saved species",()->openAtlas("phlibrary_saved_only","true"));
-        tile(body,"Import species photos",this::selectSpeciesPhotos);
+        tile(body,"Import Drive photos",this::selectSpeciesPhotos);
 
     }
 }

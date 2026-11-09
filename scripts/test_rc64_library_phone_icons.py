@@ -15,7 +15,7 @@ class Rc64PhoneIcons(unittest.TestCase):
         self.assertIn("frame.setClipToOutline(true)",portal)
     def test_original_assets_and_navigation_still_present(self):
         library=(JAVA/"LikasLibraryActivity.java").read_text()
-        for row in ('"Wildlife groups"',
+        for row in ('"Species Atlas"',
                     '"Habitat Atlas"',
                     '"Saved species"'):
             self.assertIn(row,library)

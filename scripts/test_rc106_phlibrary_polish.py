@@ -15,6 +15,10 @@ class Rc106UiContracts(unittest.TestCase):
                     'Discovery Rarity","', 'pickForests'):
             self.assertNotIn(old,s)
         self.assertIn('PhLibraryPhotoHero.create',s)
+        hero=read('PhLibraryPhotoHero.java')
+        self.assertIn('getBoolean("reduced_motion",false)',hero)
+        self.assertIn('ValueAnimator.areAnimatorsEnabled()',hero)
+        self.assertIn('onWindowVisibilityChanged',hero)
 
     def test_explorer_has_one_title_and_one_reset_path(self):
         s=read('PhLibraryDirectoryActivity.java')

@@ -11,20 +11,20 @@ ASSETS=ROOT/"app/src/main/assets"
 class Rc97PHLibraryVisual(unittest.TestCase):
     def test_hub_has_one_book_and_no_photo_or_icon_navigation(self):
         hub=(JAVA/"LikasLibraryActivity.java").read_text()
-        self.assertIn("PhLibrary2Ui.hero",hub)
+        self.assertIn("PhLibraryPhotoHero.create",hub)
         self.assertEqual(hub.count("PhLibraryDirectoryActivity.class"),1)
         for unwanted in ('"Photo comparisons"','"Wildlife field guides"',
                          '"Habitat field guides"','LikasPortalUi.action',
                          'addApprovedIcon','OfflinePhotoEvidence.'):
             self.assertNotIn(unwanted,hub)
-        self.assertIn("PhLibrary2Ui.panel",hub)
+        self.assertIn("tile(body,",hub)
         self.assertIn("new ScrollView(this)",hub)
     def test_directory_is_searchable_and_text_only(self):
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text()
         self.assertIn("PhLibraryBook01.entries(this)",directory)
         self.assertIn("PHLibrary",directory)
         self.assertIn("UiKit.fieldInput(this,search)",directory)
-        self.assertIn("Rarity:",directory)
+        self.assertIn("Discovery Rarity:",directory)
         self.assertIn("new ListView(this)",directory)
         self.assertIn("phlibrary_scientific_name",directory)
         for unwanted in ("ImageView","AsyncImage","OfflinePhotoEvidence",

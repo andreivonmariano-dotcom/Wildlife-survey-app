@@ -114,9 +114,6 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
     private void showIndex(){
         currentHabitat=null;
         LinearLayout body=shell("Habitat Atlas",this::finish);
-        TextView heading=PhLibrary2Ui.text(this,"Habitats",27,PhLibrary2Ui.INK,true,false);
-        heading.setPadding(0,dp(10),0,dp(14));
-        body.addView(heading);
         for(JSONObject h:habitats){
             String id=h.optString("id");
             LinearLayout card=PhLibrary2Ui.panel(this,

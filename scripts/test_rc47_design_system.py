@@ -23,7 +23,7 @@ class Rc47DesignSystem(unittest.TestCase):
         self.assertIn("scroll.setFillViewport(true)",ui)
         self.assertIn("root.addView(navigationHeader(a,name,parent,onBack))",ui)
         library=read("LikasLibraryActivity.java")
-        self.assertIn("PhLibrary2Ui.hero",library)
+        self.assertIn("PhLibraryPhotoHero.create",library)
         self.assertIn("scroll.setFillViewport(true)",library)
         settings_page=read("LikasSettingsActivity.java")
         self.assertIn('UiKit.page(this,"Settings","Home",this::finish,body)',settings_page)

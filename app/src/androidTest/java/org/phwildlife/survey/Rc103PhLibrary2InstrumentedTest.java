@@ -320,6 +320,7 @@ public final class Rc103PhLibrary2InstrumentedTest {
                 .perform(androidx.test.espresso.action.ViewActions.click());
             androidx.test.espresso.Espresso.onView(
                 androidx.test.espresso.matcher.ViewMatchers.withText("Clear saved"))
+                .inRoot(androidx.test.espresso.matcher.RootMatchers.isDialog())
                 .perform(androidx.test.espresso.action.ViewActions.click());
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             scenario.onActivity(a->{

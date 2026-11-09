@@ -112,6 +112,8 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-boot-anim -camera-back none -no-snapshot
           script: |
             mkdir -p rc103-phlibrary-evidence
+            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
             adb shell am instrument -w -e class org.phwildlife.survey.Rc108SpeciesMediaInstrumentedTest org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner > rc103-phlibrary-evidence/rc108-species-photo-daily.txt
             cat rc103-phlibrary-evidence/rc108-species-photo-daily.txt
             grep -Fq 'OK (4 tests)' rc103-phlibrary-evidence/rc108-species-photo-daily.txt

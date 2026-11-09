@@ -203,9 +203,9 @@ public final class PhLibraryDirectoryActivity extends Activity {
         String summary=matches.size()+(matches.size()==1?" account":" accounts");
         if(selectedHabitat>0)
             summary=PhLibraryHabitatFilter.SHORT_NAMES[selectedHabitat]+
-                " · "+matches.size()+(matches.size()==1?" species":" species");
+                " · "+matches.size()+" species";
         else if(savedCollectionMode)
-            summary=matches.size()+(matches.size()==1?" species":" species");
+            summary=matches.size()+" species";
         else if(savedOnly)summary+=" · Saved";
         resultsCount.setText(matches.isEmpty()?(
             savedCollectionMode&&PhLibraryBookmarks.all(this).isEmpty()?

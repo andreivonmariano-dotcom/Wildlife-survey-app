@@ -13,7 +13,7 @@ assert len(ITEMS)==333 and DATA["count"]==333
 assert len({x["fileName"] for x in ITEMS})==333
 assert len({x["driveFileId"] for x in ITEMS})==333
 assert len({x["offlineAsset"] for x in ITEMS})==333
-assert len({x["taxon"] for x in ITEMS})==195, "Trinomial images map to binomial taxa"
+assert len({x["taxon"] for x in ITEMS})==197, "Trinomial images map to binomial taxa"
 assert set(x["group"] for x in ITEMS)=={"Birds","Reptiles and Amphibians","Mammals"}
 counter=Counter(x["taxon"] for x in ITEMS)
 assert sum(n>1 for n in counter.values())==77

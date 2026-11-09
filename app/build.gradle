@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 169
-        versionName '0.27.3-rc109-native-species-photos'
+        versionCode 170
+        versionName '0.27.3-rc110-highres-photo-galleries'
     }
     signingConfigs {
         debug {
@@ -138,4 +138,20 @@ tasks.configureEach { t ->
     if (t.name.contains('Merge') && t.name.contains('Assets') ||
         t.name.startsWith('merge') && t.name.endsWith('Assets'))
         t.dependsOn tasks.named('prepareOwnerNativeSpeciesPhotos')
+}
+
+
+// Owner-directed RC110 photo gallery. APK assets must be generated before
+// packaging; no device-side Drive import or network access is required.
+tasks.register('prepareDriveHighResGallery', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'python3', 'scripts/prepare_drive_gallery.py'
+    inputs.file(file('src/main/assets/offline_drive_gallery_manifest_v1.json'))
+    inputs.file(file('../scripts/prepare_drive_gallery.py'))
+    outputs.files((1..333).collect { file(String.format('src/main/assets/offline_photos/drive_%04d.jpg',it)) })
+}
+tasks.named('preBuild') { dependsOn('prepareDriveHighResGallery') }
+tasks.configureEach { t ->
+    if (t.name.toLowerCase().contains('merge') && t.name.toLowerCase().contains('assets'))
+        t.dependsOn tasks.named('prepareDriveHighResGallery')
 }

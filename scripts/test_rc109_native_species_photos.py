@@ -11,7 +11,7 @@ ASSETS = ROOT / "app/src/main/assets"
 
 class NativePhotoTests(unittest.TestCase):
     def items(self):
-        payload = json.loads((ASSETS / "offline_photo_manifest_v1.json").read_text())
+        payload = json.loads((ASSETS / "offline_owner_photo_manifest_v1.json").read_text())
         return [x for x in payload["items"]
                 if x.get("rightsBasis") == "owner_requested_in_app_preview"]
 

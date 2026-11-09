@@ -33,6 +33,22 @@ public final class OfflinePhotoEvidence {
         }
         return manifest;
     }
+    private static JSONObject ownerNativeManifest;
+    /** Unverified owner-preview media is separate from the CC-licensed photo registry. */
+    private static JSONObject ownerNativeManifest(Activity a){
+        if(ownerNativeManifest==null){
+            try(InputStream in=a.getAssets().open("offline_owner_photo_manifest_v1.json");
+                ByteArrayOutputStream out=new ByteArrayOutputStream()){
+                byte[] buffer=new byte[4096];int n;
+                while((n=in.read(buffer))!=-1){
+                    if(out.size()+n>35000)throw new IllegalStateException("Owner manifest too large");
+                    out.write(buffer,0,n);
+                }
+                ownerNativeManifest=new JSONObject(out.toString("UTF-8"));
+            }catch(Exception ignored){ownerNativeManifest=new JSONObject();}
+        }
+        return ownerNativeManifest;
+    }
     private static JSONObject inatManifest;
     private static JSONObject inatManifest(Activity a){
         if(inatManifest==null){
@@ -50,7 +66,8 @@ public final class OfflinePhotoEvidence {
     }
     private static JSONObject findForTaxon(Activity a,String scientific){
         if(scientific==null||scientific.isEmpty())return null;
-        for(JSONArray list:new JSONArray[]{inatManifest(a).optJSONArray("items"),
+        for(JSONArray list:new JSONArray[]{ownerNativeManifest(a).optJSONArray("items"),
+                inatManifest(a).optJSONArray("items"),
                 manifest(a).optJSONArray("items")}){
             if(list==null)continue;
             for(int i=0;i<list.length();i++){
@@ -71,8 +88,9 @@ public final class OfflinePhotoEvidence {
         if(scientific==null)return false;
         if(availablePhotoTaxa==null){
             java.util.HashSet<String> names=new java.util.HashSet<>();
-            for(JSONArray list:new JSONArray[]{inatManifest(a).optJSONArray("items"),
-                    manifest(a).optJSONArray("items")}){
+            for(JSONArray list:new JSONArray[]{ownerNativeManifest(a).optJSONArray("items"),
+                inatManifest(a).optJSONArray("items"),
+                manifest(a).optJSONArray("items")}){
                 if(list==null)continue;
                 for(int i=0;i<list.length();i++){
                     JSONObject image=list.optJSONObject(i);
@@ -315,7 +333,8 @@ public final class OfflinePhotoEvidence {
     public static void add(Activity a,LinearLayout parent,String id){
         if(id==null||id.trim().isEmpty())return;
         JSONObject found=null;
-        for(JSONArray items:new JSONArray[]{manifest(a).optJSONArray("items"),
+        for(JSONArray items:new JSONArray[]{ownerNativeManifest(a).optJSONArray("items"),
+                manifest(a).optJSONArray("items"),
                 inatManifest(a).optJSONArray("items")}){
             if(items==null)continue;
             for(int i=0;i<items.length();i++){

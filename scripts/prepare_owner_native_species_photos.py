@@ -13,7 +13,7 @@ from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "app/src/main/assets"
-MANIFEST = json.loads((ASSETS / "offline_photo_manifest_v1.json").read_text())
+MANIFEST = json.loads((ASSETS / "offline_owner_photo_manifest_v1.json").read_text())
 OWNED = [x for x in MANIFEST["items"]
          if x.get("rightsBasis") == "owner_requested_in_app_preview"]
 if len(OWNED) != 9:

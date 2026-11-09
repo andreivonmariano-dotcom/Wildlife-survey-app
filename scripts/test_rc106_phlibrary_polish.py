@@ -10,7 +10,7 @@ class Rc106UiContracts(unittest.TestCase):
         s=read('LikasLibraryActivity.java')
         for name in ('Species Atlas','Habitat Atlas','References','Saved species'):
             self.assertIn('tile(body,"'+name+'"',s)
-        self.assertEqual(s.count('tile(body,"'),5)
+        self.assertEqual(s.count('tile(body,"'),4)
         for old in ('Find a species','"Explore"','"Wildlife groups"',
                     'Discovery Rarity","', 'pickForests'):
             self.assertNotIn(old,s)

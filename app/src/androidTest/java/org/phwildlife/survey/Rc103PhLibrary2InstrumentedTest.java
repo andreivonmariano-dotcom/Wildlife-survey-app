@@ -107,6 +107,16 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     int innerWidth=clear.getWidth()-clear.getPaddingLeft()-clear.getPaddingRight();
                     assertTrue("Clear label must fit inside its button at this text scale",
                         clearWidth<=innerWidth);
+                    if(a.getResources().getConfiguration().fontScale>=1.6f){
+                        for(String action:new String[]{"Sort","Filters"}){
+                            TextView control=(TextView)text(root,action);
+                            assertNotNull("Missing "+action+" action",control);
+                            float needed=control.getPaint().getFontSpacing();
+                            int available=control.getHeight()-control.getPaddingTop()-control.getPaddingBottom();
+                            assertTrue(action+" text must fit vertically at 200% scale",
+                                needed<=available);
+                        }
+                    }
                     shot(a,"explorer");
                     input.setText("Ceyx mindanensis");
                     assertEquals(1,lv.getAdapter().getCount());

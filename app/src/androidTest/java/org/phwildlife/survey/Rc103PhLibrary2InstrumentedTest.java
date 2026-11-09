@@ -89,6 +89,7 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     assertNotNull(text(root,"References"));
                     assertNotNull(text(root,"Wildlife of"));
                     assertNotNull(text(root,"Species Atlas"));
+                    assertNull("Duplicate wildlife shortcuts removed",text(root,"Wildlife groups"));
                     assertNotNull("The bundled real Mindanao photo layer must decode",
                         named(root,"PhotoLayer"));
                     if(a.getResources().getConfiguration().fontScale>=1.6f){
@@ -120,12 +121,7 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     EditText input=(EditText)find(root,EditText.class);
                     assertNotNull(lv);assertNotNull(input);
                     assertEquals(715,lv.getAdapter().getCount());
-                    TextView clear=(TextView)text(root,"Clear");
-                    assertNotNull(clear);
-                    float clearWidth=clear.getPaint().measureText("Clear");
-                    int innerWidth=clear.getWidth()-clear.getPaddingLeft()-clear.getPaddingRight();
-                    assertTrue("Clear label must fit inside its button at this text scale",
-                        clearWidth<=innerWidth);
+                    assertNull("Clear should appear only when needed",text(root,"Clear"));
                     if(a.getResources().getConfiguration().fontScale>=1.6f){
                         for(String action:new String[]{"Sort","Filters"}){
                             TextView control=(TextView)text(root,action);
@@ -145,11 +141,17 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     shot(a,"explorer");
                     input.setText("Ceyx mindanensis");
                     assertEquals(1,lv.getAdapter().getCount());
-                    assertNotNull(text(root,"1 account found"));
+                    assertNotNull(text(root,"1 account"));
+                    TextView clear=(TextView)text(root,"Clear");
+                    assertNotNull("Clear shown with an active search",clear);
+                    float clearWidth=clear.getPaint().measureText("Clear");
+                    int innerWidth=clear.getWidth()-clear.getPaddingLeft()-clear.getPaddingRight();
+                    assertTrue("Clear must fit within its button",clearWidth<=innerWidth);
                     input.setText("Oreophryne cf. nana");
                     assertEquals(1,lv.getAdapter().getCount());
                     input.setText("");
                     assertEquals(715,lv.getAdapter().getCount());
+                    assertNull("Clear hidden after reset",text(root,"Clear"));
                 }catch(Exception x){err[0]=x;}
             });
             if(err[0]!=null)throw err[0];
@@ -184,11 +186,24 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     assertNull("Old display label must be removed",text(root,"IUCN GLOBAL"));
                     assertNotNull(text(root,"Uncommon"));
                     assertNotNull(text(root,"Least Concern"));
-                    assertNotNull(text(root,"Source notes"));
-                    assertNotNull(text(root,"REFERENCES"));
-                    assertNotNull(text(root,"More in Alcedinidae"));
+                    assertNotNull(text(root,"Citations ("));
+                    assertNotNull(text(root,"Same family · Alcedinidae"));
+                    TextView save=(TextView)text(root,"☆  Save");
+                    assertNotNull("Compact Save action remains discoverable",save);
+                    assertTrue(save.isClickable());
+                    if(a.getResources().getConfiguration().fontScale>=1.6f){
+                        assertTrue("Save label must fit vertically at 200% scale",
+                            save.getPaint().getFontSpacing()<=save.getHeight()-
+                                save.getPaddingTop()-save.getPaddingBottom());
+                    }
                     assertNotNull(text(root,"Next species"));
                     shot(a,"profile");
+                    View next=text(root,"Next species");
+                    assertTrue(next.performClick());
+                    a.onBackPressed();
+                    assertNotNull("Back must return to the previous species",
+                        text(a.getWindow().getDecorView(),
+                            "South Philippine Dwarf-kingfisher"));
                 }catch(Exception x){err[0]=x;}
             });
             if(err[0]!=null)throw err[0];
@@ -218,15 +233,54 @@ public final class Rc103PhLibrary2InstrumentedTest {
             scenario.onActivity(a->{
                 try{
                     View root=a.getWindow().getDecorView();
-                    assertNotNull(text(root,"FIELD INDICATORS"));
-                    assertNotNull(text(root,"LITERATURE-LINKED SPECIES"));
+                    assertNotNull(text(root,"Field indicators"));
+                    assertNotNull(text(root,"Literature-linked species"));
                     assertNotNull(text(root,"Open source"));
-                    assertNotNull(text(root,"Find textual mentions"));
+                    assertNotNull(text(root,"Search account text"));
                     shot(a,"habitat-detail");
                 }catch(Exception e){err[0]=e;}
             });
             if(err[0]!=null)throw err[0];
         }
+    }
+
+    @Test public void bibliographyIsCleanAndCitationSearchReturnsUnverifiedCandidates()
+        throws Exception {
+        final Exception[] err={null};
+        try(ActivityScenario<PhLibraryBibliographyActivity> scenario=ActivityScenario.launch(
+            new Intent(ApplicationProvider.getApplicationContext(),
+                PhLibraryBibliographyActivity.class))){
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            scenario.onActivity(a->{
+                try{
+                    View root=a.getWindow().getDecorView();
+                    assertNotNull(text(root,"1159 references"));
+                    assertNull("Old explanatory preface must be removed",
+                        text(root,"not yet completely reconciled"));
+                    assertNotNull(find(root,EditText.class));
+                    assertNotNull(find(root,ListView.class));
+                    shot(a,"references");
+                }catch(Exception e){err[0]=e;}
+            });
+        }
+        if(err[0]!=null)throw err[0];
+        try(ActivityScenario<PhLibraryBibliographyActivity> scenario=ActivityScenario.launch(
+            new Intent(ApplicationProvider.getApplicationContext(),
+                PhLibraryBibliographyActivity.class)
+                    .putExtra("phlibrary_bib_citation","Lint & Stott, 1948"))){
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            scenario.onActivity(a->{
+                try{
+                    View root=a.getWindow().getDecorView();
+                    assertNotNull("Author–year citations should discover candidate references",
+                        text(root,"possible reference"));
+                    assertNotNull(text(root,"Not verified"));
+                    assertTrue(((ListView)find(root,ListView.class)).getAdapter().getCount()>0);
+                    shot(a,"reference-candidates");
+                }catch(Exception e){err[0]=e;}
+            });
+        }
+        if(err[0]!=null)throw err[0];
     }
 
 }

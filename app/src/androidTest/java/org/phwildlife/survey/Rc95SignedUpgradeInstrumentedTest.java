@@ -20,7 +20,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import static org.junit.Assert.*;
 
-/** Two separate instrumentations around a real, signed v152 -> v167 adb install -r. */
+/** Two separate instrumentations around a real, signed v167 -> v169 adb install -r. */
 @RunWith(AndroidJUnit4.class)
 public final class Rc95SignedUpgradeInstrumentedTest {
     static final String EXCLUDED="QA_RC92_UPGRADE_EXCLUDED";
@@ -75,7 +75,7 @@ public final class Rc95SignedUpgradeInstrumentedTest {
         }
     }
     @Test public void aSeedSignedRc92Workspace() throws Exception{
-        assertEquals("Seed must execute under original signed RC92",152,version());
+        assertEquals("Seed must execute under original signed RC107",167,version());
         try(FieldDb helper=new FieldDb(app())){
             SQLiteDatabase db=helper.getWritableDatabase();
             assertEquals(29,db.getVersion());
@@ -114,7 +114,7 @@ public final class Rc95SignedUpgradeInstrumentedTest {
         assertEquals(244,file.length());
     }
     @Test public void bSignedRc95UpgradePreservesRowsMediaAndExport()throws Exception{
-        assertEquals("Upgrade must install signed RC107 over RC92, no data reset",167,version());
+        assertEquals("Upgrade must install signed RC109 over RC107, no data reset",169,version());
         try(FieldDb helper=new FieldDb(app())){
             SQLiteDatabase db=helper.getReadableDatabase();
             assertEquals(29,db.getVersion());

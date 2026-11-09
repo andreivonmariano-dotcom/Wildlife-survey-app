@@ -90,8 +90,8 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertNotIn("ImageView",hub)
         self.assertNotIn("ImageView",directory)
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 168",gradle)
-        self.assertIn("0.27.3-rc108-species-media-daily",gradle)
+        self.assertIn("versionCode 169",gradle)
+        self.assertIn("0.27.3-rc109-native-species-photos",gradle)
 
 if __name__=="__main__":
     unittest.main()

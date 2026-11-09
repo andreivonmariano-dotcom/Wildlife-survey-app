@@ -81,6 +81,7 @@ jobs:
           python3 scripts/prepare_owner_native_species_photos.py
       - name: Download all 333 pinned Drive originals and embed EXIF-free 1920px images
         run: |
+          python3 scripts/test_rc110_drive_photo_gallery.py
           python3 scripts/prepare_drive_gallery.py
           python3 scripts/test_rc110_drive_photo_gallery.py
       - name: Scientific and menu source regression tests

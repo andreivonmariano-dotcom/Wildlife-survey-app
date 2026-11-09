@@ -37,7 +37,11 @@ public final class PhLibraryPhotoHero {
         }
         final boolean large=a.getResources().getConfiguration().fontScale>=1.6f;
         FrameLayout frame=new FrameLayout(a);
-        frame.setMinimumHeight(PhLibrary2Ui.dp(a,large?240:194));
+        // A minimum alone lets the full-height ScrollView stretch the cover and
+        // hide Home navigation beneath it after neighboring headings are removed.
+        int coverHeight=PhLibrary2Ui.dp(a,large?240:194);
+        frame.setMinimumHeight(coverHeight);
+        frame.setLayoutParams(new LinearLayout.LayoutParams(-1,coverHeight));
         frame.setBackground(PhLibrary2Ui.bg(a,PhLibrary2Ui.DEEP,
             android.graphics.Color.TRANSPARENT,17));
         frame.setClipToOutline(true);

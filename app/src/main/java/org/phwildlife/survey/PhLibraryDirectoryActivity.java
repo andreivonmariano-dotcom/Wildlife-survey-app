@@ -253,7 +253,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
             search.setText("");setGroup(0);filter();
         },false);
         if(compactFilters){reset.setTextSize(12);reset.setPadding(dp(6),dp(5),dp(6),dp(5));}
-        headingBar.addView(reset,new LinearLayout.LayoutParams(dp(compactFilters?66:71),dp(48)));
+        headingBar.addView(reset,new LinearLayout.LayoutParams(dp(compactFilters?82:71),dp(48)));
         root.addView(headingBar);
         TextView eyebrow=PhLibrary2Ui.eyebrow(this,"GREATER MINDANAO  /  BOOK 01");
         if(!compactFilters)root.addView(eyebrow);

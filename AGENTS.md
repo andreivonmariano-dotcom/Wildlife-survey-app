@@ -10,13 +10,14 @@
 4. **Before any charter amendment**, present the exact proposed addition or change to the product owner and obtain explicit approval. Do not modify the Google Doc or its Markdown mirror based on an unapproved idea, source, other chat, automation or new app feature. After approval, version the canonical Doc, synchronize the GitHub mirror and record the decision. This applies even if edits seem minor.
 5. The Google Drive repository/folder/Doc currently inherit **anyone-with-link writer access**. This is an unresolved permissions risk. The approval procedure is not enforced by Google Drive until the owner restricts sharing. Do not change parent-folder permissions without explicit authorization.
 
-## Source branches and historical boundaries (verified 10 November 2026)
+## Source branches and historical boundaries (verified 11 November 2026)
 
-- `main` is an old **v0.15 Android source baseline** plus newer APO governing documents. It is **not an acceptable starting point for current APO app changes**.
-- The two RC111 Android code branches are `feature/apo-rc111-ui-overhaul-v171` (HEAD `9815f0554f345706baa52e02842e322f1306e563`) and `feature/apo-rc111-unified-field-first-ui-v171` (HEAD `f7df249d2ea124591d6fbf343b9a5a9f7c594eb8`). They have diverged. Neither should be silently assumed canonical or automatically merged. Determine the current approved lineage, compare changes and verify tests and signing before further code work.
-- Earlier RC110 work is recorded in draft PR #115 on `feature/apo-rc110-highres-offline-photo-galleries-v170`. Its signed build and physical-device upgrade remain unverified in the durable project record. Verify current CI and PR status again before relying on this statement.
-- The RC4-specific pull-request lineage script and historical release workflows contain obsolete assumptions. They are **historical safeguards**, not a valid substitute for current RC111 data-preservation, package/signing and source-lineage acceptance. Any replacement gate must preserve those protections.
-- Read `docs/LIKAS_CROSS_CHAT_CONTINUITY_POLICY.md`, `docs/LIKAS_PROJECT_STATE.md` and `docs/LIKAS_DECISION_LOG.md` at the beginning of each development task. Check live branch HEAD and relevant CI. These pathnames are retained for continuity.
+- Default `main` contains historical Android v0.15. It is an entry point for governance documents, **not** the source for present APO Android builds.
+- The selected development consolidation branch is `refactor/apo-rc112-consolidated`, derived from RC112 code172 source `acddbb2b292ac9939383183d9b0100d2dc31945d` on `feature/apo-rc110-highres-offline-photo-galleries-v170`. Its cleanup commits require separate CI verification before APK delivery.
+- **Proven baseline:** RC112 completed Android compilation, signed APK/asset/reference verification, scientific regressions and a signed RC109→RC112 no-data-clear emulator upgrade in workflow runs `42828793989` and `42828806254`. Its owner wildlife photos still require source-rights review; physical-phone field acceptance and direct APK delivery are separate.
+- The two earlier RC111 branches (`feature/apo-rc111-ui-overhaul-v171` and `feature/apo-rc111-unified-field-first-ui-v171`) diverge and have failing regression jobs. Preserve their history and selectively assess useful changes, but do not overwrite the tested RC112 source.
+- The old RC4 pull-request gate is obsolete and must not be used as current scientific or upgrade certification. The active consolidation branch consolidates CI into an Android QA/signed-upgrade gate and a separate manual APK workflow; six legacy CI definitions remain archived for historical tests.
+- Read `docs/LIKAS_CROSS_CHAT_CONTINUITY_POLICY.md`, `docs/LIKAS_PROJECT_STATE.md` and `docs/LIKAS_DECISION_LOG.md` at the start of every development task. Verify the actual current branch HEAD and CI status first; historical filenames persist for durable links.
 
 ## Product and scientific rules
 

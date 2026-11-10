@@ -17,7 +17,7 @@ class IllustratedUiContract(unittest.TestCase):
                       'case "bird":','case "frog":','case "mammal":'):
             self.assertIn(piece,portal)
         home=welcome.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
-        for title in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"'):
+        for title in ('"BioTools"','"PHLibrary"','"PHMaps preview"','"BioDiscover preview"'):
             self.assertIn(title,home)
         self.assertIn("ApoHomeUi.header(this,",home)
         self.assertIn("ApoHomeUi.resume(this,",home)
@@ -38,7 +38,7 @@ class IllustratedUiContract(unittest.TestCase):
         self.assertIn("HabitatSpeciesEvidenceActivity.class",library)
         self.assertNotIn("MainActivity.class",library)
         settings=src("LikasSettingsActivity.java")
-        self.assertIn("LikasPortalUi.mini(this,first,firstHint,firstArt",settings)
+        self.assertIn("ApoHomeUi.tool(this,",settings)
         self.assertIn("FieldBackupActivity.class",settings)
         self.assertIn("DataManagementActivity.class",settings)
         self.assertIn("ImportActivity.class",settings)

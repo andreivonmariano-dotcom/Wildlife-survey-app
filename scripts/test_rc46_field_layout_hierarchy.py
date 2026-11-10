@@ -22,7 +22,7 @@ class Rc46FieldLayoutHierarchy(unittest.TestCase):
         self.assertNotIn("LikasPortalUi.hero(",home)
         self.assertNotIn("LikasPortalUi.tile(",home)
         self.assertIn("row.setMinimumHeight(dp(a,88))",component)
-        for route in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"'):
+        for route in ('"BioTools"','"PHLibrary"','"PHMaps preview"','"BioDiscover preview"'):
             self.assertIn(route,home)
     def test_ime_layout_keeps_footer_and_essential_warnings(self):
         recorder=source("MainActivity.java")

@@ -58,12 +58,12 @@ class SpeciesMediaDailyTests(unittest.TestCase):
 
     def test_home_atlas_and_reader_connected_without_data_schema_changes(self):
         build = (ROOT / "app/build.gradle").read_text()
-        self.assertRegex(build, r"versionCode\s+170\b")
-        self.assertIn("0.27.3-rc110-highres-photo-galleries", build)
+        self.assertRegex(build, r"versionCode\s+171\b")
+        self.assertIn("0.27.3-rc111-apo-interface-overhaul", build)
         home = (JAVA / "WelcomeActivity.java").read_text()
         atlas = (JAVA / "PhLibraryDirectoryActivity.java").read_text()
         reader = (JAVA / "PhLibraryBook01.java").read_text()
-        self.assertIn('ApoSpeciesOfDay.create(this,scientific->', home)
+        self.assertIn('ApoSpeciesOfDay.createCompact(this,scientific->', home)
         # RC110 atlas intentionally uses a virtualized text list. Each row
         # opens the species reader, where its offline multi-photo gallery lives.
         self.assertIn('startActivity(new Intent(this,TaxonDetailActivity.class)', atlas)

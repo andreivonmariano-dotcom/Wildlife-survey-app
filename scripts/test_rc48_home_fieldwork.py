@@ -14,7 +14,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         self.assertIn("ApoHomeUi.resume(this,",home)
         self.assertNotIn("LikasPortalUi.hero(",home)
         self.assertNotIn("LikasPortalUi.tile(",home)
-        for label in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"'):
+        for label in ('"BioTools"','"PHLibrary"','"PHMaps preview"','"BioDiscover preview"'):
             self.assertIn(label,home)
         self.assertIn("LikasSettingsActivity.class",home)
         self.assertLess(home.index("ApoHomeUi.resume(this,"),

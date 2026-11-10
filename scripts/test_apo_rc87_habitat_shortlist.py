@@ -38,7 +38,7 @@ class Rc87HabitatShortlistTest(unittest.TestCase):
         self.assertIn("SELECT TRIM(raw_identification) FROM field_records",helper)
         self.assertNotIn("UPDATE field_records",helper)
         self.assertNotIn("INSERT INTO field_records",helper)
-        self.assertIn('if(largeText)export.setText("ZIP")',recorder)
+        self.assertIn('export.setContentDescription("Export research ZIP and additional survey options")',recorder)
 
 if __name__=="__main__":
     unittest.main()

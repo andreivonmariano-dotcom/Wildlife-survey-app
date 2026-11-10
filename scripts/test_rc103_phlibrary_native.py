@@ -56,8 +56,8 @@ class PhLibrary2Native(unittest.TestCase):
         self.assertIn('candidateMode',bib)
     def test_release_identity_and_data_scope(self):
         build=(ROOT/'app/build.gradle').read_text()
-        self.assertIn('versionCode 170',build)
-        self.assertIn("versionName '0.27.3-rc110-highres-photo-galleries'",build)
+        self.assertIn('versionCode 171',build)
+        self.assertIn("versionName '0.27.3-rc111-apo-interface-overhaul'",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn('super(context,NAME,null,29)',source('FieldDb.java'))
         self.assertNotIn('getWritableDatabase',source('PhLibraryBook01.java'))

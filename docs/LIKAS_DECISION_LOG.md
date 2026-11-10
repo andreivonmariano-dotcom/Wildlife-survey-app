@@ -1,4 +1,4 @@
-# LIKAS: Durable Decision Log
+# APO: Durable Decision Log
 
 **Purpose:** Append-only record of accepted project-owner decisions and governing rules. This file is not proof that an item has been implemented or tested.
 

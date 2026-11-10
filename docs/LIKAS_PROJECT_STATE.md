@@ -1,4 +1,4 @@
-# LIKAS: Current Project State and Next-Chat Handoff
+# APO: Current Project State and Next-Chat Handoff
 
 ## 28 October 2026 | Mandatory APK link with every app update
 

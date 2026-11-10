@@ -1,4 +1,4 @@
-# LIKAS
+# APO
 
 > **Scientific text and owner approval override (10 November 2026):** APO Charter v1.2, `docs/APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md`, is now the governing editorial copy. Apply APO-09 through APO-12 to **all user-visible app-authored prose**, including every species, habitat, ecology, taxonomy, distribution and conservation passage: no “X, not Y”, “X rather than Y”, or defensive/argumentative interpretations; audit before an APK release, preserving underlying evidence and original citations. APO-13 through APO-15 require the owner's specific prior approval for every change to the governing document, followed by versioned synchronization from the canonical Google Doc at https://docs.google.com/document/d/1khryohmOO5QsOmuKchv8VWWu7Qxcq7zxVDZX9L3qCJA/edit to the GitHub source. The current Google Drive inherited anybody-with-link writer setting is a permissions risk and does not enforce approval. Do not amend the governing charter automatically from research material or an app change.
 
@@ -7,7 +7,7 @@
 
 **Version:** 1.0.9 (9 November 2026 native PHLibrary 2.0 reader and atlas amendment; canonical filename retained)  
 **Date:** 27 October 2026  
-**Product:** LIKAS, a Philippines-first biodiversity field and knowledge platform  
+**Product:** APO, a Philippines-first biodiversity field and knowledge platform (original name retained in this historical specification's filename)  
 **Status:** Proposed authoritative project specification, pending adoption into Project instructions and the development repository  
 **Intended audience:** Product owner, wildlife biologists, ecologists, designers, developers, scientific reviewers, and future development assistants  
 **Repository reviewed:** `andreivonmariano-dotcom/Wildlife-survey-app`, branch `main`, commit `44825d70956151839bd8d90b14ef799c5ce8ea76`  

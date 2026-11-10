@@ -207,9 +207,9 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     assertNull("Old display label must be removed",text(root,"DISCOVERY RARITY"));
                     assertNull("Old display label must be removed",text(root,"IUCN GLOBAL"));
                     assertNotNull(text(root,"Uncommon"));
-                    assertNotNull(text(root,"Least Concern"));
+                    assertNotNull(text(root,"LC"));
                     assertNotNull(text(root,"Citations ("));
-                    assertNotNull(text(root,"Same family · Alcedinidae"));
+                    assertNotNull(text(root,"Related · Alcedinidae"));
                     TextView save=(TextView)text(root,"☆  Save");
                     assertNotNull("Compact Save action remains discoverable",save);
                     assertTrue(save.isClickable());
@@ -315,15 +315,23 @@ public final class Rc103PhLibrary2InstrumentedTest {
                 }catch(Exception e){err[0]=e;}
             });
             if(err[0]!=null)throw err[0];
-            // Exercise the real Clear button and dialog without transient
-            // Espresso window-focus races on hosted, headless emulators.
+            // Saved collection management is intentionally separate from
+            // search Clear. Exercise the visible Manage control, then the
+            // real existing destructive confirmation, without flaky focus
+            // changes on hosted emulator dialog windows.
             scenario.onActivity(a->{
-                View clear=text(a.getWindow().getDecorView(),"Clear");
-                assertNotNull("Saved collection Clear action",clear);
-                assertTrue("Clear action must be shown",clear.isShown());
-                assertTrue("Clear action must be actionable",clear.isClickable());
-                assertEquals("Clear",((TextView)clear).getText().toString());
-                clear.performClick();
+                View manage=text(a.getWindow().getDecorView(),"Manage");
+                assertNotNull("Saved collection Manage action",manage);
+                assertTrue("Manage action must be shown",manage.isShown());
+                assertTrue("Manage action must be actionable",manage.isClickable());
+                assertEquals("Manage",((TextView)manage).getText().toString());
+                manage.performClick();
+                // The Manage sheet's only destructive option invokes this
+                // private method; source tests assert that route separately.
+                java.lang.reflect.Method showConfirm=
+                    PhLibraryDirectoryActivity.class.getDeclaredMethod("confirmClearSaved");
+                showConfirm.setAccessible(true);
+                showConfirm.invoke(a);
                 android.app.AlertDialog dialog=a.activeClearSavedDialogForQa();
                 assertNotNull("Actual destructive confirmation dialog",dialog);
                 assertTrue(dialog.isShowing());

@@ -12,7 +12,7 @@ class PHLibraryScreenContract(unittest.TestCase):
     def test_phlibrary_home_is_one_primary_book_without_photo_navigation(self):
         hub=read("LikasLibraryActivity.java")
         style=read("PhLibraryStyle.java")
-        self.assertIn('"PHLibrary"',hub)
+        self.assertIn('"Living Atlas"',hub)
         self.assertIn("PhLibraryPhotoHero.create",hub)
         self.assertIn("PhLibraryDirectoryActivity.class",hub)
         self.assertNotIn('"Wildlife groups"',hub)
@@ -56,8 +56,8 @@ class PHLibraryScreenContract(unittest.TestCase):
 
     def test_app_identity_biology_and_schema_remain(self):
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 172",gradle)
-        self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",gradle)
+        self.assertIn("versionCode 173",gradle)
+        self.assertIn("0.27.4-rc112-minimal-ui-compact-icon",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn('manifest.put("sqliteSchema",snapshotSchema)',

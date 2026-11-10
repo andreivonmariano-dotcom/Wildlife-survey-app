@@ -14,9 +14,9 @@ import android.widget.TextView;
 /** Text-first APO Home navigation. No image, pictogram or legacy tile resources. */
 public final class ApoHomeUi {
     private ApoHomeUi(){}
-    private static final int INK=Color.rgb(23,61,50);
-    private static final int MUTED=Color.rgb(103,123,111);
-    private static final int RULE=Color.rgb(219,228,220);
+    private static final int INK=UiKit.INK;
+    private static final int MUTED=UiKit.MUTED;
+    private static final int RULE=UiKit.BORDER;
     private static int dp(Activity a,int n){
         return Math.round(a.getResources().getDisplayMetrics().density*n);
     }

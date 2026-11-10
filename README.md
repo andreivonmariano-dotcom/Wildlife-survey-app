@@ -1,69 +1,37 @@
 # APO
 
-APO is an offline-first, Philippines-focused Android biodiversity companion for biologists, with field surveys, species references, habitat context, and research-export tools. The name references Mount Apo and supersedes LIKAS as the public-facing product identity.
+APO is an offline-first Philippine wildlife survey and biodiversity learning application. Its planned modules cover fieldwork, PAIC-by-PAIC species and habitat information, an offline Philippine biogeographic map with survey localities, and a locally usable scientific research library.
 
-**Current survey UI development branch:** `feature/apo-recorder-picker-v145` (RC85 draft on signed RC84; not merged into historical default `main`)  
-**Latest verified signed APK:** `0.27.3-rc84-apo-habitats-checklist`, versionCode **144**, app/test source `2cfb36281bf9b89260939f14ff5c2915f75dc4f3`, signed emulator run `41401267934`  
-**Android ID:** `org.phwildlife.survey.beta08` (unchanged); original signer retained  
-**SQLite schema:** **28** (unchanged)
+## Project direction
 
-**APO RC78 live survey recorder preview, 2 November 2026:** Continued the BioTools overhaul in the most time-sensitive field screen. The recorder now has clearer Sampling Session/Detection Tools sections, accessible reasons when Save Observation is disabled for paused or unopened sampling units, and scalable persistent Save/Review/End Survey controls. Ending a survey warns before discarding incomplete drafts containing notes, distance, images, marked time, counts or other identification evidence, not just species text. Station progress distinguishes recorded survey visits from registered but unvisited project stations. Habitat preparation controls reflow instead of clipping text.
+**Approved governing charter v1.2:** [canonical Google Doc](https://docs.google.com/document/d/1khryohmOO5QsOmuKchv8VWWu7Qxcq7zxVDZX9L3qCJA/edit) · [GitHub Markdown mirror](docs/APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md). The Google Doc requires explicit owner approval of each proposed amendment before editing. The exact approved contents have been copied onto this branch. Check [development instructions](AGENTS.md) and [repository audit](docs/APO_REPOSITORY_CLEANUP_AUDIT_2026_11_10.md).
 
-**Verified signed APK and emulator:** `APO-v0.27.3-RC78-Recorder-Emulator-code138.apk`, **11,755,020 bytes**, SHA-256 `8485de0a265490aea115e55b7510c3a381accceec9585d7daf0afed82f907b39`. CI run `41383237787` passed **415 Python scientific/UI regressions**, Android JVM/app/AndroidTest compilation, original package/signer/art/reference checks, and an **actual Android 14 emulator (API34) instrumented recorder test at 160% text size**. Emulator screenshot (native Android activity view, not unrelated system overlays): `APO-RC78-Live-Recorder-Emulator-160pct-Clean.png` (1080×2280, SHA-256 `740efe4692f055a2f0a9e2aa44c8673b317e479b98e30603695c1d1fe748665a`). See [RC78 recorder emulator QA](docs/APO_RC78_SURVEY_RECORDER_EMULATOR_QA_2026_11_02.md).
+**APO** is the product's public name. The app's established Android package remains `org.phwildlife.survey.beta08` for update and data continuity. Historical internal names and file paths require a migration plan before they are renamed.
 
-**Historical RC78 release boundary:** RC78 was a **signed development preview**, not production field-certified. The emulator confirms key recorder controls fit under enlarged text but the observation form begins below the fold, and no full on-device survey lifecycle, GNSS, backup or archived-data upgrade tests were performed. The screenshot is an app-view capture; one earlier emulator run displayed an unrelated Pixel Launcher ANR dialog in a raw screenshot. The full design and field acceptance gate remains open. Prior RC77/RC76 builds are historical.
+## Current working source
 
-**RC79 survey-flow changes, signed development preview:** The new code139 draft fits Review and End Survey side-by-side at 160% font when width permits, prioritizes the observation form in continuous non-transect methods, expands the unsaved-entry guard to additional evidence selections, and displays completion criteria when ending a survey. Signed GitHub Actions run `41384887314` passed 419 Python tests, Android/JVM compilation and one Android 14 emulator test at 160% text. The signed 11,755,588-byte code139 APK (SHA-256 `a45503c9facdf9f4d1a3dfd631c943ec6ef40da007d60086811f0d1a5d5daf6e`) was directly delivered in the development chat. The observation form enters the initial viewport, but the status HUD still occupies considerable height. Physical-device survey QA remains unverified. [RC79 survey QA](docs/APO_RC79_SURVEY_FLOW_QA_2026_11_02.md).
+**Consolidation branch:** `refactor/apo-rc112-consolidated`, based directly on RC112 code from `feature/apo-rc110-highres-offline-photo-galleries-v170`, source commit `acddbb2b292ac9939383183d9b0100d2dc31945d`.
 
-**RC80 survey HUD/station changes (source under QA):** Compact effort/point timer and GPS display at 160%+ fonts, full unsaved-draft confirmation before changing stations, and expandable End Survey protocol details. VersionCode140 is **not signed or delivered** until its CI and emulator gates pass. [RC80 QA](docs/APO_RC80_SURVEY_HUD_STATIONS_QA_2026_11_02.md).
+- VersionCode: **172**; Android versionName: `0.27.3-rc112-minimal-ui-compact-icon`.
+- Signature and installed-app ID: retained from earlier signed source.
+- Native catalog: Book 01 v1.82 with 715 Greater Mindanao species accounts; reference/media rights still require source-by-source validation.
+- Reference image handling: verified 333-photo owner gallery recovery in the signed RC112 workflow. Actual redistributability of owner-supplied photos remains a permissions check.
+- CI: successful build/signature/scientific-regression run `42828793989` and emulator signed RC109→RC112 upgrade run `42828806254` on the exact starting source. The consolidation commits need their own CI validation.
+- The two earlier RC111 branches are divergent and failed their scientific/menu source tests. Their history remains available for selective comparison.
+- Installed-phone release acceptance is separate. A successful source build does not mean a directly deliverable APK has been attached in this conversation.
 
-**RC81 signed development preview:** The 200%/320dp emulator screenshot showed crowded controls. Code141 shortens the timing/GPS status and keeps Review / End Survey on one row at 320dp/200%; signed CI passed 426 Python tests and two emulator font/size checks. The exact 11,756,772-byte APK (SHA-256 `3d42823bfe59cfd2c631fac294a68b8edff23bc3699c32e1da9dec85c72900a8`) was directly delivered in the development conversation. [RC81 QA](docs/APO_RC81_COMPACT_320_QA_2026_11_02.md).
+The historical default `main` branch still contains v0.15 Android source. Use this tested RC112-descended branch for current code work. Do not merge `main` application sources over it.
 
-**RC82 signed developer preview:** Selecting Birds, Herpetofauna or Mammals now opens a compact method picker with optional full comparison, collapsed GPS-region assistance and opt-in repeat-route controls. [RC82 QA](docs/APO_RC82_SURVEY_SETUP_QA_2026_11_02.md). Code142 is signed and directly delivered (11,757,508 bytes, SHA-256 `747b7c92fd34ce5d38b4a099f871ef96fe951dbeb6c6f1f829f9a41411d30601`). CI passed 429 Python source tests and eight Android setup emulator tests, with six screenshots. Handset field QA is still pending.
+## Repository organization
 
-**RC83 Survey GPS signed development preview:** Live GPS quality and acquisition state up front; coordinates, satellite data and troubleshooting expandable; a single confirmed missing-GPS path. Station GPS receives the same compact layout. Signed 11,757,620-byte code143 APK (SHA-256 `7cd62bf5706352298d15294c81034ab46922b4aba43dbb1f53e909b4a1edbf90`) directly delivered, with 432 Python regressions and eight Android emulator tests at 160%/200%. Physical GNSS/data-upgrade remain unverified. [RC83 QA](docs/APO_RC83_SURVEY_GPS_QA_2026_11_02.md).
+- `app/src/main/java`, `app/src/main/assets`, `app/src/main/res`: native Android code, embedded offline datasets and assets.
+- `scripts/`: scientific content checks, offline reference preparation and Android source regressions.
+- `.github/workflows/`: current build/QA workflows. Historic release workflows remain accessible from previous branches and Git history.
+- `docs/`: scientific audit evidence, protocols, versioned work logs and owner-approved requirements.
+- `docs/LIKAS_PROJECT_STATE.md`, `docs/LIKAS_DECISION_LOG.md`: append-only historical development handoff, with stable paths retained.
 
-**RC84 Habitat & Species signed developer preview:** Compact observed-habitat selection and count, one suggested/full checklist control, expandable start-GPS evidence, and collapsed WorldCover source/import. Original evidence and survey rules remain. Signed code144 APK (11,758,144 bytes; SHA-256 `40bfe6326d0b937337f4ce9ad3b7b0933d455d29872f6a80b5a9088c36cf00a7`) directly delivered after 435 tests and four Android14 emulator checks. [RC84 QA](docs/APO_RC84_HABITAT_CHECKLIST_QA_2026_11_02.md).
+## Release and scientific safeguards
 
-**RC85 live recorder and species picker source preview (signed QA pending):** Observation-first non-station recorder, earlier photo and species actions, concise labels, and richer real taxonomic/conservation/ecology fields in compact picker cards. Habitat-first view ranks all taxa rather than excluding unmatched. [RC85 QA](docs/APO_RC85_RECORDER_PICKER_QA_2026_11_02.md).
+Use the original signer, Android package identity and data-preserving SQLite migrations. Verify species/source crosswalks, curated image rights, offline availability, survey closure states, GPS provenance, accessible screens and source-faithful copy. Follow the charter's strict anti-defensive writing rule across species, habitats and all scientific pages.
 
-## What APO currently provides
-
-- **Fieldwork:** birds, amphibians/reptiles and mammals, project and station records, GPS/elevation, observations, effort, survey history and analysis. A survey can end as **Complete**, **Incomplete**, or **Not Counted**.
-- **Library:** the owner-authorized offline **714-species Mindanao PAIC** master catalog activates automatically (408 birds, 53 amphibians, 154 reptiles, 99 mammals) with the supplied habitat and elevation guides. Legacy illustrated references, cited habitat profiles and approved photos remain separate reference assets, not proof of a local species record. Global IUCN and Philippine DENR fields remain distinct; missing or unverified statuses are not automatically certified.
-- **Settings:** backup/recovery, storage, import, integrity checks and Less motion.
-
-The research/news feed and comprehensive ecological atlas remain planned features. Reference associations never create field observations.
-
-## Development and QA
-
-**RC48 Home and Fieldwork integration:** The RC47 shared components now serve survey setup and observation inputs. Active surveys have a dedicated Current survey section; narrow-phone capture actions reflow without removing the pinned End Survey dock. See [RC48 field UI QA](docs/LIKAS_RC48_HOME_FIELDWORK_QA.md) and [RC47 design foundations](docs/LIKAS_RC47_DESIGN_SYSTEM_FOUNDATIONS.md).
-
-
-The current scientific build workflow is [`.github/workflows/core-science-qa.yml`](.github/workflows/core-science-qa.yml). It automatically runs on application/source changes and checks source contracts, evidence, database identity, pinned signing identity, photo rights, JVM unit tests, and APK compilation. Documentation-only changes do not trigger builds. Superseded runs are canceled.
-
-Two slower device workflows are **manual acceptance checks**:
-[`library-android-smoke.yml`](.github/workflows/library-android-smoke.yml) and
-[`rc7-device-emulator-qa.yml`](.github/workflows/rc7-device-emulator-qa.yml). Their source and baseline requirements must be checked before running. An APK build alone does not establish handset compatibility.
-
-Do not add APKs, keystores, local caches, emulator captures or generated photo-review packs to Git. These are covered by `.gitignore`. Signed APKs belong in short-lived CI artifacts and verified, direct conversation downloads.
-
-## Current project records
-
-- [RC49 History review and signed QA](docs/LIKAS_RC49_HISTORY_REVIEW_QA.md)
-
-- [Project state and next-chat handoff](docs/LIKAS_PROJECT_STATE.md)
-- [Decision log](docs/LIKAS_DECISION_LOG.md)
-- [RC48 Home and Fieldwork integration](docs/LIKAS_RC48_HOME_FIELDWORK_QA.md)
-- [RC47 shared design-system foundation](docs/LIKAS_RC47_DESIGN_SYSTEM_FOUNDATIONS.md)
-- [RC46 field-layout hierarchy](docs/LIKAS_RC46_FIELD_LAYOUT_HIERARCHY_QA.md)
-- [RC44 signed UI harmony QA](docs/LIKAS_RC44_UI_HARMONY_QA.md)
-- [RC43 signed icon-integrated preview QA](docs/LIKAS_RC43_APPROVED_ICON_QA.md)
-- [Locked 18-icon owner artwork](docs/LIKAS_ICON_ASSET_LOCK_2026_10_30.md)
-- [RC41 source and device QA checklist](docs/LIKAS_RC41_FIELD_READINESS_QA.md)
-- [RC40 screenshot defect and UI audit](docs/LIKAS_RC40_SCREENSHOT_AUDIT.md)
-- [RC39 full application audit](docs/LIKAS_RC39_APP_AUDIT_2026-10-29.md)
-- [Taxonomic source register](docs/PHILIPPINE_TAXONOMY_SOURCES.md)
-- [Master product/scientific specification (on `main`)](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/blob/main/docs/LIKAS_MASTER_PROJECT_SPEC_v1.0.md)
-
-Historical release decisions, original source records, scientific review ledgers and approved imagery remain in `docs/`, `app/src/main/assets/` and Git history. The obsolete v0.15 installation instructions have been removed from this README, not from version history.
+Current signed APK delivery is only complete when the exact freshly built APK can be attached with a verified direct file link. Do not substitute a GitHub Actions artifact or an older APK.

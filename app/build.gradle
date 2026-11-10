@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 170
-        versionName '0.27.3-rc110-highres-photo-galleries'
+        versionCode 171
+        versionName '0.27.3-rc111-apo-ui-overhaul'
     }
     signingConfigs {
         debug {
@@ -30,6 +30,25 @@ android {
  * Python stdlib only: reproducible for local and CI Gradle builds.
  */
 android.sourceSets.main.res.srcDirs += ["${buildDir}/generated/rc65/res"]
+
+// RC111: separate pinned smaller-ribbon source; original APO master is untouched.
+android.sourceSets.main.res.srcDirs += ["${buildDir}/generated/rc111/res"]
+tasks.register('prepareApoRc111Launcher', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'python3', 'scripts/prepare_apo_rc111_icon.py'
+    inputs.file(file('src/main/assets/apo_rc111_launcher_master.png'))
+    outputs.file(file("${buildDir}/generated/rc111/res/drawable-nodpi/apo_rc111_launcher_foreground.png"))
+}
+tasks.configureEach { task ->
+    if (task.name != 'prepareApoRc111Launcher' &&
+        (task.name.contains('Resources') ||
+         task.name.endsWith('SourceSetPaths') ||
+         task.name.startsWith('extractDeepLinks') ||
+         task.name.contains('Debug') || task.name.contains('Release'))) {
+        task.dependsOn tasks.named('prepareApoRc111Launcher')
+    }
+}
+
 tasks.register('prepareRc65LibraryIcons', Exec) {
     workingDir rootProject.projectDir
     commandLine 'python3', 'scripts/prepare_rc65_library_icons.py'
@@ -113,6 +132,14 @@ tasks.register("verifyApoArtwork") {
             (file("src/main/res/drawable-nodpi/apo_launcher_foreground.png")):
                 "2a60cc5cda8dba006c1c713f15d565c4599ad5ec1bcaebadc7690cb66445af00"
         ]
+        def newMaster = file("src/main/assets/apo_rc111_launcher_master.png")
+        def approvedNewMaster = "828b156748e5614c7a9b74efe90ee0272b1336b7f92334ebe5702a7959332c7b"
+        if(!newMaster.isFile())
+            throw new GradleException("APO RC111 approved launcher master missing")
+        def actualNewMaster = java.security.MessageDigest.getInstance("SHA-256")
+            .digest(newMaster.bytes).collect { String.format("%02x", it & 0xff) }.join("")
+        if(actualNewMaster != approvedNewMaster)
+            throw new GradleException("APO RC111 approved launcher master changed")
         derivatives.each { source, approved ->
             if(!source.isFile())
                 throw new GradleException("APO drawable missing: "+source.name)
@@ -125,6 +152,7 @@ tasks.register("verifyApoArtwork") {
         }
     }
 }
+tasks.named("verifyApoArtwork") { dependsOn("prepareApoRc111Launcher") }
 tasks.named("preBuild") { dependsOn("verifyApoArtwork") }
 
 // RC109 native species thumbnails are generated from hash-locked owner-supplied

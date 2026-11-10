@@ -21,7 +21,7 @@ class Rc40ScreenAudit(unittest.TestCase):
         self.assertIn("setMinimumHeight(dp(a,88))",component)
         self.assertIn("setFocusable(true)",component)
         self.assertNotIn("R.drawable.",component)
-        for title in ('"BioTools"','"PHLibrary"',):
+        for title in ('"BioTools"','"Living Atlas"',):
             self.assertIn(title,main)
         self.assertIn("this::bioToolsHub",main)
         self.assertIn("LikasLibraryActivity.class",main)
@@ -122,7 +122,7 @@ class Rc40ScreenAudit(unittest.TestCase):
     def test_upgrade_keeps_signed_app_and_database_identity(self):
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",build).group(1)),109)
-        self.assertIn("0.27.3-rc",build)
+        self.assertIn("0.27.4-rc",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,29)",source("FieldDb.java"))
 

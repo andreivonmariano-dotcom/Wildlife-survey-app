@@ -17,7 +17,7 @@ class IllustratedUiContract(unittest.TestCase):
                       'case "bird":','case "frog":','case "mammal":'):
             self.assertIn(piece,portal)
         home=welcome.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
-        for title in ('"BioTools"','"PHLibrary"',):
+        for title in ('"BioTools"','"Living Atlas"',):
             self.assertIn(title,home)
         self.assertIn("Coming later: PHMaps · BioDiscover",home)
         self.assertIn("ApoHomeUi.header(this,",home)
@@ -62,7 +62,7 @@ class IllustratedUiContract(unittest.TestCase):
     def test_app_identity_is_stable(self):
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",build).group(1)),109)
-        self.assertIn("versionName '0.27.3-rc",build)
+        self.assertIn("versionName '0.27.4-rc",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,29)",src("FieldDb.java"))
 

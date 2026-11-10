@@ -66,7 +66,8 @@ public final class PhLibraryDirectoryActivity extends Activity {
         for(int i=0;i<GROUPS.length;i++){
             final int j=i;boolean active=i==selectedGroup;
             TextView chip=text(GROUPS[i],14,active?Color.WHITE:PhLibrary2Ui.FOREST,false,true);
-            chip.setGravity(Gravity.CENTER);chip.setMinHeight(dp(44));
+            chip.setGravity(Gravity.CENTER);chip.setMinHeight(dp(48));
+            chip.setSingleLine(true);
             chip.setPadding(dp(12),dp(7),dp(12),dp(7));
             chip.setBackground(PhLibrary2Ui.touch(this,
                 active?PhLibrary2Ui.FOREST:PhLibrary2Ui.IVORY,
@@ -203,15 +204,15 @@ public final class PhLibraryDirectoryActivity extends Activity {
             Comparator.comparingInt(r->rank(r,query)));
         String summary=matches.size()+(matches.size()==1?" account":" accounts");
         if(selectedHabitat>0)
-            summary=PhLibraryHabitatFilter.SHORT_NAMES[selectedHabitat]+
-                " · "+matches.size()+" species";
+            summary=matches.size()+" accounts mentioning "+
+                PhLibraryHabitatFilter.SHORT_NAMES[selectedHabitat].toLowerCase(Locale.ROOT);
         else if(savedCollectionMode)
             summary=matches.size()+" species";
         else if(savedOnly)summary+=" · Saved";
         resultsCount.setText(matches.isEmpty()?(
             savedCollectionMode&&PhLibraryBookmarks.all(this).isEmpty()?
                 "No saved species":
-            selectedHabitat>0?"No matching species for this habitat":
+            selectedHabitat>0?"No accounts mention the selected habitat":
             savedOnly?"No saved matches":"No matching accounts"):summary);
         int active=(selectedRarity!=0?1:0)+(selectedIucn!=0?1:0)+
             (selectedHabitat!=0?1:0)+(family.isEmpty()?0:1)+
@@ -321,6 +322,10 @@ public final class PhLibraryDirectoryActivity extends Activity {
             // Stack full-width badges instead of shrinking readable text.
             h.badges.setOrientation(enlarged?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
             rarity.setTextSize(11);conservation.setTextSize(11);
+            rarity.setText("Book rarity · "+rarity.getText());
+            conservation.setText("IUCN global · "+conservation.getText());
+            rarity.setSingleLine(false);conservation.setSingleLine(false);
+            rarity.setMaxLines(3);conservation.setMaxLines(3);
             rarity.setPadding(dp(8),dp(5),dp(8),dp(5));
             conservation.setPadding(dp(8),dp(5),dp(8),dp(5));
             LinearLayout.LayoutParams rp=enlarged?

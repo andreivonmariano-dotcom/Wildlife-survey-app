@@ -63,6 +63,43 @@ public final class ApoSpeciesOfDay {
         v.setLetterSpacing(.06f);
         return v;
     }
+
+    /** Compact daily feature on Home; full evidence remains in the species account. */
+    public static View createCompact(Activity a,Consumer<String> open){
+        JSONObject row=select(a,LocalDate.now(PH_TIME));
+        if(row==null)return null;
+        String latin=row.optString("s"),common=row.optString("c",latin);
+        String fact=firstSourceSentence(row.optString("p"));
+        LinearLayout card=new LinearLayout(a);
+        card.setOrientation(LinearLayout.HORIZONTAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        card.setPadding(dp(a,10),dp(a,10),dp(a,12),dp(a,10));
+        card.setBackground(PhLibrary2Ui.touch(a,PhLibrary2Ui.IVORY,PhLibrary2Ui.LINE,17));
+        View photo=PhLibrarySpeciesMedia.photoOrPlaceholder(a,latin);
+        if(photo instanceof ImageView)((ImageView)photo).setScaleType(ImageView.ScaleType.CENTER_CROP);
+        FrameLayout cover=new FrameLayout(a);
+        cover.setBackgroundColor(PhLibrary2Ui.DEEP);
+        cover.addView(photo,new FrameLayout.LayoutParams(-1,-1));
+        card.addView(cover,new LinearLayout.LayoutParams(dp(a,88),dp(a,88)));
+        LinearLayout copy=new LinearLayout(a);copy.setOrientation(LinearLayout.VERTICAL);
+        copy.setPadding(dp(a,12),0,0,0);
+        copy.addView(smallLabel(a,"TODAY IN PHLIBRARY",PhLibrary2Ui.MUTED));
+        TextView name=PhLibrary2Ui.text(a,common,17,PhLibrary2Ui.INK,true,true);
+        name.setMaxLines(2);
+        copy.addView(name);
+        TextView latinText=PhLibrary2Ui.text(a,latin,13,PhLibrary2Ui.MUTED,true,false);
+        latinText.setMaxLines(1);latinText.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        copy.addView(latinText);
+        TextView preview=PhLibrary2Ui.text(a,fact,12,PhLibrary2Ui.MUTED,false,false);
+        preview.setMaxLines(2);preview.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        copy.addView(preview);
+        card.addView(copy,new LinearLayout.LayoutParams(0,-2,1));
+        card.setFocusable(true);card.setClickable(true);
+        card.setContentDescription("Species of the day: "+common+", "+latin+". Open full species account.");
+        card.setOnClickListener(v->open.accept(latin));
+        return card;
+    }
+
     public static View create(Activity a,Consumer<String> open){
         LocalDate today=LocalDate.now(PH_TIME);
         JSONObject row=select(a,today);

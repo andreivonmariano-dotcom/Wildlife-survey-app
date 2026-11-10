@@ -89,29 +89,33 @@ public final class PhLibraryDriveGallery {
                 return bitmap.getByteCount();
             }
         };
-    private static Bitmap decode(Activity a,JSONObject item){
+    private static Bitmap decodeSample(Activity a,JSONObject item,int sample){
         if(item==null)return null;
         String asset=item.optString("offlineAsset");
         if(!asset.matches("offline_photos/drive_[0-9]{4}\\.jpg"))return null;
+        String cacheKey=asset+"@"+sample;
         synchronized(frameCache){
-            Bitmap cached=frameCache.get(asset);
+            Bitmap cached=frameCache.get(cacheKey);
             if(cached!=null&&!cached.isRecycled())return cached;
         }
         try(InputStream stream=a.getAssets().open(asset)){
             BitmapFactory.Options options=new BitmapFactory.Options();
             options.inPreferredConfig=Bitmap.Config.ARGB_8888;
-            options.inSampleSize=1; // 1920px EXIF-free derivatives
+            options.inSampleSize=sample; // display-sized preview or source-sized detail
             Bitmap bitmap=BitmapFactory.decodeStream(stream,null,options);
             if(bitmap!=null){
-                synchronized(frameCache){frameCache.put(asset,bitmap);}
+                synchronized(frameCache){frameCache.put(cacheKey,bitmap);}
             }
             return bitmap;
         }catch(Exception ignored){return null;}
     }
+    private static Bitmap decode(Activity a,JSONObject item){
+        return decodeSample(a,item,1);
+    }
     public static ImageView coverForTaxon(Activity a,String scientific){
         List<JSONObject> items=photos(a,scientific);
         if(items.isEmpty())return null;
-        Bitmap bitmap=decode(a,items.get(0));
+        Bitmap bitmap=decodeSample(a,items.get(0),4);
         if(bitmap==null)return null;
         ImageView cover=new ImageView(a);
         cover.setImageBitmap(bitmap);
@@ -174,7 +178,7 @@ public final class PhLibraryDriveGallery {
         final Runnable[] refresh=new Runnable[1];
         refresh[0]=()->{
             JSONObject photo=items.get(position[0]);
-            viewer.setImageBitmap(decode(a,photo));
+            viewer.setImageBitmap(decodeSample(a,photo,2));
             counter.setText((position[0]+1)+" / "+items.size());
             viewer.setContentDescription("Photo "+(position[0]+1)+" of "+items.size()+
                 " for "+scientific+". Swipe horizontally to change. Tap to enlarge.");

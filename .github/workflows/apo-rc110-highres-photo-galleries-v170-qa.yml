@@ -1,4 +1,4 @@
-name: APO RC110 High-resolution offline wildlife photo galleries QA
+name: APO RC111 interface and gallery Android QA
 
 on:
   push:
@@ -99,23 +99,28 @@ jobs:
         run: python3 scripts/test_rc109_native_species_photos.py
       - name: JVM unit tests and debug APK build
         run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Verify approved compact APO icon source
+        run: |
+          echo '828b156748e5614c7a9b74efe90ee0272b1336b7f92334ebe5702a7959332c7b  app/src/main/assets/apo_compact_launcher_master.png' | sha256sum -c -
+          python3 scripts/prepare_apo_compact_launcher.py
+          test -s app/build/generated/apo-compact/res/drawable-nodpi/apo_compact_launcher_foreground.png
       - name: Verify signed APK and references
         run: |
           APK=app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='170'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc110-highres-photo-galleries'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='171'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc111-apo-interface-overhaul'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
           unzip -t "$APK" >/dev/null
           unzip -p "$APK" assets/apo_official_master.png | sha256sum | grep -F '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7'
           unzip -p "$APK" assets/paic714_master.csv | sha256sum | grep -F '1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959'
           unzip -p "$APK" assets/paic_worldcover2020_500m.txt | sha256sum | grep -F 'e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089'
           sha256sum "$APK"
-      - name: Export code170 signed RC110 candidate after verified build
+      - name: Export code171 signed RC111 candidate after verified build
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC110-signed-code170-highres-all333-owner-preview
+          name: APO-RC111-signed-code171-refined-ui-all333-preview
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
@@ -182,7 +187,7 @@ jobs:
           echo 'fbc31e33a6302107b21bc0a081392d458e475aec0b5e20d9b8e9bbd153361366  /tmp/apo-rc109-signed.apk' | sha256sum -c -
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging /tmp/apo-rc109-signed.apk | grep -F "versionCode='169'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs /tmp/apo-rc109-signed.apk | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
-      - name: Verify signed RC109 to RC110 no-data-clear upgrade
+      - name: Verify signed RC109 to RC111 no-data-clear upgrade
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -196,7 +201,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC109-to-RC110-upgrade-evidence
+          name: APO-RC109-to-RC111-upgrade-evidence
           path: rc110-upgrade-evidence/
           if-no-files-found: ignore
           retention-days: 7

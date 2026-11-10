@@ -328,10 +328,14 @@ public final class Rc103PhLibrary2InstrumentedTest {
                 manage.performClick();
                 // The Manage sheet's only destructive option invokes this
                 // private method; source tests assert that route separately.
-                java.lang.reflect.Method showConfirm=
-                    PhLibraryDirectoryActivity.class.getDeclaredMethod("confirmClearSaved");
-                showConfirm.setAccessible(true);
-                showConfirm.invoke(a);
+                try{
+                    java.lang.reflect.Method showConfirm=
+                        PhLibraryDirectoryActivity.class.getDeclaredMethod("confirmClearSaved");
+                    showConfirm.setAccessible(true);
+                    showConfirm.invoke(a);
+                }catch(ReflectiveOperationException ex){
+                    throw new AssertionError("Saved collection confirmation",ex);
+                }
                 android.app.AlertDialog dialog=a.activeClearSavedDialogForQa();
                 assertNotNull("Actual destructive confirmation dialog",dialog);
                 assertTrue(dialog.isShowing());

@@ -143,16 +143,7 @@ jobs:
             adb shell am instrument -w -e class org.phwildlife.survey.Rc108SpeciesMediaInstrumentedTest org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner > rc103-phlibrary-evidence/rc108-species-photo-daily.txt
             cat rc103-phlibrary-evidence/rc108-species-photo-daily.txt
             grep -Fq 'OK (4 tests)' rc103-phlibrary-evidence/rc108-species-photo-daily.txt
-            mkdir -p rc110-gallery-evidence
-            for config in "p360f100 360x800 160 1.0" "p320f200 320x720 160 2.0"; do
-              read -r preset screen density font <<< "$config"
-              adb shell wm size "$screen"
-              adb shell wm density "$density"
-              adb shell settings put system font_scale "$font"
-              adb shell am force-stop org.phwildlife.survey.beta08
-              adb shell am instrument -w -r -e preset "$preset" -e class org.phwildlife.survey.Rc110OfflineGalleryInstrumentedTest org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner | tee "rc110-gallery-evidence/${preset}-gallery.txt"
-              grep -Fq 'OK (3 tests)' "rc110-gallery-evidence/${preset}-gallery.txt"
-            done
+            bash scripts/rc110_gallery_emulator_qa.sh
       - name: Upload emulator screenshot evidence
         if: always()
         uses: actions/upload-artifact@v4

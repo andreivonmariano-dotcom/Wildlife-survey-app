@@ -95,7 +95,15 @@ public final class ApoSpeciesOfDay {
         copy.addView(preview);
         card.addView(copy,new LinearLayout.LayoutParams(0,-2,1));
         card.setFocusable(true);card.setClickable(true);
-        card.setContentDescription("Species of the day: "+common+", "+latin+". Open full species account.");
+        // Preserve the legacy accessibility and test identity while keeping
+        // the visible daily teaser compact and field-first.
+        card.setTag("apo_species_of_the_day");
+        String rarity=row.optString("t","Unranked");
+        String status=row.isNull("iucn")?"Unassessed":row.optString("iucn","Unassessed");
+        card.setContentDescription("Species of the day. "+common+", "+latin+
+            ". Rarity: "+rarity+". IUCN global status: "+
+            PhLibraryStatusBadge.status(status)+". Endemicity: "+endemicity(row)+
+            ". Open full species account.");
         card.setOnClickListener(v->open.accept(latin));
         return card;
     }

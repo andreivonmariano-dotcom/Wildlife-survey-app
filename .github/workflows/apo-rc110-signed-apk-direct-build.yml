@@ -1,9 +1,9 @@
-name: LIKAS RC110 Signed APK photo gallery build
+name: APO RC111 Signed APK unified field-first UI build
 
 on:
   push:
     branches:
-      - feature/apo-rc110-highres-offline-photo-galleries-v170
+      - feature/apo-rc111-unified-field-first-ui-v171
   workflow_dispatch:
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: apo-rc110-direct-build-v170-${{ github.ref }}
+  group: apo-rc111-direct-build-v171-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -43,6 +43,8 @@ jobs:
           echo '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7  app/src/main/assets/apo_official_master.png' | sha256sum -c -
           echo 'a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc  app/src/main/res/drawable-nodpi/apo_splash_mark.png' | sha256sum -c -
           echo '2a60cc5cda8dba006c1c713f15d565c4599ad5ec1bcaebadc7690cb66445af00  app/src/main/res/drawable-nodpi/apo_launcher_foreground.png' | sha256sum -c -
+          echo '828b156748e5614c7a9b74efe90ee0272b1336b7f92334ebe5702a7959332c7b  app/locked/apo_rc111_approved_launcher_master.png' | sha256sum -c -
+          echo 'fef4ef6924d8864b52956ab52e859499122cb9d8b98a9b7ced876557398903fb  app/src/main/res/drawable-nodpi/apo_rc111_launcher_foreground.png' | sha256sum -c -
       - name: Require retained Android signer
         run: |
           test -s .signing/wildlife-beta08.keystore
@@ -100,18 +102,18 @@ jobs:
           APK=app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='170'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc110-highres-photo-galleries'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='171'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc111-apo-unified-field-first'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
           unzip -t "$APK" >/dev/null
           unzip -p "$APK" assets/apo_official_master.png | sha256sum | grep -F '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7'
           unzip -p "$APK" assets/paic714_master.csv | sha256sum | grep -F '1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959'
           unzip -p "$APK" assets/paic_worldcover2020_500m.txt | sha256sum | grep -F 'e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089'
           sha256sum "$APK"
-      - name: Export signed RC110 owner-preview APK after verified build
+      - name: Export signed APO RC111 owner-preview APK after verified build
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC110-signed-code170-highres-all333-owner-preview
+          name: APO-RC111-signed-code171-unified-ui-all333-owner-preview
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7

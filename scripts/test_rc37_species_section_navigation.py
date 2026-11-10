@@ -37,7 +37,7 @@ class LibraryNavigationContract(unittest.TestCase):
     def test_version_identity_schema_continuity(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",gradle).group(1)),109)
-        self.assertIn("0.27.3-rc",gradle)
+        self.assertIn("0.27.4-rc",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,29)",
                       (JAVA/"FieldDb.java").read_text())

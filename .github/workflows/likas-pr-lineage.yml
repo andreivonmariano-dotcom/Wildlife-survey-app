@@ -1,4 +1,4 @@
-name: LIKAS RC4 PR lineage gate
+name: APO | Historical RC4 PR lineage gate
 
 on:
   pull_request_target:

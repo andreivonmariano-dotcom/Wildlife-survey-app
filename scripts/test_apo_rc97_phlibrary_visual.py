@@ -22,7 +22,7 @@ class Rc97PHLibraryVisual(unittest.TestCase):
     def test_directory_is_searchable_and_text_only(self):
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text()
         self.assertIn("PhLibraryBook01.entries(this)",directory)
-        self.assertIn("Living Atlas",directory)
+        self.assertIn("PHLibrary",directory)
         self.assertIn("UiKit.fieldInput(this,search)",directory)
         self.assertIn("Rarity: ",directory)
         self.assertIn("new ListView(this)",directory)
@@ -56,7 +56,7 @@ class Rc97PHLibraryVisual(unittest.TestCase):
     def test_existing_apk_identity_and_science_schema_preserved(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertIn("versionCode 173",gradle)
-        self.assertIn("0.27.4-rc112-minimal-ui-compact-icon",gradle)
+        self.assertIn("0.27.4-rc113-living-atlas-preview",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,29)",
                       (JAVA/"FieldDb.java").read_text())

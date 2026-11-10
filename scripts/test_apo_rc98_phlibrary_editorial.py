@@ -91,7 +91,7 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertNotIn("ImageView",directory)
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
         self.assertIn("versionCode 173",gradle)
-        self.assertIn("0.27.4-rc112-minimal-ui-compact-icon",gradle)
+        self.assertIn("0.27.4-rc113-living-atlas-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

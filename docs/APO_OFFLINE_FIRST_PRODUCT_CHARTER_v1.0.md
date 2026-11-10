@@ -1,7 +1,8 @@
 # APO
 ## Offline-First Product Vision and Governing Source Document
 
-**Version:** 1.0  
+**Version:** 1.2  
+**Revision:** 10 November 2026 (Asia/Manila); reader-facing scientific prose and owner-approval governance  
 **Decision date:** 10 November 2026 (Asia/Manila)  
 **Status:** Product-owner direction; governs future design and development  
 **Product:** APO, the Philippines-focused wildlife field and learning application. Existing LIKAS package, repository paths and development history remain intact until a separate technical renaming decision.  
@@ -34,6 +35,25 @@ The app has two equally important uses: **work in the field** and **learn about 
 **APO-07 | Online features are a later phase.** Live papers/news, remote collaboration, cloud sync, shared atlases and online data refresh are out of scope until the offline feature set and planned offline geographic coverage meet their acceptance gates. An update to bundled content is not an online feature.
 
 **APO-08 | Existing app continuity matters.** Retain the installed Android application ID, signing identity and compatible database migrations. APO branding and revised navigation do not authorize replacing the app with a fresh installation that discards existing LIKAS field records.
+
+
+### Highest-priority rule for every visible text and scientific account
+
+**APO-09 | Strict reader-facing prose standard.** This is a mandatory release-blocking rule for EVERY word authored or adapted by APO and visible to users. It applies to the entire interface and all educational/scientific information: species descriptions, identification accounts, ecology, habitat and ecosystem guides, distribution summaries, conservation information, map details, research-library descriptions, fieldwork screens, buttons, dialogs, notices, empty states, help, onboarding, captions, accessibility labels and future content. Write direct, self-contained, informative statements. State the animal, habitat, record, measurement, status or required action. Never use argumentative, defensive, corrective, self-justifying or editorial commentary in app copy.
+
+**APO-10 | Prohibited constructions, with no science-content exemption.** Reject opposing-formula phrasing such as “X rather than Y”, “X, not Y”, “not X but Y”, “instead of X”, “unlike X”, “should not be mistaken for”, “does not imply”, “is not proof of”, “cannot be assumed to”, and related denial-led explanations. Reject paragraphs that defend a conclusion against a hypothetical misconception, explain what a passage is trying to establish, or repeatedly instruct readers how to interpret the writer. Avoid generic explanatory captions, process justifications, audit language and redundant methodological caveats. This prohibition applies equally to species and habitat narrative, other scientific accounts, and all optional detail screens. Moving the same rhetorical wording into a footnote, citation panel or expanded text does not satisfy the rule.
+
+**APO-11 | Express scientific qualifications as facts and labels.** Preserve scientific accuracy through concise, affirmative descriptions and explicit evidence metadata. Examples of approved app text: “Habitat: lowland dipterocarp forest.” “Record: historical sighting, Zamboanga, 1948.” “Current occurrence: unverified.” “Identification: provisional.” “Evidence type: modeled suitability.” “Discovery Rarity: educational category.” “IUCN: global conservation assessment.” “Habitat selection: unassessed.” Provide dates, geography, method and citation when relevant. Use precise, species-specific natural-history explanations when they teach a real biological process; omit commentary about alternative interpretations or the author’s caution. Maintain meaningful uncertainty without using defensive prose. Preserve source bibliographic records and original wording in the underlying evidence archive.
+
+**APO-12 | Editorial and automated release gate.** Every change to app text, curated accounts or local content must pass a two-part review: (1) automated scanning of user-facing strings and bundled content for prohibited contrast/denial phrases, and (2) line-by-line human/editorial review for subtler argumentative or unnecessary explanation. Review includes original and translated strings, scientific narratives, summaries, pop-ups, screen-reader descriptions, and expanded source notes. Each rejection is revised before signing or releasing an APK. The science editor verifies that revisions retain the source’s exact claim, uncertainty, taxonomy and geographic scope. Previously locked Book 01 prose may be presented through a revised, source-faithful display edition when needed to comply; retain the verbatim archival source and citation mapping. Exact third-party published full texts, official titles, required safety/legal messages and fixed protocol labels such as “Not Counted” may retain their legally or scientifically necessary original wording. These narrow exceptions must never be used for APO-authored explanations.
+
+### Mandatory approval for changes to this governing document
+
+**APO-13 | Explicit product-owner approval before governing-document edits.** Treat the Google Doc in the APO — Governing Documents folder as the canonical editable charter. No assistant, automated workflow, collaborator, or developer may add, remove, reword, reorder, or replace governing content, source references, version history, or requirements without the product owner’s explicit approval for that specific change. Sending a source file, suggesting a feature, holding a discussion, or granting access to the document does not constitute permission to amend it. A direct instruction from the product owner that clearly identifies the intended amendment counts as approval for that amendment only. Every later change requires its own approval. The owner may edit their own document directly.
+
+**APO-14 | Proposal, approval record, and controlled synchronization.** Before changing the governing document, prepare a concise proposal stating the text to add or revise, its reason, the affected requirements, and any material scientific or implementation consequences. Present the proposed change to the product owner outside the canonical document. Leave the approved version untouched until the owner authorizes the stated revision. After approval, edit the canonical Google Doc, increase its version, record the date and scope of the approval, then mirror the approved text to the repository Markdown specification and update the decision log and project-state file. Verify the two authoritative copies agree; flag any mismatch rather than overwriting either copy silently. Rejected and unapproved proposals remain separate from the governing source. Avoid automatic external-content ingestion into the charter.
+
+**APO-15 | Access permissions and practical limit.** Keep the governing document under product-owner control. Prefer owner-only editing, with reader or commenter access for reviewers as needed. Repository copies are version-controlled records, not a means to bypass approval. The editorial approval rule is a project procedure; technical access must be configured separately to restrict who can edit the Google Doc. Review inherited folder and document permissions when creating or moving the file. Do not claim a technical approval lock if an editor, link recipient, or inherited access still permits direct changes.
 
 ## 3. Product architecture and primary navigation
 
@@ -117,6 +137,8 @@ Separate **curated reference data** from **the user's observations**. Retain use
 
 No fabricated images, species facts, locality records, conservation categories or scientific certainty. Where the evidence is missing, use clear human-facing language such as “Not documented in this edition” without presenting the absence of a source as evidence of biological absence.
 
+**Mandatory display-copy treatment.** Apply APO-09 through APO-12 to every species, habitat, distribution, conservation, ecology, and research passage presented inside the app. Store evidence classification and caveats as structured metadata with concise factual display labels. Preserve the archival original separately when an inherited paragraph requires a style-only rewrite.
+
 ## 9. Visual and interaction direction
 
 Adopt a clean, recognizably Philippine natural-history aesthetic. Prefer restrained forest greens, warm neutral reading surfaces, legible type and real, properly attributed wildlife or habitat photography over exaggerated scientific dashboards. Use the approved APO visual identity and existing photo-gallery direction unless a later explicit design decision replaces them.
@@ -124,6 +146,8 @@ Adopt a clean, recognizably Philippine natural-history aesthetic. Prefer restrai
 Aim for **one main purpose per screen**, quick returning navigation, short labels, good contrast, clear active controls and comfortable touch targets. Provide readable scaling, including enlarged system fonts, and honor reduced-motion settings. A featured species, interesting field fact or discreet discovery collection can make browsing enjoyable without turning scientific records into game scores.
 
 The source material should feel like a field guide: concise introductory content, useful natural-history prose and short fact labels, with original citations accessible on demand. Species photos are evidence-backed reference media, not decoration to be synthesized. Avoid repetitive disclaimers in each card, but do not hide uncertainty when it changes the interpretation.
+
+**Voice and copy are release criteria.** All screens and all scientific reading surfaces use direct, informative language. In-app educational explanations may describe actual organisms, environments, observations and ecological processes; editorial self-defence, correction-of-misconception prose and repeated defensive contrasts are prohibited throughout the app.
 
 ## 10. Offline-first development sequence and completion gates
 
@@ -143,6 +167,8 @@ The source material should feel like a field guide: concise introductory content
 
 **Acceptance of the offline milestone** requires a fresh install with all bundled references usable in airplane mode; data-preserving upgrade from the previous signed app; functioning surveys and end states; no required reference imports; offline atlas/map/library search; checked metadata and source rights; and visible separation of curated data from user observations. Device tests must cover large text, low-storage behavior and field interruptions. Actual app release status must be evidenced, not inferred from this charter.
 
+**Additional acceptance gate: editorial copy.** A new APK or content edition is blocked until the automated text scan and editorial review defined in APO-12 report zero unapproved violations across the full installed offline corpus and every user-facing surface. Existing canonical source text remains archived when its app display wording changes.
+
 ## 11. Scope boundaries and open technical decisions
 
 - **In scope now:** local survey creation and in-app evidence capture, curated native reference content, offline maps, local bookmarks, survey-locality visualization, backup/export and a built-in literature catalogue.
@@ -153,10 +179,14 @@ The source material should feel like a field guide: concise introductory content
 
 **Instruction priority:** (1) later explicit direction from the product owner; (2) this APO product charter for vision, scope, offline packaging and PAIC sequencing; (3) existing LIKAS master scientific, data-safety, survey and release standards where compatible; (4) validated current code and tests for what is actually implemented; (5) project-state and decision records for continuity. An older requirement for live research feeds or user-imported reference files is superseded when it conflicts with this charter. Scientific integrity, permissions, privacy, no-data-loss, Android signing continuity and direct-download requirements remain in force.
 
-**Change discipline:** Record substantive changes in the repository decision log and project-state file. Give a new version number when this charter changes. Never equate “requested,” “documented,” “coded,” “tested,” “signed,” and “field-verified.” A documentation change does not produce an APK.
+**Highest-priority presentation requirement:** APO-09 through APO-12 govern all app-authored user-facing text, including species and habitat science. They supersede earlier wording, verbosity, defensive-disclaimer and verbatim-reader preferences where those conflict with direct reader-facing prose. Scientific evidence, original source archiving, conservation authority, privacy and legally required notices remain protected.
+
+**Approval and synchronization discipline:** APO-13 through APO-15 govern every future revision. Propose changes to the product owner first. Edit the canonical Google Doc and mirror to GitHub only after the owner explicitly approves the specific amendment. Preserve version history, record the approval in the decision log and project-state file, and check that both copies match. An authorized document revision does not produce an APK.
 
 **Existing project continuity:** Preserve Book 01 editorial assets, the existing PHLibrary reader, the work toward offline species photo galleries and the current field-survey foundation. Those are inputs and development efforts, not evidence that every part of this charter has already shipped. The RC110 full-photo APK remains unverified at the time of this decision due to recorded CI startup failures.
 
 ---
 
-**Controlling instruction for future work:** Design every feature to help users **record, explore, understand and revisit Philippine biodiversity without a connection**. Build and finish Greater Mindanao first, extend the atlas PAIC by PAIC, and do not substitute an import workflow or an online service for reference information that APO is meant to carry natively.
+**v1.1 amendment, 10 November 2026:** Added APO-09 through APO-12 to impose a strict, release-blocking prohibition on defensive/argumentative phrasing and oppositional formulas across every visible UI and scientific account. Added human and automated content review, with source-faithful display editing and archival preservation.
+
+**v1.2 amendment, 10 November 2026:** Designated the Google Docs charter as the canonical editable governing source; added APO-13 through APO-15 for explicit approval of every future revision, proposal-first workflow, version-controlled GitHub synchronization and permissions review.

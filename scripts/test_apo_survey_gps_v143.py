@@ -38,7 +38,7 @@ class GpsRC83(unittest.TestCase):
                         s.index("TrackService.currentFix()",s.index("private void updateLocation()")))
     def test_signed_preview_verification_configured(self):
         wf=read("docs/archive/ci/apo-survey-gps-v143-emulator-qa.yml")
-        for t in ('versionCode=\'143\'','versionName=\'0.27.4-rc83-apo-survey-gps\'',
+        for t in ('versionCode=\'143\'','versionName=\'0.27.3-rc83-apo-survey-gps\'',
                   'GpsCompactUiEmulatorTest','Rc55GpsPreflightInstrumentedTest',
                   'font_scale 1.6','font_scale 2.0','wm size 960x2160',
                   'apo_gps_','gps_${mode}_160.png','gps_${mode}_200.png',
@@ -46,7 +46,7 @@ class GpsRC83(unittest.TestCase):
             self.assertIn(t,wf)
         gradle=read("app/build.gradle")
         self.assertIn("versionCode 173",gradle)
-        self.assertIn("0.27.4-rc112-minimal-ui-compact-icon",gradle)
+        self.assertIn("0.27.4-rc113-living-atlas-preview",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 if __name__=="__main__":unittest.main()

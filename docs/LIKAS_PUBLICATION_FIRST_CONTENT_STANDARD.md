@@ -1,5 +1,7 @@
 # LIKAS editorial and science policy | Publication-first species accounts
 
+> **HISTORICAL SCIENTIFIC EVIDENCE POLICY | Presentation sections superseded 11 November 2026.** The owner-approved APO Charter v1.2 governs current species, habitat and all scientific reader-facing text. Preserve original evidence, bibliographic provenance, source rights and valid uncertainty from this historical policy. Do not use publication-style page structure or oppositional/defensive writing as a current app requirement. See `docs/APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md`.
+
 **Effective:** 29 October 2026  
 **Owner decision:** Q1 and Q2 accepted. No specialist approval, signatures, review queues, or expert certification gate for species reference accounts. This replaces the specialist-signoff plan in RC12 and earlier design notes.
 

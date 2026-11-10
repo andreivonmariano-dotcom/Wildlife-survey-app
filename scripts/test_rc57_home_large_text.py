@@ -16,7 +16,7 @@ class Rc57Home(unittest.TestCase):
     def test_same_identity_next_upgrade_code(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(gradle.split("versionCode ",1)[1].split()[0]),125)
-        self.assertIn("versionName \'0.27.3-",gradle)
+        self.assertIn("versionName \'0.27.4-",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         db=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
         self.assertIn("super(context,NAME,null,29)",db)
@@ -24,7 +24,7 @@ class Rc57Home(unittest.TestCase):
         source=(ROOT/"app/src/main/java/org/phwildlife/survey/WelcomeActivity.java").read_text()
         home=source.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
         self.assertIn('Coming later: PHMaps · BioDiscover',home)
-        for action in ('"BioTools"','"PHLibrary"',
+        for action in ('"BioTools"','"Living Atlas"',
                        "LikasSettingsActivity.class","ApoHomeUi.resume(this,"):
             self.assertIn(action,home)
         component=(ROOT/"app/src/main/java/org/phwildlife/survey/ApoHomeUi.java").read_text()

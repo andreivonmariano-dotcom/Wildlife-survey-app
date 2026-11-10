@@ -12,8 +12,8 @@ class GpsRC83(unittest.TestCase):
                       '"GPS details","quiet"',
                       'helpPanel.setVisibility(View.GONE)',
                       '"GPS troubleshooting","quiet"',
-                      'UiKit.button(this,"Retry GPS acquisition","secondary")',
-                      'UiKit.button(this,"Android location settings","secondary")',
+                      'UiKit.button(this,"Retry GPS","secondary")',
+                      'UiKit.button(this,"Location settings","secondary")',
                       'Ellipsoidal altitude (device; not terrain elevation): ',
                       'current.hasVerticalAccuracy()','"Mock device position rejected"'):
             self.assertIn(token,s)
@@ -45,8 +45,8 @@ class GpsRC83(unittest.TestCase):
                   'len(files)==4'):
             self.assertIn(t,wf)
         gradle=read("app/build.gradle")
-        self.assertIn("versionCode 169",gradle)
-        self.assertIn("0.27.3-rc109-native-species-photos",gradle)
+        self.assertIn("versionCode 172",gradle)
+        self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 if __name__=="__main__":unittest.main()

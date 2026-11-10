@@ -250,11 +250,15 @@ public class MainActivity extends Activity implements LocationListener {
         title.setPadding(dp(LikasDesignSystem.SPACE_MD),0,dp(LikasDesignSystem.SPACE_SM),0);
         title.setContentDescription(profile+" Survey");
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-        Button export=UiKit.button(this,"All data","secondary");
-        if(largeText)export.setText("ZIP");
-        export.setContentDescription("Export all projects and surveys as research ZIP");
+        Button export=UiKit.button(this,largeText?"⋯":"More","secondary");
+        export.setContentDescription("Export research ZIP and additional survey options");
         top.addView(export,new LinearLayout.LayoutParams(dp(largeText?68:96),dp(48)));
-        export.setOnClickListener(v->exportZip());
+        export.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Survey options")
+            .setItems(new String[]{"Export research ZIP"},(dialog,which)->{
+                if(which==0)exportZip();
+            })
+            .setNegativeButton("Close",null).show());
         root.addView(top);
         // Fixed status HUD: short, high-contrast survey state, always visible.
         LinearLayout hud=vertical();
@@ -732,7 +736,7 @@ public class MainActivity extends Activity implements LocationListener {
         });
         LinearLayout row=horizontal();
         if(stackCaptureActions)row.setOrientation(LinearLayout.VERTICAL);
-        distanceEntry=edit("Horizontal distance (m)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        distanceEntry=edit("Horizontal (m)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         distanceEntry.setContentDescription("Observer-estimated or measured horizontal detection distance in meters");
         row.addView(distanceEntry,stackCaptureActions?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
@@ -1052,6 +1056,8 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void showGroups(){
         groupBar.removeAllViews();
+        boolean stackGroups=getResources().getConfiguration().fontScale>=1.6f;
+        groupBar.setOrientation(stackGroups?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         boolean canSwitch=profile.equals("Herpetofauna")&&!method.equals("amphibian_calls");
         groupBar.setVisibility(canSwitch?View.VISIBLE:View.GONE);
         if(!canSwitch)return;
@@ -1060,10 +1066,15 @@ public class MainActivity extends Activity implements LocationListener {
             Button b=UiKit.button(this,name,selected?"pond":"secondary");
             b.setContentDescription(name+" observation group"+(selected?", selected":""));
             b.setSelected(selected);
-            LinearLayout.LayoutParams groupLp=new LinearLayout.LayoutParams(0,
-                dp(FieldLayoutPolicy.actionHeightDp(
-                    getResources().getConfiguration().fontScale)),1);
-            if(groupBar.getChildCount()>0)groupLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+            LinearLayout.LayoutParams groupLp=stackGroups?
+                new LinearLayout.LayoutParams(-1,-2):
+                new LinearLayout.LayoutParams(0,
+                    dp(FieldLayoutPolicy.actionHeightDp(
+                        getResources().getConfiguration().fontScale)),1);
+            if(groupBar.getChildCount()>0){
+                if(stackGroups)groupLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+                else groupLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+            }
             groupBar.addView(b,groupLp);
             b.setOnClickListener(v->{
                 if(group.equals(name))return;

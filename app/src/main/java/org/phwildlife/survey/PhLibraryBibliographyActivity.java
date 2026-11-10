@@ -124,11 +124,11 @@ public final class PhLibraryBibliographyActivity extends Activity {
                     PhLibrary2Ui.text(PhLibraryBibliographyActivity.this,"",15,
                         PhLibrary2Ui.INK,false,false);
                 row.setText(matches.get(position).optString("text"));
-                row.setMaxLines(3);
+                row.setMaxLines(6);
                 row.setEllipsize(TextUtils.TruncateAt.END);
                 row.setContentDescription("Open full reference: "+
                     matches.get(position).optString("text"));
-                row.setLineSpacing(dp(3),1.06f);
+                row.setLineSpacing(dp(4),1.11f);
                 row.setPadding(dp(14),dp(13),dp(14),dp(13));
                 row.setBackground(PhLibrary2Ui.touch(PhLibraryBibliographyActivity.this,
                     PhLibrary2Ui.IVORY,PhLibrary2Ui.LINE,13));

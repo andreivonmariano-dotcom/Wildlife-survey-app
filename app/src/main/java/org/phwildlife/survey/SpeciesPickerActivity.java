@@ -862,9 +862,9 @@ public final class SpeciesPickerActivity extends Activity {
         }
         LinearLayout buttons=new LinearLayout(this);
         buttons.setGravity(Gravity.CENTER_VERTICAL);
-        Button details=UiKit.button(this,"Profile","secondary");
+        Button details=UiKit.button(this,"ⓘ","quiet");
         details.setContentDescription("Open species taxonomy, sources and full ecological profile");
-        buttons.addView(details,new LinearLayout.LayoutParams(0,dp(48),1f));
+        buttons.addView(details,new LinearLayout.LayoutParams(dp(48),dp(48)));
         Button select=UiKit.button(this,"Select","primary");
         select.setContentDescription("Select "+name+" as the observation identification");
         LinearLayout.LayoutParams selectLp=new LinearLayout.LayoutParams(0,dp(48),1f);

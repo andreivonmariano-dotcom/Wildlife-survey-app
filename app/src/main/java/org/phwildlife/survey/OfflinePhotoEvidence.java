@@ -109,7 +109,7 @@ public final class OfflinePhotoEvidence {
     }
     /** Only approved, bundled JPGs are eligible. Keep decoded previews memory-bounded. */
     private static final android.util.LruCache<String,Bitmap> previewCache=
-        new android.util.LruCache<String,Bitmap>(4*1024*1024){
+        new android.util.LruCache<String,Bitmap>(16*1024*1024){
             @Override protected int sizeOf(String key,Bitmap bitmap){
                 return bitmap.getByteCount();
             }
@@ -124,8 +124,8 @@ public final class OfflinePhotoEvidence {
             if(bitmap==null||bitmap.isRecycled()){
                 try(InputStream in=a.getAssets().open(asset)){
                     BitmapFactory.Options options=new BitmapFactory.Options();
-                    options.inSampleSize=4;
-                    options.inPreferredConfig=Bitmap.Config.RGB_565;
+                    options.inSampleSize=1;
+                    options.inPreferredConfig=Bitmap.Config.ARGB_8888;
                     bitmap=BitmapFactory.decodeStream(in,null,options);
                 }
                 if(bitmap==null)return null;
@@ -413,8 +413,8 @@ public final class OfflinePhotoEvidence {
         Bitmap bitmap;
         try(InputStream input=a.getAssets().open(asset)){
             BitmapFactory.Options options=new BitmapFactory.Options();
-            options.inSampleSize=2;
-            options.inPreferredConfig=Bitmap.Config.RGB_565;
+            options.inSampleSize=1;
+            options.inPreferredConfig=Bitmap.Config.ARGB_8888;
             bitmap=BitmapFactory.decodeStream(input,null,options);
         }catch(Exception ignored){return;}
         if(bitmap==null)return;
@@ -425,7 +425,7 @@ public final class OfflinePhotoEvidence {
         image.setContentDescription("Offline photo of "+scientific+
             ". Photographer and rights immediately below.");
         LinearLayout.LayoutParams imageLp=
-            new LinearLayout.LayoutParams(-1,dp(a,158));
+            new LinearLayout.LayoutParams(-1,dp(a,268));
         imageLp.topMargin=dp(a,12);
         parent.addView(image,imageLp);
 

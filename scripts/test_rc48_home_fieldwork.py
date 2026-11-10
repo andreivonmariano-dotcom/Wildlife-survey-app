@@ -14,7 +14,8 @@ class Rc48HomeFieldwork(unittest.TestCase):
         self.assertIn("ApoHomeUi.resume(this,",home)
         self.assertNotIn("LikasPortalUi.hero(",home)
         self.assertNotIn("LikasPortalUi.tile(",home)
-        for label in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"'):
+        self.assertIn('Coming later: PHMaps · BioDiscover',home)
+        for label in ('"BioTools"','"PHLibrary"'):
             self.assertIn(label,home)
         self.assertIn("LikasSettingsActivity.class",home)
         self.assertLess(home.index("ApoHomeUi.resume(this,"),
@@ -25,7 +26,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         hub=welcome.split("private void fieldworkHub(){",1)[1].split(
             "/** Short status caption",1)[0]
         self.assertIn('FieldVisuals.section(this,"Current survey",null)',hub)
-        self.assertIn('FieldVisuals.section(this,"New survey","Choose a wildlife group")',hub)
+        self.assertIn('FieldVisuals.section(this,"New survey",null)',hub)
         self.assertLess(hub.index('if(unfinished!=null)'),
                         hub.index('FieldVisuals.section(this,"Current survey"'))
         self.assertIn('UiKit.button(this,"Resume Survey","primary")',hub)

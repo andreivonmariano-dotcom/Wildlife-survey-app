@@ -92,14 +92,17 @@ public final class ApoHomeUi {
         copy.setOrientation(LinearLayout.VERTICAL);
         TextView name=label(a,title,21,INK,true);
         copy.addView(name);
-        TextView detail=label(a,description,13,MUTED,false);
-        LinearLayout.LayoutParams detailLp=new LinearLayout.LayoutParams(-1,-2);
-        detailLp.topMargin=dp(a,5);
-        copy.addView(detail,detailLp);
+        if(description!=null&&!description.trim().isEmpty()){
+            TextView detail=label(a,description,13,MUTED,false);
+            LinearLayout.LayoutParams detailLp=new LinearLayout.LayoutParams(-1,-2);
+            detailLp.topMargin=dp(a,5);
+            copy.addView(detail,detailLp);
+        }
         row.addView(copy,new LinearLayout.LayoutParams(0,-2,1f));
         row.setFocusable(true);
         row.setClickable(true);
-        row.setContentDescription("Open "+title+". "+description);
+        row.setContentDescription("Open "+title+
+            (description==null||description.isEmpty()?"":". "+description));
         row.setOnClickListener(v->open.run());
         wrapper.addView(row,new LinearLayout.LayoutParams(-1,-2));
         divider(a,wrapper);
@@ -151,10 +154,37 @@ public final class ApoHomeUi {
         block.setOrientation(LinearLayout.VERTICAL);
         block.setPadding(dp(a,3),dp(a,14),dp(a,3),dp(a,20));
         block.addView(label(a,title,22,INK,true));
-        TextView detail=label(a,description,14,MUTED,false);
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-        lp.topMargin=dp(a,9);block.addView(detail,lp);
+        if(description!=null&&!description.trim().isEmpty()){
+            TextView detail=label(a,description,14,MUTED,false);
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+            lp.topMargin=dp(a,9);block.addView(detail,lp);
+        }
         return block;
+    }
+
+    /** Field-first primary action: always visible before editorial content. */
+    public static View primary(Activity a,String title,String description,Runnable open){
+        LinearLayout container=new LinearLayout(a);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(dp(a,18),dp(a,14),dp(a,18),dp(a,14));
+        container.setMinimumHeight(dp(a,76));
+        GradientDrawable shape=new GradientDrawable();
+        shape.setColor(Color.rgb(21,76,55));
+        shape.setCornerRadius(dp(a,17));
+        container.setBackground(new RippleDrawable(
+            ColorStateList.valueOf(Color.argb(52,255,255,255)),shape,null));
+        TextView heading=label(a,title,19,Color.WHITE,true);
+        container.addView(heading);
+        if(description!=null&&!description.trim().isEmpty()){
+            TextView sub=label(a,description,13,Color.rgb(228,242,230),false);
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+            lp.topMargin=dp(a,3);container.addView(sub,lp);
+        }
+        container.setFocusable(true);container.setClickable(true);
+        container.setContentDescription("Open "+title+
+            (description==null||description.isEmpty()?"":". "+description));
+        container.setOnClickListener(v->open.run());
+        return container;
     }
     /** Contextual survey shortcut, small enough not to dominate the Home menu. */
     public static View resume(Activity a,Runnable open){

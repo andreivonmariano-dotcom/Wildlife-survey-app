@@ -242,20 +242,14 @@ public final class PhLibraryBook01 {
         statusRow.setPadding(0,PhLibrary2Ui.dp(a,11),0,PhLibrary2Ui.dp(a,5));
         String global=record.isNull("iucn")?"Unassessed":record.optString("iucn","Unassessed");
         String tier=record.optString("t");
-        TextView rarity=PhLibraryStatusBadge.make(a,tier,true);
-        TextView iucn=PhLibraryStatusBadge.make(a,global,false);
+        TextView rarity=PhLibraryStatusBadge.makeCompact(a,tier,true);
+        TextView iucn=PhLibraryStatusBadge.makeCompact(a,global,false);
         statusRow.addView(rarity,new LinearLayout.LayoutParams(stack?-1:0,-2,1));
         LinearLayout.LayoutParams ilp=new LinearLayout.LayoutParams(stack?-1:0,-2,1);
         if(stack)ilp.topMargin=PhLibrary2Ui.dp(a,8);
         else ilp.leftMargin=PhLibrary2Ui.dp(a,8);
         statusRow.addView(iucn,ilp);
         parent.addView(statusRow);
-        if("Unranked".equals(tier)){
-            TextView note=PhLibrary2Ui.text(a,"Provisional identification · No assigned Discovery Rarity tier",
-                13,PhLibrary2Ui.MUTED,false,false);
-            note.setPadding(PhLibrary2Ui.dp(a,2),PhLibrary2Ui.dp(a,3),0,PhLibrary2Ui.dp(a,8));
-            parent.addView(note);
-        }
         String badges=record.optString("b").replace("↝","").replace("◆","")
             .replace("◉","").replace("✦","");
         int dot=badges.indexOf('•');
@@ -280,7 +274,7 @@ public final class PhLibraryBook01 {
                 "Remove species from saved collection":"Save species to collection");
             save.announceForAccessibility(selected?"Species saved":"Species removed from collection");
         });
-        LinearLayout.LayoutParams saveLp=new LinearLayout.LayoutParams(-1,PhLibrary2Ui.dp(a,50));
+        LinearLayout.LayoutParams saveLp=new LinearLayout.LayoutParams(-2,PhLibrary2Ui.dp(a,48));
         saveLp.bottomMargin=PhLibrary2Ui.dp(a,10);parent.addView(save,saveLp);
         LinearLayout tools=new LinearLayout(a);tools.setGravity(android.view.Gravity.CENTER_VERTICAL);
         TextView original=PhLibrary2Ui.text(a,"Text size",13,
@@ -327,7 +321,7 @@ public final class PhLibraryBook01 {
             PhLibrary2Ui.dp(a,52));
         citationLp.topMargin=PhLibrary2Ui.dp(a,14);
         parent.addView(refsAction,citationLp);
-        TextView related=PhLibrary2Ui.text(a,"Same family · "+record.optString("f"),
+        TextView related=PhLibrary2Ui.text(a,"Related · "+record.optString("f"),
             24,PhLibrary2Ui.INK,true,false);
         related.setPadding(0,PhLibrary2Ui.dp(a,19),0,PhLibrary2Ui.dp(a,8));
         parent.addView(related);

@@ -39,7 +39,7 @@ class LibraryPolishContract(unittest.TestCase):
 
     def test_only_approved_habitat_media_is_used(self):
         photo=(JAVA/"OfflinePhotoEvidence.java").read_text()
-        self.assertIn("android.util.LruCache<String,Bitmap>(4*1024*1024)",photo)
+        self.assertIn("android.util.LruCache<String,Bitmap>(16*1024*1024)",photo)
         self.assertIn("options.inPreferredConfig=Bitmap.Config.RGB_565;",photo)
         self.assertIn('thumbnailForHabitat(Activity a,String photoId)',photo)
         self.assertIn('!"habitat".equals(item.optString("category"))',photo)

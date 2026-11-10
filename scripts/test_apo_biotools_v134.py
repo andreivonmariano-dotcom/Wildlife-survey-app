@@ -15,11 +15,12 @@ class ApoBioToolsV134(unittest.TestCase):
     def test_home_biotools_enters_new_scientific_workspace(self):
         home=method("home","phMapsHub")
         self.assertIn('this::bioToolsHub',home)
-        self.assertNotIn('this::fieldworkHub',home)
+        self.assertIn('ApoHomeUi.primary(this,"Start Survey"',home)
+        self.assertIn('this::fieldworkHub',home)
         bio=method("bioToolsHub","fieldworkHub")
         self.assertEqual(bio.count("ApoHomeUi.module(this,"),5)
-        for label in ('"Surveys"','"Projects & Stations"','"Field Records"',
-                      '"Analysis & Exports"','"Field Utilities"'):
+        for label in ('"Surveys"','"Projects & Sites"','"Field Records"',
+                      '"Analysis"','"Utilities"'):
             self.assertIn(label,bio)
         self.assertNotIn("LikasPortalUi.action(",bio)
         self.assertNotIn("LikasPortalUi.tile(",bio)

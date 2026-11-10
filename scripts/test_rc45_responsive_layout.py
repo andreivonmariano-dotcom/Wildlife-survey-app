@@ -13,15 +13,14 @@ class Rc45LayoutContract(unittest.TestCase):
         policy = source("FieldLayoutPolicy.java")
         self.assertIn("stackPortalPair(int availableWidthDp,float fontScale)", policy)
         self.assertIn("LikasDesignSystem.useSingleColumn(availableWidthDp,fontScale)", policy)
-        for screen in ("WelcomeActivity.java", "LikasSettingsActivity.java"):
-            code=source(screen)
-            self.assertIn("FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale)",code)
-            if screen=="WelcomeActivity.java":
-                self.assertIn("surveyTile(main,",code)
-                self.assertIn("new LinearLayout.LayoutParams(-1,-2)",code)
-            else:
-                self.assertTrue("stackPortalPairs()?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in code
-                                or "stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL" in code)
+        welcome=source("WelcomeActivity.java")
+        self.assertIn("FieldLayoutPolicy.stackPortalPair(config.screenWidthDp,config.fontScale)",welcome)
+        self.assertIn("surveyTile(main,",welcome)
+        self.assertIn("new LinearLayout.LayoutParams(-1,-2)",welcome)
+        # Full-width intrinsic-height Settings links replace the old split tiles.
+        settings=source("LikasSettingsActivity.java")
+        self.assertIn("ApoHomeUi.tool(this,",settings)
+        self.assertIn('UiKit.page(this,"Settings"',settings)
         # RC97 deliberately keeps the bibliography hub one-column and text-only.
         library=source("LikasLibraryActivity.java")
         self.assertIn("tile(body,",library)

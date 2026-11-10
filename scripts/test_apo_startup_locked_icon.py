@@ -1,7 +1,7 @@
 """APO startup source contract; resource bytes are checked by Gradle preBuild.
 
-The final locked art is the original forest_green_mountain_ribbon_icon.png.
-No model-generated alternate logo or embedded text is permitted.
+The original mountain master remains locked. A later owner-approved compact
+launcher variant is versioned separately; splash text and art are preserved.
 """
 from pathlib import Path
 import re
@@ -23,6 +23,8 @@ class ApoStartupSourceContract(unittest.TestCase):
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'", gradle)
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)", gradle).group(1)),132)
         self.assertIn(MASTER_SHA, gradle)
+        self.assertIn("828b156748e5614c7a9b74efe90ee0272b1336b7f92334ebe5702a7959332c7b", gradle)
+        self.assertIn("prepareApoCompactLauncher", gradle)
         self.assertIn(SPLASH_SHA, gradle)
         self.assertIn(FOREGROUND_SHA, gradle)
         self.assertIn('dependsOn("verifyApoArtwork")', gradle)
@@ -71,7 +73,7 @@ class ApoStartupSourceContract(unittest.TestCase):
     def test_adaptive_resources_reference_approved_derivative(self):
         for name in ("apo_launcher.xml", "apo_launcher_round.xml"):
             xml = (ROOT / "app/src/main/res/mipmap-anydpi-v26" / name).read_text()
-            self.assertIn("@drawable/apo_launcher_foreground", xml)
+            self.assertIn("@drawable/apo_compact_launcher_foreground", xml)
             self.assertIn("@color/apo_icon_background", xml)
 
 

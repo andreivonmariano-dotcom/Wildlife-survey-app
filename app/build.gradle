@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 169
-        versionName '0.27.3-rc109-native-species-photos'
+        versionCode 172
+        versionName '0.27.3-rc112-minimal-ui-compact-icon'
     }
     signingConfigs {
         debug {
@@ -107,6 +107,11 @@ tasks.register("verifyApoArtwork") {
             }.join("")
         if(digest != expectedSha)
             throw new GradleException("APO owner-selected icon checksum mismatch")
+        def compactIcon = file("src/main/assets/apo_compact_launcher_master.png")
+        if(!compactIcon.isFile() || java.security.MessageDigest.getInstance("SHA-256")
+            .digest(compactIcon.bytes).collect { String.format("%02x", it & 0xff) }.join("") !=
+            "828b156748e5614c7a9b74efe90ee0272b1336b7f92334ebe5702a7959332c7b")
+            throw new GradleException("Approved APO compact launcher icon missing or modified")
         def derivatives = [
             (file("src/main/res/drawable-nodpi/apo_splash_mark.png")):
                 "a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc",
@@ -127,6 +132,25 @@ tasks.register("verifyApoArtwork") {
 }
 tasks.named("preBuild") { dependsOn("verifyApoArtwork") }
 
+
+/** Adaptive foreground from approved smaller ivory/jade ribbon master. */
+android.sourceSets.main.res.srcDirs += ["${buildDir}/generated/apo-compact/res"]
+tasks.register('prepareApoCompactLauncher', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'python3', 'scripts/prepare_apo_compact_launcher.py'
+    inputs.file('src/main/assets/apo_compact_launcher_master.png')
+    outputs.dir(file("${buildDir}/generated/apo-compact/res"))
+}
+tasks.configureEach { task ->
+    if (task.name != 'prepareApoCompactLauncher' &&
+        (task.name.contains('Resources') || task.name.endsWith('SourceSetPaths') ||
+         task.name.startsWith('extractDeepLinks') ||
+         task.name.contains('Debug') || task.name.contains('Release'))) {
+        task.dependsOn tasks.named('prepareApoCompactLauncher')
+    }
+}
+tasks.named('preBuild') { dependsOn('prepareApoCompactLauncher') }
+
 // RC109 native species thumbnails are generated from hash-locked owner-supplied
 // source JPEGs at build time. No device/Drive import or network is required.
 tasks.register('prepareOwnerNativeSpeciesPhotos', Exec) {
@@ -138,4 +162,20 @@ tasks.configureEach { t ->
     if (t.name.contains('Merge') && t.name.contains('Assets') ||
         t.name.startsWith('merge') && t.name.endsWith('Assets'))
         t.dependsOn tasks.named('prepareOwnerNativeSpeciesPhotos')
+}
+
+
+// Owner-directed RC110 photo gallery. APK assets must be generated before
+// packaging; no device-side Drive import or network access is required.
+tasks.register('prepareDriveHighResGallery', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'python3', 'scripts/prepare_drive_gallery.py'
+    inputs.file(file('src/main/assets/offline_drive_gallery_manifest_v1.json'))
+    inputs.file(file('../scripts/prepare_drive_gallery.py'))
+    outputs.files((1..333).collect { file(String.format('src/main/assets/offline_photos/drive_%04d.jpg',it)) })
+}
+tasks.named('preBuild') { dependsOn('prepareDriveHighResGallery') }
+tasks.configureEach { t ->
+    if (t.name.toLowerCase().contains('merge') && t.name.toLowerCase().contains('assets'))
+        t.dependsOn tasks.named('prepareDriveHighResGallery')
 }

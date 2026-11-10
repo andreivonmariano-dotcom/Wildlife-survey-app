@@ -186,8 +186,25 @@ public class WelcomeActivity extends Activity {
     }
     private void setupSpinner(Spinner spinner,String description){
         spinner.setContentDescription(description);
-        spinner.setMinimumHeight(dp(56));
+        spinner.setMinimumHeight(dp(64));
         spinner.setPadding(dp(8),dp(6),dp(8),dp(6));
+    }
+    /** Native dropdown remains accessible; selected method/region text can wrap. */
+    private ArrayAdapter<String> readableSelectionAdapter(String[] options){
+        return new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_dropdown_item,options){
+            @Override public View getView(int position,View reused,android.view.ViewGroup parent){
+                TextView label=new TextView(WelcomeActivity.this);
+                label.setText(getItem(position));
+                label.setTextColor(UiKit.INK);
+                label.setTextSize(16);
+                label.setGravity(Gravity.CENTER_VERTICAL);
+                label.setSingleLine(false);
+                label.setMaxLines(3);
+                label.setPadding(dp(12),dp(10),dp(26),dp(10));
+                return label;
+            }
+        };
     }
     /** Native input hints, numeric keyboard types, validators and saved values remain intact. */
     private void styleSetupInput(EditText input){
@@ -214,7 +231,18 @@ public class WelcomeActivity extends Activity {
             resumeLp.bottomMargin=dp(LikasDesignSystem.SPACE_LG);
             main.addView(resume,resumeLp);
         }
-        View daily=ApoSpeciesOfDay.create(this,scientific->
+        if(lastHomeActiveSurvey==null){
+            View start=ApoHomeUi.primary(this,"Start Survey",
+                "",this::fieldworkHub);
+            LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,-2);
+            startLp.bottomMargin=dp(8);main.addView(start,startLp);
+        }
+        main.addView(ApoHomeUi.module(this,"01","BioTools",
+            "",this::bioToolsHub));
+        main.addView(ApoHomeUi.module(this,"02","PHLibrary",
+            "",()->
+                startActivity(new Intent(this,LikasLibraryActivity.class))));
+        View daily=ApoSpeciesOfDay.createCompact(this,scientific->
             startActivity(new Intent(this,TaxonDetailActivity.class)
                 .putExtra("phlibrary_scientific_name",scientific)));
         if(daily!=null){
@@ -222,15 +250,8 @@ public class WelcomeActivity extends Activity {
             spotlight.bottomMargin=dp(LikasDesignSystem.SPACE_MD);
             main.addView(daily,spotlight);
         }
-        main.addView(ApoHomeUi.module(this,"01","BioTools",
-            "Fieldwork, surveys and data analysis",this::bioToolsHub));
-        main.addView(ApoHomeUi.module(this,"02","PHLibrary",
-            "Philippine species, habitats and ecology",()->
-                startActivity(new Intent(this,LikasLibraryActivity.class))));
-        main.addView(ApoHomeUi.module(this,"03","PHMaps",
-            "Spatial context, site habitats and map tools",this::phMapsHub));
-        main.addView(ApoHomeUi.module(this,"04","BioDiscover",
-            "Research and conservation updates · In development",this::bioDiscoverHub));
+        main.addView(ApoHomeUi.note(this,
+            "Coming later: PHMaps · BioDiscover"));
         UiMotion.enterHome(this,main);
     }
     /** Honest spatial hub: existing site records are available; a full atlas is not. */
@@ -266,26 +287,22 @@ public class WelcomeActivity extends Activity {
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         lastHomeActiveSurvey=activeSurvey();
         main.addView(UiKit.navigationHeader(this,"BioTools","Home",this::home));
-        main.addView(ApoHomeUi.section(this,"Scientific workspace",
-            "Select a field task, review saved evidence, or work with research data."));
+        // Module names supply the navigation context without a repeated introduction.
         if(lastHomeActiveSurvey!=null){
-            main.addView(ApoHomeUi.note(this,
-                "A survey is in progress. Resume it from Surveys or the APO Home shortcut."));
+            main.addView(ApoHomeUi.note(this,"Survey in progress · Resume from Home"));
         }
-        main.addView(FieldVisuals.section(this,"FIELDWORK",null));
+        // Navigation remains a compact single list.
         main.addView(ApoHomeUi.module(this,"01","Surveys",
-            "Start, resume and manage wildlife surveys",this::fieldworkHub));
-        main.addView(ApoHomeUi.module(this,"02","Projects & Stations",
-            "Sampling sites, routes and monitoring projects",()->
+            "",this::fieldworkHub));
+        main.addView(ApoHomeUi.module(this,"02","Projects & Sites",
+            "",()->
                 startActivity(new Intent(this,SitesActivity.class))));
-        main.addView(FieldVisuals.section(this,"DATA & RESEARCH",null));
-        main.addView(ApoHomeUi.module(this,"03","Field Records",
-            "Survey history, observations and habitat records",this::fieldRecordsHub));
-        main.addView(ApoHomeUi.module(this,"04","Analysis & Exports",
-            "Survey summaries, data review and research files",this::analysisHub));
-        main.addView(FieldVisuals.section(this,"UTILITIES",null));
-        main.addView(ApoHomeUi.module(this,"05","Field Utilities",
-            "Audio, camera traps, protocols and study plans",this::fieldUtilitiesHub));
+         main.addView(ApoHomeUi.module(this,"03","Field Records",
+            "",this::fieldRecordsHub));
+        main.addView(ApoHomeUi.module(this,"04","Analysis",
+            "",this::analysisHub));
+         main.addView(ApoHomeUi.module(this,"05","Utilities",
+            "",this::fieldUtilitiesHub));
         UiMotion.enterHome(this,main);
     }
 
@@ -323,7 +340,7 @@ public class WelcomeActivity extends Activity {
             activeCard.addView(resume,resumeLp);
             main.addView(activeCard);
         }else{
-            main.addView(FieldVisuals.section(this,"New survey","Choose a wildlife group"));
+            main.addView(FieldVisuals.section(this,"New survey",null));
             surveyTile(main,"Birds","Counts · Transects",()->setup("Birds"));
             surveyTile(main,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna"));
             surveyTile(main,"Mammals","Signs · Stations",()->setup("Mammals"));
@@ -339,8 +356,7 @@ public class WelcomeActivity extends Activity {
         homeVisible=false;currentScreen="records";main.removeAllViews();scrollTop();
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         main.addView(UiKit.navigationHeader(this,"Field Records","BioTools",this::bioToolsHub));
-        main.addView(ApoHomeUi.section(this,"Recorded field data",
-            "Search survey records and inspect documented site habitat evidence."));
+        main.addView(ApoHomeUi.section(this,"Field records",null));
         main.addView(ApoHomeUi.note(this,savedRecordCounts()));
         main.addView(ApoHomeUi.tool(this,"01","Survey history",
             "Browse surveys and recorded observations",()->
@@ -358,8 +374,7 @@ public class WelcomeActivity extends Activity {
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         main.addView(UiKit.navigationHeader(this,"Analysis & Exports","BioTools",
             this::bioToolsHub));
-        main.addView(ApoHomeUi.section(this,"Research data",
-            "Descriptive summaries, review flags and portable source records."));
+        main.addView(ApoHomeUi.section(this,"Analysis",null));
         main.addView(ApoHomeUi.note(this,
             "Summary counts use completed surveys unless labeled otherwise. " +
             "They are not population or habitat-selection estimates."));
@@ -381,8 +396,7 @@ public class WelcomeActivity extends Activity {
         if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
         main.addView(UiKit.navigationHeader(this,"Field Utilities","BioTools",
             this::bioToolsHub));
-        main.addView(ApoHomeUi.section(this,"Field support",
-            "Tools for recording evidence and managing repeatable field methods."));
+        main.addView(ApoHomeUi.section(this,"Utilities",null));
         main.addView(FieldVisuals.section(this,"RECORDINGS & DEVICES",null));
         main.addView(ApoHomeUi.tool(this,"01","Sound recordings",
             "Review saved audio; recording requires an active survey",()->
@@ -478,10 +492,9 @@ public class WelcomeActivity extends Activity {
         main.addView(step("01","Survey method"));
         LinearLayout methodsCard=vertical();
         methodPicker=new Spinner(this);
-        methodPicker.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,SurveyMethods.displayNames(profile)));
+        methodPicker.setAdapter(readableSelectionAdapter(SurveyMethods.displayNames(profile)));
         setupSpinner(methodPicker,"Choose survey method");
-        methodsCard.addView(methodPicker,new LinearLayout.LayoutParams(-1,dp(56)));
+        methodsCard.addView(methodPicker,new LinearLayout.LayoutParams(-1,-2));
         TextView methodHint=LikasPortalUi.text(this,choices[0].description,13,
             UiKit.MUTED,false);
         methodHint.setPadding(dp(LikasDesignSystem.SPACE_XS),
@@ -550,8 +563,7 @@ public class WelcomeActivity extends Activity {
         projectManage.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
         main.addView(setupLabel("Checklist region"));
         geographicChoice=new Spinner(this);
-        geographicChoice.setAdapter(new ArrayAdapter<String>(
-            this,android.R.layout.simple_spinner_dropdown_item,GeoRegions.LABELS));
+        geographicChoice.setAdapter(readableSelectionAdapter(GeoRegions.LABELS));
         geographicChoice.setSelection(0);
         setupSpinner(projectChoice,"Choose survey project");
         setupSpinner(geographicChoice,"Choose checklist region");

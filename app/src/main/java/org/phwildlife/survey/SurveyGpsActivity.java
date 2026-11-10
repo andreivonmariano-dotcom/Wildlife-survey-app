@@ -121,7 +121,7 @@ public final class SurveyGpsActivity extends Activity {
         status.setTextSize(LikasDesignSystem.TEXT_SECTION);
         status.setTypeface(null,android.graphics.Typeface.BOLD);
         status.setTextColor(UiKit.INK);
-        status.setText("Waiting for device GPS");
+        status.setText("Acquiring GPS…");
         status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
         card.addView(status);
         qualitySummary=UiKit.caption(this,"Accuracy unavailable · Fix age unavailable");
@@ -166,7 +166,7 @@ public final class SurveyGpsActivity extends Activity {
         // Troubleshooting is one tap away, not two permanent primary-looking actions.
         helpPanel=new LinearLayout(this);
         helpPanel.setOrientation(LinearLayout.VERTICAL);
-        Button retry=UiKit.button(this,"Retry GPS acquisition","secondary");
+        Button retry=UiKit.button(this,"Retry GPS","secondary");
         retry.setOnClickListener(v->{
             if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
                 try{TrackService.startGnss(this);receiverStartedInThisScreen=true;}
@@ -176,7 +176,7 @@ public final class SurveyGpsActivity extends Activity {
             updateLocation();
         });
         addAction(helpPanel,retry);
-        Button settings=UiKit.button(this,"Android location settings","secondary");
+        Button settings=UiKit.button(this,"Location settings","secondary");
         settings.setContentDescription("Open Android device location settings");
         settings.setOnClickListener(v->
             startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)));

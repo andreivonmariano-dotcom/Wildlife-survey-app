@@ -53,7 +53,7 @@ public final class Rc8PhotoComparisonActivity extends Activity {
         root.setPadding(dp(12),dp(9),dp(12),dp(10));
         root.addView(UiKit.navigationHeader(this,"Offline photo comparisons","Species",this::finish));
         root.addView(text("Choose two photographs, including separate views of one species. "+
-            "Photography is contextual reference, not a diagnosis or a LIKAS detection. "+
+            "Photography is contextual reference, not a diagnosis or a recorded APO detection. "+
             "Visible-character notes come from published sources, not automated image recognition.",13));
         try{
             JSONArray photos=read(this,"offline_inaturalist_manifest_v1.json").getJSONArray("items");

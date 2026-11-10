@@ -38,7 +38,8 @@ public final class PhLibrarySpeciesMedia {
         return privateFile(c,scientific)!=null;
     }
     public static boolean hasApprovedPhoto(Activity a,String scientific){
-        return OfflinePhotoEvidence.hasOfflineTaxon(a,scientific);
+        return PhLibraryDriveGallery.hasForTaxon(a,scientific) ||
+            OfflinePhotoEvidence.hasOfflineTaxon(a,scientific);
     }
     private static Bitmap privateBitmap(Context c,String scientific){
         File image=privateFile(c,scientific);
@@ -48,9 +49,9 @@ public final class PhLibrarySpeciesMedia {
         BitmapFactory.decodeFile(image.getAbsolutePath(),opts);
         if(opts.outWidth<1||opts.outHeight<1)return null;
         opts.inJustDecodeBounds=false;
-        opts.inPreferredConfig=Bitmap.Config.RGB_565;
+        opts.inPreferredConfig=Bitmap.Config.ARGB_8888;
         opts.inSampleSize=1;
-        while(Math.max(opts.outWidth,opts.outHeight)/opts.inSampleSize>640)
+        while(Math.max(opts.outWidth,opts.outHeight)/opts.inSampleSize>1600)
             opts.inSampleSize*=2;
         return BitmapFactory.decodeFile(image.getAbsolutePath(),opts);
     }
@@ -66,6 +67,8 @@ public final class PhLibrarySpeciesMedia {
         return frame;
     }
     public static View photoOrPlaceholder(Activity a,String scientific){
+        ImageView owner=PhLibraryDriveGallery.coverForTaxon(a,scientific);
+        if(owner!=null)return owner;
         Bitmap personal=privateBitmap(a,scientific);
         if(personal!=null){
             ImageView image=new ImageView(a);image.setImageBitmap(personal);
@@ -83,7 +86,9 @@ public final class PhLibrarySpeciesMedia {
     }
     /** Reader plate, preserving approved Commons attribution and a simple missing-photo state. */
     public static void addReaderPlate(Activity a,LinearLayout parent,String scientific){
-        if(hasPersonalPhoto(a,scientific)){
+        if(PhLibraryDriveGallery.hasForTaxon(a,scientific)){
+            PhLibraryDriveGallery.addReaderGallery(a,parent,scientific);
+        }else if(hasPersonalPhoto(a,scientific)){
             View plate=photoOrPlaceholder(a,scientific);
             LinearLayout.LayoutParams image=new LinearLayout.LayoutParams(-1,dp(a,188));
             image.topMargin=dp(a,12);parent.addView(plate,image);
@@ -127,7 +132,7 @@ public final class PhLibrarySpeciesMedia {
             bounds.outWidth>22000||bounds.outHeight>22000)
             throw new IllegalArgumentException("Unsupported photograph dimensions");
         BitmapFactory.Options opts=new BitmapFactory.Options();
-        opts.inPreferredConfig=Bitmap.Config.RGB_565;
+        opts.inPreferredConfig=Bitmap.Config.ARGB_8888;
         opts.inSampleSize=1;
         while(Math.max(bounds.outWidth,bounds.outHeight)/opts.inSampleSize>1280)
             opts.inSampleSize*=2;

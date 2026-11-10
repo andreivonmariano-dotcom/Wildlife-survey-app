@@ -43,7 +43,7 @@ class Rc86InteractiveTest(unittest.TestCase):
         self.assertIn('UiKit.button(this,"Attach photo","secondary")',recorder)
         self.assertIn("detectRow.removeView(markTime)",recorder)
         self.assertIn("utilityRow.removeView(pauseButton)",recorder)
-        self.assertIn('UiKit.button(this,"All data","secondary")',recorder)
+        self.assertIn('new String[]{"Export research ZIP"}',recorder)
         for part in ("filled(microhabitatEntry)","filled(herpHeightEntry)",
                      "filled(perchEntry)","filled(deviceEntry)",
                      "callScoreSpinner.setSelection(0)"):
@@ -83,8 +83,8 @@ class Rc86InteractiveTest(unittest.TestCase):
         self.assertIn("'Not assessed'",src("ResearchExports.java"))
     def test_preview_metadata(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 169",gradle)
-        self.assertIn("0.27.3-rc109-native-species-photos",gradle)
+        self.assertIn("versionCode 172",gradle)
+        self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",gradle)
         wf=(ROOT/".github/workflows/apo-recorder-picker-v146-emulator-qa.yml").read_text()
         self.assertIn("versionCode='146'",wf)
         self.assertIn("RecorderPickerCompactEmulatorTest",wf)

@@ -34,7 +34,7 @@ class RecorderPickerRC85(unittest.TestCase):
                       'item.iucn','item.ph','item.paicHabitat','item.paicElevation',
                       'item.reviewedHabitats','item.reviewedElevation',
                       'OccurrenceEvidencePolicy.title(item.evidence)',
-                      '"Profile","secondary"','"Select","primary"',
+                      '"ⓘ","quiet"','"Select","primary"',
                       'new Intent(this,TaxonDetailActivity.class)'):
             self.assertIn(token,card)
         for phrase in ('not proof of site presence','not probabilities',
@@ -54,8 +54,8 @@ class RecorderPickerRC85(unittest.TestCase):
                       'wm size 960x2160','len(files)==6'):
             self.assertIn(value,wf)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 169",g)
-        self.assertIn("0.27.3-rc109-native-species-photos",g)
+        self.assertIn("versionCode 172",g)
+        self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn('super(context,NAME,null,29)',
                       read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))

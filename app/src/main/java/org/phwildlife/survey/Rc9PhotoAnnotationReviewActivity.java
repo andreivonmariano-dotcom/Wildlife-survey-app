@@ -63,7 +63,7 @@ public final class Rc9PhotoAnnotationReviewActivity extends Activity {
         root.setBackgroundColor(UiKit.BG);root.setPadding(dp(14),dp(9),dp(14),dp(11));
         root.addView(UiKit.navigationHeader(this,"Anatomical annotation drafts","Species",this::finish));
         root.addView(text("Tap the exact anatomical feature in a photograph you own. "+
-            "Each draft links to a cited LIKAS trait. It is never an expert-approved marker. "+
+            "Each draft links to a cited APO trait. It is never an expert-approved marker. "+
             "Review source, image position, identity and diagnostic value before publication.",13));
         try{
             JSONArray species=read(this,"rc8_evidence_comparisons_v1.json").getJSONArray("species");
@@ -243,7 +243,7 @@ public final class Rc9PhotoAnnotationReviewActivity extends Activity {
             Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("application/json");
-            intent.putExtra(Intent.EXTRA_TITLE,"LIKAS-annotation-review-drafts.json");
+            intent.putExtra(Intent.EXTRA_TITLE,"APO-annotation-review-drafts.json");
             startActivityForResult(intent,EXPORT_DRAFTS);
         }catch(Exception ex){
             status.setText("Cannot read existing drafts. No backup was created and originals were not overwritten.");
@@ -275,7 +275,7 @@ public final class Rc9PhotoAnnotationReviewActivity extends Activity {
             }
             Intent send=new Intent(Intent.ACTION_SEND);
             send.setType("text/plain");
-            send.putExtra(Intent.EXTRA_SUBJECT,"LIKAS anatomical annotations requiring expert review");
+            send.putExtra(Intent.EXTRA_SUBJECT,"APO anatomical annotations requiring expert review");
             send.putExtra(Intent.EXTRA_TEXT,data.toString(2));
             startActivity(Intent.createChooser(send,"Send source-linked review drafts"));
         }catch(Exception ex){

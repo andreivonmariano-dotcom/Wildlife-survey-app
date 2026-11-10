@@ -10,7 +10,7 @@ class Rc56RecorderLayout(unittest.TestCase):
         block=a.split("private void draw(){",1)[1].split("private void showGroups(){",1)[0]
         self.assertIn('UiKit.button(this,"‹","quiet")',block)
         self.assertIn('home.setContentDescription("Back to Home")',block)
-        self.assertIn('export.setContentDescription("Export all projects and surveys as research ZIP")',block)
+        self.assertIn('export.setContentDescription("Export research ZIP and additional survey options")',block)
         self.assertIn('boolean stackSessionControls=FieldLayoutPolicy.stackPortalPair(',block)
         self.assertIn('utilityRow.setOrientation(LinearLayout.VERTICAL)',block)
         self.assertIn('if(stackCaptureActions)row.setOrientation(LinearLayout.VERTICAL)',block)

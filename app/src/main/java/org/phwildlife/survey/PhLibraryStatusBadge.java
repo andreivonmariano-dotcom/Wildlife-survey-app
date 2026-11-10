@@ -21,7 +21,16 @@ public final class PhLibraryStatusBadge {
         return "Unassessed";
     }
     public static TextView make(Activity a,String value,boolean rarity){
-        String name=rarity?value:status(value);
+        return makeWithDisplay(a,value,rarity,false);
+    }
+    /** Rank-only visible pills; full scientific labels remain accessible and explainable. */
+    public static TextView makeCompact(Activity a,String value,boolean rarity){
+        return makeWithDisplay(a,value,rarity,true);
+    }
+    private static TextView makeWithDisplay(Activity a,String value,boolean rarity,
+                                            boolean compact){
+        String name=rarity?value:(compact && value!=null && !value.isEmpty()
+            && !"Unassessed".equals(value)?value:status(value));
         int bg=0xFFE2ECE4,fg=0xFF245344,stroke=0xFFBBD0BE;
         String icon="●";
         if(rarity){
@@ -44,7 +53,7 @@ public final class PhLibraryStatusBadge {
                 default:break;
             }
         }
-        TextView t=PhLibrary2Ui.text(a,icon+"  "+name,13,fg,false,true);
+        TextView t=PhLibrary2Ui.text(a,compact?name:icon+"  "+name,13,fg,false,true);
         t.setGravity(Gravity.CENTER);
         t.setPadding(PhLibrary2Ui.dp(a,11),PhLibrary2Ui.dp(a,9),
             PhLibrary2Ui.dp(a,11),PhLibrary2Ui.dp(a,9));
@@ -54,10 +63,12 @@ public final class PhLibraryStatusBadge {
         final String intro=rarity?
             "Rarity is an educational book category, not an IUCN or DENR assessment.":
             "IUCN global category shown in the original reference account. This is not a Philippine national threat assessment.";
-        t.setContentDescription((rarity?"Rarity: ":"IUCN global status: ")+name+". Tap for explanation.");
+        String accessible=rarity?value:status(value);
+        t.setContentDescription((rarity?"Educational rarity: ":"IUCN global status: ")+
+            accessible+". Tap for explanation.");
         t.setClickable(true);t.setFocusable(true);
         t.setOnClickListener(v->new AlertDialog.Builder(a)
-            .setTitle((rarity?"Rarity":"IUCN global status")+" · "+name)
+            .setTitle((rarity?"Educational rarity":"IUCN global status")+" · "+accessible)
             .setMessage(intro).setPositiveButton("Close",null).show());
         return t;
     }

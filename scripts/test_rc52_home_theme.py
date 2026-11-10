@@ -10,7 +10,10 @@ class Rc52HomeTheme(unittest.TestCase):
     def test_home_has_one_brand_heading_and_three_destinations(self):
         home=source("WelcomeActivity.java").split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
         self.assertIn("ApoHomeUi.header(this,",home)
-        self.assertEqual(home.count("ApoHomeUi.module(this,"),4)
+        self.assertEqual(home.count("ApoHomeUi.module(this,"),2)
+        self.assertEqual(home.count("ApoHomeUi.tool(this,"),0)
+        self.assertIn("Coming later: PHMaps · BioDiscover",home)
+        self.assertIn('ApoHomeUi.primary(this,"Start Survey"',home)
         self.assertIn("ApoHomeUi.resume(this,",home)
         self.assertLess(home.index("ApoHomeUi.resume(this,"),
                         home.index('ApoHomeUi.module(this,"01","BioTools"'))

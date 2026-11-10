@@ -45,8 +45,8 @@ class TimelineContracts(unittest.TestCase):
         self.assertIn('super(context,NAME,null,29)',read("FieldDb.java"))
     def test_existing_identity_and_survey_dispositions(self):
         g=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 169",g)
-        self.assertIn("0.27.3-rc109-native-species-photos",g)
+        self.assertIn("versionCode 172",g)
+        self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         m=read("MainActivity.java")
         for token in ('Finish Complete','End Incomplete','Cancel Survey · Not Counted',

@@ -40,7 +40,7 @@ class Rc44UiHarmony(unittest.TestCase):
         self.assertIn('ApoHomeUi.module(this,index,title,detail,tap)',welcome)
         self.assertNotIn('surveyTile(second,"Custom"',welcome)
         settings=read("LikasSettingsActivity.java")
-        self.assertIn('"Data check","Review records","reports"',settings)
+        self.assertIn('"Data check","","reports"',settings)
         library=read("LikasLibraryActivity.java")
         self.assertIn('PhLibraryPhotoHero.create(',library)
 

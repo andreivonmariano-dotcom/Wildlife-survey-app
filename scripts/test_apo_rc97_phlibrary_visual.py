@@ -56,7 +56,7 @@ class Rc97PHLibraryVisual(unittest.TestCase):
     def test_existing_apk_identity_and_science_schema_preserved(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertIn("versionCode 170",gradle)
-        self.assertIn("0.27.3-rc109-native-species-photos",gradle)
+        self.assertIn("0.27.3-rc110-highres-photo-galleries",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,29)",
                       (JAVA/"FieldDb.java").read_text())

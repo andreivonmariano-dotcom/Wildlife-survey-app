@@ -84,7 +84,7 @@ class Rc86InteractiveTest(unittest.TestCase):
     def test_preview_metadata(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertIn("versionCode 170",gradle)
-        self.assertIn("0.27.3-rc109-native-species-photos",gradle)
+        self.assertIn("0.27.3-rc110-highres-photo-galleries",gradle)
         wf=(ROOT/".github/workflows/apo-recorder-picker-v146-emulator-qa.yml").read_text()
         self.assertIn("versionCode='146'",wf)
         self.assertIn("RecorderPickerCompactEmulatorTest",wf)

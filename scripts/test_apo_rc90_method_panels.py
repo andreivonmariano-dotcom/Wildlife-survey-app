@@ -45,7 +45,7 @@ class AdaptivePanels(unittest.TestCase):
         m=read("MainActivity.java")
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn("versionCode 170",(ROOT/"app/build.gradle").read_text())
-        self.assertIn("0.27.3-rc109-native-species-photos",
+        self.assertIn("0.27.3-rc110-highres-photo-galleries",
             (ROOT/"app/build.gradle").read_text())
         for marker in ("SurveyClosePolicy.resolve(","Finish Complete",
             "End Incomplete","Cancel Survey · Not Counted",

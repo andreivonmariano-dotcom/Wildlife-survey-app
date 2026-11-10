@@ -51,6 +51,6 @@ class MethodCompletionReviewContracts(unittest.TestCase):
         self.assertIn('super(context,NAME,null,29)',src("FieldDb.java"))
         build=(ROOT/"app/build.gradle").read_text()
         self.assertIn("versionCode 170",build)
-        self.assertIn("versionName '0.27.3-rc109-native-species-photos'",build)
+        self.assertIn("versionName '0.27.3-rc110-highres-photo-galleries'",build)
 
 if __name__=="__main__":unittest.main()

@@ -27,7 +27,7 @@ public final class Rc110SignedUpgradeInstrumentedTest {
     static final String ZERO="QA_RC110_UPGRADE_ZERO";
     static final String ACTIVE="QA_RC110_UPGRADE_ACTIVE";
     static final String LABEL="Unidentified bird, original field note";
-    static final String AUDIO="clip_20261110_rc110_upgrade.wav";
+    static final String AUDIO="clip_20261110_rc110upgrade.wav";
     static final String TIMESTAMP="2026-11-10T00:00:00Z";
 
     private static Context app(){
@@ -75,6 +75,8 @@ public final class Rc110SignedUpgradeInstrumentedTest {
         }
     }
     @Test public void aSeedRc109Workspace() throws Exception{
+        assertTrue("QA filename must satisfy existing recorder policy",
+            AcousticEvidence.safeName(AUDIO));
         assertEquals("Seed must execute under verified signed RC109",169,version());
         try(FieldDb helper=new FieldDb(app())){
             SQLiteDatabase db=helper.getWritableDatabase();

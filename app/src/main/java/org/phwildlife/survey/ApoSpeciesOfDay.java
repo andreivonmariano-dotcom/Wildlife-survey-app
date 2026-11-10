@@ -102,9 +102,11 @@ public final class ApoSpeciesOfDay {
         c.topMargin=dp(a,5);labels.addView(context,c);
         row.addView(labels,new LinearLayout.LayoutParams(0,-2,1));
         row.setMinimumHeight(dp(a,108));
+        row.setTag("apo_species_of_the_day");
         row.setFocusable(true);row.setClickable(true);
         row.setContentDescription("Species of the day: "+common+", "+latin+
-            ". IUCN global: "+iucn+". Open full account.");
+            ". IUCN global status: "+iucn+". Endemicity: "+endemicity(account)+
+            ". Open full account.");
         row.setOnClickListener(v->open.accept(latin));
         return row;
     }

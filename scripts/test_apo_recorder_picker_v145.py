@@ -48,14 +48,14 @@ class RecorderPickerRC85(unittest.TestCase):
         self.assertIn("e.review_status='source_listed'",s)
     def test_screens_built_with_original_identity(self):
         wf=read("docs/archive/ci/apo-recorder-picker-v145-emulator-qa.yml")
-        for value in ("versionCode='146'","0.27.3-rc86-apo-interactive-recorder",
+        for value in ("versionCode='146'","0.27.4-rc86-apo-interactive-recorder",
                       'RecorderPickerCompactEmulatorTest','RecorderUiEmulatorTest',
                       'font_scale 1.6','font_scale 2.0',
                       'wm size 960x2160','len(files)==6'):
             self.assertIn(value,wf)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 172",g)
-        self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",g)
+        self.assertIn("versionCode 173",g)
+        self.assertIn("0.27.4-rc112-minimal-ui-compact-icon",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn('super(context,NAME,null,29)',
                       read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))

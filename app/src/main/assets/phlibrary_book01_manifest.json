@@ -1,0 +1,20 @@
+{
+  "edition": "1.75",
+  "rarityModel": "0.3.1",
+  "speciesCount": 714,
+  "groups": {
+    "Birds": 408,
+    "Amphibians": 53,
+    "Reptiles": 154,
+    "Mammals": 99
+  },
+  "tiers": {
+    "Uncommon": 343,
+    "Common": 117,
+    "Legendary": 3,
+    "Rare": 214,
+    "Exceptionally rare": 37
+  },
+  "parts": 8,
+  "note": "Source is owner-supplied PHLibrary Book 01 v1.75; citations are copied from its accounts. Empty full references indicate that unique bibliography matching was unavailable."
+}

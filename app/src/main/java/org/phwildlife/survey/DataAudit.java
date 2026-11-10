@@ -83,6 +83,13 @@ public final class DataAudit {
             "SELECT COUNT(*),MIN(id) FROM sites WHERE (latitude IS NULL AND longitude IS NOT NULL) "+
                 "OR (latitude IS NOT NULL AND longitude IS NULL)",
             "Station latitude and longitude must be recorded together.");
+        check(issues,d,"ERROR","SURVEY_START_GPS_INVALID",
+            "SELECT COUNT(*),MIN(id) FROM surveys WHERE start_gps_recorded_at IS NOT NULL AND ("+
+                "start_gps_latitude IS NULL OR start_gps_longitude IS NULL OR "+
+                "start_gps_latitude NOT BETWEEN -90 AND 90 OR "+
+                "start_gps_longitude NOT BETWEEN -180 AND 180 OR "+
+                "start_gps_accuracy_m IS NULL OR start_gps_accuracy_m<=0 OR start_gps_accuracy_m>=10)",
+            "Stored v0.16 survey-start GPS lacks valid coordinates or is not better than 10 m.");
         check(issues,d,"REVIEW","STATION_GPS_NOT_CAPTURED",
             "SELECT COUNT(*),MIN(id) FROM point_counts WHERE planned_chainage_m IS NOT NULL AND "+
                 "(gps_latitude IS NULL OR gps_longitude IS NULL)",

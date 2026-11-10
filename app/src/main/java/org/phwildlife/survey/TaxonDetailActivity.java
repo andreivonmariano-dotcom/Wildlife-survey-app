@@ -1,0 +1,627 @@
+package org.phwildlife.survey;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.view.WindowManager;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.content.Context;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.net.Uri;
+import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Locale;
+
+/**
+ * Read-only catalog record and evidence page. This never changes a historic
+ * observation or claims the species has been seen at the survey station.
+ */
+public final class TaxonDetailActivity extends Activity {
+    private FieldDb db;
+    private LinearLayout content;
+    private TextView phLibraryHeaderTitle;
+    private Button phLibraryBack;
+    private LinearLayout phLibraryPage;
+    private ScrollView phLibraryScroll;
+    private AutoCompleteTextView search;
+    private LinearLayout searchRow;
+    private Button groupFilter;
+    private Button conservation;
+    private TextView screenCaption;
+    private String searchGroup="";
+    private boolean archivedProfileScope=false;
+    private SpeciesReferenceSuggestionAdapter detailSuggestions;
+    private boolean stackedSearch;
+    private final ArrayDeque<String> phLibraryHistory=new ArrayDeque<>();
+    private String currentPhLibraryName=null;
+    private static final int REQUEST_PERSONAL_SPECIES_PHOTO=8413;
+    private String pendingPhotoTaxon=null;
+
+    private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
+    private TextView text(String value,int size,boolean bold){
+        TextView v=new TextView(this);
+        v.setText(value);v.setTextSize(size);v.setTextColor(UiKit.INK);
+        if(bold)v.setTypeface(null,Typeface.BOLD);
+        return v;
+    }
+    private void paragraph(String heading,String value){
+        if(value==null||value.trim().isEmpty()||value.equalsIgnoreCase("NL"))return;
+        TextView title=text(heading,12,true);
+        title.setTextColor(UiKit.MUTED);
+        title.setPadding(0,dp(13),0,dp(3));
+        content.addView(title);
+        TextView body=text(value,15,false);
+        body.setTextIsSelectable(true);
+        body.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
+        body.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+        content.addView(body);
+    }
+    @Override public void onCreate(Bundle state){
+        super.onCreate(state);
+        if(state!=null)pendingPhotoTaxon=state.getString("pending_photo_taxon");
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN |
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        db=new FieldDb(this);
+        LinearLayout root=new LinearLayout(this);
+        phLibraryPage=root;
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setBackgroundColor(UiKit.BG);
+        root.setPadding(dp(18),dp(15),dp(18),dp(15));
+        LinearLayout nav=UiKit.navigationHeader(this,"Species Library","previous screen",this::backWithinBook);
+        phLibraryHeaderTitle=(TextView)nav.getChildAt(1);
+        phLibraryBack=(Button)nav.getChildAt(0);
+        root.addView(nav);
+        screenCaption=text("Identification, habitat and research sources",12,false);
+        screenCaption.setTextColor(UiKit.MUTED);
+        root.addView(screenCaption);
+        searchRow=new LinearLayout(this);
+        searchRow.setOrientation(LinearLayout.HORIZONTAL);
+        search=new AutoCompleteTextView(this){
+            @Override public boolean enoughToFilter(){return true;}
+        };
+        search.setSingleLine(true);
+        search.setTextSize(15);
+        search.setThreshold(1);
+        search.setHint("Search species");
+        search.setContentDescription("Search species by scientific, common or former name");
+        detailSuggestions=new SpeciesReferenceSuggestionAdapter(this,db,null);
+        search.setAdapter(detailSuggestions);
+        search.setDropDownHeight(dp(220));
+        search.setOnItemClickListener((parent,view,position,id)->{
+            search.dismissDropDown();
+            lookup(parent.getItemAtPosition(position).toString());
+        });
+        searchRow.addView(search,new LinearLayout.LayoutParams(0,dp(52),1f));
+        Button dropdown=UiKit.button(this,"▾","quiet");
+        dropdown.setContentDescription("Show species suggestions");
+        dropdown.setOnClickListener(v->{
+            if(search.getText().toString().trim().length()<2){
+                search.requestFocus();
+                android.widget.Toast.makeText(this,
+                    "Type at least two letters to see matching species",
+                    android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
+            search.requestFocus();
+            detailSuggestions.getFilter().filter(search.getText().toString(),
+                count->{if(count>0)search.showDropDown();});
+        });
+        searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(52)));
+        Button find=UiKit.button(this,"Find","secondary");
+        find.setOnClickListener(v->lookup(search.getText().toString()));
+        searchRow.addView(find,new LinearLayout.LayoutParams(dp(80),dp(52)));
+        // At narrow widths and enlarged system fonts, keep Search fully usable.
+        // Reuse the same controls and listeners without truncating the query field.
+        float widthDp=getResources().getDisplayMetrics().widthPixels/
+            getResources().getDisplayMetrics().density;
+        stackedSearch=widthDp<350f||
+            getResources().getConfiguration().fontScale>=1.60f;
+        if(stackedSearch){
+            searchRow.removeAllViews();
+            searchRow.setOrientation(LinearLayout.VERTICAL);
+            searchRow.addView(search,new LinearLayout.LayoutParams(-1,dp(64)));
+            LinearLayout searchActions=new LinearLayout(this);
+            searchActions.setOrientation(LinearLayout.HORIZONTAL);
+            searchActions.addView(dropdown,new LinearLayout.LayoutParams(dp(60),dp(58)));
+            searchActions.addView(find,new LinearLayout.LayoutParams(0,dp(58),1f));
+            searchRow.addView(searchActions,new LinearLayout.LayoutParams(-1,-2));
+        }
+        root.addView(searchRow);
+        final String[] groupNames={"All groups","Birds","Amphibians","Reptiles","Mammals"};
+        groupFilter=UiKit.button(this,"All wildlife groups  ▾","quiet");
+        groupFilter.setContentDescription("Filter species by wildlife group");
+        LinearLayout.LayoutParams groupLp=new LinearLayout.LayoutParams(-1,-2);
+        groupFilter.setMinimumHeight(dp(stackedSearch?64:48));
+        groupLp.topMargin=dp(6);
+        root.addView(groupFilter,groupLp);
+        conservation=UiKit.button(this,"Conservation research · 96 species","secondary");
+        conservation.setContentDescription("Explore dated global assessments, national conservation records and research threats");
+        LinearLayout.LayoutParams conservationLp=new LinearLayout.LayoutParams(-1,-2);
+        conservation.setMinimumHeight(dp(stackedSearch?64:52));
+        conservationLp.topMargin=dp(5);
+        root.addView(conservation,conservationLp);
+        conservation.setOnClickListener(v->startActivity(
+            new Intent(this,Rc24ConservationDashboardActivity.class)));
+        groupFilter.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Browse wildlife group")
+            .setItems(groupNames,(dialog,which)->{
+                String group=which==0?null:groupNames[which];
+                searchGroup=group==null?"":group;
+                detailSuggestions.setGroup(group);
+                groupFilter.setText(groupNames[which]+"  ▾");
+                search.setText("");
+                showMessage("Search "+(group==null?
+                    "all Philippine wildlife groups":group.toLowerCase(Locale.ROOT))+
+                    " by typing at least two letters.");
+            }).setNegativeButton("Cancel",null).show());
+        search.setOnEditorActionListener((v,action,event)->{
+            lookup(search.getText().toString());return true;
+        });
+        ScrollView scroll=new ScrollView(this);
+        phLibraryScroll=scroll;
+        content=new LinearLayout(this);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(0,dp(8),0,dp(30));
+        scroll.addView(content);
+        root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
+
+        setContentView(root);
+        UiMotion.enter(this,root);
+        String query=getIntent().getStringExtra("taxon_query");
+        String key=getIntent().getStringExtra("taxon_key");
+        String phLibraryName=state!=null?
+            state.getString("phlibrary_current"):
+            getIntent().getStringExtra("phlibrary_scientific_name");
+        if(state!=null){
+            ArrayList<String> previous=state.getStringArrayList("phlibrary_history");
+            if(previous!=null)phLibraryHistory.addAll(previous);
+        }
+        if(phLibraryName!=null&&!phLibraryName.isEmpty()){
+            showPhLibraryBook(phLibraryName);
+            if(state!=null){
+                int scrollY=state.getInt("phlibrary_scroll",0);
+                if(phLibraryScroll!=null)phLibraryScroll.post(()->phLibraryScroll.scrollTo(0,scrollY));
+            }
+        }
+        else if(key!=null&&!key.isEmpty())loadKey(key);
+        else if(query!=null&&!query.trim().isEmpty()){
+            search.setText(query);
+            lookup(query);
+        }else{
+            content.addView(FieldVisuals.context(this,
+                "Search names with at least two letters, or browse the reference accounts below."));
+            OfflineFieldLibrary.addSpeciesDirectory(this,content,scientific->{
+                search.setText(scientific);
+                search.dismissDropDown();
+                lookup(scientific);
+            });
+        }
+    }
+    private static String originalReference(String source){
+        String label=source==null?"":source.toLowerCase(Locale.ROOT);
+        if(label.contains("checklist of amphibians of the philippines"))
+            return "https://www.researchgate.net/publication/360034142_Checklist_of_amphibians_of_the_Philippines_version_2025-1";
+        if(label.contains("checklist of reptiles of the philippines"))
+            return "https://www.researchgate.net/publication/362324825_Checklist_of_reptiles_of_the_Philippines_version_2026-1";
+        if(label.contains("mammal diversity database"))
+            return "https://doi.org/10.5281/zenodo.21654811";
+        if(label.contains("avilist"))
+            return "https://doi.org/10.2173/avilist.v2026";
+        return "";
+    }
+    private static String col(Cursor c,String field){
+        int i=c.getColumnIndex(field);
+        return i<0||c.isNull(i)?"":c.getString(i).trim();
+    }
+    private void lookup(String input){
+        String query=input==null?"":input.trim();
+        if(query.isEmpty())return;
+        int divider=query.lastIndexOf(" · ");
+        if(divider>=0)query=query.substring(divider+3).trim();
+        String pattern="%"+TaxonSearchPolicy.escapeLike(query.toLowerCase(Locale.ROOT))+"%";
+        String catalog=archivedProfileScope?"likas_prior_taxon_catalog":"taxon_catalog";
+        String synonyms=archivedProfileScope?"likas_prior_taxon_synonyms":"taxon_synonyms";
+        ArrayList<String> names=new ArrayList<>(),keys=new ArrayList<>();
+        java.util.HashSet<String> acceptedNames=new java.util.HashSet<>();
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT taxon_key,common_name,scientific_name FROM "+catalog+" WHERE ("+
+                "taxon_key=? OR LOWER(scientific_name)=LOWER(?) OR "+
+                "LOWER(common_name)=LOWER(?) OR "+
+                "LOWER(scientific_name) LIKE ? ESCAPE '!' OR "+
+                "LOWER(common_name) LIKE ? ESCAPE '!' OR EXISTS ("+
+                "SELECT 1 FROM "+synonyms+" a WHERE a.taxon_key="+catalog+".taxon_key "+
+                "AND LOWER(a.alias_name) LIKE ? ESCAPE '!')) "+
+                "AND (?='' OR taxon_group=?) "+
+                "ORDER BY CASE WHEN LOWER(scientific_name)=LOWER(?) THEN 0 ELSE 1 END,"+
+                "CASE WHEN taxon_key LIKE 'STARTER:%' THEN 1 ELSE 0 END,"+
+                "scientific_name COLLATE NOCASE LIMIT 64",
+            new String[]{query,query,query,pattern,pattern,pattern,searchGroup,searchGroup,query})){
+            while(c.moveToNext()){
+                String common=c.isNull(1)?"":c.getString(1);
+                String scientific=c.getString(2);
+                // An old starter and an official checklist may describe one species.
+                // Prefer the attributed source above the starter, never duplicate it.
+                if(!acceptedNames.add(scientific.toLowerCase(Locale.ROOT)))continue;
+                keys.add(c.getString(0));
+                names.add((common.isEmpty()?"":common+" · ")+scientific);
+            }
+        }catch(Exception ex){showMessage("Catalog search unavailable.");return;}
+        if(keys.isEmpty()){
+            showMessage("No matching species in the offline catalog.");
+            return;
+        }
+        if(keys.size()==1){loadKey(keys.get(0));return;}
+        final String[] ids=keys.toArray(new String[0]);
+        new AlertDialog.Builder(this).setTitle("Select a species")
+            .setItems(names.toArray(new String[0]),(d,which)->loadKey(ids[which]))
+            .setNegativeButton("Cancel",null).show();
+    }
+    /**
+     * Publisher references open externally. Offline photographs use attributed
+     * CC preview files shipped separately by the licensed reference pack.
+     */
+    private void sourceLink(String title,String candidate,String prefix){
+        if(candidate==null||!candidate.startsWith(prefix))return;
+        Button button=UiKit.button(this,title,"secondary");
+        content.addView(button);
+        button.setOnClickListener(v->{
+            try{
+                Intent open=new Intent(Intent.ACTION_VIEW,Uri.parse(candidate));
+                startActivity(open);
+            }catch(Exception ex){
+                new AlertDialog.Builder(this)
+                    .setMessage("No app is available to open this reference link.")
+                    .setPositiveButton("Close",null).show();
+            }
+        });
+    }
+    private void showSearchControls(){
+        if(phLibraryHeaderTitle!=null)phLibraryHeaderTitle.setText("Species Library");
+        if(searchRow!=null)searchRow.setVisibility(View.VISIBLE);
+        if(groupFilter!=null)groupFilter.setVisibility(View.VISIBLE);
+        if(conservation!=null)conservation.setVisibility(View.VISIBLE);
+        if(screenCaption!=null)screenCaption.setVisibility(View.VISIBLE);
+    }
+    private void showMessage(String message){
+        showSearchControls();
+        content.removeAllViews();
+        content.addView(text(message,15,false));
+    }
+
+    /** Harmonized PAIC714 source attributes, without mixing retired catalog profiles. */
+    private void showMindanaoMasterRecord(SQLiteDatabase database,Cursor c,String key){
+        content.addView(FieldVisuals.section(this,
+            "Mindanao PAIC checklist · 714 species","Offline species reference"));
+        paragraph("Order and family",col(c,"order_name")+" · "+col(c,"family"));
+        paragraph("Distribution statement",checked(col(c,"distribution_text")));
+        paragraph("IUCN global category (source snapshot)",
+            checked(col(c,"iucn_red_list")));
+        paragraph("Philippine DENR category (source snapshot)",
+            checked(col(c,"ph_red_list")));
+        try(Cursor attrs=database.rawQuery(
+            "SELECT habitat_text,elevation_text,source_version "+
+            "FROM likas_master_attributes WHERE taxon_key=? LIMIT 1",
+            new String[]{key})){
+            if(attrs.moveToFirst()){
+                paragraph("Habitat guide",checked(attrs.getString(0)));
+                paragraph("Elevation guide",checked(attrs.getString(1)));
+            }else{
+                paragraph("Habitat and elevation","Unverified in this installation");
+            }
+        }catch(Exception error){
+            paragraph("Habitat and elevation","Reference attributes unavailable");
+        }
+        paragraph("Source edition",col(c,"source")+" · "+col(c,"source_version"));
+        paragraph("About this record","Distribution and elevation are checklist "+
+            "references, not a detection at the observer\'s GPS position. "+
+            "IUCN and DENR fields are separate source snapshots.");
+        if(OfflinePhotoEvidence.hasOfflineTaxon(this,col(c,"scientific_name")))
+            OfflinePhotoEvidence.addForTaxon(this,content,col(c,"scientific_name"));
+    }
+    private static String checked(String value){
+        return value==null||value.trim().isEmpty()||value.equals("—")?
+            "Unverified / not supplied":value;
+    }
+
+    private void backWithinBook(){
+        if(currentPhLibraryName!=null&&!phLibraryHistory.isEmpty()){
+            String back=phLibraryHistory.removeLast();
+            currentPhLibraryName=null; // Back navigates rather than adding a new forward-history entry.
+            showPhLibraryBook(back);
+        }else finish();
+    }
+    private void showPhLibraryBook(String scientific) {
+        if(currentPhLibraryName!=null&&!currentPhLibraryName.equalsIgnoreCase(scientific))
+            phLibraryHistory.addLast(currentPhLibraryName);
+        currentPhLibraryName=scientific;
+        if(phLibraryHeaderTitle!=null)phLibraryHeaderTitle.setText("Species");
+        if(phLibraryBack!=null){
+            phLibraryBack.setText("Back");
+            phLibraryBack.setTextSize(14);
+            phLibraryBack.setLayoutParams(new LinearLayout.LayoutParams(
+                dp(getResources().getConfiguration().fontScale>=1.6f?104:68),dp(48)));
+        }
+        if(phLibraryPage!=null)phLibraryPage.setPadding(dp(16),dp(10),dp(16),dp(8));
+        searchRow.setVisibility(View.GONE);
+        groupFilter.setVisibility(View.GONE);
+        conservation.setVisibility(View.GONE);
+        screenCaption.setVisibility(View.GONE);
+        content.removeAllViews();
+        if(!PhLibraryBook01.render(this,content,scientific,this::showPhLibraryBook)) {
+            showMessage("This PHLibrary species account is unavailable.");
+            return;
+        }
+        if(phLibraryScroll!=null)phLibraryScroll.post(()->phLibraryScroll.scrollTo(0,0));
+    }
+    private void loadKey(String key){
+        SQLiteDatabase database=db.getReadableDatabase();
+        boolean prior=false;
+        try(Cursor present=database.rawQuery(
+                "SELECT 1 FROM taxon_catalog WHERE taxon_key=? LIMIT 1",
+                new String[]{key})){
+            prior=!present.moveToFirst();
+        }
+        archivedProfileScope=prior;
+        if(detailSuggestions!=null)detailSuggestions.setArchivedCatalog(prior);
+        final String catalog=prior?"likas_prior_taxon_catalog":"taxon_catalog";
+        final String habitatCatalog=prior?
+            "likas_prior_taxon_habitat_profiles":"taxon_habitat_profiles";
+        final String synonymCatalog=prior?
+            "likas_prior_taxon_synonyms":"taxon_synonyms";
+        final String evidenceCatalog=prior?
+            "likas_prior_taxon_occurrence_evidence":"taxon_occurrence_evidence";
+        try(Cursor c=database.rawQuery(
+            "SELECT * FROM "+catalog+" WHERE taxon_key=? LIMIT 1",new String[]{key})){
+            if(!c.moveToFirst()){showMessage("Species record unavailable.");return;}
+            String scientific=col(c,"scientific_name");
+            // Current Greater Mindanao taxa open the complete one-paragraph
+            // educational account. Archived profile data retain their original view.
+            if(!prior && PhLibraryBook01.has(this,scientific)) {
+                showPhLibraryBook(scientific);
+                return;
+            }
+            content.removeAllViews();
+            searchRow.setVisibility(View.GONE);
+            groupFilter.setVisibility(View.GONE);
+            conservation.setVisibility(View.GONE);
+            screenCaption.setVisibility(View.GONE);
+            Button searchAnother=UiKit.button(this,"⌕  Search another species","quiet");
+            searchAnother.setContentDescription("Search another wildlife species");
+            LinearLayout.LayoutParams searchLp=new LinearLayout.LayoutParams(-1,-2);
+            searchAnother.setMinimumHeight(dp(stackedSearch?64:48));
+            searchLp.bottomMargin=dp(9);
+            content.addView(searchAnother,searchLp);
+            searchAnother.setOnClickListener(v->{
+                showSearchControls();
+                search.requestFocus();
+                search.selectAll();
+                InputMethodManager keyboard=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                if(keyboard!=null)keyboard.showSoftInput(search,InputMethodManager.SHOW_IMPLICIT);
+            });
+            TextView common=text(col(c,"common_name"),21,true);
+            if(!common.getText().toString().isEmpty())content.addView(common);
+            TextView latin=text(scientific,19,true);
+            latin.setTypeface(null,Typeface.BOLD_ITALIC);
+            latin.setPadding(0,dp(3),0,dp(3));
+            content.addView(latin);
+            // A privately installed Mindanao checklist replaces the legacy
+            // reference profile, not the historical identification record.
+            if(key.startsWith("LIKAS725:")){
+                showMindanaoMasterRecord(database,c,key);
+                return;
+            }
+            // All 96 prioritized taxa share one concise, citation-backed account.
+            // Preserve the complete legacy catalog for the remaining source names.
+            if(Rc7FieldAccounts.priority(this,scientific)){
+                Rc11PrioritySpeciesView.add(this,content,c,scientific);
+                return;
+            }
+            OfflinePhotoEvidence.addForTaxon(this,content,scientific);
+            boolean detailed=OfflineFieldLibrary.addSpecies(this,content,scientific);
+            boolean literature=Rc7LiteratureNotes.add(this,content,scientific);
+            boolean rc7=Rc7FieldAccounts.add(this,content,scientific);
+            Rc9ProfileCompleteness.add(this,content,scientific);
+            content.addView(FieldVisuals.section(this,"Identification and taxonomy",""));
+            paragraph("Classification",col(c,"taxon_group")+" · "+
+                col(c,"order_name")+" · "+col(c,"family"));
+            paragraph("Taxonomic authority",col(c,"authority"));
+            paragraph("Endemism / origin",col(c,"distribution_status"));
+            paragraph("Philippine distribution in source",col(c,"distribution_text"));
+            content.addView(FieldVisuals.section(this,"Conservation references",""));
+            paragraph("IUCN category (source snapshot)",col(c,"iucn_red_list"));
+            paragraph("Philippine Red List category (source snapshot)",col(c,"ph_red_list"));
+            paragraph("CITES (source snapshot)",col(c,"cites"));
+            paragraph("Taxonomic note",col(c,"taxonomic_note"));
+            if(Rc7FieldAccounts.priority(this,scientific)){
+                Button guide=UiKit.button(this,"Compare field traits and habitat evidence","secondary");
+                content.addView(guide);
+                guide.setOnClickListener(v->startActivity(
+                    new Intent(this,Rc8TraitComparisonActivity.class)
+                        .putExtra("scientific_name",scientific)));
+            }
+            if(Rc7FieldAccounts.priority(this,scientific)){
+                Button differences=UiKit.button(this,"Compare documented lookalike characters","quiet");
+                differences.setOnClickListener(v->startActivity(
+                    new Intent(this,Rc9DifferentialActivity.class).putExtra("scientific_name",scientific)));
+                content.addView(differences);
+            }
+            if(OfflinePhotoEvidence.hasOfflineTaxon(this,scientific)){
+                Button pictures=UiKit.button(this,"Compare offline wildlife photographs","secondary");
+                content.addView(pictures);
+                pictures.setOnClickListener(v->startActivity(
+                    new Intent(this,Rc8PhotoComparisonActivity.class)
+                        .putExtra("scientific_name",scientific)));
+            }
+            if(DiagnosticGuideActivity.hasProfile(this,scientific)){
+                Button legacy=UiKit.button(this,"Compare source-checked ID characters","quiet");
+                content.addView(legacy);
+                legacy.setOnClickListener(v->startActivity(
+                    new Intent(this,DiagnosticGuideActivity.class)
+                        .putExtra("scientific_name",scientific)));
+            }
+            paragraph("Original source",col(c,"source")+" · "+col(c,"source_version"));
+            paragraph("Source publication",originalReference(col(c,"source")));
+            sourceLink("WBCP checklist source",col(c,"source_url"),
+                "https://birdwatch.ph/");
+            sourceLink("Bird photographs and identification on eBird",
+                col(c,"ebird_url"),"https://ebird.org/species/");
+            sourceLink("Bird vocalizations on xeno-canto",
+                col(c,"sound_url"),"https://www.xeno-canto.org/species/");
+            paragraph("Source record ID",col(c,"taxon_key"));
+            Button iNat=UiKit.button(this,"iNaturalist photos · dreidrei (online)","quiet");
+            iNat.setOnClickListener(v->startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://www.inaturalist.org/observations?user_id=dreidrei"+
+                    "&taxon_name="+Uri.encode(scientific)+"&photos=true"))));
+            content.addView(iNat);
+            content.addView(FieldVisuals.section(this,"Habitat and elevation",""));
+            try(Cursor ecology=database.rawQuery(
+                "SELECT habitat_codes,elevation_min_m,elevation_max_m,"+
+                    "source,source_version,review_status,source_url,evidence_note "+
+                    "FROM "+habitatCatalog+" WHERE taxon_key=? LIMIT 1",
+                new String[]{key})){
+                if(ecology.moveToFirst()){
+                    String habitats=ecology.getString(0).replace("|",", ");
+                    paragraph("Reviewed habitat codes",habitats);
+                    String low=ecology.isNull(1)?"Unassessed":ecology.getString(1)+" m";
+                    String high=ecology.isNull(2)?"Unassessed":ecology.getString(2)+" m";
+                    paragraph("Elevation range","Minimum: "+low+
+                        " · Maximum: "+high);
+                    paragraph("Habitat reference",ecology.getString(3)+
+                        " ("+ecology.getString(4)+")");
+                    paragraph("Scope and limitations",
+                        ecology.isNull(7)?"":ecology.getString(7));
+                    if(!ecology.isNull(6)&&
+                        ecology.getString(6).startsWith("https://")){
+                        String cited=ecology.getString(6);
+                        sourceLink("Habitat source",cited,"https://");
+                    }
+                }
+            }
+            StringBuilder names=new StringBuilder();
+            try(Cursor aliases=database.rawQuery(
+                "SELECT alias_name,source,source_version FROM "+synonymCatalog+" "+
+                    "WHERE taxon_key=? ORDER BY alias_name COLLATE NOCASE LIMIT 30",
+                new String[]{key})){
+                while(aliases.moveToNext()){
+                    if(names.length()>0)names.append("\n");
+                    names.append(aliases.getString(0));
+                    if(!aliases.isNull(1)&&!aliases.getString(1).isEmpty())
+                        names.append(" (").append(aliases.getString(1))
+                            .append(" · ").append(aliases.getString(2)).append(")");
+                }
+            }
+            if(names.length()>0)paragraph("Previous scientific names",names.toString());
+            content.addView(FieldVisuals.section(this,"Regional source evidence",""));
+            StringBuilder regional=new StringBuilder();
+            try(Cursor evidence=database.rawQuery(
+                "SELECT area_type,area_label,evidence_basis,evidence_text,"+
+                    "source,source_version,source_url,review_status "+
+                    "FROM "+evidenceCatalog+" WHERE taxon_key=? "+
+                    "ORDER BY area_type,area_label LIMIT 60",new String[]{key})){
+                while(evidence.moveToNext()){
+                    if(regional.length()>0)regional.append("\n\n");
+                    regional.append(evidence.getString(1)).append(" (")
+                        .append(evidence.getString(0)).append(") · ")
+                        .append(evidence.getString(7)).append("\n")
+                        .append(evidence.getString(3)).append("\n")
+                        .append(evidence.getString(4)).append(" · ")
+                        .append(evidence.getString(5));
+                    if(!evidence.isNull(6)&&!evidence.getString(6).isEmpty())
+                        regional.append("\n").append(evidence.getString(6));
+                }
+            }catch(Exception ignored){}
+            if(regional.length()>0)
+                paragraph("Regional occurrence evidence",regional.toString());
+            else paragraph("Regional occurrence evidence","No regional record in this catalog");
+        }catch(Exception ex){showMessage("Unable to read this species record.");}
+    }
+    @Override public void onBackPressed(){
+        if(currentPhLibraryName!=null&&!phLibraryHistory.isEmpty())backWithinBook();
+        else super.onBackPressed();
+    }
+
+    /** The system document picker can open local files or connected Drive documents. */
+    public void choosePrivateSpeciesPhoto(String scientific){
+        if(!PhLibraryBook01.has(this,scientific))return;
+        new AlertDialog.Builder(this)
+            .setTitle("Add photograph")
+            .setMessage("Select only a photograph you own or have permission to use. "+
+                "The app keeps a private offline copy, removes embedded location metadata, "+
+                "and does not verify species identification. The source file is unchanged.")
+            .setNegativeButton("Cancel",null)
+            .setPositiveButton("Choose photo",(dialog,which)->{
+                pendingPhotoTaxon=scientific;
+                Intent select=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                select.addCategory(Intent.CATEGORY_OPENABLE);
+                select.setType("image/*");
+                try{startActivityForResult(select,REQUEST_PERSONAL_SPECIES_PHOTO);}
+                catch(Exception ex){
+                    pendingPhotoTaxon=null;
+                    new AlertDialog.Builder(this).setMessage(
+                        "No photo picker is available on this device.")
+                        .setPositiveButton("Close",null).show();
+                }
+            }).show();
+    }
+    public void confirmRemovePrivateSpeciesPhoto(String scientific){
+        if(!PhLibrarySpeciesMedia.hasPersonalPhoto(this,scientific))return;
+        new AlertDialog.Builder(this).setTitle("Remove device photograph?")
+            .setMessage("Remove this species' private app copy? The source photograph in "+
+                "Drive or your device will not be touched.")
+            .setNegativeButton("Cancel",null)
+            .setPositiveButton("Remove",(d,w)->{
+                boolean removed=PhLibrarySpeciesMedia.removePrivate(this,scientific);
+                if(removed&&scientific.equalsIgnoreCase(currentPhLibraryName))
+                    showPhLibraryBook(scientific);
+                else if(!removed)new AlertDialog.Builder(this)
+                    .setMessage("Unable to remove the private photograph.")
+                    .setPositiveButton("Close",null).show();
+            }).show();
+    }
+    @Override protected void onActivityResult(int request,int result,Intent data){
+        super.onActivityResult(request,result,data);
+        if(request!=REQUEST_PERSONAL_SPECIES_PHOTO)return;
+        String scientific=pendingPhotoTaxon;pendingPhotoTaxon=null;
+        if(result!=RESULT_OK||data==null||data.getData()==null||
+            scientific==null||!PhLibraryBook01.has(this,scientific))return;
+        android.net.Uri chosen=data.getData();
+        new Thread(()->{
+            String failure=null;
+            try{PhLibrarySpeciesMedia.importPrivate(this,scientific,chosen);}
+            catch(Exception ex){failure=ex.getMessage();}
+            final String error=failure;
+            runOnUiThread(()->{
+                if(isFinishing()||isDestroyed())return;
+                if(error==null){
+                    if(scientific.equalsIgnoreCase(currentPhLibraryName))
+                        showPhLibraryBook(scientific);
+                }else{
+                    new AlertDialog.Builder(this).setTitle("Photo not imported")
+                        .setMessage(error).setPositiveButton("Close",null).show();
+                }
+            });
+        },"phlibrary-private-photo-copy").start();
+    }
+    @Override protected void onSaveInstanceState(Bundle out){
+        out.putString("pending_photo_taxon",pendingPhotoTaxon);
+        if(currentPhLibraryName!=null){
+            out.putString("phlibrary_current",currentPhLibraryName);
+            out.putStringArrayList("phlibrary_history",new ArrayList<>(phLibraryHistory));
+            if(phLibraryScroll!=null)
+                out.putInt("phlibrary_scroll",phLibraryScroll.getScrollY());
+        }
+        super.onSaveInstanceState(out);
+    }
+    @Override protected void onDestroy(){db.close();super.onDestroy();}
+}

@@ -6,8 +6,9 @@ android {
         applicationId 'org.phwildlife.survey.beta08'
         minSdk 26
         targetSdk 34
-        versionCode 17
-        versionName '0.15.0-beta'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        versionCode 172
+        versionName '0.27.3-rc112-minimal-ui-compact-icon'
     }
     signingConfigs {
         debug {
@@ -23,4 +24,158 @@ android {
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
 
-dependencies { testImplementation 'junit:junit:4.13.2' }
+/**
+ * Library-specific optical display crops are derived from the existing approved/
+ * generated PNG source files. These are build outputs, never replacement masters.
+ * Python stdlib only: reproducible for local and CI Gradle builds.
+ */
+android.sourceSets.main.res.srcDirs += ["${buildDir}/generated/rc65/res"]
+tasks.register('prepareRc65LibraryIcons', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'python3', 'scripts/prepare_rc65_library_icons.py'
+    inputs.files(
+        file('src/main/res/drawable-nodpi/likas_generated_conservation.png'),
+        file('src/main/res/drawable-nodpi/likas_generated_habitat_links.png'),
+        file('src/main/res/drawable-nodpi/likas_approved_camera.png'),
+        file('src/main/res/drawable-nodpi/likas_approved_reports.png'))
+    outputs.dir(file("${buildDir}/generated/rc65/res"))
+}
+tasks.configureEach { task ->
+    // AGP's resource producers/readers all see this added source directory.
+    // Explicit dependencies are required by Gradle 8.11, not just mergeResources.
+    if (task.name != 'prepareRc65LibraryIcons' &&
+        (task.name.contains('Resources') ||
+         task.name.endsWith('SourceSetPaths') ||
+         task.name.startsWith('extractDeepLinks') ||
+         task.name.contains('Debug') || task.name.contains('Release'))) {
+        task.dependsOn tasks.named('prepareRc65LibraryIcons')
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:core:1.6.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+}
+
+/**
+ * The owner has authorized release of the original 714-species checklist, and
+ * the ESA WorldCover derivative is CC BY 4.0 with source attribution.
+ * Both files are public app assets and must pass exact byte checksums at build.
+ * There is no manual reference download, private Gradle input or fallback build.
+ */
+tasks.register("verifyBundledPaicReferences") {
+    doLast {
+        def expected = [
+            (file("src/main/assets/paic714_master.csv")):
+                "1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959",
+            (file("src/main/assets/paic_worldcover2020_500m.txt")):
+                "e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089"
+        ]
+        expected.each { source, approved ->
+            if (!source.isFile())
+                throw new GradleException("Public reference missing: "+source.name)
+            def digest = java.security.MessageDigest.getInstance("SHA-256")
+                .digest(source.bytes)
+                .collect { String.format("%02x", it & 0xff) }.join("")
+            if(digest != approved)
+                throw new GradleException("Incorrect public reference: "+source.name)
+        }
+        logger.lifecycle("Verified public 714-species catalog and ESA WorldCover map")
+    }
+}
+tasks.named("preBuild") { dependsOn("verifyBundledPaicReferences") }
+
+
+/**
+ * The locked owner-selected mountain ribbon PNG has not yet been transferred
+ * to GitHub binary source. The splash uses only a transparent mountain-derived
+ * PNG; retain original launcher tile. Reject missing or swapped art.
+ * Expected file is the exact 1254px locked PNG (unaltered bytes).
+ */
+tasks.register("verifyApoArtwork") {
+    doLast {
+        def master = file("src/main/assets/apo_official_master.png")
+        def expectedSha = "6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7"
+        if(!master.isFile())
+            throw new GradleException("APO owner-selected icon PNG missing; APK build blocked")
+        def digest = java.security.MessageDigest.getInstance("SHA-256")
+            .digest(master.bytes).collect {
+                String.format("%02x", it & 0xff)
+            }.join("")
+        if(digest != expectedSha)
+            throw new GradleException("APO owner-selected icon checksum mismatch")
+        def compactIcon = file("src/main/assets/apo_compact_launcher_master.png")
+        if(!compactIcon.isFile() || java.security.MessageDigest.getInstance("SHA-256")
+            .digest(compactIcon.bytes).collect { String.format("%02x", it & 0xff) }.join("") !=
+            "828b156748e5614c7a9b74efe90ee0272b1336b7f92334ebe5702a7959332c7b")
+            throw new GradleException("Approved APO compact launcher icon missing or modified")
+        def derivatives = [
+            (file("src/main/res/drawable-nodpi/apo_splash_mark.png")):
+                "a194803302b7e6c884068ff4e3e3926ba4a4e4110986e599e09a2e6dd7fd22bc",
+            (file("src/main/res/drawable-nodpi/apo_launcher_foreground.png")):
+                "2a60cc5cda8dba006c1c713f15d565c4599ad5ec1bcaebadc7690cb66445af00"
+        ]
+        derivatives.each { source, approved ->
+            if(!source.isFile())
+                throw new GradleException("APO drawable missing: "+source.name)
+            def artifactSha = java.security.MessageDigest.getInstance("SHA-256")
+                .digest(source.bytes).collect {
+                    String.format("%02x", it & 0xff)
+                }.join("")
+            if(artifactSha != approved)
+                throw new GradleException("APO drawable digest mismatch: "+source.name)
+        }
+    }
+}
+tasks.named("preBuild") { dependsOn("verifyApoArtwork") }
+
+
+/** Adaptive foreground from approved smaller ivory/jade ribbon master. */
+android.sourceSets.main.res.srcDirs += ["${buildDir}/generated/apo-compact/res"]
+tasks.register('prepareApoCompactLauncher', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'python3', 'scripts/prepare_apo_compact_launcher.py'
+    inputs.file('src/main/assets/apo_compact_launcher_master.png')
+    outputs.dir(file("${buildDir}/generated/apo-compact/res"))
+}
+tasks.configureEach { task ->
+    if (task.name != 'prepareApoCompactLauncher' &&
+        (task.name.contains('Resources') || task.name.endsWith('SourceSetPaths') ||
+         task.name.startsWith('extractDeepLinks') ||
+         task.name.contains('Debug') || task.name.contains('Release'))) {
+        task.dependsOn tasks.named('prepareApoCompactLauncher')
+    }
+}
+tasks.named('preBuild') { dependsOn('prepareApoCompactLauncher') }
+
+// RC109 native species thumbnails are generated from hash-locked owner-supplied
+// source JPEGs at build time. No device/Drive import or network is required.
+tasks.register('prepareOwnerNativeSpeciesPhotos', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'python3', 'scripts/prepare_owner_native_species_photos.py'
+}
+tasks.named('preBuild') { dependsOn('prepareOwnerNativeSpeciesPhotos') }
+tasks.configureEach { t ->
+    if (t.name.contains('Merge') && t.name.contains('Assets') ||
+        t.name.startsWith('merge') && t.name.endsWith('Assets'))
+        t.dependsOn tasks.named('prepareOwnerNativeSpeciesPhotos')
+}
+
+
+// Owner-directed RC110 photo gallery. APK assets must be generated before
+// packaging; no device-side Drive import or network access is required.
+tasks.register('prepareDriveHighResGallery', Exec) {
+    workingDir rootProject.projectDir
+    commandLine 'python3', 'scripts/prepare_drive_gallery.py'
+    inputs.file(file('src/main/assets/offline_drive_gallery_manifest_v1.json'))
+    inputs.file(file('../scripts/prepare_drive_gallery.py'))
+    outputs.files((1..333).collect { file(String.format('src/main/assets/offline_photos/drive_%04d.jpg',it)) })
+}
+tasks.named('preBuild') { dependsOn('prepareDriveHighResGallery') }
+tasks.configureEach { t ->
+    if (t.name.toLowerCase().contains('merge') && t.name.toLowerCase().contains('assets'))
+        t.dependsOn tasks.named('prepareDriveHighResGallery')
+}

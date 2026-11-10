@@ -1,4 +1,6 @@
 # APO repository cleanup and conflict audit
+
+> **Historical snapshot (10 November 2026):** The branch statuses below were accurate at audit time. The later controlled promotion of RC112 to `main` is documented in `docs/APO_MAIN_INTEGRATION_2026_11_11.md`. Preserve this audit as dated evidence.
 **Audited:** 10 November 2026 (Asia/Manila)  
 **Repository:** `andreivonmariano-dotcom/Wildlife-survey-app`  
 **Status:** Verified structural/documentation cleanup; Android source cleanup and branch integration pending. This report does not claim a signed APK or complete codebase migration.

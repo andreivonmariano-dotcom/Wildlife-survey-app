@@ -1,0 +1,70 @@
+"""RC38 illustrated navigation, science-safe collection cards and offline boundaries."""
+import unittest
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[1]
+JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
+
+def src(name):
+    return (JAVA/name).read_text()
+
+class IllustratedUiContract(unittest.TestCase):
+    def test_three_destinations_and_illustrated_portal(self):
+        portal=src("LikasPortalUi.java")
+        welcome=src("WelcomeActivity.java")
+        for piece in ("public static View tile(", "public static View mini(",
+                      "new GradientDrawable(", "new RippleDrawable(",
+                      'case "bird":','case "frog":','case "mammal":'):
+            self.assertIn(piece,portal)
+        home=welcome.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
+        for title in ('"BioTools"','"PHLibrary"',):
+            self.assertIn(title,home)
+        self.assertIn("Coming later: PHMaps · BioDiscover",home)
+        self.assertIn("ApoHomeUi.header(this,",home)
+        self.assertIn("ApoHomeUi.resume(this,",home)
+        self.assertNotIn("LikasPortalUi.tile(",home)
+        self.assertNotIn("LikasPortalUi.hero(",home)
+        field=welcome.split("private void fieldworkHub(){",1)[1].split("/** Short status caption",1)[0]
+        for label in ('"Birds"','"Herpetofauna"','"Mammals"',
+                      '"Current survey"','"New survey"','"Resume Survey"'):
+            self.assertIn(label,field)
+        self.assertIn("ApoHomeUi.module(this,index,title,detail,tap)",welcome)
+        self.assertNotIn("LikasPortalUi.action(this,title,detail,art,tap)",welcome)
+    def test_library_is_separate_and_visual(self):
+        library=src("LikasLibraryActivity.java")
+        self.assertIn("PhLibraryPhotoHero.create(this",library)
+        self.assertIn("tile(body,",library)
+        self.assertNotIn("LikasPortalUi.libraryFeature",library)
+        self.assertNotIn('"Photo comparisons"',library)
+        self.assertIn("HabitatSpeciesEvidenceActivity.class",library)
+        self.assertNotIn("MainActivity.class",library)
+        settings=src("LikasSettingsActivity.java")
+        self.assertIn("ApoHomeUi.tool(this,",settings)
+        self.assertIn("FieldBackupActivity.class",settings)
+        self.assertIn("DataManagementActivity.class",settings)
+        self.assertIn("ImportActivity.class",settings)
+        self.assertIn("AuditActivity.class",settings)
+        self.assertIn('getBoolean("reduced_motion",false)',settings)
+
+    def test_cards_avoid_invented_classification(self):
+        cards=src("LikasDiscoveryActivity.java")
+        for piece in ('int severity=0,accent=UiKit.BORDER;',
+                      'if(status==null)',
+                      'for(String authority:new String[]{"iucn","denr"})',
+                      'appendLabel(card,labelText',
+                      '"Status unverified"',
+                      'new GradientDrawable(', 'severity>0'):
+            self.assertIn(piece,cards)
+        self.assertNotIn('"Priority species"',cards)
+        for unsafe in ("getWritableDatabase(", "execSQL(", "deleteDatabase("):
+            self.assertNotIn(unsafe,cards)
+
+    def test_app_identity_is_stable(self):
+        build=(ROOT/"app/build.gradle").read_text()
+        self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",build).group(1)),109)
+        self.assertIn("versionName '0.27.3-rc",build)
+        self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
+        self.assertIn("super(context,NAME,null,29)",src("FieldDb.java"))
+
+if __name__=="__main__":
+    unittest.main()

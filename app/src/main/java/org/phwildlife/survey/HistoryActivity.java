@@ -8,6 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.text.InputType;
+import android.text.TextWatcher;
+import android.text.Editable;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.Gravity;
+import android.graphics.Typeface;
 import android.view.View;
 import android.widget.*;
 import org.json.JSONObject;
@@ -17,56 +23,353 @@ public class HistoryActivity extends Activity {
     private FieldDb db;
     private LinearLayout rows,root;
     private String eventFilter;
-    private final int INK=Color.rgb(29,57,40);
+    private String outcomeFilter="all";
+    private String surveySearch="";
+    private final Handler searchHandler=new Handler(Looper.getMainLooper());
+    private Runnable pendingSearch;
+    private static final String OUTCOME_SQL=SurveyOutcomeSql.RESOLVED;
+    private static final String[] OUTCOME_LABELS={
+        "All outcomes","Complete","Incomplete","Canceled / Not counted","Active"};
+    private static final String[] OUTCOME_VALUES={
+        "all","complete","incomplete","not_counted","active"};
+    private static final int PAGE_SIZE=40;
+    private int surveyOffset=0,observationOffset=0;
+    private final int INK=UiKit.INK;
     private int dp(int value){return (int)(value*getResources().getDisplayMetrics().density+0.5f);}
     private LinearLayout column(){LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;}
     private TextView text(String val,int size){TextView t=new TextView(this);t.setText(val);t.setTextSize(size);t.setTextColor(INK);t.setPadding(dp(5),dp(7),dp(5),dp(7));return t;}
     private Button btn(String val){return UiKit.button(this,val,"secondary");}
-    private EditText field(String hint,String init){EditText v=new EditText(this);v.setHint(hint);v.setText(init==null?"":init);v.setSingleLine(true);return v;}
-    @Override public void onCreate(Bundle b){super.onCreate(b);db=new FieldDb(this);eventFilter=getIntent().getStringExtra("event_id");draw();}
-    @Override protected void onDestroy(){super.onDestroy();db.close();}
+    private boolean largeText(){return getResources().getConfiguration().fontScale>=1.60f;}
+    private int actionDp(){return FieldLayoutPolicy.actionHeightDp(
+        getResources().getConfiguration().fontScale);}
+    private EditText field(String hint,String init){
+        EditText v=new EditText(this);
+        v.setHint(hint);
+        v.setText(init==null?"":init);
+        v.setSingleLine(true);
+        UiKit.fieldInput(this,v);
+        return v;
+    }
+    @Override public void onCreate(Bundle b){
+        super.onCreate(b);
+        db=new FieldDb(this);
+        eventFilter=getIntent().getStringExtra("event_id");
+        draw();
+        long focus=getIntent().getLongExtra("focus_record_id",-1L);
+        // Deep links are permitted only within the specified survey event.
+        if(focus>0&&eventFilter!=null&&root!=null)
+            root.post(()->recordDetail(focus));
+    }
+    @Override protected void onDestroy(){
+        searchHandler.removeCallbacksAndMessages(null);
+        db.close();
+        super.onDestroy();
+    }
     private void draw(){
-        root=column();root.setBackgroundColor(Color.rgb(247,249,247));root.setPadding(dp(12),dp(12),dp(12),dp(12));
-        root.addView(text(eventFilter==null?"Survey history":"Survey observations",23));
-        Button back=btn(eventFilter==null?"← Home":"← All surveys");
-        back.setOnClickListener(v->{if(eventFilter==null)finish();else{eventFilter=null;draw();}});
-        root.addView(back);
+        root=column();root.setBackgroundColor(UiKit.BG);
+        root.setPadding(dp(LikasDesignSystem.SCREEN_GUTTER),
+            dp(LikasDesignSystem.SPACE_MD),
+            dp(LikasDesignSystem.SCREEN_GUTTER),
+            dp(LikasDesignSystem.SPACE_SM));
+        root.addView(UiKit.navigationHeader(this,
+            eventFilter==null?(largeText()?"History":"Survey history"):"Observations",
+            eventFilter==null?"Field Records":fromRecorder()?"Live survey":"All surveys",
+            this::returnToCaller));
+        // Keep only the page header fixed. Filters must scroll on 320dp devices
+        // and under 200% font scaling so result rows remain reachable.
         ScrollView scroll=new ScrollView(this);
-        rows=column();scroll.addView(rows);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
+        scroll.setFillViewport(true);
+        LinearLayout scrollBody=column();
+        scrollBody.setPadding(0,dp(4),0,dp(22));
+        scroll.addView(scrollBody);
+        LinearLayout filters=column();
+        if(eventFilter==null){
+            filters.addView(ApoHomeUi.section(this,"Saved surveys",null));
+            Spinner outcomes=new Spinner(this);
+            outcomes.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_dropdown_item,OUTCOME_LABELS));
+            for(int i=0;i<OUTCOME_VALUES.length;i++)
+                if(OUTCOME_VALUES[i].equals(outcomeFilter)){outcomes.setSelection(i);break;}
+            outcomes.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+                @Override public void onItemSelected(android.widget.AdapterView<?> parent,
+                        View view,int position,long id){
+                    String selected=OUTCOME_VALUES[position];
+                    if(selected.equals(outcomeFilter))return;
+                    outcomeFilter=selected;surveyOffset=0;
+                    if(rows!=null){rows.removeAllViews();surveys();}
+                }
+                @Override public void onNothingSelected(android.widget.AdapterView<?> parent){}
+            });
+            outcomes.setContentDescription("Filter saved surveys by outcome");
+            filters.addView(UiKit.caption(this,"Survey status"));
+            filters.addView(outcomes,new LinearLayout.LayoutParams(-1,
+                dp(largeText()?72:56)));
+            EditText search=new EditText(this);search.setSingleLine(true);
+            search.setTextSize(LikasDesignSystem.TEXT_BODY);
+            search.setHint("Search surveys");
+            search.setContentDescription("Search survey group, method, station or date");
+            UiKit.fieldInput(this,search);
+            search.setText(surveySearch);
+            LinearLayout searchRow=new LinearLayout(this);
+            searchRow.setOrientation(LinearLayout.HORIZONTAL);
+            searchRow.setGravity(Gravity.CENTER_VERTICAL);
+            searchRow.addView(search,new LinearLayout.LayoutParams(0,-2,1f));
+            Button clear=UiKit.button(this,"Clear","quiet");
+            clear.setContentDescription("Clear survey search");
+            LinearLayout.LayoutParams clearLp=new LinearLayout.LayoutParams(
+                dp(76),-2);
+            clearLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+            searchRow.addView(clear,clearLp);
+            clear.setEnabled(!surveySearch.isEmpty());
+            clear.setOnClickListener(v->search.setText(""));
+            LinearLayout.LayoutParams searchLp=new LinearLayout.LayoutParams(-1,-2);
+            searchLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+            filters.addView(searchRow,searchLp);
+            search.addTextChangedListener(new TextWatcher(){
+                public void beforeTextChanged(CharSequence s,int st,int n,int after){}
+                public void onTextChanged(CharSequence s,int st,int before,int count){
+                    surveySearch=s.toString().trim();
+                    clear.setEnabled(!surveySearch.isEmpty());
+                    if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
+                    pendingSearch=()->{
+                        surveyOffset=0;
+                        if(eventFilter==null&&rows!=null){rows.removeAllViews();surveys();}
+                    };
+                    searchHandler.postDelayed(pendingSearch,220L);
+                }
+                public void afterTextChanged(Editable value){}
+            });
+        }
+        scrollBody.addView(filters);
+        rows=column();
+        scrollBody.addView(rows,new LinearLayout.LayoutParams(-1,-2));
+        root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         setContentView(root);
         if(eventFilter==null)surveys();else observations(eventFilter);
     }
+    /** Recorder-owned review closes directly to the live recorder.
+     * Browsing an archived survey from History returns to the survey list. */
+    private boolean fromRecorder(){
+        return "recorder".equals(getIntent().getStringExtra("navigation_origin"));
+    }
+    private void returnToCaller(){
+        if(eventFilter==null||fromRecorder()){
+            finish();
+            return;
+        }
+        if(pendingSearch!=null)searchHandler.removeCallbacks(pendingSearch);
+        eventFilter=null;
+        surveyOffset=0;
+        observationOffset=0;
+        draw();
+    }
+    @Override public void onBackPressed(){returnToCaller();}
     private void surveys(){
+        if(surveyOffset==0){
+            int complete=0,incomplete=0,excluded=0,active=0;
+            try(Cursor summary=db.getReadableDatabase().rawQuery(
+                "SELECT "+OUTCOME_SQL+",COUNT(*) FROM surveys s GROUP BY "+OUTCOME_SQL,
+                null)){
+                while(summary.moveToNext()){
+                    String state=summary.getString(0);
+                    int n=summary.getInt(1);
+                    if("complete".equals(state))complete=n;
+                    else if("incomplete".equals(state))incomplete=n;
+                    else if("not_counted".equals(state))excluded=n;
+                    else if("active".equals(state))active=n;
+                }
+                rows.addView(ApoHomeUi.note(this,
+                    complete+" complete · "+incomplete+" incomplete · "+
+                    excluded+" not counted · "+active+" active"));
+            }catch(Exception error){
+                rows.addView(ApoHomeUi.note(this,
+                    "Survey status counts unavailable; saved records can still be browsed."));
+            }
+        }
         try(Cursor c=db.getReadableDatabase().rawQuery(
-          "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),COALESCE(s.outcome,'active') FROM surveys s LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL GROUP BY s.id ORDER BY s.started DESC",null)){
-            if(c.getCount()==0)rows.addView(text("No saved surveys yet.",15));
+          "SELECT s.id,COALESCE(s.survey_profile,s.taxon_group,'Birds'),s.method,"+
+          "COALESCE(s.station_id,''),s.started,s.ended,s.complete,COUNT(r.id),"+
+          OUTCOME_SQL+" FROM surveys s "+
+          "LEFT JOIN field_records r ON r.event_id=s.id AND r.deleted_at IS NULL "+
+          "WHERE (?='all' OR "+OUTCOME_SQL+"=?) "+
+          "AND (COALESCE(s.survey_profile,s.taxon_group,'Birds') LIKE ? OR "+
+          "COALESCE(s.method,'') LIKE ? OR COALESCE(s.station_id,'') LIKE ? OR "+
+          "COALESCE(s.started,'') LIKE ?) "+
+          "GROUP BY s.id ORDER BY s.started DESC LIMIT ? OFFSET ?",
+          new String[]{outcomeFilter,outcomeFilter,"%"+surveySearch+"%",
+              "%"+surveySearch+"%","%"+surveySearch+"%","%"+surveySearch+"%",
+              String.valueOf(PAGE_SIZE),String.valueOf(surveyOffset)})){
+            int rowsThisPage=c.getCount();
+            if(rowsThisPage==0&&surveyOffset==0)
+                rows.addView(ApoHomeUi.note(this,"No matching surveys. Adjust the status or search text."));
             while(c.moveToNext()){
-                String event=c.getString(0),profile=c.getString(1),method=c.getString(2),site=c.getString(3),date=c.getString(4);
-                String state=c.getString(8).equals("not_counted")?"NOT COUNTED":c.isNull(5)?"Active":c.getInt(6)==1?"Completed":"Incomplete";
-                Button item=UiKit.button(this,profile+" · "+method+"\n"+site+" · "+date+"\n"+state+" · "+c.getInt(7)+" records",state.equals("NOT COUNTED")?"danger":"secondary");
-                item.setOnClickListener(v->{eventFilter=event;draw();});
-                rows.addView(item);
+                String event=c.getString(0),profile=c.getString(1),method=c.getString(2),site=c.getString(3),
+                    date=c.isNull(4)?"Date not recorded":c.getString(4);
+                String outcome=c.getString(8);
+                String state="not_counted".equals(outcome)?"Not counted":
+                    "complete".equals(outcome)?"Complete":
+                    "incomplete".equals(outcome)?"Incomplete":
+                    c.isNull(5)?"Active":c.getInt(6)==1?"Complete":"Incomplete";
+                LinearLayout card=column();card.setPadding(
+                    dp(LikasDesignSystem.SPACE_MD),dp(LikasDesignSystem.SPACE_SM),
+                    dp(LikasDesignSystem.SPACE_MD),dp(LikasDesignSystem.SPACE_SM));
+                card.setBackground(UiKit.surface(this));
+                TextView name=text(profile+" · "+SurveyMethods.displayLabel(profile,method),16);
+                name.setTypeface(null,Typeface.BOLD);card.addView(name);
+                TextView meta=text((site.isEmpty()?"":site+" · ")+date+
+                    "\n"+c.getInt(7)+" observations",12);
+                meta.setTextSize(LikasDesignSystem.TEXT_CAPTION);
+                meta.setTextColor(UiKit.MUTED);card.addView(meta);
+                TextView badge=text(state+"  ›",13);badge.setTypeface(null,Typeface.BOLD);
+                badge.setTextColor("Not counted".equals(state)?Color.rgb(163,58,48):
+                    "Incomplete".equals(state)?UiKit.AMBER:UiKit.FOREST);
+                card.addView(badge);
+                card.setMinimumHeight(dp(100));card.setFocusable(true);
+                card.setContentDescription(profile+", "+state+", "+c.getInt(7)+
+                    " observations. Open survey.");
+                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+                lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);rows.addView(card,lp);
+                card.setOnClickListener(v->{eventFilter=event;observationOffset=0;draw();});
+            }
+            if(rowsThisPage==PAGE_SIZE){
+                Button more=UiKit.button(this,"Load older surveys","quiet");
+                rows.addView(more);
+                more.setOnClickListener(v->{rows.removeView(more);surveyOffset+=PAGE_SIZE;surveys();});
             }
         }
     }
     private void observations(String event){
-        try(Cursor meta=db.getReadableDatabase().rawQuery("SELECT COALESCE(station_id,''),method,started,ended,COALESCE(outcome,'active'),COALESCE(exclusion_reason,'') FROM surveys WHERE id=?",new String[]{event})){
-            if(meta.moveToFirst())rows.addView(text("Station "+meta.getString(0)+" · "+meta.getString(1)+"\n"+meta.getString(2)+"\n"+meta.getString(4)+(meta.getString(4).equals("not_counted")?"\nNOT COUNTED REASON: "+meta.getString(5):""),14));
+        String outcome="active";
+        String surveyMethod="";
+        String surveyProfile="Birds";
+        String exclusionReason="";
+        try(Cursor meta=db.getReadableDatabase().rawQuery(
+            "SELECT COALESCE(station_id,''),method,started,ended,"+
+                "CASE WHEN outcome IS NOT NULL THEN outcome WHEN ended IS NULL "+
+                "THEN 'active' WHEN COALESCE(complete,0)=1 THEN 'complete' "+
+                "ELSE 'incomplete' END,COALESCE(exclusion_reason,''),"+
+                "COALESCE(survey_profile,taxon_group,'Birds') "+
+                "FROM surveys WHERE id=?",new String[]{event})){
+            if(meta.moveToFirst()){
+                outcome=meta.getString(4);
+                surveyMethod=meta.getString(1);
+                surveyProfile=meta.getString(6);
+                exclusionReason=meta.getString(5);
+                String state=outcome.equals("not_counted")?"Canceled · Not counted":
+                    outcome.equals("incomplete")?"Incomplete":
+                    outcome.equals("complete")?"Complete":"Active";
+                LinearLayout summary=column();
+                summary.setBackground(UiKit.surface(this));
+                summary.setPadding(dp(LikasDesignSystem.SPACE_MD),
+                    dp(LikasDesignSystem.SPACE_SM),dp(LikasDesignSystem.SPACE_MD),
+                    dp(LikasDesignSystem.SPACE_SM));
+                TextView stateTitle=text(state,LikasDesignSystem.TEXT_SECTION);
+                stateTitle.setTypeface(null,Typeface.BOLD);
+                stateTitle.setTextColor("Canceled · Not counted".equals(state)?
+                    Color.rgb(163,58,48):"Incomplete".equals(state)?
+                    UiKit.AMBER:UiKit.FOREST);
+                summary.addView(stateTitle);
+                TextView details=text(SurveyMethods.displayLabel(surveyProfile,meta.getString(1))+
+                    (meta.getString(0).isEmpty()?"":"\nStation "+meta.getString(0))+
+                    "\nStarted "+meta.getString(2)+
+                    (meta.isNull(3)?"":"\nEnded "+meta.getString(3)),
+                    LikasDesignSystem.TEXT_CAPTION);
+                details.setTextColor(UiKit.MUTED);summary.addView(details);
+                LinearLayout.LayoutParams summaryLp=new LinearLayout.LayoutParams(-1,-2);
+                summaryLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+                rows.addView(summary,summaryLp);
+            }
         }
-        Button progress=UiKit.button(this,"Station progress","secondary");
-        progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
-            .putExtra("event_id",event)));
-        rows.addView(progress);
+        if(outcome.equals("incomplete")||outcome.equals("not_counted")){
+            boolean hasAudit=false;
+            try(Cursor changes=db.getReadableDatabase().rawQuery(
+                "SELECT reason,changed_at_utc,record_count "+
+                "FROM survey_outcome_audit WHERE event_id=? "+
+                "ORDER BY id DESC LIMIT 1",new String[]{event})){
+                if(changes.moveToFirst()){
+                    hasAudit=true;
+                    String reason=changes.isNull(0)?"":changes.getString(0);
+                    String changed=changes.isNull(1)?"":changes.getString(1);
+                    int records=changes.getInt(2);
+                    Button audit=UiKit.button(this,"Closure details","quiet");
+                    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():46));
+                    rows.addView(audit,lp);
+                    audit.setOnClickListener(v->new AlertDialog.Builder(this)
+                        .setTitle("Survey closure audit")
+                        .setMessage("Changed: "+changed+"\nReason: "+
+                            (reason.trim().isEmpty()?"Not recorded":reason)+
+                            "\nRecords at closure: "+records)
+                        .setPositiveButton("Close",null).show());
+                }
+            }
+            if(!hasAudit&&!exclusionReason.trim().isEmpty())
+                rows.addView(text("Reason: "+exclusionReason,13));
+        }
+        boolean birdOrHerp="Birds".equals(surveyProfile)||
+            "Herpetofauna".equals(surveyProfile);
+        boolean trap=TrapProtocolPolicy.supported(surveyMethod);
+        boolean field=FieldProtocolPolicy.supported(surveyMethod);
+        if(birdOrHerp){
+            Button sounds=UiKit.button(this,"Sound recordings","secondary");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
+            lp.topMargin=dp(5);rows.addView(sounds,lp);
+            sounds.setOnClickListener(v->startActivity(new Intent(this,CallLibraryActivity.class)
+                .putExtra("event_id",event)
+                .putExtra("navigation_origin","history")));
+        }
+        if(trap||field){
+            Button evidence=UiKit.button(this,trap?"Device checks & captures":"Method effort & evidence","secondary");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
+            lp.topMargin=dp(5);rows.addView(evidence,lp);
+            final Class<?> destination=trap?TrapProtocolActivity.class:FieldProtocolsActivity.class;
+            evidence.setOnClickListener(v->startActivity(new Intent(this,destination)
+                .putExtra("event_id",event)
+                .putExtra("navigation_origin","history")));
+        }
+        if("point_count".equals(surveyMethod)||SurveyMethods.timedInterval(surveyMethod)){
+            Button progress=UiKit.button(this,"Station & effort progress","quiet");
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
+            lp.topMargin=dp(5);rows.addView(progress,lp);
+            progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
+                .putExtra("event_id",event)
+                .putExtra("navigation_origin","history")));
+        }
+        appendObservations(event);
+    }
+    private void appendObservations(String event){
         try(Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,u.station_id,''),COALESCE(p.sequence_number,u.sequence_number,0),r.point_count_id,r.sampling_unit_id FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id LEFT JOIN sampling_units u ON u.id=r.sampling_unit_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,u.sequence_number,0),r.detected_at,r.id",new String[]{event})){
-            if(c.getCount()==0)rows.addView(text("No detections recorded. The survey event remains saved.",14));
+            "SELECT r.id,COALESCE(r.raw_identification,''),COALESCE(r.taxon_group,''),r.individual_count,r.horizontal_m,COALESCE(r.detection_method,''),r.detected_at,COALESCE(p.station_id,u.station_id,''),COALESCE(p.sequence_number,u.sequence_number,0),r.point_count_id,r.sampling_unit_id FROM field_records r LEFT JOIN point_counts p ON p.id=r.point_count_id LEFT JOIN sampling_units u ON u.id=r.sampling_unit_id WHERE r.event_id=? AND r.deleted_at IS NULL ORDER BY COALESCE(p.sequence_number,u.sequence_number,0),r.detected_at,r.id LIMIT ? OFFSET ?",
+            new String[]{event,String.valueOf(PAGE_SIZE),String.valueOf(observationOffset)})){
+            int pageCount=c.getCount();
+            if(observationOffset==0)
+                rows.addView(FieldVisuals.section(this,"Observations",
+                    "Tap a record to review evidence, photographs or corrections"));
+            if(pageCount==0&&observationOffset==0)
+                rows.addView(text("No detections recorded. The survey event remains saved.",14));
             while(c.moveToNext()){
                 long record=c.getLong(0);
                 String dist=c.isNull(4)?"distance unknown":String.format(Locale.US,"%.1f m",c.getDouble(4));
                 String point=c.getInt(8)>0?"Station "+c.getString(7)+" · "+(!c.isNull(9)?"Point ":"Visit ")+c.getInt(8)+"\n":"";
-                Button item=btn(point+c.getString(1)+" · "+c.getInt(3)+"\n"+c.getString(2)+" · "+c.getString(5)+" · "+dist+"\n"+c.getString(6));
-                item.setOnClickListener(v->recordDetail(record));
-                rows.addView(item);
+                LinearLayout card=column();card.setPadding(dp(13),dp(8),dp(13),dp(8));
+                card.setBackground(UiKit.surface(this));
+                TextView name=text(c.getString(1)+"  ×"+c.getInt(3),16);
+                name.setTypeface(null,Typeface.BOLD);card.addView(name);
+                TextView detail=text(point+c.getString(2)+" · "+c.getString(5)+
+                    " · "+dist+"\n"+c.getString(6),12);
+                detail.setTextColor(UiKit.MUTED);card.addView(detail);
+                card.setMinimumHeight(dp(85));card.setFocusable(true);
+                card.setContentDescription(c.getString(1)+", "+c.getInt(3)+
+                    " individuals, "+dist+". Review observation and edit history.");
+                LinearLayout.LayoutParams cardLp=new LinearLayout.LayoutParams(-1,-2);
+                cardLp.bottomMargin=dp(7);rows.addView(card,cardLp);
+                card.setOnClickListener(v->recordDetail(record));
+            }
+            if(pageCount==PAGE_SIZE){
+                Button more=UiKit.button(this,"Load more observations","quiet");
+                rows.addView(more);
+                more.setOnClickListener(v->{
+                    rows.removeView(more);observationOffset+=PAGE_SIZE;appendObservations(event);
+                });
             }
         }
     }
@@ -83,22 +386,71 @@ public class HistoryActivity extends Activity {
         return o;
     }
     private void recordDetail(long id){
-        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT * FROM field_records WHERE id=? AND deleted_at IS NULL",new String[]{String.valueOf(id)})){
-            if(!c.moveToFirst()){draw();return;}
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT * FROM field_records WHERE id=? AND deleted_at IS NULL"+
+                (eventFilter==null?"":" AND event_id=?"),
+            eventFilter==null?new String[]{String.valueOf(id)}:
+                new String[]{String.valueOf(id),eventFilter})){
+            if(!c.moveToFirst()){
+                Toast.makeText(this,"Observation is no longer available in this survey",
+                    Toast.LENGTH_SHORT).show();
+                return;
+            }
             JSONObject original=snapshot(c);
             String title=original.optString("raw_identification","Observation "+id);
             new AlertDialog.Builder(this).setTitle(title)
-              .setMessage("Review or correct this record. Original values remain in the audit history.")
-              .setNegativeButton("Cancel",null)
-              .setNeutralButton("Edit", (dlg,w)->edit(id,original))
-              .setPositiveButton("More",(dlg,w)->new AlertDialog.Builder(this).setTitle("Record actions")
-                  .setItems(new String[]{"Edit observation","View photo evidence","View edit history","Delete observation"},(d,index)->{
-                      if(index==0)edit(id,original);
-                      else if(index==1)viewPhotos(id);
-                      else if(index==2)audit(id);
-                      else deletePrompt(id,original);
-                  }).show()).show();
+              .setItems(new String[]{"View recorded details","Edit observation",
+                  "Photos","Edit history","Delete observation"},(dialog,index)->{
+                  if(index==0)showRecordDetails(id,original);
+                  else if(index==1)edit(id,original);
+                  else if(index==2)viewPhotos(id);
+                  else if(index==3)audit(id);
+                  else deletePrompt(id,original);
+              })
+              .setNegativeButton("Back",null).show();
         }catch(Exception e){Toast.makeText(this,"Cannot open record: "+e.getMessage(),Toast.LENGTH_LONG).show();}
+    }
+    /** Present exactly the stored observation evidence, with missing values explicit. */
+    private static String observed(JSONObject source,String key){
+        if(!source.has(key)||source.isNull(key))return "Not recorded";
+        String value=source.optString(key,"").trim();
+        return value.isEmpty()?"Not recorded":value;
+    }
+    private void evidenceLine(LinearLayout parent,String label,String value){
+        TextView heading=UiKit.caption(this,label);
+        heading.setPadding(0,dp(LikasDesignSystem.SPACE_SM),0,0);
+        parent.addView(heading);
+        TextView data=text(value,LikasDesignSystem.TEXT_BODY);
+        data.setPadding(0,0,0,0);
+        parent.addView(data);
+    }
+    private void showRecordDetails(long id,JSONObject source){
+        LinearLayout contents=column();
+        contents.setPadding(dp(LikasDesignSystem.SPACE_LG),
+            dp(LikasDesignSystem.SPACE_SM),
+            dp(LikasDesignSystem.SPACE_LG),
+            dp(LikasDesignSystem.SPACE_MD));
+        evidenceLine(contents,"Observation ID",String.valueOf(id));
+        evidenceLine(contents,"Current recorded identification",observed(source,"raw_identification"));
+        evidenceLine(contents,"Scientific name recorded",observed(source,"scientific_name"));
+        evidenceLine(contents,"Taxonomic group",observed(source,"taxon_group"));
+        evidenceLine(contents,"Individuals recorded",observed(source,"individual_count"));
+        evidenceLine(contents,"Detection method",observed(source,"detection_method"));
+        evidenceLine(contents,"Detected at",observed(source,"detected_at"));
+        evidenceLine(contents,"Horizontal distance (m)",observed(source,"horizontal_m"));
+        evidenceLine(contents,"Distance source",observed(source,"distance_method"));
+        evidenceLine(contents,"Identification confidence",observed(source,"identification_confidence"));
+        evidenceLine(contents,"Identification evidence",observed(source,"identification_review_note"));
+        evidenceLine(contents,"Habitat / microhabitat",observed(source,"habitat"));
+        evidenceLine(contents,"Behavior",observed(source,"behavior"));
+        evidenceLine(contents,"Field notes",observed(source,"notes"));
+        evidenceLine(contents,"Observer latitude",observed(source,"observer_lat"));
+        evidenceLine(contents,"Observer longitude",observed(source,"observer_lon"));
+        evidenceLine(contents,"GPS accuracy (m)",observed(source,"gps_accuracy_m"));
+        ScrollView scroll=new ScrollView(this);
+        scroll.addView(contents);
+        new AlertDialog.Builder(this).setTitle("Recorded observation")
+            .setView(scroll).setPositiveButton("Close",null).show();
     }
     private void viewPhotos(long record){
         java.util.ArrayList<String> names=new java.util.ArrayList<>();
@@ -127,7 +479,11 @@ public class HistoryActivity extends Activity {
         EditText distance=field("Horizontal distance (m)",before.isNull("horizontal_m")?"":before.optString("horizontal_m"));
         distance.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         EditText notes=field("Natural history / notes",before.optString("notes",""));
-        EditText reason=field("Reason for correction (recommended)","");
+        notes.setSingleLine(false);notes.setMinLines(3);
+        notes.setInputType(InputType.TYPE_CLASS_TEXT|
+            InputType.TYPE_TEXT_FLAG_MULTI_LINE|
+            InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        EditText reason=field("Reason for correction (required)","");
         EditText confidenceNote=field("Identification evidence / notes",before.optString("identification_review_note",""));
         Spinner confidence=new Spinner(this);
         String[] levels={"Field-identified (not expert verified)","Probable","Uncertain","Unidentified"};
@@ -163,6 +519,15 @@ public class HistoryActivity extends Activity {
             String name=taxon.getText().toString().trim();
             int count=0;try{count=Integer.parseInt(individuals.getText().toString().trim());}catch(Exception ignored){}
             Double d=num(distance.getText().toString());
+            String why=reason.getText().toString().trim();
+            if(why.length()<5){
+                reason.setError("Record a specific reason (at least 5 characters)");
+                return;
+            }
+            if(!distance.getText().toString().trim().isEmpty()&&d==null){
+                distance.setError("Enter a valid horizontal distance or leave blank");
+                return;
+            }
             if(name.length()<2||count<1||d!=null&&(d<0||d>10000)){
                 Toast.makeText(this,"Check identification, count and distance",Toast.LENGTH_LONG).show();return;
             }
@@ -172,6 +537,13 @@ public class HistoryActivity extends Activity {
             try{
                 ContentValues values=new ContentValues();
                 values.put("raw_identification",name);values.put("common_name",split[0]);values.put("scientific_name",split[1]);
+                // Correcting the name invalidates the old catalog identity. It
+                // must not remain attached to a different raw identification.
+                if(!name.equals(before.optString("raw_identification","").trim())){
+                    values.putNull("taxon_key");
+                    values.putNull("taxon_source_version");
+                    values.put("name_source","user_corrected");
+                }
                 boolean unknown=Taxa.isUnknown(name);
                 boolean genusOnly=!unknown&&split[1]!=null&&(split[1].trim().endsWith(" sp.")||split[1].trim().endsWith(" spp."));
                 String rank=unknown?"unidentified":genusOnly?"genus":
@@ -215,12 +587,15 @@ public class HistoryActivity extends Activity {
                     values.put("perpendicular_m",Geometry.perpendicular(d,before.getDouble("bearing_magnetic"),Double.parseDouble(survey[1])));
                 else values.putNull("perpendicular_m");
                 values.put("updated_at",new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US){{setTimeZone(TimeZone.getTimeZone("UTC"));}}.format(new Date()));
-                writable.update("field_records",values,"id=?",new String[]{""+id});
+                int changed=writable.update("field_records",values,
+                    "id=? AND event_id=? AND deleted_at IS NULL",
+                    new String[]{String.valueOf(id),before.optString("event_id")});
+                if(changed!=1)throw new IllegalStateException("Record was changed or removed");
                 JSONObject after;
                 try(Cursor c=writable.rawQuery("SELECT * FROM field_records WHERE id=?",new String[]{""+id})){
                     c.moveToFirst();after=snapshot(c);
                 }
-                auditWrite(writable,id,"edit",before,after,reason.getText().toString());
+                auditWrite(writable,id,"edit",before,after,why);
                 writable.setTransactionSuccessful();
                 dialog.dismiss();draw();
             }catch(Exception e){Toast.makeText(this,"Save failed: "+e.getMessage(),Toast.LENGTH_LONG).show();}
@@ -253,14 +628,29 @@ public class HistoryActivity extends Activity {
     }
     private void audit(long id){
         StringBuilder msg=new StringBuilder();
-        try(Cursor c=db.getReadableDatabase().rawQuery("SELECT edited_at,action,COALESCE(reason,''),previous_json FROM record_edits WHERE record_id=? ORDER BY id DESC",new String[]{String.valueOf(id)})){
+        try(Cursor c=db.getReadableDatabase().rawQuery(
+            "SELECT edited_at,action,COALESCE(reason,''),previous_json,current_json "+
+            "FROM record_edits WHERE record_id=? ORDER BY id DESC",
+            new String[]{String.valueOf(id)})){
             if(c.getCount()==0)msg.append("No changes recorded.");
             while(c.moveToNext()){
                 msg.append(c.getString(0)).append(" · ").append(c.getString(1)).append("\n");
-                if(!c.getString(2).isEmpty())msg.append("Reason: ").append(c.getString(2)).append("\n");
-                msg.append("Before: ").append(c.getString(3)).append("\n\n");
+                if(!c.getString(2).isEmpty())
+                    msg.append("Reason: ").append(c.getString(2)).append("\n");
+                msg.append("Before:\n")
+                    .append(c.isNull(3)?"Not recorded":c.getString(3))
+                    .append("\nAfter:\n")
+                    .append(c.isNull(4)?"Not recorded":c.getString(4))
+                    .append("\n\n");
             }
         }
-        new AlertDialog.Builder(this).setTitle("Record edit history").setMessage(msg.toString()).setPositiveButton("Close",null).show();
+        TextView history=text(msg.toString(),LikasDesignSystem.TEXT_CAPTION);
+        history.setTextIsSelectable(true);
+        history.setPadding(dp(LikasDesignSystem.SPACE_LG),
+            dp(LikasDesignSystem.SPACE_MD),dp(LikasDesignSystem.SPACE_LG),
+            dp(LikasDesignSystem.SPACE_MD));
+        ScrollView scroll=new ScrollView(this);scroll.addView(history);
+        new AlertDialog.Builder(this).setTitle("Record edit history")
+            .setView(scroll).setPositiveButton("Close",null).show();
     }
 }

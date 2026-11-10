@@ -1,0 +1,26 @@
+LIKAS PAIC habitat recommendation map: source and attribution
+
+The bundled file paic_worldcover2020_500m.txt is a MODIFIED DERIVATIVE of the
+ESA WorldCover 10 m 2020 v100 land-cover classification. The LIKAS derivative
+stores the modal land-cover class in approximately 0.005° cells. It is not the
+original 10 m map and is not a survey-specific or current habitat observation.
+
+SOURCE CREDIT (2020):
+© ESA WorldCover project 2020 / Contains modified Copernicus Sentinel data (2020)
+processed by ESA WorldCover consortium.
+
+Original dataset:
+Zanaga, D., Van De Kerchove, R., De Keersmaecker, W., Souverijns, N.,
+Brockmann, C., Quast, R., Wevers, J., Grosu, A., Paccini, A., Vergnaud,
+S., Cartus, O., Santoro, M., Fritz, S., Georgieva, I., Lesiv, M.,
+Carter, S., Herold, M., Li, Linlin, Tsendbazar, N.E., Ramoino, F.,
+Arino, O. (2021). ESA WorldCover 10 m 2020 v100.
+https://doi.org/10.5281/zenodo.5571936
+https://esa-worldcover.org/en/data-access
+
+LICENSE: Creative Commons Attribution 4.0 International (CC BY 4.0).
+https://creativecommons.org/licenses/by/4.0/
+The derivative includes data modifications (modal aggregation, regridding,
+geographic extraction, compression, and habitat-class suggestion crosswalk).
+Neither ESA nor Copernicus validates or endorses inferred field habitats.
+Map suggestions are unconfirmed until field researchers select them.

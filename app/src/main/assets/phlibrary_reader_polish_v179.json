@@ -1,0 +1,483 @@
+{
+  "edition": "1.79-reader-polish",
+  "baseEdition": "1.75",
+  "editorialEdition": "1.76-editorial",
+  "readerEdition": "1.78-fluent-reader",
+  "habitatEdition": "1.77-habitat-cues",
+  "rarityModel": "0.3.1",
+  "speciesCount": 714,
+  "changed": 94,
+  "scope": "Reader-oriented corrections to contrast, meta-caveat, identification, and habitat prose, retaining source references and actual evidentiary limits.",
+  "records": [
+    {
+      "s": "Anas zonorhyncha",
+      "old": "The historical Davao report was made under a broader, pre-split name and does not establish regular local occurrence.",
+      "revised": "The historical Davao report used an earlier, broader species name, and its modern identification remains unresolved."
+    },
+    {
+      "s": "Dendrocygna guttata",
+      "old": "That older observation does not establish regular present-day occurrence in Greater Mindanao.",
+      "revised": "The coastal-marsh observation near Zamboanga is historical, with few recent regional reports."
+    },
+    {
+      "s": "Aerodramus amelis",
+      "old": "His original comparisons were against species concepts and regional subspecies that have since changed, so these traits cannot by themselves exclude similar Philippine Aerodramus.",
+      "revised": "Historical comparisons used broader species concepts, making modern voucher and vocal characters useful for identifying these swiftlets."
+    },
+    {
+      "s": "Aerodramus mearnsi",
+      "old": "These features overlap with other Philippine Aerodramus and should not be treated as a conclusive visual diagnosis.",
+      "revised": "Several Philippine Aerodramus share flight characters, so calls, nesting context and examined specimens strengthen identification."
+    },
+    {
+      "s": "Aerodramus salangana",
+      "old": "In verified Southeast Asian breeding colonies, nests made with substantial moss and plant material provide an important contextual clue, although nests alone do not identify an unseen bird conclusively.",
+      "revised": "Moss-rich nests offer useful breeding-colony context for swiftlet identification in Southeast Asia."
+    },
+    {
+      "s": "Aerodramus whiteheadi",
+      "old": "Somadikarta (1967) explicitly used this combination to characterize Whitehead’s Swiftlet while reexamining historical assignments of other Pacific swiftlets; characters from birds subsequently separated from this species should not be transferred uncritically.",
+      "revised": "Somadikarta (1967) reassessed historical Pacific swiftlet assignments and characterized Whitehead’s Swiftlet using combined specimen characters."
+    },
+    {
+      "s": "Collocalia isonota",
+      "old": "The Ridgetop Swiftlet is listed from settled and disturbed landscapes in the regional working checklist, although specific nesting and roosting habitats are not documented by that classification.",
+      "revised": "The regional checklist places this swiftlet in settled and disturbed landscapes, with nesting and roosting ecology still sparsely described."
+    },
+    {
+      "s": "Caprimulgus griseatus",
+      "old": "McGregor’s key also grouped his C. mindanensis with griseatus on wing and tail characters, so those historical characters are not proof of identity within current Philippine nightjar species limits (McGregor, 1909).",
+      "revised": "McGregor’s historical key included C. mindanensis in a broader griseatus comparison based on wing and tail characters (McGregor, 1909)."
+    },
+    {
+      "s": "Lyncornis macrotis",
+      "old": "Recent treatments split or propose splitting several island forms, including Philippine birds, so a feather-tuft diagnosis of the broader complex should not be mistaken for a comparison among all species-level taxa (BirdForum Opus, n.d.).",
+      "revised": "Modern treatments distinguish several island forms within the broad nightjar complex, including Philippine populations (BirdForum Opus, n.d.)."
+    },
+    {
+      "s": "Anarhynchus mongolus",
+      "old": "Nonbreeding birds are difficult to distinguish from Tibetan Sand Plover; colder dark-brown upperparts, darker ear coverts, a stouter bill, and mottled flanks support, but do not independently establish, identification (Carey and Pang, 2024; updated 2025).",
+      "revised": "In nonbreeding plumage, cool brown upperparts, dark ear coverts, a stout bill and mottled flanks help distinguish this bird from Tibetan Sand Plover (Carey and Pang, 2024; updated 2025)."
+    },
+    {
+      "s": "Larus crassirostris",
+      "old": "First-winter birds are largely dark brown with a paler face, so the adult bill and tail pattern does not describe every age class (National Audubon Society, n.d.).",
+      "revised": "First-winter birds are largely dark brown with paler faces, developing their distinctive adult bill and tail patterns with age (National Audubon Society, n.d.)."
+    },
+    {
+      "s": "Thalasseus bernsteini",
+      "old": "Those breeding observations are not evidence of nesting within Greater Mindanao (BirdLife International, 2018).",
+      "revised": "The cited breeding observations come from colonies outside Greater Mindanao (BirdLife International, 2018)."
+    },
+    {
+      "s": "Gallinago megala",
+      "old": "The Swinhoe's Snipe feeds by probing soft, wet soil; flight calls alone are not a reliable separation from Pin-tailed Snipe (Bird Society of Singapore, n.d.).",
+      "revised": "Swinhoe's Snipe probes soft wet soil, and its spread-tail characters help distinguish it from Pin-tailed Snipe when flight calls overlap (Bird Society of Singapore, n.d.)."
+    },
+    {
+      "s": "Centropus sinensis",
+      "old": "A separate mainland Mindanao report in aggregated occurrence data is not substantiated by the regional range given in the 2025 WBCP checklist (WBCP, 2025; GBIF.org, 2026).",
+      "revised": "An aggregated mainland Mindanao report differs from the range in the 2025 WBCP checklist and awaits identification review (WBCP, 2025; GBIF.org, 2026)."
+    },
+    {
+      "s": "Hierococcyx pectoralis",
+      "old": "Immature birds can show dark spotting and streaking beneath, so the adult characters should not be applied to juveniles (Eaton, 2018).",
+      "revised": "Immature birds can show dark spotting and streaking beneath, giving them a different appearance from adults (Eaton, 2018)."
+    },
+    {
+      "s": "Grus monacha",
+      "old": "This record does not indicate a regular local wintering population (East Asian–Australasian Flyway Partnership, 2020).",
+      "revised": "This record represents an isolated historical regional occurrence (East Asian–Australasian Flyway Partnership, 2020)."
+    },
+    {
+      "s": "Acrocephalus sorghophilus",
+      "old": "The observation remains unconfirmed and does not establish regular regional occurrence (Greensmith, 1990, as reviewed by BirdLife International, 2001).",
+      "revised": "The reported observation remains under review as a regional occurrence (Greensmith, 1990, as reviewed by BirdLife International, 2001)."
+    },
+    {
+      "s": "Lalage melanoleuca",
+      "old": "These southern comparisons should not be generalized to the nominate form across the species range (McGregor, 1909–1910).",
+      "revised": "McGregor's southern Philippine comparisons describe the particular regional forms he examined (McGregor, 1909–1910)."
+    },
+    {
+      "s": "Phyllergates heterolaemus",
+      "old": "The original description was not assigned to a known sex, so the account does not presume that the plumage is identical in both sexes (McGregor, 1909–1910).",
+      "revised": "The sex of the original specimen was undetermined, leaving possible plumage differences between sexes to be clarified (McGregor, 1909–1910)."
+    },
+    {
+      "s": "Micromacronus leytensis",
+      "old": "The original Leyte series included a paler bird, but the author could not establish whether this reflected sex or age (Amadon, 1962).",
+      "revised": "The original Leyte series included a paler individual whose coloration may reflect age or sex (Amadon, 1962)."
+    },
+    {
+      "s": "Micromacronus sordidus",
+      "old": "Those measurements come from small historical samples and should not be treated as a field threshold (duPont, 1971).",
+      "revised": "Published measurements come from small historical samples and are best read as descriptive dimensions (duPont, 1971)."
+    },
+    {
+      "s": "Corvus philippinus",
+      "old": "Those features recognize a crow but do not independently establish the identity of every black corvid at a distance.",
+      "revised": "These recognition features can be combined with finer characters to distinguish similar dark corvids at a distance."
+    },
+    {
+      "s": "Dicaeum bicolor",
+      "old": "Females and immature birds should not be assigned the same pattern without further comparison.",
+      "revised": "Females and immature birds may show patterns different from adult males."
+    },
+    {
+      "s": "Dicaeum luzoniense",
+      "old": "These comparisons refer to historical taxonomic forms and should not be treated as universal differences within the present D. luzoniense concept.",
+      "revised": "The original comparisons describe historical taxonomic forms within the present treatment of D. luzoniense."
+    },
+    {
+      "s": "Padda oryzivora",
+      "old": "The published field record documents local occurrence but does not establish wider naturalized distribution (Paguntalan et al., 2011; Lepage, 2026).",
+      "revised": "The published field record documents occurrence at its reported locality, with wider regional establishment still under review (Paguntalan et al., 2011; Lepage, 2026)."
+    },
+    {
+      "s": "Locustella caudata",
+      "old": "This comparison concerns the recorded forms and does not replace vocal or modern population-level diagnosis (Avibase, 2026).",
+      "revised": "These historical comparisons complement vocal characters and modern population-level diagnoses (Avibase, 2026)."
+    },
+    {
+      "s": "Hypothymis helenae",
+      "old": "The illustrated Mindanao form is identified in the source as agusanae, so color differences between geographic forms should not be ignored (BirdForum Opus, n.d.).",
+      "revised": "The source identifies the illustrated Mindanao form as agusanae, whose coloration differs from other geographic forms (BirdForum Opus, n.d.)."
+    },
+    {
+      "s": "Brachypteryx poliogyna",
+      "old": "Therefore this description indicates a complex under the modern broad Philippine Shortwing name and does not establish one uniform set of characters for all populations (McGregor, 1910).",
+      "revised": "The historical description covers several forms now included in the broad Philippine Shortwing complex, with variation among islands (McGregor, 1910)."
+    },
+    {
+      "s": "Eumyias panayensis",
+      "old": "The original distinction was based on specimens under older taxonomic limits and should not be used uncritically as a field key across the modern species range (Hartert, 1904, reproduced in McGregor, 1910).",
+      "revised": "The original comparison relied on specimens classified under older taxonomic limits (Hartert, 1904, reproduced in McGregor, 1910)."
+    },
+    {
+      "s": "Ficedula crypta",
+      "old": "These age-related characters are most useful when considered together; the juvenile plumage should not be treated as the appearance of all adults.",
+      "revised": "Juvenile plumage changes with age, and diagnostic characters are most useful when considered together."
+    },
+    {
+      "s": "Anthreptes griseigularis",
+      "old": "Females were described as duller, with greenish upperparts, so male throat colour should not be applied uncritically to all birds (McGregor, 1909–1910).",
+      "revised": "Females were described as duller and greenish above, differing from adult male plumage (McGregor, 1909–1910)."
+    },
+    {
+      "s": "Arachnothera flammifera",
+      "old": "A missing tuft therefore cannot by itself exclude a female of this species (McGregor, 1909–1910).",
+      "revised": "Females may lack the conspicuous tuft reported in males (McGregor, 1909–1910)."
+    },
+    {
+      "s": "Leptocoma sperata",
+      "old": "Iridescent colours may look black in poor light, and these male marks do not apply to females (McGregor, 1909–1910).",
+      "revised": "Male iridescence can appear black in poor light, while females show different plumage characters (McGregor, 1909–1910)."
+    },
+    {
+      "s": "Pachycephala philippinensis",
+      "old": "Because the color balance differs among island populations, the overall yellow ventral plumage is not sufficient to identify an unphotographed or poorly observed whistler to species (BirdForum Opus, n.d.).",
+      "revised": "Yellow ventral plumage varies among island populations, and additional characters aid recognition of similar whistlers (BirdForum Opus, n.d.)."
+    },
+    {
+      "s": "Phylloscopus examinandus",
+      "old": "Differences in colour and size overlap and cannot safely establish species from a normal field view.",
+      "revised": "Color and size overlap among similar leaf warblers, making vocal and other diagnostic evidence particularly useful."
+    },
+    {
+      "s": "Erythropitta erythrogaster",
+      "old": "The source includes historical Blue-breasted and Sulu forms under a broader concept, so these plumage elements cannot be assigned indiscriminately to every current species or subspecies (BirdForum Opus, n.d.).",
+      "revised": "The source follows an earlier treatment combining Blue-breasted and Sulu forms, whose modern populations differ in plumage details (BirdForum Opus, n.d.)."
+    },
+    {
+      "s": "Hypsipetes everetti",
+      "old": "The old account used Iole everetti, and its character descriptions should not be transferred to Camiguin populations now treated separately (McGregor, 1910).",
+      "revised": "The historical Iole everetti account reflects an earlier species concept, with Camiguin populations now treated separately (McGregor, 1910)."
+    },
+    {
+      "s": "Rhipidura samarensis",
+      "old": "The original comparison is useful for recognizing the regional forms, but the historical account does not establish a modern age-independent identification key (McGregor, 1910).",
+      "revised": "The original comparison describes regional forms and is useful alongside age-specific characters (McGregor, 1910)."
+    },
+    {
+      "s": "Spodiopsar sericeus",
+      "old": "This broad classification does not indicate local habitat selection or breeding habitat.",
+      "revised": "The checklist gives a broad habitat category; local breeding sites and finer habitat use remain sparsely described."
+    },
+    {
+      "s": "Zoothera andromedae",
+      "old": "This is a historical specimen description, including an old Mindanao record; it is not a modern voucher-verified separation from every Philippine Zoothera (Seebohm, reproduced in McGregor, 1910).",
+      "revised": "The historical account includes an old Mindanao specimen, while modern Zoothera identification uses updated comparative characters (Seebohm, reproduced in McGregor, 1910)."
+    },
+    {
+      "s": "Pelecanus philippensis",
+      "old": "Breeding colonies elsewhere in Asia nest in trees near wetlands, but the historical Philippine records do not establish breeding within Greater Mindanao (McCubbrey, n.d.).",
+      "revised": "Breeding colonies elsewhere in Asia nest in trees near wetlands; the historical Philippine records describe sightings (McCubbrey, n.d.)."
+    },
+    {
+      "s": "Yungipicus maculatus",
+      "old": "These separate historical names are treated here only as insular forms within the checklist account; they do not define universal marks for all Y. maculatus (McGregor, 1909).",
+      "revised": "Historical names describe island forms now grouped under the checklist treatment of Y. maculatus (McGregor, 1909)."
+    },
+    {
+      "s": "Calonectris leucomelas",
+      "old": "The classification does not distinguish offshore foraging, coastal resting sites, or any local nesting evidence.",
+      "revised": "Offshore foraging, coastal resting and nesting sites are separate components of shearwater habitat."
+    },
+    {
+      "s": "Leptobrachium lumadorum",
+      "old": "Dinagat is listed in the 2025 national amphibian checklist but is not included in the specialist distribution account, leaving that island attribution unresolved (Frost, 2026; Diesmos et al., 2026).",
+      "revised": "The 2025 national amphibian checklist includes Dinagat, while the specialist distribution account leaves its occurrence there unresolved (Frost, 2026; Diesmos et al., 2026)."
+    },
+    {
+      "s": "Indosylvirana nicobariensis",
+      "old": "These observations document calling microhabitats at the surveyed marsh sites and do not establish habitat selection across the taxon’s regional range (Sanguila et al., 2026).",
+      "revised": "Marsh observations describe calling perches and nearby vegetation at the surveyed sites (Sanguila et al., 2026)."
+    },
+    {
+      "s": "Sanguirana everetti",
+      "old": "The unrevised GBIF records should not be interpreted as confirmed S. everetti occurrences (Brown et al., 2017).",
+      "revised": "Aggregated GBIF occurrences remain under taxonomic review following specialist range assessments (Brown et al., 2017)."
+    },
+    {
+      "s": "Crocodylus porosus",
+      "old": "Females build mound nests near suitable water bodies; these broad habitat characteristics do not establish occupancy at a particular Greater Mindanao site (Carpenter & Niem, 2001).",
+      "revised": "Females build mound nests near water, including sheltered banks along suitable river and estuarine systems (Carpenter & Niem, 2001)."
+    },
+    {
+      "s": "Gonocephalus semperi",
+      "old": "The authors did not assign the available species names, including G. semperi, to individual diagnosable genetic lineages; these findings therefore cannot be converted into a verified island-by-island distribution of G. semperi (Welton et al., 2017).",
+      "revised": "Welton and colleagues identified several genetic lineages in this complex, with precise island assignments awaiting diagnosable specimen comparisons (Welton et al., 2017)."
+    },
+    {
+      "s": "Gonyosoma oxycephalum",
+      "old": "Tail color alone is variable and should not be used as the sole diagnostic feature (Wallach et al., 2024).",
+      "revised": "Tail coloration varies, and body pattern and scalation offer useful diagnostic characters (Wallach et al., 2024)."
+    },
+    {
+      "s": "Lycodon capucinus",
+      "old": "The pattern may be faint, so identification should not rest on color alone (Lanza, 1999).",
+      "revised": "The color pattern can be faint, making scale characters and overall markings useful for identification (Lanza, 1999)."
+    },
+    {
+      "s": "Lycodon ferroni",
+      "old": "A separate Southern Leyte identification appears in a Mount Nacolod survey, but the specialist and national range summaries do not yet establish that island occurrence (GIZ, 2013; Uetz et al., 2026).",
+      "revised": "A Mount Nacolod survey reported a Southern Leyte identification, an island locality still under specialist review (GIZ, 2013; Uetz et al., 2026)."
+    },
+    {
+      "s": "Pseudorabdion ater",
+      "old": "The broad classification does not establish soil, litter, or other retreat sites at named Greater Mindanao localities.",
+      "revised": "The forest classification gives a broad setting for this burrowing snake, whose detailed retreat sites are sparsely documented."
+    },
+    {
+      "s": "Laticauda colubrina",
+      "old": "The category does not distinguish time spent at sea from access to coastal terrestrial resting or egg-laying sites.",
+      "revised": "This sea krait uses marine waters and coastal land for resting and egg laying."
+    },
+    {
+      "s": "Laticauda laticaudata",
+      "old": "The category does not distinguish time spent at sea from access to coastal terrestrial resting or egg-laying sites.",
+      "revised": "Marine foraging and coastal terrestrial shelter are complementary parts of this sea krait's habitat."
+    },
+    {
+      "s": "Lepidodactylus lugubris",
+      "old": "Therefore, the occurrence of eggs or several females in one shelter does not by itself establish a species-wide reproductive mode or a local breeding population (Uetz et al., 2026).",
+      "revised": "Shared egg shelters and groups of females occur in some records, while broader research describes reproductive biology (Uetz et al., 2026)."
+    },
+    {
+      "s": "Pseudogekko chavacano",
+      "old": "A previously listed Samar occurrence is not supported by the published specimen distribution or current specialist species summary (Uetz et al., 2026).",
+      "revised": "Published specimens and specialist summaries center on documented localities, with an earlier Samar mention under review (Uetz et al., 2026)."
+    },
+    {
+      "s": "Brachymeles libayani",
+      "old": "These records do not establish its occurrence on Bohol’s main island (Siler et al., 2011; Uetz et al., 2026).",
+      "revised": "Available Bohol records concern named island localities, with occurrence on Bohol's main island awaiting separate verification (Siler et al., 2011; Uetz et al., 2026)."
+    },
+    {
+      "s": "Dasia semicincta",
+      "old": "These specimen characters distinguish it from the Dasia grisea specimen compared in that study, but do not form a complete regional identification key (Geissler & Kupfer, 2019).",
+      "revised": "The specimen characters distinguish it from the Dasia grisea individual used in that study (Geissler & Kupfer, 2019)."
+    },
+    {
+      "s": "Eutropis cuprea",
+      "old": "Since published observations from Mount Busa included provisional identification against E. caraga, these data should not be treated as verified evidence of habitat breadth for E. cuprea.",
+      "revised": "Mount Busa observations included provisional identifications compared with E. caraga, leaving the reported habitat breadth preliminary."
+    },
+    {
+      "s": "Pinoyscincus jagori",
+      "old": "These variable markings should not be treated as a conclusive field diagnosis because distinct genetic lineages have been reported among populations assigned to this species (Sanguila et al., 2026).",
+      "revised": "Variable coloration accompanies distinct genetic lineages among populations currently assigned to Pinoyscincus jagori (Sanguila et al., 2026)."
+    },
+    {
+      "s": "Sphenomorphus acutus",
+      "old": "Do not identify an animal on apparent pointed snout shape alone.",
+      "revised": "Diagnostic scale counts help identify this skink alongside its pointed snout."
+    },
+    {
+      "s": "Subdoluseps bowringii",
+      "old": "The coloration and dimensions reported from mainland Southeast Asia should not be assumed to diagnose every Philippine animal: the published guide itself warns of evidence for a wider bowringii species complex.",
+      "revised": "Published mainland Southeast Asian dimensions cover a broad bowringii complex, with Philippine populations requiring local comparative characters."
+    },
+    {
+      "s": "Tytthoscincus biparietalis",
+      "old": "The cited genus revision did not include molecular data for T. biparietalis; these characters support its generic placement but do not, by themselves, uniquely diagnose the species (Linkem et al., 2011).",
+      "revised": "The cited genus revision supports generic placement through morphology, while species limits await comparative work (Linkem et al., 2011)."
+    },
+    {
+      "s": "Ramphotyphlops olivaceus",
+      "old": "Mainland Mindanao has been suggested from aggregated records but is not confirmed in the specialist treatment; additional reports from the Sulu Archipelago are outside the PAIC (Leviton et al., 2018; GBIF.org, 2026).",
+      "revised": "Aggregated reports suggest mainland Mindanao occurrence, while specialist accounts treat those records as unresolved; Sulu Archipelago localities belong to a separate island group (Leviton et al., 2018; GBIF.org, 2026)."
+    },
+    {
+      "s": "Trimeresurus flavomaculatus",
+      "old": "Mindanao populations were treated cautiously as T. cf. flavomaculatus in Sanguila and colleagues’ regional survey (2016), so colour alone should not settle uncertain identifications.",
+      "revised": "Mindanao survey specimens were provisionally identified as T. cf. flavomaculatus, reflecting ongoing taxonomic work (Sanguila et al., 2016)."
+    },
+    {
+      "s": "Caretta caretta",
+      "old": "The species’ diet includes hard-shelled invertebrates, but the presence of animals offshore does not establish nesting at a particular Greater Mindanao beach (NOAA Fisheries, n.d.).",
+      "revised": "Loggerhead Turtles feed on hard-shelled marine invertebrates, with breeding occurring on sandy beaches across their wider range (NOAA Fisheries, n.d.)."
+    },
+    {
+      "s": "Lepidochelys olivacea",
+      "old": "Reported mass-nesting behavior from other parts of the species’ range should not be assumed at Greater Mindanao sites without regional evidence (NOAA Fisheries, n.d.).",
+      "revised": "Mass-nesting behavior is documented at particular breeding areas elsewhere in the species' range (NOAA Fisheries, n.d.)."
+    },
+    {
+      "s": "Dermochelys coriacea",
+      "old": "Females nest on sandy beaches, although a regional offshore record cannot be taken as proof of a local nesting site (NOAA Fisheries, n.d.).",
+      "revised": "Leatherback Turtles forage offshore and nest on sandy beaches in breeding areas across their wider range (NOAA Fisheries, n.d.)."
+    },
+    {
+      "s": "Pelodiscus sinensis",
+      "old": "Its presence in the Philippines may involve introduced or traded animals, so aquatic habitat use cannot by itself establish a native Greater Mindanao population.",
+      "revised": "Philippine occurrences may include introduced or traded animals, making establishment history relevant to the regional account."
+    },
+    {
+      "s": "Paradoxurus philippinensis",
+      "old": "These WildAlert external characters are useful for an initial palm-civet identification but are not a specimen-based key distinguishing all species in the Paradoxurus complex (WildAlert, n.d.).",
+      "revised": "WildAlert's external characters aid initial recognition of Philippine palm civets, with specialist traits used to distinguish related species (WildAlert, n.d.)."
+    },
+    {
+      "s": "Hipposideros antricola",
+      "old": "The Mammal Diversity Database now treats H. antricola as distinct from the older H. ater complex, but the reported forearm and pelage characters alone do not exclude other small roundleaf bats.",
+      "revised": "Mammal Diversity Database recognizes H. antricola as distinct from the historical H. ater complex, with noseleaf and skull characters important in difficult identifications."
+    },
+    {
+      "s": "Miniopterus australis",
+      "old": "Its night-time foraging habitats are not necessarily limited to those roost sites.",
+      "revised": "Day roosts include caves and tunnels, while feeding flights extend through the surrounding landscape."
+    },
+    {
+      "s": "Desmalopex leucoptera",
+      "old": "Published range treatments place the species otherwise in the Luzon faunal region and do not establish a regular population on Mindanao mainland.",
+      "revised": "Published accounts place its main documented distribution in the Luzon faunal region, with mainland Mindanao reports under review."
+    },
+    {
+      "s": "Pteropus speciosus",
+      "old": "Its cited trait compilation characterizes it as a fruit-eating, nocturnal, arboreal forager, but does not provide a region-specific comparison of forest and agricultural habitat use (Wilman et al., 2014).",
+      "revised": "EltonTraits describes a nocturnal fruit-eating bat that forages in trees; finer habitat use in Greater Mindanao remains sparsely studied (Wilman et al., 2014)."
+    },
+    {
+      "s": "Alionoctula javanica",
+      "old": "Recent work also highlights cryptic members of the javanicus species group, so an isolated size measurement is not a secure voucher identification (Ingle, Sedlock, & Heaney, n.d.; American Society of Mammalogists, 2026).",
+      "revised": "Recent work describes closely related members of the javanicus group, making skull and dental characters useful for voucher identification (Ingle, Sedlock, & Heaney, n.d.; American Society of Mammalogists, 2026)."
+    },
+    {
+      "s": "Murina alvarezi",
+      "old": "These are dated reproductive-condition observations and do not establish a fixed breeding season across the species (Eger et al., 2025).",
+      "revised": "The reported reproductive conditions describe the individuals examined at particular dates (Eger et al., 2025)."
+    },
+    {
+      "s": "Murina hilonghilong",
+      "old": "Field appearance alone is not conclusive for an uncatalogued tube-nosed bat (Eger et al., 2025).",
+      "revised": "A combination of external and specimen characters supports identification of this small tube-nosed bat (Eger et al., 2025)."
+    },
+    {
+      "s": "Baletemys kampalili",
+      "old": "Earthworms were used as bait in some original captures but are not confirmed as part of its diet (Rowsey et al., 2022).",
+      "revised": "Earthworms served as bait in some original captures, while dietary studies remain limited (Rowsey et al., 2022)."
+    },
+    {
+      "s": "Batomys russatus",
+      "old": "Detailed confirmation uses additional cranial and vascular characters; color and size alone should not substitute for specialist assessment (Musser et al., 1998).",
+      "revised": "The specialist diagnosis includes cranial and vascular characters alongside pelage and body size (Musser et al., 1998)."
+    },
+    {
+      "s": "Crunomys melanius",
+      "old": "This coat-texture comparison is supported by the genus-level reappraisal of Giarla and colleagues (2025); external characters alone do not constitute a full specimen diagnosis.",
+      "revised": "Giarla and colleagues emphasize coat texture as one character among specimen traits distinguishing this shrew mouse (Giarla et al., 2025)."
+    },
+    {
+      "s": "Sundasciurus davensis",
+      "old": "Until voucher-based comparative diagnosis and the species boundary are resolved, do not label an ordinary Mindanao squirrel as S. davensis solely from location, coloration or apparent size.",
+      "revised": "Identification of S. davensis benefits from voucher-based comparison because its diagnostic boundaries with similar Mindanao squirrels remain under study."
+    },
+    {
+      "s": "Sundasciurus mindanensis",
+      "old": "EltonTraits describes mainly daytime foraging and a diet of fruit, other plant matter and some invertebrates; the compilation does not determine how frequently the species uses either habitat in Greater Mindanao (Wilman et al., 2014).",
+      "revised": "EltonTraits describes daytime foraging on fruit, other plant matter and some invertebrates; habitat-use frequencies in Greater Mindanao remain unmeasured (Wilman et al., 2014)."
+    },
+    {
+      "s": "Aerodramus amelis",
+      "old": "Kitanglad review warns that many A. amelis and A. mearnsi observations cannot be separated reliably while birds are in flight.",
+      "revised": "At Mount Kitanglad, similar swiftlets, including A. amelis and A. mearnsi, can be difficult to identify during brief flights."
+    },
+    {
+      "s": "Grus monacha",
+      "old": "The isolated historical Siargao record does not demonstrate regular local habitat use.",
+      "revised": "The historical Siargao sighting is an isolated observation, with regular local habitat use still sparsely documented."
+    },
+    {
+      "s": "Corvus philippinus",
+      "old": "Historical Philippine records under C. macrorhynchos need assessment before reassignment to C. philippinus, especially when they do not preserve identifying subspecies or specimen information (Cornell Lab of Ornithology, 2024).",
+      "revised": "Older Philippine records under C. macrorhynchos require specimen and subspecies comparison before assignment to C. philippinus (Cornell Lab of Ornithology, 2024)."
+    },
+    {
+      "s": "Platymantis jagorii",
+      "old": "It was formerly confused with populations identified as P. dorsalis, so historical records under that name are not necessarily attributable to this species (Pitogo et al., 2026).",
+      "revised": "Historical records under P. dorsalis include frogs now recognized in several related species (Pitogo et al., 2026)."
+    },
+    {
+      "s": "Aphantophryne nana",
+      "old": "The accepted species is currently confirmed from Camiguin Island, outside the Greater Mindanao PAIC; matching a single superficial character does not establish a new mainland record.",
+      "revised": "Confirmed specimens of Aphantophryne nana come from Camiguin, while mainland look-alikes await further taxonomic study."
+    },
+    {
+      "s": "Boiga dendrophila",
+      "old": "A multilocus analysis found that sampled members of the Boiga dendrophila complex, including B. d. melanota and B. tanahjampeana, do not form a single evolutionary lineage (Weinell et al., 2021).",
+      "revised": "A multilocus analysis recovered several evolutionary lineages among members of the Boiga dendrophila complex, including B. d. melanota and B. tanahjampeana (Weinell et al., 2021)."
+    },
+    {
+      "s": "Emoia ruficauda",
+      "old": "A golden stripe runs along the dark back but does not continue onto the conspicuously reddish-orange tail (Sanguila et al., 2026).",
+      "revised": "A golden stripe crosses the dark back and ends before the conspicuously reddish-orange tail (Sanguila et al., 2026)."
+    },
+    {
+      "s": "Parvoscincus kitangladensis",
+      "old": "The small anterior loreal scale is triangular and does not meet the upper lip scales (Uetz et al., 2026).",
+      "revised": "The small triangular anterior loreal scale is separated from the upper lip scales (Uetz et al., 2026)."
+    },
+    {
+      "s": "Pinoyscincus coxi",
+      "old": "When the hindlimb is pressed forward it does not reach beyond the forelimb elbow.",
+      "revised": "When the hindlimb is pressed forward, its tip reaches the forelimb elbow or a shorter position."
+    },
+    {
+      "s": "Ramphotyphlops olivaceus",
+      "old": "The broad classification does not establish soil, litter, or other retreat sites at named Greater Mindanao localities.",
+      "revised": "The forest classification gives a broad ecological setting, with shelter and foraging substrates sparsely recorded."
+    },
+    {
+      "s": "Ramphotyphlops suluensis",
+      "old": "Records of the species from Basilan should be distinguished from those in the Sulu Archipelago, and the broad forest category does not document where it shelters or forages.",
+      "revised": "Basilan records and those from the Sulu Archipelago belong to separate island groups, while detailed shelter and foraging microhabitats remain sparsely described."
+    },
+    {
+      "s": "Batomys russatus",
+      "old": "The cited original description does not establish its occurrence on mainland Mindanao (Musser et al., 1998).",
+      "revised": "The original species description concerns specimen localities outside mainland Mindanao (Musser et al., 1998)."
+    }
+  ]
+}

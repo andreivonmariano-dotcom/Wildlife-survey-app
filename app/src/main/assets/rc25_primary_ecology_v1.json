@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "rc25-primary-ecology-source-notes-v1",
+  "asOf": "2026-10-29",
+  "recordCount": 7,
+  "scope": "Three peer-reviewed primary field studies for previously undocumented topic sections. Facts are historical and site-specific.",
+  "policy": "No species absence, national status, local occurrence certainty, modelled presence, or universal life history inferred.",
+  "records": [
+    {
+      "scientificName": "Pithecophaga jefferyi",
+      "section": "Natural history",
+      "label": "Mount Sinaka incubation record",
+      "text": "A Philippine Eagle pair studied at Mount Sinaka incubated one egg for 58 days; the female accounted for 74% of observed incubation time.",
+      "source": "Ibañez et al. (2003), Wilson Bulletin 115:333–336",
+      "url": "https://doi.org/10.1676/01-054",
+      "sourceType": "peer_reviewed_breeding_field_study",
+      "sourceYear": 2003,
+      "sourceLocation": "Abstract; Mount Sinaka pair observed July 1999–January 2000",
+      "studyScope": "One documented central Mindanao nesting pair; 58 days and female attendance are observations, not an invariant across all Philippine Eagles."
+    },
+    {
+      "scientificName": "Pithecophaga jefferyi",
+      "section": "Natural history",
+      "label": "Mount Sinaka prey delivered to nest",
+      "text": "The studied pair's 17 recorded prey items included four vertebrate taxa; civets and Philippine colugos comprised most identified prey in that nest sample.",
+      "source": "Ibañez et al. (2003), Wilson Bulletin 115:333–336",
+      "url": "https://doi.org/10.1676/01-054",
+      "sourceType": "peer_reviewed_breeding_field_study",
+      "sourceYear": 2003,
+      "sourceLocation": "Abstract; diet of the observed Mount Sinaka pair",
+      "studyScope": "17 prey items from one nest, July 1999–January 2000; not a population-wide prey percentage or habitat occurrence estimate."
+    },
+    {
+      "scientificName": "Leptobrachium lumadorum",
+      "section": "Habitat",
+      "label": "Northeast Mindanao field microhabitats",
+      "text": "The 2016 northeast Mindanao surveys encountered this frog at agricultural edges beside second-growth vegetation, tree nurseries and lowland forest riparian sites.",
+      "source": "Sanguila et al. (2016), ZooKeys 624:1–132",
+      "url": "https://doi.org/10.3897/zookeys.624.9814",
+      "sourceType": "peer_reviewed_herpetofauna_field_survey",
+      "sourceYear": 2016,
+      "sourceLocation": "Species account: Leptobrachium lumadorum, habitat observations",
+      "studyScope": "Survey encounters in northeast Mindanao; some disturbed-site detections do not establish equal survival in all disturbed habitats."
+    },
+    {
+      "scientificName": "Leptobrachium lumadorum",
+      "section": "Habitat",
+      "label": "Mountain encounter elevations",
+      "text": "Sanguila and colleagues reported specimens on the mountains Magdiwata, Hilong-hilong, Balatukan and Lumot at elevations reaching 1,500 m.",
+      "source": "Sanguila et al. (2016), ZooKeys 624:1–132",
+      "url": "https://doi.org/10.3897/zookeys.624.9814",
+      "sourceType": "peer_reviewed_herpetofauna_field_survey",
+      "sourceYear": 2016,
+      "sourceLocation": "Species account: Leptobrachium lumadorum, elevational field records",
+      "studyScope": "Maximum elevation mentioned for sampled northeast Mindanao mountains, not a national elevation tolerance or confirmation of absence elsewhere."
+    },
+    {
+      "scientificName": "Cynocephalus volans",
+      "section": "Habitat",
+      "label": "Trees used for feeding in field study",
+      "text": "A study of six Philippine colugos monitored feeding among trees at its study area, where the researchers enumerated 76 available tree species.",
+      "source": "Wischusen & Richmond (1998), Journal of Mammalogy 79:1288–1295",
+      "url": "https://doi.org/10.2307/1383020",
+      "sourceType": "peer_reviewed_foraging_field_study",
+      "sourceYear": 1998,
+      "sourceLocation": "Abstract; observed trees and study vegetation sampling",
+      "studyScope": "Six observed Philippine colugos at one study area in 1986–1987; feeding substrate evidence, not a national habitat suitability classification."
+    },
+    {
+      "scientificName": "Cynocephalus volans",
+      "section": "Natural history",
+      "label": "Documented tree use during foraging",
+      "text": "Six observed colugos fed on 35 of 76 available tree species, representing at least 12 plant families, in the 1986–1987 study.",
+      "source": "Wischusen & Richmond (1998), Journal of Mammalogy 79:1288–1295",
+      "url": "https://doi.org/10.2307/1383020",
+      "sourceType": "peer_reviewed_foraging_field_study",
+      "sourceYear": 1998,
+      "sourceLocation": "Abstract; sampled tree-species use",
+      "studyScope": "Six colugos and 76 inventoried tree species; the observed 35 species are not a complete diet list for the Philippines."
+    },
+    {
+      "scientificName": "Cynocephalus volans",
+      "section": "Natural history",
+      "label": "Repeated short nocturnal feeding visits",
+      "text": "The tracked colugos made many short feeding visits during the night and used several tree species within individual nights.",
+      "source": "Wischusen & Richmond (1998), Journal of Mammalogy 79:1288–1295",
+      "url": "https://doi.org/10.2307/1383020",
+      "sourceType": "peer_reviewed_foraging_field_study",
+      "sourceYear": 1998,
+      "sourceLocation": "Abstract; observed nocturnal foraging behavior",
+      "studyScope": "Six animals observed in 1986–1987; no assertion that all individuals share the same nightly activity schedule."
+    }
+  ]
+}

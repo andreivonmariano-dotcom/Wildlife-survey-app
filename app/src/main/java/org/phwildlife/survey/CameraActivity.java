@@ -14,6 +14,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.location.Location;
+import android.location.LocationManager;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -96,6 +99,13 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         result.putExtra("bearing_deg",heading);
         result.putExtra("pitch_deg",inclination);
         result.putExtra("captured_at",System.currentTimeMillis());
+        Location fix=TrackService.currentFix();
+        if(fix!=null&&LocationManager.GPS_PROVIDER.equals(fix.getProvider())&&fix.hasAccuracy()){
+            long age=(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1000000L;
+            if(GpsFixPolicy.acceptableElapsed(fix.getLatitude(),fix.getLongitude(),
+                fix.getAccuracy(),age,fix.isFromMockProvider()))
+                result.putExtra("capture_observer_fix",new Location(fix));
+        }
         result.putExtra("sensor_quality",quality);
         setResult(RESULT_OK,result);
         finish();

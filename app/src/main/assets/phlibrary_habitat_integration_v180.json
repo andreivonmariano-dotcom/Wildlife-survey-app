@@ -1,0 +1,304 @@
+{
+  "edition": "1.80-integrated-habitats",
+  "baseEdition": "1.75",
+  "editorialEdition": "1.76-editorial",
+  "readerEdition": "1.79-reader-polish",
+  "habitatEdition": "1.77-habitat-cues",
+  "rarityModel": "0.3.1",
+  "speciesCount": 714,
+  "reviewedSpecies": 100,
+  "integratedSpecies": 47,
+  "changed": 48,
+  "scope": "Reversible natural-history prose integration of the previously reviewed 100 habitat cues. Merge 47 inserted cue passages into species-specific context, preserve reported observations, island boundaries and original references. Eight earlier generic replacements and 45 retained entries remain unchanged. No new ecological research or status changes.",
+  "evidenceRule": "Citations are kept next to the source-reported assertion. Uncited habitat search suggestions remain cautious interpretation; never infer habitat selection, new sites or occurrence from this overlay.",
+  "records": [
+    {
+      "s": "Aviceda jerdoni",
+      "old": "The Jerdon's Baza is reported from forests, rivers and streams, as well as grasslands and other open areas. Shaded canopy gaps and streamside trees offer concealed hunting perches for this baza.",
+      "revised": "Jerdon's Baza is reported from forest, stream corridors and adjoining open country, where shaded canopy gaps and streamside trees may provide concealed hunting perches.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Circus melanoleucos",
+      "old": "The Pied Harrier is reported from freshwater wetlands, grasslands and other open areas, as well as agricultural land. Pied Harriers search low over wet grassland, marsh margins and fallow fields.",
+      "revised": "Pied Harriers forage over freshwater marshes, wet grassland, agricultural fields and other open country, searching low along marsh margins and fallow fields.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Elanus caeruleus",
+      "old": "The Black-winged Kite is reported from grasslands and other open areas, shrublands, agricultural areas, as well as settlements and disturbed habitats. Open fields with isolated trees and poles provide hunting perches for Black-winged Kites, which also hover while searching for prey.",
+      "revised": "Black-winged Kites use open grassland, shrubland, cultivated land and other modified landscapes, often hunting over fields from isolated trees or poles and by hovering above the vegetation.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Icthyophaga ichthyaetus",
+      "old": "The Grey-headed Fish Eagle inhabits freshwater environments, particularly large slow rivers, reservoirs and wetlands (BirdLife International, 2024). Large, slow-moving rivers and wetlands with tall bankside trees provide perches overlooking the water for Grey-headed Fish Eagles.",
+      "revised": "Grey-headed Fish Eagles inhabit large, slow-moving rivers, reservoirs and freshwater wetlands (BirdLife International, 2024). Tall bankside trees may provide perches overlooking the water.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Pernis ptilorhynchus",
+      "old": "The Crested Honey Buzzard locates bee and wasp colonies and raids their nests for larvae. Wooded ridge crests and canopy openings provide broad views of Crested Honey Buzzards during seasonal movements.",
+      "revised": "The Crested Honey Buzzard raids bee and wasp colonies for larvae. During seasonal movements, wooded ridgelines and canopy openings can offer views of birds crossing the forest canopy.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Spilornis holospilus",
+      "old": "The Philippine Serpent Eagle is reported from forest edges, riparian forest, foothills and wooded agricultural country (Department of Environment and Natural Resources, n.d.). Philippine Serpent Eagles use forest edges, wooded foothills and riparian corridors, where their calls carry across canopy openings.",
+      "revised": "Philippine Serpent Eagles inhabit wooded foothills, riparian corridors, forest margins and tree-covered agricultural landscapes (Department of Environment and Natural Resources, n.d.). Their calls can carry across openings in the canopy.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Tachyspiza gularis",
+      "old": "The Japanese Sparrowhawk is reported from forests, grasslands and other open habitats. Narrow gaps in wooded hillsides and forest margins offer brief views of Japanese Sparrowhawks during passage.",
+      "revised": "Japanese Sparrowhawks occur in forest and open habitats, with wooded hillsides and narrow gaps along forest margins offering possible views of birds in passage.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Tachyspiza soloensis",
+      "old": "The Chinese Sparrowhawk is reported from forests, grasslands and other open habitats. During migration, Chinese Sparrowhawks may appear over wooded valleys and forest margins.",
+      "revised": "Chinese Sparrowhawks occur in wooded and open habitats, and may pass over forest margins and valleys during migration.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Tachyspiza virgata",
+      "old": "The Besra is reported from forests, grasslands and other open habitats. Within shaded forest, the Besra may perch in the mid-canopy before flying through narrow gaps between trees.",
+      "revised": "Besras use forest and adjoining open habitats, potentially hunting from shaded mid-canopy perches and moving through narrow gaps among trees.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Pandion haliaetus",
+      "old": "The Osprey is reported from rivers and streams as well as coastal and intertidal habitats. Over reservoirs, river reaches and coastal shallows, Ospreys search open water and dive to seize fish.",
+      "revised": "Ospreys use coastal shallows, rivers, reservoirs and other open-water habitats where fish are accessible.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Anas acuta",
+      "old": "The Northern Pintail is reported from freshwater wetlands. Shallow marshes and seasonally flooded grasslands offer open water and vegetated edges used by Northern Pintails.",
+      "revised": "Northern Pintails use freshwater wetlands, including shallow marshes and seasonally flooded grassland with open water and vegetated edges.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Anas zonorhyncha",
+      "old": "The Eastern Spot-billed Duck is reported from freshwater and coastal wetland habitats. Sheltered wetland backwaters and flooded vegetation may provide feeding and resting areas for Eastern Spot-billed Ducks.",
+      "revised": "Eastern Spot-billed Ducks are reported from freshwater and coastal wetlands, where sheltered backwaters and flooded vegetation may provide places to feed and rest.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Ansonia mcgregori",
+      "old": "The McGregor's Slender Stream Toad has been documented on Mindanao, including Mount Kitanglad Range, Mount Malindang Range, Pasonanca area, Zamboanga del Norte, and Zamboanga del Sur (GBIF.org, 2026; Beukema, 2011; AMNH Amphibian Species of the World, n.d.; AMNH, n.d.; Nuñeza et al., 2010). Forested mountain streams provide wet rock surfaces and nearby vegetation that may shelter McGregor's Slender Stream Toad.",
+      "revised": "The McGregor's Slender Stream Toad has been documented on Mindanao, including Mount Kitanglad Range, Mount Malindang Range, the Pasonanca area, Zamboanga del Norte and Zamboanga del Sur (GBIF.org, 2026; Beukema, 2011; AMNH Amphibian Species of the World, n.d.; AMNH, n.d.; Nuñeza et al., 2010). In forested mountain streams, wet rocks and nearby vegetation may offer shelter.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Rhinella marina",
+      "old": "In Agusan Marsh it was recorded around agricultural margins and mixed freshwater-swamp vegetation (Sanguila et al., 2026). Marine Toads often occupy disturbed lowland areas, including yards, drainage edges and temporary pools that fill after rain.",
+      "revised": "At Agusan Marsh, Cane Toads were recorded around cultivated margins and freshwater-swamp vegetation (Sanguila et al., 2026). In disturbed lowland landscapes, yards, drainage edges and rain-filled pools can provide additional activity sites.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Platymantis bayani",
+      "old": "Walter’s Limestone Forest Frog inhabits the forest floor and terrestrial limestone habitats of eastern Samar (Siler et al., 2009). Within limestone forest, shaded leaf litter and sheltered rock crevices may provide moist refuges for Walter's Limestone Forest Frog.",
+      "revised": "Walter’s Limestone Forest Frog inhabits the floor of limestone forest in eastern Samar (Siler et al., 2009), where shaded leaf litter and sheltered rock crevices may provide moist refuges.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Platymantis jagorii",
+      "old": "Jagor’s Variable Forest Frog is associated with terrestrial forest habitats in the southern Philippines. Shaded ground cover and deep leaf litter in terrestrial forest may shelter Jagor's Variable Forest Frog.",
+      "revised": "Jagor’s Variable Forest Frog inhabits terrestrial forest in the southern Philippines, where shaded ground cover and deep leaf litter may offer shelter.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Platymantis laticeps",
+      "old": "The Broad-headed Variable Forest Frog inhabits terrestrial forest habitats in northeastern Mindanao. In northeastern Mindanao, fallen wood and leaf litter may create sheltered spaces for this broad-headed forest frog.",
+      "revised": "The Broad-headed Variable Forest Frog inhabits terrestrial forest in northeastern Mindanao, where fallen wood and leaf litter may provide sheltered ground-level spaces.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Platymantis navjoti",
+      "old": "Navjot Sodhi’s Cloud Frog inhabits montane forest on Leyte and has also been recorded from northern Leyte and north-central Samar (Diesmos et al., 2020; Frost, 2026). Cloudy montane forest provides a cool, damp setting for Navjot Sodhi's Cloud Frog, with shaded vegetation offering possible activity sites after rain.",
+      "revised": "Navjot Sodhi’s Cloud Frog inhabits montane forest on Leyte and is also recorded from northern Leyte and north-central Samar (Diesmos et al., 2020; Frost, 2026). Cool, moist forest vegetation may offer sheltered activity sites after rainfall.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Fejervarya moodiei",
+      "old": "The Asian Mangrove Frog has been recorded in ground-level and aquatic habitats on northeastern Leyte (Decena et al., 2023). Asian Mangrove Frogs may occupy shallow pools and muddy backwaters along mangrove margins, including brackish edges.",
+      "revised": "On northeastern Leyte, Asian Mangrove Frogs have been recorded in terrestrial and aquatic habitats (Decena et al., 2023). Shallow pools and muddy backwaters along mangrove margins, including brackish edges, may provide further activity sites.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Fejervarya vittigera",
+      "old": "Philippine accounts report this frog from low-elevation ponds, flooded rice fields and irrigation channels, including still pools beside streams at Agusan Marsh. In the Taguibo Watershed analysis, sampled animals occupied aquatic habitats; northeastern Leyte inventories recorded both terrestrial and aquatic observations. Rice paddies, irrigation channels, still pools beside streams and swampy forest patches are documented habitats of the Philippine Field Frog.",
+      "revised": "Philippine records place this frog in low-elevation ponds, flooded rice fields, irrigation channels and streamside pools, including at Agusan Marsh. Taguibo Watershed surveys recorded aquatic use, while northeastern Leyte inventories included terrestrial and aquatic encounters. Swampy forest patches have also been reported as habitat.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Hoplobatrachus chinensis",
+      "old": "The East Asian Bullfrog is reported from cultivated areas. Large pools, wetland margins and flooded cultivated ground provide potential shallow-water habitat for the East Asian Bullfrog.",
+      "revised": "The East Asian Bullfrog is reported from cultivated landscapes, where flooded ground, large pools and wetland margins may provide shallow-water habitat.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Limnonectes magnus",
+      "old": "A 2025 anuran survey along Miral River in Bansalan, Davao del Sur, reports the species in a six-species field assemblage (Ubat, 2025). Mindanao Fanged Frogs occupy small, shallow forest streams and nearby banks, ground surfaces and low vegetation.",
+      "revised": "A 2025 survey documented Mindanao Fanged Frogs along the Miral River in Bansalan, Davao del Sur (Ubat, 2025). The species also uses small, shallow forest streams and adjacent banks, ground surfaces and low vegetation.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Limnonectes micrixalus",
+      "old": "Compiled ecological information describes the Western Mindanao Fanged Frog as using terrestrial and aquatic environments and having a larval stage (Oliveira et al., 2017). Shaded stream margins and damp ground in riparian forest may provide activity sites for the Western Mindanao Fanged Frog.",
+      "revised": "Compiled accounts describe the Western Mindanao Fanged Frog as terrestrial and aquatic, with a larval stage (Oliveira et al., 2017). Shaded stream margins and damp riparian ground may offer activity sites.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Limnonectes visayanus",
+      "old": "Compiled traits describe the Visayan Fanged Frog as nocturnal and associated with both terrestrial and aquatic environments, with larval development (Oliveira et al., 2017). The Visayan Fanged Frog may use saturated ground and shallow edges of forest streams within its island range.",
+      "revised": "Compiled accounts describe the Visayan Fanged Frog as nocturnal and terrestrial-aquatic, with larval development (Oliveira et al., 2017). Within its documented island range, saturated ground and shallow forest-stream margins may provide activity sites.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Occidozyga diminutiva",
+      "old": "Compiled ecological information places the Tiny Puddle Frog in terrestrial and aquatic environments, with a larval stage (Oliveira et al., 2017). Small puddles and shallow standing water may provide activity sites for this tiny aquatic frog during wet periods.",
+      "revised": "Compiled accounts place the Tiny Puddle Frog in terrestrial and aquatic environments, with a larval stage (Oliveira et al., 2017). Small puddles and shallow standing water may provide activity sites during wet periods.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Occidozyga laevis",
+      "old": "The Common Puddle Frog has been recorded in aquatic habitats on northeastern Leyte (Decena et al., 2023). Common Puddle Frogs occupy shallow water and muddy margins, including small pools and waterlogged ground along lowland tracks.",
+      "revised": "On northeastern Leyte, Common Puddle Frogs have been recorded in aquatic habitats (Decena et al., 2023). Small pools, muddy margins and waterlogged ground along lowland tracks may provide suitable activity sites.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Eleutherodactylus planirostris",
+      "old": "Direct development occurs within terrestrial eggs, with small froglets hatching without an aquatic tadpole stage (Animal Diversity Web, n.d.). In villages and gardens, damp leaf litter, planted beds and sheltered ground cover can support the small terrestrial Greenhouse Frog.",
+      "revised": "Greenhouse Frogs develop directly inside terrestrial eggs, with froglets hatching without an aquatic tadpole stage (Animal Diversity Web, n.d.). Damp leaf litter, planted beds and sheltered ground cover in gardens and settlements can provide terrestrial cover.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Crocodylus mindorensis",
+      "old": "The Philippine Crocodile inhabits freshwater rivers, creeks, ponds, lakes and marshes. Philippine Crocodiles inhabit freshwater marsh channels, vegetated pond margins and calmer river reaches, where basking and shelter sites occur near water.",
+      "revised": "Philippine Crocodiles inhabit freshwater rivers, creeks, ponds, lakes and marshes, including quiet channels and vegetated margins with nearby basking and shelter sites.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Crocodylus porosus",
+      "old": "Saltwater Crocodiles use tidal rivers, estuaries, mangrove swamps and coastal waters, and may also occupy freshwater rivers and lakes well inland. Saltwater Crocodiles move through tidal channels, estuarine banks and mangrove creeks and can travel far into freshwater river reaches.",
+      "revised": "Saltwater Crocodiles use mangrove creeks, estuaries, tidal channels and coastal waters, and may travel far upstream into freshwater rivers and lakes.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Bronchocela philippina",
+      "old": "The Philippine Bloodsucker is reported from forests and shrublands. Sunlit branches, forest-edge saplings and adjoining shrub vegetation may offer perches for the Philippine Bloodsucker.",
+      "revised": "Philippine Bloodsuckers occur in forest and shrubland, where sunlit branches, edge saplings and other shrub vegetation may serve as perches.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Draco bimaculatus",
+      "old": "Agusan Marsh records include peat-swamp forest and relatively low perches in regenerating vegetation (Sanguila et al., 2026). In northeastern Mindanao, Two-spotted Flying Lizards have been recorded on trunks near forest edges and adjoining coconut groves (Sanguila et al., 2016).",
+      "revised": "At Agusan Marsh, Two-spotted Flying Lizards were observed on relatively low perches in peat-swamp and regenerating forest (Sanguila et al., 2026). Northeastern Mindanao records also describe individuals on trunks near forest margins and adjoining coconut groves (Sanguila et al., 2016).",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Draco cyanopterus",
+      "old": "Recent survey records from Taguibo Watershed placed Draco cyanopterus in vegetation and trees of the sampled terrestrial zone (Sanguila et al., 2021). Northeastern Mindanao records place Chartreuse-spotted Flying Lizards on coconut palms and exposed trunks adjoining forest (Sanguila et al., 2016).",
+      "revised": "Surveys in Taguibo Watershed recorded Chartreuse-spotted Flying Lizards on trees and other vegetation in terrestrial habitat (Sanguila et al., 2021). In northeastern Mindanao, individuals were also recorded on coconut palms and exposed trunks bordering forest (Sanguila et al., 2016).",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Ahaetulla prasina",
+      "old": "Sleeping snakes were seen on low shrubs beside forest edges (Sanguila et al., 2016). Asian Vine Snakes use slender branches, vines and shrubs along wooded edges, where their narrow green bodies blend with foliage.",
+      "revised": "Asian Vine Snakes have been seen sleeping on low shrubs beside forest edges (Sanguila et al., 2016). Slender branches, vines and shrub foliage offer climbing sites where their narrow green bodies blend into the vegetation.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Boiga angulata",
+      "old": "The species has been characterized as fully arboreal in comparative snake-habitat literature summarized by Uetz et al (2026). Intertwined branches and lower-canopy vegetation may provide nighttime activity sites for the Philippine Blunt-headed Cat Snake.",
+      "revised": "Comparative habitat accounts characterize the Philippine Blunt-headed Cat Snake as arboreal (Uetz et al., 2026). Intertwined branches and lower-canopy vegetation may offer places for nighttime activity.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Boiga dendrophila",
+      "old": "An adult was documented swimming through a shallow stream at Tinuy-an Falls (Plaza et al., 2025). Mangrove branches and creekside trees above tidal water offer sheltered climbing habitat for the Mangrove Snake.",
+      "revised": "An adult Mangrove Snake was observed swimming through a shallow stream at Tinuy-an Falls (Plaza et al., 2025). Its climbing habits also fit creekside trees and mangrove branches above tidal water.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Coelognathus erythrurus",
+      "old": "In the Leyte Cordillera and Babatngon ranges, the species was encountered in aquatic habitats (Decena et al., 2023). Fallen wood, ground cover and vegetated forest edges may provide retreat and movement sites for the Philippine Red-tailed Ratsnake.",
+      "revised": "On northeastern Leyte, Philippine Red-tailed Ratsnakes were encountered in aquatic settings (Decena et al., 2023). Vegetated forest margins, fallen wood and ground cover may offer additional routes and retreats.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Dendrelaphis marenae",
+      "old": "Tree-dwelling specimens were recorded from the Agusan region (Sanguila et al., 2016). The sunlit shrub layer and lower trees around forest openings may provide activity sites for Maren's Bronzeback Snake.",
+      "revised": "Tree-dwelling Maren's Bronzeback Snakes have been recorded in the Agusan region (Sanguila et al., 2016). Sunlit shrubs and lower tree branches around forest openings may offer further activity sites.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Dryophiops philippina",
+      "old": "The Philippine Whip Snake is reported from forests. Fine branches, suspended vines and dense shrubs offer likely climbing routes for the Philippine Whip Snake.",
+      "revised": "The Philippine Whip Snake occurs in forest, where fine branches, hanging vines and dense shrubs may provide climbing routes.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Gonyosoma oxycephalum",
+      "old": "On Samar, records include Mount Huraw and Eastern Samar (GBIF.org, 2026; Supsup et al., 2017; Sanguila et al., 2016; Gamalo et al., 2023). Trees and climbing plants at wooded edges create connected aboveground pathways for the Red-tailed Green Ratsnake.",
+      "revised": "On Samar, records include Mount Huraw and Eastern Samar (GBIF.org, 2026; Supsup et al., 2017; Sanguila et al., 2016; Gamalo et al., 2023).",
+      "note": "Retain exact island occurrence and its four supporting citations"
+    },
+    {
+      "s": "Gonyosoma oxycephalum",
+      "old": "Published behavior records describe a primarily tree-dwelling snake, active during daylight and using forest vegetation (Uetz et al., 2026).",
+      "revised": "Published accounts describe the Red-tailed Green Ratsnake as a diurnal tree-dwelling species (Uetz et al., 2026). Connected branches and climbing plants along forest margins may provide aboveground movement routes.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Lycodon capucinus",
+      "old": "The Common Wolf Snake has been recorded near residences and other heavily modified lowland sites (Sanguila et al., 2016). Common Wolf Snakes use sheltered ground, rock crevices and modified lowland surroundings, including areas near houses.",
+      "revised": "Common Wolf Snakes have been recorded near houses and in other modified lowland habitats (Sanguila et al., 2016), where sheltered ground and rock crevices may provide refuges.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Rusa marianna",
+      "old": "The Philippine Brown Deer browses shoots, foliage and fruit and may graze in forest clearings and adjacent grassland. Philippine Brown Deer browse shoots and foliage in forest clearings and adjoining grassland, often moving along sheltered vegetated paths.",
+      "revised": "Philippine Brown Deer browse shoots, foliage and fruit in forest and along clearings, sometimes grazing adjoining grassland and moving through sheltered vegetation.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Sus philippensis",
+      "old": "The Philippine Warty Pig inhabits forests and adjoining vegetated habitats, including montane and mossy forest in some areas. On the forest floor, rooted soil, wallows and disturbed leaf litter may reveal movements of Philippine Warty Pigs.",
+      "revised": "Philippine Warty Pigs inhabit forest and adjoining vegetation, including montane and mossy forest in some areas. Rooted soil, wallows and disturbed leaf litter on the forest floor may indicate their activity.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Viverra tangalunga",
+      "old": "The Malay Civet uses forest, cultivated land and other modified terrestrial habitats. Malay Civets travel along ground-level routes through secondary woodland, cultivated edges and other vegetated mosaics.",
+      "revised": "Malay Civets use forest, cultivated land and other modified terrestrial habitats, moving along ground-level routes through secondary woodland and vegetated edges.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Coelops hirsutus",
+      "old": "The Philippine Tailless Roundleaf Bat is reported from forests, rivers, streams, caves and karst landscapes. Caves and karst may provide daytime shelter for Philippine Tailless Roundleaf Bats, with adjoining forest and waterways offering possible flight corridors.",
+      "revised": "Philippine Tailless Roundleaf Bats occur in forest, cave and karst landscapes near waterways. Caves may provide daytime shelter, while nearby woodland and stream corridors offer possible flight routes.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Miniopterus tristis",
+      "old": "The Great Long-fingered Bat is reported from forests, caves and karst landscapes. Caves within forested karst may provide roosting spaces for Great Long-fingered Bats, with wooded corridors forming possible flight routes.",
+      "revised": "Great Long-fingered Bats occur in forest and cave-rich karst, where caves may offer roosting spaces and wooded corridors possible flight routes.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Mops sarasinorum",
+      "old": "The Sulawesian Free-tailed Bat is reported from forests, rivers and streams, and cultivated areas. Openings above wooded waterways and cultivated land may provide flight corridors for Sulawesian Free-tailed Bats.",
+      "revised": "Sulawesian Free-tailed Bats are reported from forest, river corridors and cultivated areas; openings above wooded waterways and farmland may serve as flight routes.",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    },
+    {
+      "s": "Acerodon jubatus",
+      "old": "The Golden-capped Flying Fox roosts in trees, sometimes alongside other large flying foxes, and feeds heavily on figs in mature lowland forest. A Luzon GPS study found most recorded foraging locations of Golden-capped Flying Foxes in closed forest, with roosting trees occurring across a wider landscape (de Jong et al., 2013).",
+      "revised": "Golden-capped Flying Foxes roost in trees, sometimes alongside other large flying foxes, and feed heavily on figs in mature lowland forest. In a Luzon GPS study, most recorded foraging locations lay within closed forest, while roost trees occurred across a wider landscape (de Jong et al., 2013).",
+      "note": "Integrate habitat setting and activity into the existing natural-history account"
+    }
+  ]
+}

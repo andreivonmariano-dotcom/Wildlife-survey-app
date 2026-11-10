@@ -16,55 +16,125 @@ public class SitesActivity extends Activity {
     private FieldDb helper;
     private LinearLayout content;
     private Spinner projectSpinner;
+    private String stationQuery="";
     private ArrayList<String> pids=new ArrayList<>();
-    private final int GREEN=Color.rgb(35,105,73);
     private static String now(){return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US){{setTimeZone(TimeZone.getTimeZone("UTC"));}}.format(new Date());}
     private int dp(int v){return (int)(v*getResources().getDisplayMetrics().density+0.5);}
-    private TextView label(String t,int size){TextView x=new TextView(this);x.setText(t);x.setTextSize(size);x.setTextColor(Color.rgb(24,53,40));x.setPadding(dp(5),dp(8),dp(5),dp(8));return x;}
+    private TextView label(String t,int size){TextView x=new TextView(this);x.setText(t);x.setTextSize(size);x.setTextColor(UiKit.INK);x.setPadding(dp(5),dp(8),dp(5),dp(8));return x;}
     private Button btn(String t){return UiKit.button(this,t,"secondary");}
-    private EditText edit(String hint,String value){EditText x=new EditText(this);x.setHint(hint);x.setText(value==null?"":value);x.setSingleLine(true);x.setTextSize(15);return x;}
+    private EditText edit(String hint,String value){EditText x=new EditText(this);x.setHint(hint);x.setText(value==null?"":value);x.setSingleLine(true);x.setTextSize(15);UiKit.fieldInput(this,x);return x;}
     private LinearLayout column(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
     @Override public void onCreate(Bundle b){super.onCreate(b);helper=new FieldDb(this);render();}
     @Override protected void onDestroy(){super.onDestroy();helper.close();}
     private String selectedProject(){int pos=projectSpinner==null?-1:projectSpinner.getSelectedItemPosition();return pos<0||pos>=pids.size()?"default":pids.get(pos);}
     private void render(){
-        LinearLayout root=column();root.setPadding(dp(16),dp(16),dp(16),dp(16));root.setBackgroundColor(Color.rgb(246,249,246));
-        root.addView(label("Projects",23));
-        root.addView(label("Create a project first. Survey routes generate their sampling stations automatically. Existing stations remain editable for location corrections and repeat visits.",13));
-        Button back=btn("← Home");back.setOnClickListener(v->finish());root.addView(back);
-        Spinner previous=projectSpinner;String selected=previous==null?"default":selectedProject();
-        projectSpinner=new Spinner(this);pids.clear();ArrayList<String> projects=new ArrayList<>();
-        try(Cursor c=helper.getReadableDatabase().rawQuery("SELECT id,name FROM projects ORDER BY name",null)){
-            while(c.moveToNext()){pids.add(c.getString(0));projects.add(c.getString(1)+" · "+c.getString(0));}
-        }
-        projectSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,projects));
-        int selectedIndex=pids.indexOf(selected);if(selectedIndex>=0)projectSpinner.setSelection(selectedIndex);
-        root.addView(label("Active project",15));
-        root.addView(projectSpinner);
-        Button project=UiKit.button(this,"＋ Add project","primary");project.setOnClickListener(v->newProject());root.addView(project);
-        ScrollView scroll=new ScrollView(this);content=column();scroll.addView(content);
+        LinearLayout root=column();
+        root.setPadding(dp(16),dp(12),dp(16),dp(10));
+        root.setBackgroundColor(UiKit.BG);
+        root.addView(UiKit.navigationHeader(this,"Projects & Stations","Previous screen",this::finish));
+        ScrollView scroll=new ScrollView(this);
+        scroll.setFillViewport(true);
+        LinearLayout page=column();
+        page.setPadding(0,dp(5),0,dp(24));
+        scroll.addView(page);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        projectSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
-            public void onNothingSelected(android.widget.AdapterView<?> p){}
-            public void onItemSelected(android.widget.AdapterView<?> p,View v,int i,long id){renderSites();}
-        });
-        setContentView(root);renderSites();
-    }
-    private void renderSites(){
-        if(content==null)return;content.removeAllViews();
-        String projectId=selectedProject();
-        content.addView(label("Saved sampling stations in "+projectId,17));
-        try(Cursor c=helper.getReadableDatabase().rawQuery("SELECT id,name,habitat,latitude,longitude FROM sites WHERE project_id=? ORDER BY id",new String[]{projectId})){
-            if(c.getCount()==0)content.addView(label("No stations yet. Start a survey to generate stations automatically.",13));
+        page.addView(ApoHomeUi.section(this,"Project workspace",
+            "Select a project to inspect permanent station IDs and reference coordinates."));
+        Spinner previous=projectSpinner;
+        String selected=previous==null?"default":selectedProject();
+        projectSpinner=new Spinner(this);
+        projectSpinner.setMinimumHeight(dp(48));
+        projectSpinner.setContentDescription("Select project for saved sampling stations");
+        pids.clear();
+        ArrayList<String> projects=new ArrayList<>();
+        try(Cursor c=helper.getReadableDatabase().rawQuery(
+                "SELECT id,name FROM projects ORDER BY name",null)){
             while(c.moveToNext()){
-                String id=c.getString(0);
-                String coords=c.isNull(3)?"No coordinates":String.format(Locale.US,"%.5f, %.5f",c.getDouble(3),c.getDouble(4));
-                Button edit=btn(c.getString(1)+" ("+id+")\n"+coords);
-                edit.setAllCaps(false);
-                edit.setOnClickListener(v->siteDialog(id));
-                content.addView(edit);
+                pids.add(c.getString(0));
+                projects.add(c.getString(1));
             }
         }
+        projectSpinner.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item,projects));
+        int selectedIndex=pids.indexOf(selected);
+        if(selectedIndex>=0)projectSpinner.setSelection(selectedIndex);
+        page.addView(UiKit.sectionTitle(this,"Project"));
+        page.addView(projectSpinner,new LinearLayout.LayoutParams(-1,dp(52)));
+        Button project=UiKit.button(this,"Create project","primary");
+        LinearLayout.LayoutParams projectLp=new LinearLayout.LayoutParams(-1,-2);
+        projectLp.topMargin=dp(8);
+        page.addView(project,projectLp);
+        project.setOnClickListener(v->newProject());
+        page.addView(ApoHomeUi.note(this,
+            "Station identifiers persist across visits. Editing a site's reference " +
+            "coordinates never changes earlier GPS fixes."));
+        page.addView(UiKit.sectionTitle(this,"Find a station"));
+        EditText search=edit("Search station name, ID or habitat",stationQuery);
+        search.setContentDescription("Search stations by name, identifier or habitat");
+        page.addView(search);
+        search.addTextChangedListener(new android.text.TextWatcher(){
+            public void beforeTextChanged(CharSequence val,int start,int count,int after){}
+            public void onTextChanged(CharSequence val,int start,int before,int count){
+                stationQuery=val.toString().trim();
+                renderSites();
+            }
+            public void afterTextChanged(android.text.Editable editable){}
+        });
+        content=column();
+        page.addView(content);
+        projectSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
+            public void onNothingSelected(android.widget.AdapterView<?> p){}
+            public void onItemSelected(android.widget.AdapterView<?> p,View v,int i,long id){
+                renderSites();
+            }
+        });
+        setContentView(root);
+        renderSites();
+    }
+    private void renderSites(){
+        if(content==null)return;
+        content.removeAllViews();
+        String projectId=selectedProject();
+        content.addView(UiKit.sectionTitle(this,"Saved sampling stations"));
+        int total=0,matched=0;
+        LinearLayout list=column();
+        try(Cursor c=helper.getReadableDatabase().rawQuery(
+                "SELECT id,name,habitat,latitude,longitude FROM sites "+
+                "WHERE project_id=? ORDER BY name COLLATE NOCASE,id",
+                new String[]{projectId})){
+            while(c.moveToNext()){
+                total++;
+                String id=c.getString(0);
+                String name=c.isNull(1)||c.getString(1).trim().isEmpty()?
+                    "Unnamed station":c.getString(1);
+                String habitat=c.isNull(2)||c.getString(2).trim().isEmpty()?
+                    "Habitat not recorded":c.getString(2);
+                String query=stationQuery.toLowerCase(Locale.ROOT);
+                if(!query.isEmpty()&&!name.toLowerCase(Locale.ROOT).contains(query)
+                    &&!id.toLowerCase(Locale.ROOT).contains(query)
+                    &&!habitat.toLowerCase(Locale.ROOT).contains(query))continue;
+                matched++;
+                String coords=c.isNull(3)||c.isNull(4)?
+                    "Coordinates not recorded":
+                    String.format(Locale.US,"%.5f, %.5f",c.getDouble(3),c.getDouble(4));
+                list.addView(ApoHomeUi.tool(this,String.format(Locale.US,"%02d",matched),
+                    name,id+" · "+coords+"\n"+habitat,()->siteDialog(id)));
+            }
+        }catch(Exception error){
+            content.addView(ApoHomeUi.note(this,
+                "Stations cannot be read: "+error.getClass().getSimpleName()));
+            return;
+        }
+        content.addView(ApoHomeUi.note(this,
+            matched+" shown of "+total+" saved stations"));
+        if(total==0){
+            content.addView(ApoHomeUi.note(this,
+                "No stations in this project. Supported surveys create station " +
+                "identifiers when sampling routes or units are registered."));
+        }else if(matched==0){
+            content.addView(ApoHomeUi.note(this,
+                "No stations match this search. Clear the search field to show all stations."));
+        }else content.addView(list);
     }
     /** Permanent device-independent identifiers, checked again by SQLite's primary key. */
     private String newId(String prefix,String table){
@@ -87,7 +157,8 @@ public class SitesActivity extends Activity {
         EditText name=edit("Project name (required)","");
         form.addView(name);
         form.addView(label("Name the project. The ID stays unchanged so observations and stations keep their original links.",12));
-        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("New project").setView(form)
+        ScrollView projectForm=new ScrollView(this);projectForm.addView(form);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("New project").setView(projectForm)
             .setNegativeButton("Cancel",null).setPositiveButton("Create project",null).create();
         dialog.setOnShowListener(w->dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
             String n=name.getText().toString().trim();
@@ -106,7 +177,13 @@ public class SitesActivity extends Activity {
         }));
         dialog.show();
     }
-    private static Double num(String s){try{return s.trim().isEmpty()?null:Double.valueOf(s.trim());}catch(Exception e){return null;}}
+    private static Double num(String s){
+        try{
+            if(s.trim().isEmpty())return null;
+            Double value=Double.valueOf(s.trim());
+            return Double.isFinite(value)?value:null;
+        }catch(Exception e){return null;}
+    }
     private void siteDialog(String siteId){
         if(siteId==null)return; // New stations are generated from a survey, not here.
         String[] original={"","","","","",""};
@@ -139,7 +216,15 @@ public class SitesActivity extends Activity {
             .setView(scroll).setNegativeButton("Cancel",null).setPositiveButton("Save",null).create();
         dialog.setOnShowListener(d->dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
             String id=entries[0].getText().toString().trim(),name=entries[1].getText().toString().trim();
-            Double lat=num(entries[3].getText().toString()),lon=num(entries[4].getText().toString());
+            String rawLat=entries[3].getText().toString().trim();
+            String rawLon=entries[4].getText().toString().trim();
+            Double lat=num(rawLat),lon=num(rawLon);
+            if((!rawLat.isEmpty()&&lat==null)||(!rawLon.isEmpty()&&lon==null)){
+                if(!rawLat.isEmpty()&&lat==null)entries[3].setError("Invalid latitude");
+                if(!rawLon.isEmpty()&&lon==null)entries[4].setError("Invalid longitude");
+                Toast.makeText(this,"Invalid coordinates were not saved",Toast.LENGTH_LONG).show();
+                return;
+            }
             if(id.isEmpty()||name.isEmpty()){Toast.makeText(this,"Station ID and name required",Toast.LENGTH_SHORT).show();return;}
             if((lat==null)!=(lon==null)||lat!=null&&(lat< -90||lat>90||lon< -180||lon>180)){
                 Toast.makeText(this,"Enter valid latitude and longitude, or leave both blank",Toast.LENGTH_LONG).show();return;

@@ -1,0 +1,1455 @@
+{
+  "schemaVersion": "rc32-priority-96-status-evidence-ledger-v1",
+  "date": "2026-10-29",
+  "speciesCount": 96,
+  "globalIucnDirectReviewCount": 3,
+  "denrDatedOrderReviewCount": 3,
+  "rc32SpeciesWithNewResearch": 6,
+  "description": "No current status is invented. Old RC18/RC31 IUCN citations are not silently promoted to current. National and global authorities remain separate. A status in a secondary specialist webpage is kept unverified at the primary-source level. Dated 2019 national order is not proof of future revisions. RC31's northern Rufous Hornbill IUCN 2020 status is a dated specialist summary, not direct primary IUCN retrieval.",
+  "records": [
+    {
+      "scientificName": "Pithecophaga jefferyi",
+      "group": "Birds",
+      "topicsFilled": 5,
+      "totalFacts": 15,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Cacatua haematuropygia",
+      "group": "Birds",
+      "topicsFilled": 3,
+      "totalFacts": 6,
+      "emptySections": [
+        "Distribution",
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Gallicolumba platenae",
+      "group": "Birds",
+      "topicsFilled": 4,
+      "totalFacts": 7,
+      "emptySections": [
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Dicaeum quadricolor",
+      "group": "Birds",
+      "topicsFilled": 3,
+      "totalFacts": 5,
+      "emptySections": [
+        "Habitat",
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Rhabdotorrhinus waldeni",
+      "group": "Birds",
+      "topicsFilled": 5,
+      "totalFacts": 9,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Anthracoceros montani",
+      "group": "Birds",
+      "topicsFilled": 3,
+      "totalFacts": 3,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Gallicolumba menagei",
+      "group": "Birds",
+      "topicsFilled": 4,
+      "totalFacts": 4,
+      "emptySections": [
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Gallicolumba keayi",
+      "group": "Birds",
+      "topicsFilled": 4,
+      "totalFacts": 6,
+      "emptySections": [
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Penelopides panini",
+      "group": "Birds",
+      "topicsFilled": 5,
+      "totalFacts": 9,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Sarcophanops samarensis",
+      "group": "Birds",
+      "topicsFilled": 4,
+      "totalFacts": 5,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Erythropitta kochi",
+      "group": "Birds",
+      "topicsFilled": 2,
+      "totalFacts": 3,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Dicaeum haematostictum",
+      "group": "Birds",
+      "topicsFilled": 3,
+      "totalFacts": 3,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Barbourula busuangensis",
+      "group": "Amphibians",
+      "topicsFilled": 4,
+      "totalFacts": 8,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis insulatus",
+      "group": "Amphibians",
+      "topicsFilled": 5,
+      "totalFacts": 11,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis spelaeus",
+      "group": "Amphibians",
+      "topicsFilled": 4,
+      "totalFacts": 5,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis paengi",
+      "group": "Amphibians",
+      "topicsFilled": 3,
+      "totalFacts": 7,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis hazelae",
+      "group": "Amphibians",
+      "topicsFilled": 4,
+      "totalFacts": 5,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis rabori",
+      "group": "Amphibians",
+      "topicsFilled": 4,
+      "totalFacts": 6,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Leptobrachium lumadorum",
+      "group": "Amphibians",
+      "topicsFilled": 3,
+      "totalFacts": 6,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Leptobrachium mangyanorum",
+      "group": "Amphibians",
+      "topicsFilled": 2,
+      "totalFacts": 3,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Limnonectes magnus",
+      "group": "Amphibians",
+      "topicsFilled": 4,
+      "totalFacts": 8,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Ansonia mcgregori",
+      "group": "Amphibians",
+      "topicsFilled": 3,
+      "totalFacts": 5,
+      "emptySections": [
+        "Habitat",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Pelophryne lighti",
+      "group": "Amphibians",
+      "topicsFilled": 2,
+      "totalFacts": 4,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Sanguirana everetti",
+      "group": "Amphibians",
+      "topicsFilled": 2,
+      "totalFacts": 3,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Crocodylus mindorensis",
+      "group": "Reptiles",
+      "topicsFilled": 5,
+      "totalFacts": 9,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Hydrosaurus pustulatus",
+      "group": "Reptiles",
+      "topicsFilled": 4,
+      "totalFacts": 9,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus olivaceus",
+      "group": "Reptiles",
+      "topicsFilled": 5,
+      "totalFacts": 9,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus mabitang",
+      "group": "Reptiles",
+      "topicsFilled": 4,
+      "totalFacts": 10,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus bitatawa",
+      "group": "Reptiles",
+      "topicsFilled": 4,
+      "totalFacts": 7,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus cumingi",
+      "group": "Reptiles",
+      "topicsFilled": 2,
+      "totalFacts": 5,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus nuchalis",
+      "group": "Reptiles",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Cuora philippinensis",
+      "group": "Reptiles",
+      "topicsFilled": 3,
+      "totalFacts": 5,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": true,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Siebenrockiella leytensis",
+      "group": "Reptiles",
+      "topicsFilled": 5,
+      "totalFacts": 7,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Pelochelys cantorii",
+      "group": "Reptiles",
+      "topicsFilled": 4,
+      "totalFacts": 6,
+      "emptySections": [
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Trimeresurus mcgregori",
+      "group": "Reptiles",
+      "topicsFilled": 3,
+      "totalFacts": 3,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Ophiophagus salvatana",
+      "group": "Reptiles",
+      "topicsFilled": 2,
+      "totalFacts": 4,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": true,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Bubalus mindorensis",
+      "group": "Mammals",
+      "topicsFilled": 5,
+      "totalFacts": 12,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Manis culionensis",
+      "group": "Mammals",
+      "topicsFilled": 5,
+      "totalFacts": 12,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Sus cebifrons",
+      "group": "Mammals",
+      "topicsFilled": 4,
+      "totalFacts": 7,
+      "emptySections": [
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Rusa alfredi",
+      "group": "Mammals",
+      "topicsFilled": 5,
+      "totalFacts": 9,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Acerodon jubatus",
+      "group": "Mammals",
+      "topicsFilled": 5,
+      "totalFacts": 11,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Carlito syrichta",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 11,
+      "emptySections": [
+        "Distribution",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Cynocephalus volans",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 7,
+      "emptySections": [
+        "Distribution",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Crateromys australis",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 4,
+      "emptySections": [
+        "Habitat",
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [
+        {
+          "source": "https://ncr.denr.gov.ph/news-events/cloud-rat-o-buot-nakuha-sa-las-pinas-city-ng-denr-meo-south/",
+          "kind": "government_secondary_source_national",
+          "reviewStatus": "government_secondary_text_with_order_typo",
+          "edition": "DAO 2019-09"
+        }
+      ],
+      "hasRc32ScienceRecord": true,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Crateromys heaneyi",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 4,
+      "emptySections": [
+        "Habitat",
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Sus oliveri",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 4,
+      "emptySections": [
+        "Habitat",
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Dobsonia chapmani",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 3,
+      "emptySections": [
+        "Distribution",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Pteropus pumilus",
+      "group": "Mammals",
+      "topicsFilled": 4,
+      "totalFacts": 4,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Buceros hydrocorax",
+      "group": "Birds",
+      "topicsFilled": 5,
+      "totalFacts": 6,
+      "emptySections": [],
+      "globalIucnVerified": {
+        "authority": "IUCN",
+        "year": 2020,
+        "category": "VU",
+        "edition": "2020",
+        "sourceUrl": "https://iucnhornbills.org/northern-rufous-hornbill/",
+        "verification": "specialist_group_secondary"
+      },
+      "philippineNationalVerified": {
+        "authority": "DENR",
+        "edition": "DAO 2019-09",
+        "category": "EN",
+        "sourceUrl": "https://bmb.gov.ph/downloads/WRD/WC/WC2020/stat_and_lists_of_wildlife/fauna/dao-2019-09.pdf"
+      },
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Rhabdotorrhinus leucocephalus",
+      "group": "Birds",
+      "topicsFilled": 5,
+      "totalFacts": 5,
+      "emptySections": [],
+      "globalIucnVerified": {
+        "authority": "IUCN",
+        "year": 2020,
+        "category": "NT",
+        "edition": "2020",
+        "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2020-3.RLTS.T22682522A184689600.en",
+        "verification": "dated_original_assessment_or_status_change"
+      },
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Anthracoceros marchei",
+      "group": "Birds",
+      "topicsFilled": 3,
+      "totalFacts": 3,
+      "emptySections": [
+        "Distribution",
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Penelopides affinis",
+      "group": "Birds",
+      "topicsFilled": 5,
+      "totalFacts": 7,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Penelopides mindorensis",
+      "group": "Birds",
+      "topicsFilled": 5,
+      "totalFacts": 7,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Gallicolumba crinigera",
+      "group": "Birds",
+      "topicsFilled": 4,
+      "totalFacts": 4,
+      "emptySections": [
+        "Distribution"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Gallicolumba luzonica",
+      "group": "Birds",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Distribution",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Dicaeum retrocinctum",
+      "group": "Birds",
+      "topicsFilled": 5,
+      "totalFacts": 5,
+      "emptySections": [],
+      "globalIucnVerified": {
+        "authority": "IUCN",
+        "year": 2024,
+        "category": "NT",
+        "edition": "2024-2",
+        "sourceUrl": "https://nc.iucnredlist.org/redlist/content/attachment_files/2024-2_RL_Table_7.pdf",
+        "verification": "dated_original_assessment_or_status_change"
+      },
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Dicaeum kampalili",
+      "group": "Birds",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Dicaeum anthonyi",
+      "group": "Birds",
+      "topicsFilled": 3,
+      "totalFacts": 4,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Actenoides hombroni",
+      "group": "Birds",
+      "topicsFilled": 5,
+      "totalFacts": 5,
+      "emptySections": [],
+      "globalIucnVerified": {
+        "authority": "IUCN",
+        "year": 2024,
+        "category": "LC",
+        "edition": "2024-2",
+        "sourceUrl": "https://doi.org/10.2305/IUCN.UK.2024-2.RLTS.T22683542A241691549.en",
+        "verification": "dated_original_assessment_or_status_change"
+      },
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Ceyx argentatus",
+      "group": "Birds",
+      "topicsFilled": 4,
+      "totalFacts": 4,
+      "emptySections": [
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis cornutus",
+      "group": "Amphibians",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis diesmosi",
+      "group": "Amphibians",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis isarog",
+      "group": "Amphibians",
+      "topicsFilled": 4,
+      "totalFacts": 4,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis negrosensis",
+      "group": "Amphibians",
+      "topicsFilled": 3,
+      "totalFacts": 4,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis naomii",
+      "group": "Amphibians",
+      "topicsFilled": 4,
+      "totalFacts": 7,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis pygmaeus",
+      "group": "Amphibians",
+      "topicsFilled": 3,
+      "totalFacts": 6,
+      "emptySections": [
+        "Habitat",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Platymantis banahao",
+      "group": "Amphibians",
+      "topicsFilled": 2,
+      "totalFacts": 3,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Pelophryne albotaeniata",
+      "group": "Amphibians",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Limnonectes beloncioi",
+      "group": "Amphibians",
+      "topicsFilled": 2,
+      "totalFacts": 7,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Limnonectes acanthi",
+      "group": "Amphibians",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Kaloula picta",
+      "group": "Amphibians",
+      "topicsFilled": 3,
+      "totalFacts": 4,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Fejervarya vittigera",
+      "group": "Amphibians",
+      "topicsFilled": 2,
+      "totalFacts": 3,
+      "emptySections": [
+        "Distribution",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus bangonorum",
+      "group": "Reptiles",
+      "topicsFilled": 5,
+      "totalFacts": 7,
+      "emptySections": [],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [
+        {
+          "source": "https://iucn-mlsg.org/species/philippine-species/varanus-bangonorum/",
+          "kind": "specialist_group_dated_assessment_synthesis",
+          "reviewStatus": "specialist_group_secondary_only",
+          "edition": "2021"
+        }
+      ],
+      "hasRc32ScienceRecord": true,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus dalubhasa",
+      "group": "Reptiles",
+      "topicsFilled": 3,
+      "totalFacts": 3,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus marmoratus",
+      "group": "Reptiles",
+      "topicsFilled": 3,
+      "totalFacts": 3,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus palawanensis",
+      "group": "Reptiles",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus samarensis",
+      "group": "Reptiles",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Varanus rasmusseni",
+      "group": "Reptiles",
+      "topicsFilled": 2,
+      "totalFacts": 3,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Naja philippinensis",
+      "group": "Reptiles",
+      "topicsFilled": 2,
+      "totalFacts": 3,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Naja samarensis",
+      "group": "Reptiles",
+      "topicsFilled": 3,
+      "totalFacts": 4,
+      "emptySections": [
+        "Habitat",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Trimeresurus schultzei",
+      "group": "Reptiles",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Gekko gigante",
+      "group": "Reptiles",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Cyrtodactylus agusanensis",
+      "group": "Reptiles",
+      "topicsFilled": 3,
+      "totalFacts": 5,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": true,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Brachymeles hilong",
+      "group": "Reptiles",
+      "topicsFilled": 3,
+      "totalFacts": 4,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Axis calamianensis",
+      "group": "Mammals",
+      "topicsFilled": 2,
+      "totalFacts": 2,
+      "emptySections": [
+        "Habitat",
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Sus ahoenobarbus",
+      "group": "Mammals",
+      "topicsFilled": 4,
+      "totalFacts": 4,
+      "emptySections": [
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Rusa marianna",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 3,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Phloeomys pallidus",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 4,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Phloeomys cumingi",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 3,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Crateromys paulus",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 4,
+      "emptySections": [
+        "Habitat",
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": {
+        "authority": "DENR",
+        "edition": "DAO 2019-09",
+        "category": "CR",
+        "sourceUrl": "https://bmb.gov.ph/downloads/WRD/WC/WC2020/stat_and_lists_of_wildlife/fauna/dao-2019-09.pdf"
+      },
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Crateromys schadenbergi",
+      "group": "Mammals",
+      "topicsFilled": 4,
+      "totalFacts": 4,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Acerodon leucotis",
+      "group": "Mammals",
+      "topicsFilled": 4,
+      "totalFacts": 4,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Harpyionycteris whiteheadi",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 5,
+      "emptySections": [
+        "Natural history",
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Desmalopex microleucoptera",
+      "group": "Mammals",
+      "topicsFilled": 4,
+      "totalFacts": 6,
+      "emptySections": [
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Dugong dugon",
+      "group": "Mammals",
+      "topicsFilled": 3,
+      "totalFacts": 6,
+      "emptySections": [
+        "Distribution",
+        "Natural history"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": {
+        "year": 2019,
+        "edition": "DAO 2019-09",
+        "category": "CR",
+        "sourceUrl": "https://bmb.gov.ph/downloads/WRD/WC/WC2020/stat_and_lists_of_wildlife/fauna/dao-2019-09.pdf",
+        "verification": "primary_dated_order"
+      },
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": true,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    },
+    {
+      "scientificName": "Baletemys kampalili",
+      "group": "Mammals",
+      "topicsFilled": 4,
+      "totalFacts": 10,
+      "emptySections": [
+        "Conservation"
+      ],
+      "globalIucnVerified": null,
+      "philippineNationalVerified": null,
+      "statusSourcesRequirePrimaryVerification": [],
+      "hasRc32ScienceRecord": false,
+      "photoAudit": "Use RC31 licensed packaged-media audit; species identity and comparison suitability require review"
+    }
+  ],
+  "globalIucnSecondaryDatedSummaryCount": 1
+}

@@ -14,7 +14,7 @@
 
 - **Prior signed evidence:** run `42852787251` on source commit `85bfba7f7d00ec3da04fc058b98f827a57c51078` succeeded in scientific-source, Android, gallery, screen and signed RC109→RC112 emulator upgrade checks. Subsequent consolidation commits modified documents only.
 - **Integration staging:** `integration/apo-main-rc112-20261111`. The quality workflow runs on both staging and `main` with the approved source and prior signing certificate.
-- **Final QA state:** To be entered after staging and default-main workflow results are verified. Do not treat this report's creation as evidence of a passing final integration build.
+- **Final QA state:** Staging Actions run `42856304093`, attempt **2**, **SUCCESS** on exact merge commit `157c268c1fb6fb2f015ca7ca5a4010ab3bbb3da8`. The earlier attempt had one Android emulator process-attachment failure after the signed APK and preceding emulator tests succeeded; the retry passed all tests and the signed RC109→RC112 no-clear-data upgrade. Default `main` fast-forwarded to that same commit without force, overwrites or history removal. Its own follow-up Actions run `42859195154` was initiated, with final outcome pending at this record's creation. Do not treat this report's creation as evidence of a passing final integration build.
 
 ## Release and permission boundaries
 

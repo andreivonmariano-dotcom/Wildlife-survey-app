@@ -19,9 +19,13 @@ def main():
     alpha = red.point(lambda r: 0 if r <= 22 else 255 if r >= 45 else round((r-22)*255/23))
     foreground = image.convert("RGBA")
     foreground.putalpha(alpha)
-    foreground = foreground.resize((432, 432), Image.Resampling.LANCZOS)
+    # Reduce the artwork, never enlarge it. The Android adaptive icon mask
+    # crops its 432px viewport; an inset prevents the ribbon nearing the edges.
+    foreground = foreground.resize((310, 310), Image.Resampling.LANCZOS)
+    canvas = Image.new("RGBA", (432, 432), (0, 0, 0, 0))
+    canvas.alpha_composite(foreground, ((432 - 310)//2, (432 - 310)//2))
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    foreground.save(OUTPUT, optimize=True)
+    canvas.save(OUTPUT, optimize=True)
     print("Prepared approved compact APO launcher foreground:", OUTPUT)
 
 if __name__ == "__main__":

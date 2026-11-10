@@ -84,8 +84,7 @@ public class HistoryActivity extends Activity {
         scroll.addView(scrollBody);
         LinearLayout filters=column();
         if(eventFilter==null){
-            filters.addView(ApoHomeUi.section(this,"Saved surveys",
-                "Filter by survey outcome, field method, sampling station or date."));
+            filters.addView(ApoHomeUi.section(this,"Saved surveys",null));
             Spinner outcomes=new Spinner(this);
             outcomes.setAdapter(new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item,OUTCOME_LABELS));
@@ -107,7 +106,7 @@ public class HistoryActivity extends Activity {
                 dp(largeText()?72:56)));
             EditText search=new EditText(this);search.setSingleLine(true);
             search.setTextSize(LikasDesignSystem.TEXT_BODY);
-            search.setHint("Search group, method, station, date");
+            search.setHint("Search surveys");
             search.setContentDescription("Search survey group, method, station or date");
             UiKit.fieldInput(this,search);
             search.setText(surveySearch);

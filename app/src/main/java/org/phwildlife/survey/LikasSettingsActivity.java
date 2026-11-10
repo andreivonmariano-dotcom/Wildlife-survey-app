@@ -50,10 +50,10 @@ public final class LikasSettingsActivity extends Activity {
         LinearLayout.LayoutParams rm=new LinearLayout.LayoutParams(-1,-2);
         rm.bottomMargin=dp(LikasDesignSystem.SPACE_MD);body.addView(reduce,rm);
         body.addView(FieldVisuals.section(this,"Data",null));
-        options(body,"Backup","Save · Restore","backup",FieldBackupActivity.class,
-            "Storage","My records","settings",DataManagementActivity.class);
-        options(body,"Import","Source files","protocol",ImportActivity.class,
-            "Data check","Review records","reports",AuditActivity.class);
+        options(body,"Backup","","backup",FieldBackupActivity.class,
+            "Storage","","settings",DataManagementActivity.class);
+        options(body,"Import","","protocol",ImportActivity.class,
+            "Data check","","reports",AuditActivity.class);
         body.addView(FieldVisuals.section(this,"About",null));
         View about=ApoHomeUi.tool(this,"","About APO","Version and privacy",()->{
             String version="Version unavailable";

@@ -183,8 +183,8 @@ public final class ApoSpeciesOfDay {
         statusLp.topMargin=dp(a,15);body.addView(statuses,statusLp);
         LinearLayout rarityColumn=new LinearLayout(a);
         rarityColumn.setOrientation(LinearLayout.VERTICAL);
-        rarityColumn.addView(smallLabel(a,"RARITY",PhLibrary2Ui.MUTED));
-        TextView rarityBadge=PhLibraryStatusBadge.make(a,rarity,true);
+        // The category pill carries the value; its accessibility label gives the authority.
+        TextView rarityBadge=PhLibraryStatusBadge.makeCompact(a,rarity,true);
         rarityBadge.setClickable(false);rarityBadge.setFocusable(false);
         rarityBadge.setTextSize(12);
         LinearLayout.LayoutParams rarityBadgeLp=new LinearLayout.LayoutParams(-1,-2);
@@ -192,8 +192,8 @@ public final class ApoSpeciesOfDay {
         statuses.addView(rarityColumn,new LinearLayout.LayoutParams(stack?-1:0,-2,1f));
         LinearLayout globalColumn=new LinearLayout(a);
         globalColumn.setOrientation(LinearLayout.VERTICAL);
-        globalColumn.addView(smallLabel(a,"IUCN GLOBAL STATUS",PhLibrary2Ui.MUTED));
-        TextView globalBadge=PhLibraryStatusBadge.make(a,status,false);
+        // IUCN remains distinct in accessibility and the account explanation.
+        TextView globalBadge=PhLibraryStatusBadge.makeCompact(a,status,false);
         globalBadge.setClickable(false);globalBadge.setFocusable(false);
         globalBadge.setTextSize(12);
         LinearLayout.LayoutParams globalBadgeLp=new LinearLayout.LayoutParams(-1,-2);

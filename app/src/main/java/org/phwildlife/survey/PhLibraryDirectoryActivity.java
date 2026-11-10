@@ -315,9 +315,9 @@ public final class PhLibraryDirectoryActivity extends Activity {
             h.latin.setText(emphasis(row.optString("s"),q));
             h.family.setText(row.optString("f")+" · "+row.optString("g"));
             h.badges.removeAllViews();
-            TextView rarity=PhLibraryStatusBadge.make(PhLibraryDirectoryActivity.this,
+            TextView rarity=PhLibraryStatusBadge.makeCompact(PhLibraryDirectoryActivity.this,
                 row.optString("t"),true);
-            TextView conservation=PhLibraryStatusBadge.make(PhLibraryDirectoryActivity.this,
+            TextView conservation=PhLibraryStatusBadge.makeCompact(PhLibraryDirectoryActivity.this,
                 row.isNull("iucn")?"Unassessed":row.optString("iucn"),false);
             // Keep ListView rows tappable; status explanations live on the species profile.
             rarity.setClickable(false);rarity.setFocusable(false);
@@ -327,23 +327,13 @@ public final class PhLibraryDirectoryActivity extends Activity {
             // Stack full-width badges instead of shrinking readable text.
             h.badges.setOrientation(enlarged?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
             rarity.setTextSize(11);conservation.setTextSize(11);
-            // Keep the scientific label distinct from the value so enlarged
-            // text never strands a rarity symbol on a separate line.
             rarity.setSingleLine(false);conservation.setSingleLine(false);
             rarity.setMaxLines(2);conservation.setMaxLines(2);
             LinearLayout rarityColumn=new LinearLayout(PhLibraryDirectoryActivity.this);
             rarityColumn.setOrientation(LinearLayout.VERTICAL);
-            TextView rarityLabel=PhLibrary2Ui.text(PhLibraryDirectoryActivity.this,
-                "Book rarity",10,PhLibrary2Ui.MUTED,false,true);
-            rarityLabel.setPadding(dp(6),0,0,dp(4));
-            rarityColumn.addView(rarityLabel);
             rarityColumn.addView(rarity,new LinearLayout.LayoutParams(-1,-2));
             LinearLayout globalColumn=new LinearLayout(PhLibraryDirectoryActivity.this);
             globalColumn.setOrientation(LinearLayout.VERTICAL);
-            TextView globalLabel=PhLibrary2Ui.text(PhLibraryDirectoryActivity.this,
-                "IUCN global",10,PhLibrary2Ui.MUTED,false,true);
-            globalLabel.setPadding(dp(6),0,0,dp(4));
-            globalColumn.addView(globalLabel);
             globalColumn.addView(conservation,new LinearLayout.LayoutParams(-1,-2));
             rarity.setPadding(dp(8),dp(5),dp(8),dp(5));
             conservation.setPadding(dp(8),dp(5),dp(8),dp(5));
@@ -365,7 +355,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
             card.setBackground(PhLibrary2Ui.touch(PhLibraryDirectoryActivity.this,
                 PhLibrary2Ui.IVORY,PhLibrary2Ui.LINE,13));
             card.setContentDescription("Read "+common+", "+row.optString("s")+
-                ", "+row.optString("t")+", IUCN "+
+                ", educational rarity "+row.optString("t")+", IUCN global "+
                 PhLibraryStatusBadge.status(row.isNull("iucn")?"Unassessed":row.optString("iucn")));
             return card;
         }
@@ -415,8 +405,12 @@ public final class PhLibraryDirectoryActivity extends Activity {
             compactFilters?12:14,PhLibrary2Ui.FOREST,false,true);
         title.setGravity(Gravity.CENTER);title.setLetterSpacing(.11f);
         headingBar.addView(title,new LinearLayout.LayoutParams(0,dp(48),1));
-        resetButton=PhLibrary2Ui.action(this,"Clear",
-            ()->{if(savedCollectionMode)confirmClearSaved();else clearFilters();},false);
+        resetButton=PhLibrary2Ui.action(this,savedCollectionMode?"Manage":"Clear",
+            ()->{if(savedCollectionMode)
+                new AlertDialog.Builder(this).setTitle("Saved species")
+                    .setItems(new String[]{"Clear saved species"},
+                        (dialog,which)->confirmClearSaved()).show();
+                else clearFilters();},false);
         resetButton.setContentDescription(savedCollectionMode?
             "Clear all saved species":"Clear species filters and search");
         if(compactFilters){resetButton.setTextSize(12);resetButton.setPadding(dp(6),dp(5),dp(6),dp(5));}
@@ -426,7 +420,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
         root.addView(searchGap,new LinearLayout.LayoutParams(-1,dp(8)));
 
         search=new EditText(this);search.setSingleLine(true);
-        search.setHint(compactFilters?"Search":"Search species, habitats or places");
+        search.setHint("Search species");
         search.setTextSize(16);search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         search.setContentDescription("Search names, taxonomy and source text");
         UiKit.fieldInput(this,search);

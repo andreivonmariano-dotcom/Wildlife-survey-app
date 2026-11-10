@@ -285,7 +285,7 @@ public final class Rc103PhLibrary2InstrumentedTest {
                         species.getAdapter().getCount()>previous);
                     assertNotNull(text(a.getWindow().getDecorView(),"Filters"));
                     assertNotNull("Habitat selection must remain visible in the result summary",
-                        text(a.getWindow().getDecorView(),"Riparian ·"));
+                        text(a.getWindow().getDecorView(),"accounts mentioning riparian"));
                     shot(a,"habitat-species");
                 }catch(Exception e){err[0]=e;}
             });

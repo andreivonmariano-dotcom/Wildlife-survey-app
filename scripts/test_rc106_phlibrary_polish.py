@@ -78,8 +78,8 @@ class Rc106UiContracts(unittest.TestCase):
 
     def test_identity_and_locked_data_invariants(self):
         gradle=(ROOT/'app/build.gradle').read_text()
-        self.assertIn('versionCode 171',gradle)
-        self.assertIn("0.27.3-rc111-apo-interface-overhaul",gradle)
+        self.assertIn('versionCode 172',gradle)
+        self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn('super(context,NAME,null,29)',read('FieldDb.java'))
         self.assertIn('EXPECTED_COUNT=715',read('PhLibraryBook01.java'))

@@ -88,8 +88,8 @@ class SurveyNavigationRC95(unittest.TestCase):
 
     def test_identity_and_database_unchanged(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 171",build)
-        self.assertIn("0.27.3-rc111-apo-interface-overhaul",build)
+        self.assertIn("versionCode 172",build)
+        self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",build)
         self.assertIn("org.phwildlife.survey.beta08",build)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn("FieldBackupArchive",read("FieldBackupActivity.java"))

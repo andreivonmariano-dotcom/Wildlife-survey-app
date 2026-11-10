@@ -1,4 +1,6 @@
-# LIKAS: Cross-Chat Continuity and Project Memory Policy
+# APO: Cross-Chat Continuity and Project Memory Policy
+
+> **Naming note, 10 November 2026:** APO is the current product. The filename and some historical identifiers retain the original name for durable links and provenance. When interpreting this policy, follow the canonical APO governing charter and the latest verified repository lineage.
 
 **Policy ID:** CC-01  
 **Adopted:** 27 October 2026  

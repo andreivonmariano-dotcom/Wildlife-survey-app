@@ -48,7 +48,7 @@ class DetectionFirstContracts(unittest.TestCase):
         self.assertIn('if(hasUnsavedObservation())',main)
         self.assertIn('markedAt>0||count!=1',main)
         self.assertIn("versionCode 173",(ROOT/"app/build.gradle").read_text())
-        self.assertIn('0.27.4-rc112-minimal-ui-compact-icon',(ROOT/"app/build.gradle").read_text())
+        self.assertIn('0.27.4-rc113-living-atlas-preview',(ROOT/"app/build.gradle").read_text())
 
 if __name__=="__main__":
     unittest.main()

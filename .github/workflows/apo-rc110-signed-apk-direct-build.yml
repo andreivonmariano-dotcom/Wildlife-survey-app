@@ -76,7 +76,11 @@ jobs:
         run: |
           python3 -m pip install Pillow==11.3.0 gdown==5.2.0
           python3 scripts/prepare_owner_native_species_photos.py
-      - name: Download all 333 pinned Drive originals and embed EXIF-free 1920px images
+      - name: Restore owner source photographs from 22 pinned Drive split-ZIP parts
+        run: python3 scripts/prepare_rc110_split_drive_archives.py
+      - name: Validate source-set SHA-256 and embed 333 EXIF-free 1920px images
+        env:
+          LIKAS_DRIVE_SOURCE_DIR: .taxonomy-cache/likas-drive-originals
         run: |
           python3 scripts/test_rc110_drive_photo_gallery.py
           python3 scripts/prepare_drive_gallery.py

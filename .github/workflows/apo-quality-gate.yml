@@ -119,18 +119,18 @@ jobs:
           APK=app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='172'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc112-minimal-ui-compact-icon'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='173'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.4-rc113-living-atlas-preview'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
           unzip -t "$APK" >/dev/null
           unzip -p "$APK" assets/apo_official_master.png | sha256sum | grep -F '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7'
           unzip -p "$APK" assets/paic714_master.csv | sha256sum | grep -F '1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959'
           unzip -p "$APK" assets/paic_worldcover2020_500m.txt | sha256sum | grep -F 'e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089'
           sha256sum "$APK"
-      - name: Export code172 signed RC112 candidate after verified build
+      - name: Export code173 signed Living Atlas owner-preview APK
         uses: actions/upload-artifact@v4
         with:
-          name: APO-RC112-signed-code172-refined-ui-all333-preview
+          name: APO-Living-Atlas-RC113-signed-code173-owner-preview
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
@@ -162,7 +162,16 @@ jobs:
             adb shell am instrument -w -e class org.phwildlife.survey.LivingAtlasDataLayerInstrumentedTest org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner > rc103-phlibrary-evidence/living-atlas-index.txt
             cat rc103-phlibrary-evidence/living-atlas-index.txt
             grep -Fq 'OK (2 tests)' rc103-phlibrary-evidence/living-atlas-index.txt
+            bash scripts/living_atlas_emulator_qa.sh
             bash scripts/rc110_visual_audit_qa.sh
+      - name: Upload actual Living Atlas 360px and large-text emulator screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: APO-Living-Atlas-RC113-visual-review
+          path: living-atlas-emulator-evidence/
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Upload emulator screenshot evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -200,7 +209,7 @@ jobs:
           echo 'fbc31e33a6302107b21bc0a081392d458e475aec0b5e20d9b8e9bbd153361366  /tmp/apo-rc109-signed.apk' | sha256sum -c -
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging /tmp/apo-rc109-signed.apk | grep -F "versionCode='169'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs /tmp/apo-rc109-signed.apk | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
-      - name: Verify signed RC109 to RC112 no-data-clear upgrade
+      - name: Verify signed RC109 to RC113 no-data-clear upgrade
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -214,7 +223,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: APO-RC109-to-RC112-upgrade-evidence
+          name: APO-RC109-to-RC113-upgrade-evidence
           path: rc110-upgrade-evidence/
           if-no-files-found: ignore
           retention-days: 7

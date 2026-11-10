@@ -1,5 +1,7 @@
 # LIKAS identity: retro wildlife field app
 
+> **HISTORICAL ARTWORK RECORD | Superseded 10 November 2026.** The owner-approved public product name is **APO**. This document describes the older main-branch visual identity and must not be used as a current branding, launcher, or UI specification. Current development is in the divergent RC111 branches; preserve historical asset IDs until references and checksums are migrated and tested.
+
 ## Brand direction
 
 A deliberately limited pixel-art identity inspired by a tropical Philippine forest. It depicts a frog, mountains, a waterfall, and the **LIKAS** wordmark. The refined launcher art was reduced to an 80 × 80 pixel color grid with **20 colors**, enlarged with nearest-neighbor sampling to 432 × 432. The resulting offline WebP is lossless. It is concept-art-derived and pixel-refined, not a claim of manually painted individual pixels.

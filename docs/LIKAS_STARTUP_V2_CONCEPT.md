@@ -1,5 +1,7 @@
 # LIKAS | Rainforest Welcome v2: Design Review Brief
 
+> **ARCHIVED CONCEPT | Superseded 10 November 2026.** This historical review prototype uses an obsolete wordmark and unshipped visual direction. APO is the current product identity, and current launcher/startup assets and approval decisions must be established from the relevant RC111 branch and its verified source history. Do not implement this proposal as a live requirement.
+
 **Date:** 28 October 2026 (Asia/Manila)  
 **Status:** New visual and interaction prototype produced for owner review. Not approved final art, not integrated in native LIKAS, and not a shipped APK.  
 **Baseline:** `9e4059192afdf0d9478481f816fe5e4bcd8a2087` before this design documentation.  

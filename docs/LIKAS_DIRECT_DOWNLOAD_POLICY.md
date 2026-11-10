@@ -1,4 +1,6 @@
-# LIKAS: Mandatory Direct Download Delivery Policy
+# APO: Mandatory Direct Download Delivery Policy
+
+> **Naming note, 10 November 2026:** This policy applies to APO. The legacy filename remains stable for existing source references and continuity. Deliver the newly generated file directly in chat and verify its exact path in the current session.
 
 **Policy ID:** DL-01  
 **Effective:** 27 October 2026  

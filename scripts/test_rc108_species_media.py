@@ -64,8 +64,13 @@ class SpeciesMediaDailyTests(unittest.TestCase):
         atlas = (JAVA / "PhLibraryDirectoryActivity.java").read_text()
         reader = (JAVA / "PhLibraryBook01.java").read_text()
         self.assertIn('ApoSpeciesOfDay.create(this,scientific->', home)
-        self.assertIn('PhLibrarySpeciesMedia.photoOrPlaceholder(', atlas)
+        # RC110 atlas intentionally uses a virtualized text list. Each row
+        # opens the species reader, where its offline multi-photo gallery lives.
+        self.assertIn('startActivity(new Intent(this,TaxonDetailActivity.class)', atlas)
+        self.assertIn('goToSpecies(matches.get(index).optString("s"))', atlas)
         self.assertIn('PhLibrarySpeciesMedia.addReaderPlate(a,parent,scientific)', reader)
+        media = (JAVA / "PhLibrarySpeciesMedia.java").read_text()
+        self.assertIn('PhLibraryDriveGallery.addReaderGallery(a,parent,scientific)', media)
 
 
 if __name__ == "__main__":

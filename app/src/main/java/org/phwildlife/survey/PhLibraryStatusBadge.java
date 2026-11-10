@@ -44,7 +44,8 @@ public final class PhLibraryStatusBadge {
                 default:break;
             }
         }
-        TextView t=PhLibrary2Ui.text(a,icon+"  "+name,13,fg,false,true);
+        TextView t=PhLibrary2Ui.text(a,
+            (rarity?"Book rarity: ":"IUCN: ")+icon+"  "+name,13,fg,false,true);
         t.setGravity(Gravity.CENTER);
         t.setPadding(PhLibrary2Ui.dp(a,11),PhLibrary2Ui.dp(a,9),
             PhLibrary2Ui.dp(a,11),PhLibrary2Ui.dp(a,9));

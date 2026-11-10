@@ -66,7 +66,10 @@ public final class PhLibraryDirectoryActivity extends Activity {
         for(int i=0;i<GROUPS.length;i++){
             final int j=i;boolean active=i==selectedGroup;
             TextView chip=text(GROUPS[i],14,active?Color.WHITE:PhLibrary2Ui.FOREST,false,true);
-            chip.setGravity(Gravity.CENTER);chip.setMinHeight(dp(44));
+            chip.setSingleLine(true);
+            chip.setGravity(Gravity.CENTER);chip.setMinHeight(dp(48));
+            if(getResources().getConfiguration().fontScale>=1.60f)
+                chip.setMinWidth(dp(146));
             chip.setPadding(dp(12),dp(7),dp(12),dp(7));
             chip.setBackground(PhLibrary2Ui.touch(this,
                 active?PhLibrary2Ui.FOREST:PhLibrary2Ui.IVORY,

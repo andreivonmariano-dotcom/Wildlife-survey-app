@@ -20,33 +20,17 @@ public final class LikasSettingsActivity extends Activity {
     private void options(LinearLayout parent,String first,String firstHint,String firstArt,
             Class<?> firstTarget,String second,String secondHint,String secondArt,
             Class<?> secondTarget){
-        LinearLayout row=new LinearLayout(this);
-        boolean stacked=stackPortalPairs();
-        row.setOrientation(stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-        View a=stacked?
-            LikasPortalUi.action(this,first,firstHint,firstArt,
-                ()->startActivity(new Intent(this,firstTarget))):
-            LikasPortalUi.mini(this,first,firstHint,firstArt,
-                ()->startActivity(new Intent(this,firstTarget)));
-        View b=stacked?
-            LikasPortalUi.action(this,second,secondHint,secondArt,
-                ()->startActivity(new Intent(this,secondTarget))):
-            LikasPortalUi.mini(this,second,secondHint,secondArt,
-                ()->startActivity(new Intent(this,secondTarget)));
-        LinearLayout.LayoutParams left=new LinearLayout.LayoutParams(
-            stacked?-1:0,-2,1);
-        left.bottomMargin=dp(LikasDesignSystem.SPACE_SM);row.addView(a,left);
-        LinearLayout.LayoutParams right=new LinearLayout.LayoutParams(
-            stacked?-1:0,-2,1);
-        right.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
-        if(!stacked)right.leftMargin=dp(LikasDesignSystem.SPACE_SM);
-        row.addView(b,right);
-        parent.addView(row);
+        parent.addView(ApoHomeUi.tool(this,"",first,firstHint,
+            ()->startActivity(new Intent(this,firstTarget))));
+        parent.addView(ApoHomeUi.tool(this,"",second,secondHint,
+            ()->startActivity(new Intent(this,secondTarget))));
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         getWindow().setStatusBarColor(UiKit.BG);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        getWindow().setNavigationBarColor(UiKit.BG);
+        getWindow().getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         LinearLayout body=new LinearLayout(this);
         LinearLayout root=UiKit.page(this,"Settings","Home",this::finish,body);
         body.addView(FieldVisuals.section(this,"Preferences",null));
@@ -71,13 +55,13 @@ public final class LikasSettingsActivity extends Activity {
         options(body,"Import","Source files","protocol",ImportActivity.class,
             "Data check","Review records","reports",AuditActivity.class);
         body.addView(FieldVisuals.section(this,"About",null));
-        View about=LikasPortalUi.action(this,"About LIKAS","Version · Privacy","library",()->{
+        View about=ApoHomeUi.tool(this,"","About APO","Version and privacy",()->{
             String version="Version unavailable";
             try{
                 PackageInfo pkg=getPackageManager().getPackageInfo(getPackageName(),0);
                 version=pkg.versionName;
             }catch(Exception ignored){}
-            new AlertDialog.Builder(this).setTitle("LIKAS")
+            new AlertDialog.Builder(this).setTitle("APO")
                 .setMessage("Version "+version+"\n\nPhilippine biodiversity toolkit. "+
                     "Survey records and offline research stay on this device. "+
                     "References are separate from field records.")

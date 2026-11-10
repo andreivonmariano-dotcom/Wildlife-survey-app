@@ -63,6 +63,50 @@ public final class ApoSpeciesOfDay {
         v.setLetterSpacing(.06f);
         return v;
     }
+
+    /** Field-first, bounded editorial teaser. Full scientific facts remain in the account. */
+    public static View createCompact(Activity a,Consumer<String> open){
+        JSONObject row=select(a,LocalDate.now(PH_TIME));
+        if(row==null)return null;
+        String latin=row.optString("s");
+        String common=row.optString("c",latin);
+        LinearLayout card=new LinearLayout(a);
+        card.setOrientation(LinearLayout.HORIZONTAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        card.setPadding(dp(a,10),dp(a,10),dp(a,12),dp(a,10));
+        card.setMinimumHeight(dp(a,106));
+        card.setBackground(PhLibrary2Ui.touch(a,PhLibrary2Ui.IVORY,PhLibrary2Ui.LINE,16));
+        ImageView photo=null;
+        View art=PhLibrarySpeciesMedia.photoOrPlaceholder(a,latin);
+        FrameLayout thumb=new FrameLayout(a);
+        thumb.setBackgroundColor(PhLibrary2Ui.DEEP);
+        if(art instanceof ImageView){
+            photo=(ImageView)art;
+            photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }
+        thumb.addView(art,new FrameLayout.LayoutParams(-1,-1));
+        card.addView(thumb,new LinearLayout.LayoutParams(dp(a,90),dp(a,90)));
+        LinearLayout content=new LinearLayout(a);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(dp(a,12),0,0,0);
+        content.addView(smallLabel(a,"SPECIES OF THE DAY",PhLibrary2Ui.MUTED));
+        TextView name=PhLibrary2Ui.text(a,common,17,PhLibrary2Ui.INK,true,false);
+        name.setMaxLines(2);
+        LinearLayout.LayoutParams nlp=new LinearLayout.LayoutParams(-1,-2);
+        nlp.topMargin=dp(a,3);
+        content.addView(name,nlp);
+        TextView scientific=PhLibrary2Ui.text(a,latin,13,PhLibrary2Ui.MUTED,true,false);
+        scientific.setTypeface(Typeface.create("serif",Typeface.ITALIC));
+        content.addView(scientific);
+        TextView link=PhLibrary2Ui.text(a,"Open account ›",13,PhLibrary2Ui.FOREST,false,true);
+        LinearLayout.LayoutParams llp=new LinearLayout.LayoutParams(-1,-2);
+        llp.topMargin=dp(a,5);content.addView(link,llp);
+        card.addView(content,new LinearLayout.LayoutParams(0,-2,1f));
+        card.setClickable(true);card.setFocusable(true);
+        card.setContentDescription("Species of the day: "+common+", "+latin+". Open source account.");
+        card.setOnClickListener(v->open.accept(latin));
+        return card;
+    }
     public static View create(Activity a,Consumer<String> open){
         LocalDate today=LocalDate.now(PH_TIME);
         JSONObject row=select(a,today);

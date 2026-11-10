@@ -187,7 +187,8 @@ public class WelcomeActivity extends Activity {
     private void setupSpinner(Spinner spinner,String description){
         spinner.setContentDescription(description);
         spinner.setMinimumHeight(dp(56));
-        spinner.setPadding(dp(8),dp(6),dp(8),dp(6));
+        spinner.setPadding(dp(6),dp(5),dp(6),dp(5));
+        spinner.setVerticalScrollBarEnabled(false);
     }
     /** Native input hints, numeric keyboard types, validators and saved values remain intact. */
     private void styleSetupInput(EditText input){
@@ -214,23 +215,30 @@ public class WelcomeActivity extends Activity {
             resumeLp.bottomMargin=dp(LikasDesignSystem.SPACE_LG);
             main.addView(resume,resumeLp);
         }
-        View daily=ApoSpeciesOfDay.create(this,scientific->
+        // Field access always precedes editorial content on APO Home.
+        if(lastHomeActiveSurvey==null){
+            Button begin=UiKit.button(this,"Start wildlife survey","primary");
+            begin.setContentDescription("Open survey methods and begin a wildlife survey");
+            begin.setOnClickListener(v->fieldworkHub());
+            LinearLayout.LayoutParams beginLp=new LinearLayout.LayoutParams(-1,dp(actionDp()));
+            beginLp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+            main.addView(begin,beginLp);
+        }
+        main.addView(ApoHomeUi.module(this,"01","BioTools",
+            "Surveys, field records and analysis",this::bioToolsHub));
+        main.addView(ApoHomeUi.module(this,"02","PHLibrary",
+            "Species identification, habitats and references",()->
+                startActivity(new Intent(this,LikasLibraryActivity.class))));
+        View daily=ApoSpeciesOfDay.createCompact(this,scientific->
             startActivity(new Intent(this,TaxonDetailActivity.class)
                 .putExtra("phlibrary_scientific_name",scientific)));
         if(daily!=null){
             LinearLayout.LayoutParams spotlight=new LinearLayout.LayoutParams(-1,-2);
-            spotlight.bottomMargin=dp(LikasDesignSystem.SPACE_MD);
+            spotlight.topMargin=dp(LikasDesignSystem.SPACE_MD);
             main.addView(daily,spotlight);
         }
-        main.addView(ApoHomeUi.module(this,"01","BioTools",
-            "Fieldwork, surveys and data analysis",this::bioToolsHub));
-        main.addView(ApoHomeUi.module(this,"02","PHLibrary",
-            "Philippine species, habitats and ecology",()->
-                startActivity(new Intent(this,LikasLibraryActivity.class))));
-        main.addView(ApoHomeUi.module(this,"03","PHMaps",
-            "Spatial context, site habitats and map tools",this::phMapsHub));
-        main.addView(ApoHomeUi.module(this,"04","BioDiscover",
-            "Research and conservation updates · In development",this::bioDiscoverHub));
+        main.addView(ApoHomeUi.note(this,
+            "Coming later · PHMaps full spatial atlas and BioDiscover research updates"));
         UiMotion.enterHome(this,main);
     }
     /** Honest spatial hub: existing site records are available; a full atlas is not. */
@@ -478,10 +486,9 @@ public class WelcomeActivity extends Activity {
         main.addView(step("01","Survey method"));
         LinearLayout methodsCard=vertical();
         methodPicker=new Spinner(this);
-        methodPicker.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,SurveyMethods.displayNames(profile)));
+        methodPicker.setAdapter(new ApoSpinnerAdapter(this,SurveyMethods.displayNames(profile)));
         setupSpinner(methodPicker,"Choose survey method");
-        methodsCard.addView(methodPicker,new LinearLayout.LayoutParams(-1,dp(56)));
+        methodsCard.addView(methodPicker,new LinearLayout.LayoutParams(-1,-2));
         TextView methodHint=LikasPortalUi.text(this,choices[0].description,13,
             UiKit.MUTED,false);
         methodHint.setPadding(dp(LikasDesignSystem.SPACE_XS),
@@ -524,7 +531,7 @@ public class WelcomeActivity extends Activity {
             while(c.moveToNext()){projectKeys.add(c.getString(0));names.add(c.getString(1));}
         }
         if(names.isEmpty()){projectKeys.add("default");names.add("General field project");}
-        projectChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));
+        projectChoice.setAdapter(new ApoSpinnerAdapter(this,names));
         main.addView(setupLabel("Project"));
         projectChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
             public void onNothingSelected(android.widget.AdapterView<?> parent){}
@@ -538,7 +545,7 @@ public class WelcomeActivity extends Activity {
         projectRow.setOrientation(stackProjectControls?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         projectRow.setGravity(Gravity.CENTER_VERTICAL);
         projectRow.addView(projectChoice,new LinearLayout.LayoutParams(
-            stackProjectControls?-1:0,dp(stackProjectControls?64:56),1f));
+            stackProjectControls?-1:0,-2,1f));
         Button projectManage=UiKit.button(this,"Manage","secondary");
         LinearLayout.LayoutParams manageWidth=new LinearLayout.LayoutParams(
             stackProjectControls?-1:dp(116),dp(stackProjectControls?actionDp():56));
@@ -550,8 +557,7 @@ public class WelcomeActivity extends Activity {
         projectManage.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
         main.addView(setupLabel("Checklist region"));
         geographicChoice=new Spinner(this);
-        geographicChoice.setAdapter(new ArrayAdapter<String>(
-            this,android.R.layout.simple_spinner_dropdown_item,GeoRegions.LABELS));
+        geographicChoice.setAdapter(new ApoSpinnerAdapter(this,GeoRegions.LABELS));
         geographicChoice.setSelection(0);
         setupSpinner(projectChoice,"Choose survey project");
         setupSpinner(geographicChoice,"Choose checklist region");

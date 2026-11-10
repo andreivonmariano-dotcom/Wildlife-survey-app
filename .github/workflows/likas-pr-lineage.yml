@@ -1,8 +1,9 @@
-name: APO | Historical RC4 PR lineage gate
+name: APO | Historical RC4 ancestry audit (manual)
 
+# Archived RC4-only contract. New APO lineage uses current branch's
+# signed Android QA and data-preservation checks.
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened, ready_for_review, edited]
+  workflow_dispatch:
 
 permissions:
   contents: read

@@ -19,9 +19,7 @@ concurrency:
 
 jobs:
   build:
-    # Keep full emulator QA manually runnable while testing the authenticated archive source.
-    # The signed RC110 build below still runs all core unit/build checks on each push.
-    if: github.event_name == 'workflow_dispatch'
+    # Full emulator and signed-upgrade QA gate for every RC110 push.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -114,7 +112,7 @@ jobs:
           unzip -p "$APK" assets/paic714_master.csv | sha256sum | grep -F '1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959'
           unzip -p "$APK" assets/paic_worldcover2020_500m.txt | sha256sum | grep -F 'e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089'
           sha256sum "$APK"
-      - name: Export code169 signed development candidate after verified build
+      - name: Export code170 signed RC110 candidate after verified build
         uses: actions/upload-artifact@v4
         with:
           name: LIKAS-RC110-signed-code170-highres-all333-owner-preview
@@ -126,7 +124,7 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Exercise RC109 single-paragraph habitat, saved clear and inherited PHLibrary screens
+      - name: Exercise inherited PHLibrary screens, RC108 media and RC110 gallery
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -145,6 +143,16 @@ jobs:
             adb shell am instrument -w -e class org.phwildlife.survey.Rc108SpeciesMediaInstrumentedTest org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner > rc103-phlibrary-evidence/rc108-species-photo-daily.txt
             cat rc103-phlibrary-evidence/rc108-species-photo-daily.txt
             grep -Fq 'OK (4 tests)' rc103-phlibrary-evidence/rc108-species-photo-daily.txt
+            mkdir -p rc110-gallery-evidence
+            for config in "p360f100 360x800 160 1.0" "p320f200 320x720 160 2.0"; do
+              read -r preset screen density font <<< "$config"
+              adb shell wm size "$screen"
+              adb shell wm density "$density"
+              adb shell settings put system font_scale "$font"
+              adb shell am force-stop org.phwildlife.survey.beta08
+              adb shell am instrument -w -r -e preset "$preset" -e class org.phwildlife.survey.Rc110OfflineGalleryInstrumentedTest org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner | tee "rc110-gallery-evidence/${preset}-gallery.txt"
+              grep -Fq 'OK (3 tests)' "rc110-gallery-evidence/${preset}-gallery.txt"
+            done
       - name: Upload emulator screenshot evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -162,18 +170,19 @@ jobs:
             rc101-phlibrary-evidence/
             rc102-startup-evidence/
             rc103-phlibrary-evidence/
+            rc110-gallery-evidence/
           if-no-files-found: ignore
           retention-days: 7
-      - name: Retrieve independently hash-verified signed RC107 baseline
+      - name: Retrieve independently hash-verified signed RC109 baseline
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13652276706/zip" > /tmp/apo-rc107-artifact.zip
-          unzip -p /tmp/apo-rc107-artifact.zip app-debug.apk > /tmp/apo-rc107-signed.apk
-          echo '639a3677bf46d98d9aa1115a25ce296ab83fa0b2503d4ce28c4825bcb7ed441c  /tmp/apo-rc107-signed.apk' | sha256sum -c -
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging /tmp/apo-rc107-signed.apk | grep -F "versionCode='167'"
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs /tmp/apo-rc107-signed.apk | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
-      - name: Verify signed RC107 to RC109 no-data-clear upgrade
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13688892745/zip" > /tmp/apo-rc109-artifact.zip
+          unzip -p /tmp/apo-rc109-artifact.zip app-debug.apk > /tmp/apo-rc109-signed.apk
+          echo 'fbc31e33a6302107b21bc0a081392d458e475aec0b5e20d9b8e9bbd153361366  /tmp/apo-rc109-signed.apk' | sha256sum -c -
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging /tmp/apo-rc109-signed.apk | grep -F "versionCode='169'"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs /tmp/apo-rc109-signed.apk | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
+      - name: Verify signed RC109 to RC110 no-data-clear upgrade
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -182,18 +191,12 @@ jobs:
           profile: pixel_4
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-boot-anim -camera-back none -no-snapshot
-          script: bash scripts/rc95_signed_upgrade_qa.sh
+          script: bash scripts/rc110_signed_upgrade_qa.sh
       - name: Upload signed upgrade evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: LIKAS-RC107-to-RC110-upgrade-evidence
-          path: rc95-upgrade-evidence/
+          name: LIKAS-RC109-to-RC110-upgrade-evidence
+          path: rc110-upgrade-evidence/
           if-no-files-found: ignore
-          retention-days: 7
-      - name: Export signed candidate for direct in-chat download
-        uses: actions/upload-artifact@v4
-        with:
-          name: APO-RC109-PHLibrary-habitat-saved-signed-code169-preview
-          path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 7

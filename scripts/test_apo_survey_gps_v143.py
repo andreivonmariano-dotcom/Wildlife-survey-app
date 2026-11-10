@@ -37,7 +37,7 @@ class GpsRC83(unittest.TestCase):
         self.assertLess(s.index("checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)",s.index("private void updateLocation()")),
                         s.index("TrackService.currentFix()",s.index("private void updateLocation()")))
     def test_signed_preview_verification_configured(self):
-        wf=read(".github/workflows/apo-survey-gps-v143-emulator-qa.yml")
+        wf=read("docs/archive/ci/apo-survey-gps-v143-emulator-qa.yml")
         for t in ('versionCode=\'143\'','versionName=\'0.27.3-rc83-apo-survey-gps\'',
                   'GpsCompactUiEmulatorTest','Rc55GpsPreflightInstrumentedTest',
                   'font_scale 1.6','font_scale 2.0','wm size 960x2160',

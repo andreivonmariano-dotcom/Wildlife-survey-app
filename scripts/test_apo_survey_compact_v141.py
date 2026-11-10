@@ -23,7 +23,7 @@ class Rc81SurveyCompact(unittest.TestCase):
         t=read("app/src/androidTest/java/org/phwildlife/survey/RecorderUiEmulatorTest.java")
         self.assertIn('"apo_recorder_200pct_320dp.png":"apo_recorder_160pct.png"',t)
         self.assertIn('ultraLarge?"Review":"Review Records"',t)
-        wf=read(".github/workflows/apo-survey-compact-v141-emulator-qa.yml")
+        wf=read("docs/archive/ci/apo-survey-compact-v141-emulator-qa.yml")
         for fragment in ('font_scale 1.6','font_scale 2.0','wm size 960x2160',
                          'Identical screenshots from different configurations',
                          'versionCode=\'141\''):

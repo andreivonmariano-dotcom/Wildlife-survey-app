@@ -85,7 +85,7 @@ class Rc86InteractiveTest(unittest.TestCase):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertIn("versionCode 172",gradle)
         self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",gradle)
-        wf=(ROOT/".github/workflows/apo-recorder-picker-v146-emulator-qa.yml").read_text()
+        wf=(ROOT/"docs/archive/ci/apo-recorder-picker-v146-emulator-qa.yml").read_text()
         self.assertIn("versionCode='146'",wf)
         self.assertIn("RecorderPickerCompactEmulatorTest",wf)
 

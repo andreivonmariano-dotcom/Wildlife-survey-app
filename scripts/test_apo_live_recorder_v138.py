@@ -65,7 +65,7 @@ class LiveRecorderRC78(unittest.TestCase):
 
     def test_real_emulator_test_and_automated_capture_configured(self):
         instrumentation=(BASE/"app/src/androidTest/java/org/phwildlife/survey/RecorderUiEmulatorTest.java").read_text()
-        workflow=(BASE/".github/workflows/apo-recorder-v138-emulator-qa.yml").read_text()
+        workflow=(BASE/"docs/archive/ci/apo-recorder-v138-emulator-qa.yml").read_text()
         self.assertIn('recorderHasPersistentSaveReviewAndEndSurvey()',instrumentation)
         self.assertIn('assertTrue("End Survey must stay visible"',instrumentation)
         self.assertIn('root.draw(new Canvas(screenshot))',instrumentation)

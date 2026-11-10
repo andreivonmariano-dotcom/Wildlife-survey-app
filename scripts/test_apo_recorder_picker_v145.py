@@ -47,7 +47,7 @@ class RecorderPickerRC85(unittest.TestCase):
         self.assertIn("taxon_synonyms",s)
         self.assertIn("e.review_status='source_listed'",s)
     def test_screens_built_with_original_identity(self):
-        wf=read(".github/workflows/apo-recorder-picker-v145-emulator-qa.yml")
+        wf=read("docs/archive/ci/apo-recorder-picker-v145-emulator-qa.yml")
         for value in ("versionCode='146'","0.27.3-rc86-apo-interactive-recorder",
                       'RecorderPickerCompactEmulatorTest','RecorderUiEmulatorTest',
                       'font_scale 1.6','font_scale 2.0',

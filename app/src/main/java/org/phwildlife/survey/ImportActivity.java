@@ -24,9 +24,9 @@ public class ImportActivity extends Activity {
         super.onCreate(b);helper=new FieldDb(this);
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(25,25,25,25);root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Legacy v0.7 importer","Home",this::finish));
+        root.addView(UiKit.navigationHeader(this,"Legacy survey restore","Home",this::finish));
         status=new TextView(this);status.setTextSize(15);status.setTextColor(UiKit.INK);
-        status.setText("Import a ZIP exported by Wildlife Survey Beta v0.7. The import runs only on an empty v0.8 database and is all-or-nothing. Keep the previous app and its export until you have reviewed the imported survey history.");
+        status.setText("Restore survey records from a Wildlife Survey Beta v0.7 ZIP. Requires an empty survey database. Keep your original archive until you have checked the restored records.");
         status.setPadding(10,20,10,28);root.addView(status);
         Button select=UiKit.button(this,"Choose backup ZIP","primary");
         root.addView(select);select.setOnClickListener(v->choose());

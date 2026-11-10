@@ -34,7 +34,7 @@ class RecorderPickerRC85(unittest.TestCase):
                       'item.iucn','item.ph','item.paicHabitat','item.paicElevation',
                       'item.reviewedHabitats','item.reviewedElevation',
                       'OccurrenceEvidencePolicy.title(item.evidence)',
-                      '"Profile","secondary"','"Select","primary"',
+                      '"ⓘ","quiet"','"Select","primary"',
                       'new Intent(this,TaxonDetailActivity.class)'):
             self.assertIn(token,card)
         for phrase in ('not proof of site presence','not probabilities',

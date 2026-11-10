@@ -19,7 +19,7 @@ class Rc53FieldworkHub(unittest.TestCase):
         section=text.split("private void fieldworkHub(){",1)[1].split("private void fieldRecordsHub(){",1)[0]
         for group in ("Birds","Herpetofauna","Mammals"):
             self.assertIn('surveyTile(main,"'+group+'"',section)
-        self.assertIn('FieldVisuals.section(this,"New survey","Choose a wildlife group")',section)
+        self.assertIn('FieldVisuals.section(this,"New survey",null)',section)
     def test_current_survey_remains_first_and_interactive(self):
         section=source("WelcomeActivity.java").split("private void fieldworkHub(){",1)[1].split("private void fieldRecordsHub(){",1)[0]
         self.assertIn("String unfinished=activeSurvey()",section)
@@ -33,8 +33,8 @@ class Rc53FieldworkHub(unittest.TestCase):
         text=source("WelcomeActivity.java")
         workspace=text.split("private void bioToolsHub(){",1)[1].split("private void fieldworkHub(){",1)[0]
         self.assertEqual(workspace.count("ApoHomeUi.module(this,"),5)
-        for title in ('"Surveys"','"Projects & Stations"','"Field Records"',
-                      '"Analysis & Exports"','"Field Utilities"'):
+        for title in ('"Surveys"','"Projects & Sites"','"Field Records"',
+                      '"Analysis"','"Utilities"'):
             self.assertIn(title,workspace)
         self.assertNotIn("LikasPortalUi.action(",workspace)
         self.assertNotIn("More field tools",workspace)

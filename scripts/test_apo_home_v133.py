@@ -10,8 +10,9 @@ class ApoHomeContracts(unittest.TestCase):
     def test_home_has_four_modules_and_settings(self):
         s=(JAVA/"WelcomeActivity.java").read_text()
         home=s.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
-        for name in ("BioTools","PHLibrary","PHMaps preview","BioDiscover preview"):
+        for name in ("BioTools","PHLibrary"):
             self.assertIn('"'+name+'"',home)
+        self.assertIn("Coming later: PHMaps · BioDiscover",home)
         self.assertIn("ApoHomeUi.header",home)
         self.assertIn("LikasSettingsActivity.class",home)
         self.assertNotIn("LikasPortalUi.hero",home)

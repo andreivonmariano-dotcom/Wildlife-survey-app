@@ -21,7 +21,7 @@ class Rc40ScreenAudit(unittest.TestCase):
         self.assertIn("setMinimumHeight(dp(a,88))",component)
         self.assertIn("setFocusable(true)",component)
         self.assertNotIn("R.drawable.",component)
-        for title in ('"BioTools"','"PHLibrary"','"PHMaps preview"','"BioDiscover preview"'):
+        for title in ('"BioTools"','"PHLibrary"',):
             self.assertIn(title,main)
         self.assertIn("this::bioToolsHub",main)
         self.assertIn("LikasLibraryActivity.class",main)

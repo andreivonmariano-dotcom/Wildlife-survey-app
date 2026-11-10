@@ -12,8 +12,8 @@ class GpsRC83(unittest.TestCase):
                       '"GPS details","quiet"',
                       'helpPanel.setVisibility(View.GONE)',
                       '"GPS troubleshooting","quiet"',
-                      'UiKit.button(this,"Retry GPS acquisition","secondary")',
-                      'UiKit.button(this,"Android location settings","secondary")',
+                      'UiKit.button(this,"Retry GPS","secondary")',
+                      'UiKit.button(this,"Location settings","secondary")',
                       'Ellipsoidal altitude (device; not terrain elevation): ',
                       'current.hasVerticalAccuracy()','"Mock device position rejected"'):
             self.assertIn(token,s)

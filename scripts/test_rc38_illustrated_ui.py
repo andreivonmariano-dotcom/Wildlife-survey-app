@@ -17,8 +17,9 @@ class IllustratedUiContract(unittest.TestCase):
                       'case "bird":','case "frog":','case "mammal":'):
             self.assertIn(piece,portal)
         home=welcome.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
-        for title in ('"BioTools"','"PHLibrary"','"PHMaps preview"','"BioDiscover preview"'):
+        for title in ('"BioTools"','"PHLibrary"',):
             self.assertIn(title,home)
+        self.assertIn("Coming later: PHMaps · BioDiscover",home)
         self.assertIn("ApoHomeUi.header(this,",home)
         self.assertIn("ApoHomeUi.resume(this,",home)
         self.assertNotIn("LikasPortalUi.tile(",home)

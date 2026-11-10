@@ -23,7 +23,8 @@ class Rc57Home(unittest.TestCase):
     def test_no_home_actions_removed(self):
         source=(ROOT/"app/src/main/java/org/phwildlife/survey/WelcomeActivity.java").read_text()
         home=source.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
-        for action in ('"BioTools"','"PHLibrary"','"PHMaps preview"','"BioDiscover preview"',
+        self.assertIn('Coming later: PHMaps · BioDiscover',home)
+        for action in ('"BioTools"','"PHLibrary"',
                        "LikasSettingsActivity.class","ApoHomeUi.resume(this,"):
             self.assertIn(action,home)
         component=(ROOT/"app/src/main/java/org/phwildlife/survey/ApoHomeUi.java").read_text()

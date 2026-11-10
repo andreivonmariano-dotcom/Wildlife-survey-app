@@ -11,8 +11,8 @@ class AllBioToolsScreens(unittest.TestCase):
         s=src("WelcomeActivity.java")
         hub=s.split("private void bioToolsHub(){",1)[1].split("private void fieldworkHub(){",1)[0]
         self.assertEqual(hub.count("ApoHomeUi.module(this,"),5)
-        for name in ("Surveys","Projects & Stations","Field Records",
-                     "Analysis & Exports","Field Utilities"):
+        for name in ("Surveys","Projects & Sites","Field Records",
+                     "Analysis","Utilities"):
             self.assertIn('"'+name+'"',hub)
         for cls in ("SitesActivity","HistoryActivity","HabitatRecordsActivity",
                     "DashboardActivity","ResearchExportActivity","AuditActivity",

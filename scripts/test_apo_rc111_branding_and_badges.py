@@ -22,11 +22,14 @@ class ApoRc111BrandingAndReadability(unittest.TestCase):
         self.assertIn("manifestSchema>=27&&manifestSchema<=29",fmt)
     def test_large_text_status_preserves_label_without_wrapping_symbol(self):
         atlas=read("PhLibraryDirectoryActivity.java")
-        self.assertIn('"Book rarity",10,PhLibrary2Ui.MUTED',atlas)
-        self.assertIn('"IUCN global",10,PhLibrary2Ui.MUTED',atlas)
+        self.assertNotIn('"Book rarity",10,PhLibrary2Ui.MUTED',atlas)
+        self.assertNotIn('"IUCN global",10,PhLibrary2Ui.MUTED',atlas)
         self.assertIn("rarityColumn.addView(rarity,new LinearLayout.LayoutParams(-1,-2))",atlas)
         self.assertIn("globalColumn.addView(conservation,new LinearLayout.LayoutParams(-1,-2))",atlas)
         self.assertIn("h.badges.setOrientation(enlarged?LinearLayout.VERTICAL",atlas)
+        self.assertIn("makeCompact(PhLibraryDirectoryActivity.this",atlas)
+        self.assertIn("Educational rarity:",read("PhLibraryStatusBadge.java"))
+        self.assertIn("IUCN global status:",read("PhLibraryStatusBadge.java"))
         self.assertNotIn('rarity.setText("Book rarity · "',atlas)
         self.assertNotIn('conservation.setText("IUCN global · "',atlas)
     def test_saved_clear_still_requires_visible_positive_confirmation(self):
@@ -40,7 +43,7 @@ class ApoRc111BrandingAndReadability(unittest.TestCase):
     def test_research_source_identifiers_and_survey_engine_preserved(self):
         gradle=(BASE/"app/build.gradle").read_text()
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
-        self.assertIn("versionCode 171",gradle)
+        self.assertIn("versionCode 172",gradle)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         recorder=read("MainActivity.java")
         for action in ('"Save Observation"','"Review Records"','"End Survey"'):

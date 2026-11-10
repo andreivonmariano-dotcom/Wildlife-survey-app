@@ -69,18 +69,36 @@ def ensure_download(entry):
         raise SystemExit("Missing gdown for owner-photo build") from ex
     SOURCES.mkdir(parents=True, exist_ok=True)
     partial = target.with_name(target.name + ".part")
-    try:
-        downloaded = gdown.download(
-            id=entry["driveFileId"], output=str(partial), quiet=True,
-            use_cookies=False, resume=False)
-    except Exception as ex:
-        raise SystemExit("Drive download failed for " + name + ": " + str(ex)) from ex
-    if downloaded is None or not partial.is_file():
-        raise SystemExit("Drive did not return photograph " + name)
-    if partial.stat().st_size != size:
-        raise SystemExit("Source file size changed for " + name)
-    partial.rename(target)
-    return target
+    # Google Drive's unauthenticated link gateway may intermittently decline
+    # an otherwise authorized file. Retry with bounded pauses; never weaken
+    # the pinned-size and complete 333-file SHA-256 validations below.
+    import time
+    last_error = "Google Drive returned no file"
+    for attempt, pause_seconds in enumerate((0, 7, 15, 30, 60, 90), 1):
+        if pause_seconds:
+            print(f"Retrying {name} after {pause_seconds}s (attempt {attempt}/6)",
+                  flush=True)
+            time.sleep(pause_seconds)
+        partial.unlink(missing_ok=True)
+        try:
+            downloaded = gdown.download(
+                id=entry["driveFileId"], output=str(partial), quiet=True,
+                use_cookies=False, resume=False)
+        except Exception as ex:
+            downloaded = None
+            last_error = str(ex)
+        if downloaded is None or not partial.is_file():
+            last_error = "Drive link gateway declined the requested file"
+            continue
+        if partial.stat().st_size != size:
+            last_error = ("Downloaded byte length differs from approved source: "
+                          + str(partial.stat().st_size) + " vs " + str(size))
+            continue
+        partial.rename(target)
+        return target
+    raise SystemExit("Drive download failed after 6 attempts for " + name
+                     + ": " + last_error
+                     + ". No partial gallery APK is permitted.")
 
 
 def validate_jpeg_bytes(data, asset_name):

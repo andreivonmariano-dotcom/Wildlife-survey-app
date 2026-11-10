@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "indexEdition": "living-atlas-data-v1",
+  "regionId": "greater-mindanao",
+  "compiledReference": {
+    "bookEdition": "1.82",
+    "bookAsset": "phlibrary_book01_v182.json.gz.b64",
+    "speciesCount": 715,
+    "bibliographyAsset": "phlibrary_book01_bibliography_v182.json.gz.b64",
+    "bibliographyCount": 1159,
+    "checksumAuthority": "PhLibraryBook01.java SHA-256 pins"
+  },
+  "editableScientificSources": [
+    {
+      "title": "BOOK 1: MINDANAO PAIC.docx",
+      "kind": "Word file in Google Drive",
+      "role": "narrative accounts, source citations and edition decisions",
+      "edition": "1.82",
+      "speciesHeadings": 715
+    },
+    {
+      "title": "MINDANAO PAIC CHECKLIST.xlsx",
+      "kind": "Excel file in Google Drive",
+      "tab": "Master Checklist",
+      "role": "structured taxonomy, regional status, conservation categories, habitats and elevation",
+      "scientificNames": 714
+    }
+  ],
+  "provisionalIdentification": "Oreophryne cf. nana",
+  "editorialNameDifferences": {
+    "bookOnly": [
+      "Ceyx mindanensis",
+      "Mops plicatus",
+      "Oreophryne cf. nana"
+    ],
+    "checklistOnly": [
+      "Chaerephon plicata",
+      "Aphantophryne nana"
+    ],
+    "status": "needs explicit reviewed crosswalk; keep names, identifications, and original sources unchanged"
+  },
+  "habitatProfilesAsset": "offline_habitat_profiles_v1.json",
+  "habitatEvidenceAsset": "rc8_species_habitat_links_v1.json",
+  "habitatEvidencePolicy": "An Ecological Threads relationship requires pack-level, scientific and habitat-mapping approval; source text matches remain search aids only.",
+  "runtimePolicy": "Offline bundled reference lookup. No required Google connection, user import, taxonomy rewrite or database migration."
+}

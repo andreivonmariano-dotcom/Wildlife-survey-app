@@ -40,14 +40,14 @@ class Rc84HabitatChecklist(unittest.TestCase):
         self.assertNotIn('matching is a presence prediction',s.lower())
     def test_signed_preview_and_system_identity(self):
         wf=read("docs/archive/ci/apo-habitats-v144-emulator-qa.yml")
-        for t in ("versionCode='144'","0.27.3-rc84-apo-habitats-checklist",
+        for t in ("versionCode='144'","0.27.4-rc84-apo-habitats-checklist",
                   "HabitatChecklistCompactEmulatorTest","font_scale 1.6",
                   "font_scale 2.0","wm size 960x2160","len(files)==4",
                   "PaicHabitatPolicy"):
             self.assertIn(t,wf)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 172",g)
-        self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",g)
+        self.assertIn("versionCode 173",g)
+        self.assertIn("0.27.4-rc112-minimal-ui-compact-icon",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn("super(context,NAME,null,29)",
                       read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))

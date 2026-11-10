@@ -1,62 +1,42 @@
-# Philippine Wildlife Survey Beta v0.15.0
+# APO
 
-Offline Android wildlife field application for Birds, Herpetofauna and Mammals. Independent of SMART and KALUMBATA. No map UI in this release.
+**APO** is an offline-first Android field and learning companion for Philippine wildlife biologists, ecologists, conservation practitioners and students. The planned core combines wildlife surveys, a PAIC-based species and habitat atlas, an offline biogeographic map with locally recorded survey sites, and an embedded scientific literature library.
 
-## Q2: repeatable routes with permanent stations
-For **bird point-count** monitoring, survey setup now offers:
-- **New route: generate unique stations**, with optional (on by default) **Save this route for future monitoring**, plus a route name.
-- **Existing saved routes in the selected project**. Selecting one loads its recorded planned length, spacing and number of stations.
+**Repository status (10 November 2026):** The default `main` branch contains an **older v0.15 Android implementation** and current governance documentation. Current APO Android development exists on separate, unmerged RC branches. The files on `main` are insufficient evidence of the newest application, signed APK or installed feature set.
 
-An initial 2 km route with 250 m spacing creates nine permanent IDs at chainages 0, 250, …, 2000 m. Saving a route template registers those same station IDs in `route_template_stations`. A subsequent survey using the same template starts fresh point-count visits at those *same station IDs*, not new sites. Each visit gets its own timestamp, point-count ID, GPS/accuracy and detection records. Historic station coordinates remain unchanged, and GPS deviation is flagged for review.
+## Governing source
 
-Only **point-count routes** are reusable as fixed monitoring stations. Bird line-transect and herpetofauna VES route lengths remain *design values only*. Their GIS tracks are captured per field event, not silently reused as geographic waypoints.
+The approved, editable **APO Governing Product Charter v1.2** is available in Google Docs:
 
-The database migration to schema 11 adds `route_templates`, `route_template_stations`, and `surveys.route_template_id`. Original surveys, station IDs, observation data and archived photographs are not discarded. ZIP export now includes `route_templates.csv` and `route_template_stations.csv`.
+- [Canonical governing Google Doc](https://docs.google.com/document/d/1khryohmOO5QsOmuKchv8VWWu7Qxcq7zxVDZX9L3qCJA/edit)
+- [APO — Governing Documents folder](https://drive.google.com/drive/folders/1j3QFI8QTw2zgWIgJLxgQVZsnCJYEl3AI)
+- [Approved GitHub Markdown mirror](docs/APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md), a stable filename whose **document content is version 1.2**
+- [Repository contributor/assistant instructions](AGENTS.md)
 
-## Q3: scientific data quality and stability audit
-Home now has **Scientific data review**, a read-only checker of:
-- SQLite quick_check and orphaned survey, observation and unit links
-- Invalid or missing station coordinates and absent GPS accuracy
-- Missing, cross-project or incomplete reusable route station records
-- Survey planned/actual station count mismatches
-- Point-count completion that falls short of actual active station duration
-- Survey completion despite unvisited stations
-- Duplicate use of unrelated site identity, invalid detection counts and contradictory unknown taxa
-- Large differences between repeat-visit GPS positions and stored station reference positions, considering uncertainty
-- Missing photo files referenced by the observation evidence index
+**Every governing-document change requires the product owner's explicit approval of the proposed edit in advance.** The Google Doc and Markdown mirror must be synchronized following approval. Current Google Drive link-level edit access is too broad; see the governance notes in `AGENTS.md`.
 
-The audit never deletes or changes source records. **`data_quality_flags.csv`** is included in the ZIP export. A clean automated report is not proof of ecological validity. Direct handset GPS, camera behavior, migration integrity, field methods and taxonomic identification still require field review.
+The charter governs offline-first coverage, native reference content, scientific evidence, field data, and the strict user-facing writing standard. Historical plans remain useful as provenance and technical records.
 
-**Critical scientific correction:** for station-based monitoring, `observer_effort_minutes` is calculated from completed sampling-unit intervals with documented pauses removed. Travel between stations is not counted as stationary effort. The whole-session timer keeps recording actual elapsed time, and the second session clock is explicitly labeled *Session excluding pauses*, not sampling effort.
+## Android development branches
 
-Automated Java tests check route planning arithmetic, including 2 km / 250 m = 9 stations, nondivisible route distances, zero spacing and numeric overflow. GitHub Actions runs unit tests before assembling the APK.
+Two recent RC111 lines require comparison before choosing the next Android baseline:
 
-## Species catalog and sources
+- `feature/apo-rc111-ui-overhaul-v171`, HEAD `9815f0554f345706baa52e02842e322f1306e563`
+- `feature/apo-rc111-unified-field-first-ui-v171`, HEAD `f7df249d2ea124591d6fbf343b9a5a9f7c594eb8`
 
-The app's existing built-in taxonomy is still a **small, unreviewed starter list**, not an exhaustive official Philippine species list.
+Both use versionCode **171** and are **divergent**. Neither is merged into `main`. The preceding photo-gallery RC110 work remains in [draft PR #115](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/pull/115). Recent branch presence is evidence of source work, not an APK release or validated phone installation.
 
-### Mammals
-Use the **American Society of Mammalogists Mammal Diversity Database (MDD) v2.5**, July 28, 2026, for up-to-date mammalian scientific names and *country-level* distributions.
+The established Android application ID is `org.phwildlife.survey.beta08`. Preserve this ID, signing identity, schema migrations and stored survey data while modernizing branding. Some internal classes and resource names still contain historical `Likas` / `likas_` identifiers. These need dependency-checked migrations; **user-visible branding is APO**.
 
-In Home > Offline species checklist, choose **Import Philippine mammals from MDD v2.5 CSV**. Select the exact official source file `MDD_v2.5_6904species.csv` from the [MDD Zenodo record](https://zenodo.org/records/21654811). The importer verifies fields, selects records where `countryDistribution` explicitly includes the Philippines, and excludes taxa marked recently extinct or domestic. It imports taxon ID, scientific/common name, family, provenance and version into the local catalog. No province-level or faunal-region association is invented. Synonyms and reviewed locality evidence can be appended in later versions.
+## Where to work
 
-MDD v2.5 source: [mammaldiversity.org](https://www.mammaldiversity.org/) and [Zenodo 21654811](https://zenodo.org/records/21654811).
+- **Scientific and product decisions:** canonical charter, compatible `docs/LIKAS_MASTER_PROJECT_SPEC_v1.0.md`, and dated project decision log.
+- **Current code, data and QA:** verify the appropriate RC111 branch, source HEAD, CI evidence and dependencies before editing.
+- **Historical records:** older `docs/LIKAS_*` audits, RC4 checks and retired visual concepts are preserved to maintain traceability. They do not override the approved APO charter.
+- **Repository cleanup findings:** see [10 November 2026 audit](docs/APO_REPOSITORY_CLEANUP_AUDIT_2026_11_10.md) for branch divergence, conflicting policies, old CI and source-name migration risks.
 
-For Philippine and island-specific occurrence verification, consult [Field Museum Synopsis of Philippine Mammals](https://www.fieldmuseum.org/project-narrative/science/synopsis-of-philippine-mammals) and [Philippine Mammal Project publications](https://www.philippinemammalproject.com/publications.html). The Field Museum site is not a replacement for MDD v2.5 taxonomy updates.
+## Build and release caution
 
-### Amphibians and reptiles
-Emerson Y. Sy maintains:
-- **Checklist of amphibians of the Philippines**, version **2025-1**, updated February 25, 2025
-- **Checklist of reptiles of the Philippines**, version **2026-1**, updated February 28, 2026
+The `main` workflow is retained as a **manual historical build**. It no longer republishes a version 0.15 artifact after a documentation edit. For current APO APKs, use a verified current source lineage and the applicable signing, scientific, offline, accessibility and data-preserving upgrade tests. Provide the exact newly built APK directly to the product owner, with its tested provenance, when available.
 
-Those versions are documented on [Emerson Sy's research profile](https://www.researchgate.net/profile/Emerson-Sy). The app's attributed CSV importer is prepared to receive curated entries from the checklists. **Their full datasets are NOT bundled in this release.** Distribution, synonymy and redistributable source licensing need separate review. The [Reptile Database](https://www.reptile-database.org/data/index.html) provides a useful independent taxonomic cross-check. Avoid conflating lists of invasive/exotic pet trade species with native species inventories.
-
-### Birds
-AviList v2026 provides an attributed global avian taxonomic backbone under CC BY 4.0, but its global names alone cannot establish occurrence in Mindanao or other Philippine regions. Source: https://www.avilist.org/checklist/v2026/
-
-Regional suggestions in the UI are **positive evidence only**. Any unassessed name remains available with the regional suggestion filter off.
-
-## Field installation
-v0.15 keeps Android application ID `org.phwildlife.survey.beta08` and the established persistent signing key. **Export your existing ZIP before updating in place**. Do not uninstall the older version. New SQLite version 11 keeps previous observations.
-
-See `docs/QA_v0_15.md` for migration, saved routes, data quality, scientific methods and import checks. CI unit tests and APK compilation are not substitutes for physical-phone testing.
+No current release or fully functioning offline Atlas/Map/Research implementation is certified by this README.

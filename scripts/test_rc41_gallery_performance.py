@@ -37,7 +37,7 @@ class GalleryPerf(unittest.TestCase):
             'galleryPhotoForTaxon(Activity a,String scientific)',
             'galleryPhotoForHabitat(Activity a,String photoId)',
             'getAssets().open(asset)',
-            'new android.util.LruCache<String,Bitmap>(4*1024*1024)'
+            'new android.util.LruCache<String,Bitmap>(16*1024*1024)'
         ):self.assertIn(needle,photos)
         self.assertNotIn("new URL(",photos)
         self.assertIn('photo.optString("license")',photos)

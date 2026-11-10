@@ -50,7 +50,7 @@ class Rc102StartupMotion(unittest.TestCase):
         build=BUILD.read_text(encoding='utf-8')
         manifest=MANIFEST.read_text(encoding='utf-8')
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
-        self.assertIn('versionCode 169',build)
+        self.assertIn('versionCode 170',build)
         self.assertIn("versionName '0.27.3-rc109-native-species-photos'",build)
         self.assertIn('android:name=".LikasLaunchActivity"',manifest)
         self.assertIn('android:exported="true"',manifest)

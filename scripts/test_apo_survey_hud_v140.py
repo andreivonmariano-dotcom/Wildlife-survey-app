@@ -30,7 +30,7 @@ class Rc80SurveyLayout(unittest.TestCase):
         for label in ('"Finish Complete"','"End Incomplete"','"Cancel Survey · Not Counted"'):
             self.assertIn(label,s)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 169",g)
+        self.assertIn("versionCode 170",g)
         self.assertIn("versionName '0.27.3-rc109-native-species-photos'",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))

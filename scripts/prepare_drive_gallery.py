@@ -109,8 +109,34 @@ def validate_jpeg_bytes(data, asset_name):
         raise SystemExit("EXIF retained in packaged JPEG: " + asset_name)
 
 
+def reuse_pinned_derivatives(entries):
+    """Permit only the exact original RC110 fully checked derivatives, not a partial pack."""
+    paths = [ASSETS / entry["offlineAsset"] for entry in entries]
+    present = sum(path.is_file() for path in paths)
+    if present == 0:
+        return False
+    if present != len(paths):
+        raise SystemExit("Partial preexisting owner gallery is unsafe; refusing to build")
+    digest = hashlib.sha256()
+    total = 0
+    for entry, path in zip(entries, paths):
+        data = path.read_bytes()
+        validate_jpeg_bytes(data, entry["offlineAsset"])
+        digest.update(hashlib.sha256(data).digest())
+        total += len(data)
+    if (digest.hexdigest() !=
+            "b4252f23b0f943b083ffacea96099f5391e71ceb3823c48ecbec86e9ffb07fac"
+            or total != 127507271):
+        raise SystemExit("Cached owner-photo derivatives differ from approved RC110")
+    print("Reused 333 cryptographically pinned EXIF-free signed RC110 JPEG derivatives",
+          flush=True)
+    return True
+
+
 def prepare():
     entries = load_entries()
+    if reuse_pinned_derivatives(entries):
+        return
     digest = hashlib.sha256()
     for index, entry in enumerate(entries, 1):
         source = ensure_download(entry)

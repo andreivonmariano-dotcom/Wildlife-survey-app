@@ -76,13 +76,17 @@ jobs:
         run: |
           python3 -m pip install Pillow==11.3.0 gdown==5.2.0
           python3 scripts/prepare_owner_native_species_photos.py
-      - name: Restore owner source photographs from 22 pinned Drive split-ZIP parts
-        run: python3 scripts/prepare_rc110_split_drive_archives.py
-      - name: Validate source-set SHA-256 and embed 333 EXIF-free 1920px images
+      - name: Restore 333 exact owner-photo derivatives from verified signed RC110
         env:
-          LIKAS_DRIVE_SOURCE_DIR: .taxonomy-cache/likas-drive-originals
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13736851110/zip" > /tmp/apo-rc110-gallery-source.zip
+          unzip -p /tmp/apo-rc110-gallery-source.zip app-debug.apk > /tmp/apo-rc110-gallery-source.apk
+          echo '4062242f3e43379d55b195f3694a0b630841c74a606432e02e7a69b21ee855dc  /tmp/apo-rc110-gallery-source.apk' | sha256sum -c -
           python3 scripts/test_rc110_drive_photo_gallery.py
+          python3 scripts/restore_rc110_verified_gallery.py /tmp/apo-rc110-gallery-source.apk
+      - name: Verify all 333 pinned offline photos and the gallery source manifest
+        run: |
           python3 scripts/prepare_drive_gallery.py
           python3 scripts/test_rc110_drive_photo_gallery.py
       - name: Scientific and menu source regression tests

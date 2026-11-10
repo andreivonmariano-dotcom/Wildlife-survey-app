@@ -52,7 +52,7 @@ public final class LikasSettingsActivity extends Activity {
         body.addView(FieldVisuals.section(this,"Data",null));
         options(body,"Backup","","backup",FieldBackupActivity.class,
             "Storage","","settings",DataManagementActivity.class);
-        options(body,"Import","","protocol",ImportActivity.class,
+        options(body,"Legacy survey restore","","protocol",ImportActivity.class,
             "Data check","","reports",AuditActivity.class);
         body.addView(FieldVisuals.section(this,"About",null));
         View about=ApoHomeUi.tool(this,"","About APO","Version and privacy",()->{

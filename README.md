@@ -17,16 +17,15 @@ The approved, editable **APO Governing Product Charter v1.2** is available in Go
 
 The charter governs offline-first coverage, native reference content, scientific evidence, field data, and the strict user-facing writing standard. Historical plans remain useful as provenance and technical records.
 
-## Android development branches
+## Current Android source
 
-Two recent RC111 lines require comparison before choosing the next Android baseline:
+The selected consolidation baseline is **RC112 code172**, sourced from `feature/apo-rc110-highres-offline-photo-galleries-v170` at `acddbb2b292ac9939383183d9b0100d2dc31945d`. [The consolidation branch](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/tree/refactor/apo-rc112-consolidated) is `refactor/apo-rc112-consolidated`. This is the **working Android source** for safe repository cleanup, pending its own QA acceptance.
 
-- `feature/apo-rc111-ui-overhaul-v171`, HEAD `9815f0554f345706baa52e02842e322f1306e563`
-- `feature/apo-rc111-unified-field-first-ui-v171`, HEAD `f7df249d2ea124591d6fbf343b9a5a9f7c594eb8`
+The RC112 baseline passed signed APK compilation and Android emulator upgrade verification from RC109 in CI runs `42828793989` and `42828806254`. Two older RC111 branches remain divergent; their regression checks failed before APK compilation. They are retained for selective review.
 
-Both use versionCode **171** and are **divergent**. Neither is merged into `main`. The preceding photo-gallery RC110 work remains in [draft PR #115](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/pull/115). Recent branch presence is evidence of source work, not an APK release or validated phone installation.
+The established application ID is `org.phwildlife.survey.beta08`; retain its original signer and migrations. Legacy internal class, resource and preference names have compatibility implications. User-facing branding is **APO**.
 
-The established Android application ID is `org.phwildlife.survey.beta08`. Preserve this ID, signing identity, schema migrations and stored survey data while modernizing branding. Some internal classes and resource names still contain historical `Likas` / `likas_` identifiers. These need dependency-checked migrations; **user-visible branding is APO**.
+The default `main` Android code remains historical. Promotion of the active Android branch to `main` is separate from this documentation cleanup and requires successful CI, evidence preservation, and controlled branch integration.
 
 ## Where to work
 

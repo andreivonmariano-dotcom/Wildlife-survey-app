@@ -1,4 +1,6 @@
 # LIKAS
+
+> **New controlling product direction, 10 November 2026:** Read [`docs/APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md`](APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md) first for APO's offline-first, native-content, non-publication-style, PAIC-sequential fieldwork/atlas/map/research scope. This document continues to govern compatible scientific integrity, survey lifecycle, provenance, migration, privacy, licensing, Android signing and verified-release rules. Conflicting older user-import and live-feed feature plans are superseded by the charter. This notice does not assert that the new modules have shipped.
 ## Master Project Charter, Product Requirements, and Scientific Standards
 
 **Version:** 1.0.9 (9 November 2026 native PHLibrary 2.0 reader and atlas amendment; canonical filename retained)  

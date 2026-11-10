@@ -82,36 +82,57 @@ public final class PhLibraryDriveGallery {
         List<JSONObject> items=byTaxon.get(key(scientific));
         return items==null?Collections.emptyList():items;
     }
-    /** Keep adjacent full-resolution frames decoded for smooth gallery swipes. */
+    /** Bounded full-frame + thumbnail cache. Owners' original JPEGs are unchanged. */
     private static final android.util.LruCache<String,Bitmap> frameCache=
         new android.util.LruCache<String,Bitmap>(24*1024*1024){
             @Override protected int sizeOf(String key,Bitmap bitmap){
                 return bitmap.getByteCount();
             }
         };
-    private static Bitmap decode(Activity a,JSONObject item){
+    private static final java.util.concurrent.ThreadPoolExecutor PREFETCH=
+        new java.util.concurrent.ThreadPoolExecutor(1,1,0L,
+            java.util.concurrent.TimeUnit.MILLISECONDS,
+            new java.util.concurrent.ArrayBlockingQueue<Runnable>(4),
+            new java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy());
+    private static Bitmap decode(android.content.Context context,JSONObject item,int sample){
         if(item==null)return null;
         String asset=item.optString("offlineAsset");
         if(!asset.matches("offline_photos/drive_[0-9]{4}\\.jpg"))return null;
+        int step=sample<=1?1:2;
+        String cacheKey=asset+"#"+step;
         synchronized(frameCache){
-            Bitmap cached=frameCache.get(asset);
+            Bitmap cached=frameCache.get(cacheKey);
             if(cached!=null&&!cached.isRecycled())return cached;
         }
-        try(InputStream stream=a.getAssets().open(asset)){
+        try(InputStream stream=context.getAssets().open(asset)){
             BitmapFactory.Options options=new BitmapFactory.Options();
             options.inPreferredConfig=Bitmap.Config.ARGB_8888;
-            options.inSampleSize=1; // 1920px EXIF-free derivatives
+            options.inSampleSize=step;
             Bitmap bitmap=BitmapFactory.decodeStream(stream,null,options);
             if(bitmap!=null){
-                synchronized(frameCache){frameCache.put(asset,bitmap);}
+                synchronized(frameCache){frameCache.put(cacheKey,bitmap);}
             }
             return bitmap;
         }catch(Exception ignored){return null;}
     }
+    private static Bitmap decode(Activity a,JSONObject item){
+        return decode(a.getApplicationContext(),item,1);
+    }
+    private static void preloadNeighbors(Activity a,List<JSONObject> items,int index){
+        if(items.size()<2)return;
+        android.content.Context app=a.getApplicationContext();
+        for(int offset:new int[]{1,-1}){
+            int i=index+offset;
+            if(i<0||i>=items.size())continue;
+            JSONObject neighbor=items.get(i);
+            PREFETCH.execute(()->decode(app,neighbor,1));
+        }
+    }
     public static ImageView coverForTaxon(Activity a,String scientific){
         List<JSONObject> items=photos(a,scientific);
         if(items.isEmpty())return null;
-        Bitmap bitmap=decode(a,items.get(0));
+        // Browse cards need only a sampled cover; 1920px remains for the full reader.
+        Bitmap bitmap=decode(a.getApplicationContext(),items.get(0),2);
         if(bitmap==null)return null;
         ImageView cover=new ImageView(a);
         cover.setImageBitmap(bitmap);
@@ -175,6 +196,7 @@ public final class PhLibraryDriveGallery {
         refresh[0]=()->{
             JSONObject photo=items.get(position[0]);
             viewer.setImageBitmap(decode(a,photo));
+            preloadNeighbors(a,items,position[0]);
             counter.setText((position[0]+1)+" / "+items.size());
             viewer.setContentDescription("Photo "+(position[0]+1)+" of "+items.size()+
                 " for "+scientific+". Swipe horizontally to change. Tap to enlarge.");

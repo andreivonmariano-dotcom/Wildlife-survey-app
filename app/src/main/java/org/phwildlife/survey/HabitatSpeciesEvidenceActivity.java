@@ -139,23 +139,24 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         title.setPadding(0,dp(12),0,dp(14));
         body.addView(title);
 
-        // Like a Book 01 species account, display one uninterrupted readable
-        // paragraph, not six separate instructions and linked-species cards.
-        TextView article=PhLibrary2Ui.text(this,articles.optString(id),17.5f,
-            PhLibrary2Ui.INK,true,false);
+        // The canonical habitat wording stays intact; only its reading typography
+        // changes. Source references are never split or silently rewritten.
+        TextView article=PhLibrary2Ui.text(this,articles.optString(id),17,
+            PhLibrary2Ui.INK,false,false);
         article.setTextIsSelectable(true);
-        article.setLineSpacing(dp(4),1.13f);
+        article.setLineSpacing(dp(7),1.21f);
         article.setPadding(dp(2),0,dp(2),dp(19));
         article.setContentDescription("Habitat account for "+profile.optString("name")+
             ". "+articles.optString(id));
         body.addView(article);
 
         // The destination is a *text retrieval* filter, not a claimed species list.
-        TextView browse=PhLibrary2Ui.action(this,"Browse species",()->{
+        TextView browse=PhLibrary2Ui.action(this,"Account text matches",()->{
             startActivity(new Intent(this,PhLibraryDirectoryActivity.class)
                 .putExtra("phlibrary_habitat_id",id));
         },false);
-        browse.setContentDescription("Browse species related to "+profile.optString("name"));
+        browse.setContentDescription("Find source accounts mentioning "+profile.optString("name")+
+            ". Search matches do not establish species habitat occupancy.");
         if(getResources().getConfiguration().fontScale>=1.6f){
             browse.setTextSize(12);
             browse.setPadding(dp(8),dp(5),dp(8),dp(5));

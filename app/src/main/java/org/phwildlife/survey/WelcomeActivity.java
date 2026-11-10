@@ -184,9 +184,33 @@ public class WelcomeActivity extends Activity {
             dp(LikasDesignSystem.SPACE_XS));
         return label;
     }
+    /** Full selected labels are more important than a compact one-line spinner. */
+    private ArrayAdapter<String> readableSelection(java.util.List<String> choices){
+        return new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,choices){
+            @Override public View getView(int position,View reuse,android.view.ViewGroup parent){
+                TextView view=new TextView(WelcomeActivity.this);
+                view.setText(getItem(position));
+                view.setTextSize(15);
+                view.setTextColor(UiKit.INK);
+                view.setMaxLines(3);
+                view.setSingleLine(false);
+                view.setGravity(Gravity.CENTER_VERTICAL);
+                view.setPadding(dp(9),dp(7),dp(7),dp(7));
+                view.setMinHeight(dp(largeText()?82:54));
+                return view;
+            }
+            @Override public View getDropDownView(int position,View reuse,
+                                                   android.view.ViewGroup parent){
+                TextView row=(TextView)getView(position,reuse,parent);
+                row.setPadding(dp(14),dp(11),dp(12),dp(11));
+                row.setMinHeight(dp(largeText()?94:54));
+                return row;
+            }
+        };
+    }
     private void setupSpinner(Spinner spinner,String description){
         spinner.setContentDescription(description);
-        spinner.setMinimumHeight(dp(56));
+        spinner.setMinimumHeight(dp(largeText()?84:56));
         spinner.setPadding(dp(8),dp(6),dp(8),dp(6));
     }
     /** Native input hints, numeric keyboard types, validators and saved values remain intact. */
@@ -482,10 +506,10 @@ public class WelcomeActivity extends Activity {
         main.addView(step("01","Survey method"));
         LinearLayout methodsCard=vertical();
         methodPicker=new Spinner(this);
-        methodPicker.setAdapter(new ArrayAdapter<String>(this,
-            android.R.layout.simple_spinner_dropdown_item,SurveyMethods.displayNames(profile)));
+        methodPicker.setAdapter(readableSelection(
+            java.util.Arrays.asList(SurveyMethods.displayNames(profile))));
         setupSpinner(methodPicker,"Choose survey method");
-        methodsCard.addView(methodPicker,new LinearLayout.LayoutParams(-1,dp(56)));
+        methodsCard.addView(methodPicker,new LinearLayout.LayoutParams(-1,-2));
         TextView methodHint=LikasPortalUi.text(this,choices[0].description,13,
             UiKit.MUTED,false);
         methodHint.setPadding(dp(LikasDesignSystem.SPACE_XS),
@@ -528,7 +552,7 @@ public class WelcomeActivity extends Activity {
             while(c.moveToNext()){projectKeys.add(c.getString(0));names.add(c.getString(1));}
         }
         if(names.isEmpty()){projectKeys.add("default");names.add("General field project");}
-        projectChoice.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));
+        projectChoice.setAdapter(readableSelection(names));
         main.addView(setupLabel("Project"));
         projectChoice.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){
             public void onNothingSelected(android.widget.AdapterView<?> parent){}
@@ -542,7 +566,7 @@ public class WelcomeActivity extends Activity {
         projectRow.setOrientation(stackProjectControls?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         projectRow.setGravity(Gravity.CENTER_VERTICAL);
         projectRow.addView(projectChoice,new LinearLayout.LayoutParams(
-            stackProjectControls?-1:0,dp(stackProjectControls?64:56),1f));
+            stackProjectControls?-1:0,-2,1f));
         Button projectManage=UiKit.button(this,"Manage","secondary");
         LinearLayout.LayoutParams manageWidth=new LinearLayout.LayoutParams(
             stackProjectControls?-1:dp(116),dp(stackProjectControls?actionDp():56));
@@ -554,8 +578,8 @@ public class WelcomeActivity extends Activity {
         projectManage.setOnClickListener(v->startActivity(new Intent(this,SitesActivity.class)));
         main.addView(setupLabel("Checklist region"));
         geographicChoice=new Spinner(this);
-        geographicChoice.setAdapter(new ArrayAdapter<String>(
-            this,android.R.layout.simple_spinner_dropdown_item,GeoRegions.LABELS));
+        geographicChoice.setAdapter(readableSelection(
+            java.util.Arrays.asList(GeoRegions.LABELS)));
         geographicChoice.setSelection(0);
         setupSpinner(projectChoice,"Choose survey project");
         setupSpinner(geographicChoice,"Choose checklist region");

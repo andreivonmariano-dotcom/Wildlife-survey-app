@@ -225,6 +225,25 @@ public class MainActivity extends Activity implements LocationListener {
         view.setGravity(Gravity.CENTER_VERTICAL);
         view.setFocusable(true);
     }
+    /** The selected field value remains readable at 320 dp and 200% text. */
+    private ArrayAdapter<String> readableSpinner(String[] names){
+        return new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,names){
+            @Override public View getView(int position,View reused,android.view.ViewGroup parent){
+                TextView t=new TextView(MainActivity.this);
+                t.setText(getItem(position));
+                t.setTextColor(UiKit.INK);t.setTextSize(14);
+                t.setSingleLine(false);t.setMaxLines(3);
+                t.setGravity(Gravity.CENTER_VERTICAL);
+                t.setPadding(dp(9),dp(8),dp(8),dp(8));
+                t.setMinHeight(dp(MainActivity.this.getResources().getConfiguration().fontScale>=1.60f?78:54));
+                return t;
+            }
+            @Override public View getDropDownView(int position,View reused,
+                                                   android.view.ViewGroup parent){
+                return getView(position,reused,parent);
+            }
+        };
+    }
     private void draw(){
         inputKeyboardVisible=false;
         LinearLayout root=vertical();root.setBackgroundColor(BACK);
@@ -250,11 +269,8 @@ public class MainActivity extends Activity implements LocationListener {
         title.setPadding(dp(LikasDesignSystem.SPACE_MD),0,dp(LikasDesignSystem.SPACE_SM),0);
         title.setContentDescription(profile+" Survey");
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-        Button export=UiKit.button(this,"All data","secondary");
-        if(largeText)export.setText("ZIP");
-        export.setContentDescription("Export all projects and surveys as research ZIP");
-        top.addView(export,new LinearLayout.LayoutParams(dp(largeText?68:96),dp(48)));
-        export.setOnClickListener(v->exportZip());
+        // All-data research ZIP is available from secondary tools and BioTools,
+        // not in the observation-first header.
         root.addView(top);
         // Fixed status HUD: short, high-contrast survey state, always visible.
         LinearLayout hud=vertical();
@@ -281,10 +297,9 @@ public class MainActivity extends Activity implements LocationListener {
         startGpsBanner.setTextColor(UiKit.AMBER);
         hud.addView(startGpsBanner);
         refreshStartGpsBanner();
-        if(!largeText)root.addView(hud,hudLp);
-        else {
-            // Keep effort timing and GPS quality available at a glance.
-            // The full session, station progress and start-fix history stay accessible.
+        {
+            // Compact HUD at all text sizes. Full effort and GPS provenance
+            // remain one disclosure away in the scrollable form.
             LinearLayout compactHud=vertical();
             compactHud.setBackground(UiKit.surface(this));
             compactHud.setPadding(dp(10),dp(2),dp(10),dp(2));
@@ -314,12 +329,10 @@ public class MainActivity extends Activity implements LocationListener {
         }
         fieldScroll=new ScrollView(this);fieldScroll.setFillViewport(false);fieldScroll.setVerticalScrollBarEnabled(false);
         LinearLayout content=vertical();content.setPadding(dp(1),0,dp(1),dp(12));
-        if(largeText){
-            statusDetailsPanel=hud;
-            hud.setVisibility(View.GONE);
-            content.addView(hud,hudLp);
-            syncCompactGps();
-        }
+        statusDetailsPanel=hud;
+        hud.setVisibility(View.GONE);
+        content.addView(hud,hudLp);
+        syncCompactGps();
         groupBar=horizontal();content.addView(groupBar);showGroups();
         LinearLayout methodRow=horizontal();
         // The method was already chosen in survey setup. Do not offer a second, disabled selector.
@@ -478,6 +491,11 @@ public class MainActivity extends Activity implements LocationListener {
             optionalMethod[0]=methodRecords;
             methodRecords.setOnClickListener(v->openFieldProtocol());
         }
+        Button export=UiKit.button(this,"Export research ZIP","secondary");
+        export.setContentDescription("Export research ZIP of all projects and surveys");
+        LinearLayout.LayoutParams exportLp=new LinearLayout.LayoutParams(-1,-2);
+        exportLp.topMargin=dp(7);evidenceTools.addView(export,exportLp);
+        export.setOnClickListener(v->exportZip());
         Button evidenceToggle=UiKit.button(this,"More tools  ▾","quiet");
         evidenceToggle.setContentDescription("Show other evidence capture tools");
         LinearLayout.LayoutParams evidenceLp=new LinearLayout.LayoutParams(-1,-2);
@@ -714,7 +732,7 @@ public class MainActivity extends Activity implements LocationListener {
         LinearLayout confidenceBlock=vertical();
         confidenceBlock.addView(label("ID confidence",12,true));
         confidenceSpinner=new Spinner(this);
-        confidenceSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+        confidenceSpinner.setAdapter(readableSpinner(
             new String[]{"Not assessed","Identified","Probable","Uncertain","Unidentified"}));
         confidenceSpinner.setContentDescription("Identification confidence, not expert verification");
         confidenceSpinner.setMinimumHeight(dp(56));
@@ -732,7 +750,7 @@ public class MainActivity extends Activity implements LocationListener {
         });
         LinearLayout row=horizontal();
         if(stackCaptureActions)row.setOrientation(LinearLayout.VERTICAL);
-        distanceEntry=edit("Horizontal distance (m)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        distanceEntry=edit("Distance (m)",InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         distanceEntry.setContentDescription("Observer-estimated or measured horizontal detection distance in meters");
         row.addView(distanceEntry,stackCaptureActions?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
@@ -741,11 +759,11 @@ public class MainActivity extends Activity implements LocationListener {
         TextView detectionLabel=label("Detection type",LikasDesignSystem.TEXT_CONTROL,true);
         detectionBlock.addView(detectionLabel);
         detectionSpinner=new Spinner(this);
-        detectionSpinner.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
+        detectionSpinner.setAdapter(readableSpinner(
             new String[]{"Visual","Auditory","Both","Sign","Camera"}));
         detectionSpinner.setContentDescription("Choose observation detection type");
         detectionSpinner.setMinimumHeight(dp(56));
-        detectionBlock.addView(detectionSpinner,new LinearLayout.LayoutParams(-1,dp(56)));
+        detectionBlock.addView(detectionSpinner,new LinearLayout.LayoutParams(-1,-2));
         LinearLayout.LayoutParams detectionLp=stackCaptureActions?
             new LinearLayout.LayoutParams(-1,-2):
             new LinearLayout.LayoutParams(0,-2,0.8f);
@@ -887,7 +905,7 @@ public class MainActivity extends Activity implements LocationListener {
         callContainer.addView(callScoreLabel);
         callContainer.addView(callScoreSpinner);
         lifeStageSpinner=new Spinner(this);
-        lifeStageSpinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+        lifeStageSpinner.setAdapter(readableSpinner(
             new String[]{"Life stage not recorded","Egg","Larva / tadpole","Juvenile","Subadult","Adult","Unknown"}));
         TextView lifeStageLabel=label("Life stage",13,true);
         LinearLayout stageContainer=listeningPriority?herpPanel:herpQuick;
@@ -1055,15 +1073,25 @@ public class MainActivity extends Activity implements LocationListener {
         boolean canSwitch=profile.equals("Herpetofauna")&&!method.equals("amphibian_calls");
         groupBar.setVisibility(canSwitch?View.VISIBLE:View.GONE);
         if(!canSwitch)return;
+        boolean stackGroup=getResources().getConfiguration().fontScale>=1.60f||
+            getResources().getConfiguration().screenWidthDp<350;
+        groupBar.setOrientation(stackGroup?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
         for(String name:new String[]{"Reptiles","Amphibians"}){
             boolean selected=name.equals(group);
             Button b=UiKit.button(this,name,selected?"pond":"secondary");
             b.setContentDescription(name+" observation group"+(selected?", selected":""));
             b.setSelected(selected);
-            LinearLayout.LayoutParams groupLp=new LinearLayout.LayoutParams(0,
-                dp(FieldLayoutPolicy.actionHeightDp(
-                    getResources().getConfiguration().fontScale)),1);
-            if(groupBar.getChildCount()>0)groupLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+            b.setSingleLine(false);
+            b.setMaxLines(2);
+            LinearLayout.LayoutParams groupLp=stackGroup?
+                new LinearLayout.LayoutParams(-1,-2):
+                new LinearLayout.LayoutParams(0,-2,1);
+            b.setMinHeight(dp(FieldLayoutPolicy.actionHeightDp(
+                getResources().getConfiguration().fontScale)));
+            if(groupBar.getChildCount()>0){
+                if(stackGroup)groupLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
+                else groupLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
+            }
             groupBar.addView(b,groupLp);
             b.setOnClickListener(v->{
                 if(group.equals(name))return;
@@ -1179,7 +1207,7 @@ public class MainActivity extends Activity implements LocationListener {
         if(clear)taxonEntry.setText("");
         else taxonSuggestionAdapter.getFilter().filter(taxonEntry.getText());
         if(distanceEntry!=null)distanceEntry.setHint(group.equals("Birds")?
-            "Horizontal distance (m)":"Distance (m, optional)");
+            "Distance (m)":"Distance (m, optional)");
         if(birdMeasurements!=null&&!group.equals("Birds"))
             birdMeasurements.setVisibility(View.GONE);
         if(herpPanel!=null&&!profile.equals("Herpetofauna"))

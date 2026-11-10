@@ -203,15 +203,15 @@ public final class PhLibraryDirectoryActivity extends Activity {
             Comparator.comparingInt(r->rank(r,query)));
         String summary=matches.size()+(matches.size()==1?" account":" accounts");
         if(selectedHabitat>0)
-            summary=PhLibraryHabitatFilter.SHORT_NAMES[selectedHabitat]+
-                " · "+matches.size()+" species";
+            summary=matches.size()+" source accounts mention "+
+                PhLibraryHabitatFilter.SHORT_NAMES[selectedHabitat].toLowerCase(Locale.ROOT);
         else if(savedCollectionMode)
             summary=matches.size()+" species";
         else if(savedOnly)summary+=" · Saved";
         resultsCount.setText(matches.isEmpty()?(
             savedCollectionMode&&PhLibraryBookmarks.all(this).isEmpty()?
                 "No saved species":
-            selectedHabitat>0?"No matching species for this habitat":
+            selectedHabitat>0?"No accounts mention this habitat term":
             savedOnly?"No saved matches":"No matching accounts"):summary);
         int active=(selectedRarity!=0?1:0)+(selectedIucn!=0?1:0)+
             (selectedHabitat!=0?1:0)+(family.isEmpty()?0:1)+
@@ -313,6 +313,11 @@ public final class PhLibraryDirectoryActivity extends Activity {
                 row.optString("t"),true);
             TextView conservation=PhLibraryStatusBadge.make(PhLibraryDirectoryActivity.this,
                 row.isNull("iucn")?"Unassessed":row.optString("iucn"),false);
+            // Explain unrelated status sources visibly; badges remain non-interactive in browse. 
+            rarity.setText("Book rarity: "+rarity.getText());
+            conservation.setText("IUCN global: "+conservation.getText());
+            rarity.setMaxLines(2);
+            conservation.setMaxLines(2);
             // Keep ListView rows tappable; status explanations live on the species profile.
             rarity.setClickable(false);rarity.setFocusable(false);
             conservation.setClickable(false);conservation.setFocusable(false);

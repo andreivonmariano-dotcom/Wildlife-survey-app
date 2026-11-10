@@ -41,7 +41,7 @@ public final class ApoHomeUi {
     public static View header(Activity a,Runnable settings){
         LinearLayout block=new LinearLayout(a);
         block.setOrientation(LinearLayout.VERTICAL);
-        block.setPadding(dp(a,3),dp(a,10),dp(a,3),dp(a,23));
+        block.setPadding(dp(a,3),dp(a,8),dp(a,3),dp(a,12));
         LinearLayout top=new LinearLayout(a);
         top.setGravity(Gravity.CENTER_VERTICAL);
         top.setOrientation(LinearLayout.HORIZONTAL);
@@ -69,8 +69,30 @@ public final class ApoHomeUi {
         TextView desc=label(a,"Field tools, biodiversity references and research in one place.",
             14,MUTED,false);
         LinearLayout.LayoutParams descLp=new LinearLayout.LayoutParams(-1,-2);
-        descLp.topMargin=dp(a,15);block.addView(desc,descLp);
+        descLp.topMargin=dp(a,7);block.addView(desc,descLp);
         return block;
+    }
+    /** One immediately visible survey entry point, sized for glove-friendly use. */
+    public static View primary(Activity a,String title,String description,Runnable open){
+        LinearLayout card=new LinearLayout(a);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        card.setPadding(dp(a,18),dp(a,15),dp(a,18),dp(a,15));
+        card.setMinimumHeight(dp(a,82));
+        GradientDrawable base=new GradientDrawable();
+        base.setColor(UiKit.DEEP);
+        base.setCornerRadius(dp(a,16));
+        card.setBackground(new RippleDrawable(ColorStateList.valueOf(
+            Color.argb(45,255,255,255)),base,null));
+        card.addView(label(a,title,21,Color.WHITE,true));
+        TextView detail=label(a,description,13,Color.rgb(221,240,225),false);
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,-2);
+        p.topMargin=dp(a,4);
+        card.addView(detail,p);
+        card.setFocusable(true);card.setClickable(true);
+        card.setContentDescription("Open "+title+". "+description);
+        card.setOnClickListener(v->open.run());
+        return card;
     }
     public static View module(Activity a,String number,String title,String description,Runnable open){
         LinearLayout wrapper=new LinearLayout(a);

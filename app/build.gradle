@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 170
-        versionName '0.27.3-rc110-highres-photo-galleries'
+        versionCode 171
+        versionName '0.27.3-rc111-apo-unified-field-first'
     }
     signingConfigs {
         debug {
@@ -122,6 +122,20 @@ tasks.register("verifyApoArtwork") {
                 }.join("")
             if(artifactSha != approved)
                 throw new GradleException("APO drawable digest mismatch: "+source.name)
+        }
+        // RC111 owner-approved smaller ribbon is a new lock. Retain the RC71 master
+        // and all historical derivatives for exact preservation and traceability.
+        def rc111 = [
+            (file("../app/locked/apo_rc111_approved_launcher_master.png")):
+                "828b156748e5614c7a9b74efe90ee0272b1336b7f92334ebe5702a7959332c7b",
+            (file("src/main/res/drawable-nodpi/apo_rc111_launcher_foreground.png")):
+                "fef4ef6924d8864b52956ab52e859499122cb9d8b98a9b7ced876557398903fb"
+        ]
+        rc111.each { source, approved ->
+            if(!source.isFile())throw new GradleException("Approved RC111 icon missing: "+source.name)
+            def sha=java.security.MessageDigest.getInstance("SHA-256").digest(source.bytes)
+                .collect { String.format("%02x", it & 0xff) }.join("")
+            if(sha!=approved)throw new GradleException("Owner-approved RC111 icon mismatch: "+source.name)
         }
     }
 }

@@ -63,6 +63,51 @@ public final class ApoSpeciesOfDay {
         v.setLetterSpacing(.06f);
         return v;
     }
+    /** Compact Home teaser; detailed facts and citations stay in the source account. */
+    public static View createCompact(Activity a,Consumer<String> open){
+        JSONObject account=select(a,LocalDate.now(PH_TIME));
+        if(account==null)return null;
+        String latin=account.optString("s");
+        String common=account.optString("c",latin);
+        String iucn=account.isNull("iucn")?"Unassessed":
+            PhLibraryStatusBadge.status(account.optString("iucn","Unassessed"));
+        LinearLayout row=new LinearLayout(a);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setPadding(dp(a,10),dp(a,10),dp(a,12),dp(a,10));
+        row.setBackground(PhLibrary2Ui.touch(a,UiKit.BG,UiKit.BORDER,16));
+        View cover=PhLibrarySpeciesMedia.photoOrPlaceholder(a,latin);
+        if(cover instanceof ImageView)
+            ((ImageView)cover).setScaleType(ImageView.ScaleType.CENTER_CROP);
+        FrameLayout image=new FrameLayout(a);
+        image.setBackgroundColor(PhLibrary2Ui.DEEP);
+        image.setClipToOutline(true);
+        image.addView(cover,new FrameLayout.LayoutParams(-1,-1));
+        row.addView(image,new LinearLayout.LayoutParams(dp(a,88),dp(a,88)));
+        LinearLayout labels=new LinearLayout(a);
+        labels.setOrientation(LinearLayout.VERTICAL);
+        labels.setPadding(dp(a,12),0,0,0);
+        labels.addView(PhLibrary2Ui.text(a,"SPECIES OF THE DAY",11,
+            UiKit.MUTED,false,true));
+        TextView name=PhLibrary2Ui.text(a,common,17,UiKit.INK,true,false);
+        name.setMaxLines(2);
+        LinearLayout.LayoutParams n=new LinearLayout.LayoutParams(-1,-2);
+        n.topMargin=dp(a,5);labels.addView(name,n);
+        TextView scientific=PhLibrary2Ui.text(a,latin,13,UiKit.MUTED,false,false);
+        scientific.setTypeface(Typeface.create("serif",Typeface.ITALIC));
+        labels.addView(scientific);
+        TextView context=PhLibrary2Ui.text(a,"IUCN global: "+iucn,12,
+            UiKit.FOREST,false,false);
+        LinearLayout.LayoutParams c=new LinearLayout.LayoutParams(-1,-2);
+        c.topMargin=dp(a,5);labels.addView(context,c);
+        row.addView(labels,new LinearLayout.LayoutParams(0,-2,1));
+        row.setMinimumHeight(dp(a,108));
+        row.setFocusable(true);row.setClickable(true);
+        row.setContentDescription("Species of the day: "+common+", "+latin+
+            ". IUCN global: "+iucn+". Open full account.");
+        row.setOnClickListener(v->open.accept(latin));
+        return row;
+    }
     public static View create(Activity a,Consumer<String> open){
         LocalDate today=LocalDate.now(PH_TIME);
         JSONObject row=select(a,today);

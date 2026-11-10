@@ -25,6 +25,8 @@ class ApoStartupSourceContract(unittest.TestCase):
         self.assertIn(MASTER_SHA, gradle)
         self.assertIn(SPLASH_SHA, gradle)
         self.assertIn(FOREGROUND_SHA, gradle)
+        self.assertIn("828b156748e5614c7a9b74efe90ee0272b1336b7f92334ebe5702a7959332c7b", gradle)
+        self.assertIn("fef4ef6924d8864b52956ab52e859499122cb9d8b98a9b7ced876557398903fb", gradle)
         self.assertIn('dependsOn("verifyApoArtwork")', gradle)
 
     def test_single_native_wordmark_and_noncircular_loading(self):
@@ -71,7 +73,7 @@ class ApoStartupSourceContract(unittest.TestCase):
     def test_adaptive_resources_reference_approved_derivative(self):
         for name in ("apo_launcher.xml", "apo_launcher_round.xml"):
             xml = (ROOT / "app/src/main/res/mipmap-anydpi-v26" / name).read_text()
-            self.assertIn("@drawable/apo_launcher_foreground", xml)
+            self.assertIn("@drawable/apo_rc111_launcher_foreground", xml)
             self.assertIn("@color/apo_icon_background", xml)
 
 

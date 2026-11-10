@@ -214,23 +214,27 @@ public class WelcomeActivity extends Activity {
             resumeLp.bottomMargin=dp(LikasDesignSystem.SPACE_LG);
             main.addView(resume,resumeLp);
         }
-        View daily=ApoSpeciesOfDay.create(this,scientific->
+        // Field-first Home: the primary survey path stays visible on small phones.
+        main.addView(ApoHomeUi.primary(this,"Start wildlife survey",
+            "Birds · Herpetofauna · Mammals",this::fieldworkHub));
+        main.addView(ApoHomeUi.module(this,"01","Species & habitats",
+            "Search the Philippine field reference",()->
+                startActivity(new Intent(this,LikasLibraryActivity.class))));
+        main.addView(ApoHomeUi.module(this,"02","Field records & tools",
+            "Projects, past surveys, analysis and exports",this::bioToolsHub));
+        // Wildlife spotlight remains a real sourced account, without covering Home.
+        View daily=ApoSpeciesOfDay.createCompact(this,scientific->
             startActivity(new Intent(this,TaxonDetailActivity.class)
                 .putExtra("phlibrary_scientific_name",scientific)));
         if(daily!=null){
             LinearLayout.LayoutParams spotlight=new LinearLayout.LayoutParams(-1,-2);
-            spotlight.bottomMargin=dp(LikasDesignSystem.SPACE_MD);
+            spotlight.topMargin=dp(LikasDesignSystem.SPACE_LG);
             main.addView(daily,spotlight);
         }
-        main.addView(ApoHomeUi.module(this,"01","BioTools",
-            "Fieldwork, surveys and data analysis",this::bioToolsHub));
-        main.addView(ApoHomeUi.module(this,"02","PHLibrary",
-            "Philippine species, habitats and ecology",()->
-                startActivity(new Intent(this,LikasLibraryActivity.class))));
-        main.addView(ApoHomeUi.module(this,"03","PHMaps",
-            "Spatial context, site habitats and map tools",this::phMapsHub));
-        main.addView(ApoHomeUi.module(this,"04","BioDiscover",
-            "Research and conservation updates · In development",this::bioDiscoverHub));
+        // PHMaps and BioDiscover do not pretend to be full tools before launch.
+        main.addView(ApoHomeUi.note(this,
+            "In development: offline map atlas and research updates. "+
+            "Existing sites and habitat records are in Field records & tools."));
         UiMotion.enterHome(this,main);
     }
     /** Honest spatial hub: existing site records are available; a full atlas is not. */
@@ -270,7 +274,7 @@ public class WelcomeActivity extends Activity {
             "Select a field task, review saved evidence, or work with research data."));
         if(lastHomeActiveSurvey!=null){
             main.addView(ApoHomeUi.note(this,
-                "A survey is in progress. Resume it from Surveys or the APO Home shortcut."));
+                "A survey is in progress. Resume it from Home or Surveys."));
         }
         main.addView(FieldVisuals.section(this,"FIELDWORK",null));
         main.addView(ApoHomeUi.module(this,"01","Surveys",
@@ -329,8 +333,8 @@ public class WelcomeActivity extends Activity {
             surveyTile(main,"Mammals","Signs · Stations",()->setup("Mammals"));
         }
         main.addView(ApoHomeUi.note(this,
-            "Survey completion follows the selected method. End Incomplete retains partial " +
-            "effort; Not Counted remains excluded from default analytical summaries."));
+            "End Survey offers Complete, Incomplete and Not Counted. " +
+            "Method requirements determine whether Complete is available."));
         UiMotion.enter(this,main);
     }
 

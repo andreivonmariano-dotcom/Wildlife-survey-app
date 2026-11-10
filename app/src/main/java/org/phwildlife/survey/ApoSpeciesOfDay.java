@@ -103,7 +103,10 @@ public final class ApoSpeciesOfDay {
         llp.topMargin=dp(a,5);content.addView(link,llp);
         card.addView(content,new LinearLayout.LayoutParams(0,-2,1f));
         card.setClickable(true);card.setFocusable(true);
-        card.setContentDescription("Species of the day: "+common+", "+latin+". Open source account.");
+        card.setContentDescription("Species of the day: "+common+", "+latin+
+            ". Book rarity: "+row.optString("t")+
+            ". IUCN global status: "+PhLibraryStatusBadge.status(row.optString("iucn"))+
+            ". Endemicity: "+endemicity(row)+". Open source account.");
         card.setOnClickListener(v->open.accept(latin));
         return card;
     }

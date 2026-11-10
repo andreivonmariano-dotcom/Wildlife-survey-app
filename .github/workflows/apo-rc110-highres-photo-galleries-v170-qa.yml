@@ -52,27 +52,13 @@ jobs:
           test -s .signing/wildlife-beta08.keystore
           keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/apo-original-cert.der
           echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/apo-original-cert.der' | sha256sum -c -
-      - name: Restore verified Commons photos from signed RC109 source build
+      - name: Restore 333 immutable RC110 JPEGs and approved Commons from signed APK
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13688892745/zip" > /tmp/apo-rc109-photos.zip
-          unzip -p /tmp/apo-rc109-photos.zip app-debug.apk > /tmp/apo-rc109-photos.apk
-          echo 'fbc31e33a6302107b21bc0a081392d458e475aec0b5e20d9b8e9bbd153361366  /tmp/apo-rc109-photos.apk' | sha256sum -c -
-          python3 - <<'PY'
-          import hashlib,json,zipfile
-          from pathlib import Path
-          lock=json.loads(Path('docs/RC7_PINNED_COMMONS_PHOTO_SHA256.json').read_text())['items']
-          with zipfile.ZipFile('/tmp/apo-rc109-photos.apk') as z:
-              for entry in lock:
-                  asset=entry['offlineAsset']
-                  data=z.read('assets/'+asset)
-                  assert hashlib.sha256(data).hexdigest()==entry['sha256'],asset
-                  dest=Path('app/src/main/assets')/asset
-                  dest.parent.mkdir(parents=True,exist_ok=True)
-                  dest.write_bytes(data)
-          print('Nine original approved Commons photos restored and SHA-256 validated.')
-          PY
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13736851110/zip" > /tmp/apo-rc110-gallery.zip
+          unzip -p /tmp/apo-rc110-gallery.zip app-debug.apk > /tmp/apo-rc110-signed.apk
+          python3 scripts/restore_apo_rc111_photo_assets.py /tmp/apo-rc110-signed.apk
       - name: Verify durable approved photos from repository source
         run: |
           python3 scripts/prepare_offline_photos.py
@@ -80,14 +66,9 @@ jobs:
         run: |
           python3 -m pip install Pillow==11.3.0 gdown==5.2.0
           python3 scripts/prepare_owner_native_species_photos.py
-      - name: Restore owner source photographs from exact split ZIP archive parts
-        run: python3 scripts/prepare_rc110_split_drive_archives.py
-      - name: Validate all 333 archive originals and embed EXIF-free 1920px images
-        env:
-          LIKAS_DRIVE_SOURCE_DIR: .taxonomy-cache/likas-drive-originals
+      - name: Validate 333 EXIF-free JPEGs against signed RC110 output
         run: |
-          python3 scripts/test_rc110_drive_photo_gallery.py
-          python3 scripts/prepare_drive_gallery.py
+          python3 scripts/restore_apo_rc111_photo_assets.py --verify
           python3 scripts/test_rc110_drive_photo_gallery.py
       - name: Scientific and menu source regression tests
         run: |

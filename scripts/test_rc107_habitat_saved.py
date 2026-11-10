@@ -57,9 +57,9 @@ class Rc107HabitatSaved(unittest.TestCase):
         self.assertIn('{"riparian","streamside"',habitat)
         self.assertIn('"lowland-forest"',habitat)
         self.assertIn('"moist-deciduous-forest"',habitat)
-        self.assertIn('articles.optString(id),17.5f',atlas)
+        self.assertIn('articles.optString(id),16',atlas)
         self.assertIn('article.setTextIsSelectable(true)',atlas)
-        self.assertIn('"Browse species"',atlas)
+        self.assertIn('"Find accounts mentioning this habitat"',atlas)
         self.assertNotIn("Literature-linked species",atlas)
         self.assertNotIn('"About Habitat"',directory)
         self.assertNotIn('"Discovery Rarity:',directory)
@@ -76,8 +76,8 @@ class Rc107HabitatSaved(unittest.TestCase):
 
     def test_preserved_surveys_and_version(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 170",gradle)
-        self.assertIn("0.27.3-rc110-highres-photo-galleries",gradle)
+        self.assertIn("versionCode 171",gradle)
+        self.assertIn("0.27.3-rc111-apo-ui-overhaul",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,29)",java("FieldDb.java"))
         self.assertIn('EXPECTED_COUNT=715',java("PhLibraryBook01.java"))

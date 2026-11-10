@@ -173,9 +173,9 @@ tasks.configureEach { t ->
 // packaging; no device-side Drive import or network access is required.
 tasks.register('prepareDriveHighResGallery', Exec) {
     workingDir rootProject.projectDir
-    commandLine 'python3', 'scripts/prepare_drive_gallery.py'
+    commandLine 'python3', 'scripts/restore_apo_rc111_photo_assets.py', '--verify'
     inputs.file(file('src/main/assets/offline_drive_gallery_manifest_v1.json'))
-    inputs.file(file('../scripts/prepare_drive_gallery.py'))
+    inputs.file(file('../scripts/restore_apo_rc111_photo_assets.py'))
     outputs.files((1..333).collect { file(String.format('src/main/assets/offline_photos/drive_%04d.jpg',it)) })
 }
 tasks.named('preBuild') { dependsOn('prepareDriveHighResGallery') }

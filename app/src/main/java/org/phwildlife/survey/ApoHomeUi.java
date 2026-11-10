@@ -118,8 +118,10 @@ public final class ApoHomeUi {
         base.setColor(UiKit.BG);
         line.setBackground(new RippleDrawable(ColorStateList.valueOf(
             Color.argb(27,25,87,61)),base,null));
-        TextView count=label(a,number,12,Color.rgb(116,137,121),true);
-        line.addView(count,new LinearLayout.LayoutParams(dp(a,32),-2));
+        if(number!=null&&!number.trim().isEmpty()){
+            TextView count=label(a,number,12,Color.rgb(116,137,121),true);
+            line.addView(count,new LinearLayout.LayoutParams(dp(a,32),-2));
+        }
         LinearLayout detail=new LinearLayout(a);
         detail.setOrientation(LinearLayout.VERTICAL);
         detail.addView(label(a,title,17,INK,true));

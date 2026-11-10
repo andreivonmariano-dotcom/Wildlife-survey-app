@@ -141,6 +141,10 @@ public class MainActivity extends Activity implements LocationListener {
 
     @Override public void onCreate(Bundle b) {
         super.onCreate(b);
+        getWindow().setStatusBarColor(BACK);
+        getWindow().setNavigationBarColor(BACK);
+        getWindow().getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         db=new FieldDb(this);
         hudReader=new SurveyHudReader(this);
         locations=(LocationManager)getSystemService(LOCATION_SERVICE);

@@ -25,6 +25,10 @@ The default **`main`** branch contains the consolidated APO **RC112 code172** An
 
 Active development uses `main` or short-lived branches based on it. Previously divergent RC111 branches, older RC stages and obsolete LIKAS material remain available as version history and historical QA records.
 
+## Living Atlas data foundation
+
+A versioned, read-only `LivingAtlasDataLayer` now provides edition-scoped Book 01 references, offline name search, verified bibliography access and guarded habitat relationships. See [technical data layer guide](docs/APO_LIVING_ATLAS_DATA_LAYER_v1.md) and run `python3 scripts/check_living_atlas_data.py` for pinned scientific source verification. The Google Drive Office manuscript and checklist stay editable upstream; no live or required reference sync, automatic taxonomic remapping, or survey DB migration is introduced.
+
 ## Release gates and unresolved work
 
 The promoted repository source is **an owner-preview development baseline**. Public distribution requires completed photo attribution/rights review, a durable permitted source for the 333-photo gallery, review of a private-labelled reference file already present in the public source history, complete APO-09–APO-12 scientific and interface copy QA, and physical-device acceptance where appropriate.

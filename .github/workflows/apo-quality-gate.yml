@@ -100,6 +100,7 @@ jobs:
           python3 scripts/test_rc110_drive_photo_gallery.py
       - name: Scientific and menu source regression tests
         run: |
+          python3 scripts/check_living_atlas_data.py
           python3 -m unittest discover -s scripts -p 'test_*.py'
           python3 scripts/prepare_mdd_mammals.py
           python3 scripts/prepare_offline_photos.py
@@ -158,6 +159,9 @@ jobs:
             cat rc103-phlibrary-evidence/rc108-species-photo-daily.txt
             grep -Fq 'OK (4 tests)' rc103-phlibrary-evidence/rc108-species-photo-daily.txt
             bash scripts/rc110_gallery_emulator_qa.sh
+            adb shell am instrument -w -e class org.phwildlife.survey.LivingAtlasDataLayerInstrumentedTest org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner > rc103-phlibrary-evidence/living-atlas-index.txt
+            cat rc103-phlibrary-evidence/living-atlas-index.txt
+            grep -Fq 'OK (2 tests)' rc103-phlibrary-evidence/living-atlas-index.txt
             bash scripts/rc110_visual_audit_qa.sh
       - name: Upload emulator screenshot evidence
         if: always()

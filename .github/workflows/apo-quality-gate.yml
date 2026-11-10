@@ -1,12 +1,16 @@
-name: APO RC106 PHLibrary screen/button polish and canonical Book v1.82
+name: APO | Consolidated Android QA and signed-upgrade check
 
 on:
   push:
     branches:
-      - feature/apo-rc106-phlibrary-ux-polish-v166
+      - refactor/apo-rc112-consolidated
+    paths-ignore:
+      - 'docs/**'
+      - 'AGENTS.md'
+      - 'README.md'
   pull_request:
     branches:
-      - feature/apo-rc105-phlibrary-clean-atlas-v165
+      - feature/apo-rc110-highres-offline-photo-galleries-v170
   workflow_dispatch:
 
 permissions:
@@ -14,11 +18,12 @@ permissions:
   actions: read
 
 concurrency:
-  group: apo-phlibrary-ux-polish-v166-${{ github.ref }}
+  group: apo-consolidated-android-qa-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
+    # Full emulator and signed-upgrade QA gate for the current APO source.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -51,18 +56,18 @@ jobs:
           test -s .signing/wildlife-beta08.keystore
           keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/apo-original-cert.der
           echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/apo-original-cert.der' | sha256sum -c -
-      - name: Restore verified Commons photos from the signed RC95 source build
+      - name: Restore verified Commons photos from signed RC109 source build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13197003456/zip" > /tmp/apo-rc95-photos.zip
-          unzip -p /tmp/apo-rc95-photos.zip app-debug.apk > /tmp/apo-rc95-photos.apk
-          echo 'bea7a1bb9725cf85bc69b6f286dcf5c4de1fe408f392c2ef053e9879765931ec  /tmp/apo-rc95-photos.apk' | sha256sum -c -
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13688892745/zip" > /tmp/apo-rc109-photos.zip
+          unzip -p /tmp/apo-rc109-photos.zip app-debug.apk > /tmp/apo-rc109-photos.apk
+          echo 'fbc31e33a6302107b21bc0a081392d458e475aec0b5e20d9b8e9bbd153361366  /tmp/apo-rc109-photos.apk' | sha256sum -c -
           python3 - <<'PY'
           import hashlib,json,zipfile
           from pathlib import Path
           lock=json.loads(Path('docs/RC7_PINNED_COMMONS_PHOTO_SHA256.json').read_text())['items']
-          with zipfile.ZipFile('/tmp/apo-rc95-photos.apk') as z:
+          with zipfile.ZipFile('/tmp/apo-rc109-photos.apk') as z:
               for entry in lock:
                   asset=entry['offlineAsset']
                   data=z.read('assets/'+asset)
@@ -75,33 +80,64 @@ jobs:
       - name: Verify durable approved photos from repository source
         run: |
           python3 scripts/prepare_offline_photos.py
+      - name: Generate nine bounded JPEGs embedded in the APK
+        run: |
+          python3 -m pip install Pillow==11.3.0 gdown==5.2.0
+          python3 scripts/prepare_owner_native_species_photos.py
+      - name: Restore 333 exact owner-photo derivatives from verified signed RC110
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13736851110/zip" > /tmp/apo-rc110-gallery-source.zip
+          unzip -p /tmp/apo-rc110-gallery-source.zip app-debug.apk > /tmp/apo-rc110-gallery-source.apk
+          echo '4062242f3e43379d55b195f3694a0b630841c74a606432e02e7a69b21ee855dc  /tmp/apo-rc110-gallery-source.apk' | sha256sum -c -
+          python3 scripts/test_rc110_drive_photo_gallery.py
+          python3 scripts/restore_rc110_verified_gallery.py /tmp/apo-rc110-gallery-source.apk
+      - name: Verify all 333 pinned offline photos and the gallery source manifest
+        run: |
+          python3 scripts/prepare_drive_gallery.py
+          python3 scripts/test_rc110_drive_photo_gallery.py
       - name: Scientific and menu source regression tests
         run: |
           python3 -m unittest discover -s scripts -p 'test_*.py'
           python3 scripts/prepare_mdd_mammals.py
           python3 scripts/prepare_offline_photos.py
           python3 scripts/audit_inaturalist_photos.py --install-approved
+      - name: Verify native photograph manifest and EXIF-free outputs
+        run: python3 scripts/test_rc109_native_species_photos.py
       - name: JVM unit tests and debug APK build
         run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Verify approved compact APO icon source
+        run: |
+          echo '828b156748e5614c7a9b74efe90ee0272b1336b7f92334ebe5702a7959332c7b  app/src/main/assets/apo_compact_launcher_master.png' | sha256sum -c -
+          python3 scripts/prepare_apo_compact_launcher.py
+          test -s app/build/generated/apo-compact/res/drawable-nodpi/apo_compact_launcher_foreground.png
       - name: Verify signed APK and references
         run: |
           APK=app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='166'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc106-phlibrary-polish'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='172'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.3-rc112-minimal-ui-compact-icon'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
           unzip -t "$APK" >/dev/null
           unzip -p "$APK" assets/apo_official_master.png | sha256sum | grep -F '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7'
           unzip -p "$APK" assets/paic714_master.csv | sha256sum | grep -F '1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959'
           unzip -p "$APK" assets/paic_worldcover2020_500m.txt | sha256sum | grep -F 'e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089'
           sha256sum "$APK"
+      - name: Export code172 signed RC112 candidate after verified build
+        uses: actions/upload-artifact@v4
+        with:
+          name: APO-RC112-signed-code172-refined-ui-all333-preview
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
       - name: Enable hardware-accelerated Android emulator
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Exercise RC106 PHLibrary screens/buttons and inherited signed startup screens
+      - name: Exercise inherited PHLibrary screens, RC108 media and RC110 gallery
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -110,12 +146,23 @@ jobs:
           profile: pixel_4
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-boot-anim -camera-back none -no-snapshot
-          script: bash scripts/rc103_phlibrary_native_qa.sh
+          script: |
+            bash scripts/rc103_phlibrary_native_qa.sh
+            adb shell wm size 360x800
+            adb shell wm density 160
+            adb shell settings put system font_scale 1.0
+            adb shell am force-stop org.phwildlife.survey.beta08
+            mkdir -p rc103-phlibrary-evidence
+            adb shell am instrument -w -e class org.phwildlife.survey.Rc108SpeciesMediaInstrumentedTest org.phwildlife.survey.beta08.test/androidx.test.runner.AndroidJUnitRunner > rc103-phlibrary-evidence/rc108-species-photo-daily.txt
+            cat rc103-phlibrary-evidence/rc108-species-photo-daily.txt
+            grep -Fq 'OK (4 tests)' rc103-phlibrary-evidence/rc108-species-photo-daily.txt
+            bash scripts/rc110_gallery_emulator_qa.sh
+            bash scripts/rc110_visual_audit_qa.sh
       - name: Upload emulator screenshot evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: APO-RC106-PHLibrary-screen-button-emulator-evidence
+          name: LIKAS-RC110-gallery-emulator-evidence
           path: |
             rc92-unverified-evidence/
             rc94-phlibrary-evidence/
@@ -128,18 +175,27 @@ jobs:
             rc101-phlibrary-evidence/
             rc102-startup-evidence/
             rc103-phlibrary-evidence/
+            rc110-gallery-evidence/
           if-no-files-found: ignore
           retention-days: 7
-      - name: Retrieve independently hash-verified signed RC92 baseline
+      - name: Upload RC110 native UI audit screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LIKAS-RC110-native-screen-review-evidence
+          path: rc110-visual-audit-evidence/
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Retrieve independently hash-verified signed RC109 baseline
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13139140344/zip" > /tmp/apo-rc92-artifact.zip
-          unzip -p /tmp/apo-rc92-artifact.zip app-debug.apk > /tmp/apo-rc92-signed.apk
-          echo 'c88f641e73516b7e9916e34ec31a511c06b2f4042ffde0b559471aff91fabb06  /tmp/apo-rc92-signed.apk' | sha256sum -c -
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging /tmp/apo-rc92-signed.apk | grep -F "versionCode='152'"
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs /tmp/apo-rc92-signed.apk | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
-      - name: Verify signed RC92 to RC106 no-data-clear upgrade
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13688892745/zip" > /tmp/apo-rc109-artifact.zip
+          unzip -p /tmp/apo-rc109-artifact.zip app-debug.apk > /tmp/apo-rc109-signed.apk
+          echo 'fbc31e33a6302107b21bc0a081392d458e475aec0b5e20d9b8e9bbd153361366  /tmp/apo-rc109-signed.apk' | sha256sum -c -
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging /tmp/apo-rc109-signed.apk | grep -F "versionCode='169'"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs /tmp/apo-rc109-signed.apk | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
+      - name: Verify signed RC109 to RC112 no-data-clear upgrade
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -148,18 +204,12 @@ jobs:
           profile: pixel_4
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-boot-anim -camera-back none -no-snapshot
-          script: bash scripts/rc95_signed_upgrade_qa.sh
+          script: bash scripts/rc110_signed_upgrade_qa.sh
       - name: Upload signed upgrade evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: APO-RC92-to-RC106-data-preservation-evidence
-          path: rc95-upgrade-evidence/
+          name: APO-RC109-to-RC112-upgrade-evidence
+          path: rc110-upgrade-evidence/
           if-no-files-found: ignore
-          retention-days: 7
-      - name: Export signed candidate for direct in-chat download
-        uses: actions/upload-artifact@v4
-        with:
-          name: APO-RC106-PHLibrary-screen-button-signed-code166-preview
-          path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 7

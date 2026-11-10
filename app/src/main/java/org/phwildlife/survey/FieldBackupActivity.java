@@ -53,18 +53,18 @@ public final class FieldBackupActivity extends Activity {
             Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);
             i.addCategory(Intent.CATEGORY_OPENABLE);
             i.setType("application/zip");
-            i.putExtra(Intent.EXTRA_TITLE,"LIKAS-field-backup-v27.zip");
+            i.putExtra(Intent.EXTRA_TITLE,"APO-field-backup.zip");
             startActivityForResult(i,CREATE);
         });
         contents.addView(UiKit.sectionTitle(this,"Restore on a fresh workspace"));
         TextView note=new TextView(this);
-        note.setText("Restore only into an empty LIKAS workspace with no surveys, stations, "
+        note.setText("Restore only into an empty APO workspace with no surveys, stations, "
             +"custom projects, routes, study templates, or favorites. This operation never merges "
-            +"data or overwrites existing fieldwork. Use a ZIP created by this version's backup tool. "
+            +"data or overwrites existing fieldwork. Older recovery archives are checked for compatibility before restoration. "
             +"The app must restart after restoration.");
         note.setTextColor(UiKit.MUTED);note.setTextSize(14);
         note.setPadding(dp(4),dp(4),dp(4),dp(10));contents.addView(note);
-        restore=UiKit.button(this,"Check and restore LIKAS ZIP","secondary");
+        restore=UiKit.button(this,"Check and restore backup ZIP","secondary");
         contents.addView(restore,new LinearLayout.LayoutParams(-1,dp(56)));
         restore.setOnClickListener(v->{
             if(busy)return;
@@ -77,7 +77,7 @@ public final class FieldBackupActivity extends Activity {
                 .setTitle("Restore a fieldwork archive?")
                 .setMessage("The current workspace must be empty. The ZIP will be verified "
                     +"before any local replacement. A private copy of the original empty "
-                    +"database is kept for recovery. Only proceed with a trusted LIKAS ZIP.")
+                    +"database is kept for recovery. Only proceed with a trusted recovery ZIP.")
                 .setNegativeButton("Cancel",null)
                 .setPositiveButton("Choose ZIP",(dialog,which)->{
                     Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -120,9 +120,9 @@ public final class FieldBackupActivity extends Activity {
                 if(didRestore){
                     new AlertDialog.Builder(this)
                         .setTitle("Recovery installed")
-                        .setMessage("Close and reopen LIKAS to reload restored records and settings.")
+                        .setMessage("Close and reopen APO to reload restored records and settings.")
                         .setCancelable(false)
-                        .setPositiveButton("Close LIKAS",(dialog,which)->{
+                        .setPositiveButton("Close APO",(dialog,which)->{
                             finishAffinity();
                             android.os.Process.killProcess(android.os.Process.myPid());
                         }).show();

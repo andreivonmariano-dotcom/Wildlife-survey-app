@@ -77,7 +77,7 @@ public final class FieldBackupArchive {
         try{
             int version=db.getVersion();
             require(version>=27&&version<=29,
-                "Backup database schema is not a supported LIKAS v27-v29: "+version);
+                "Backup database schema is not supported (v27-v29): "+version);
             try(Cursor c=db.rawQuery("PRAGMA quick_check",null)){
                 require(c.moveToFirst()&&"ok".equalsIgnoreCase(c.getString(0)),
                     "Backup SQLite integrity check failed");
@@ -267,7 +267,7 @@ public final class FieldBackupArchive {
                 }
             }
             require(manifest!=null&&FORMAT.equals(manifest.optString("format")),
-                "Not a LIKAS current-version recovery archive");
+                "Not a compatible APO recovery archive");
             int manifestSchema=manifest.optInt("sqliteSchema");
             require(manifestSchema>=27&&manifestSchema<=29,"Incompatible backup schema");
             JSONObject hashes=manifest.getJSONObject("files");
@@ -380,7 +380,7 @@ public final class FieldBackupArchive {
                 moveNew(incomingDb,db);
                 dbInstalled=true;
                 checkDatabase(db);
-                return "Restore installed. Close and restart LIKAS before viewing fieldwork.";
+                return "Restore installed. Close and restart APO before viewing fieldwork.";
             }catch(Exception failure){
                 // Reverse installation order. Preserve staged originals if rollback fails.
                 boolean rollbackOk=true;

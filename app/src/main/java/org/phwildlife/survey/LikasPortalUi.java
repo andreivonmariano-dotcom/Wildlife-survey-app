@@ -156,7 +156,7 @@ public final class LikasPortalUi {
         // Reserve illustration clearance only when art is drawn beside the text.
         words.setPadding(dp(a,22),dp(a,compact?12:(largeHomeText?11:20)),
             dp(a,showFrog?76:20),dp(a,compact?12:(largeHomeText?11:19)));
-        TextView mark=text(a,"LIKAS",
+        TextView mark=text(a,"APO",
             compact?22:12,compact?CREAM:LIME,true);
         mark.setLetterSpacing(compact ? 0.05f : 0.14f);
         words.addView(mark);
@@ -180,7 +180,7 @@ public final class LikasPortalUi {
             dp(a,compact?46:54),dp(a,compact?46:54),Gravity.TOP|Gravity.RIGHT);
         iconLp.topMargin=dp(a,compact?10:14);iconLp.rightMargin=dp(a,14);
         if(showFrog)cover.addView(frog,iconLp);
-        cover.setContentDescription("LIKAS. Philippine wildlife surveys, species, and habitats.");
+        cover.setContentDescription("APO. Philippine wildlife surveys, species, and habitats.");
         return cover;
     }
 

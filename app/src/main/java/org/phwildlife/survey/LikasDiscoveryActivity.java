@@ -171,7 +171,7 @@ public final class LikasDiscoveryActivity extends Activity {
         groupLp.topMargin=dp(8);card.addView(group,groupLp);
         card.setContentDescription(label+", "+scientific+
             (status!=null?", dated conservation classification available":
-                ", conservation classification not independently reviewed in LIKAS")+
+                ", conservation classification not independently reviewed in APO")+
             ". Open species account.");
         TextView open=note("OPEN FIELD GUIDE   ›",11,UiKit.POND,true);
         open.setLetterSpacing(.07f);

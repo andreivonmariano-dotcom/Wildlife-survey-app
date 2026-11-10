@@ -315,13 +315,24 @@ public final class Rc103PhLibrary2InstrumentedTest {
                 }catch(Exception e){err[0]=e;}
             });
             if(err[0]!=null)throw err[0];
-            androidx.test.espresso.Espresso.onView(
-                androidx.test.espresso.matcher.ViewMatchers.withText("Clear"))
-                .perform(androidx.test.espresso.action.ViewActions.click());
-            androidx.test.espresso.Espresso.onView(
-                androidx.test.espresso.matcher.ViewMatchers.withText("Clear saved"))
-                .inRoot(androidx.test.espresso.matcher.RootMatchers.isDialog())
-                .perform(androidx.test.espresso.action.ViewActions.click());
+            // Exercise the real Clear button and dialog without transient
+            // Espresso window-focus races on hosted, headless emulators.
+            scenario.onActivity(a->{
+                View clear=text(a.getWindow().getDecorView(),"Clear");
+                assertNotNull("Saved collection Clear action",clear);
+                assertTrue("Clear action must be shown",clear.isShown());
+                assertTrue("Clear action must be actionable",clear.isClickable());
+                assertEquals("Clear",((TextView)clear).getText().toString());
+                clear.performClick();
+                android.app.AlertDialog dialog=a.activeClearSavedDialogForQa();
+                assertNotNull("Actual destructive confirmation dialog",dialog);
+                assertTrue(dialog.isShowing());
+                android.widget.Button confirm=dialog.getButton(
+                    android.content.DialogInterface.BUTTON_POSITIVE);
+                assertNotNull(confirm);
+                assertEquals("Clear saved",confirm.getText().toString());
+                confirm.performClick();
+            });
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             scenario.onActivity(a->{
                 try{

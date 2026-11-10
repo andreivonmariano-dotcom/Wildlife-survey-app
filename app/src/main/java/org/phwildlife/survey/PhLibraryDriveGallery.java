@@ -89,24 +89,41 @@ public final class PhLibraryDriveGallery {
                 return bitmap.getByteCount();
             }
         };
-    private static Bitmap decode(Activity a,JSONObject item){
+    private static final java.util.concurrent.ExecutorService prefetchIo=
+        java.util.concurrent.Executors.newSingleThreadExecutor(r->{
+            Thread thread=new Thread(r,"apo-gallery-prefetch");
+            thread.setDaemon(true);
+            return thread;
+        });
+    private static Bitmap decode(Activity a,JSONObject item){return decode(a,item,2);}
+    private static Bitmap decode(Activity a,JSONObject item,int sample){
         if(item==null)return null;
         String asset=item.optString("offlineAsset");
         if(!asset.matches("offline_photos/drive_[0-9]{4}\\.jpg"))return null;
+        String cacheKey=asset+":sample"+sample;
         synchronized(frameCache){
-            Bitmap cached=frameCache.get(asset);
+            Bitmap cached=frameCache.get(cacheKey);
             if(cached!=null&&!cached.isRecycled())return cached;
         }
         try(InputStream stream=a.getAssets().open(asset)){
             BitmapFactory.Options options=new BitmapFactory.Options();
             options.inPreferredConfig=Bitmap.Config.ARGB_8888;
-            options.inSampleSize=1; // 1920px EXIF-free derivatives
+            options.inSampleSize=sample; // 960px for reader and covers; 1920px on enlarge
             Bitmap bitmap=BitmapFactory.decodeStream(stream,null,options);
             if(bitmap!=null){
-                synchronized(frameCache){frameCache.put(asset,bitmap);}
+                synchronized(frameCache){frameCache.put(cacheKey,bitmap);}
             }
             return bitmap;
         }catch(Exception ignored){return null;}
+    }
+    private static void prefetchAdjacent(Activity a,List<JSONObject> items,int index){
+        if(items.size()<2)return;
+        final JSONObject next=items.get((index+1)%items.size());
+        final JSONObject previous=items.get((index-1+items.size())%items.size());
+        prefetchIo.execute(()->{
+            decode(a,next,2);
+            if(previous!=next)decode(a,previous,2);
+        });
     }
     public static ImageView coverForTaxon(Activity a,String scientific){
         List<JSONObject> items=photos(a,scientific);
@@ -122,7 +139,7 @@ public final class PhLibraryDriveGallery {
         return cover;
     }
     private static void openFullScreen(Activity a,String scientific,JSONObject photo){
-        Bitmap full=decode(a,photo);
+        Bitmap full=decode(a,photo,1);
         if(full==null)return;
         LinearLayout panel=new LinearLayout(a);
         panel.setOrientation(LinearLayout.VERTICAL);
@@ -176,6 +193,7 @@ public final class PhLibraryDriveGallery {
             JSONObject photo=items.get(position[0]);
             viewer.setImageBitmap(decode(a,photo));
             counter.setText((position[0]+1)+" / "+items.size());
+            prefetchAdjacent(a,items,position[0]);
             viewer.setContentDescription("Photo "+(position[0]+1)+" of "+items.size()+
                 " for "+scientific+". Swipe horizontally to change. Tap to enlarge.");
         };

@@ -206,15 +206,16 @@ public final class PhLibraryDirectoryActivity extends Activity {
             Comparator.comparingInt(r->rank(r,query)));
         String summary=matches.size()+(matches.size()==1?" account":" accounts");
         if(selectedHabitat>0)
-            summary=PhLibraryHabitatFilter.SHORT_NAMES[selectedHabitat]+
-                " · "+matches.size()+" species";
+            summary=matches.size()+
+                (matches.size()==1?" account":" accounts")+
+                " mentioning "+PhLibraryHabitatFilter.SHORT_NAMES[selectedHabitat];
         else if(savedCollectionMode)
             summary=matches.size()+" species";
         else if(savedOnly)summary+=" · Saved";
         resultsCount.setText(matches.isEmpty()?(
             savedCollectionMode&&PhLibraryBookmarks.all(this).isEmpty()?
                 "No saved species":
-            selectedHabitat>0?"No matching species for this habitat":
+            selectedHabitat>0?"No accounts mention this habitat under current filters":
             savedOnly?"No saved matches":"No matching accounts"):summary);
         int active=(selectedRarity!=0?1:0)+(selectedIucn!=0?1:0)+
             (selectedHabitat!=0?1:0)+(family.isEmpty()?0:1)+

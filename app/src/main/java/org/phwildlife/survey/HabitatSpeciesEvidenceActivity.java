@@ -139,28 +139,33 @@ public final class HabitatSpeciesEvidenceActivity extends Activity {
         title.setPadding(0,dp(12),0,dp(14));
         body.addView(title);
 
-        // Like a Book 01 species account, display one uninterrupted readable
-        // paragraph, not six separate instructions and linked-species cards.
-        TextView article=PhLibrary2Ui.text(this,articles.optString(id),17.5f,
+        // Preserve the original complete narrative; improve the reading hierarchy.
+        TextView accountHeading=PhLibrary2Ui.text(this,"HABITAT ACCOUNT",12,
+            PhLibrary2Ui.FOREST,false,true);
+        accountHeading.setLetterSpacing(.08f);
+        accountHeading.setPadding(dp(2),dp(2),0,dp(8));
+        body.addView(accountHeading);
+        TextView article=PhLibrary2Ui.text(this,articles.optString(id),16,
             PhLibrary2Ui.INK,true,false);
         article.setTextIsSelectable(true);
-        article.setLineSpacing(dp(4),1.13f);
+        article.setLineSpacing(dp(5),1.16f);
         article.setPadding(dp(2),0,dp(2),dp(19));
         article.setContentDescription("Habitat account for "+profile.optString("name")+
             ". "+articles.optString(id));
         body.addView(article);
 
         // The destination is a *text retrieval* filter, not a claimed species list.
-        TextView browse=PhLibrary2Ui.action(this,"Browse species",()->{
+        TextView browse=PhLibrary2Ui.action(this,"Find accounts mentioning this habitat",()->{
             startActivity(new Intent(this,PhLibraryDirectoryActivity.class)
                 .putExtra("phlibrary_habitat_id",id));
         },false);
-        browse.setContentDescription("Browse species related to "+profile.optString("name"));
+        browse.setContentDescription("Find source accounts mentioning "+profile.optString("name")+
+            ". Results are text matches, not verified habitat occupancy.");
         if(getResources().getConfiguration().fontScale>=1.6f){
             browse.setTextSize(12);
             browse.setPadding(dp(8),dp(5),dp(8),dp(5));
         }
-        body.addView(browse,new LinearLayout.LayoutParams(-1,dp(52)));
+        body.addView(browse,new LinearLayout.LayoutParams(-1,-2));
         if(detailScrollY>0 && pageScroll!=null){
             final int offset=detailScrollY;
             pageScroll.post(()->pageScroll.scrollTo(0,offset));

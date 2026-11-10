@@ -90,7 +90,8 @@ public final class PhLibrarySpeciesMedia {
             PhLibraryDriveGallery.addReaderGallery(a,parent,scientific);
         }else if(hasPersonalPhoto(a,scientific)){
             View plate=photoOrPlaceholder(a,scientific);
-            LinearLayout.LayoutParams image=new LinearLayout.LayoutParams(-1,dp(a,188));
+            LinearLayout.LayoutParams image=new LinearLayout.LayoutParams(-1,dp(a,
+                plate instanceof ImageView?188:132));
             image.topMargin=dp(a,12);parent.addView(plate,image);
             TextView source=PhLibrary2Ui.text(a,"Device photo · selected by user",12,
                 PhLibrary2Ui.MUTED,false,false);

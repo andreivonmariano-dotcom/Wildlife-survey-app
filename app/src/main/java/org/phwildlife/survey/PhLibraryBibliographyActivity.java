@@ -124,8 +124,8 @@ public final class PhLibraryBibliographyActivity extends Activity {
                     PhLibrary2Ui.text(PhLibraryBibliographyActivity.this,"",15,
                         PhLibrary2Ui.INK,false,false);
                 row.setText(matches.get(position).optString("text"));
-                row.setMaxLines(3);
-                row.setEllipsize(TextUtils.TruncateAt.END);
+                row.setMaxLines(Integer.MAX_VALUE);
+                row.setEllipsize(null);
                 row.setContentDescription("Open full reference: "+
                     matches.get(position).optString("text"));
                 row.setLineSpacing(dp(3),1.06f);

@@ -144,6 +144,7 @@ jobs:
             cat rc103-phlibrary-evidence/rc108-species-photo-daily.txt
             grep -Fq 'OK (4 tests)' rc103-phlibrary-evidence/rc108-species-photo-daily.txt
             bash scripts/rc110_gallery_emulator_qa.sh
+            bash scripts/rc110_visual_audit_qa.sh
       - name: Upload emulator screenshot evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -162,6 +163,14 @@ jobs:
             rc102-startup-evidence/
             rc103-phlibrary-evidence/
             rc110-gallery-evidence/
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Upload RC110 native UI audit screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LIKAS-RC110-native-screen-review-evidence
+          path: rc110-visual-audit-evidence/
           if-no-files-found: ignore
           retention-days: 7
       - name: Retrieve independently hash-verified signed RC109 baseline

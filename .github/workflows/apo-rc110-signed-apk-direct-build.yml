@@ -48,18 +48,18 @@ jobs:
           test -s .signing/wildlife-beta08.keystore
           keytool -exportcert -keystore .signing/wildlife-beta08.keystore -storepass android -alias androiddebugkey -file /tmp/apo-original-cert.der
           echo 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937  /tmp/apo-original-cert.der' | sha256sum -c -
-      - name: Restore verified Commons photos from the signed RC95 source build
+      - name: Restore verified Commons photos from signed RC109 source build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13197003456/zip" > /tmp/apo-rc95-photos.zip
-          unzip -p /tmp/apo-rc95-photos.zip app-debug.apk > /tmp/apo-rc95-photos.apk
-          echo 'bea7a1bb9725cf85bc69b6f286dcf5c4de1fe408f392c2ef053e9879765931ec  /tmp/apo-rc95-photos.apk' | sha256sum -c -
+          gh api "/repos/$GITHUB_REPOSITORY/actions/artifacts/13688892745/zip" > /tmp/apo-rc109-photos.zip
+          unzip -p /tmp/apo-rc109-photos.zip app-debug.apk > /tmp/apo-rc109-photos.apk
+          echo 'fbc31e33a6302107b21bc0a081392d458e475aec0b5e20d9b8e9bbd153361366  /tmp/apo-rc109-photos.apk' | sha256sum -c -
           python3 - <<'PY'
           import hashlib,json,zipfile
           from pathlib import Path
           lock=json.loads(Path('docs/RC7_PINNED_COMMONS_PHOTO_SHA256.json').read_text())['items']
-          with zipfile.ZipFile('/tmp/apo-rc95-photos.apk') as z:
+          with zipfile.ZipFile('/tmp/apo-rc109-photos.apk') as z:
               for entry in lock:
                   asset=entry['offlineAsset']
                   data=z.read('assets/'+asset)

@@ -1,5 +1,7 @@
 # APO documentation index
 
+- [Living Atlas data layer v1](APO_LIVING_ATLAS_DATA_LAYER_v1.md): editable Drive manuscript/checklist source governance, edition-scoped offline index, taxonomic reconciliation and validation. This is a technical implementation note, not an amendment to the owner-approved charter.
+
 **Canonical development branch:** `main`, based on tested RC112 code172 and a non-destructive two-parent integration. Historical main Android v0.15 remains available in Git history. Read [root README](../README.md) and [development instructions](../AGENTS.md) before changes.
 
 ## Active authority and handoff

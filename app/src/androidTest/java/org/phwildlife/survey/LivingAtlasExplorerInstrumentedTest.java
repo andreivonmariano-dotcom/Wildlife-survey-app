@@ -82,6 +82,15 @@ public final class LivingAtlasExplorerInstrumentedTest {
             settle();
             s.onActivity(a->{
                 assertTrue(hasText(a.getWindow().getDecorView(),"Explore the living atlas"));
+                View title=a.getWindow().getDecorView().findViewWithTag("living_atlas_nav_title");
+                View back=a.getWindow().getDecorView().findViewWithTag("living_atlas_back");
+                assertTrue("Atlas heading must remain one line at 200% text",
+                    title instanceof TextView && ((TextView)title).getLineCount()==1);
+                assertTrue("Atlas header must fit its text",title.getHeight()>=
+                    ((TextView)title).getLineHeight());
+                assertTrue("Back must remain readable and accessible",
+                    back instanceof TextView && back.getHeight()>=
+                    ((TextView)back).getLineHeight());
                 capture(a,"explore",0);
                 a.showSpecies("Pithecophaga jefferyi");
             });

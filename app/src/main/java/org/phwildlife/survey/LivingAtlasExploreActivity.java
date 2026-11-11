@@ -74,13 +74,23 @@ public final class LivingAtlasExploreActivity extends Activity {
         root.setBackgroundColor(PhLibrary2Ui.PAPER);
         LinearLayout rail=new LinearLayout(this);
         rail.setGravity(Gravity.CENTER_VERTICAL);
+        boolean largeText=getResources().getConfiguration().fontScale>=1.6f;
+        int headerHeight=dp(largeText?66:52);
         TextView back=PhLibrary2Ui.action(this,"Back",this::backToAtlas,false);
-        rail.addView(back,new LinearLayout.LayoutParams(dp(
-            getResources().getConfiguration().fontScale>=1.6f?100:75),dp(48)));
-        TextView title=text("LIVING ATLAS",13,PhLibrary2Ui.FOREST,false,true);
+        if(largeText){
+            back.setTextSize(12);
+            back.setPadding(dp(10),dp(5),dp(10),dp(5));
+        }
+        back.setTag("living_atlas_back");
+        rail.addView(back,new LinearLayout.LayoutParams(dp(largeText?92:75),headerHeight));
+        TextView title=text("LIVING ATLAS",largeText?10.5f:13,
+            PhLibrary2Ui.FOREST,false,true);
         title.setGravity(Gravity.CENTER);
-        title.setLetterSpacing(.11f);
-        rail.addView(title,new LinearLayout.LayoutParams(0,dp(48),1));
+        title.setLetterSpacing(largeText?.04f:.11f);
+        title.setSingleLine(true);
+        title.setContentDescription("Living Atlas");
+        title.setTag("living_atlas_nav_title");
+        rail.addView(title,new LinearLayout.LayoutParams(0,headerHeight,1));
         root.addView(rail,new LinearLayout.LayoutParams(-1,-2));
         scroll=new ScrollView(this);
         scroll.setFillViewport(true);

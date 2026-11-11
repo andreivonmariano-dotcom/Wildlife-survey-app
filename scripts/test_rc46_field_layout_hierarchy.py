@@ -10,20 +10,20 @@ def source(name):
 class Rc46FieldLayoutHierarchy(unittest.TestCase):
     def test_active_home_uses_compact_content_sized_hero(self):
         welcome=source("WelcomeActivity.java")
-        home=welcome.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
+        home=welcome.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
         component=source("ApoHomeUi.java")
         self.assertIn("lastHomeActiveSurvey=activeSurvey()",home)
         self.assertIn("if(lastHomeActiveSurvey!=null)",home)
         self.assertIn("ApoHomeUi.resume(this,",home)
         self.assertLess(home.index("ApoHomeUi.resume(this,"),
-                        home.index('ApoHomeUi.module(this,"01","BioTools"'))
+                        home.index('ApoHomeUi.module(this,"01","Living Atlas"'))
         self.assertIn("ApoHomeUi.header(this,",home)
         self.assertIn("UiMotion.enterHome(this,main)",home)
         self.assertNotIn("LikasPortalUi.hero(",home)
         self.assertNotIn("LikasPortalUi.tile(",home)
-        self.assertIn("row.setMinimumHeight(dp(a,88))",component)
-        self.assertIn('Coming later: PHMaps · BioDiscover',home)
-        for route in ('"BioTools"','"Living Atlas"'):
+        self.assertIn("row.setMinimumHeight(dp(a,compact?64:78))",component)
+        self.assertIn('"Offline map is in development"',home)
+        for route in ('"Living Atlas"','"Research Library"'):
             self.assertIn(route,home)
     def test_ime_layout_keeps_footer_and_essential_warnings(self):
         recorder=source("MainActivity.java")

@@ -144,6 +144,7 @@ public class WelcomeActivity extends Activity {
         setupFooter.setVisibility(View.GONE);
         root.addView(setupFooter);
         shellNavigation=vertical();
+        shellNavigation.setTag("apo_shell_navigation");
         root.addView(shellNavigation);
         setContentView(root);
     }

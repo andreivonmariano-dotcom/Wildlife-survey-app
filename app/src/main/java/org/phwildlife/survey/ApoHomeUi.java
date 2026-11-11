@@ -107,7 +107,7 @@ public final class ApoHomeUi {
             lp.topMargin=dp(a,4);
             copy.addView(sub,lp);
         }
-        row.addView(copy,new LinearLayout.LayoutParams(0,-2,1));
+        row.addView(copy,new LinearLayout.LayoutParams(0,-2,1f));
 
         TextView chevron=label(a,"›",26,ApoVisualSystem.FOREST,false);
         chevron.setGravity(Gravity.CENTER);

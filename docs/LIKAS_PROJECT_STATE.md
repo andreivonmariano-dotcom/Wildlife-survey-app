@@ -1,3 +1,13 @@
+## 2026-11-11 | Coherent APO rebuild proposed; isolated planning branch created
+
+- **Latest verified main when planning began:** `046bfa2dc4e37bc163bf2956e3472ccd0a9aeefa` (RC113 code173, Android package `org.phwildlife.survey.beta08`, SQLite29). RC113 existing emulator/signed upgrade evidence remains as documented; no current physical handset test or public release approval is newly claimed.
+- **Owner feedback:** The existing interface feels cluttered and conflicting after accumulated feature additions. The owner proposed rebuilding from zero to integrate the app consistently. This is recorded as a request for a coherent redesign; a destructive app/data reset was **not** authorized. Keep the current APO brand and approved Charter v1.2.
+- **Safe work completed:** Created `refactor/apo-coherent-rebuild-20261111` from that exact baseline and committed `docs/APO_COHERENT_REBUILD_ARCHITECTURE_2026_11_11.md` at `e0ff8db17e034665738fbe2eaa4ef135e751440c`. The document establishes one canonical navigation, one UI language, retained domain/database/references, and QA gates. No app Java, asset, database, signing, APK, or owner-approved governing charter changes were made.
+- **Current-source diagnosis:** Very large `MainActivity` and `WelcomeActivity`, multiple presentation toolkits, layered Living Atlas/Library destinations and internal screen-state routing create maintainability risks. Historical UX audits noted inconsistent visual systems, redundant routes and crowded field forms; RC113 needs a fresh visual assessment before any old issue is claimed to remain unresolved.
+- **Immediate next task:** Map actual RC113 Activity/button/back routes, inspect latest native emulator captures with owner feedback, then implement one replacement navigation shell/design system on the isolated branch. Characterize and preserve survey outcomes, SQLite29, source citations, rights, original signer and packaged materials. **No rebuild APK exists or was delivered in this session.**
+
+---
+
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
 ## 2026-11-03 | RC95 BioTools navigation | signed code155 emulator + upgrade verified

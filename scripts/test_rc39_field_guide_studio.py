@@ -72,7 +72,7 @@ class FieldGuideStudioQA(unittest.TestCase):
         self.assertIn('setupStartButton.setOnClickListener(v->startSelected())',home)
         self.assertIn('"Survey in progress"',portal)
         self.assertNotIn("DataManagementActivity.class",home)
-        self.assertNotIn("FieldBackupActivity.class",home)
+        self.assertIn("FieldBackupActivity.class",home)
 
     def test_install_identity_schema_and_source_pack_stable(self):
         gradle=(ROOT/"app/build.gradle").read_text()

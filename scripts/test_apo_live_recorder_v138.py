@@ -59,7 +59,7 @@ class LiveRecorderRC78(unittest.TestCase):
         self.assertIn("recorded_at",source("FieldDb.java"))
         b=(BASE/"app/build.gradle").read_text(encoding="utf-8")
         self.assertRegex(b,r"versionCode (13[89]|(14[0-9]|15[0-9]|16[0-9]|17[0-3]))")
-        self.assertIn("0.27.4-rc113-living-atlas-preview",b)
+        self.assertIn("0.27.4-rc114-coherent-shell-preview",b)
         self.assertIn("org.phwildlife.survey.beta08",b)
         self.assertIn("super(context,NAME,null,29)",source("FieldDb.java"))
 

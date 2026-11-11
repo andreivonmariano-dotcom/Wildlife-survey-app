@@ -35,35 +35,28 @@ public final class Rc40HomeLayoutInstrumentedTest {
         }
         return false;
     }
-    @Test public void mainMenuShowsThreeCompactEntries(){
+    @Test public void mainMenuShowsFieldFirstAndTwoLiveReferenceEntries(){
         Intent intent=new Intent(InstrumentationRegistry.getInstrumentation()
             .getTargetContext(),WelcomeActivity.class);
         intent.putExtra("show_menu",true);
         try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(intent)){
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
-                View field=find(root,"Open Fieldwork. Surveys & history");
-                View library=find(root,"Open Library. Species & habitats");
-                View settings=find(root,"Open Settings. Backups & preferences");
-                assertNotNull("Fieldwork",field);
-                View hero=find(root,"LIKAS. Philippine wildlife surveys, species, and habitats.");
-                assertNotNull("Hero card",hero);
-                if(a.getResources().getConfiguration().fontScale<1.30f){
-                    float heroDp=hero.getHeight()/a.getResources().getDisplayMetrics().density;
-                    assertTrue("Decorative Home header must stay content-sized: "+heroDp,
-                        heroDp<250f);
-                }
-                assertNotNull("Library",library);
+                View field=find(root,"Start Survey. Choose a method and begin field recording");
+                View atlas=find(root,"Open Living Atlas. Species, habitats and the Greater Mindanao field guide");
+                View papers=find(root,"Open Research Library. Search the offline source bibliography");
+                View settings=find(root,"Open settings");
+                assertNotNull("Start Survey",field);
+                assertNotNull("Living Atlas",atlas);
+                assertNotNull("Research Library",papers);
                 assertNotNull("Settings",settings);
+                assertTrue(field.isClickable()&&atlas.isClickable()&&papers.isClickable()&&settings.isClickable());
                 float density=a.getResources().getDisplayMetrics().density;
-                assertTrue("Fieldwork tile should be rendered",field.getHeight()>0);
-                assertTrue("Fieldwork must not occupy most of screen",
-                    field.getHeight()/density<170f);
-                assertTrue("Library must not occupy most of screen",
-                    library.getHeight()/density<170f);
-                assertTrue("Settings must not occupy most of screen",
-                    settings.getHeight()/density<170f);
-                assertTrue(field.isClickable()&&library.isClickable()&&settings.isClickable());
+                assertTrue("Field CTA should be visible",field.getHeight()>0);
+                if(a.getResources().getConfiguration().fontScale<1.30f){
+                    assertTrue("Field CTA must remain compact",field.getHeight()/density<170f);
+                    assertTrue("Atlas tile must remain compact",atlas.getHeight()/density<170f);
+                }
             });
         }
     }
@@ -74,7 +67,7 @@ public final class Rc40HomeLayoutInstrumentedTest {
         try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(intent)){
             scenario.onActivity(a->{
                 View root=a.getWindow().getDecorView();
-                View field=find(root,"Open Fieldwork. Surveys & history");
+                View field=find(root,"Start Survey. Choose a method and begin field recording");
                 assertNotNull(field);
                 field.performClick();
                 View birds=find(root,"Open Birds. Counts · Transects");

@@ -22,6 +22,15 @@ import android.widget.TextView;
 /** A short, image-led entry to the complete offline 715-account Book 01 atlas. */
 public final class LikasLibraryActivity extends Activity {
     private int dp(float n){return PhLibrary2Ui.dp(this,n);}
+
+    /** Return from Living Atlas to the one canonical workspace without duplicating its state. */
+    private void workspace(String target){
+        Intent intent=new Intent(this,WelcomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra("workspace_destination",target);
+        startActivity(intent);
+        finish();
+    }
     private void openAtlas(String extra,String filter){
         Intent i=new Intent(this,PhLibraryDirectoryActivity.class);
         if(extra!=null)i.putExtra(extra,filter);
@@ -170,6 +179,9 @@ public final class LikasLibraryActivity extends Activity {
         LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);
         body.setPadding(0,dp(9),0,dp(26));scroll.addView(body);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
+        root.addView(ApoShellBar.create(this,"atlas",
+            ()->workspace("home"),()->workspace("fieldwork"),
+            ()->scroll.smoothScrollTo(0,0),()->workspace("data")));
         setContentView(root);
 
         body.addView(PhLibraryPhotoHero.create(this,"Wildlife of\nGreater Mindanao","715 species accounts"));

@@ -10,20 +10,18 @@ def read(file):
     return (SRC/file).read_text(encoding="utf-8")
 
 class PortalNavigation(unittest.TestCase):
-    def test_three_short_home_destinations_and_existing_launch(self):
+    def test_home_has_one_live_entry_to_each_reference_feature(self):
         welcome=read("WelcomeActivity.java")
         splash=read("LikasLaunchActivity.java")
-        assert 'new Intent(this,WelcomeActivity.class)' in splash
-        home=welcome.split("private void home(){",1)[1].split("private void fieldworkHub(){",1)[0]
+        self.assertIn('new Intent(this,WelcomeActivity.class)',splash)
+        home=welcome.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
         self.assertIn('ApoHomeUi.header(this,',home)
-        for label in ('"BioTools"','"Living Atlas"','"PHMaps"','"BioDiscover"'):
+        for label in ('"Start Survey"','"Living Atlas"','"Research Library"','"Map"'):
             self.assertIn(label,home)
-        self.assertIn("LikasLibraryActivity.class",home)
         self.assertIn("LikasSettingsActivity.class",home)
-        self.assertIn("this::bioToolsHub",home)
-        self.assertIn("this::fieldworkHub",welcome)
+        self.assertIn("this::fieldworkHub",home)
         self.assertIn("ApoHomeUi.resume",home)
-        self.assertNotIn("DataManagementActivity.class",home)
+        self.assertNotIn('"BioTools"',home)
         self.assertNotIn("FieldBackupActivity.class",home)
 
     def test_fieldwork_is_distinct_and_preserves_methods(self):
@@ -37,7 +35,7 @@ class PortalNavigation(unittest.TestCase):
         self.assertNotIn('surveyTile(second,"Custom"',tools)
         self.assertNotIn('private void customPicker()',c)
         self.assertIn('private String activeSurvey()',c)
-        self.assertIn('this::bioToolsHub',tools)
+        self.assertIn('this::myDataHub',tools)
         for target in ('SitesActivity.class','HistoryActivity.class',
                        'DashboardActivity.class','CallLibraryActivity.class',
                        'TrapProtocolActivity.class'):

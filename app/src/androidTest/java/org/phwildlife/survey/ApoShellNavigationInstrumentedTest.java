@@ -84,16 +84,25 @@ public final class ApoShellNavigationInstrumentedTest {
                 assertTrue(nav(a,"home").isSelected());
                 capture(a,"home");
                 select(a,"fieldwork");
+            });
+            idle();
+            scenario.onActivity(a->{
                 assertTrue(hasText(a.getWindow().getDecorView(),"New survey"));
                 assertTrue(hasText(a.getWindow().getDecorView(),"Herpetofauna"));
                 assertTrue(nav(a,"fieldwork").isSelected());
                 capture(a,"fieldwork");
                 select(a,"data");
+            });
+            idle();
+            scenario.onActivity(a->{
                 assertTrue(hasText(a.getWindow().getDecorView(),"Survey history"));
                 assertTrue(hasText(a.getWindow().getDecorView(),"Analysis & exports"));
                 assertTrue(nav(a,"data").isSelected());
                 capture(a,"my-data");
                 a.onBackPressed();
+            });
+            idle();
+            scenario.onActivity(a->{
                 assertTrue(hasText(a.getWindow().getDecorView(),"Start Survey"));
                 assertTrue(nav(a,"home").isSelected());
                 capture(a,"back-home");
@@ -112,6 +121,9 @@ public final class ApoShellNavigationInstrumentedTest {
                     method.setAccessible(true);
                     method.invoke(a,"Birds");
                 }catch(Exception ex){throw new AssertionError(ex);}
+            });
+            idle();
+            scenario.onActivity(a->{
                 View navbar=a.getWindow().getDecorView().findViewWithTag(
                     "apo_shell_navigation");
                 assertNotNull(navbar);
@@ -119,10 +131,14 @@ public final class ApoShellNavigationInstrumentedTest {
                 assertTrue(hasText(a.getWindow().getDecorView(),"Continue to GPS"));
                 capture(a,"setup");
                 a.onBackPressed();
+            });
+            idle();
+            scenario.onActivity(a->{
                 assertTrue(hasText(a.getWindow().getDecorView(),"New survey"));
                 assertTrue(nav(a,"fieldwork").isSelected());
                 capture(a,"back-fieldwork");
             });
         }
     }
+
 }

@@ -35,7 +35,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         for profile in ("Birds","Herpetofauna","Mammals"):
             self.assertIn('"'+profile+'"',hub)
         self.assertIn('private void fieldRecordsHub(){',hub)
-        self.assertIn('HistoryActivity.class',hub)
+        self.assertNotIn('HistoryActivity.class',hub)
         self.assertIn('private void analysisHub(){',hub)
         self.assertIn('DashboardActivity.class',hub)
         self.assertIn('surveyTile(main,"Birds"',hub)

@@ -12,19 +12,18 @@ def method(name, next_name):
     return s.split("private void "+name+"(){",1)[1].split("private void "+next_name+"(){",1)[0]
 
 class ApoBioToolsV134(unittest.TestCase):
-    def test_home_biotools_enters_new_scientific_workspace(self):
-        home=method("home","phMapsHub")
-        self.assertIn('this::bioToolsHub',home)
+    def test_home_routes_to_single_fieldwork_and_data_workspaces(self):
+        home=method("home","bioToolsHub")
         self.assertIn('ApoHomeUi.primary(this,"Start Survey"',home)
         self.assertIn('this::fieldworkHub',home)
-        bio=method("bioToolsHub","fieldworkHub")
-        self.assertEqual(bio.count("ApoHomeUi.module(this,"),5)
-        for label in ('"Surveys"','"Projects & Sites"','"Field Records"',
-                      '"Analysis"','"Utilities"'):
-            self.assertIn(label,bio)
-        self.assertNotIn("LikasPortalUi.action(",bio)
-        self.assertNotIn("LikasPortalUi.tile(",bio)
-        self.assertNotIn("R.drawable.",bio)
+        self.assertNotIn('"BioTools"',home)
+        data=method("myDataHub","fieldworkHub")
+        self.assertEqual(data.count("ApoHomeUi.tool(this,"),6)
+        for label in ('"Survey history"','"Projects & sites"','"Site habitat records"',
+                      '"Analysis & exports"','"Field utilities"','"Backup & restore"'):
+            self.assertIn(label,data)
+        self.assertNotIn("LikasPortalUi.action(",data)
+        self.assertNotIn("LikasPortalUi.tile(",data)
 
     def test_surveys_still_handle_active_and_new_sessions(self):
         s=method("fieldworkHub","fieldRecordsHub")
@@ -44,7 +43,7 @@ class ApoBioToolsV134(unittest.TestCase):
                        "CallLibraryActivity.class","TrapProtocolActivity.class",
                        "FieldProtocolsActivity.class","StudyProtocolsActivity.class"):
             self.assertIn(target,s)
-        for screen in ('"fieldwork"','"biotools"','"records"','"analysis"','"utilities"'):
+        for screen in ('"fieldwork"','"data"','"analysis"','"utilities"'):
             self.assertIn(screen,s)
         self.assertIn('UiKit.navigationHeader(this,profile+" survey","Surveys"',s)
         self.assertNotIn("field_tools_open",s)

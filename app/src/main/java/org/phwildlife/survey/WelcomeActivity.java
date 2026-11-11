@@ -89,7 +89,7 @@ public class WelcomeActivity extends Activity {
             setup(rememberedProfile);restoreSetup();
         }
         else home();
-        if(!showMenu&&isSurveyActive()&&
+        if(destination==null&&!showMenu&&isSurveyActive()&&
             getSharedPreferences("field_resume",MODE_PRIVATE).getString("screen","home").equals("survey"))
             startActivity(new Intent(this,MainActivity.class).putExtra("resume",true));
     }

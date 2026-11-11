@@ -14,7 +14,7 @@ class SurveyNavigationRC95(unittest.TestCase):
         gps=read("SurveyGpsActivity.java")
         guide=read("HabitatsSpeciesActivity.java")
         rec=read("MainActivity.java")
-        self.assertIn('UiKit.navigationHeader(this,"Fieldwork","Home"',hub)
+        self.assertIn('ApoHomeUi.section(this,"Fieldwork",null)',hub)
         self.assertIn('setupStartButton.setText("Continue to GPS")',hub)
         self.assertIn("this::fieldworkHub",hub)
         self.assertIn('setPositiveButton("Continue, flag missing GPS"',gps)

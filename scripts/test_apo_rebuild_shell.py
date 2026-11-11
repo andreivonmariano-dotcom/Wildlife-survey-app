@@ -12,7 +12,8 @@ class ApoRebuildShell(unittest.TestCase):
         welcome=source("WelcomeActivity.java")
         for tab in ("home","fieldwork","atlas","data"):
             self.assertIn('"'+tab+'"',bar)
-        self.assertIn('item.setMaxLines(2)',bar)
+        self.assertIn('item.setSingleLine(true)',bar)
+        self.assertIn('new String[]{"Home","Field","Atlas","Data"}',bar)
         self.assertIn('item.setContentDescription',bar)
         self.assertIn('item.setFocusable(true)',bar)
         self.assertIn('item.setMinHeight',bar)

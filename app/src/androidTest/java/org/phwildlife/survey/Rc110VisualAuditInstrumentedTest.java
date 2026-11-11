@@ -108,13 +108,13 @@ public final class Rc110VisualAuditInstrumentedTest {
             settle();
             capture(scenario,"apo-home-top",0);
             capture(scenario,"apo-home-bottom",100);
-            screen(scenario,"bioToolsHub","biotools",true,true);
+            screen(scenario,"myDataHub","my-data",true,true);
             screen(scenario,"fieldworkHub","surveys",false,true);
-            screen(scenario,"fieldRecordsHub","field-records",false,false);
+            
             screen(scenario,"analysisHub","analysis-exports",false,false);
             screen(scenario,"fieldUtilitiesHub","field-utilities",false,true);
-            screen(scenario,"phMapsHub","phmaps",false,false);
-            screen(scenario,"bioDiscoverHub","biodiscover",false,false);
+            
+            
             surveySetup(scenario,"Birds",true);
             surveySetup(scenario,"Herpetofauna",true);
             surveySetup(scenario,"Mammals",true);

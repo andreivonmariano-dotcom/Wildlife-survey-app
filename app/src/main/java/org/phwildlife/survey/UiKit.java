@@ -15,20 +15,20 @@ import android.widget.TextView;
 public final class UiKit {
   private UiKit(){}
   // Shared forest palette. Warm off-white is reserved for readable field surfaces.
-  public static final int BG=Color.rgb(247,248,242);
-  public static final int INK=Color.rgb(19,51,38);
-  public static final int DEEP=Color.rgb(10,42,29);
-  public static final int FOREST=Color.rgb(33,83,53);
-  public static final int POND=Color.rgb(46,105,65);
-  public static final int MUTED=Color.rgb(81,106,87);
-  public static final int LEAF_LIGHT=Color.rgb(237,246,231);
-  public static final int LEAF_MID=Color.rgb(228,239,220);
-  public static final int HIGHLIGHT=Color.rgb(205,230,160);
+  public static final int BG=ApoVisualSystem.FIELD_BACKGROUND;
+  public static final int INK=ApoVisualSystem.INK;
+  public static final int DEEP=ApoVisualSystem.FOREST_DEEP;
+  public static final int FOREST=ApoVisualSystem.FOREST;
+  public static final int POND=ApoVisualSystem.POND;
+  public static final int MUTED=ApoVisualSystem.MUTED;
+  public static final int LEAF_LIGHT=ApoVisualSystem.LEAF_PALE;
+  public static final int LEAF_MID=ApoVisualSystem.LEAF_MID;
+  public static final int HIGHLIGHT=ApoVisualSystem.ACCENT;
   // Distinct diagnostic/warning colors remain available where the meaning requires them.
-  public static final int BLUE=Color.rgb(40,88,137);
-  public static final int AMBER=Color.rgb(145,85,20); // legible diagnostic text on pale cards
-  public static final int BORDER=Color.rgb(217,228,210); // decorative surface outline
-  public static final int CONTROL_BORDER=Color.rgb(117,143,123); // 3:1+ for functional controls
+  public static final int BLUE=ApoVisualSystem.CAMERA;
+  public static final int AMBER=ApoVisualSystem.CAUTION; // legible diagnostic text on pale cards
+  public static final int BORDER=ApoVisualSystem.BORDER; // decorative surface outline
+  public static final int CONTROL_BORDER=ApoVisualSystem.INPUT_BORDER; // 3:1+ for functional controls
   private static int dp(Activity a,int n){return (int)(a.getResources().getDisplayMetrics().density*n+0.5);}
   public static TextView title(Activity a,String title) {
     TextView t=new TextView(a);t.setText(title);t.setTextSize(LikasDesignSystem.TEXT_PAGE);

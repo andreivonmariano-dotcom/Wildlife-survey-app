@@ -14,7 +14,7 @@ class SurveyNavigationRC95(unittest.TestCase):
         gps=read("SurveyGpsActivity.java")
         guide=read("HabitatsSpeciesActivity.java")
         rec=read("MainActivity.java")
-        self.assertIn('UiKit.navigationHeader(this,"Surveys","BioTools"',hub)
+        self.assertIn('ApoHomeUi.section(this,"Fieldwork",null)',hub)
         self.assertIn('setupStartButton.setText("Continue to GPS")',hub)
         self.assertIn("this::fieldworkHub",hub)
         self.assertIn('setPositiveButton("Continue, flag missing GPS"',gps)
@@ -88,8 +88,8 @@ class SurveyNavigationRC95(unittest.TestCase):
 
     def test_identity_and_database_unchanged(self):
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 173",build)
-        self.assertIn("0.27.4-rc113-living-atlas-preview",build)
+        self.assertIn("versionCode 174",build)
+        self.assertIn("0.27.4-rc114-coherent-shell-preview",build)
         self.assertIn("org.phwildlife.survey.beta08",build)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         self.assertIn("FieldBackupArchive",read("FieldBackupActivity.java"))

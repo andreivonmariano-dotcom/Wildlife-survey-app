@@ -36,8 +36,16 @@ public final class ApoSpeciesOfDay {
     public static String firstSourceSentence(String paragraph){
         if(paragraph==null||paragraph.trim().isEmpty())return "";
         String clean=paragraph.trim();
+        // Protect common natural-history abbreviations while locating a sentence.
+        // Replacement glyphs retain the original character offsets. We return
+        // the unmodified source string and preserve its wording and citations.
+        String boundaryText=clean.replace("Mt.","Mt\uE000")
+            .replace("cf.","cf\uE000")
+            .replace("sp.","sp\uE000")
+            .replace("spp.","spp\uE000")
+            .replace("et al.","et al\uE000");
         BreakIterator iterator=BreakIterator.getSentenceInstance(Locale.ENGLISH);
-        iterator.setText(clean);
+        iterator.setText(boundaryText);
         int end=iterator.first();
         end=iterator.next();
         if(end==BreakIterator.DONE||end<12)return clean;

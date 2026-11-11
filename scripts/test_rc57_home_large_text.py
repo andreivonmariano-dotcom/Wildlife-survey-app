@@ -20,14 +20,17 @@ class Rc57Home(unittest.TestCase):
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         db=(ROOT/"app/src/main/java/org/phwildlife/survey/FieldDb.java").read_text()
         self.assertIn("super(context,NAME,null,29)",db)
-    def test_no_home_actions_removed(self):
+    def test_home_prioritizes_field_recording_and_readable_navigation(self):
         source=(ROOT/"app/src/main/java/org/phwildlife/survey/WelcomeActivity.java").read_text()
-        home=source.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
-        self.assertIn('Coming later: PHMaps · BioDiscover',home)
-        for action in ('"BioTools"','"Living Atlas"',
+        home=source.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
+        self.assertIn('"Offline map is in development"',home)
+        for action in ('"Living Atlas"','"Research Library"',
                        "LikasSettingsActivity.class","ApoHomeUi.resume(this,"):
             self.assertIn(action,home)
         component=(ROOT/"app/src/main/java/org/phwildlife/survey/ApoHomeUi.java").read_text()
+        tabs=(ROOT/"app/src/main/java/org/phwildlife/survey/ApoShellBar.java").read_text()
         self.assertIn("new LinearLayout.LayoutParams(0,-2,1f)",component)
-        self.assertNotIn("setMaxLines(",component)
+        self.assertIn("item.setSingleLine(true)",tabs)
+        self.assertIn("ApoVisualSystem.largeText(activity)",tabs)
+
 if __name__=="__main__":unittest.main()

@@ -13,9 +13,9 @@ class Rc53FieldworkHub(unittest.TestCase):
         self.assertNotIn("LikasPortalUi.action(",tile)
         self.assertNotIn("LikasPortalUi.mini(",tile)
         ui=source("ApoHomeUi.java")
-        self.assertIn("row.setMinimumHeight(dp(a,88))",ui)
+        self.assertIn("row.setMinimumHeight(dp(a,compact?64:78))",ui)
         self.assertIn("new LinearLayout.LayoutParams(-1,-2)",ui)
-        self.assertNotIn("R.drawable.",ui)
+        self.assertIn("R.drawable.apo_splash_mark",ui)
         section=text.split("private void fieldworkHub(){",1)[1].split("private void fieldRecordsHub(){",1)[0]
         for group in ("Birds","Herpetofauna","Mammals"):
             self.assertIn('surveyTile(main,"'+group+'"',section)
@@ -31,10 +31,10 @@ class Rc53FieldworkHub(unittest.TestCase):
         self.assertIn("}else{",section)
     def test_uniform_record_rows_and_reduced_tool_duplication(self):
         text=source("WelcomeActivity.java")
-        workspace=text.split("private void bioToolsHub(){",1)[1].split("private void fieldworkHub(){",1)[0]
-        self.assertEqual(workspace.count("ApoHomeUi.module(this,"),5)
-        for title in ('"Surveys"','"Projects & Sites"','"Field Records"',
-                      '"Analysis"','"Utilities"'):
+        workspace=text.split("private void myDataHub(){",1)[1].split("private void fieldworkHub(){",1)[0]
+        self.assertEqual(workspace.count("ApoHomeUi.tool(this,"),6)
+        for title in ('"Survey history"','"Projects & sites"','"Site habitat records"',
+                      '"Analysis & exports"','"Field utilities"','"Backup & restore"'):
             self.assertIn(title,workspace)
         self.assertNotIn("LikasPortalUi.action(",workspace)
         self.assertNotIn("More field tools",workspace)

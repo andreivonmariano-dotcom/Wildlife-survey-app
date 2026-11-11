@@ -35,7 +35,7 @@ class PortalNavigation(unittest.TestCase):
         self.assertNotIn('surveyTile(second,"Custom"',tools)
         self.assertNotIn('private void customPicker()',c)
         self.assertIn('private String activeSurvey()',c)
-        self.assertIn('this::myDataHub',tools)
+        self.assertIn('this::home',tools)
         for target in ('SitesActivity.class','HistoryActivity.class',
                        'DashboardActivity.class','CallLibraryActivity.class',
                        'TrapProtocolActivity.class'):

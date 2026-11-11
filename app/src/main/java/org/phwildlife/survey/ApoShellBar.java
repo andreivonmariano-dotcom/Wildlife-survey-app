@@ -45,7 +45,6 @@ public final class ApoShellBar {
     public static View create(Activity activity,String screen,Runnable home,
             Runnable fieldwork,Runnable atlas,Runnable data) {
         LinearLayout block=new LinearLayout(activity);
-        block.setTag("apo_shell_navigation");
         block.setOrientation(LinearLayout.VERTICAL);
         block.setBackgroundColor(ApoVisualSystem.FIELD_BACKGROUND);
         View rule=new View(activity);

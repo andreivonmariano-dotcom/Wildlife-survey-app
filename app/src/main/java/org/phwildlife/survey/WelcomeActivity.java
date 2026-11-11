@@ -291,7 +291,7 @@ public class WelcomeActivity extends Activity {
     private void myDataHub(){
         showShellPage("data");
         lastHomeActiveSurvey=activeSurvey();
-        main.addView(UiKit.navigationHeader(this,"My Data","Home",this::home));
+        main.addView(ApoHomeUi.section(this,"My Data",null));
         main.addView(ApoHomeUi.note(this,savedRecordCounts()));
         main.addView(ApoHomeUi.tool(this,"01","Survey history",
             "Review observations, effort and survey outcomes",()->
@@ -316,7 +316,7 @@ public class WelcomeActivity extends Activity {
     /** Survey-only workspace; method setup and survey outcomes remain unchanged. */
     private void fieldworkHub(){
         showShellPage("fieldwork");
-        main.addView(UiKit.navigationHeader(this,"Fieldwork","Home",this::home));
+        main.addView(ApoHomeUi.section(this,"Fieldwork",null));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){

@@ -30,7 +30,7 @@ class Rc57Home(unittest.TestCase):
         component=(ROOT/"app/src/main/java/org/phwildlife/survey/ApoHomeUi.java").read_text()
         tabs=(ROOT/"app/src/main/java/org/phwildlife/survey/ApoShellBar.java").read_text()
         self.assertIn("new LinearLayout.LayoutParams(0,-2,1f)",component)
-        self.assertIn("item.setMaxLines(2)",tabs)
+        self.assertIn("item.setSingleLine(true)",tabs)
         self.assertIn("ApoVisualSystem.largeText(activity)",tabs)
 
 if __name__=="__main__":unittest.main()

@@ -51,6 +51,25 @@ public final class ApoShellNavigationInstrumentedTest {
         assertTrue(target.getHeight()>=ApoVisualSystem.dp(a,48));
         target.performClick();
     }
+    /** All four tabs must display complete words at enlarged system text. */
+    private static void assertNavLabelsFit(Activity a){
+        boolean enlarged=ApoVisualSystem.largeText(a);
+        String[] tags={"home","fieldwork","atlas","data"};
+        String[] expected=enlarged?
+            new String[]{"Home","Field","Atlas","Data"}:
+            new String[]{"Home","Survey","Atlas","My Data"};
+        for(int i=0;i<tags.length;i++){
+            View view=nav(a,tags[i]);
+            assertTrue("Navigation tab missing: "+tags[i],view instanceof TextView);
+            TextView text=(TextView)view;
+            assertEquals("Unexpected tab label: "+tags[i],expected[i],text.getText().toString());
+            assertEquals("Tab must remain on one line: "+tags[i],1,text.getLineCount());
+            float needed=text.getPaint().measureText(expected[i]);
+            float room=text.getWidth()-text.getPaddingLeft()-text.getPaddingRight();
+            assertTrue("Clipped bottom tab "+tags[i]+": "+needed+" > "+room,
+                needed<=room+1f);
+        }
+    }
     private static void capture(Activity a,String label){
         View root=a.getWindow().getDecorView();
         assertTrue(root.getWidth()>50&&root.getHeight()>50);
@@ -82,6 +101,7 @@ public final class ApoShellNavigationInstrumentedTest {
                 for(String name:new String[]{"home","fieldwork","atlas","data"})
                     assertNotNull(nav(a,name));
                 assertTrue(nav(a,"home").isSelected());
+                assertNavLabelsFit(a);
                 capture(a,"home");
                 select(a,"fieldwork");
             });
@@ -152,6 +172,7 @@ public final class ApoShellNavigationInstrumentedTest {
                 assertNotNull(nav(a,"atlas"));
                 assertNotNull(nav(a,"data"));
                 assertTrue(nav(a,"atlas").isSelected());
+                assertNavLabelsFit(a);
                 assertTrue(hasText(a.getWindow().getDecorView(),"Living Atlas"));
                 capture(a,"atlas");
                 select(a,"atlas");

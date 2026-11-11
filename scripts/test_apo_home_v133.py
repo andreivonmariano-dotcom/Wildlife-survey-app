@@ -7,32 +7,34 @@ ROOT=Path(__file__).resolve().parent.parent
 JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
 
 class ApoHomeContracts(unittest.TestCase):
-    def test_home_has_four_modules_and_settings(self):
+    def test_home_has_one_field_action_and_two_live_reference_routes(self):
         s=(JAVA/"WelcomeActivity.java").read_text()
-        home=s.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
-        for name in ("BioTools","Living Atlas"):
-            self.assertIn('"'+name+'"',home)
-        self.assertIn("Coming later: PHMaps · BioDiscover",home)
-        self.assertIn("ApoHomeUi.header",home)
-        self.assertIn("LikasSettingsActivity.class",home)
-        self.assertNotIn("LikasPortalUi.hero",home)
-        self.assertNotIn("LikasPortalUi.tile",home)
-        self.assertNotIn("likas_natator_frog",home)
+        home=s.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
+        self.assertIn('ApoHomeUi.header(this,',home)
+        self.assertIn('"Start Survey"',home)
+        self.assertIn('"Living Atlas"',home)
+        self.assertIn('"Research Library"',home)
+        self.assertIn('"Offline map is in development"',home)
+        self.assertIn('this::openAtlas',home)
+        self.assertIn('this::openResearch',home)
+        self.assertIn('LikasSettingsActivity.class',home)
+        self.assertNotIn('"BioTools"',home)
+        self.assertNotIn("LikasPortalUi.hero(",home)
 
-    def test_text_first_home_and_accessibility(self):
+    def test_shared_accessible_components_and_approved_mark(self):
         s=(JAVA/"ApoHomeUi.java").read_text()
         self.assertIn("setContentDescription",s)
-        self.assertIn("setMinimumHeight(dp(a,88))",s)
+        self.assertIn("setMinimumHeight(dp(a,76))",s)
         self.assertIn("setFocusable(true)",s)
-        self.assertNotIn("R.drawable.",s)
-        self.assertNotIn("ImageView",s)
+        self.assertIn("R.drawable.apo_splash_mark",s)
+        self.assertNotIn("likas_natator_frog",s)
 
-    def test_undeveloped_features_are_disclosed(self):
+    def test_incomplete_map_is_noninteractive_and_not_a_duplicate_hub(self):
         s=(JAVA/"WelcomeActivity.java").read_text()
-        self.assertIn("Standalone map layers",s)
-        self.assertIn("not yet available in this build",s)
-        self.assertIn('"phmaps".equals(currentScreen)',s)
-        self.assertIn('"biodiscover".equals(currentScreen)',s)
+        self.assertIn('ApoHomeUi.preview(this,"Map"',s)
+        self.assertNotIn("private void phMapsHub()",s)
+        self.assertNotIn("private void bioDiscoverHub()",s)
+        self.assertIn('PhLibraryBibliographyActivity.class',s)
 
     def test_existing_survey_continuity(self):
         s=(JAVA/"WelcomeActivity.java").read_text()

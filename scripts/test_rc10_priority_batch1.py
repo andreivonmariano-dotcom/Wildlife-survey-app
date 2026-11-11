@@ -40,7 +40,7 @@ class Rc10FirstResearchBatch(unittest.TestCase):
         self.assertIn("Rc10ResearchBatch.add(a,parent,scientific)",readiness)
         self.assertIn("lastHomeActiveSurvey=activeSurvey()",home)
         self.assertIn("ApoHomeUi.resume",home)
-        self.assertIn('ApoHomeUi.module(this,"01","BioTools"',home)
+        self.assertIn('ApoHomeUi.module(this,"01","Living Atlas"',home)
         self.assertIn("Habitat research tools",habitat)
         self.assertIn("researchTools.setVisibility(android.view.View.GONE)", habitat)
         self.assertIn('"End Survey"',recorder)

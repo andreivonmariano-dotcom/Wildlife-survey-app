@@ -152,6 +152,15 @@ jobs:
             adb install -r app/build/outputs/apk/debug/app-debug.apk
             adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
             bash scripts/living_atlas_emulator_qa.sh
+            bash scripts/apo_shell_emulator_qa.sh
+      - name: Upload new APO shell navigation emulator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: APO-Coherent-Shell-RC113-native-navigation-review
+          path: apo-shell-review/
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Upload Living Atlas emulator images for owner review
         if: always()
         uses: actions/upload-artifact@v4

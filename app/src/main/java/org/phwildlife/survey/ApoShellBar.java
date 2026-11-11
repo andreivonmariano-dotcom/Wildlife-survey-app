@@ -64,7 +64,7 @@ public final class ApoShellBar {
         String[] names={"Home","Fieldwork","Living Atlas","My Data"};
         String[] tags={"home","fieldwork","atlas","data"};
         boolean[] active={"home".equals(screen),"fieldwork".equals(screen),
-            false,inData};
+            "atlas".equals(screen),inData};
         Runnable[] actions={home,fieldwork,atlas,data};
         for(int i=0;i<labels.length;i++){
             TextView child=tab(activity,labels[i],names[i],tags[i],active[i],actions[i]);

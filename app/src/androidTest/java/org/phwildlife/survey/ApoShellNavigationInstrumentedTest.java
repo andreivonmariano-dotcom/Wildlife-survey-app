@@ -141,4 +141,23 @@ public final class ApoShellNavigationInstrumentedTest {
         }
     }
 
+    @Test public void atlasHasPersistentSharedNavigation(){
+        Intent intent=new Intent(ApplicationProvider.getApplicationContext(),
+            LikasLibraryActivity.class);
+        try(ActivityScenario<LikasLibraryActivity> scenario=ActivityScenario.launch(intent)){
+            idle();
+            scenario.onActivity(a->{
+                assertNotNull(nav(a,"home"));
+                assertNotNull(nav(a,"fieldwork"));
+                assertNotNull(nav(a,"atlas"));
+                assertNotNull(nav(a,"data"));
+                assertTrue(nav(a,"atlas").isSelected());
+                assertTrue(hasText(a.getWindow().getDecorView(),"Living Atlas"));
+                capture(a,"atlas");
+                select(a,"atlas");
+                assertFalse(a.isFinishing());
+            });
+        }
+    }
+
 }

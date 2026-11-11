@@ -80,7 +80,10 @@ public class WelcomeActivity extends Activity {
         String screen=getPreferences(MODE_PRIVATE).getString("screen","home");
         String rememberedProfile=getPreferences(MODE_PRIVATE).getString("profile","Birds");
         boolean showMenu=getIntent().getBooleanExtra("show_menu",false);
-        if(showMenu)home();
+        String destination=getIntent().getStringExtra("workspace_destination");
+        if("fieldwork".equals(destination))fieldworkHub();
+        else if("data".equals(destination))myDataHub();
+        else if(showMenu)home();
         else if(screen.equals("setup")&&!isSurveyActive() &&
                 (rememberedProfile.equals("Birds")||rememberedProfile.equals("Herpetofauna")||rememberedProfile.equals("Mammals"))){
             setup(rememberedProfile);restoreSetup();
@@ -107,7 +110,14 @@ public class WelcomeActivity extends Activity {
     @Override protected void onPause(){
         cancelGpsLookup();persistSetup();super.onPause();
     }
-    @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);home();}
+    @Override protected void onNewIntent(Intent intent){
+        super.onNewIntent(intent);
+        setIntent(intent);
+        String destination=intent.getStringExtra("workspace_destination");
+        if("fieldwork".equals(destination))fieldworkHub();
+        else if("data".equals(destination))myDataHub();
+        else home();
+    }
     @Override public void onBackPressed(){
         if("setup".equals(currentScreen)||"custom".equals(currentScreen)){
             fieldworkHub();

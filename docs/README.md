@@ -1,8 +1,9 @@
 # APO documentation index
 
+- [RC113 Living Atlas native emulator and signed-upgrade QA](APO_RC113_LIVING_ATLAS_EMULATOR_QA_2026_11_11.md): screenshots at standard/200% text, actual APK provenance, legacy upgrade and review scope.
 - [Living Atlas data layer v1](APO_LIVING_ATLAS_DATA_LAYER_v1.md): editable Drive manuscript/checklist source governance, edition-scoped offline index, taxonomic reconciliation and validation. This is a technical implementation note, not an amendment to the owner-approved charter.
 
-**Canonical development branch:** `main`, based on tested RC112 code172 and a non-destructive two-parent integration. Historical main Android v0.15 remains available in Git history. Read [root README](../README.md) and [development instructions](../AGENTS.md) before changes.
+**Canonical development branch:** `main`, currently RC113 code173 and based on tested RC112 code172 and a non-destructive two-parent integration. Historical main Android v0.15 remains available in Git history. Read [root README](../README.md) and [development instructions](../AGENTS.md) before changes.
 
 ## Active authority and handoff
 

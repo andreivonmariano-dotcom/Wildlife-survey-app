@@ -12,18 +12,22 @@ Read [APO developer instructions](AGENTS.md) and the [documentation index](docs/
 
 ## Current Android development
 
-The default **`main`** branch contains the consolidated APO **RC112 code172** Android application. This branch preserves both the historical main repository record and the signed RC112 source lineage through a two-parent integration commit. The original v0.15 Android implementation is retained in Git history.
+The default **`main`** branch contains the consolidated APO **RC113 code173** Android application. This branch preserves both the historical main repository record and the signed RC112 source lineage through a two-parent integration commit. The original v0.15 Android implementation is retained in Git history.
 
 - **Android ID:** `org.phwildlife.survey.beta08` (preserved for installed-app continuity).
-- **Version:** `0.27.3-rc112-minimal-ui-compact-icon`, versionCode **172**.
+- **Version:** `0.27.4-rc113-living-atlas-preview`, versionCode **173**.
 - **App label:** APO.
 - **Database:** SQLite29, with historical migrations retained.
 - **Scientific reference:** Greater Mindanao Book 01 v1.82 (715 taxa), source provenance and separate dated status labels.
-- **Images:** 333 offline owner-photo references in the RC112 build, with provenance/redistribution checks pending.
+- **Images:** 333 offline owner-photo references in the RC113 build, with provenance/redistribution checks pending.
 - **Current CI:** `.github/workflows/apo-quality-gate.yml` for source checks, signing, emulator and upgrade QA; `.github/workflows/apo-signed-apk.yml` for manually requested owner-preview APK builds.
-- **Evidence:** the prior RC112 and consolidation sources passed signed build and upgrade tests in [run 42852787251](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/actions/runs/42852787251). See [main integration QA record](docs/APO_MAIN_INTEGRATION_2026_11_11.md) for promotion verification.
+- **Evidence:** RC113 source, emulator screens at normal/200% text, signed build, gallery checks and RC109→RC113 no-data-clear upgrade passed [Actions 42941822102](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/actions/runs/42941822102). See [RC113 visual/upgrade report](docs/APO_RC113_LIVING_ATLAS_EMULATOR_QA_2026_11_11.md).
 
 Active development uses `main` or short-lived branches based on it. Previously divergent RC111 branches, older RC stages and obsolete LIKAS material remain available as version history and historical QA records.
+
+## Living Atlas interactive preview
+
+The first **Explore Connections** screen links the 715-species offline Book 01 explorer to taxonomic family peers, explicit habitat text mentions, original natural-history accounts and the full 1,159-entry bibliography. It appears in the renamed Living Atlas home and each Book 01 species reader. Provisional habitat evidence remains excluded from verified ecological links until reviewed. The current visual slice was captured on a real Android 14 emulator at standard and 200% font scales. See [RC113 emulator QA and screenshots](docs/APO_RC113_LIVING_ATLAS_EMULATOR_QA_2026_11_11.md).
 
 ## Living Atlas data foundation
 

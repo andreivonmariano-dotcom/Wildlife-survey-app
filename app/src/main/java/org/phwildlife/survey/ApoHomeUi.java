@@ -51,8 +51,11 @@ public final class ApoHomeUi {
         TextView brand=label(a,"APO",27,ApoVisualSystem.INK,true);
         brand.setLetterSpacing(.01f);
         identity.addView(brand);
-        TextView edition=label(a,"PHILIPPINE WILDLIFE",11,ApoVisualSystem.MUTED,true);
-        edition.setLetterSpacing(.075f);
+        // Readable compact subtitle for narrow screens with 200% font scaling.
+        TextView edition=label(a,ApoVisualSystem.largeText(a)?"WILDLIFE":
+            "PHILIPPINE WILDLIFE",11,ApoVisualSystem.MUTED,true);
+        edition.setSingleLine(true);
+        edition.setLetterSpacing(ApoVisualSystem.largeText(a)?0f:.075f);
         identity.addView(edition);
         top.addView(identity,new LinearLayout.LayoutParams(0,-2,1));
         TextView config=label(a,"Settings",14,ApoVisualSystem.FOREST,true);

@@ -4,202 +4,185 @@ import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/** Text-first APO Home navigation. No image, pictogram or legacy tile resources. */
+/** Consistent field-first navigation and readable native workspace components. */
 public final class ApoHomeUi {
-    private ApoHomeUi(){}
-    private static final int INK=Color.rgb(23,61,50);
-    private static final int MUTED=Color.rgb(103,123,111);
-    private static final int RULE=Color.rgb(219,228,220);
-    private static int dp(Activity a,int n){
-        return Math.round(a.getResources().getDisplayMetrics().density*n);
+    private ApoHomeUi() {}
+
+    private static int dp(Activity a,float value){return ApoVisualSystem.dp(a,value);}
+
+    private static TextView label(Activity a,String value,int size,int color,boolean weight) {
+        TextView text=new TextView(a);
+        text.setText(value);
+        text.setTextSize(size);
+        text.setTextColor(color);
+        text.setIncludeFontPadding(true);
+        if(weight)text.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
+        return text;
     }
-    private static TextView label(Activity a,String text,int size,int color,boolean medium){
-        TextView view=new TextView(a);
-        view.setText(text);
-        view.setTextSize(size);
-        view.setTextColor(color);
-        view.setIncludeFontPadding(true);
-        view.setFontFeatureSettings("kern");
-        if(medium)view.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
-        return view;
+
+    private static RippleDrawable tapBackground(Activity a,int fill,int border,int radius) {
+        return new RippleDrawable(ColorStateList.valueOf(0x27336245),
+            ApoVisualSystem.surface(a,fill,border,radius),null);
     }
-    private static View rule(Activity a){
-        View rule=new View(a);
-        rule.setBackgroundColor(RULE);
-        return rule;
-    }
-    private static void divider(Activity a,LinearLayout container){
-        container.addView(rule(a),new LinearLayout.LayoutParams(-1,dp(a,1)));
-    }
+
     public static View header(Activity a,Runnable settings){
         LinearLayout block=new LinearLayout(a);
         block.setOrientation(LinearLayout.VERTICAL);
-        block.setPadding(dp(a,3),dp(a,10),dp(a,3),dp(a,23));
+        block.setPadding(dp(a,1),dp(a,5),dp(a,1),dp(a,12));
         LinearLayout top=new LinearLayout(a);
         top.setGravity(Gravity.CENTER_VERTICAL);
-        top.setOrientation(LinearLayout.HORIZONTAL);
-        TextView brand=label(a,"APO",32,INK,true);
-        brand.setLetterSpacing(.015f);
-        brand.setContentDescription("APO home");
-        top.addView(brand,new LinearLayout.LayoutParams(0,-2,1f));
-        TextView config=label(a,"Settings",14,MUTED,true);
+        ImageView emblem=new ImageView(a);
+        emblem.setImageResource(R.drawable.apo_splash_mark);
+        emblem.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        emblem.setContentDescription(null);
+        emblem.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        LinearLayout.LayoutParams icon=new LinearLayout.LayoutParams(dp(a,40),dp(a,40));
+        icon.rightMargin=dp(a,9);
+        top.addView(emblem,icon);
+        LinearLayout identity=new LinearLayout(a);
+        identity.setOrientation(LinearLayout.VERTICAL);
+        TextView brand=label(a,"APO",27,ApoVisualSystem.INK,true);
+        brand.setLetterSpacing(.01f);
+        identity.addView(brand);
+        TextView edition=label(a,"PHILIPPINE WILDLIFE",11,ApoVisualSystem.MUTED,true);
+        edition.setLetterSpacing(.075f);
+        identity.addView(edition);
+        top.addView(identity,new LinearLayout.LayoutParams(0,-2,1));
+        TextView config=label(a,"Settings",14,ApoVisualSystem.FOREST,true);
         config.setGravity(Gravity.CENTER);
-        config.setMinimumHeight(dp(a,48));
-        config.setMinimumWidth(dp(a,80));
-        config.setPadding(dp(a,9),dp(a,7),dp(a,9),dp(a,7));
-        config.setBackground(new RippleDrawable(ColorStateList.valueOf(
-            Color.argb(30,23,82,60)),null,null));
+        config.setMinWidth(dp(a,76));
+        config.setMinHeight(dp(a,48));
+        config.setPadding(dp(a,10),dp(a,9),dp(a,10),dp(a,9));
+        config.setBackground(tapBackground(a,ApoVisualSystem.FIELD_BACKGROUND,
+            ApoVisualSystem.INPUT_BORDER,12));
         config.setContentDescription("Open settings");
-        config.setFocusable(true);
         config.setClickable(true);
+        config.setFocusable(true);
         config.setOnClickListener(v->settings.run());
         top.addView(config);
         block.addView(top);
-        TextView kicker=label(a,"PHILIPPINE BIODIVERSITY WORKSPACE",11,MUTED,true);
-        kicker.setLetterSpacing(.10f);
-        LinearLayout.LayoutParams kickerLp=new LinearLayout.LayoutParams(-1,-2);
-        kickerLp.topMargin=dp(a,5);block.addView(kicker,kickerLp);
-        TextView desc=label(a,"Field tools, biodiversity references and research in one place.",
-            14,MUTED,false);
-        LinearLayout.LayoutParams descLp=new LinearLayout.LayoutParams(-1,-2);
-        descLp.topMargin=dp(a,15);block.addView(desc,descLp);
         return block;
     }
-    public static View module(Activity a,String number,String title,String description,Runnable open){
-        LinearLayout wrapper=new LinearLayout(a);
-        wrapper.setOrientation(LinearLayout.VERTICAL);
+
+    /** One accessible card component for top-level destinations. */
+    public static View module(Activity a,String number,String title,String description,Runnable open) {
+        return navigationCard(a,number,title,description,open,false);
+    }
+
+    /** Smaller card for a secondary, contextual tool. */
+    public static View tool(Activity a,String number,String title,String description,Runnable open) {
+        return navigationCard(a,number,title,description,open,true);
+    }
+
+    private static View navigationCard(Activity a,String number,String title,
+            String description,Runnable open,boolean compact) {
         LinearLayout row=new LinearLayout(a);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(dp(a,3),dp(a,16),dp(a,3),dp(a,17));
-        row.setMinimumHeight(dp(a,88));
-        GradientDrawable fill=new GradientDrawable();
-        fill.setColor(UiKit.BG);
-        row.setBackground(new RippleDrawable(ColorStateList.valueOf(
-            Color.argb(25,25,87,61)),fill,null));
-        TextView index=label(a,number,12,Color.rgb(128,148,134),true);
+        row.setMinimumHeight(dp(a,compact?64:78));
+        row.setPadding(dp(a,14),dp(a,compact?11:15),
+            dp(a,13),dp(a,compact?11:15));
+        row.setBackground(tapBackground(a,ApoVisualSystem.SURFACE,
+            ApoVisualSystem.BORDER,16));
+
+        TextView index=label(a,number,11,ApoVisualSystem.MUTED,true);
         index.setGravity(Gravity.TOP);
-        index.setPadding(0,dp(a,4),0,0);
-        row.addView(index,new LinearLayout.LayoutParams(dp(a,34),-2));
+        index.setPadding(0,dp(a,4),dp(a,3),0);
+        index.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        row.addView(index,new LinearLayout.LayoutParams(dp(a,29),-2));
+
         LinearLayout copy=new LinearLayout(a);
         copy.setOrientation(LinearLayout.VERTICAL);
-        TextView name=label(a,title,21,INK,true);
-        copy.addView(name);
+        copy.addView(label(a,title,compact?16:18,ApoVisualSystem.INK,true));
         if(description!=null&&!description.trim().isEmpty()){
-            TextView detail=label(a,description,13,MUTED,false);
-            LinearLayout.LayoutParams detailLp=new LinearLayout.LayoutParams(-1,-2);
-            detailLp.topMargin=dp(a,5);
-            copy.addView(detail,detailLp);
+            TextView sub=label(a,description,13,ApoVisualSystem.MUTED,false);
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+            lp.topMargin=dp(a,4);
+            copy.addView(sub,lp);
         }
-        row.addView(copy,new LinearLayout.LayoutParams(0,-2,1f));
-        row.setFocusable(true);
+        row.addView(copy,new LinearLayout.LayoutParams(0,-2,1));
+
+        TextView chevron=label(a,"›",26,ApoVisualSystem.FOREST,false);
+        chevron.setGravity(Gravity.CENTER);
+        chevron.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        row.addView(chevron,new LinearLayout.LayoutParams(dp(a,25),-2));
         row.setClickable(true);
+        row.setFocusable(true);
         row.setContentDescription("Open "+title+
             (description==null||description.isEmpty()?"":". "+description));
         row.setOnClickListener(v->open.run());
-        wrapper.addView(row,new LinearLayout.LayoutParams(-1,-2));
-        divider(a,wrapper);
-        return wrapper;
-    }
-    /** Smaller numbered action for nested tool screens; no images or fixed text height. */
-    public static View tool(Activity a,String number,String title,String description,Runnable open){
         LinearLayout wrapper=new LinearLayout(a);
         wrapper.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout line=new LinearLayout(a);
-        line.setOrientation(LinearLayout.HORIZONTAL);
-        line.setGravity(Gravity.CENTER_VERTICAL);
-        line.setPadding(dp(a,3),dp(a,12),dp(a,3),dp(a,12));
-        line.setMinimumHeight(dp(a,72));
-        GradientDrawable base=new GradientDrawable();
-        base.setColor(UiKit.BG);
-        line.setBackground(new RippleDrawable(ColorStateList.valueOf(
-            Color.argb(27,25,87,61)),base,null));
-        TextView count=label(a,number,12,Color.rgb(116,137,121),true);
-        line.addView(count,new LinearLayout.LayoutParams(dp(a,32),-2));
-        LinearLayout detail=new LinearLayout(a);
-        detail.setOrientation(LinearLayout.VERTICAL);
-        detail.addView(label(a,title,17,INK,true));
-        if(description!=null&&!description.isEmpty()){
-            TextView sub=label(a,description,13,MUTED,false);
-            LinearLayout.LayoutParams subLp=new LinearLayout.LayoutParams(-1,-2);
-            subLp.topMargin=dp(a,4);
-            detail.addView(sub,subLp);
-        }
-        line.addView(detail,new LinearLayout.LayoutParams(0,-2,1f));
-        line.setFocusable(true);
-        line.setClickable(true);
-        line.setContentDescription("Open "+title+
-            (description==null||description.isEmpty()?"":". "+description));
-        line.setOnClickListener(v->open.run());
-        wrapper.addView(line,new LinearLayout.LayoutParams(-1,-2));
-        divider(a,wrapper);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.bottomMargin=dp(a,8);
+        wrapper.addView(row,lp);
         return wrapper;
-    }
-    /** Plain text/status content for small screens and scalable Android text. */
-    public static TextView note(Activity a,String value){
-        TextView text=label(a,value,13,MUTED,false);
-        text.setPadding(dp(a,3),dp(a,10),dp(a,3),dp(a,12));
-        return text;
     }
 
     public static View section(Activity a,String title,String description){
         LinearLayout block=new LinearLayout(a);
         block.setOrientation(LinearLayout.VERTICAL);
-        block.setPadding(dp(a,3),dp(a,14),dp(a,3),dp(a,20));
-        block.addView(label(a,title,22,INK,true));
+        block.setPadding(dp(a,2),dp(a,15),dp(a,2),dp(a,11));
+        block.addView(label(a,title,20,ApoVisualSystem.INK,true));
         if(description!=null&&!description.trim().isEmpty()){
-            TextView detail=label(a,description,14,MUTED,false);
+            TextView sub=label(a,description,14,ApoVisualSystem.MUTED,false);
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-            lp.topMargin=dp(a,9);block.addView(detail,lp);
+            lp.topMargin=dp(a,5);block.addView(sub,lp);
         }
         return block;
     }
 
-    /** Field-first primary action: always visible before editorial content. */
-    public static View primary(Activity a,String title,String description,Runnable open){
-        LinearLayout container=new LinearLayout(a);
-        container.setOrientation(LinearLayout.VERTICAL);
-        container.setPadding(dp(a,18),dp(a,14),dp(a,18),dp(a,14));
-        container.setMinimumHeight(dp(a,76));
-        GradientDrawable shape=new GradientDrawable();
-        shape.setColor(Color.rgb(21,76,55));
-        shape.setCornerRadius(dp(a,17));
-        container.setBackground(new RippleDrawable(
-            ColorStateList.valueOf(Color.argb(52,255,255,255)),shape,null));
-        TextView heading=label(a,title,19,Color.WHITE,true);
-        container.addView(heading);
-        if(description!=null&&!description.trim().isEmpty()){
-            TextView sub=label(a,description,13,Color.rgb(228,242,230),false);
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
-            lp.topMargin=dp(a,3);container.addView(sub,lp);
-        }
-        container.setFocusable(true);container.setClickable(true);
-        container.setContentDescription("Open "+title+
-            (description==null||description.isEmpty()?"":". "+description));
-        container.setOnClickListener(v->open.run());
-        return container;
+    public static TextView note(Activity a,String value) {
+        TextView note=label(a,value,13,ApoVisualSystem.MUTED,false);
+        note.setPadding(dp(a,2),dp(a,9),dp(a,2),dp(a,12));
+        return note;
     }
-    /** Contextual survey shortcut, small enough not to dominate the Home menu. */
+
+    /** One dominant action per Home, above all editorial content. */
+    public static View primary(Activity a,String title,String description,Runnable open) {
+        LinearLayout content=new LinearLayout(a);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setGravity(Gravity.CENTER_VERTICAL);
+        content.setPadding(dp(a,18),dp(a,15),dp(a,18),dp(a,15));
+        content.setMinimumHeight(dp(a,76));
+        content.setBackground(new RippleDrawable(ColorStateList.valueOf(0x50FFFFFF),
+            ApoVisualSystem.surface(a,ApoVisualSystem.FOREST,Color.TRANSPARENT,18),null));
+        content.addView(label(a,title,20,Color.WHITE,true));
+        if(description!=null&&!description.trim().isEmpty()){
+            TextView sub=label(a,description,13,0xFFE5F2E7,false);
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+            lp.topMargin=dp(a,4);content.addView(sub,lp);
+        }
+        content.setContentDescription(title+
+            (description==null||description.isEmpty()?"":". "+description));
+        content.setClickable(true);
+        content.setFocusable(true);
+        content.setOnClickListener(v->open.run());
+        return content;
+    }
+
     public static View resume(Activity a,Runnable open){
-        TextView link=label(a,"Resume current survey",14,INK,true);
-        link.setPadding(dp(a,13),dp(a,12),dp(a,13),dp(a,12));
-        link.setMinHeight(dp(a,48));
-        GradientDrawable fill=new GradientDrawable();
-        fill.setColor(Color.rgb(230,240,229));
-        fill.setCornerRadius(dp(a,12));
-        link.setBackground(new RippleDrawable(ColorStateList.valueOf(
-            Color.argb(35,18,72,48)),fill,null));
-        link.setContentDescription("Resume current active survey");
-        link.setFocusable(true);
-        link.setClickable(true);
-        link.setOnClickListener(v->open.run());
-        return link;
+        return primary(a,"Resume Survey","Continue your active field session",open);
+    }
+
+    /** A truthful, noninteractive planned destination cannot become a dead-end route. */
+    public static View preview(Activity a,String title,String status){
+        LinearLayout row=new LinearLayout(a);
+        row.setOrientation(LinearLayout.VERTICAL);
+        row.setPadding(dp(a,15),dp(a,13),dp(a,15),dp(a,13));
+        row.setBackground(ApoVisualSystem.surface(a,ApoVisualSystem.LEAF_PALE,
+            ApoVisualSystem.BORDER,16));
+        row.addView(label(a,title,17,ApoVisualSystem.FOREST,true));
+        TextView message=label(a,status,13,ApoVisualSystem.MUTED,false);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+        lp.topMargin=dp(a,3);row.addView(message,lp);
+        return row;
     }
 }

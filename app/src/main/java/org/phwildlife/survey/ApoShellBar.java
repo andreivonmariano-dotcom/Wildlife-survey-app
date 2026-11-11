@@ -19,11 +19,12 @@ public final class ApoShellBar {
         TextView item=new TextView(activity);
         item.setTag("apo_nav_"+tag);
         item.setText(label);
-        item.setTextSize(ApoVisualSystem.largeText(activity)?12:13);
+        item.setTextSize(ApoVisualSystem.largeText(activity)?11:13);
         item.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
         item.setTextColor(selected?Color.WHITE:ApoVisualSystem.FOREST);
         item.setGravity(Gravity.CENTER);
-        item.setMaxLines(2);
+        item.setSingleLine(true);
+        item.setEllipsize(android.text.TextUtils.TruncateAt.END);
         item.setMinHeight(ApoVisualSystem.dp(activity,
             ApoVisualSystem.largeText(activity)?68:54));
         item.setPadding(ApoVisualSystem.dp(activity,3),
@@ -60,7 +61,10 @@ public final class ApoShellBar {
         boolean inData="data".equals(screen)||"analysis".equals(screen)||
             "utilities".equals(screen)||"records".equals(screen)||
             "biotools".equals(screen);
-        String[] labels={"Home","Survey","Atlas","My Data"};
+        // Short visible labels preserve full-word legibility at 200% system text.
+        String[] labels=ApoVisualSystem.largeText(activity)?
+            new String[]{"Home","Field","Atlas","Data"}:
+            new String[]{"Home","Survey","Atlas","My Data"};
         String[] names={"Home","Fieldwork","Living Atlas","My Data"};
         String[] tags={"home","fieldwork","atlas","data"};
         boolean[] active={"home".equals(screen),"fieldwork".equals(screen),

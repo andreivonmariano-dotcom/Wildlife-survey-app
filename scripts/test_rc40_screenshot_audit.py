@@ -16,15 +16,15 @@ class Rc40ScreenAudit(unittest.TestCase):
         portal=source("LikasPortalUi.java")
         home=source("WelcomeActivity.java")
         component=source("ApoHomeUi.java")
-        main=home.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
+        main=home.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
         self.assertIn("new LinearLayout.LayoutParams(-1,-2)",home)
-        self.assertIn("setMinimumHeight(dp(a,88))",component)
+        self.assertIn("row.setMinimumHeight(dp(a,compact?64:78))",component)
         self.assertIn("setFocusable(true)",component)
-        self.assertNotIn("R.drawable.",component)
-        for title in ('"BioTools"','"Living Atlas"',):
+        self.assertIn("R.drawable.apo_splash_mark",component)
+        for title in ('"Living Atlas"','"Research Library"',):
             self.assertIn(title,main)
-        self.assertIn("this::bioToolsHub",main)
-        self.assertIn("LikasLibraryActivity.class",main)
+        self.assertIn("this::openAtlas",main)
+        self.assertIn("LikasLibraryActivity.class",home)
         self.assertIn("LikasSettingsActivity.class",main)
         self.assertNotIn("LikasPortalUi.tile(",main)
         self.assertNotIn("LikasPortalUi.hero(",main)
@@ -33,7 +33,9 @@ class Rc40ScreenAudit(unittest.TestCase):
         field=home.split("private void fieldworkHub(){",1)[1].split(
             "/** Short status caption",1)[0]
         self.assertNotIn("addHomeRecentSurvey()",field)
-        self.assertEqual(field.count("HistoryActivity.class"),1)
+        self.assertEqual(field.count("HistoryActivity.class"),0)
+        data=home.split("private void myDataHub(){",1)[1].split("private void fieldworkHub(){",1)[0]
+        self.assertEqual(data.count("HistoryActivity.class"),1)
         self.assertIn('private void fieldRecordsHub(){',field)
         self.assertEqual(field.count('FieldVisuals.section(this,"New survey"'),1)
         self.assertNotIn('"Go to the field."',field)

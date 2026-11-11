@@ -19,7 +19,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: apo-consolidated-android-qa-${{ github.ref }}
+  group: apo-coherent-rc114-android-qa-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

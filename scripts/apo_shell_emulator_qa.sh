@@ -14,7 +14,7 @@ for configuration in "p360f100 360x800 1.0" "p320f200 320x720 2.0"; do
     adb shell am instrument -w -r -e preset "$preset" \
         -e class org.phwildlife.survey.ApoShellNavigationInstrumentedTest \
         "$RUNNER" | tee "$OUT/$preset.txt"
-    grep -Fq 'OK (2 tests)' "$OUT/$preset.txt"
+    grep -Fq 'OK (3 tests)' "$OUT/$preset.txt"
     mkdir -p "$OUT/$preset"
     adb pull "$SOURCE/." "$OUT/$preset/" >/dev/null
     python3 - "$OUT/$preset" <<'PY'
@@ -22,7 +22,7 @@ from pathlib import Path
 import sys
 folder=Path(sys.argv[1])
 files=list(folder.glob("*.png"))
-assert len(files)>=6,(folder,len(files))
+assert len(files)>=7,(folder,len(files))
 for file in files:
     data=file.read_bytes()
     assert len(data)>2500 and data[:8]==bytes((137,80,78,71,13,10,26,10)),file

@@ -116,7 +116,7 @@ public final class Rc110SignedUpgradeInstrumentedTest {
         assertEquals(244,file.length());
     }
     @Test public void bRc110UpgradePreservesRowsMediaAndExport()throws Exception{
-        assertEquals("Upgrade must install signed RC113 over RC109, no data reset",173,version());
+        assertEquals("Upgrade must install signed RC114 over RC109, no data reset",174,version());
         try(FieldDb helper=new FieldDb(app())){
             SQLiteDatabase db=helper.getReadableDatabase();
             assertEquals(29,db.getVersion());

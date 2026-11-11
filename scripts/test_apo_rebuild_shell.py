@@ -35,6 +35,12 @@ class ApoRebuildShell(unittest.TestCase):
         self.assertNotIn('phMapsHub()',welcome)
         self.assertIn('PhLibraryBibliographyActivity.class',welcome)
         self.assertIn('LikasLibraryActivity.class',welcome)
+        atlas=source("LikasLibraryActivity.java")
+        self.assertIn('ApoShellBar.create(this,"atlas"',atlas)
+        self.assertIn('Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP',atlas)
+        self.assertIn('"workspace_destination",target',atlas)
+        self.assertIn('if("fieldwork".equals(destination))fieldworkHub()',welcome)
+        self.assertIn('else if("data".equals(destination))myDataHub()',welcome)
 
     def test_one_data_workspace_and_unmodified_survey_outcomes(self):
         welcome=source("WelcomeActivity.java")

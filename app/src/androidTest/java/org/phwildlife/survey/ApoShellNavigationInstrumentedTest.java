@@ -181,4 +181,11 @@ public final class ApoShellNavigationInstrumentedTest {
         }
     }
 
+    @Test public void sourceFactKeepsAbbreviatedMountainNames(){
+        String paragraph="Specimens discussed from Mt. Apo Natural Park in Mindanao. "
+            +"The species occurs near forest streams.";
+        assertEquals("Specimens discussed from Mt. Apo Natural Park in Mindanao.",
+            ApoSpeciesOfDay.firstSourceSentence(paragraph));
+    }
+
 }

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 /** Home and survey setup. Never starts the camera or a survey without a user choice. */
 public class WelcomeActivity extends Activity {
     private final int BG=UiKit.BG,INK=UiKit.INK,GREEN=UiKit.FOREST,MUTED=UiKit.MUTED;
-    private LinearLayout main,root,setupFooter;
+    private LinearLayout main,root,setupFooter,shellNavigation;
     private ScrollView shellScroll;
     private Button setupStartButton;
     private String profile="Birds";
@@ -92,14 +92,14 @@ public class WelcomeActivity extends Activity {
     }
     @Override protected void onResume(){
         super.onResume();
-        if(root!=null&&(homeVisible||"fieldwork".equals(currentScreen)||
-                "biotools".equals(currentScreen))){
+        if(root!=null&&(homeVisible||"fieldwork".equals(currentScreen))){
             String current=activeSurvey();
             if(!java.util.Objects.equals(current,lastHomeActiveSurvey)){
                 if(homeVisible)home();
-                else if("biotools".equals(currentScreen))bioToolsHub();
                 else fieldworkHub();
             }
+        }else if(root!=null&&"data".equals(currentScreen)){
+            myDataHub();
         }else if(root!=null&&"setup".equals(currentScreen)&&projectChoice!=null){
             refreshProjectOptions();refreshStudyChoices();
         }
@@ -109,16 +109,13 @@ public class WelcomeActivity extends Activity {
     }
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);home();}
     @Override public void onBackPressed(){
-        if("setup".equals(currentScreen)){
+        if("setup".equals(currentScreen)||"custom".equals(currentScreen)){
             fieldworkHub();
-        }else if("custom".equals(currentScreen)){
-            // Legacy preference from older APKs; no new Custom Survey screen.
-            fieldworkHub();
-        }else if("fieldwork".equals(currentScreen)||"records".equals(currentScreen)||
-                "analysis".equals(currentScreen)||"utilities".equals(currentScreen)){
-            bioToolsHub();
-        }else if("biotools".equals(currentScreen)||"phmaps".equals(currentScreen)||
-                "biodiscover".equals(currentScreen)){
+        }else if("analysis".equals(currentScreen)||"utilities".equals(currentScreen)||
+                "records".equals(currentScreen)){
+            myDataHub();
+        }else if("fieldwork".equals(currentScreen)||"data".equals(currentScreen)||
+                "biotools".equals(currentScreen)){
             home();
         }else{
             super.onBackPressed();
@@ -146,7 +143,29 @@ public class WelcomeActivity extends Activity {
         setupStartButton.setOnClickListener(v->startSelected());
         setupFooter.setVisibility(View.GONE);
         root.addView(setupFooter);
+        shellNavigation=vertical();
+        root.addView(shellNavigation);
         setContentView(root);
+    }
+    /** One display owner and one bottom navigation for workspace pages. */
+    private void showShellPage(String page){
+        homeVisible="home".equals(page);
+        currentScreen=page;
+        main.removeAllViews();
+        scrollTop();
+        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
+        if(shellNavigation!=null){
+            shellNavigation.removeAllViews();
+            shellNavigation.setVisibility(View.VISIBLE);
+            shellNavigation.addView(ApoShellBar.create(this,page,
+                this::home,this::fieldworkHub,this::openAtlas,this::myDataHub));
+        }
+    }
+    private void openAtlas(){
+        startActivity(new Intent(this,LikasLibraryActivity.class));
+    }
+    private void openResearch(){
+        startActivity(new Intent(this,PhLibraryBibliographyActivity.class));
     }
     private void scrollTop(){
         if(shellScroll!=null)shellScroll.post(()->shellScroll.scrollTo(0,0));
@@ -217,100 +236,76 @@ public class WelcomeActivity extends Activity {
         if("Mammals".equals(title))index="03";
         parent.addView(ApoHomeUi.module(this,index,title,detail,tap));
     }
-    /** APO Home: four text-only destinations, with no obsolete illustrated tiles. */
+    /** Field access precedes exploration; planned destinations are named accurately. */
     private void home(){
-        homeVisible=true;currentScreen="home";main.removeAllViews();scrollTop();
-        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
+        showShellPage("home");
         lastHomeActiveSurvey=activeSurvey();
         main.addView(ApoHomeUi.header(this,()->
             startActivity(new Intent(this,LikasSettingsActivity.class))));
         if(lastHomeActiveSurvey!=null){
             View resume=ApoHomeUi.resume(this,()->
                 startActivity(new Intent(this,MainActivity.class).putExtra("resume",true)));
-            LinearLayout.LayoutParams resumeLp=new LinearLayout.LayoutParams(-1,-2);
-            resumeLp.bottomMargin=dp(LikasDesignSystem.SPACE_LG);
-            main.addView(resume,resumeLp);
-        }
-        if(lastHomeActiveSurvey==null){
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+            lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+            main.addView(resume,lp);
+        }else{
             View start=ApoHomeUi.primary(this,"Start Survey",
-                "",this::fieldworkHub);
-            LinearLayout.LayoutParams startLp=new LinearLayout.LayoutParams(-1,-2);
-            startLp.bottomMargin=dp(8);main.addView(start,startLp);
+                "Choose a method and begin field recording",this::fieldworkHub);
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+            lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
+            main.addView(start,lp);
         }
-        main.addView(ApoHomeUi.module(this,"01","BioTools",
-            "",this::bioToolsHub));
-        main.addView(ApoHomeUi.module(this,"02","Living Atlas",
-            "",()->
-                startActivity(new Intent(this,LikasLibraryActivity.class))));
+        main.addView(ApoHomeUi.section(this,"Explore",null));
+        main.addView(ApoHomeUi.module(this,"01","Living Atlas",
+            "Species, habitats and the Greater Mindanao field guide",this::openAtlas));
+        main.addView(ApoHomeUi.module(this,"02","Research Library",
+            "Search the offline source bibliography",this::openResearch));
+        main.addView(ApoHomeUi.preview(this,"Map",
+            "Offline map is in development"));
         View daily=ApoSpeciesOfDay.createCompact(this,scientific->
             startActivity(new Intent(this,TaxonDetailActivity.class)
                 .putExtra("phlibrary_scientific_name",scientific)));
         if(daily!=null){
             LinearLayout.LayoutParams spotlight=new LinearLayout.LayoutParams(-1,-2);
-            spotlight.bottomMargin=dp(LikasDesignSystem.SPACE_MD);
+            spotlight.topMargin=dp(LikasDesignSystem.SPACE_LG);
             main.addView(daily,spotlight);
         }
-        main.addView(ApoHomeUi.note(this,
-            "Coming later: PHMaps · BioDiscover"));
         UiMotion.enterHome(this,main);
     }
-    /** Honest spatial hub: existing site records are available; a full atlas is not. */
-    private void phMapsHub(){
-        homeVisible=false;currentScreen="phmaps";main.removeAllViews();scrollTop();
-        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        main.addView(UiKit.navigationHeader(this,"PHMaps","Home",this::home));
-        main.addView(ApoHomeUi.section(this,"Spatial workspace",
-            "Explore existing field-site and habitat records. Standalone map layers, " +
-            "terrain and elevation exploration are still in development."));
-        main.addView(ApoHomeUi.module(this,"01","Projects & stations",
-            "Recorded field locations and station information",()->
+
+    /** Compatibility entry for legacy BioTools routes: one My Data destination. */
+    private void bioToolsHub(){myDataHub();}
+
+    /** Unified saved-data workspace; no second Survey or Atlas navigation tree. */
+    private void myDataHub(){
+        showShellPage("data");
+        lastHomeActiveSurvey=activeSurvey();
+        main.addView(UiKit.navigationHeader(this,"My Data","Home",this::home));
+        main.addView(ApoHomeUi.note(this,savedRecordCounts()));
+        main.addView(ApoHomeUi.tool(this,"01","Survey history",
+            "Review observations, effort and survey outcomes",()->
+                startActivity(new Intent(this,HistoryActivity.class))));
+        main.addView(ApoHomeUi.tool(this,"02","Projects & sites",
+            "Manage local study areas, routes and stations",()->
                 startActivity(new Intent(this,SitesActivity.class))));
-        main.addView(ApoHomeUi.module(this,"02","Site habitats",
-            "Recorded site habitat details",()->
+        main.addView(ApoHomeUi.tool(this,"03","Site habitat records",
+            "Inspect habitat details recorded in the field",()->
                 startActivity(new Intent(this,HabitatRecordsActivity.class)
                     .putExtra("initial_tab","records"))));
+        main.addView(ApoHomeUi.tool(this,"04","Analysis & exports",
+            "Inspect survey results and research data",this::analysisHub));
+        main.addView(ApoHomeUi.tool(this,"05","Field utilities",
+            "Recordings, trap records and study templates",this::fieldUtilitiesHub));
+        main.addView(ApoHomeUi.tool(this,"06","Backup & restore",
+            "Protect and transfer local field records",()->
+                startActivity(new Intent(this,FieldBackupActivity.class))));
         UiMotion.enter(this,main);
-    }
-    /** Sourced news is not represented as live until its feed actually exists. */
-    private void bioDiscoverHub(){
-        homeVisible=false;currentScreen="biodiscover";main.removeAllViews();scrollTop();
-        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        main.addView(UiKit.navigationHeader(this,"BioDiscover","Home",this::home));
-        main.addView(ApoHomeUi.section(this,"Research & conservation",
-            "BioDiscover is in development. A source-linked feed for recent wildlife " +
-            "research and conservation updates is not yet available in this build."));
-        UiMotion.enter(this,main);
-    }
-    /** Five-part BioTools landing page. The field survey is one tool, not the hub. */
-    private void bioToolsHub(){
-        homeVisible=false;currentScreen="biotools";main.removeAllViews();scrollTop();
-        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        lastHomeActiveSurvey=activeSurvey();
-        main.addView(UiKit.navigationHeader(this,"BioTools","Home",this::home));
-        // Module names supply the navigation context without a repeated introduction.
-        if(lastHomeActiveSurvey!=null){
-            main.addView(ApoHomeUi.note(this,"Survey in progress · Resume from Home"));
-        }
-        // Navigation remains a compact single list.
-        main.addView(ApoHomeUi.module(this,"01","Surveys",
-            "",this::fieldworkHub));
-        main.addView(ApoHomeUi.module(this,"02","Projects & Sites",
-            "",()->
-                startActivity(new Intent(this,SitesActivity.class))));
-         main.addView(ApoHomeUi.module(this,"03","Field Records",
-            "",this::fieldRecordsHub));
-        main.addView(ApoHomeUi.module(this,"04","Analysis",
-            "",this::analysisHub));
-         main.addView(ApoHomeUi.module(this,"05","Utilities",
-            "",this::fieldUtilitiesHub));
-        UiMotion.enterHome(this,main);
     }
 
     /** Survey-only workspace; method setup and survey outcomes remain unchanged. */
     private void fieldworkHub(){
-        homeVisible=false;currentScreen="fieldwork";main.removeAllViews();scrollTop();
-        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        main.addView(UiKit.navigationHeader(this,"Surveys","BioTools",this::bioToolsHub));
+        showShellPage("fieldwork");
+        main.addView(UiKit.navigationHeader(this,"Fieldwork","Home",this::home));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
@@ -346,38 +341,21 @@ public class WelcomeActivity extends Activity {
             surveyTile(main,"Mammals","Signs · Stations",()->setup("Mammals"));
         }
         main.addView(ApoHomeUi.note(this,
-            "Survey completion follows the selected method. End Incomplete retains partial " +
-            "effort; Not Counted remains excluded from default analytical summaries."));
+            "End Survey is available while recording or paused."));
         UiMotion.enter(this,main);
     }
 
-    /** Saved observations are research data; habitat reference profiles remain in PHLibrary. */
-    private void fieldRecordsHub(){
-        homeVisible=false;currentScreen="records";main.removeAllViews();scrollTop();
-        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        main.addView(UiKit.navigationHeader(this,"Field Records","BioTools",this::bioToolsHub));
-        main.addView(ApoHomeUi.section(this,"Field records",null));
-        main.addView(ApoHomeUi.note(this,savedRecordCounts()));
-        main.addView(ApoHomeUi.tool(this,"01","Survey history",
-            "Browse surveys and recorded observations",()->
-                startActivity(new Intent(this,HistoryActivity.class))));
-        main.addView(ApoHomeUi.tool(this,"02","Site habitat records",
-            "Review and record site-level habitat information",()->
-                startActivity(new Intent(this,HabitatRecordsActivity.class)
-                    .putExtra("initial_tab","records"))));
-        UiMotion.enter(this,main);
-    }
+    /** Compatibility-only alias for older Field Records routes. */
+    private void fieldRecordsHub(){myDataHub();}
 
     /** Independent analysis and export without forcing a new survey session. */
     private void analysisHub(){
-        homeVisible=false;currentScreen="analysis";main.removeAllViews();scrollTop();
-        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        main.addView(UiKit.navigationHeader(this,"Analysis & Exports","BioTools",
-            this::bioToolsHub));
+        showShellPage("analysis");
+        main.addView(UiKit.navigationHeader(this,"Analysis & Exports","My Data",
+            this::myDataHub));
         main.addView(ApoHomeUi.section(this,"Analysis",null));
         main.addView(ApoHomeUi.note(this,
-            "Summary counts use completed surveys unless labeled otherwise. " +
-            "They are not population or habitat-selection estimates."));
+            "Survey summaries, sampling effort and exportable field records."));
         main.addView(ApoHomeUi.tool(this,"01","Survey analysis",
             "Counts, sampling units and survey outcomes",()->
                 startActivity(new Intent(this,DashboardActivity.class))));
@@ -392,10 +370,9 @@ public class WelcomeActivity extends Activity {
 
     /** Field methods/utilities remain available but do not clutter Survey setup. */
     private void fieldUtilitiesHub(){
-        homeVisible=false;currentScreen="utilities";main.removeAllViews();scrollTop();
-        if(setupFooter!=null)setupFooter.setVisibility(View.GONE);
-        main.addView(UiKit.navigationHeader(this,"Field Utilities","BioTools",
-            this::bioToolsHub));
+        showShellPage("utilities");
+        main.addView(UiKit.navigationHeader(this,"Field Utilities","My Data",
+            this::myDataHub));
         main.addView(ApoHomeUi.section(this,"Utilities",null));
         main.addView(FieldVisuals.section(this,"RECORDINGS & DEVICES",null));
         main.addView(ApoHomeUi.tool(this,"01","Sound recordings",
@@ -425,8 +402,7 @@ public class WelcomeActivity extends Activity {
                     "SELECT COUNT(*) FROM field_records WHERE deleted_at IS NULL",null)){
                 if(b.moveToFirst())observations=b.getInt(0);
             }
-            return surveys+" saved surveys (all outcomes) · "+observations+
-                " observations (excluding deleted records)";
+            return surveys+" saved surveys · "+observations+" observations";
         }catch(Exception error){
             return "Saved record counts unavailable. Survey history remains accessible.";
         }
@@ -463,6 +439,7 @@ public class WelcomeActivity extends Activity {
     private void setup(String selected){
         homeVisible=false;currentScreen="setup";profile=selected;
         main.removeAllViews();scrollTop();
+        if(shellNavigation!=null)shellNavigation.setVisibility(View.GONE);
         setupStartButton.setText("Continue to GPS");
         setupStartButton.setContentDescription("Continue "+profile+" survey setup to GPS preflight");
         setupFooter.setVisibility(View.VISIBLE);

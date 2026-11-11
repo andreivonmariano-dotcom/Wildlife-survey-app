@@ -46,6 +46,6 @@ class Rc54SetupVisualContract(unittest.TestCase):
           'radiusEntry.setError("Enter 1 to 2000 meters or leave blank")',
         ):self.assertIn(token,a)
         self.assertGreaterEqual(int((ROOT/"app/build.gradle").read_text().split("versionCode ",1)[1].split()[0]),125)
-        self.assertIn("versionName '0.27.3-", (ROOT/"app/build.gradle").read_text())
+        self.assertIn("versionName '0.27.4-", (ROOT/"app/build.gradle").read_text())
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
 if __name__=="__main__":unittest.main()

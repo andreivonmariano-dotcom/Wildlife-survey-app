@@ -80,7 +80,7 @@ class ApoBioToolsWorkflowsV136(unittest.TestCase):
     def test_no_data_or_signing_changes(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",gradle).group(1)),136)
-        self.assertIn('0.27.3-rc',gradle)
+        self.assertIn('0.27.4-rc',gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn('super(context,NAME,null,29)',src("FieldDb.java"))
         main=src("MainActivity.java")

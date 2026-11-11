@@ -10,7 +10,7 @@ class ApoHomeContracts(unittest.TestCase):
     def test_home_has_four_modules_and_settings(self):
         s=(JAVA/"WelcomeActivity.java").read_text()
         home=s.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
-        for name in ("BioTools","PHLibrary"):
+        for name in ("BioTools","Living Atlas"):
             self.assertIn('"'+name+'"',home)
         self.assertIn("Coming later: PHMaps · BioDiscover",home)
         self.assertIn("ApoHomeUi.header",home)
@@ -41,7 +41,7 @@ class ApoHomeContracts(unittest.TestCase):
         self.assertIn('putExtra("resume",true)',s)
         g=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",g).group(1)),133)
-        self.assertIn("0.27.3-rc",g)
+        self.assertIn("0.27.4-rc",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
 
     def test_motion_respects_system_and_preference(self):

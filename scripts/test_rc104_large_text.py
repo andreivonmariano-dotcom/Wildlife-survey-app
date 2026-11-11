@@ -20,8 +20,8 @@ class Rc104LargeText(unittest.TestCase):
         self.assertIn('Reader heading breaks in the middle of a word',tests)
     def test_version_and_invariants(self):
         build=(ROOT/'app/build.gradle').read_text()
-        self.assertIn('versionCode 172',build)
-        self.assertIn("versionName '0.27.3-rc112-minimal-ui-compact-icon'",build)
+        self.assertIn('versionCode 173',build)
+        self.assertIn("versionName '0.27.4-rc113-living-atlas-preview'",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn('super(context,NAME,null,29)',(JAVA/'FieldDb.java').read_text())
         self.assertIn('EXPECTED_COUNT=715',(JAVA/'PhLibraryBook01.java').read_text())

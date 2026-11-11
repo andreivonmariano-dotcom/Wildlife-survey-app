@@ -239,7 +239,7 @@ public class WelcomeActivity extends Activity {
         }
         main.addView(ApoHomeUi.module(this,"01","BioTools",
             "",this::bioToolsHub));
-        main.addView(ApoHomeUi.module(this,"02","PHLibrary",
+        main.addView(ApoHomeUi.module(this,"02","Living Atlas",
             "",()->
                 startActivity(new Intent(this,LikasLibraryActivity.class))));
         View daily=ApoSpeciesOfDay.createCompact(this,scientific->

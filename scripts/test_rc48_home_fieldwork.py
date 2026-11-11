@@ -15,7 +15,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         self.assertNotIn("LikasPortalUi.hero(",home)
         self.assertNotIn("LikasPortalUi.tile(",home)
         self.assertIn('Coming later: PHMaps · BioDiscover',home)
-        for label in ('"BioTools"','"PHLibrary"'):
+        for label in ('"BioTools"','"Living Atlas"'):
             self.assertIn(label,home)
         self.assertIn("LikasSettingsActivity.class",home)
         self.assertLess(home.index("ApoHomeUi.resume(this,"),
@@ -86,7 +86,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         self.assertIn("new Intent(this,SurveyGpsActivity.class)",welcome)
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",build).group(1)),109)
-        self.assertIn("0.27.3-rc",build)
+        self.assertIn("0.27.4-rc",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,29)",src("FieldDb.java"))
 

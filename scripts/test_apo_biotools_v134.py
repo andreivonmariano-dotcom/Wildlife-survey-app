@@ -67,7 +67,7 @@ class ApoBioToolsV134(unittest.TestCase):
     def test_version_and_database_identity_preserved(self):
         gradle=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(re.search(r"versionCode\s+(\d+)",gradle).group(1)),134)
-        self.assertIn("0.27.3-rc",gradle)
+        self.assertIn("0.27.4-rc",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn("super(context,NAME,null,29)",source("FieldDb.java"))
 

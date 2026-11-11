@@ -35,7 +35,7 @@ class Rc60VisualDecisions(unittest.TestCase):
         self.assertNotIn("Rc8PhotoComparisonActivity.class",library)
         build=(ROOT/"app/build.gradle").read_text()
         self.assertGreaterEqual(int(build.split("versionCode ",1)[1].split()[0]),125)
-        self.assertIn("versionName \'0.27.3-",build)
+        self.assertIn("versionName \'0.27.4-",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,29)",(JAVA/"FieldDb.java").read_text())
 if __name__=="__main__":unittest.main()

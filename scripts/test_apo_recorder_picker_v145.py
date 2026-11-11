@@ -54,8 +54,8 @@ class RecorderPickerRC85(unittest.TestCase):
                       'wm size 960x2160','len(files)==6'):
             self.assertIn(value,wf)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 172",g)
-        self.assertIn("0.27.3-rc112-minimal-ui-compact-icon",g)
+        self.assertIn("versionCode 173",g)
+        self.assertIn("0.27.4-rc113-living-atlas-preview",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn('super(context,NAME,null,29)',
                       read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))

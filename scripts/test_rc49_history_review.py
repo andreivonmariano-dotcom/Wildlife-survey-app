@@ -76,7 +76,7 @@ class Rc49HistoryReview(unittest.TestCase):
     def test_version_and_data_compatibility(self):
         build=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",build).group(1)),109)
-        self.assertIn("0.27.3-rc",build)
+        self.assertIn("0.27.4-rc",build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn("super(context,NAME,null,29)",source("FieldDb.java"))
         self.assertIn('endSurveyButton=UiKit.button(this,"End Survey","outline-danger")',

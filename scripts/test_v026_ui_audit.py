@@ -27,7 +27,7 @@ class CleanFieldUi(unittest.TestCase):
         self.assertIn('progressView.setVisibility(',screen)
     def test_home_puts_shortcuts_first_and_groups_other_tools(self):
         home=src("WelcomeActivity.java")
-        for key in ('"BioTools"','"PHLibrary"','"PHMaps"','"BioDiscover"',
+        for key in ('"BioTools"','"Living Atlas"','"PHMaps"','"BioDiscover"',
                     "ApoHomeUi.header(this,","ApoHomeUi.resume(this,",
                     "LikasLibraryActivity.class","LikasSettingsActivity.class",
                     "HistoryActivity.class","SitesActivity.class"):

@@ -160,7 +160,7 @@ public final class LikasLibraryActivity extends Activity {
         }
         nav.addView(back,new LinearLayout.LayoutParams(dp(
             getResources().getConfiguration().fontScale>=1.6f?100:74),dp(48)));
-        TextView title=PhLibrary2Ui.text(this,"PHLibrary",15,PhLibrary2Ui.FOREST,false,true);
+        TextView title=PhLibrary2Ui.text(this,"Living Atlas",15,PhLibrary2Ui.FOREST,false,true);
         title.setGravity(Gravity.CENTER);
         if(getResources().getConfiguration().fontScale>=1.6f)title.setTextSize(12);
         nav.addView(title,new LinearLayout.LayoutParams(0,dp(48),1));
@@ -203,6 +203,12 @@ public final class LikasLibraryActivity extends Activity {
 
         View tileGap=new View(this);
         body.addView(tileGap,new LinearLayout.LayoutParams(-1,dp(16)));
+        body.addView(PhLibrary2Ui.panel(this,"Explore connections",
+            "Species, taxonomy, habitats and references",()->
+                startActivity(new Intent(this,LivingAtlasExploreActivity.class))),
+            new LinearLayout.LayoutParams(-1,-2));
+        View connectionsGap=new View(this);
+        body.addView(connectionsGap,new LinearLayout.LayoutParams(-1,dp(10)));
         tile(body,"Species Atlas",()->openAtlas(null,null));
         tile(body,"Habitat Atlas",()->startActivity(
             new Intent(this,HabitatSpeciesEvidenceActivity.class)));

@@ -58,6 +58,6 @@ class Rc56RecorderLayout(unittest.TestCase):
         self.assertIn('"Precise GPS permission needed · details":"Device GPS off · details"',a)
         self.assertIn('countView.setContentDescription(count+" individuals or evidence items")',a)
         self.assertGreaterEqual(int((ROOT/"app/build.gradle").read_text().split("versionCode ",1)[1].split()[0]),125)
-        self.assertIn("versionName '0.27.3-", (ROOT/"app/build.gradle").read_text())
+        self.assertIn("versionName '0.27.4-", (ROOT/"app/build.gradle").read_text())
         self.assertIn("super(context,NAME,null,29)",src("FieldDb.java"))
 if __name__=="__main__":unittest.main()

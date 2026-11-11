@@ -321,6 +321,12 @@ public final class PhLibraryBook01 {
             PhLibrary2Ui.dp(a,52));
         citationLp.topMargin=PhLibrary2Ui.dp(a,14);
         parent.addView(refsAction,citationLp);
+        TextView explore=PhLibrary2Ui.action(a,"Explore connections",()->
+            a.startActivity(new Intent(a,LivingAtlasExploreActivity.class)
+                .putExtra(LivingAtlasExploreActivity.EXTRA_SCIENTIFIC_NAME,scientific)),true);
+        LinearLayout.LayoutParams connectionsLp=new LinearLayout.LayoutParams(-1,PhLibrary2Ui.dp(a,52));
+        connectionsLp.topMargin=PhLibrary2Ui.dp(a,9);
+        parent.addView(explore,connectionsLp);
         TextView related=PhLibrary2Ui.text(a,"Related · "+record.optString("f"),
             24,PhLibrary2Ui.INK,true,false);
         related.setPadding(0,PhLibrary2Ui.dp(a,19),0,PhLibrary2Ui.dp(a,8));

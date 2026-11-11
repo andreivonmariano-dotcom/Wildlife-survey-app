@@ -23,7 +23,7 @@ class Rc46FieldLayoutHierarchy(unittest.TestCase):
         self.assertNotIn("LikasPortalUi.tile(",home)
         self.assertIn("row.setMinimumHeight(dp(a,88))",component)
         self.assertIn('Coming later: PHMaps · BioDiscover',home)
-        for route in ('"BioTools"','"PHLibrary"'):
+        for route in ('"BioTools"','"Living Atlas"'):
             self.assertIn(route,home)
     def test_ime_layout_keeps_footer_and_essential_warnings(self):
         recorder=source("MainActivity.java")
@@ -61,7 +61,7 @@ class Rc46FieldLayoutHierarchy(unittest.TestCase):
     def test_version_and_reference_assets_are_unchanged(self):
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
         self.assertGreaterEqual(int(__import__("re").search(r"versionCode\s+(\d+)",gradle).group(1)),109)
-        self.assertIn("0.27.3-rc",gradle)
+        self.assertIn("0.27.4-rc",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn("super(context,NAME,null,29)",source("FieldDb.java"))
         self.assertIn("frame.setClipToOutline(true)",source("LikasPortalUi.java"))

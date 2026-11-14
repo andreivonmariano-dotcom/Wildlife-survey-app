@@ -51,9 +51,10 @@ public final class ApoOfflineMapActivity extends Activity {
     private static String fmt(double value){
         return String.format(Locale.US,"%.5f",value);
     }
-    private void readLocalities() {
+    private ArrayList<Pin> readLocalities() {
+        ArrayList<Pin> result=new ArrayList<>();
         File file=getDatabasePath(FieldDb.NAME);
-        if(!file.isFile())return;
+        if(!file.isFile())return result;
         // OPEN_READONLY deliberately bypasses FieldDb constructors and upgrades.
         try(SQLiteDatabase db=SQLiteDatabase.openDatabase(file.getAbsolutePath(),
                 null,SQLiteDatabase.OPEN_READONLY)){
@@ -68,7 +69,7 @@ public final class ApoOfflineMapActivity extends Activity {
                     String detail="Saved site reference coordinate"+
                         (accuracy>=0?" · recorded uncertainty "+Math.round(accuracy)+" m":
                             " · coordinate uncertainty unrecorded");
-                    pins.add(new Pin(rows.getString(0),"site",detail,lat,lon));
+                    result.add(new Pin(rows.getString(0),"site",detail,lat,lon));
                 }
             }
             try(Cursor rows=db.rawQuery(
@@ -82,17 +83,17 @@ public final class ApoOfflineMapActivity extends Activity {
                     String label=rows.getString(0)+" survey";
                     String date=rows.getString(1);
                     String status=rows.getString(4);
-                    pins.add(new Pin(label,"survey",
+                    result.add(new Pin(label,"survey",
                         "Survey-start GPS fix · "+(date==null?"":date)+
                         " · status "+status,lat,lon));
                 }
             }
         }catch(Exception ex){
             // Keep the reference map usable if a historical table is unavailable.
-            pins.clear();
-            subtitle.post(()->subtitle.setText(
-                "Reference provinces available. Local records could not be read."));
+            // Corrupt or inaccessible field rows leave the reference map usable.
+            result.clear();
         }
+        return result;
     }
 
     private void showPin(Pin pin){
@@ -159,14 +160,16 @@ public final class ApoOfflineMapActivity extends Activity {
         controls.setOrientation(LinearLayout.HORIZONTAL);
         controls.setPadding(0,ApoVisualSystem.dp(this,10),0,0);
         TextView scope=action("Mindanao",()->{
-            mindanao=!mindanao;
+            mindanao=true;
             surface.resetShapes();
             surface.invalidate();
             updateSubtitle();
         });
         controls.addView(scope,new LinearLayout.LayoutParams(0,-2,1f));
-        TextView locality=action("Show sites",()->{
+        TextView locality=action("Hide sites",()->{});
+        locality.setOnClickListener(v->{
             showLocalities=!showLocalities;
+            locality.setText(showLocalities?"Hide sites":"Show sites");
             surface.invalidate();
         });
         LinearLayout.LayoutParams locParams=new LinearLayout.LayoutParams(0,-2,1f);
@@ -195,10 +198,8 @@ public final class ApoOfflineMapActivity extends Activity {
             try{features=BoundaryLookup.mapFeatures(getApplicationContext());}
             catch(Exception ignored){}
             final JSONArray ready=features;
-            final ArrayList<Pin> loaded=new ArrayList<>();
-            // Background owned list, copied onto UI after database read.
-            readLocalities();
-            loaded.addAll(pins);
+            // Database reads never mutate a list currently used by the UI.
+            final ArrayList<Pin> loaded=readLocalities();
             runOnUiThread(()->{
                 if(isFinishing()||isDestroyed())return;
                 pins.clear();pins.addAll(loaded);

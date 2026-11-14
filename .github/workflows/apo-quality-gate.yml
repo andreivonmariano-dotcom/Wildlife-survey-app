@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - integration/apo-main-rc112-20261111
-      - refactor/apo-offline-map-consolidation-20261114
     paths-ignore:
       - 'docs/**'
       - 'AGENTS.md'

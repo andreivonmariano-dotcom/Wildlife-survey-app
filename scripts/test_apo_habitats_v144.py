@@ -11,7 +11,7 @@ class Rc84HabitatChecklist(unittest.TestCase):
                       '"Checklist: Suggested"', 'checklistMode.setVisibility(View.GONE)',
                       'mapOptions.setVisibility(View.GONE)',
                       'siteDetails.setVisibility(View.GONE)',
-                      '"Source & license"', '"Map source & files"',
+                      '"Source & license"', '"Land-cover source"',
                       '"Begin survey","primary"',
                       'selectedSummary.setText(', 'updateSelectedSummary()'):
             self.assertIn(token,s)

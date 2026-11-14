@@ -74,13 +74,13 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertIn("super(context,NAME,null,29)",
                       (JAVA/"FieldDb.java").read_text(encoding="utf-8"))
 
-    def test_home_has_only_one_book_and_three_distinct_actions(self):
+    def test_home_has_one_book_and_five_distinct_routes(self):
         hub=(JAVA/"LikasLibraryActivity.java").read_text(encoding="utf-8")
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text(encoding="utf-8")
         self.assertEqual(hub.count("PhLibraryPhotoHero.create(this"),1)
-        self.assertEqual(hub.count('tile(body,"'),4)
+        self.assertEqual(hub.count('tile(body,"'),5)
         for title in ('"Species Atlas"','"Saved species"',
-                      '"Habitat Atlas"'):
+                      '"Habitat Atlas"','"Offline Map"'):
             self.assertIn(title,hub)
         for old in ('"Conservation evidence"','"Similar species"',
                     '"Source collections"','"Photo comparisons"'):

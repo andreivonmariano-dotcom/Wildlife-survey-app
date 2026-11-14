@@ -19,6 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Locale;
 
 /**
@@ -33,16 +35,21 @@ public final class ApoOfflineMapActivity extends Activity {
     private JSONArray provinceFeatures;
     private AlertDialog nearbyChooser;
     private MapSurface surface;
-    private TextView subtitle;
+    private TextView subtitle,filterAction;
+    private final LinkedHashMap<String,String> projectNames=new LinkedHashMap<>();
+    private String kindFilter="all";
+    private String projectFilter="";
     private boolean mindanao=false;
     private boolean showLocalities=true;
 
     private static final class Pin {
-        final String name,kind,provenance;
+        final String name,kind,provenance,recordId,projectId;
         final double lat,lon;
-        Pin(String name,String kind,String provenance,double lat,double lon){
+        Pin(String name,String kind,String provenance,double lat,double lon,
+                String recordId,String projectId){
             this.name=name;this.kind=kind;this.provenance=provenance;
             this.lat=lat;this.lon=lon;
+            this.recordId=recordId;this.projectId=projectId;
         }
     }
     private static boolean valid(double lat,double lon){
@@ -52,16 +59,27 @@ public final class ApoOfflineMapActivity extends Activity {
     private static String fmt(double value){
         return String.format(Locale.US,"%.5f",value);
     }
-    private ArrayList<Pin> readLocalities() {
-        ArrayList<Pin> result=new ArrayList<>();
+    private static final class LocalityData {
+        final ArrayList<Pin> points=new ArrayList<>();
+        final LinkedHashMap<String,String> projects=new LinkedHashMap<>();
+    }
+    private LocalityData readLocalities() {
+        LocalityData data=new LocalityData();
+        ArrayList<Pin> result=data.points;
         File file=getDatabasePath(FieldDb.NAME);
-        if(!file.isFile())return result;
+        if(!file.isFile())return data;
         // OPEN_READONLY deliberately bypasses FieldDb constructors and upgrades.
         try(SQLiteDatabase db=SQLiteDatabase.openDatabase(file.getAbsolutePath(),
                 null,SQLiteDatabase.OPEN_READONLY)){
             try(Cursor rows=db.rawQuery(
+                "SELECT id,name FROM projects ORDER BY name COLLATE NOCASE",null)){
+                while(rows.moveToNext())
+                    data.projects.put(rows.getString(0),rows.getString(1));
+            }
+            try(Cursor rows=db.rawQuery(
                 "SELECT COALESCE(name,id),latitude,longitude,"+
-                "COALESCE(coordinate_uncertainty_m,-1) FROM sites "+
+                "COALESCE(coordinate_uncertainty_m,-1),id,"+
+                "COALESCE(project_id,'default') FROM sites "+
                 "WHERE latitude IS NOT NULL AND longitude IS NOT NULL",null)){
                 while(rows.moveToNext()){
                     double lat=rows.getDouble(1),lon=rows.getDouble(2);
@@ -70,13 +88,17 @@ public final class ApoOfflineMapActivity extends Activity {
                     String detail="Saved site reference coordinate"+
                         (accuracy>=0?" · recorded uncertainty "+Math.round(accuracy)+" m":
                             " · coordinate uncertainty unrecorded");
-                    result.add(new Pin(rows.getString(0),"site",detail,lat,lon));
+                    String project=rows.getString(5);
+                    result.add(new Pin(rows.getString(0),"site",detail,lat,lon,
+                        rows.getString(4),project));
                 }
             }
             try(Cursor rows=db.rawQuery(
                 "SELECT COALESCE(survey_profile,taxon_group,'Survey'),"+
                 "COALESCE(started,''),start_gps_latitude,start_gps_longitude,"+
-                "COALESCE(start_gps_status,'unrecorded') FROM surveys "+
+                "COALESCE(start_gps_status,'unrecorded'),id,"+
+                "COALESCE(project_id,'default'),COALESCE(method,''),"+
+                "COALESCE(outcome,'') FROM surveys "+
                 "WHERE start_gps_latitude IS NOT NULL AND start_gps_longitude IS NOT NULL",null)){
                 while(rows.moveToNext()){
                     double lat=rows.getDouble(2),lon=rows.getDouble(3);
@@ -84,9 +106,13 @@ public final class ApoOfflineMapActivity extends Activity {
                     String label=rows.getString(0)+" survey";
                     String date=rows.getString(1);
                     String status=rows.getString(4);
+                    String project=rows.getString(6);
+                    String outcome=rows.getString(8);
                     result.add(new Pin(label,"survey",
                         "Survey-start GPS fix · "+(date==null?"":date)+
-                        " · status "+status,lat,lon));
+                        " · GPS status: "+status+" · Method: "+rows.getString(7)+
+                        (outcome.isEmpty()?"":" · Outcome: "+outcome),lat,lon,
+                        rows.getString(5),project));
                 }
             }
         }catch(Exception ex){
@@ -94,7 +120,7 @@ public final class ApoOfflineMapActivity extends Activity {
             // Corrupt or inaccessible field rows leave the reference map usable.
             result.clear();
         }
-        return result;
+        return data;
     }
 
     /** Native chooser remains inspectable without a duplicate selection model. */
@@ -110,16 +136,30 @@ public final class ApoOfflineMapActivity extends Activity {
         String message=pin.provenance+"\n"+
             fmt(pin.lat)+"° N, "+fmt(pin.lon)+"° E"+
             "\nStored only on this device.";
-        new AlertDialog.Builder(this).setTitle(pin.name)
-            .setMessage(message).setPositiveButton("Close",null).show();
+        AlertDialog.Builder dialog=new AlertDialog.Builder(this)
+            .setTitle(pin.name).setMessage(message)
+            .setPositiveButton("Close",null);
+        if("survey".equals(pin.kind))
+            dialog.setNeutralButton("View observations",(d,w)->
+                startActivity(new Intent(this,HistoryActivity.class)
+                    .putExtra("event_id",pin.recordId)));
+        else
+            dialog.setNeutralButton("Manage sites",(d,w)->
+                startActivity(new Intent(this,SitesActivity.class)));
+        dialog.show();
     }
     private void updateSubtitle(){
         if(subtitle==null)return;
         int visible=0;
         double[] extent=mindanao?MINDANAO:PH;
-        for(Pin p:pins)if(inside(p.lat,p.lon,extent))visible++;
+        for(Pin p:pins)if(isVisible(p,extent))visible++;
         subtitle.setText((mindanao?"Mindanao view":"Philippines view")+
             " · "+visible+" saved coordinates in view");
+    }
+    private boolean isVisible(Pin p,double[] extent){
+        return showLocalities&&inside(p.lat,p.lon,extent)&&
+            ("all".equals(kindFilter)||kindFilter.equals(p.kind))&&
+            (projectFilter.isEmpty()||projectFilter.equals(p.projectId));
     }
     private static boolean inside(double lat,double lon,double[] b){
         return valid(lat,lon)&&lon>=b[0]&&lon<=b[1]&&lat>=b[2]&&lat<=b[3];
@@ -222,10 +262,11 @@ public final class ApoOfflineMapActivity extends Activity {
             catch(Exception ignored){}
             final JSONArray ready=features;
             // Database reads never mutate a list currently used by the UI.
-            final ArrayList<Pin> loaded=readLocalities();
+            final LocalityData loaded=readLocalities();
             runOnUiThread(()->{
                 if(isFinishing()||isDestroyed())return;
-                pins.clear();pins.addAll(loaded);
+                pins.clear();pins.addAll(loaded.points);
+                projectNames.clear();projectNames.putAll(loaded.projects);
                 provinceFeatures=ready;
                 surface.resetShapes();
                 surface.invalidate();
@@ -304,7 +345,7 @@ public final class ApoOfflineMapActivity extends Activity {
             brush.setColor(ApoVisualSystem.MUTED);
             canvas.drawText("N ↑",14,22,brush);
             if(showLocalities)for(int layer=0;layer<2;layer++)for(Pin p:pins){
-                if(!inside(p.lat,p.lon,b))continue;
+                if(!isVisible(p,b))continue;
                 float px=x(p.lon,w),py=y(p.lat,h);
                 boolean survey="survey".equals(p.kind);
                 if((layer==1)!=survey)continue;
@@ -332,7 +373,7 @@ public final class ApoOfflineMapActivity extends Activity {
             ArrayList<Pin> nearby=new ArrayList<>();
             double radius=ApoVisualSystem.dp(ApoOfflineMapActivity.this,22);
             for(Pin p:pins){
-                if(!inside(p.lat,p.lon,bounds()))continue;
+                if(!isVisible(p,bounds()))continue;
                 double distance=Math.hypot(event.getX()-x(p.lon,getWidth()),
                     event.getY()-y(p.lat,getHeight()));
                 if(distance<=radius)nearby.add(p);

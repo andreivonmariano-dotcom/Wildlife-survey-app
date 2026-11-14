@@ -8,8 +8,8 @@ JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
 class Rc112CompactInterface(unittest.TestCase):
     def test_version_is_monotonic_and_data_model_unchanged(self):
         gradle=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 175",gradle)
-        self.assertIn("0.27.4-rc115-offline-map-overhaul-preview",gradle)
+        self.assertIn("versionCode 176",gradle)
+        self.assertIn("0.27.4-rc116-localities-research-preview",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
     def test_atlas_bare_status_values_with_accessibility(self):
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text()

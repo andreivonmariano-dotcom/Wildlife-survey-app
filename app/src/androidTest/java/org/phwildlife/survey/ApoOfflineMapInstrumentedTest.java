@@ -114,7 +114,7 @@ public final class ApoOfflineMapInstrumentedTest {
             screen.onActivity(a->{
                 assertTrue(hasText(a.getWindow().getDecorView(),"2026 Q3"));
                 assertTrue(hasText(a.getWindow().getDecorView(),
-                    "Boundaries: low-resolution administrative provinces"));
+                    "2026 Q3 provinces"));
                 assertTrue(hasText(a.getWindow().getDecorView(),"Offline Map"));
                 assertNotNull(labelled(a.getWindow().getDecorView(),"Mindanao"));
                 snapshot(a,"offline-map-philippines");

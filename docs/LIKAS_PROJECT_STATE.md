@@ -1,3 +1,11 @@
+## 2026-11-14 | RC116 QA correction: enforce code176 signed upgrade and settled bibliography screenshot
+
+- **Observed test blocker:** The first RC116 CI passed source tests (562), Android build, 100%/200% native map, Atlas and bibliography screenshots, and inherited gallery tests, but signed RC109→RC116 upgrade stopped on a historic instrumentation assertion still expecting code175. The installed package was correctly identified as code176; this was a test expectation error, with the data-preservation assertions not yet completed. [Failed run 43603277402](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/actions/runs/43603277402).
+- **Correction:** Exact Android signed-upgrade expectation is now **176**, with workflow and upgrade script naming aligned. The saved-only bibliography capture now waits for ListView to finish redrawing and asserts one displayed row for one saved reference. Original recorder/media/data assertions were preserved.
+- **Current candidate:** Draft PR #125 branch `refactor/apo-localities-research-20261114` HEAD `9c2ec14f9653ad80f571b3f93f7fc9850c60cda0`. [Exact-head CI 43604695081](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/actions/runs/43604695081) is pending. The pre-correction code176 signed APK was retrieved and ZIP/hash inspected, but its final release gate had not passed. No APK delivery claim should be made until a green exact-head run and direct file verification.
+
+---
+
 ## 2026-11-14 | APO RC116 locality filters and research bookmarks: signed QA in progress
 
 - **Owner direction:** Continue the broader offline-first overhaul after the verified RC115 map/Atlas work. The prior Phase 3 canonical Atlas PR #124 passed [full Android CI 43597857277](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/actions/runs/43597857277).

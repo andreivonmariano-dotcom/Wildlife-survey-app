@@ -100,12 +100,6 @@ public final class LikasLibraryActivity extends Activity {
 
         View tileGap=new View(this);
         body.addView(tileGap,new LinearLayout.LayoutParams(-1,dp(16)));
-        body.addView(PhLibrary2Ui.panel(this,"Explore connections",
-            "Species, taxonomy, habitats and references",()->
-                startActivity(new Intent(this,LivingAtlasExploreActivity.class))),
-            new LinearLayout.LayoutParams(-1,-2));
-        View connectionsGap=new View(this);
-        body.addView(connectionsGap,new LinearLayout.LayoutParams(-1,dp(10)));
         tile(body,"Species Atlas",()->openAtlas(null,null));
         tile(body,"Habitat Atlas",()->startActivity(
             new Intent(this,HabitatSpeciesEvidenceActivity.class)));

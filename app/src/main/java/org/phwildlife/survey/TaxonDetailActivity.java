@@ -362,6 +362,13 @@ public final class TaxonDetailActivity extends Activity {
             showMessage("This PHLibrary species account is unavailable.");
             return;
         }
+        // Taxonomic connections are contextual to the chosen account.
+        // The Atlas directory owns general species search, avoiding a second
+        // visually different search and species-account entry point.
+        content.addView(PhLibrary2Ui.panel(this,"Taxonomic connections",
+            "Related family accounts and indexed habitat source terms",()->
+                startActivity(new Intent(this,LivingAtlasExploreActivity.class)
+                    .putExtra(LivingAtlasExploreActivity.EXTRA_SCIENTIFIC_NAME,scientific))));
         if(phLibraryScroll!=null)phLibraryScroll.post(()->phLibraryScroll.scrollTo(0,0));
     }
     private void loadKey(String key){

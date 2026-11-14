@@ -13,6 +13,7 @@ on:
     branches:
       - main
       - refactor/apo-coherent-rebuild-20261111
+      - refactor/apo-offline-map-consolidation-20261114
   workflow_dispatch:
 
 permissions:

@@ -20,11 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.action.ViewActions.click;
 
 /** Provenance-preserving, airplane-mode-compatible map acceptance. */
 @RunWith(AndroidJUnit4.class)
@@ -154,9 +149,11 @@ public final class ApoOfflineMapInstrumentedTest {
                 map.dispatchTouchEvent(up);
                 down.recycle();up.recycle();
             });
-            onView(withText("2 saved positions near this point"))
-                .check(matches(isDisplayed()));
-            onView(withText("Close")).perform(click());
+            screen.onActivity(a->{
+                assertTrue("Map must list both overlapping source records",
+                    a.chooserShowsRecords(2));
+                a.closeNearbyChooser();
+            });
             screen.onActivity(a->{
                 assertTrue(hasText(a.getWindow().getDecorView(),
                     "2 saved coordinates in view"));

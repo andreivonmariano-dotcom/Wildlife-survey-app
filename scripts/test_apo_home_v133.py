@@ -31,7 +31,7 @@ class ApoHomeContracts(unittest.TestCase):
 
     def test_offline_map_has_one_real_destination_and_no_duplicate_hub(self):
         s=(JAVA/"WelcomeActivity.java").read_text()
-        self.assertIn('ApoHomeUi.module(this,"03","Offline Map"',s)
+        self.assertIn('ApoHomeUi.module(this,"02","Offline Map"',s)
         self.assertIn('ApoOfflineMapActivity.class',s)
         self.assertNotIn("private void phMapsHub()",s)
         self.assertNotIn("private void bioDiscoverHub()",s)

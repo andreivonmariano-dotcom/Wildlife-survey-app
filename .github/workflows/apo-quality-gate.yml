@@ -121,18 +121,18 @@ jobs:
           APK=app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='175'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.4-rc115-offline-map-overhaul-preview'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='176'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.4-rc116-localities-research-preview'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
           unzip -t "$APK" >/dev/null
           unzip -p "$APK" assets/apo_official_master.png | sha256sum | grep -F '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7'
           unzip -p "$APK" assets/paic714_master.csv | sha256sum | grep -F '1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959'
           unzip -p "$APK" assets/paic_worldcover2020_500m.txt | sha256sum | grep -F 'e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089'
           sha256sum "$APK"
-      - name: Export code175 signed offline-map owner-preview APK
+      - name: Export code176 signed localities and research owner-preview APK
         uses: actions/upload-artifact@v4
         with:
-          name: APO-Offline-Map-RC115-signed-code175-owner-preview
+          name: APO-Localities-Research-RC116-signed-code176-owner-preview
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
@@ -159,7 +159,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: APO-Offline-Map-RC115-native-navigation-review
+          name: APO-Localities-Research-RC116-native-navigation-review
           path: apo-shell-review/
           if-no-files-found: ignore
           retention-days: 7
@@ -232,7 +232,7 @@ jobs:
           echo 'fbc31e33a6302107b21bc0a081392d458e475aec0b5e20d9b8e9bbd153361366  /tmp/apo-rc109-signed.apk' | sha256sum -c -
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging /tmp/apo-rc109-signed.apk | grep -F "versionCode='169'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs /tmp/apo-rc109-signed.apk | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
-      - name: Verify signed RC109 to RC115 no-data-clear upgrade
+      - name: Verify signed RC109 to RC116 no-data-clear upgrade
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -246,7 +246,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: APO-RC109-to-RC115-upgrade-evidence
+          name: APO-RC109-to-RC116-upgrade-evidence
           path: rc110-upgrade-evidence/
           if-no-files-found: ignore
           retention-days: 7

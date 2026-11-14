@@ -32,7 +32,8 @@ public final class PhLibraryBibliographyActivity extends Activity {
     private final ArrayList<JSONObject> refs=new ArrayList<>();
     private final ArrayList<JSONObject> matches=new ArrayList<>();
     private EditText search;
-    private TextView count;
+    private TextView count,savedToggle;
+    private boolean savedOnly=false;
     private ListView list;
     private BaseAdapter adapter;
     private String originalCitation="";
@@ -58,13 +59,18 @@ public final class PhLibraryBibliographyActivity extends Activity {
         candidateMode=false;
         String q=search.getText().toString().trim();
         String lowerQuery=lower(q);
-        for(JSONObject item:refs)
-            if(q.isEmpty()||lower(item.optString("text")).contains(lowerQuery))
+        for(JSONObject item:refs){
+            String citation=item.optString("text");
+            if((q.isEmpty()||lower(citation).contains(lowerQuery))&&
+                    (!savedOnly||ApoReferenceBookmarks.isSaved(this,citation)))
                 matches.add(item);
+        }
         boolean fromCitation=!originalCitation.isEmpty()&&q.equals(originalCitation);
         if(fromCitation&&matches.isEmpty()){
             for(JSONObject item:refs)
-                if(candidate(q,item.optString("text")))matches.add(item);
+                if(candidate(q,item.optString("text"))&&
+                    (!savedOnly||ApoReferenceBookmarks.isSaved(this,item.optString("text"))))
+                    matches.add(item);
             candidateMode=!matches.isEmpty();
         }
         if(fromCitation){
@@ -80,6 +86,12 @@ public final class PhLibraryBibliographyActivity extends Activity {
                     matches.size()+(matches.size()==1?" reference":" references"));
         }
         adapter.notifyDataSetChanged();
+        if(savedToggle!=null){
+            savedToggle.setText(savedOnly?"All references":"Saved only ("+
+                ApoReferenceBookmarks.count(this)+")");
+            savedToggle.setContentDescription(savedOnly?
+                "Show all reference citations":"Show saved reference citations");
+        }
         list.setSelection(0);
     }
     @Override public void onCreate(Bundle saved){
@@ -89,6 +101,7 @@ public final class PhLibraryBibliographyActivity extends Activity {
         getWindow().getDecorView().setSystemUiVisibility(
             View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        savedOnly=saved!=null&&saved.getBoolean("saved_only",false);
         JSONArray items=PhLibraryBook01.bibliography(this);
         for(int i=0;i<items.length();i++){
             JSONObject ref=items.optJSONObject(i);if(ref!=null)refs.add(ref);
@@ -109,6 +122,14 @@ public final class PhLibraryBibliographyActivity extends Activity {
         search.setTextSize(16);search.setHint("Search references");
         search.setContentDescription("Search original bibliography by author, title, year or DOI");
         UiKit.fieldInput(this,search);root.addView(search,new LinearLayout.LayoutParams(-1,dp(56)));
+        savedToggle=PhLibrary2Ui.action(this,"Saved only",()->{
+            savedOnly=!savedOnly;
+            refresh();
+        },false);
+        savedToggle.setTextSize(14);
+        LinearLayout.LayoutParams savedLp=new LinearLayout.LayoutParams(-1,dp(50));
+        savedLp.topMargin=dp(7);
+        root.addView(savedToggle,savedLp);
         count=PhLibrary2Ui.text(this,"",14,PhLibrary2Ui.FOREST,false,true);
         count.setPadding(0,dp(8),0,dp(8));root.addView(count);
 
@@ -123,11 +144,14 @@ public final class PhLibraryBibliographyActivity extends Activity {
                 TextView row=existing instanceof TextView?(TextView)existing:
                     PhLibrary2Ui.text(PhLibraryBibliographyActivity.this,"",15,
                         PhLibrary2Ui.INK,false,false);
-                row.setText(matches.get(position).optString("text"));
+                String citation=matches.get(position).optString("text");
+                boolean isSaved=ApoReferenceBookmarks.isSaved(
+                    PhLibraryBibliographyActivity.this,citation);
+                row.setText((isSaved?"★  ":"")+citation);
                 row.setMaxLines(6);
                 row.setEllipsize(TextUtils.TruncateAt.END);
-                row.setContentDescription("Open full reference: "+
-                    matches.get(position).optString("text"));
+                row.setContentDescription(
+                    (isSaved?"Saved reference. ":"Reference citation. ")+citation);
                 row.setLineSpacing(dp(4),1.11f);
                 row.setPadding(dp(14),dp(13),dp(14),dp(13));
                 row.setBackground(PhLibrary2Ui.touch(PhLibraryBibliographyActivity.this,
@@ -141,13 +165,22 @@ public final class PhLibraryBibliographyActivity extends Activity {
         list.setOnItemClickListener((parent,view,position,id)->{
             String full=matches.get(position).optString("text");
             String sourceUrl=matches.get(position).optString("url");
-            TextView detail=PhLibrary2Ui.text(this,full,16,PhLibrary2Ui.INK,false,false);
+            boolean isSaved=ApoReferenceBookmarks.isSaved(this,full);
+            TextView detail=PhLibrary2Ui.text(this,full+
+                "\\n\\nFull text: unavailable in this offline edition."+
+                (sourceUrl.startsWith("https://")?
+                    "\\nOnline source: connection required.":""),16,
+                PhLibrary2Ui.INK,false,false);
             detail.setPadding(dp(20),dp(15),dp(20),dp(15));
             detail.setTextIsSelectable(true);
             detail.setAutoLinkMask(Linkify.WEB_URLS);
             detail.setMovementMethod(LinkMovementMethod.getInstance());
-            AlertDialog.Builder dialog=new AlertDialog.Builder(this).setTitle("Full reference")
-                .setView(detail).setPositiveButton("Close",null);
+            AlertDialog.Builder dialog=new AlertDialog.Builder(this).setTitle("Reference details")
+                .setView(detail).setPositiveButton("Close",null)
+                .setNegativeButton(isSaved?"Remove saved":"Save reference",(d,w)->{
+                    ApoReferenceBookmarks.setSaved(this,full,!isSaved);
+                    refresh();
+                });
             if(sourceUrl.startsWith("https://"))
                 dialog.setNeutralButton("Open source",(d,w)->{
                     try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(sourceUrl)));}
@@ -183,6 +216,7 @@ public final class PhLibraryBibliographyActivity extends Activity {
     }
     @Override protected void onSaveInstanceState(Bundle out){
         out.putString("q",search.getText().toString());
+        out.putBoolean("saved_only",savedOnly);
         out.putString("citation",originalCitation);
         out.putInt("first",list.getFirstVisiblePosition());
         View child=list.getChildAt(0);out.putInt("offset",child==null?0:child.getTop());

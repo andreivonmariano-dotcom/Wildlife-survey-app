@@ -69,7 +69,9 @@ public final class PhLibrary2Ui {
         p.setPadding(dp(a,16),dp(a,12),dp(a,16),dp(a,12));
         p.setBackground(touch(a,IVORY,LINE,15));
         p.setMinimumHeight(dp(a,hasDetail?82:62));
-        TextView head=text(a,title,20,INK,true,false);
+        // Navigation cards use the same sans-serif hierarchy as Fieldwork and My Data.
+        // Long-form species reading typography remains unchanged.
+        TextView head=text(a,title,18,INK,false,true);
         p.addView(head);
         if(hasDetail){
             TextView sub=text(a,description,12,MUTED,false,false);

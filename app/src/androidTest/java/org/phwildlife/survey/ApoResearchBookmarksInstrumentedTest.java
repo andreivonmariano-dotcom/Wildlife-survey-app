@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ListView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -38,6 +39,17 @@ public final class ApoResearchBookmarksInstrumentedTest {
             for(int i=0;i<group.getChildCount();i++){
                 View found=matching(group.getChildAt(i),label);
                 if(found!=null)return found;
+            }
+        }
+        return null;
+    }
+    private static ListView listIn(View root){
+        if(root instanceof ListView)return (ListView)root;
+        if(root instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)root;
+            for(int i=0;i<group.getChildCount();i++){
+                ListView result=listIn(group.getChildAt(i));
+                if(result!=null)return result;
             }
         }
         return null;
@@ -78,6 +90,16 @@ public final class ApoResearchBookmarksInstrumentedTest {
                 toggle.performClick();
                 assertTrue(includes(root,"1 saved references"));
                 assertTrue(includes(root,"All references"));
+            });
+            // ListView reconciles recycled rows on the next layout pass.
+            // Capture the real settled UI, not rows from the prior adapter frame.
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            activity.onActivity(a->{
+                ListView list=listIn(a.getWindow().getDecorView());
+                assertNotNull(list);
+                assertEquals(1,list.getAdapter().getCount());
+                assertTrue("Stale unsaved rows remained on screen",
+                    list.getChildCount()<=1);
                 screenshot(a);
             });
         }finally{

@@ -35,6 +35,22 @@ class OfflineMapContract(unittest.TestCase):
             self.assertNotIn(forbidden,src)
         self.assertIn('new Thread(()->{',src)
 
+    def test_native_land_cover_is_present_without_import(self):
+        source_text=source("PaicLandCoverPack.java")
+        setup=source("HabitatsSpeciesActivity.java")
+        bundled=ROOT/"app/src/main/assets/paic_worldcover2020_500m.txt"
+        self.assertTrue(bundled.is_file())
+        with bundled.open(encoding="ascii") as file:
+            self.assertEqual(file.readline().strip(),
+                "LIKAS_WORLDCOVER_2020_500M_V1")
+        self.assertIn('BUNDLED="paic_worldcover2020_500m.txt"',source_text)
+        self.assertIn('context.getAssets().open(BUNDLED)',source_text)
+        self.assertIn('new FileInputStream(source):context.getAssets().open(BUNDLED)',source_text)
+        self.assertIn('PaicLandCoverPack.suggest(this,preflightLat,preflightLon)',setup)
+        self.assertNotIn('Import offline map',setup)
+        self.assertNotIn('ACTION_OPEN_DOCUMENT',setup)
+        self.assertIn('"Land-cover source"',setup)
+
     def test_every_map_entry_has_one_destination(self):
         home=source("WelcomeActivity.java")
         atlas=source("LikasLibraryActivity.java")

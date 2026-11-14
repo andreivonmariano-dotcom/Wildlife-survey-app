@@ -81,7 +81,8 @@ public final class PhLibraryBibliographyActivity extends Activity {
                     matches.size()+(matches.size()==1?" text match":" text matches")+
                         " · Not verified");
         }else{
-            count.setText(q.isEmpty()?refs.size()+" references":
+            count.setText(q.isEmpty()?matches.size()+
+                (savedOnly?" saved references":" references"):
                 matches.isEmpty()?"No matching references":
                     matches.size()+(matches.size()==1?" reference":" references"));
         }

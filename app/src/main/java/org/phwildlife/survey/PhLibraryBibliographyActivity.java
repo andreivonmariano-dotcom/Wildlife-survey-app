@@ -167,9 +167,9 @@ public final class PhLibraryBibliographyActivity extends Activity {
             String sourceUrl=matches.get(position).optString("url");
             boolean isSaved=ApoReferenceBookmarks.isSaved(this,full);
             TextView detail=PhLibrary2Ui.text(this,full+
-                "\\n\\nFull text: unavailable in this offline edition."+
+                "\n\nFull text: unavailable in this offline edition."+
                 (sourceUrl.startsWith("https://")?
-                    "\\nOnline source: connection required.":""),16,
+                    "\nOnline source: connection required.":""),16,
                 PhLibrary2Ui.INK,false,false);
             detail.setPadding(dp(20),dp(15),dp(20),dp(15));
             detail.setTextIsSelectable(true);

@@ -159,34 +159,35 @@ public final class ApoOfflineMapActivity extends Activity {
         LinearLayout controls=new LinearLayout(this);
         controls.setOrientation(LinearLayout.HORIZONTAL);
         controls.setPadding(0,ApoVisualSystem.dp(this,10),0,0);
-        TextView scope=action("Mindanao",()->{
-            mindanao=true;
-            surface.resetShapes();
-            surface.invalidate();
-            updateSubtitle();
+        TextView scope=action("Mindanao",()->{});
+        scope.setOnClickListener(v->{
+            mindanao=!mindanao;
+            scope.setText(mindanao?"Philippines":"Mindanao");
+            scope.setContentDescription(mindanao?
+                "Show all Philippines":"Show Mindanao region");
+            surface.resetShapes();surface.invalidate();updateSubtitle();
         });
         controls.addView(scope,new LinearLayout.LayoutParams(0,-2,1f));
         TextView locality=action("Hide sites",()->{});
         locality.setOnClickListener(v->{
             showLocalities=!showLocalities;
             locality.setText(showLocalities?"Hide sites":"Show sites");
+            locality.setContentDescription(showLocalities?
+                "Hide recorded coordinates":"Show recorded coordinates");
             surface.invalidate();
         });
         LinearLayout.LayoutParams locParams=new LinearLayout.LayoutParams(0,-2,1f);
         locParams.leftMargin=ApoVisualSystem.dp(this,7);
         controls.addView(locality,locParams);
-        TextView all=action("Philippines",()->{
-            mindanao=false;
-            surface.resetShapes();surface.invalidate();updateSubtitle();
-        });
-        LinearLayout.LayoutParams allParams=new LinearLayout.LayoutParams(0,-2,1f);
-        allParams.leftMargin=ApoVisualSystem.dp(this,7);
-        controls.addView(all,allParams);
+        if(ApoVisualSystem.largeText(this)){
+            scope.setTextSize(12);
+            locality.setTextSize(12);
+        }
         root.addView(controls);
         TextView legend=new TextView(this);
         legend.setText("● Survey-start GPS    ◆ Saved site\n"+
             "Boundaries: low-resolution administrative provinces. "+
-            "Positions are plotted from recorded coordinates.");
+            "Positions are plotted from recorded coordinates. Schematic WGS84 view.");
         legend.setTextColor(ApoVisualSystem.MUTED);legend.setTextSize(12);
         legend.setPadding(0,ApoVisualSystem.dp(this,9),0,0);
         root.addView(legend);

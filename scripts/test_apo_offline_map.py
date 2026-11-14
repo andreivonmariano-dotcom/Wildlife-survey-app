@@ -54,7 +54,7 @@ class OfflineMapContract(unittest.TestCase):
     def test_every_map_entry_has_one_destination(self):
         home=source("WelcomeActivity.java")
         atlas=source("LikasLibraryActivity.java")
-        self.assertIn('ApoHomeUi.module(this,"03","Offline Map"',home)
+        self.assertIn('ApoHomeUi.module(this,"02","Offline Map"',home)
         self.assertIn('this::openMap',home)
         self.assertIn('ApoOfflineMapActivity.class',home)
         self.assertIn('ApoOfflineMapActivity.class',atlas)

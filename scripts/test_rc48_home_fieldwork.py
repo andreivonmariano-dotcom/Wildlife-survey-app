@@ -15,7 +15,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         self.assertIn('ApoHomeUi.primary(this,"Start Survey"',home)
         self.assertIn('"Living Atlas"',home)
         self.assertIn('"Research Library"',home)
-        self.assertIn("ApoHomeUi.module(this,\"03\",\"Offline Map\"",home)
+        self.assertIn("ApoHomeUi.module(this,\"02\",\"Offline Map\"",home)
         self.assertNotIn('"BioTools"',home)
         self.assertNotIn("LikasPortalUi.hero(",home)
         self.assertNotIn("LikasPortalUi.tile(",home)

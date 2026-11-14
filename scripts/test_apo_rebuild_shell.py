@@ -56,6 +56,15 @@ class ApoRebuildShell(unittest.TestCase):
             self.assertIn(value,recorder)
         self.assertIn('super(context,NAME,null,29)',source("FieldDb.java"))
 
+    def test_large_text_cards_and_atlas_navigation_use_one_type_system(self):
+        cards=source("ApoHomeUi.java")
+        atlas=source("PhLibrary2Ui.java")
+        self.assertIn('if(ApoVisualSystem.largeText(a))index.setVisibility(View.GONE)',cards)
+        self.assertIn('heading.setBreakStrategy(',cards)
+        self.assertIn('TextView head=text(a,title,18,INK,false,true)',atlas)
+        self.assertIn('if(serif)t.setTypeface(',atlas)  # long-form reading remains available
+        self.assertIn('row.setContentDescription(',cards)
+
     def test_shared_theme_and_original_identity(self):
         visual=source("ApoVisualSystem.java")
         self.assertIn('FIELD_BACKGROUND',visual)

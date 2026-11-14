@@ -45,8 +45,8 @@ class TimelineContracts(unittest.TestCase):
         self.assertIn('super(context,NAME,null,29)',read("FieldDb.java"))
     def test_existing_identity_and_survey_dispositions(self):
         g=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 175",g)
-        self.assertIn("0.27.4-rc115-offline-map-overhaul-preview",g)
+        self.assertIn("versionCode 176",g)
+        self.assertIn("0.27.4-rc116-localities-research-preview",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         m=read("MainActivity.java")
         for token in ('Finish Complete','End Incomplete','Cancel Survey · Not Counted',

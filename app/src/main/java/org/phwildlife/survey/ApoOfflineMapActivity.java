@@ -164,6 +164,48 @@ public final class ApoOfflineMapActivity extends Activity {
     private static boolean inside(double lat,double lon,double[] b){
         return valid(lat,lon)&&lon>=b[0]&&lon<=b[1]&&lat>=b[2]&&lat<=b[3];
     }
+    private void syncFilterLabel(){
+        if(filterAction==null)return;
+        String type="all".equals(kindFilter)?"All records":
+            "survey".equals(kindFilter)?"Survey starts":"Saved sites";
+        String project=projectFilter.isEmpty()?"All projects":
+            projectNames.containsKey(projectFilter)?
+                projectNames.get(projectFilter):projectFilter;
+        filterAction.setText("Filter · "+type+" · "+project);
+        filterAction.setContentDescription("Filter map records. "+
+            type+". "+project);
+        updateSubtitle();surface.invalidate();
+    }
+    private void chooseProject(){
+        LinkedHashMap<String,String> available=new LinkedHashMap<>();
+        for(Pin pin:pins)
+            available.put(pin.projectId,projectNames.containsKey(pin.projectId)?
+                projectNames.get(pin.projectId):pin.projectId);
+        ArrayList<String> ids=new ArrayList<>(available.keySet());
+        String[] names=new String[ids.size()+1];
+        names[0]="All projects";
+        int selected=0;
+        for(int i=0;i<ids.size();i++){
+            names[i+1]=available.get(ids.get(i));
+            if(ids.get(i).equals(projectFilter))selected=i+1;
+        }
+        new AlertDialog.Builder(this).setTitle("Survey project")
+            .setSingleChoiceItems(names,selected,(dialog,index)->{
+                projectFilter=index==0?"":ids.get(index-1);
+                dialog.dismiss();syncFilterLabel();
+            }).setNegativeButton("Close",null).show();
+    }
+    private void chooseFilters(){
+        String[] options={"All saved records","Survey starts","Saved sites"};
+        int selected="survey".equals(kindFilter)?1:
+            "site".equals(kindFilter)?2:0;
+        new AlertDialog.Builder(this).setTitle("Map record filters")
+            .setSingleChoiceItems(options,selected,(dialog,index)->{
+                kindFilter=index==1?"survey":index==2?"site":"all";
+                dialog.dismiss();syncFilterLabel();
+            }).setNeutralButton("Choose project",(dialog,index)->chooseProject())
+            .setNegativeButton("Close",null).show();
+    }
     private TextView action(String title,Runnable run){
         TextView v=new TextView(this);
         v.setText(title);v.setTextColor(ApoVisualSystem.FOREST);
@@ -184,6 +226,7 @@ public final class ApoOfflineMapActivity extends Activity {
         LinearLayout root=new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(ApoVisualSystem.FIELD_BACKGROUND);
+        showLocalities=getPreferences(MODE_PRIVATE).getBoolean("show_localities",true);
         int gutter=ApoVisualSystem.dp(this,14);
         root.setPadding(gutter,gutter,gutter,gutter);
         LinearLayout header=new LinearLayout(this);
@@ -217,13 +260,15 @@ public final class ApoOfflineMapActivity extends Activity {
             surface.resetShapes();surface.invalidate();updateSubtitle();
         });
         controls.addView(scope,new LinearLayout.LayoutParams(0,-2,1f));
-        TextView locality=action("Hide sites",()->{});
+        TextView locality=action(showLocalities?"Hide sites":"Show sites",()->{});
         locality.setOnClickListener(v->{
             showLocalities=!showLocalities;
             locality.setText(showLocalities?"Hide sites":"Show sites");
             locality.setContentDescription(showLocalities?
                 "Hide recorded coordinates":"Show recorded coordinates");
-            surface.invalidate();
+            getPreferences(MODE_PRIVATE).edit()
+                .putBoolean("show_localities",showLocalities).apply();
+            updateSubtitle();surface.invalidate();
         });
         LinearLayout.LayoutParams locParams=new LinearLayout.LayoutParams(0,-2,1f);
         locParams.leftMargin=ApoVisualSystem.dp(this,7);
@@ -233,6 +278,11 @@ public final class ApoOfflineMapActivity extends Activity {
             locality.setTextSize(12);
         }
         root.addView(controls);
+        filterAction=action("Filter · All records · All projects",this::chooseFilters);
+        filterAction.setTextSize(ApoVisualSystem.largeText(this)?12:14);
+        LinearLayout.LayoutParams filterLp=new LinearLayout.LayoutParams(-1,-2);
+        filterLp.topMargin=ApoVisualSystem.dp(this,5);
+        root.addView(filterAction,filterLp);
         TextView legend=new TextView(this);
         legend.setText("● Survey GPS   ◆ Saved site\n"+
             "2026 Q3 provinces · schematic view");
@@ -268,6 +318,7 @@ public final class ApoOfflineMapActivity extends Activity {
                 pins.clear();pins.addAll(loaded.points);
                 projectNames.clear();projectNames.putAll(loaded.projects);
                 provinceFeatures=ready;
+                syncFilterLabel();
                 surface.resetShapes();
                 surface.invalidate();
                 updateSubtitle();

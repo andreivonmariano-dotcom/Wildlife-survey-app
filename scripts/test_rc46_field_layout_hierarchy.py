@@ -22,7 +22,7 @@ class Rc46FieldLayoutHierarchy(unittest.TestCase):
         self.assertNotIn("LikasPortalUi.hero(",home)
         self.assertNotIn("LikasPortalUi.tile(",home)
         self.assertIn("row.setMinimumHeight(dp(a,compact?64:78))",component)
-        self.assertIn('"Offline map is in development"',home)
+        self.assertIn('"Offline Map"',home)
         for route in ('"Living Atlas"','"Research Library"'):
             self.assertIn(route,home)
     def test_ime_layout_keeps_footer_and_essential_warnings(self):

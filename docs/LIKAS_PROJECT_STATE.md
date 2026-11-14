@@ -1,3 +1,13 @@
+## 2026-11-14 | Phase 3 Atlas consolidation: contextual taxonomy route in draft
+
+- **New implementation:** Draft [PR #124](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/pull/124), branch `refactor/apo-atlas-canonical-20261114`, stacked on Phase 2 PR #123, first code SHA `d7e26c608be835ccb1aa2268674e5e23e16cf1a7`. Home and Atlas retain their canonical Book 01 species directory; a redundant generic “Explore connections” landing panel is removed, and the existing taxonomic family/source-term explorer is accessible from each verified Book 01 account with an explicit scientific-name deep link.
+- **Scientific protection:** Taxonomic connections remain family-derived from the validated Book 01. Habitat text is labeled source context; reviewed ecological edges still require source/editorial approval. No field database, survey recorder, or reference content is rewritten.
+- **QA at entry:** New source tests committed. [CI workflow 43597648525](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/actions/runs/43597648525) started but was **still running** as of this entry. Phase 3 has **no separately versioned owner APK** and is **not merged**.
+- **Current known-good owner preview:** Phase 2 RC115 code175 passed the full signed CI run 43595876689, with exact APK and checksum documented immediately below. Retain that file as the safe preview until Phase 3 passes its own gates and receives a new version number.
+- **Next gate:** Review Phase 3 source/Android result and native 200% screenshots; fix any route regressions; then evaluate further redundant entry screens and recorder modularization. Public artwork/editorial rights and physical-phone accessibility remain open.
+
+---
+
 ## 2026-11-14 | APO phase 2 overhaul: RC115 signed preview delivered, remaining development isolated
 
 - **Owner direction and repository:** Continue overhauling APO to remove redundant interfaces and integrate offline-first features. Work is isolated in draft [PR #123](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/pull/123) on `refactor/apo-offline-map-consolidation-20261114`, stacked on draft PR #122. The feature-bearing app-code SHA is `8eb7851136f88a8f667efecd30949c6bbfe2d217`. Subsequent HEAD `e1ba1198b60340cdbea5d324d6e47358797842a2` changes only CI/retry scripts. Default `main` retains RC113 application code.

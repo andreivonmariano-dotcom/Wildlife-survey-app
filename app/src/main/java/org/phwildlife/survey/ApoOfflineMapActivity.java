@@ -31,6 +31,7 @@ public final class ApoOfflineMapActivity extends Activity {
     private static final double[] MINDANAO={120.0,128.0,4.5,11.3};
     private final ArrayList<Pin> pins=new ArrayList<>();
     private JSONArray provinceFeatures;
+    private AlertDialog nearbyChooser;
     private MapSurface surface;
     private TextView subtitle;
     private boolean mindanao=false;
@@ -96,6 +97,15 @@ public final class ApoOfflineMapActivity extends Activity {
         return result;
     }
 
+    /** Native chooser remains inspectable without a duplicate selection model. */
+    boolean chooserShowsRecords(int count){
+        return nearbyChooser!=null&&nearbyChooser.isShowing()&&
+            nearbyChooser.getListView()!=null&&
+            nearbyChooser.getListView().getAdapter().getCount()==count;
+    }
+    void closeNearbyChooser(){
+        if(nearbyChooser!=null){nearbyChooser.dismiss();nearbyChooser=null;}
+    }
     private void showPin(Pin pin){
         String message=pin.provenance+"\n"+
             fmt(pin.lat)+"° N, "+fmt(pin.lon)+"° E"+
@@ -335,10 +345,13 @@ public final class ApoOfflineMapActivity extends Activity {
                     Pin p=nearby.get(i);
                     names[i]=("survey".equals(p.kind)?"Survey start: ":"Site: ")+p.name;
                 }
-                new AlertDialog.Builder(ApoOfflineMapActivity.this)
+                closeNearbyChooser();
+                nearbyChooser=new AlertDialog.Builder(ApoOfflineMapActivity.this)
                     .setTitle(nearby.size()+" saved positions near this point")
                     .setItems(names,(dialog,index)->showPin(nearby.get(index)))
-                    .setNegativeButton("Close",null).show();
+                    .setNegativeButton("Close",(dialog,which)->closeNearbyChooser())
+                    .create();
+                nearbyChooser.show();
             }
             performClick();
             return true;

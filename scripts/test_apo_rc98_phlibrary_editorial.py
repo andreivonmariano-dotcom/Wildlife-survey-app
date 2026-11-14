@@ -90,8 +90,8 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertNotIn("ImageView",hub)
         self.assertNotIn("ImageView",directory)
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 174",gradle)
-        self.assertIn("0.27.4-rc114-coherent-shell-preview",gradle)
+        self.assertIn("versionCode 175",gradle)
+        self.assertIn("0.27.4-rc115-offline-map-overhaul-preview",gradle)
 
 if __name__=="__main__":
     unittest.main()

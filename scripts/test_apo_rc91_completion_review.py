@@ -50,7 +50,7 @@ class MethodCompletionReviewContracts(unittest.TestCase):
             self.assertIn(text,main)
         self.assertIn('super(context,NAME,null,29)',src("FieldDb.java"))
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 174",build)
-        self.assertIn("versionName '0.27.4-rc114-coherent-shell-preview'",build)
+        self.assertIn("versionCode 175",build)
+        self.assertIn("versionName '0.27.4-rc115-offline-map-overhaul-preview'",build)
 
 if __name__=="__main__":unittest.main()

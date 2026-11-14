@@ -45,8 +45,8 @@ class GpsRC83(unittest.TestCase):
                   'len(files)==4'):
             self.assertIn(t,wf)
         gradle=read("app/build.gradle")
-        self.assertIn("versionCode 174",gradle)
-        self.assertIn("0.27.4-rc114-coherent-shell-preview",gradle)
+        self.assertIn("versionCode 175",gradle)
+        self.assertIn("0.27.4-rc115-offline-map-overhaul-preview",gradle)
         self.assertIn("org.phwildlife.survey.beta08",gradle)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 if __name__=="__main__":unittest.main()

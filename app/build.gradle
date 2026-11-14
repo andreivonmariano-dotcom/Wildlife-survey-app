@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 174
-        versionName '0.27.4-rc114-coherent-shell-preview'
+        versionCode 175
+        versionName '0.27.4-rc115-offline-map-overhaul-preview'
     }
     signingConfigs {
         debug {

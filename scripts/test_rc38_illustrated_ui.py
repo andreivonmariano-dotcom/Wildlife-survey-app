@@ -19,7 +19,7 @@ class IllustratedUiContract(unittest.TestCase):
         home=welcome.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
         for title in ('"Living Atlas"','"Research Library"',):
             self.assertIn(title,home)
-        self.assertIn('"Offline map is in development"',home)
+        self.assertIn('"Offline Map"',home)
         self.assertIn("ApoHomeUi.header(this,",home)
         self.assertIn("ApoHomeUi.resume(this,",home)
         self.assertNotIn("LikasPortalUi.tile(",home)

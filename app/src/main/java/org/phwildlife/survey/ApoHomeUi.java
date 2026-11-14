@@ -99,11 +99,16 @@ public final class ApoHomeUi {
         index.setGravity(Gravity.TOP);
         index.setPadding(0,dp(a,4),dp(a,3),0);
         index.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        row.addView(index,new LinearLayout.LayoutParams(dp(a,29),-2));
+        // Decorative numbering consumes nearly an entire card column at 200% text.
+        // Screen-reader labels already identify each destination by its full title.
+        if(ApoVisualSystem.largeText(a))index.setVisibility(View.GONE);
+        else row.addView(index,new LinearLayout.LayoutParams(dp(a,29),-2));
 
         LinearLayout copy=new LinearLayout(a);
         copy.setOrientation(LinearLayout.VERTICAL);
-        copy.addView(label(a,title,compact?16:18,ApoVisualSystem.INK,true));
+        TextView heading=label(a,title,compact?16:18,ApoVisualSystem.INK,true);
+        heading.setBreakStrategy(android.text.Layout.BREAK_STRATEGY_HIGH_QUALITY);
+        copy.addView(heading);
         if(description!=null&&!description.trim().isEmpty()){
             TextView sub=label(a,description,13,ApoVisualSystem.MUTED,false);
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);

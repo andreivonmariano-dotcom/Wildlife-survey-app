@@ -47,6 +47,7 @@
         <activity android:name=".LikasDiscoveryActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".LikasHabitatProfileActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".LikasLibraryActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".ApoOfflineMapActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".LikasSettingsActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".WelcomeActivity" android:screenOrientation="portrait" android:exported="false" />
         <activity android:name=".LikasLaunchActivity" android:screenOrientation="portrait" android:exported="true">

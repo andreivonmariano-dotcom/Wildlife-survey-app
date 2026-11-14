@@ -14,7 +14,7 @@ class ApoHomeContracts(unittest.TestCase):
         self.assertIn('"Start Survey"',home)
         self.assertIn('"Living Atlas"',home)
         self.assertIn('"Research Library"',home)
-        self.assertIn('"Offline map is in development"',home)
+        self.assertIn('"Offline Map"',home)
         self.assertIn('this::openAtlas',home)
         self.assertIn('this::openResearch',home)
         self.assertIn('LikasSettingsActivity.class',home)
@@ -29,9 +29,10 @@ class ApoHomeContracts(unittest.TestCase):
         self.assertIn("R.drawable.apo_splash_mark",s)
         self.assertNotIn("likas_natator_frog",s)
 
-    def test_incomplete_map_is_noninteractive_and_not_a_duplicate_hub(self):
+    def test_offline_map_has_one_real_destination_and_no_duplicate_hub(self):
         s=(JAVA/"WelcomeActivity.java").read_text()
-        self.assertIn('ApoHomeUi.preview(this,"Map"',s)
+        self.assertIn('ApoHomeUi.module(this,"02","Offline Map"',s)
+        self.assertIn('ApoOfflineMapActivity.class',s)
         self.assertNotIn("private void phMapsHub()",s)
         self.assertNotIn("private void bioDiscoverHub()",s)
         self.assertIn('PhLibraryBibliographyActivity.class',s)

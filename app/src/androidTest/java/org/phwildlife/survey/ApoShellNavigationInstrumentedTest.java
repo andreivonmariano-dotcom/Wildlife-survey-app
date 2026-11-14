@@ -96,7 +96,7 @@ public final class ApoShellNavigationInstrumentedTest {
                 assertTrue(hasText(a.getWindow().getDecorView(),"Start Survey"));
                 assertTrue(hasText(a.getWindow().getDecorView(),"Living Atlas"));
                 assertTrue(hasText(a.getWindow().getDecorView(),"Research Library"));
-                assertTrue(hasText(a.getWindow().getDecorView(),"Offline map is in development"));
+                assertTrue(hasText(a.getWindow().getDecorView(),"Offline Map"));
                 assertFalse(hasText(a.getWindow().getDecorView(),"BioTools"));
                 for(String name:new String[]{"home","fieldwork","atlas","data"})
                     assertNotNull(nav(a,name));

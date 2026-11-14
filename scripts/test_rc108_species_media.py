@@ -58,8 +58,8 @@ class SpeciesMediaDailyTests(unittest.TestCase):
 
     def test_home_atlas_and_reader_connected_without_data_schema_changes(self):
         build = (ROOT / "app/build.gradle").read_text()
-        self.assertRegex(build, r"versionCode\s+174\b")
-        self.assertIn("0.27.4-rc114-coherent-shell-preview", build)
+        self.assertRegex(build, r"versionCode\s+175\b")
+        self.assertIn("0.27.4-rc115-offline-map-overhaul-preview", build)
         home = (JAVA / "WelcomeActivity.java").read_text()
         atlas = (JAVA / "PhLibraryDirectoryActivity.java").read_text()
         reader = (JAVA / "PhLibraryBook01.java").read_text()

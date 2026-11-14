@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.view.View;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.test.core.app.ActivityScenario;
@@ -19,6 +20,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.action.ViewActions.click;
 
 /** Provenance-preserving, airplane-mode-compatible map acceptance. */
 @RunWith(AndroidJUnit4.class)
@@ -44,6 +50,17 @@ public final class ApoOfflineMapInstrumentedTest {
             for(int i=0;i<group.getChildCount();i++){
                 View v=labelled(group.getChildAt(i),needle);
                 if(v!=null)return v;
+            }
+        }
+        return null;
+    }
+    private static View described(View root,String label){
+        if(label.equals(String.valueOf(root.getContentDescription())))return root;
+        if(root instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)root;
+            for(int i=0;i<group.getChildCount();i++){
+                View child=described(group.getChildAt(i),label);
+                if(child!=null)return child;
             }
         }
         return null;
@@ -122,6 +139,24 @@ public final class ApoOfflineMapInstrumentedTest {
                 assertNotNull(button);button.performClick();
             });
             awaitText(screen,"Mindanao view");
+            screen.onActivity(a->{
+                View map=described(a.getWindow().getDecorView(),
+                    "Offline provincial reference map with saved survey and site coordinates");
+                assertNotNull(map);
+                float x=(float)(16+(125.470-120.0)/8.0*(map.getWidth()-32));
+                float y=(float)(15+(11.3-7.204)/(11.3-4.5)*(map.getHeight()-30));
+                long now=SystemClock.uptimeMillis();
+                MotionEvent down=MotionEvent.obtain(now,now,
+                    MotionEvent.ACTION_DOWN,x,y,0);
+                MotionEvent up=MotionEvent.obtain(now,now+20,
+                    MotionEvent.ACTION_UP,x,y,0);
+                map.dispatchTouchEvent(down);
+                map.dispatchTouchEvent(up);
+                down.recycle();up.recycle();
+            });
+            onView(withText("2 saved positions near this point"))
+                .check(matches(isDisplayed()));
+            onView(withText("Close")).perform(click());
             screen.onActivity(a->{
                 assertTrue(hasText(a.getWindow().getDecorView(),
                     "2 saved coordinates in view"));

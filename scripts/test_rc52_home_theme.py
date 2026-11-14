@@ -10,9 +10,9 @@ class Rc52HomeTheme(unittest.TestCase):
     def test_home_has_one_primary_action_and_two_reference_routes(self):
         home=source("WelcomeActivity.java").split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
         self.assertIn("ApoHomeUi.header(this,",home)
-        self.assertEqual(home.count("ApoHomeUi.module(this,"),2)
+        self.assertEqual(home.count("ApoHomeUi.module(this,"),3)
         self.assertEqual(home.count("ApoHomeUi.tool(this,"),0)
-        self.assertIn('"Offline map is in development"',home)
+        self.assertIn('"Offline Map"',home)
         self.assertIn('ApoHomeUi.primary(this,"Start Survey"',home)
         self.assertIn("ApoHomeUi.resume(this,",home)
         self.assertLess(home.index("ApoHomeUi.resume(this,"),

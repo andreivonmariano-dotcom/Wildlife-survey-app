@@ -272,11 +272,11 @@ public class WelcomeActivity extends Activity {
         main.addView(ApoHomeUi.section(this,"Explore",null));
         main.addView(ApoHomeUi.module(this,"01","Living Atlas",
             "Species, habitats and the Greater Mindanao field guide",this::openAtlas));
-        main.addView(ApoHomeUi.module(this,"02","Research Library",
-            "Search the offline source bibliography",this::openResearch));
-        main.addView(ApoHomeUi.module(this,"03","Offline Map",
+        main.addView(ApoHomeUi.module(this,"02","Offline Map",
             "Philippine provincial outlines and your saved field localities",
             this::openMap));
+        main.addView(ApoHomeUi.module(this,"03","Research Library",
+            "Search the offline source bibliography",this::openResearch));
         View daily=ApoSpeciesOfDay.createCompact(this,scientific->
             startActivity(new Intent(this,TaxonDetailActivity.class)
                 .putExtra("phlibrary_scientific_name",scientific)));

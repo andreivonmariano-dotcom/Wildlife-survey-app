@@ -293,14 +293,22 @@ public final class ApoOfflineMapActivity extends Activity {
             brush.setTextSize(ApoVisualSystem.dp(ApoOfflineMapActivity.this,11));
             brush.setColor(ApoVisualSystem.MUTED);
             canvas.drawText("N ↑",14,22,brush);
-            if(showLocalities)for(Pin p:pins){
+            if(showLocalities)for(int layer=0;layer<2;layer++)for(Pin p:pins){
                 if(!inside(p.lat,p.lon,b))continue;
                 float px=x(p.lon,w),py=y(p.lat,h);
                 boolean survey="survey".equals(p.kind);
+                if((layer==1)!=survey)continue;
                 brush.setColor(survey?ApoVisualSystem.CAMERA:ApoVisualSystem.FOREST);
-                if(survey)canvas.drawCircle(px,py,ApoVisualSystem.dp(ApoOfflineMapActivity.this,4),brush);
-                else{
-                    float d=ApoVisualSystem.dp(ApoOfflineMapActivity.this,5);
+                if(survey){
+                    brush.setStyle(Paint.Style.FILL);
+                    canvas.drawCircle(px,py,
+                        ApoVisualSystem.dp(ApoOfflineMapActivity.this,4),brush);
+                }else{
+                    // Outline around the precise site coordinate remains visible
+                    // when a survey-start fix is plotted at the same pixel.
+                    brush.setStyle(Paint.Style.STROKE);
+                    brush.setStrokeWidth(ApoVisualSystem.dp(ApoOfflineMapActivity.this,2));
+                    float d=ApoVisualSystem.dp(ApoOfflineMapActivity.this,7);
                     Path diamond=new Path();
                     diamond.moveTo(px,py-d);diamond.lineTo(px+d,py);
                     diamond.lineTo(px,py+d);diamond.lineTo(px-d,py);
@@ -311,15 +319,27 @@ public final class ApoOfflineMapActivity extends Activity {
         @Override public boolean onTouchEvent(MotionEvent event){
             if(event.getAction()!=MotionEvent.ACTION_UP)return true;
             if(!showLocalities)return true;
-            Pin closest=null;
-            double best=ApoVisualSystem.dp(ApoOfflineMapActivity.this,22);
+            ArrayList<Pin> nearby=new ArrayList<>();
+            double radius=ApoVisualSystem.dp(ApoOfflineMapActivity.this,22);
             for(Pin p:pins){
                 if(!inside(p.lat,p.lon,bounds()))continue;
                 double distance=Math.hypot(event.getX()-x(p.lon,getWidth()),
                     event.getY()-y(p.lat,getHeight()));
-                if(distance<best){best=distance;closest=p;}
+                if(distance<=radius)nearby.add(p);
             }
-            if(closest!=null)showPin(closest);
+            if(nearby.size()==1)showPin(nearby.get(0));
+            else if(nearby.size()>1){
+                int limit=Math.min(nearby.size(),30);
+                String[] names=new String[limit];
+                for(int i=0;i<limit;i++){
+                    Pin p=nearby.get(i);
+                    names[i]=("survey".equals(p.kind)?"Survey start: ":"Site: ")+p.name;
+                }
+                new AlertDialog.Builder(ApoOfflineMapActivity.this)
+                    .setTitle(nearby.size()+" saved positions near this point")
+                    .setItems(names,(dialog,index)->showPin(nearby.get(index)))
+                    .setNegativeButton("Close",null).show();
+            }
             performClick();
             return true;
         }

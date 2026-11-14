@@ -108,8 +108,7 @@ public final class ApoOfflineMapActivity extends Activity {
         int visible=0;
         double[] extent=mindanao?MINDANAO:PH;
         for(Pin p:pins)if(inside(p.lat,p.lon,extent))visible++;
-        subtitle.setText("2026 Q3 provincial boundaries · "+
-            (mindanao?"Mindanao view":"Philippines view")+
+        subtitle.setText((mindanao?"Mindanao view":"Philippines view")+
             " · "+visible+" saved coordinates in view");
     }
     private static boolean inside(double lat,double lon,double[] b){
@@ -185,11 +184,24 @@ public final class ApoOfflineMapActivity extends Activity {
         }
         root.addView(controls);
         TextView legend=new TextView(this);
-        legend.setText("● Survey-start GPS    ◆ Saved site\n"+
-            "Boundaries: low-resolution administrative provinces. "+
-            "Positions are plotted from recorded coordinates. Schematic WGS84 view.");
-        legend.setTextColor(ApoVisualSystem.MUTED);legend.setTextSize(12);
-        legend.setPadding(0,ApoVisualSystem.dp(this,9),0,0);
+        legend.setText("● Survey GPS   ◆ Saved site\n"+
+            "2026 Q3 provinces · schematic view");
+        legend.setTextColor(ApoVisualSystem.MUTED);
+        legend.setTextSize(ApoVisualSystem.largeText(this)?10:12);
+        legend.setPadding(0,ApoVisualSystem.dp(this,8),0,0);
+        legend.setContentDescription("Map legend and sources. Tap to read details");
+        legend.setFocusable(true);legend.setClickable(true);
+        legend.setMinHeight(ApoVisualSystem.dp(this,48));
+        legend.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle("Map sources and coordinates")
+            .setMessage("Boundaries: Philippine administrative provinces, PSGC Q3 2026, "+
+                "low-resolution simplified polygons. Source: faeldon/philippines-json-maps "+
+                "(MIT).\n\nCoordinates: WGS84 (EPSG:4326). The map is a schematic "+
+                "longitude-latitude view without a distance scale.\n\n"+
+                "● Survey-start GPS: coordinates recorded at survey start.\n"+
+                "◆ Saved site: field project reference coordinates. "+
+                "Original accuracy and uncertainty remain in the saved record.")
+            .setPositiveButton("Close",null).show());
         root.addView(legend);
         setContentView(root);
         updateSubtitle();

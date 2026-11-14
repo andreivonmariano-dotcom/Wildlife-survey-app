@@ -30,6 +30,11 @@ public final class BoundaryLookup {
         }
         provinces=new JSONObject(new String(out.toByteArray(),StandardCharsets.UTF_8)).getJSONArray("features");
     }
+    /** Shared read-only mapping source; callers must not modify the returned JSON. */
+    static synchronized JSONArray mapFeatures(Context context)throws Exception {
+        load(context);
+        return provinces;
+    }
     private static String region(String code,String name){
         if(code.equals("1700000000")){
             if(name.equals("Palawan"))return "PALAWAN";

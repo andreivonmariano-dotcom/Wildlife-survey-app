@@ -23,7 +23,7 @@ class Rc57Home(unittest.TestCase):
     def test_home_prioritizes_field_recording_and_readable_navigation(self):
         source=(ROOT/"app/src/main/java/org/phwildlife/survey/WelcomeActivity.java").read_text()
         home=source.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
-        self.assertIn('"Offline map is in development"',home)
+        self.assertIn('"Offline Map"',home)
         for action in ('"Living Atlas"','"Research Library"',
                        "LikasSettingsActivity.class","ApoHomeUi.resume(this,"):
             self.assertIn(action,home)

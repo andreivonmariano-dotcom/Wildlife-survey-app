@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.Gravity;
@@ -17,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +24,6 @@ import java.util.Set;
 
 /** Optional pre-survey preparation between GPS preflight and the recorder. */
 public final class HabitatsSpeciesActivity extends Activity {
-    private static final int PICK_MAP=943;
     private final Set<String> confirmed=new HashSet<>();
     private List<String> suggested=new ArrayList<>();
     private LinearLayout body,checks;
@@ -102,23 +99,16 @@ public final class HabitatsSpeciesActivity extends Activity {
                 "historical mapped suggestions, not verified current habitats.")
             .setPositiveButton("OK",null).show());
         mapOptions.addView(mapCredit);
-        Button importMap=UiKit.button(this,PaicLandCoverPack.installed(this)?
-            "Replace offline map":"Import offline map","secondary");
-        importMap.setOnClickListener(v->pickMap());
-        if(BundledPrivateReferences.hasBundledMap(this)&&
-                PaicLandCoverPack.installed(this))
-            importMap.setVisibility(View.GONE);
-        mapOptions.addView(importMap,new LinearLayout.LayoutParams(-1,-2));
         mapOptions.setVisibility(View.GONE);
-        Button mapToggle=UiKit.button(this,"Map source & files","quiet");
-        mapToggle.setContentDescription("Show land-cover source, license and file management");
+        Button mapToggle=UiKit.button(this,"Land-cover source","quiet");
+        mapToggle.setContentDescription("Show land-cover source and license");
         mapToggle.setOnClickListener(v->{
             boolean open=mapOptions.getVisibility()!=View.VISIBLE;
             mapOptions.setVisibility(open?View.VISIBLE:View.GONE);
-            mapToggle.setText(open?"Hide map options":"Map source & files");
+            mapToggle.setText(open?"Hide land-cover source":"Land-cover source");
             mapToggle.setContentDescription(open?
-                "Hide land-cover source and file management":
-                "Show land-cover source, license and file management");
+                "Hide land-cover source":
+                "Show land-cover source and license");
         });
         body.addView(FieldVisuals.section(this,"Species checklist",null));
         checklistMode=new RadioGroup(this);
@@ -197,31 +187,6 @@ public final class HabitatsSpeciesActivity extends Activity {
             String.format(Locale.US,"Start: %.6f, %.6f%s",
                 preflightLat,preflightLon,accuracyText):
             "Start coordinates unavailable")+"\\n"+height);
-    }
-    private void pickMap(){
-        Intent select=new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        select.setType("*/*");
-        select.addCategory(Intent.CATEGORY_OPENABLE);
-        select.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{
-            "text/plain","application/octet-stream"});
-        startActivityForResult(select,PICK_MAP);
-    }
-    @Override protected void onActivityResult(int request,int result,Intent data){
-        super.onActivityResult(request,result,data);
-        if(request!=PICK_MAP||result!=RESULT_OK||data==null||data.getData()==null)return;
-        Uri file=data.getData();
-        mapSummary.setText("Validating offline land-cover file…");
-        new Thread(()->{
-            try(InputStream in=getContentResolver().openInputStream(file)){
-                if(in==null)throw new IllegalArgumentException("File unavailable");
-                PaicLandCoverPack.install(getApplicationContext(),in);
-                runOnUiThread(()->{if(!isFinishing()){updateMap();renderHabitats();}});
-            }catch(Exception error){
-                runOnUiThread(()->{if(!isFinishing())
-                    mapSummary.setText("Map not installed: "+error.getMessage()+
-                        ". Choose habitats manually.");});
-            }
-        },"LIKAS-Offline-Habitat-Pack").start();
     }
     private void updateMap(){
         suggested=new ArrayList<>();

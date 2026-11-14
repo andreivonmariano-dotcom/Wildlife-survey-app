@@ -227,6 +227,8 @@ public final class LikasLibraryActivity extends Activity {
         tile(body,"References",()->startActivity(
             new Intent(this,PhLibraryBibliographyActivity.class)));
         tile(body,"Saved species",()->openAtlas("phlibrary_saved_only","true"));
+        tile(body,"Offline Map",()->
+            startActivity(new Intent(this,ApoOfflineMapActivity.class)));
         // Native photos ship inside the signed APK; no photo import is needed.
 
     }

@@ -47,8 +47,8 @@ class DetectionFirstContracts(unittest.TestCase):
         self.assertIn('UiKit.button(this,"End Survey","outline-danger")',main)
         self.assertIn('if(hasUnsavedObservation())',main)
         self.assertIn('markedAt>0||count!=1',main)
-        self.assertIn("versionCode 175",(ROOT/"app/build.gradle").read_text())
-        self.assertIn('0.27.4-rc115-offline-map-overhaul-preview',(ROOT/"app/build.gradle").read_text())
+        self.assertIn("versionCode 176",(ROOT/"app/build.gradle").read_text())
+        self.assertIn('0.27.4-rc116-localities-research-preview',(ROOT/"app/build.gradle").read_text())
 
 if __name__=="__main__":
     unittest.main()

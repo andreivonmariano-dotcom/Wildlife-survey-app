@@ -16,7 +16,7 @@ class PortalNavigation(unittest.TestCase):
         self.assertIn('new Intent(this,WelcomeActivity.class)',splash)
         home=welcome.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
         self.assertIn('ApoHomeUi.header(this,',home)
-        for label in ('"Start Survey"','"Living Atlas"','"Research Library"','"Map"'):
+        for label in ('"Start Survey"','"Living Atlas"','"Research Library"','"Offline Map"'):
             self.assertIn(label,home)
         self.assertIn("LikasSettingsActivity.class",home)
         self.assertIn("this::fieldworkHub",home)

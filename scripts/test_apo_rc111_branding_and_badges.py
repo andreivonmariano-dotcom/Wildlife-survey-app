@@ -43,7 +43,7 @@ class ApoRc111BrandingAndReadability(unittest.TestCase):
     def test_research_source_identifiers_and_survey_engine_preserved(self):
         gradle=(BASE/"app/build.gradle").read_text()
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
-        self.assertIn("versionCode 175",gradle)
+        self.assertIn("versionCode 176",gradle)
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
         recorder=read("MainActivity.java")
         for action in ('"Save Observation"','"Review Records"','"End Survey"'):

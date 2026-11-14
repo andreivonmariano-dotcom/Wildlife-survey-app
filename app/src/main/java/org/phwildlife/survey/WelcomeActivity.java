@@ -178,6 +178,9 @@ public class WelcomeActivity extends Activity {
     private void openResearch(){
         startActivity(new Intent(this,PhLibraryBibliographyActivity.class));
     }
+    private void openMap(){
+        startActivity(new Intent(this,ApoOfflineMapActivity.class));
+    }
     private void scrollTop(){
         if(shellScroll!=null)shellScroll.post(()->shellScroll.scrollTo(0,0));
     }
@@ -271,8 +274,9 @@ public class WelcomeActivity extends Activity {
             "Species, habitats and the Greater Mindanao field guide",this::openAtlas));
         main.addView(ApoHomeUi.module(this,"02","Research Library",
             "Search the offline source bibliography",this::openResearch));
-        main.addView(ApoHomeUi.preview(this,"Map",
-            "Offline map is in development"));
+        main.addView(ApoHomeUi.module(this,"03","Offline Map",
+            "Philippine provincial outlines and your saved field localities",
+            this::openMap));
         View daily=ApoSpeciesOfDay.createCompact(this,scientific->
             startActivity(new Intent(this,TaxonDetailActivity.class)
                 .putExtra("phlibrary_scientific_name",scientific)));

@@ -83,7 +83,7 @@ public final class LikasLibraryActivity extends Activity {
         bar.addView(search,largeText?
             new LinearLayout.LayoutParams(-1,dp(58)):
             new LinearLayout.LayoutParams(0,dp(54),1));
-        TextView go=PhLibrary2Ui.action(this,"Search",()->
+        TextView go=PhLibrary2Ui.action(this,"Browse species",()->
             openAtlas("phlibrary_query",search.getText().toString().trim()),true);
         if(largeText){go.setTextSize(12);go.setPadding(dp(9),dp(5),dp(9),dp(5));}
         LinearLayout.LayoutParams gp=new LinearLayout.LayoutParams(
@@ -100,10 +100,9 @@ public final class LikasLibraryActivity extends Activity {
 
         View tileGap=new View(this);
         body.addView(tileGap,new LinearLayout.LayoutParams(-1,dp(16)));
-        tile(body,"Species Atlas",()->openAtlas(null,null));
         tile(body,"Habitat Atlas",()->startActivity(
             new Intent(this,HabitatSpeciesEvidenceActivity.class)));
-        tile(body,"References",()->startActivity(
+        tile(body,"Research Library",()->startActivity(
             new Intent(this,PhLibraryBibliographyActivity.class)));
         tile(body,"Saved species",()->openAtlas("phlibrary_saved_only","true"));
         tile(body,"Offline Map",()->

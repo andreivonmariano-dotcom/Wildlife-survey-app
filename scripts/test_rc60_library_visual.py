@@ -9,7 +9,7 @@ class Rc60VisualDecisions(unittest.TestCase):
         library=(JAVA/"LikasLibraryActivity.java").read_text()
         self.assertIn("R.drawable.likas_library_conservation_display",portal)
         self.assertIn("R.drawable.likas_library_habitat_links_display",portal)
-        self.assertIn('"Species Atlas"',library)
+        self.assertIn('"Browse species"',library)
         self.assertIn('"Habitat Atlas"',library)
         self.assertNotIn("class PixelShield",portal)
         self.assertIn("likas_approved_species_library",portal)

@@ -18,7 +18,7 @@ class Rc40ScreenAudit(unittest.TestCase):
         component=source("ApoHomeUi.java")
         main=home.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
         self.assertIn("new LinearLayout.LayoutParams(-1,-2)",home)
-        self.assertIn("row.setMinimumHeight(dp(a,compact?64:78))",component)
+        self.assertIn("row.setMinimumHeight(dp(a,compact?58:66))",component)
         self.assertIn("setFocusable(true)",component)
         self.assertIn("R.drawable.apo_splash_mark",component)
         for title in ('"Living Atlas"','"Research Library"',):
@@ -37,7 +37,7 @@ class Rc40ScreenAudit(unittest.TestCase):
         data=home.split("private void myDataHub(){",1)[1].split("private void fieldworkHub(){",1)[0]
         self.assertEqual(data.count("HistoryActivity.class"),1)
         self.assertIn('private void fieldRecordsHub(){',field)
-        self.assertEqual(field.count('FieldVisuals.section(this,"New survey"'),1)
+        self.assertEqual(field.count('FieldVisuals.section(this,"New survey"'),0)
         self.assertNotIn('"Go to the field."',field)
         self.assertNotIn('step("NEW"',field)
         self.assertIn('private void analysisHub(){',field)

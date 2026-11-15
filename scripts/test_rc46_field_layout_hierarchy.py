@@ -21,7 +21,7 @@ class Rc46FieldLayoutHierarchy(unittest.TestCase):
         self.assertIn("UiMotion.enterHome(this,main)",home)
         self.assertNotIn("LikasPortalUi.hero(",home)
         self.assertNotIn("LikasPortalUi.tile(",home)
-        self.assertIn("row.setMinimumHeight(dp(a,compact?64:78))",component)
+        self.assertIn("row.setMinimumHeight(dp(a,compact?58:66))",component)
         self.assertIn('"Offline Map"',home)
         for route in ('"Living Atlas"','"Research Library"'):
             self.assertIn(route,home)

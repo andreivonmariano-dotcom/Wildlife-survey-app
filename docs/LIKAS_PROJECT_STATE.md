@@ -1,5 +1,14 @@
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-15 | RC117 direct-download recovery and bounded UI copy review
+
+- **Distribution issue reported:** Owner could not download the original 142,455,572-byte APK via ChatGPT link. A second full APK and ZIP existed and matched the verified `9ff4a1f6...` SHA-256, but a successful phone download was not confirmed. Do not assert that this failure was caused by size or that any link works on the owner's device.
+- **Alternate direct-chat delivery:** The identical, unchanged code177 signed APK was divided into three byte-exact 48,000,000 / 48,000,000 / 46,455,572-byte pieces named `APO_RC117.apk.001/.002/.003`. Local concatenation verified original APK SHA-256 `9ff4a1f6c35db4e454eee26d3e5789af04587e0688bf9ce7e82e07c428e2e69c`. A 2 KB standalone HTML local APK joiner and a tiny download-check text file are available through direct conversation artifacts. No APK code, compression, source assets, Android ID or signing was modified. Android client-side download/reassembly remains unverified.
+- **Targeted app-copy sampling:** Reviewed 20 selected Android Java screens at tested code HEAD `92dbcad...` for explicit `preview`, `provisional`, `coming soon`, defensive wording and unavailable/error-state text. A few follow-up candidates remain: recorder timeline error fallback says `Saved timeline` while normal state says `Observations`; Dashboard shows denial-led `not verified taxa` and `not a density estimate`; some count-error messages add a redundant navigation explanation. GPS and bibliography uncertainty and safety notices require scientifically precise labels. This was a **bounded sample, not the complete APO-12 line-by-line editorial clearance**. No app code was changed.
+- **Next:** Verify a small ChatGPT attachment downloads on the owner's device; then confirm three-part delivery or alternate direct-chat method before preparing another 142 MB app build. The previously validated RC117 artifact remains the owner-preview baseline. Continue full APO-09–APO-12 copy, licenses, PAIC mapping, and physical phone acceptance separately.
+
+---
+
 ## 2026-11-15 | RC117 clean UI and unified navigation motion | signed owner preview verified
 
 - **Exact tested development source:** Draft [PR #126](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/pull/126) code HEAD `92dbcad6b9f11402e87b5eba7f012af8495170cc` on `refactor/apo-rc117-clean-ui-motion-20261115`, stacked above unmerged PRs #122–#125. Main still contains RC113 code173.

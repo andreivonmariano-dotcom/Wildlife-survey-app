@@ -10,7 +10,7 @@ class ApoBioToolsDestinations(unittest.TestCase):
     def test_nested_tools_use_shared_touch_targets_and_readable_text(self):
         ui=src("ApoHomeUi.java")
         self.assertIn("public static View tool(",ui)
-        self.assertIn("row.setMinimumHeight(dp(a,compact?64:78))",ui)
+        self.assertIn("row.setMinimumHeight(dp(a,compact?58:66))",ui)
         self.assertIn("setContentDescription",ui)
         self.assertIn("new LinearLayout.LayoutParams(0,-2,1f)",ui)
         self.assertIn("R.drawable.apo_splash_mark",ui)

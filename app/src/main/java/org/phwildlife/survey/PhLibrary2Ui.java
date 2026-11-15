@@ -18,15 +18,15 @@ import android.widget.TextView;
 /** Editorial components for the offline Greater Mindanao atlas.
  * Forest drawing is decorative, not a species depiction or a habitat record. */
 public final class PhLibrary2Ui {
-    public static final int PAPER=Color.rgb(245,242,233);
-    public static final int IVORY=Color.rgb(254,252,245);
-    public static final int FOREST=Color.rgb(27,67,51);
-    public static final int DEEP=Color.rgb(14,45,39);
-    public static final int INK=Color.rgb(31,52,41);
-    public static final int MUTED=Color.rgb(78,99,84);
-    public static final int MOSS=Color.rgb(218,231,210);
+    public static final int PAPER=ApoVisualSystem.READING_BACKGROUND;
+    public static final int IVORY=ApoVisualSystem.READING_SURFACE;
+    public static final int FOREST=ApoVisualSystem.FOREST;
+    public static final int DEEP=ApoVisualSystem.FOREST_DEEP;
+    public static final int INK=ApoVisualSystem.INK;
+    public static final int MUTED=ApoVisualSystem.MUTED;
+    public static final int MOSS=ApoVisualSystem.LEAF_MID;
     public static final int OCHRE=Color.rgb(195,151,84);
-    public static final int LINE=Color.rgb(208,216,202);
+    public static final int LINE=ApoVisualSystem.READING_BORDER;
     private PhLibrary2Ui() {}
     public static int dp(Activity a,float n){return Math.round(n*a.getResources().getDisplayMetrics().density);}
     public static GradientDrawable bg(Activity a,int fill,int border,int radius){

@@ -7,15 +7,15 @@ JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
 def src(name):return (JAVA/name).read_text(encoding="utf-8")
 
 class ApoBioToolsDestinations(unittest.TestCase):
-    def test_nested_tools_are_text_only_and_reflow(self):
+    def test_nested_tools_use_shared_touch_targets_and_readable_text(self):
         ui=src("ApoHomeUi.java")
         self.assertIn("public static View tool(",ui)
-        self.assertIn("line.setMinimumHeight(dp(a,72))",ui)
+        self.assertIn("row.setMinimumHeight(dp(a,compact?64:78))",ui)
         self.assertIn("setContentDescription",ui)
         self.assertIn("new LinearLayout.LayoutParams(0,-2,1f)",ui)
-        self.assertNotIn("R.drawable.",ui)
+        self.assertIn("R.drawable.apo_splash_mark",ui)
         home=src("WelcomeActivity.java")
-        for name in ("fieldRecordsHub","analysisHub","fieldUtilitiesHub"):
+        for name in ("myDataHub","analysisHub","fieldUtilitiesHub"):
             section=home.split("private void "+name+"(){",1)[1].split("UiMotion.enter(this,main)",1)[0]
             self.assertIn("ApoHomeUi.tool(",section)
             self.assertNotIn("LikasPortalUi.action(",section)

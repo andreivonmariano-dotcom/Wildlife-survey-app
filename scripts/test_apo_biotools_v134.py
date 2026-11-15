@@ -28,7 +28,7 @@ class ApoBioToolsV134(unittest.TestCase):
     def test_surveys_still_handle_active_and_new_sessions(self):
         s=method("fieldworkHub","fieldRecordsHub")
         for required in ('String unfinished=activeSurvey()','if(unfinished!=null)',
-                '"Current survey"','"New survey"','"Birds"','"Herpetofauna"',
+                '"Current survey"','surveyTile(main','"Birds"','"Herpetofauna"',
                 '"Mammals"','"Resume Survey"','putExtra("resume",true)'):
             self.assertIn(required,s)
         self.assertIn("SurveyMethods.lookup",s)

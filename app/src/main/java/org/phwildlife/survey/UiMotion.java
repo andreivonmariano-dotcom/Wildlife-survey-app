@@ -30,17 +30,9 @@ public final class UiMotion {
             .setInterpolator(new DecelerateInterpolator()).start();
     }
 
-    /** Slightly longer Home entrance, disabled by the same motion preference. */
+    /** The workspace uses one consistent 155 ms entrance. */
     public static void enterHome(Activity a,View root){
-        if(root==null)return;
-        root.animate().cancel();
-        if(!animate(a)){
-            root.setAlpha(1f);root.setTranslationY(0f);return;
-        }
-        root.setAlpha(0f);
-        root.setTranslationY(dp(a,6));
-        root.animate().alpha(1f).translationY(0f).setDuration(220)
-            .setInterpolator(new DecelerateInterpolator()).start();
+        enter(a,root);
     }
 
     /** Reveal only secondary content. Do not animate or delay main field actions. */
@@ -50,7 +42,7 @@ public final class UiMotion {
         content.setVisibility(View.VISIBLE);
         if(!animate(a)){content.setAlpha(1f);content.setTranslationY(0f);return;}
         content.setAlpha(0f);content.setTranslationY(dp(a,6));
-        content.animate().alpha(1f).translationY(0f).setDuration(160)
+        content.animate().alpha(1f).translationY(0f).setDuration(155)
             .setInterpolator(new DecelerateInterpolator()).start();
     }
 

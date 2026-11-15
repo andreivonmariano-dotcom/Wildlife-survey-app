@@ -59,7 +59,7 @@ class ApoRebuildShell(unittest.TestCase):
     def test_large_text_cards_and_atlas_navigation_use_one_type_system(self):
         cards=source("ApoHomeUi.java")
         atlas=source("PhLibrary2Ui.java")
-        self.assertIn('if(ApoVisualSystem.largeText(a))index.setVisibility(View.GONE)',cards)
+        self.assertNotIn('row.addView(index',cards)
         self.assertIn('heading.setBreakStrategy(',cards)
         self.assertIn('TextView head=text(a,title,18,INK,false,true)',atlas)
         self.assertIn('if(serif)t.setTypeface(',atlas)  # long-form reading remains available

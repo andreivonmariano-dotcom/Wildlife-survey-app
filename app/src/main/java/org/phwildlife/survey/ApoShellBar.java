@@ -64,7 +64,7 @@ public final class ApoShellBar {
         // Short visible labels preserve full-word legibility at 200% system text.
         String[] labels=ApoVisualSystem.largeText(activity)?
             new String[]{"Home","Field","Atlas","Data"}:
-            new String[]{"Home","Survey","Atlas","My Data"};
+            new String[]{"Home","Fieldwork","Atlas","My Data"};
         String[] names={"Home","Fieldwork","Living Atlas","My Data"};
         String[] tags={"home","fieldwork","atlas","data"};
         boolean[] active={"home".equals(screen),"fieldwork".equals(screen),

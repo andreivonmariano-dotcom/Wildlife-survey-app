@@ -187,27 +187,14 @@ public class WelcomeActivity extends Activity {
     private void heading(String title,String subtitle) {
         main.addView(FieldVisuals.section(this,title,subtitle));
     }
-    /** Quiet step heading, consistent with the LIKAS page and section hierarchy. */
+    /** Setup headings use names without repeating step numbers. */
     private View step(String number,String title){
-        LinearLayout row=new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(dp(LikasDesignSystem.SPACE_XS),dp(LikasDesignSystem.SPACE_LG),
-            dp(LikasDesignSystem.SPACE_XS),dp(LikasDesignSystem.SPACE_SM));
-        TextView index=text(number,12,true);
-        index.setTextColor(UiKit.MUTED);
-        index.setGravity(Gravity.CENTER_VERTICAL);
-        index.setMinWidth(dp(32));
-        index.setMinHeight(dp(40));
-        index.setPadding(dp(3),dp(5),dp(3),dp(5));
-        index.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        row.addView(index,new LinearLayout.LayoutParams(dp(34),-2));
         TextView label=text(title,LikasDesignSystem.TEXT_SECTION,true);
         label.setTextColor(UiKit.INK);
-        label.setPadding(dp(LikasDesignSystem.SPACE_MD),0,0,0);
-        label.setContentDescription("Step "+number+": "+title);
-        row.addView(label,new LinearLayout.LayoutParams(0,-2,1));
-        return row;
+        label.setPadding(dp(LikasDesignSystem.SPACE_XS),dp(LikasDesignSystem.SPACE_LG),
+            dp(LikasDesignSystem.SPACE_XS),dp(LikasDesignSystem.SPACE_SM));
+        label.setContentDescription(title);
+        return label;
     }
     private TextView setupLabel(String value){
         TextView label=text(value,LikasDesignSystem.TEXT_CONTROL,true);
@@ -264,19 +251,14 @@ public class WelcomeActivity extends Activity {
             main.addView(resume,lp);
         }else{
             View start=ApoHomeUi.primary(this,"Start Survey",
-                "Choose a method and begin field recording",this::fieldworkHub);
+                null,this::fieldworkHub);
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
             lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
             main.addView(start,lp);
         }
-        main.addView(ApoHomeUi.section(this,"Explore",null));
-        main.addView(ApoHomeUi.module(this,"01","Living Atlas",
-            "Species, habitats and the Greater Mindanao field guide",this::openAtlas));
-        main.addView(ApoHomeUi.module(this,"02","Offline Map",
-            "Philippine provincial outlines and your saved field localities",
-            this::openMap));
-        main.addView(ApoHomeUi.module(this,"03","Research Library",
-            "Search the offline source bibliography",this::openResearch));
+        main.addView(ApoHomeUi.module(this,"01","Living Atlas",null,this::openAtlas));
+        main.addView(ApoHomeUi.module(this,"02","Offline Map",null,this::openMap));
+        main.addView(ApoHomeUi.module(this,"03","Research Library",null,this::openResearch));
         View daily=ApoSpeciesOfDay.createCompact(this,scientific->
             startActivity(new Intent(this,TaxonDetailActivity.class)
                 .putExtra("phlibrary_scientific_name",scientific)));
@@ -298,21 +280,21 @@ public class WelcomeActivity extends Activity {
         main.addView(ApoHomeUi.section(this,"My Data",null));
         main.addView(ApoHomeUi.note(this,savedRecordCounts()));
         main.addView(ApoHomeUi.tool(this,"01","Survey history",
-            "Review observations, effort and survey outcomes",()->
+            null,()->
                 startActivity(new Intent(this,HistoryActivity.class))));
         main.addView(ApoHomeUi.tool(this,"02","Projects & sites",
-            "Manage local study areas, routes and stations",()->
+            null,()->
                 startActivity(new Intent(this,SitesActivity.class))));
         main.addView(ApoHomeUi.tool(this,"03","Site habitat records",
-            "Inspect habitat details recorded in the field",()->
+            null,()->
                 startActivity(new Intent(this,HabitatRecordsActivity.class)
                     .putExtra("initial_tab","records"))));
         main.addView(ApoHomeUi.tool(this,"04","Analysis & exports",
-            "Inspect survey results and research data",this::analysisHub));
+            null,this::analysisHub));
         main.addView(ApoHomeUi.tool(this,"05","Field utilities",
-            "Recordings, trap records and study templates",this::fieldUtilitiesHub));
+            null,this::fieldUtilitiesHub));
         main.addView(ApoHomeUi.tool(this,"06","Backup & restore",
-            "Protect and transfer local field records",()->
+            null,()->
                 startActivity(new Intent(this,FieldBackupActivity.class))));
         UiMotion.enter(this,main);
     }
@@ -350,13 +332,10 @@ public class WelcomeActivity extends Activity {
             activeCard.addView(resume,resumeLp);
             main.addView(activeCard);
         }else{
-            main.addView(FieldVisuals.section(this,"New survey",null));
             surveyTile(main,"Birds","Counts · Transects",()->setup("Birds"));
             surveyTile(main,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna"));
             surveyTile(main,"Mammals","Signs · Stations",()->setup("Mammals"));
         }
-        main.addView(ApoHomeUi.note(this,
-            "End Survey is available while recording or paused."));
         UiMotion.enter(this,main);
     }
 
@@ -368,17 +347,14 @@ public class WelcomeActivity extends Activity {
         showShellPage("analysis");
         main.addView(UiKit.navigationHeader(this,"Analysis & Exports","My Data",
             this::myDataHub));
-        main.addView(ApoHomeUi.section(this,"Analysis",null));
-        main.addView(ApoHomeUi.note(this,
-            "Survey summaries, sampling effort and exportable field records."));
         main.addView(ApoHomeUi.tool(this,"01","Survey analysis",
-            "Counts, sampling units and survey outcomes",()->
+            null,()->
                 startActivity(new Intent(this,DashboardActivity.class))));
         main.addView(ApoHomeUi.tool(this,"02","Research ZIP export",
-            "Export recorded effort, observations and evidence",()->
+            null,()->
                 startActivity(new Intent(this,ResearchExportActivity.class))));
         main.addView(ApoHomeUi.tool(this,"03","Data quality review",
-            "Review records and scientific integrity flags",()->
+            null,()->
                 startActivity(new Intent(this,AuditActivity.class))));
         UiMotion.enter(this,main);
     }
@@ -388,20 +364,17 @@ public class WelcomeActivity extends Activity {
         showShellPage("utilities");
         main.addView(UiKit.navigationHeader(this,"Field Utilities","My Data",
             this::myDataHub));
-        main.addView(ApoHomeUi.section(this,"Utilities",null));
-        main.addView(FieldVisuals.section(this,"RECORDINGS & DEVICES",null));
         main.addView(ApoHomeUi.tool(this,"01","Sound recordings",
-            "Review saved audio; recording requires an active survey",()->
+            null,()->
                 startActivity(new Intent(this,CallLibraryActivity.class))));
         main.addView(ApoHomeUi.tool(this,"02","Trap & camera records",
-            "Deployments and checks tied to supported survey methods",()->
+            null,()->
                 startActivity(new Intent(this,TrapProtocolActivity.class))));
-        main.addView(FieldVisuals.section(this,"METHODS & PLANNING",null));
         main.addView(ApoHomeUi.tool(this,"03","Field protocols",
-            "Coverboard, area search, spotlight, and track/sign evidence",()->
+            null,()->
                 startActivity(new Intent(this,FieldProtocolsActivity.class))));
         main.addView(ApoHomeUi.tool(this,"04","Study templates",
-            "Set effort rules for future surveys without altering past data",()->
+            null,()->
                 startActivity(new Intent(this,StudyProtocolsActivity.class))));
         UiMotion.enter(this,main);
     }

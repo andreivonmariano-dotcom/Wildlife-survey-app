@@ -17,7 +17,7 @@ class ApoStartupSourceContract(unittest.TestCase):
     def test_manifest_brand_and_identity(self):
         manifest = (ROOT / "app/src/main/AndroidManifest.xml").read_text()
         gradle = (ROOT / "app/build.gradle").read_text()
-        self.assertIn('android:label="Apo"', manifest)
+        self.assertIn('android:label="APO"', manifest)
         self.assertIn('android:icon="@mipmap/apo_launcher"', manifest)
         self.assertIn('android:roundIcon="@mipmap/apo_launcher_round"', manifest)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'", gradle)

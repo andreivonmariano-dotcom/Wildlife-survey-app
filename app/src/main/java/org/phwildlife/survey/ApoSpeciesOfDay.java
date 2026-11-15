@@ -77,7 +77,6 @@ public final class ApoSpeciesOfDay {
         JSONObject row=select(a,LocalDate.now(PH_TIME));
         if(row==null)return null;
         String latin=row.optString("s"),common=row.optString("c",latin);
-        String fact=firstSourceSentence(row.optString("p"));
         LinearLayout card=new LinearLayout(a);
         card.setOrientation(LinearLayout.HORIZONTAL);
         card.setGravity(Gravity.CENTER_VERTICAL);
@@ -91,16 +90,13 @@ public final class ApoSpeciesOfDay {
         card.addView(cover,new LinearLayout.LayoutParams(dp(a,88),dp(a,88)));
         LinearLayout copy=new LinearLayout(a);copy.setOrientation(LinearLayout.VERTICAL);
         copy.setPadding(dp(a,12),0,0,0);
-        copy.addView(smallLabel(a,"TODAY IN PHLIBRARY",PhLibrary2Ui.MUTED));
+        copy.addView(smallLabel(a,"TODAY IN ATLAS",PhLibrary2Ui.MUTED));
         TextView name=PhLibrary2Ui.text(a,common,17,PhLibrary2Ui.INK,true,true);
         name.setMaxLines(2);
         copy.addView(name);
         TextView latinText=PhLibrary2Ui.text(a,latin,13,PhLibrary2Ui.MUTED,true,false);
         latinText.setMaxLines(1);latinText.setEllipsize(android.text.TextUtils.TruncateAt.END);
         copy.addView(latinText);
-        TextView preview=PhLibrary2Ui.text(a,fact,12,PhLibrary2Ui.MUTED,false,false);
-        preview.setMaxLines(2);preview.setEllipsize(android.text.TextUtils.TruncateAt.END);
-        copy.addView(preview);
         card.addView(copy,new LinearLayout.LayoutParams(0,-2,1));
         card.setFocusable(true);card.setClickable(true);
         // Preserve the legacy accessibility and test identity while keeping

@@ -88,7 +88,7 @@ public final class ApoResearchBookmarksInstrumentedTest {
                 View toggle=matching(root,"Saved only (1)");
                 assertNotNull(toggle);
                 toggle.performClick();
-                assertTrue(includes(root,"1 saved references"));
+                assertTrue(includes(root,"1 saved reference"));
                 assertTrue(includes(root,"All references"));
             });
             // ListView reconciles recycled rows on the next layout pass.

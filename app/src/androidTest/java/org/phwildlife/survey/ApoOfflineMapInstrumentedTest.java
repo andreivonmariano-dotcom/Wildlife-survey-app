@@ -158,9 +158,15 @@ public final class ApoOfflineMapInstrumentedTest {
                 assertTrue(hasText(a.getWindow().getDecorView(),
                     "2 saved coordinates in view"));
                 snapshot(a,"offline-map-mindanao");
-                View toggle=labelled(a.getWindow().getDecorView(),"Hide locations");
-                assertNotNull(toggle);toggle.performClick();
-                assertNotNull(labelled(a.getWindow().getDecorView(),"Show locations"));
+                View toggle=a.getWindow().getDecorView().findViewWithTag(
+                    "apo_map_localities_toggle");
+                assertNotNull("Missing map-locality control",toggle);
+                assertTrue(toggle instanceof TextView);
+                assertEquals("Map must initially show both locality sources",
+                    "Hide locations",((TextView)toggle).getText().toString());
+                toggle.performClick();
+                assertEquals("Map-locality visibility should toggle",
+                    "Show locations",((TextView)toggle).getText().toString());
                 View all=labelled(a.getWindow().getDecorView(),"Philippines");
                 assertNotNull(all);all.performClick();
                 assertTrue(hasText(a.getWindow().getDecorView(),"Philippines view"));

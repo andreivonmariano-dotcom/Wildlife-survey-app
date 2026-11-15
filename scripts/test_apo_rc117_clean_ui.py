@@ -21,6 +21,10 @@ class ApoCleanUi(unittest.TestCase):
         atlas=source("LikasLibraryActivity.java")
         self.assertEqual(atlas.count('tile(body,"Species Atlas"'),0)
         self.assertIn('"Browse species"',atlas)
+        self.assertIn('"TODAY IN ATLAS"',source("ApoSpeciesOfDay.java"))
+        bibliography=source("PhLibraryBibliographyActivity.java")
+        self.assertIn('PhLibrary2Ui.text(this,"Research Library"',bibliography)
+        self.assertIn('matches.size()==1?" saved reference":" saved references"',bibliography)
         self.assertIn('tile(body,"Research Library"',atlas)
 
     def test_recorder_keeps_lifecycle_without_duplicate_captions(self):

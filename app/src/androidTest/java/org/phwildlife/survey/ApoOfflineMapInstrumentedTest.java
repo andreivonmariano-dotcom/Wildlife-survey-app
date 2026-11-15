@@ -158,9 +158,9 @@ public final class ApoOfflineMapInstrumentedTest {
                 assertTrue(hasText(a.getWindow().getDecorView(),
                     "2 saved coordinates in view"));
                 snapshot(a,"offline-map-mindanao");
-                View toggle=labelled(a.getWindow().getDecorView(),"Hide sites");
+                View toggle=labelled(a.getWindow().getDecorView(),"Hide locations");
                 assertNotNull(toggle);toggle.performClick();
-                assertNotNull(labelled(a.getWindow().getDecorView(),"Show sites"));
+                assertNotNull(labelled(a.getWindow().getDecorView(),"Show locations"));
                 View all=labelled(a.getWindow().getDecorView(),"Philippines");
                 assertNotNull(all);all.performClick();
                 assertTrue(hasText(a.getWindow().getDecorView(),"Philippines view"));

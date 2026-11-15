@@ -82,7 +82,8 @@ public final class PhLibraryBibliographyActivity extends Activity {
                         " · Not verified");
         }else{
             count.setText(q.isEmpty()?matches.size()+
-                (savedOnly?" saved references":" references"):
+                (savedOnly?(matches.size()==1?" saved reference":" saved references"):
+                    (matches.size()==1?" reference":" references")):
                 matches.isEmpty()?"No matching references":
                     matches.size()+(matches.size()==1?" reference":" references"));
         }
@@ -114,7 +115,7 @@ public final class PhLibraryBibliographyActivity extends Activity {
         TextView back=PhLibrary2Ui.action(this,"Back",this::finish,false);
         if(large){back.setTextSize(12);back.setPadding(dp(6),dp(5),dp(6),dp(5));}
         nav.addView(back,new LinearLayout.LayoutParams(dp(large?98:75),dp(48)));
-        TextView navTitle=PhLibrary2Ui.text(this,"References",
+        TextView navTitle=PhLibrary2Ui.text(this,"Research Library",
             large?12:14,PhLibrary2Ui.FOREST,false,true);
         navTitle.setGravity(Gravity.CENTER);
         nav.addView(navTitle,new LinearLayout.LayoutParams(0,dp(48),1));

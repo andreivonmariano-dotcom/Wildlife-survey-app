@@ -28,7 +28,7 @@ class PortalNavigation(unittest.TestCase):
         c=read("WelcomeActivity.java")
         tools=c.split("private void fieldworkHub(){",1)[1].split("/** Short status caption",1)[0]
         for label in ('"Birds"','"Herpetofauna"','"Mammals"',
-                      '"Current survey"','"New survey"','"Resume Survey"'):
+                      '"Current survey"','surveyTile(main','"Resume Survey"'):
             self.assertIn(label,tools)
         self.assertNotIn('Rc7SpeciesLibraryActivity.class',tools)
         self.assertIn('private void setup(String selected)',c)

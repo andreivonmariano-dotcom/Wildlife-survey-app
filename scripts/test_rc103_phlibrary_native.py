@@ -31,7 +31,7 @@ class PhLibrary2Native(unittest.TestCase):
         ui=source('PhLibrary2Ui.java')
         self.assertIn('Wildlife of',home)
         self.assertIn('Greater Mindanao',home)
-        self.assertIn('References',home)
+        self.assertIn('Research Library',home)
         self.assertIn('Saved species',home)
         self.assertIn('Habitat Atlas',home)
         self.assertIn('new ForestCanvas',ui)

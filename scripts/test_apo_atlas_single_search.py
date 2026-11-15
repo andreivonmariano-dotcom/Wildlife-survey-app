@@ -10,14 +10,14 @@ class AtlasSingleEntryTest(unittest.TestCase):
     def test_landing_exposes_one_species_search_and_useful_scoped_routes(self):
         ui=source("LikasLibraryActivity.java")
         self.assertEqual(ui.count('search.setHint("Search species")'),1)
-        self.assertEqual(ui.count('tile(body,"Species Atlas"'),1)
+        self.assertEqual(ui.count('tile(body,"Species Atlas"'),0)
         self.assertIn('new Intent(this,PhLibraryDirectoryActivity.class)',ui)
         self.assertNotIn('PhLibrary2Ui.panel(this,"Explore connections"',ui)
         self.assertIn('tile(body,"Habitat Atlas"',ui)
-        self.assertIn('tile(body,"References"',ui)
+        self.assertIn('tile(body,"Research Library"',ui)
         self.assertIn('tile(body,"Saved species"',ui)
         self.assertIn('tile(body,"Offline Map"',ui)
-        self.assertEqual(ui.count('tile(body,"'),5)
+        self.assertEqual(ui.count('tile(body,"'),4)
 
     def test_taxonomic_connections_open_from_a_real_book_account(self):
         detail=source("TaxonDetailActivity.java")

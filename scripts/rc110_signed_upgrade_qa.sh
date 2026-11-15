@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# Real no-data-clear in-place upgrade: pinned signed RC109 -> signed RC116.
+# Real no-data-clear in-place upgrade: pinned signed RC109 -> signed RC117.
 # Test APK uses the original signer; no adb uninstall or pm clear is permitted.
 PKG=org.phwildlife.survey.beta08
 RUNNER="${PKG}.test/androidx.test.runner.AndroidJUnitRunner"
@@ -19,11 +19,11 @@ grep -Fq 'OK (1 test)' "$OUT/pre_upgrade_seed.txt"
 adb shell dumpsys package "$PKG" > "$OUT/pre_upgrade_package.txt"
 grep -Eq 'versionCode=169([[:space:]]|\b)' "$OUT/pre_upgrade_package.txt"
 # An in-place install retains database, shared preferences and audio in app storage.
-adb install -r "$CANDIDATE" | tee "$OUT/install_rc116_in_place.txt"
+adb install -r "$CANDIDATE" | tee "$OUT/install_rc117_in_place.txt"
 adb shell dumpsys package "$PKG" > "$OUT/post_upgrade_package.txt"
-grep -Eq 'versionCode=176([[:space:]]|\b)' "$OUT/post_upgrade_package.txt"
+grep -Eq 'versionCode=177([[:space:]]|\b)' "$OUT/post_upgrade_package.txt"
 adb shell am instrument -w -r -e class "org.phwildlife.survey.Rc110SignedUpgradeInstrumentedTest#bRc110UpgradePreservesRowsMediaAndExport" "$RUNNER" | tee "$OUT/post_upgrade_validation.txt"
 grep -Fq 'OK (1 test)' "$OUT/post_upgrade_validation.txt"
 adb logcat -d -s AndroidRuntime:E > "$OUT/android_runtime_errors.txt"
 test ! -s "$OUT/android_runtime_errors.txt"
-echo "Signed in-place RC109 code169 -> RC116 code176 passed; 3 survey outcomes, field record, point-count, WAV bytes and research exports retained." | tee "$OUT/summary.txt"
+echo "Signed in-place RC109 code169 -> RC117 code177 passed; 3 survey outcomes, field record, point-count, WAV bytes and research exports retained." | tee "$OUT/summary.txt"

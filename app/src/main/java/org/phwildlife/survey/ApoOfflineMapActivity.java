@@ -261,6 +261,7 @@ public final class ApoOfflineMapActivity extends Activity {
         });
         controls.addView(scope,new LinearLayout.LayoutParams(0,-2,1f));
         TextView locality=action(showLocalities?"Hide locations":"Show locations",()->{});
+        locality.setTag("apo_map_localities_toggle");
         locality.setOnClickListener(v->{
             showLocalities=!showLocalities;
             locality.setText(showLocalities?"Hide locations":"Show locations");

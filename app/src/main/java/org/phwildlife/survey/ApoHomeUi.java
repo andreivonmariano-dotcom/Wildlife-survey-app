@@ -89,20 +89,11 @@ public final class ApoHomeUi {
         LinearLayout row=new LinearLayout(a);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setMinimumHeight(dp(a,compact?64:78));
-        row.setPadding(dp(a,14),dp(a,compact?11:15),
-            dp(a,13),dp(a,compact?11:15));
+        row.setMinimumHeight(dp(a,compact?58:66));
+        row.setPadding(dp(a,15),dp(a,compact?10:13),
+            dp(a,13),dp(a,compact?10:13));
         row.setBackground(tapBackground(a,ApoVisualSystem.SURFACE,
             ApoVisualSystem.BORDER,16));
-
-        TextView index=label(a,number,11,ApoVisualSystem.MUTED,true);
-        index.setGravity(Gravity.TOP);
-        index.setPadding(0,dp(a,4),dp(a,3),0);
-        index.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        // Decorative numbering consumes nearly an entire card column at 200% text.
-        // Screen-reader labels already identify each destination by its full title.
-        if(ApoVisualSystem.largeText(a))index.setVisibility(View.GONE);
-        else row.addView(index,new LinearLayout.LayoutParams(dp(a,29),-2));
 
         LinearLayout copy=new LinearLayout(a);
         copy.setOrientation(LinearLayout.VERTICAL);
@@ -123,8 +114,7 @@ public final class ApoHomeUi {
         row.addView(chevron,new LinearLayout.LayoutParams(dp(a,25),-2));
         row.setClickable(true);
         row.setFocusable(true);
-        row.setContentDescription("Open "+title+
-            (description==null||description.isEmpty()?"":". "+description));
+        row.setContentDescription("Open "+title);
         row.setOnClickListener(v->open.run());
         LinearLayout wrapper=new LinearLayout(a);
         wrapper.setOrientation(LinearLayout.VERTICAL);

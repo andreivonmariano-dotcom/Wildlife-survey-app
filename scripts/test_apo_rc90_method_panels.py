@@ -21,7 +21,6 @@ class AdaptivePanels(unittest.TestCase):
     def test_actual_main_view_bindings_are_method_specific(self):
         m=read("MainActivity.java")
         for part in (
-          "RecorderMethodUiPolicy.focus(profile,method)",
           "RecorderMethodUiPolicy.firstDetectionProminent(profile,method)",
           "RecorderMethodUiPolicy.listeningProminent(profile,method)",
           "RecorderMethodUiPolicy.microhabitatProminent(profile,method)",
@@ -38,6 +37,7 @@ class AdaptivePanels(unittest.TestCase):
           "else mammalPanel.addView(deviceEntry)"
         ):
             self.assertIn(part,m)
+        self.assertNotIn("content.addView(methodFocus)",m)
         self.assertIn('herpToggle.setOnClickListener',m)
         self.assertIn('mammalToggle.setOnClickListener',m)
         self.assertIn('birdToggle.setOnClickListener',m)

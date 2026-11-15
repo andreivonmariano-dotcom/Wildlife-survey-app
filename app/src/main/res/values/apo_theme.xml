@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ApoTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowAnimationStyle">@style/ApoWindowAnimations</item>
+    </style>
+    <style name="ApoWindowAnimations">
+        <item name="android:activityOpenEnterAnimation">@anim/apo_screen_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/apo_screen_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/apo_screen_back_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/apo_screen_back_exit</item>
+    </style>
+</resources>

@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.zip.InflaterInputStream;
 
 /**
- * Optional OWNER-IMPORTED land-cover index, not an in-APK base map.
+ * Native bundled land-cover index with a legacy private-file override.
  * Derived from ESA WorldCover v100 (2020) 10m pixels, aggregated to 0.005 degree
  * modal grid cells (~500m). No current habitat or specific ecological community
  * can be inferred from the map. Never auto-confirm a habitat.
@@ -31,9 +31,13 @@ public final class PaicLandCoverPack {
     private PaicLandCoverPack(){}
     public static final String FORMAT="LIKAS_WORLDCOVER_2020_500M_V1";
     private static final String NAME="paic_worldcover_2020_500m_v1.txt";
+    private static final String BUNDLED="paic_worldcover2020_500m.txt";
     private static final int SIDE=600, CELLS=SIDE*SIDE, MAX_BYTES=1024*1024;
     public static boolean installed(Context context){
-        return new File(context.getFilesDir(),NAME).isFile();
+        if(new File(context.getFilesDir(),NAME).isFile())return true;
+        try(InputStream bundled=context.getAssets().open(BUNDLED)){
+            return bundled.read()>=0;
+        }catch(Exception ignored){return false;}
     }
     private static String idAt(double latitude,double longitude){
         if(latitude<0||longitude<0||latitude>=90||longitude>=180)return "";
@@ -105,9 +109,13 @@ public final class PaicLandCoverPack {
                 latitude < -90 ||latitude >90||longitude < -180||longitude >180)
             return Collections.emptyList();
         File source=new File(context.getFilesDir(),NAME);
-        if(!source.isFile())return Collections.emptyList();
         Map<String,String> data;
-        try(FileInputStream in=new FileInputStream(source)){data=read(in);}
+        // Existing owner files remain readable for upgrade compatibility;
+        // the packaged derivative is the default on a clean offline install.
+        try(InputStream in=source.isFile()?
+                new FileInputStream(source):context.getAssets().open(BUNDLED)){
+            data=read(in);
+        }
         Map<String,byte[]> cached=new HashMap<>();
         Map<String,Integer> counts=new HashMap<>();
         // Sample grid cells symmetrically around the initial, verified GPS fix.

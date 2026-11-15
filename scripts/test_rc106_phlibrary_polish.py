@@ -6,11 +6,12 @@ JAVA=ROOT/'app/src/main/java/org/phwildlife/survey'
 def read(name):return (JAVA/name).read_text(encoding='utf-8')
 
 class Rc106UiContracts(unittest.TestCase):
-    def test_four_concise_home_destinations_no_redundant_groups(self):
+    def test_five_concise_atlas_destinations_without_duplicate_map(self):
         s=read('LikasLibraryActivity.java')
-        for name in ('Species Atlas','Habitat Atlas','References','Saved species'):
+        for name in ('Habitat Atlas','Research Library','Saved species','Offline Map'):
             self.assertIn('tile(body,"'+name+'"',s)
         self.assertEqual(s.count('tile(body,"'),4)
+        self.assertIn('"Browse species"',s)
         for old in ('Find a species','"Explore"','"Wildlife groups"',
                     'Discovery Rarity","', 'pickForests'):
             self.assertNotIn(old,s)
@@ -78,8 +79,8 @@ class Rc106UiContracts(unittest.TestCase):
 
     def test_identity_and_locked_data_invariants(self):
         gradle=(ROOT/'app/build.gradle').read_text()
-        self.assertIn('versionCode 173',gradle)
-        self.assertIn("0.27.4-rc113-living-atlas-preview",gradle)
+        self.assertIn('versionCode 177',gradle)
+        self.assertIn("0.27.4-rc117-clean-ui-motion",gradle)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",gradle)
         self.assertIn('super(context,NAME,null,29)',read('FieldDb.java'))
         self.assertIn('EXPECTED_COUNT=715',read('PhLibraryBook01.java'))

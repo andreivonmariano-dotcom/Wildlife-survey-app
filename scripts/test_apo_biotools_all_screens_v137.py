@@ -7,12 +7,12 @@ JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
 def src(n):return (JAVA/n).read_text(encoding="utf-8")
 
 class AllBioToolsScreens(unittest.TestCase):
-    def test_hub_and_all_destinations_are_explicit(self):
+    def test_my_data_workspace_has_one_route_per_saved_data_tool(self):
         s=src("WelcomeActivity.java")
-        hub=s.split("private void bioToolsHub(){",1)[1].split("private void fieldworkHub(){",1)[0]
-        self.assertEqual(hub.count("ApoHomeUi.module(this,"),5)
-        for name in ("Surveys","Projects & Sites","Field Records",
-                     "Analysis","Utilities"):
+        hub=s.split("private void myDataHub(){",1)[1].split("private void fieldworkHub(){",1)[0]
+        self.assertEqual(hub.count("ApoHomeUi.tool(this,"),6)
+        for name in ("Survey history","Projects & sites","Site habitat records",
+                     "Analysis & exports","Field utilities","Backup & restore"):
             self.assertIn('"'+name+'"',hub)
         for cls in ("SitesActivity","HistoryActivity","HabitatRecordsActivity",
                     "DashboardActivity","ResearchExportActivity","AuditActivity",

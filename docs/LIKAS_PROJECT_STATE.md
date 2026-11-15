@@ -74,6 +74,16 @@
 
 # APO (historically LIKAS): Current Project State and Next-Chat Handoff
 
+## 2026-11-15 | RC117 clean UI and unified navigation motion | signed owner preview verified
+
+- **Exact tested development source:** Draft [PR #126](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/pull/126) code HEAD `92dbcad6b9f11402e87b5eba7f012af8495170cc` on `refactor/apo-rc117-clean-ui-motion-20261115`, stacked above unmerged PRs #122–#125. Main still contains RC113 code173.
+- **Build and gate:** `0.27.4-rc117-clean-ui-motion`, Android **versionCode177**, original application ID, signer and SQLite29. [Exact-head Actions 43704750113 SUCCESS](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/actions/runs/43704750113): 566 Python regressions; JVM, Android and AndroidTest compilation; source/art/photo/manifest/signature gates; normal/200%-font emulator shell, map, Atlas, saved bibliography and inherited media/recorder screens; signed no-data-clear **RC109 code169→RC117 code177** upgrade preserving survey outcomes, observation, point-count, WAV bytes and exports.
+- **Direct owner artifact verified this chat:** `APO-v0.27.4-RC117-code177-clean-ui-motion-verified.apk`, **142,455,572 bytes**, SHA-256 `9ff4a1f6c35db4e454eee26d3e5789af04587e0688bf9ce7e82e07c428e2e69c`, GitHub artifact **14158206861**; independent APK CRC passed and identical SHA confirmed in CI. Direct sandbox link is chat-local, not assumed valid in later conversations.
+- **UI scope:** Shorter consistent Home/My Data/Fieldwork cards, fewer duplicate recorder labels, one Atlas browse route, clean Home daily teaser, Research Library naming and singular grammar, standardized 155 ms native Activity transitions with reduced-motion preference. Survey Complete/Incomplete/Not Counted and scientific evidence limitations remain preserved.
+- **Open release blockers:** Physical phone/TalkBack, image and source permissions, comprehensive scientific editorial QA, accepted PAIC boundaries and terrain, offline licensed full-text papers and reviewed ecological links. **Owner preview, not public final release.** See `docs/APO_RC117_CLEAN_UI_QA_2026_11_15.md`. No governing charter edit.
+
+---
+
 ## 2026-11-03 | RC95 BioTools navigation | signed code155 emulator + upgrade verified
 
 - **Verified tested source:** `cfba9200540259e2985fc906cb4ae84075940f11` on `feature/apo-rc95-biotools-survey-navigation-v155` (draft PR #99). GitHub Actions **41560848770 SUCCESS** at tested source; the feature branch may subsequently include **documentation-only commits**. Android `0.27.3-rc95-biotools-navigation`, versionCode **155**, original application ID `org.phwildlife.survey.beta08`, signer SHA-256 **f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937**, SQLite29 unchanged.

@@ -14,7 +14,7 @@ class Rc80SurveyLayout(unittest.TestCase):
             self.assertIn(phrase,s)
         self.assertIn("if(!largeText)root.addView(hud,hudLp)",s)
         self.assertIn("compactClockView.setVisibility(keyboardShown?View.GONE:View.VISIBLE)",s)
-        self.assertIn('sessionClockView.setText("Session "+',s)
+        self.assertIn('sessionClockView.setText("Active "+',s)
     def test_station_switch_checks_full_unsaved_draft(self):
         s=read("app/src/main/java/org/phwildlife/survey/MainActivity.java")
         for method in ("private void nextSamplingUnit(){","private void nextPoint(){"):
@@ -25,13 +25,13 @@ class Rc80SurveyLayout(unittest.TestCase):
         self.assertIn("pendingPhoto!=null||markedAt>0||count!=1",s)
     def test_three_outcomes_unchanged(self):
         s=read("app/src/main/java/org/phwildlife/survey/MainActivity.java")
-        self.assertIn('detailsToggle=label("Show method completion checks"',s)
+        self.assertIn('detailsToggle=label("Completion criteria"',s)
         self.assertIn("SurveyClosePolicy.resolve(",s)
         for label in ('"Finish Complete"','"End Incomplete"','"Cancel Survey · Not Counted"'):
             self.assertIn(label,s)
         g=read("app/build.gradle")
-        self.assertIn("versionCode 173",g)
-        self.assertIn("versionName '0.27.4-rc113-living-atlas-preview'",g)
+        self.assertIn("versionCode 177",g)
+        self.assertIn("versionName '0.27.4-rc117-clean-ui-motion'",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         self.assertIn('super(context,NAME,null,29)',read("app/src/main/java/org/phwildlife/survey/FieldDb.java"))
 if __name__=="__main__":unittest.main()

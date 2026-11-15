@@ -16,17 +16,17 @@ class IllustratedUiContract(unittest.TestCase):
                       "new GradientDrawable(", "new RippleDrawable(",
                       'case "bird":','case "frog":','case "mammal":'):
             self.assertIn(piece,portal)
-        home=welcome.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
-        for title in ('"BioTools"','"Living Atlas"',):
+        home=welcome.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
+        for title in ('"Living Atlas"','"Research Library"',):
             self.assertIn(title,home)
-        self.assertIn("Coming later: PHMaps · BioDiscover",home)
+        self.assertIn('"Offline Map"',home)
         self.assertIn("ApoHomeUi.header(this,",home)
         self.assertIn("ApoHomeUi.resume(this,",home)
         self.assertNotIn("LikasPortalUi.tile(",home)
         self.assertNotIn("LikasPortalUi.hero(",home)
         field=welcome.split("private void fieldworkHub(){",1)[1].split("/** Short status caption",1)[0]
         for label in ('"Birds"','"Herpetofauna"','"Mammals"',
-                      '"Current survey"','"New survey"','"Resume Survey"'):
+                      '"Current survey"','surveyTile(main','"Resume Survey"'):
             self.assertIn(label,field)
         self.assertIn("ApoHomeUi.module(this,index,title,detail,tap)",welcome)
         self.assertNotIn("LikasPortalUi.action(this,title,detail,art,tap)",welcome)

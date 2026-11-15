@@ -21,7 +21,6 @@ class AdaptivePanels(unittest.TestCase):
     def test_actual_main_view_bindings_are_method_specific(self):
         m=read("MainActivity.java")
         for part in (
-          "RecorderMethodUiPolicy.focus(profile,method)",
           "RecorderMethodUiPolicy.firstDetectionProminent(profile,method)",
           "RecorderMethodUiPolicy.listeningProminent(profile,method)",
           "RecorderMethodUiPolicy.microhabitatProminent(profile,method)",
@@ -38,14 +37,15 @@ class AdaptivePanels(unittest.TestCase):
           "else mammalPanel.addView(deviceEntry)"
         ):
             self.assertIn(part,m)
+        self.assertNotIn("content.addView(methodFocus)",m)
         self.assertIn('herpToggle.setOnClickListener',m)
         self.assertIn('mammalToggle.setOnClickListener',m)
         self.assertIn('birdToggle.setOnClickListener',m)
     def test_draft_schema_and_survey_completion_are_not_modified(self):
         m=read("MainActivity.java")
         self.assertIn("super(context,NAME,null,29)",read("FieldDb.java"))
-        self.assertIn("versionCode 173",(ROOT/"app/build.gradle").read_text())
-        self.assertIn("0.27.4-rc113-living-atlas-preview",
+        self.assertIn("versionCode 177",(ROOT/"app/build.gradle").read_text())
+        self.assertIn("0.27.4-rc117-clean-ui-motion",
             (ROOT/"app/build.gradle").read_text())
         for marker in ("SurveyClosePolicy.resolve(","Finish Complete",
             "End Incomplete","Cancel Survey · Not Counted",

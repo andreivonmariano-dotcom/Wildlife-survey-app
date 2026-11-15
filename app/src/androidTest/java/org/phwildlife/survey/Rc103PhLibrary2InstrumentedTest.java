@@ -86,9 +86,9 @@ public final class Rc103PhLibrary2InstrumentedTest {
                     assertNotNull(text(root,"715"));
                     assertNotNull(text(root,"Habitat Atlas"));
                     assertNotNull(text(root,"Saved species"));
-                    assertNotNull(text(root,"References"));
+                    assertNotNull(text(root,"Research Library"));
                     assertNotNull(text(root,"Wildlife of"));
-                    assertNotNull(text(root,"Species Atlas"));
+                    assertNotNull(text(root,"Browse species"));
                     assertNull("Duplicate wildlife shortcuts removed",text(root,"Wildlife groups"));
                     View photo=named(root,"PhotoLayer");
                     assertNotNull("The bundled real Mindanao photo layer must decode",photo);

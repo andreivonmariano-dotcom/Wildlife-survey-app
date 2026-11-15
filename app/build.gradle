@@ -7,8 +7,8 @@ android {
         minSdk 26
         targetSdk 34
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 173
-        versionName '0.27.4-rc113-living-atlas-preview'
+        versionCode 177
+        versionName '0.27.4-rc117-clean-ui-motion'
     }
     signingConfigs {
         debug {

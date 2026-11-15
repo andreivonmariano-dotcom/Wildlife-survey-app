@@ -37,20 +37,20 @@ class MethodCompletionReviewContracts(unittest.TestCase):
         main=src("MainActivity.java")
         for text in ('MethodCompletionReview.Result methodReview=methodRecordReview()',
                      'methodReview.kind!=MethodCompletionReview.Kind.NONE',
-                     'actions.addView(reviewTitle,3)', 'actions.addView(reviewDetail,4)',
+                     'actions.addView(reviewTitle)', 'actions.addView(reviewDetail)',
                      'if(!methodReview.methodRecordsReady)',
                      'methodFix[0].setOnClickListener',
                      'if(requiresGenericUnit()&&samplingUnitId==null)',
                      'pointNextButton.performClick()',
                      'else openFieldProtocol();','openTrapProtocol();',
-                     'new AlertDialog.Builder(this)', 'Show method completion checks',
+                     'new AlertDialog.Builder(this)', 'Completion criteria',
                      'Finish Complete', 'End Incomplete', 'Cancel Survey · Not Counted',
                      'SurveyClosePolicy.resolve(', 'FieldProtocolPolicy.canComplete(',
                      'TrapProtocolPolicy.canComplete(', 'if(hasUnsavedObservation())'):
             self.assertIn(text,main)
         self.assertIn('super(context,NAME,null,29)',src("FieldDb.java"))
         build=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 173",build)
-        self.assertIn("versionName '0.27.4-rc113-living-atlas-preview'",build)
+        self.assertIn("versionCode 177",build)
+        self.assertIn("versionName '0.27.4-rc117-clean-ui-motion'",build)
 
 if __name__=="__main__":unittest.main()

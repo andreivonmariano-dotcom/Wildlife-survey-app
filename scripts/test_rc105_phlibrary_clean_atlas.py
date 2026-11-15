@@ -32,7 +32,7 @@ class Rc105CleanAtlas(unittest.TestCase):
     def test_home_is_concise_and_200percent_search_accessible(self):
         home=(JAVA/'LikasLibraryActivity.java').read_text()
         self.assertIn('PhLibraryPhotoHero.create(this',home)
-        for destination in ('Species Atlas','Habitat Atlas','References','Saved species'):
+        for destination in ('Browse species','Habitat Atlas','Research Library','Saved species'):
             self.assertIn('"'+destination+'"',home)
         self.assertNotIn('this::chooseRarity',home)
         self.assertIn('largeText?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL',home)
@@ -70,7 +70,7 @@ class Rc105CleanAtlas(unittest.TestCase):
         self.assertNotIn('getWritableDatabase',book)
         self.assertNotIn('getWritableDatabase',habitat)
         build=(ROOT/'app/build.gradle').read_text()
-        self.assertIn('versionCode 173',build)
+        self.assertIn('versionCode 177',build)
         self.assertIn("applicationId 'org.phwildlife.survey.beta08'",build)
         self.assertIn('super(context,NAME,null,29)',(JAVA/'FieldDb.java').read_text())
 

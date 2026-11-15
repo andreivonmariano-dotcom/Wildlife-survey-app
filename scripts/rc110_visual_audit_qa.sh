@@ -9,10 +9,24 @@ mkdir -p "$OUT"
 execute(){
   local preset="$1" method="$2" profile="${3:-Birds}"
   local name="${preset}-${method}-${profile}"
-  adb shell am instrument -w -r -e preset "$preset" -e profile "$profile" \
-      -e class "org.phwildlife.survey.Rc110VisualAuditInstrumentedTest#${method}" \
-      "$RUNNER" | tee "$OUT/${name}.txt"
-  grep -Fq "OK (1 test)" "$OUT/${name}.txt"
+  local attempt
+  # Emulator process attach can transiently fail after consecutive clear-data
+  # runs. Never accept an absent, failed or incomplete instrumentation result.
+  for attempt in 1 2 3; do
+    adb wait-for-device
+    adb shell am force-stop "$PKG" || true
+    if adb shell am instrument -w -r -e preset "$preset" -e profile "$profile" \
+        -e class "org.phwildlife.survey.Rc110VisualAuditInstrumentedTest#${method}" \
+        "$RUNNER" | tee "$OUT/${name}.txt"; then
+      if grep -Fq "OK (1 test)" "$OUT/${name}.txt"; then
+        return 0
+      fi
+    fi
+    echo "Native audit ${name} did not complete (attempt ${attempt}/3)" >&2
+    sleep 2
+  done
+  echo "Native audit ${name} failed all three runs; gate remains blocked" >&2
+  return 1
 }
 for config in "p360f100 360x800 160 1.0" "p320f200 320x720 160 2.0"; do
   read -r preset screen density font <<< "$config"

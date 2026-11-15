@@ -7,33 +7,36 @@ JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
 def src(name):return (JAVA/name).read_text(encoding="utf-8")
 
 class Rc48HomeFieldwork(unittest.TestCase):
-    def test_home_has_only_three_destinations_and_explicit_resume(self):
+    def test_home_has_one_primary_action_and_direct_atlas_research(self):
         welcome=src("WelcomeActivity.java")
-        home=welcome.split("private void home(){",1)[1].split("private void phMapsHub(){",1)[0]
+        home=welcome.split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
         self.assertIn("ApoHomeUi.header(this,",home)
         self.assertIn("ApoHomeUi.resume(this,",home)
+        self.assertIn('ApoHomeUi.primary(this,"Start Survey"',home)
+        self.assertIn('"Living Atlas"',home)
+        self.assertIn('"Research Library"',home)
+        self.assertIn("ApoHomeUi.module(this,\"02\",\"Offline Map\"",home)
+        self.assertNotIn('"BioTools"',home)
         self.assertNotIn("LikasPortalUi.hero(",home)
         self.assertNotIn("LikasPortalUi.tile(",home)
-        self.assertIn('Coming later: PHMaps · BioDiscover',home)
-        for label in ('"BioTools"','"Living Atlas"'):
-            self.assertIn(label,home)
-        self.assertIn("LikasSettingsActivity.class",home)
         self.assertLess(home.index("ApoHomeUi.resume(this,"),
-                        home.index('ApoHomeUi.module(this,"01","BioTools"'))
+                        home.index('ApoHomeUi.module(this,"01","Living Atlas"'))
         self.assertNotIn("startSelected();",home)
+
     def test_active_fieldwork_is_not_labelled_a_new_survey(self):
         welcome=src("WelcomeActivity.java")
         hub=welcome.split("private void fieldworkHub(){",1)[1].split(
             "/** Short status caption",1)[0]
         self.assertIn('FieldVisuals.section(this,"Current survey",null)',hub)
-        self.assertIn('FieldVisuals.section(this,"New survey",null)',hub)
+        self.assertNotIn('FieldVisuals.section(this,"New survey",null)',hub)
+        self.assertIn('ApoHomeUi.section(this,"Fieldwork",null)',hub)
         self.assertLess(hub.index('if(unfinished!=null)'),
                         hub.index('FieldVisuals.section(this,"Current survey"'))
         self.assertIn('UiKit.button(this,"Resume Survey","primary")',hub)
         for profile in ("Birds","Herpetofauna","Mammals"):
             self.assertIn('"'+profile+'"',hub)
         self.assertIn('private void fieldRecordsHub(){',hub)
-        self.assertIn('HistoryActivity.class',hub)
+        self.assertNotIn('HistoryActivity.class',hub)
         self.assertIn('private void analysisHub(){',hub)
         self.assertIn('DashboardActivity.class',hub)
         self.assertIn('surveyTile(main,"Birds"',hub)

@@ -32,7 +32,7 @@ class ApoBioToolsWorkflowsV136(unittest.TestCase):
                      'setupStartButton.setOnClickListener(v->startSelected())',
                      '"Standard survey requirements"'):
             self.assertIn(item,s)
-        self.assertIn('label.setContentDescription("Step "+number+": "+title)',s)
+        self.assertIn('label.setContentDescription(title)',s)
         self.assertIn('ApoHomeUi.note(this,',s)
         self.assertIn('startActivity(new Intent(this,SitesActivity.class))',s)
         self.assertIn('refreshRouteTemplates()',s)

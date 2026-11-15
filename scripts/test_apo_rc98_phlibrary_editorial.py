@@ -74,13 +74,13 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertIn("super(context,NAME,null,29)",
                       (JAVA/"FieldDb.java").read_text(encoding="utf-8"))
 
-    def test_home_has_only_one_book_and_three_distinct_actions(self):
+    def test_home_has_one_book_and_five_distinct_routes(self):
         hub=(JAVA/"LikasLibraryActivity.java").read_text(encoding="utf-8")
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text(encoding="utf-8")
         self.assertEqual(hub.count("PhLibraryPhotoHero.create(this"),1)
         self.assertEqual(hub.count('tile(body,"'),4)
-        for title in ('"Species Atlas"','"Saved species"',
-                      '"Habitat Atlas"'):
+        for title in ('"Browse species"','"Saved species"',
+                      '"Habitat Atlas"','"Offline Map"'):
             self.assertIn(title,hub)
         for old in ('"Conservation evidence"','"Similar species"',
                     '"Source collections"','"Photo comparisons"'):
@@ -90,8 +90,8 @@ class Rc98BookEditorial(unittest.TestCase):
         self.assertNotIn("ImageView",hub)
         self.assertNotIn("ImageView",directory)
         gradle=(ROOT/"app/build.gradle").read_text(encoding="utf-8")
-        self.assertIn("versionCode 173",gradle)
-        self.assertIn("0.27.4-rc113-living-atlas-preview",gradle)
+        self.assertIn("versionCode 177",gradle)
+        self.assertIn("0.27.4-rc117-clean-ui-motion",gradle)
 
 if __name__=="__main__":
     unittest.main()

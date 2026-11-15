@@ -771,7 +771,7 @@ public class MainActivity extends Activity implements LocationListener {
         photoPreview.setMaxHeight(dp(180));
         photoPreview.setVisibility(View.GONE);content.addView(photoPreview);
         // Collapsed by default to protect primary recording controls at 200%.
-        timelineToggle=label("Saved timeline · 0  ▾",14,true);
+        timelineToggle=label("Observations · 0  ▾",14,true);
         timelineToggle.setTextColor(UiKit.FOREST);
         disclosureTarget(timelineToggle);
         timelineToggle.setPadding(dp(5),dp(7),dp(5),dp(7));
@@ -781,8 +781,9 @@ public class MainActivity extends Activity implements LocationListener {
             refreshTimeline();
         });
         content.addView(timelineToggle);
-        timelineDraft=label("Draft · No unsaved observation",12,false);
+        timelineDraft=label("",12,false);
         timelineDraft.setTextColor(UiKit.MUTED);
+        timelineDraft.setVisibility(View.GONE);
         timelineDraft.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
         content.addView(timelineDraft);
         timelineRows=vertical();
@@ -790,14 +791,7 @@ public class MainActivity extends Activity implements LocationListener {
         content.addView(timelineRows);
         if(toolsDisclosure[0]!=null)content.addView(toolsDisclosure[0]);
         content.addView(recorderTools);
-        // The selected protocol determines field emphasis, not just taxon group.
-        // Context actions use existing protocol modules and cannot create effort.
-        TextView methodFocus=label(
-            RecorderMethodUiPolicy.focus(profile,method),12,true);
-        methodFocus.setTextColor(UiKit.FOREST);
-        methodFocus.setContentDescription("Recording focus: "+
-            RecorderMethodUiPolicy.focus(profile,method));
-        content.addView(methodFocus);
+        // Method-specific actions remain reachable without a duplicate caption.
         RecorderMethodUiPolicy.Action methodAction=
             RecorderMethodUiPolicy.action(profile,method);
         if(methodAction!=RecorderMethodUiPolicy.Action.NONE){
@@ -1602,11 +1596,7 @@ public class MainActivity extends Activity implements LocationListener {
             lp.bottomMargin=dp(10);
             actions.addView(button,lp);
         }
-        TextView details=label("Complete checks the protocol; unmet criteria save as Incomplete. "+
-            "Incomplete keeps partial effort. Not Counted archives but excludes from analysis.",12,false);
-        details.setTextColor(MUTED);actions.addView(details,0);
-        // Detailed evidence is available without pushing all three outcomes off screen.
-        TextView detailsToggle=label("Show method completion checks",13,true);
+        TextView detailsToggle=label("Completion criteria",13,true);
         detailsToggle.setTextColor(UiKit.FOREST);
         disclosureTarget(detailsToggle);
         TextView required=label(completionChecklist(),12,false);
@@ -1619,8 +1609,8 @@ public class MainActivity extends Activity implements LocationListener {
                 "Hide method completion checks":"Show method completion checks");
             detailsToggle.setContentDescription(detailsToggle.getText());
         });
-        actions.addView(detailsToggle,1);
-        actions.addView(required,2);
+        actions.addView(detailsToggle);
+        actions.addView(required);
         // Summarize actual method records without claiming survey completion.
         // The existing closure policy, station and study checks remain decisive.
         MethodCompletionReview.Result methodReview=methodRecordReview();
@@ -1631,15 +1621,15 @@ public class MainActivity extends Activity implements LocationListener {
                 UiKit.FOREST:UiKit.AMBER);
             reviewTitle.setContentDescription("Method-record status. "+
                 methodReview.headline);
-            actions.addView(reviewTitle,3);
+            actions.addView(reviewTitle);
             TextView reviewDetail=label(methodReview.detail,12,false);
             reviewDetail.setTextColor(UiKit.MUTED);
-            actions.addView(reviewDetail,4);
+            actions.addView(reviewDetail);
             if(!methodReview.methodRecordsReady){
                 Button fix=UiKit.button(this,methodReview.actionLabel,"secondary");
                 fix.setContentDescription(methodReview.actionLabel+
                     ". Open existing protocol records without changing survey outcome");
-                actions.addView(fix,5,new LinearLayout.LayoutParams(-1,dp(48)));
+                actions.addView(fix,new LinearLayout.LayoutParams(-1,dp(48)));
                 methodFix[0]=fix;
             }
         }
@@ -2669,12 +2659,9 @@ public class MainActivity extends Activity implements LocationListener {
     private void updateTimelineDraftLabel(){
         if(timelineDraft==null||taxonEntry==null)return;
         boolean unfinished=hasUnsavedObservation();
-        timelineDraft.setText(unfinished?
-            "Unsaved draft · Not counted in timeline":
-            "Draft · No unsaved observation");
-        timelineDraft.setContentDescription(unfinished?
-            "An unsaved observation is in progress and is not included in the saved count":
-            "No unsaved observation is in progress");
+        timelineDraft.setVisibility(unfinished?View.VISIBLE:View.GONE);
+        timelineDraft.setText(unfinished?"Unsaved observation":"");
+        timelineDraft.setContentDescription(unfinished?"Unsaved observation":null);
     }
     private void refreshTimeline(){
         if(db==null||eventId==null||timelineToggle==null)return;
@@ -2682,7 +2669,7 @@ public class MainActivity extends Activity implements LocationListener {
             ObservationTimeline.Snapshot current=ObservationTimeline.load(
                 db.getReadableDatabase(),eventId,4);
             timelineSavedCount=current.savedCount;
-            timelineToggle.setText("Saved timeline · "+timelineSavedCount+
+            timelineToggle.setText("Observations · "+timelineSavedCount+
                 (timelineOpen?"  ▴":"  ▾"));
             timelineToggle.setContentDescription((timelineOpen?
                 "Collapse":"Expand")+" recent saved observations. "+
@@ -2745,8 +2732,9 @@ public class MainActivity extends Activity implements LocationListener {
         long now=System.currentTimeMillis();
         long wallElapsed=Math.max(0,now-startedAt);
         long activeElapsed=Math.max(0,wallElapsed-currentPausedMs(now));
-        sessionClockView.setText("Session "+timeFmt(wallElapsed/1000)+
-            "   ·   Active "+timeFmt(activeElapsed/1000));
+        sessionClockView.setText("Active "+timeFmt(activeElapsed/1000)+
+            (wallElapsed-activeElapsed>=1000L?
+                " · Session "+timeFmt(wallElapsed/1000):""));
         long unitElapsed=-1,target=0;
         String label="SURVEY";
         if(method.equals("point_count")){
@@ -2771,6 +2759,8 @@ public class MainActivity extends Activity implements LocationListener {
         else if(target<=0)eventView.setText(label+" · ELAPSED "+timeFmt(unitElapsed));
         else if(left>0)eventView.setText(label+" · "+timeFmt(left)+" left");
         else eventView.setText(label+" · OVERTIME +"+timeFmt(-left));
+        eventView.setVisibility("opportunistic".equals(method)&&target<=0?
+            View.GONE:View.VISIBLE);
         boolean near=left!=Long.MAX_VALUE&&left>0&&left<=30;
         boolean overdue=left!=Long.MAX_VALUE&&left<=0;
         eventView.setTextColor(surveyPaused?UiKit.AMBER:

@@ -260,10 +260,10 @@ public final class ApoOfflineMapActivity extends Activity {
             surface.resetShapes();surface.invalidate();updateSubtitle();
         });
         controls.addView(scope,new LinearLayout.LayoutParams(0,-2,1f));
-        TextView locality=action(showLocalities?"Hide sites":"Show sites",()->{});
+        TextView locality=action(showLocalities?"Hide locations":"Show locations",()->{});
         locality.setOnClickListener(v->{
             showLocalities=!showLocalities;
-            locality.setText(showLocalities?"Hide sites":"Show sites");
+            locality.setText(showLocalities?"Hide locations":"Show locations");
             locality.setContentDescription(showLocalities?
                 "Hide recorded coordinates":"Show recorded coordinates");
             getPreferences(MODE_PRIVATE).edit()

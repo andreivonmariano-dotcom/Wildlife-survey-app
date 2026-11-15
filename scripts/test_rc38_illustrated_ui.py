@@ -26,7 +26,7 @@ class IllustratedUiContract(unittest.TestCase):
         self.assertNotIn("LikasPortalUi.hero(",home)
         field=welcome.split("private void fieldworkHub(){",1)[1].split("/** Short status caption",1)[0]
         for label in ('"Birds"','"Herpetofauna"','"Mammals"',
-                      '"Current survey"','"New survey"','"Resume Survey"'):
+                      '"Current survey"','surveyTile(main','"Resume Survey"'):
             self.assertIn(label,field)
         self.assertIn("ApoHomeUi.module(this,index,title,detail,tap)",welcome)
         self.assertNotIn("LikasPortalUi.action(this,title,detail,art,tap)",welcome)

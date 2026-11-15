@@ -57,7 +57,7 @@ public final class ApoShellNavigationInstrumentedTest {
         String[] tags={"home","fieldwork","atlas","data"};
         String[] expected=enlarged?
             new String[]{"Home","Field","Atlas","Data"}:
-            new String[]{"Home","Survey","Atlas","My Data"};
+            new String[]{"Home","Fieldwork","Atlas","My Data"};
         for(int i=0;i<tags.length;i++){
             View view=nav(a,tags[i]);
             assertTrue("Navigation tab missing: "+tags[i],view instanceof TextView);
@@ -107,7 +107,8 @@ public final class ApoShellNavigationInstrumentedTest {
             });
             idle();
             scenario.onActivity(a->{
-                assertTrue(hasText(a.getWindow().getDecorView(),"New survey"));
+                assertTrue(hasText(a.getWindow().getDecorView(),"Birds"));
+                assertFalse(hasText(a.getWindow().getDecorView(),"New survey"));
                 assertTrue(hasText(a.getWindow().getDecorView(),"Herpetofauna"));
                 assertTrue(nav(a,"fieldwork").isSelected());
                 capture(a,"fieldwork");
@@ -154,7 +155,8 @@ public final class ApoShellNavigationInstrumentedTest {
             });
             idle();
             scenario.onActivity(a->{
-                assertTrue(hasText(a.getWindow().getDecorView(),"New survey"));
+                assertTrue(hasText(a.getWindow().getDecorView(),"Birds"));
+                assertFalse(hasText(a.getWindow().getDecorView(),"New survey"));
                 assertTrue(nav(a,"fieldwork").isSelected());
                 capture(a,"back-fieldwork");
             });

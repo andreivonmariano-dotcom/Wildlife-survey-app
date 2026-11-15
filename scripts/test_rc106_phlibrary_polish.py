@@ -8,9 +8,10 @@ def read(name):return (JAVA/name).read_text(encoding='utf-8')
 class Rc106UiContracts(unittest.TestCase):
     def test_five_concise_atlas_destinations_without_duplicate_map(self):
         s=read('LikasLibraryActivity.java')
-        for name in ('Species Atlas','Habitat Atlas','References','Saved species','Offline Map'):
+        for name in ('Habitat Atlas','Research Library','Saved species','Offline Map'):
             self.assertIn('tile(body,"'+name+'"',s)
-        self.assertEqual(s.count('tile(body,"'),5)
+        self.assertEqual(s.count('tile(body,"'),4)
+        self.assertIn('"Browse species"',s)
         for old in ('Find a species','"Explore"','"Wildlife groups"',
                     'Discovery Rarity","', 'pickForests'):
             self.assertNotIn(old,s)

@@ -32,7 +32,7 @@ class Rc105CleanAtlas(unittest.TestCase):
     def test_home_is_concise_and_200percent_search_accessible(self):
         home=(JAVA/'LikasLibraryActivity.java').read_text()
         self.assertIn('PhLibraryPhotoHero.create(this',home)
-        for destination in ('Species Atlas','Habitat Atlas','References','Saved species'):
+        for destination in ('Browse species','Habitat Atlas','Research Library','Saved species'):
             self.assertIn('"'+destination+'"',home)
         self.assertNotIn('this::chooseRarity',home)
         self.assertIn('largeText?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL',home)

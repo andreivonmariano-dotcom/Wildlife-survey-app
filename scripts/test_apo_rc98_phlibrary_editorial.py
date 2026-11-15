@@ -78,8 +78,8 @@ class Rc98BookEditorial(unittest.TestCase):
         hub=(JAVA/"LikasLibraryActivity.java").read_text(encoding="utf-8")
         directory=(JAVA/"PhLibraryDirectoryActivity.java").read_text(encoding="utf-8")
         self.assertEqual(hub.count("PhLibraryPhotoHero.create(this"),1)
-        self.assertEqual(hub.count('tile(body,"'),5)
-        for title in ('"Species Atlas"','"Saved species"',
+        self.assertEqual(hub.count('tile(body,"'),4)
+        for title in ('"Browse species"','"Saved species"',
                       '"Habitat Atlas"','"Offline Map"'):
             self.assertIn(title,hub)
         for old in ('"Conservation evidence"','"Similar species"',

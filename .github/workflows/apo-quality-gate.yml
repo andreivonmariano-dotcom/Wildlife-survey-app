@@ -15,6 +15,7 @@ on:
       - refactor/apo-coherent-rebuild-20261111
       - refactor/apo-offline-map-consolidation-20261114
       - refactor/apo-atlas-canonical-20261114
+      - refactor/apo-localities-research-20261114
   workflow_dispatch:
 
 permissions:
@@ -122,18 +123,18 @@ jobs:
           APK=app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "name='org.phwildlife.survey.beta08'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='176'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.4-rc116-localities-research-preview'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionCode='177'"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "versionName='0.27.4-rc117-clean-ui-motion'"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | grep -iF 'f7c471ad310aeeffd2b2a7cf7c371c6efdce258560a818b52be5e1f2a7509937'
           unzip -t "$APK" >/dev/null
           unzip -p "$APK" assets/apo_official_master.png | sha256sum | grep -F '6fe44e5117e0bde953b529735bc7d61a633f39201097a2fd68cd560e914ba0e7'
           unzip -p "$APK" assets/paic714_master.csv | sha256sum | grep -F '1ebf7c4ac50787b2dd6f3c22a484057fbac7e61188101bd2f2002c5ce65de959'
           unzip -p "$APK" assets/paic_worldcover2020_500m.txt | sha256sum | grep -F 'e86e0a90096e104f09ee195b70c6cfe44bd6600211a44229973a3a0c80344089'
           sha256sum "$APK"
-      - name: Export code176 signed localities and research owner-preview APK
+      - name: Export code177 signed clean-interface owner-preview APK
         uses: actions/upload-artifact@v4
         with:
-          name: APO-Localities-Research-RC116-signed-code176-owner-preview
+          name: APO-RC117-clean-ui-motion-signed-code177-owner-preview
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7

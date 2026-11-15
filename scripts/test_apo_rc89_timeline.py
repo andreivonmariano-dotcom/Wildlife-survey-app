@@ -18,8 +18,8 @@ class TimelineContracts(unittest.TestCase):
         self.assertNotIn("UPDATE field_records",query)
     def test_ui_has_distinct_unsaved_and_saved_status(self):
         code=read("MainActivity.java")
-        for part in ('Saved timeline · 0','Draft · No unsaved observation',
-                     'Unsaved draft · Not counted in timeline',
+        for part in ('Observations · 0','timelineDraft.setVisibility(unfinished?View.VISIBLE:View.GONE)',
+                     '"Unsaved observation"',
                      'ObservationTimeline.load(', 'timelineRows.setVisibility(',
                      'refreshTimeline();','openSurveyReview(record.id)',
                      '.putExtra("event_id",eventId)',
@@ -45,8 +45,8 @@ class TimelineContracts(unittest.TestCase):
         self.assertIn('super(context,NAME,null,29)',read("FieldDb.java"))
     def test_existing_identity_and_survey_dispositions(self):
         g=(ROOT/"app/build.gradle").read_text()
-        self.assertIn("versionCode 176",g)
-        self.assertIn("0.27.4-rc116-localities-research-preview",g)
+        self.assertIn("versionCode 177",g)
+        self.assertIn("0.27.4-rc117-clean-ui-motion",g)
         self.assertIn("org.phwildlife.survey.beta08",g)
         m=read("MainActivity.java")
         for token in ('Finish Complete','End Incomplete','Cancel Survey · Not Counted',

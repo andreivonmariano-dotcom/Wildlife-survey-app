@@ -16,6 +16,12 @@ for row in "p360f100 360x800 160 1.0" "p320f200 320x720 160 2.0"; do
     "org.phwildlife.survey.LivingAtlasExplorerInstrumentedTest#aExploreSpeciesNavigateAndCapture" \
     "$RUNNER" | tee "$OUT/$preset-test.txt"
   grep -Fq "OK (1 test)" "$OUT/$preset-test.txt"
+  for method in bContextualBackReturnsToAccount cCanonicalAtlasAllowsFullBrowse; do
+    adb shell am instrument -w -r -e preset "$preset" -e class \
+      "org.phwildlife.survey.LivingAtlasExplorerInstrumentedTest#$method" \
+      "$RUNNER" | tee "$OUT/$preset-$method.txt"
+    grep -Fq "OK (1 test)" "$OUT/$preset-$method.txt"
+  done
   mkdir -p "$OUT/$preset"
   adb pull "$SOURCE/." "$OUT/$preset/" >/dev/null
 done

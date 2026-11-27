@@ -16,7 +16,6 @@ on:
       - refactor/apo-offline-map-consolidation-20261114
       - refactor/apo-atlas-canonical-20261114
       - refactor/apo-localities-research-20261114
-      - refactor/apo-rc117-clean-ui-motion-20261115
   workflow_dispatch:
 
 permissions:

@@ -1,8 +1,8 @@
 # APO
 ## Offline-First Product Vision and Governing Source Document
 
-**Version:** 1.3  
-**Revision:** 27 November 2026 (Asia/Manila); product design, engineering, quality and approachable default experience  
+**Version:** 1.4  
+**Revision:** 27 November 2026 (Asia/Manila); controlled continuity recovery after signing-key loss  
 **Decision date:** 27 November 2026 (Asia/Manila)  
 **Status:** Product-owner direction; governs future design and development  
 **Product:** APO, the Philippines-focused wildlife field and learning application. Existing LIKAS package, repository paths and development history remain intact until a separate technical renaming decision.  
@@ -235,8 +235,12 @@ The following requirements supplement APO-01 through APO-15 and Sections 1–12.
 
 **APO-30 | Approachable by default.** APO is intended for ordinary use without specialized technical knowledge. Keep the default experience simple, intuitive, visually uncluttered and easy to learn across every module. Scientific rigor, required survey inputs, meaningful uncertainty, provenance, data safety and accessibility remain protected. Present advanced scientific and technical details on demand where they serve a real user task. This is a permanent product-design and release-review requirement.
 
+**APO-31 | Controlled continuity recovery after signing-key loss.** When recovery of the existing signing key has been exhausted and the product owner explicitly approves this exception, a separately installed successor may use a new owner-approved Android application ID and a new protected signing identity. Keep the original installation and verified recovery archives intact. Require a complete, validated transfer of user-created records, metadata, media and local settings into an empty successor workspace. Verify synthetic and authorized migration fixtures, rollback, offline operation, restored record identity and media integrity, and physical-device acceptance before successor deployment or migration completion. No automatic uninstall or deletion of original records is allowed. The new signing identity must have documented secure custody and independently recoverable encrypted backups before distribution. The owner must approve the final package ID, signer adoption and retirement of the legacy app separately. Preserve historical source, identifiers, data provenance, reference integrity and release evidence. This exception does not permit destructive reinstalls, undocumented signer changes, or relaxed scientific or release gates.
+
 **v1.1 amendment, 10 November 2026:** Added APO-09 through APO-12 to impose a strict, release-blocking prohibition on defensive/argumentative phrasing and oppositional formulas across every visible UI and scientific account. Added human and automated content review, with source-faithful display editing and archival preservation.
 
 **v1.2 amendment, 10 November 2026:** Designated the Google Docs charter as the canonical editable governing source; added APO-13 through APO-15 for explicit approval of every future revision, proposal-first workflow, version-controlled GitHub synchronization and permissions review.
 
 v1.3 amendment, 27 November 2026: Added Section 13 and APO-16 through APO-29, establishing task-led design, a shared design system, accessibility and field usability, maintainable local-first architecture, durable data, location provenance, scientific interoperability, reproducible content, mobile security, performance measurement, usability evaluation and release traceability. Preserved the offline-first scope, PAIC sequencing, editorial requirements, signing and data continuity, and prior approval rules. Added APO-30 at the owner's direct instruction to establish an approachable, nontechnical default experience as a permanent requirement.
+
+v1.4 amendment, 27 November 2026: Owner approved APO-31 as a narrow continuity exception to APO-08 and APO-20, and approved the proposed successor application ID org.phwildlife.survey.apo. Permanent signer adoption, migration acceptance and legacy retirement remain separate decisions.

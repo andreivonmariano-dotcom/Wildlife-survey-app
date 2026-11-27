@@ -1,0 +1,22 @@
+name: APO | Atlas source candidate checks
+on:
+  pull_request:
+    branches:
+      - refactor/apo-rc117-clean-ui-motion-20261115
+    paths:
+      - 'app/src/**'
+      - 'scripts/test_apo_atlas_single_search.py'
+      - '.github/workflows/apo-atlas-source-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Atlas canonical routes and recorder source contracts
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_apo_atlas_single_search.py'
+          python3 -m unittest discover -s scripts -p 'test_apo_rc117_clean_ui.py'
+          bash -n scripts/living_atlas_emulator_qa.sh

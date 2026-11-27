@@ -2,6 +2,8 @@
 Date: 27 November 2026 (Asia/Manila)
 Status: Development guidance implementing charter v1.3, especially APO-05, 16–19, 27–30. This companion does not amend the charter or approve a new feature, brand, framework, or release. All examples are proposed design defaults, not screenshots or tested features.
 
+**Evidence clarification (27 November 2026):** This preliminary playbook is supported and qualified by `docs/APO_EVIDENCE_BASED_DESIGN_REFERENCE_v1.0.md`. The earlier claim of thorough review of every listed source was not substantiated. Use the new reference for reviewed passages, access limitations, the static source audit and validation protocol.
+
 ## 1. The product experience
 APO should feel like a Philippine natural-history field guide with a dependable field notebook. A student or interested naturalist should be able to explore it immediately; a biologist should be able to collect scientifically useful data without navigating a technical dashboard. Put the user's task before the software's internal structures. A complex database, scientific method, or map layer is never a reason to expose implementation details on a primary screen. Keep necessary scientific terms, uncertainty and required inputs, but use ordinary labels and short explanations where needed.
 

@@ -1,3 +1,11 @@
+## 2026-11-27 | Evidence-based UI research and static source audit
+
+- User requested deeper research after the earlier review was overstated. Completed a targeted narrative review of HCI studies, platform standards, biodiversity literature and official competitor workflows; recorded evidence type, access and transfer limits in `docs/APO_EVIDENCE_BASED_DESIGN_REFERENCE_v1.0.md` at 64e66255177dd30b50bbd0c52e0e8a9d4a9b37e4. Charter v1.3 unchanged. Clarified preliminary playbook and added new reference to AGENTS.md.
+- Verified main baseline RC113 code173 from app/build.gradle and inspected Java sources at 75c1fc7dbe9d86f9218351af01e288eb37569f0e. Existing tokens and persistent Save/Review/End dock are strengths. Static issues to investigate: 44/45 dp declared minima, Living Atlas ten-result display cap, separation of reader from scientific-detail navigation, and 3,308-line MainActivity. Calculated six palette contrast pairs; no full visual audit or fresh tests.
+- Next: retrieve/run exact current APK, inventory actual screen paths, validate target bounds and browse access, then bounded design fixes preserving method/data invariants. No new app source, build or physical usability study in this session. Prior draft RC116 state is historical until rechecked. No new APK handoff.
+
+---
+
 ## 2026-11-27 | Governing charter v1.3 and design playbook
 
 - Owner approved the prior v1.3 amendment and explicitly directed that APO permanently remain nontechnical in ordinary use. Canonical Google Doc and Markdown mirror were updated, normalized text compared, and the Doc renamed. Mirror commit: 6bdf916375bccc3aeab888b682033aec1c68e2af. APO-16–29 are adopted, plus APO-30 (approachable by default). Existing offline, science, privacy, editorial, owner approval and continuity rules remain in force.

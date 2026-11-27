@@ -590,3 +590,7 @@ Further targeted search failed to find original private key. Owner directed cont
 ### 2026-11-27 | Owner approves APO-31 and successor application ID
 
 Owner's affirmative reply to the explicit approval proposal authorizes exact APO-31 and org.phwildlife.survey.apo. Charter v1.4 canonical and Markdown mirror synchronized and main normalized match verified; AGENTS updated. Production signer adoption and retirement remain separate. First private rehearsal 45993005639 failed before export; retry 45995485087 pending. Optional synthetic-only successor QA mode committed (ffa9912, 44318f9); no compiled or installed successor yet. Original app/data preserved; no permanent signer adopted or generated. No other charter change.
+
+### 2026-11-27 | Synthetic cross-signer recovery passed and RC118 QA compilation passed
+
+Verified private run 45995485087 success including original UI export, signature mismatch rejection, different-signer fresh UI restore and synthetic record/media/prefs checks; second restore refused. Separate package RC118 QA workflow run 46013177198 started via narrow same-private-repo draft PR #1 because laptop offline. Exact reviewed source 8bcda469...; source/scientific regressions, media locks, JVM and both APK builds, package/version/cert and reference checks passed; native Atlas/rollback/side-by-side restoration pending. Photo linkage and comprehensive authorized migration remain unverified. Permanent signer custody plan documented; no production signer created or adopted, no release or original-app change. No further charter change.

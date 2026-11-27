@@ -4,9 +4,11 @@ APO is an offline-first Philippine wildlife survey and biodiversity learning app
 
 ## Governing direction
 
-The [APO Governing Product Charter v1.2](docs/APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md) is the approved source for product scope and all scientific/UI copy. Its canonical editable edition is the [Google Doc](https://docs.google.com/document/d/1khryohmOO5QsOmuKchv8VWWu7Qxcq7zxVDZX9L3qCJA/edit), located in the [governing documents folder](https://drive.google.com/drive/folders/1j3QFI8QTw2zgWIgJLxgQVZsnCJYEl3AI).
+The [APO Governing Product Charter v1.3](docs/APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md) is the approved source for product scope and all scientific/UI copy. Its canonical editable edition is the [Google Doc](https://docs.google.com/document/d/1khryohmOO5QsOmuKchv8VWWu7Qxcq7zxVDZX9L3qCJA/edit), located in the [governing documents folder](https://drive.google.com/drive/folders/1j3QFI8QTw2zgWIgJLxgQVZsnCJYEl3AI).
 
-**Every proposed change to the governing document requires the owner's specific prior approval.** Neither source updates nor external research authorize automatic amendments. The Markdown file retains its stable v1.0 filename, but its approved content is **v1.2**.
+**Every proposed change to the governing document requires the owner's specific prior approval.** Neither source updates nor external research authorize automatic amendments. The Markdown file retains its stable v1.0 filename, but its approved content is **v1.3**.
+
+APO is approachable by default (APO-30). The [design and layout playbook](docs/APO_DESIGN_LAYOUT_PLAYBOOK_v1.0.md) translates the charter into everyday screen-design guidance.
 
 Read [APO developer instructions](AGENTS.md) and the [documentation index](docs/README.md) before development.
 

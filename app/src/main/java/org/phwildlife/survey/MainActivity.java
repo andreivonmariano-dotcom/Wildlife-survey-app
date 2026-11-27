@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -201,10 +200,6 @@ public class MainActivity extends Activity implements LocationListener {
     private TextView label(String text,int size,boolean bold) {
         TextView t=new TextView(this);t.setText(text);t.setTextSize(size);t.setTextColor(INK);
         if(bold)t.setTypeface(null,Typeface.BOLD);t.setPadding(dp(2),dp(3),dp(2),dp(3));return t;
-    }
-    private Button button(String txt){
-        Button b=new Button(this);b.setText(txt);b.setAllCaps(false);b.setTextColor(Color.WHITE);
-        b.setBackgroundTintList(ColorStateList.valueOf(GREEN));b.setTextSize(14);b.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));return b;
     }
     private EditText edit(String hint,int type){
         EditText e=new EditText(this);e.setHint(hint);e.setTextColor(INK);

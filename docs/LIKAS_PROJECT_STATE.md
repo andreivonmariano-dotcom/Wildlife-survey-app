@@ -1,3 +1,11 @@
+## 2026-11-27 | Governing charter v1.3 and design playbook
+
+- Owner approved the prior v1.3 amendment and explicitly directed that APO permanently remain nontechnical in ordinary use. Canonical Google Doc and Markdown mirror were updated, normalized text compared, and the Doc renamed. Mirror commit: 6bdf916375bccc3aeab888b682033aec1c68e2af. APO-16–29 are adopted, plus APO-30 (approachable by default). Existing offline, science, privacy, editorial, owner approval and continuity rules remain in force.
+- Research-based companion: `docs/APO_DESIGN_LAYOUT_PLAYBOOK_v1.0.md` (development guidance, not a separate charter amendment). Use it before UI changes; proposed spacing/type defaults require visual validation. Actual user experience must be verified and claims must match evidence.
+- Documentation-only update. No new APK, code or UI test run. Prior documented main baseline RC113 code173; prior state records RC116 code176 on draft PR #125. Draft head, physical-device usability and current runtime behavior were not independently retested. Next engineering task: review actual recorder screens and baseline tasks against APO-30 and playbook before bounded UI refactoring.
+
+---
+
 ## 2026-11-14 | RC116 signed preview: offline locality filters and saved research references verified
 
 - **Source and disposition:** Stack draft [PR #125](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/pull/125) (`refactor/apo-localities-research-20261114`), exact HEAD `9c2ec14f9653ad80f571b3f93f7fc9850c60cda0`, on top of green Atlas PR #124 and map PR #123, and coherent shell PR #122. All PRs remain draft/unmerged; main Android is still RC113 code173. Owner-preview version is `0.27.4-rc116-localities-research-preview`, **versionCode176**.

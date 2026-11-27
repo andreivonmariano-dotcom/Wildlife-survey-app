@@ -204,7 +204,7 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private Button button(String txt){
         Button b=new Button(this);b.setText(txt);b.setAllCaps(false);b.setTextColor(Color.WHITE);
-        b.setBackgroundTintList(ColorStateList.valueOf(GREEN));b.setTextSize(14);b.setMinHeight(dp(44));return b;
+        b.setBackgroundTintList(ColorStateList.valueOf(GREEN));b.setTextSize(14);b.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));return b;
     }
     private EditText edit(String hint,int type){
         EditText e=new EditText(this);e.setHint(hint);e.setTextColor(INK);

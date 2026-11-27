@@ -622,3 +622,7 @@ This preview advances privacy-preserving offline map record navigation and saved
 ### 2026-11-27 | APO charter v1.3 and permanent approachable-by-default requirement | Owner approved
 
 Owner accepted the previously presented v1.3 amendment and explicitly instructed that APO must permanently remain nontechnical for ordinary use. Added APO-16–29 as proposed and APO-30 to the canonical charter; preserved APO-01–15 and existing scope, provenance and release requirements. Normalized canonical Doc and mirror text matched before and after the amendment. Mirror commit 6bdf916375bccc3aeab888b682033aec1c68e2af. Added research-based design/layout playbook as subordinate development guidance. No change to app source, APK or actual device verification. The owner's feedback about undelivered promises requires evidence-based handoffs under APO-27–29 and DL-01.
+
+### 2026-11-27 | Research-backed design reference | Owner-directed study
+
+Owner asked for actual deeper research after the preliminary playbook's source-review claim was overstated. Saved `docs/APO_EVIDENCE_BASED_DESIGN_REFERENCE_v1.0.md` at 64e66255177dd30b50bbd0c52e0e8a9d4a9b37e4; document distinguishes empirical research, standards, competitor documentation, static APO inspection and proposed tests. No new charter amendment, design approval, app source change, new APK or device test. Future UI work consults this reference alongside the playbook and approved APO-30. The next practical work is baseline screen capture and bounded fixes verified with task and data-integrity tests.

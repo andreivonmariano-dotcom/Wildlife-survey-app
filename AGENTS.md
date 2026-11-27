@@ -4,7 +4,7 @@
 
 ## Owner-approved governing sources
 
-- **Permanent design requirement (APO-30):** APO is approachable by default. Keep every primary screen intuitive, visually uncluttered and usable without specialized technical knowledge. Preserve required scientific inputs, uncertainty, provenance and data integrity; show advanced details when useful. Read `docs/APO_DESIGN_LAYOUT_PLAYBOOK_v1.0.md` before designing or revising screens. Follow APO-16–30 and demonstrate the actual interface and tests; distinguish recommendations, implementation, verification and delivery.
+- **Permanent design requirement (APO-30):** APO is approachable by default. Keep every primary screen intuitive, visually uncluttered and usable without specialized technical knowledge. Preserve required scientific inputs, uncertainty, provenance and data integrity; show advanced details when useful. Read `docs/APO_DESIGN_LAYOUT_PLAYBOOK_v1.0.md` and `docs/APO_EVIDENCE_BASED_DESIGN_REFERENCE_v1.0.md` before designing or revising screens. The latter identifies reviewed evidence, actual source findings, and the user-test protocol; treat proposed defaults as hypotheses until tested. Follow APO-16–30 and demonstrate the actual interface and tests; distinguish recommendations, implementation, verification and delivery.
 
 - **Canonical Google Doc:** https://docs.google.com/document/d/1khryohmOO5QsOmuKchv8VWWu7Qxcq7zxVDZX9L3qCJA/edit (inside APO — Governing Documents).
 - **Approved Markdown mirror:** `docs/APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md`, **content version 1.3**. Its filename remains stable for continuity.

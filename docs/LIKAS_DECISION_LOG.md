@@ -586,3 +586,7 @@ Owner directed recovery of expired inputs. Recovered three exact APKs (RC109, RC
 ### 2026-11-27 | Signing-loss recovery preparation, proposed continuity exception
 
 Further targeted search failed to find original private key. Owner directed continued recovery/migration preparation. Read-only backup preflight and ten synthetic tests completed and committed in candidate branch (8099ab909b45ad1d2e53bab64a27faafb0786a4f). Private two-emulator rehearsal 45993005639 passed original hash/certificate and ephemeral QA signer preparation; full native result pending at last check. Proposed APO-31 recorded separately at 68c5247645a3584af5eb16e35ef2225fb71fd1a2. Specific charter approval and new identity adoption remain outstanding. Preserve original package, key requirement, installed records and original app; no new production signer or APK.
+
+### 2026-11-27 | Owner approves APO-31 and successor application ID
+
+Owner's affirmative reply to the explicit approval proposal authorizes exact APO-31 and org.phwildlife.survey.apo. Charter v1.4 canonical and Markdown mirror synchronized and main normalized match verified; AGENTS updated. Production signer adoption and retirement remain separate. First private rehearsal 45993005639 failed before export; retry 45995485087 pending. Optional synthetic-only successor QA mode committed (ffa9912, 44318f9); no compiled or installed successor yet. Original app/data preserved; no permanent signer adopted or generated. No other charter change.

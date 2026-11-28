@@ -119,7 +119,10 @@ public final class PhLibraryBibliographyActivity extends Activity {
             large?12:14,PhLibrary2Ui.FOREST,false,true);
         navTitle.setGravity(Gravity.CENTER);
         nav.addView(navTitle,new LinearLayout.LayoutParams(0,dp(48),1));
-        root.addView(nav);
+        boolean workspaceRoot=getIntent().getBooleanExtra(ApoShellBar.ROOT,false);
+        if(workspaceRoot)root.addView(ApoShellBar.rootHeader(this,"Research Library",
+            ()->ApoShellBar.workspace(this,"home")));
+        else root.addView(nav);
         search=new EditText(this);search.setSingleLine(true);
         search.setTextSize(16);search.setHint("Search references");
         search.setContentDescription("Search original bibliography by author, title, year or DOI");
@@ -195,6 +198,7 @@ public final class PhLibraryBibliographyActivity extends Activity {
             dialog.show();
         });
         root.addView(list,new LinearLayout.LayoutParams(-1,0,1));
+        if(workspaceRoot)root.addView(ApoShellBar.createRoot(this,"research"));
         setContentView(root);
         originalCitation=saved==null?
             getIntent().getStringExtra("phlibrary_bib_citation"):

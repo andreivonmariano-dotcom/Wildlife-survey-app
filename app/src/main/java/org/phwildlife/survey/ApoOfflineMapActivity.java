@@ -239,7 +239,10 @@ public final class ApoOfflineMapActivity extends Activity {
         heading.setGravity(Gravity.CENTER_VERTICAL);
         heading.setPadding(gutter,0,0,0);
         header.addView(heading,new LinearLayout.LayoutParams(0,-2,1f));
-        root.addView(header);
+        boolean workspaceRoot=getIntent().getBooleanExtra(ApoShellBar.ROOT,false);
+        if(workspaceRoot)root.addView(ApoShellBar.rootHeader(this,"Offline Map",
+            ()->ApoShellBar.workspace(this,"home")));
+        else root.addView(header);
         subtitle=new TextView(this);
         subtitle.setTextSize(13);subtitle.setTextColor(ApoVisualSystem.MUTED);
         subtitle.setPadding(0,ApoVisualSystem.dp(this,9),0,ApoVisualSystem.dp(this,10));
@@ -304,6 +307,7 @@ public final class ApoOfflineMapActivity extends Activity {
                 "Original accuracy and uncertainty remain in the saved record.")
             .setPositiveButton("Close",null).show());
         root.addView(legend);
+        if(workspaceRoot)root.addView(ApoShellBar.createRoot(this,"map"));
         setContentView(root);
         updateSubtitle();
         // Boundary geometry parsing and SQLite reads stay off the UI thread.

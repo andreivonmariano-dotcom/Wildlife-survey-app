@@ -83,6 +83,16 @@ public class WelcomeActivity extends Activity {
         String destination=getIntent().getStringExtra("workspace_destination");
         if("fieldwork".equals(destination))fieldworkHub();
         else if("data".equals(destination))myDataHub();
+        else if("atlas".equals(destination)){home();openAtlas();}
+        else if("map".equals(destination)){home();openMap();}
+        else if("research".equals(destination)){home();openResearch();}
+        else if(state!=null&&"fieldwork".equals(state.getString("workspace_page")))fieldworkHub();
+        else if(state!=null&&"data".equals(state.getString("workspace_page")))myDataHub();
+        else if(state!=null&&"analysis".equals(state.getString("workspace_page")))analysisHub();
+        else if(state!=null&&"utilities".equals(state.getString("workspace_page")))fieldUtilitiesHub();
+        else if(state!=null&&"setup".equals(state.getString("workspace_page"))&&!isSurveyActive()){
+            setup(rememberedProfile);restoreSetup();
+        }
         else if(showMenu)home();
         else if(screen.equals("setup")&&!isSurveyActive() &&
                 (rememberedProfile.equals("Birds")||rememberedProfile.equals("Herpetofauna")||rememberedProfile.equals("Mammals"))){
@@ -92,6 +102,12 @@ public class WelcomeActivity extends Activity {
         if(destination==null&&!showMenu&&isSurveyActive()&&
             getSharedPreferences("field_resume",MODE_PRIVATE).getString("screen","home").equals("survey"))
             startActivity(new Intent(this,MainActivity.class).putExtra("resume",true));
+        getIntent().removeExtra("workspace_destination");
+    }
+    @Override protected void onSaveInstanceState(Bundle out){
+        persistSetup();
+        out.putString("workspace_page",currentScreen);
+        super.onSaveInstanceState(out);
     }
     @Override protected void onResume(){
         super.onResume();
@@ -116,7 +132,12 @@ public class WelcomeActivity extends Activity {
         String destination=intent.getStringExtra("workspace_destination");
         if("fieldwork".equals(destination))fieldworkHub();
         else if("data".equals(destination))myDataHub();
+        else if("atlas".equals(destination)){home();openAtlas();}
+        else if("map".equals(destination)){home();openMap();}
+        else if("research".equals(destination)){home();openResearch();}
         else home();
+        intent.removeExtra("workspace_destination");
+        intent.putExtra("show_menu",true);
     }
     @Override public void onBackPressed(){
         if("setup".equals(currentScreen)||"custom".equals(currentScreen)){
@@ -173,13 +194,16 @@ public class WelcomeActivity extends Activity {
         }
     }
     private void openAtlas(){
-        startActivity(new Intent(this,LikasLibraryActivity.class));
+        if(!homeVisible)home();
+        startActivity(new Intent(this,LikasLibraryActivity.class).putExtra(ApoShellBar.ROOT,true));
     }
     private void openResearch(){
-        startActivity(new Intent(this,PhLibraryBibliographyActivity.class));
+        if(!homeVisible)home();
+        startActivity(new Intent(this,PhLibraryBibliographyActivity.class).putExtra(ApoShellBar.ROOT,true));
     }
     private void openMap(){
-        startActivity(new Intent(this,ApoOfflineMapActivity.class));
+        if(!homeVisible)home();
+        startActivity(new Intent(this,ApoOfflineMapActivity.class).putExtra(ApoShellBar.ROOT,true));
     }
     private void scrollTop(){
         if(shellScroll!=null)shellScroll.post(()->shellScroll.scrollTo(0,0));
@@ -279,7 +303,7 @@ public class WelcomeActivity extends Activity {
     private void myDataHub(){
         showShellPage("data");
         lastHomeActiveSurvey=activeSurvey();
-        main.addView(ApoHomeUi.section(this,"My Data",null));
+        main.addView(ApoShellBar.rootHeader(this,"My Data",this::home));
         main.addView(ApoHomeUi.note(this,savedRecordCounts()));
         main.addView(ApoHomeUi.section(this,"Records",null));
         main.addView(ApoHomeUi.tool(this,"01","Survey history",
@@ -307,7 +331,7 @@ public class WelcomeActivity extends Activity {
     /** Survey-only workspace; method setup and survey outcomes remain unchanged. */
     private void fieldworkHub(){
         showShellPage("fieldwork");
-        main.addView(ApoHomeUi.section(this,"Fieldwork",null));
+        main.addView(ApoShellBar.rootHeader(this,"Fieldwork",this::home));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){

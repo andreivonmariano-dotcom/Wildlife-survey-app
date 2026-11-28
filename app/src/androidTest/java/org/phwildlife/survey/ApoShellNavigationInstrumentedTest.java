@@ -51,23 +51,24 @@ public final class ApoShellNavigationInstrumentedTest {
         assertTrue(target.getHeight()>=ApoVisualSystem.dp(a,48));
         target.performClick();
     }
-    /** All four tabs must display complete words at enlarged system text. */
+    /** All five peer destinations must remain legible at enlarged system text. */
     private static void assertNavLabelsFit(Activity a){
-        boolean enlarged=ApoVisualSystem.largeText(a);
-        String[] tags={"home","fieldwork","atlas","data"};
+        android.content.res.Configuration cfg=a.getResources().getConfiguration();
+        boolean enlarged=cfg.screenWidthDp<350||cfg.fontScale>=1.3f;
+        String[] tags={"fieldwork","atlas","map","research","data"};
         String[] expected=enlarged?
-            new String[]{"Home","Field","Atlas","Data"}:
-            new String[]{"Home","Fieldwork","Atlas","My Data"};
+            new String[]{"Field","Atlas","Map","Papers","Data"}:
+            new String[]{"Fieldwork","Atlas","Map","Research","My Data"};
         for(int i=0;i<tags.length;i++){
             View view=nav(a,tags[i]);
             assertTrue("Navigation tab missing: "+tags[i],view instanceof TextView);
             TextView text=(TextView)view;
             assertEquals("Unexpected tab label: "+tags[i],expected[i],text.getText().toString());
-            assertEquals("Tab must remain on one line: "+tags[i],1,text.getLineCount());
-            float needed=text.getPaint().measureText(expected[i]);
-            float room=text.getWidth()-text.getPaddingLeft()-text.getPaddingRight();
-            assertTrue("Clipped bottom tab "+tags[i]+": "+needed+" > "+room,
-                needed<=room+1f);
+            assertNotNull(text.getLayout());
+            assertTrue(text.getLineCount()<=2);
+            for(int line=0;line<text.getLineCount();line++)
+                assertEquals("Clipped bottom tab "+tags[i],0,text.getLayout().getEllipsisCount(line));
+            assertTrue("Target width "+tags[i],text.getWidth()>=ApoVisualSystem.dp(a,48));
         }
     }
     private static void capture(Activity a,String label){
@@ -119,9 +120,10 @@ public final class ApoShellNavigationInstrumentedTest {
                 assertTrue(hasText(a.getWindow().getDecorView(),"Research Library"));
                 assertTrue(hasText(a.getWindow().getDecorView(),"Offline Map"));
                 assertFalse(hasText(a.getWindow().getDecorView(),"BioTools"));
-                for(String name:new String[]{"home","fieldwork","atlas","data"})
+                for(String name:new String[]{"fieldwork","atlas","map","research","data"}){
                     assertNotNull(nav(a,name));
-                assertTrue(nav(a,"home").isSelected());
+                    assertFalse(nav(a,name).isSelected());
+                }
                 assertNavLabelsFit(a);
                 assertHomeShortcutsFit(a);
                 capture(a,"home");
@@ -148,7 +150,8 @@ public final class ApoShellNavigationInstrumentedTest {
             idle();
             scenario.onActivity(a->{
                 assertTrue(hasText(a.getWindow().getDecorView(),"Start Survey"));
-                assertTrue(nav(a,"home").isSelected());
+                assertFalse(nav(a,"fieldwork").isSelected());
+                assertFalse(nav(a,"data").isSelected());
                 capture(a,"back-home");
             });
         }
@@ -192,7 +195,8 @@ public final class ApoShellNavigationInstrumentedTest {
         try(ActivityScenario<LikasLibraryActivity> scenario=ActivityScenario.launch(intent)){
             idle();
             scenario.onActivity(a->{
-                assertNotNull(nav(a,"home"));
+                assertNotNull(nav(a,"map"));
+                assertNotNull(nav(a,"research"));
                 assertNotNull(nav(a,"fieldwork"));
                 assertNotNull(nav(a,"atlas"));
                 assertNotNull(nav(a,"data"));

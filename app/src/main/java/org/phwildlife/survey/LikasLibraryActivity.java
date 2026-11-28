@@ -17,11 +17,7 @@ public final class LikasLibraryActivity extends Activity {
 
     /** Return from Living Atlas to the one canonical workspace without duplicating its state. */
     private void workspace(String target){
-        Intent intent=new Intent(this,WelcomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("workspace_destination",target);
-        startActivity(intent);
-        finish();
+        ApoShellBar.workspace(this,target);
     }
     private void openAtlas(String extra,String filter){
         Intent i=new Intent(this,PhLibraryDirectoryActivity.class);
@@ -58,7 +54,9 @@ public final class LikasLibraryActivity extends Activity {
         title.setGravity(Gravity.CENTER);
         if(getResources().getConfiguration().fontScale>=1.6f)title.setTextSize(12);
         nav.addView(title,new LinearLayout.LayoutParams(0,dp(48),1));
-        root.addView(nav);
+        if(getIntent().getBooleanExtra(ApoShellBar.ROOT,false))
+            root.addView(ApoShellBar.rootHeader(this,"Living Atlas",()->workspace("home")));
+        else root.addView(nav);
         ScrollView scroll=new ScrollView(this);
         scroll.setFillViewport(true);scroll.setVerticalScrollBarEnabled(false);
         LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);
@@ -102,11 +100,9 @@ public final class LikasLibraryActivity extends Activity {
         body.addView(tileGap,new LinearLayout.LayoutParams(-1,dp(16)));
         tile(body,"Habitat Atlas",()->startActivity(
             new Intent(this,HabitatSpeciesEvidenceActivity.class)));
-        tile(body,"Research Library",()->startActivity(
-            new Intent(this,PhLibraryBibliographyActivity.class)));
+        tile(body,"Research Library",()->workspace("research"));
         tile(body,"Saved species",()->openAtlas("phlibrary_saved_only","true"));
-        tile(body,"Offline Map",()->
-            startActivity(new Intent(this,ApoOfflineMapActivity.class)));
+        tile(body,"Offline Map",()->workspace("map"));
         // Native photos ship inside the signed APK; no photo import is needed.
 
     }

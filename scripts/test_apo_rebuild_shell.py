@@ -7,13 +7,15 @@ JAVA=ROOT/"app/src/main/java/org/phwildlife/survey"
 def source(name): return (JAVA/name).read_text(encoding="utf-8")
 
 class ApoRebuildShell(unittest.TestCase):
-    def test_four_accessible_persistent_targets(self):
+    def test_five_accessible_persistent_targets(self):
         bar=source("ApoShellBar.java")
         welcome=source("WelcomeActivity.java")
-        for tab in ("home","fieldwork","atlas","data"):
+        for tab in ("home","fieldwork","atlas","map","research","data"):
             self.assertIn('"'+tab+'"',bar)
-        self.assertIn('item.setSingleLine(true)',bar)
-        self.assertIn('new String[]{"Home","Field","Atlas","Data"}',bar)
+        self.assertIn('item.setMaxLines(2)',bar)
+        self.assertIn('new String[]{"Field","Atlas","Map","Papers","Data"}',bar)
+        self.assertIn('rootHeader(',bar)
+        self.assertIn('cfg.fontScale>=1.3f',bar)
         self.assertIn('item.setContentDescription',bar)
         self.assertIn('item.setFocusable(true)',bar)
         self.assertIn('item.setMinHeight',bar)
@@ -41,8 +43,14 @@ class ApoRebuildShell(unittest.TestCase):
         self.assertIn('LikasLibraryActivity.class',welcome)
         atlas=source("LikasLibraryActivity.java")
         self.assertIn('ApoShellBar.create(this,"atlas"',atlas)
-        self.assertIn('Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP',atlas)
-        self.assertIn('"workspace_destination",target',atlas)
+        bar=source("ApoShellBar.java")
+        self.assertIn('Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP',bar)
+        self.assertIn('"workspace_destination",target',bar)
+        self.assertIn('ApoShellBar.workspace(this,target)',atlas)
+        for screen,key in (("ApoOfflineMapActivity.java","map"),("PhLibraryBibliographyActivity.java","research")):
+            content=source(screen)
+            self.assertIn('getBooleanExtra(ApoShellBar.ROOT,false)',content)
+            self.assertIn('ApoShellBar.createRoot(this,"'+key+'")',content)
         self.assertIn('if("fieldwork".equals(destination))fieldworkHub()',welcome)
         self.assertIn('else if("data".equals(destination))myDataHub()',welcome)
 

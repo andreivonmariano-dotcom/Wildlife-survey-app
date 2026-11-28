@@ -87,6 +87,27 @@ public final class ApoShellNavigationInstrumentedTest {
         }finally{b.recycle();}
     }
 
+    private static void assertHomeShortcutsFit(Activity a){
+        View root=a.getWindow().getDecorView();
+        View map=root.findViewWithTag("apo_home_shortcut_Offline Map");
+        View research=root.findViewWithTag("apo_home_shortcut_Research Library");
+        assertNotNull(map);assertNotNull(research);
+        for(View view:new View[]{map,research}){
+            assertTrue(view.isClickable()&&view.isFocusable());
+            assertTrue(view.getHeight()>=ApoVisualSystem.dp(a,48));
+            assertTrue(view.getWidth()>=ApoVisualSystem.dp(a,48));
+            TextView label=(TextView)((ViewGroup)view).getChildAt(0);
+            assertNotNull(label.getLayout());
+            for(int i=0;i<label.getLineCount();i++)
+                assertEquals("Shortcut text clipped",0,label.getLayout().getEllipsisCount(i));
+        }
+        android.content.res.Configuration cfg=a.getResources().getConfiguration();
+        boolean stacked=cfg.screenWidthDp<360||cfg.fontScale>=1.3f;
+        assertEquals(stacked?android.widget.LinearLayout.VERTICAL:android.widget.LinearLayout.HORIZONTAL,
+            ((android.widget.LinearLayout)map.getParent()).getOrientation());
+        assertSame(map.getParent(),research.getParent());
+    }
+
     @Test public void shellHomeFieldworkDataAndBack(){
         Intent launch=new Intent(ApplicationProvider.getApplicationContext(),WelcomeActivity.class)
             .putExtra("show_menu",true);
@@ -102,6 +123,7 @@ public final class ApoShellNavigationInstrumentedTest {
                     assertNotNull(nav(a,name));
                 assertTrue(nav(a,"home").isSelected());
                 assertNavLabelsFit(a);
+                assertHomeShortcutsFit(a);
                 capture(a,"home");
                 select(a,"fieldwork");
             });
@@ -110,6 +132,7 @@ public final class ApoShellNavigationInstrumentedTest {
                 assertTrue(hasText(a.getWindow().getDecorView(),"Birds"));
                 assertFalse(hasText(a.getWindow().getDecorView(),"New survey"));
                 assertTrue(hasText(a.getWindow().getDecorView(),"Herpetofauna"));
+                assertTrue(hasText(a.getWindow().getDecorView(),"Amphibians and reptiles"));
                 assertTrue(nav(a,"fieldwork").isSelected());
                 capture(a,"fieldwork");
                 select(a,"data");

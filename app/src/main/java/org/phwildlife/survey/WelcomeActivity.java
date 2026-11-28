@@ -281,6 +281,7 @@ public class WelcomeActivity extends Activity {
         lastHomeActiveSurvey=activeSurvey();
         main.addView(ApoHomeUi.section(this,"My Data",null));
         main.addView(ApoHomeUi.note(this,savedRecordCounts()));
+        main.addView(ApoHomeUi.section(this,"Records",null));
         main.addView(ApoHomeUi.tool(this,"01","Survey history",
             null,()->
                 startActivity(new Intent(this,HistoryActivity.class))));
@@ -291,10 +292,12 @@ public class WelcomeActivity extends Activity {
             null,()->
                 startActivity(new Intent(this,HabitatRecordsActivity.class)
                     .putExtra("initial_tab","records"))));
+        main.addView(ApoHomeUi.section(this,"Tools",null));
         main.addView(ApoHomeUi.tool(this,"04","Analysis & exports",
             null,this::analysisHub));
         main.addView(ApoHomeUi.tool(this,"05","Field utilities",
             null,this::fieldUtilitiesHub));
+        main.addView(ApoHomeUi.section(this,"Data protection",null));
         main.addView(ApoHomeUi.tool(this,"06","Backup & restore",
             null,()->
                 startActivity(new Intent(this,FieldBackupActivity.class))));
@@ -622,7 +625,7 @@ public class WelcomeActivity extends Activity {
         templateChoice=new Spinner(this);
         routeOptions.addView(templateChoice);
         setupSpinner(templateChoice,"Choose a repeat monitoring route");
-        templateHint=text("Saved routes reuse permanent stations.",12,false);
+        templateHint=text("Saved routes retain station IDs.",12,false);
         templateHint.setTextColor(MUTED);routeOptions.addView(templateHint);
         saveTemplateChoice=new CheckBox(this);
         saveTemplateChoice.setText("Save this route for future monitoring");
@@ -885,8 +888,7 @@ public class WelcomeActivity extends Activity {
                 if(!GeoChecklistPolicy.canAutoSelect(match.status,match.checklistRegion)){
                     suggested=null;
                     geographicMethod=GeoRegions.BOUNDARY_METHOD;
-                    boundaryMessage.setText("Area uncertain ("+match.status+"). "+
-                        "Select the checklist area manually.");
+                    boundaryMessage.setText("GPS area uncertain. Select the checklist area manually.");
                     return;
                 }
                 // The observer has already requested GPS area selection. No extra dialog.
@@ -976,7 +978,7 @@ public class WelcomeActivity extends Activity {
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED)
             suggestBoundary();
         else if(boundaryMessage!=null)
-            boundaryMessage.setText("Precise GPS access was not granted. Use the manual geographic checklist choice.");
+            boundaryMessage.setText("Precise GPS unavailable. Select a checklist area.");
     }
     private boolean supportsRoute(String code){return FieldUiPolicy.routeSetup(code);}
     private double spacingMeters(){

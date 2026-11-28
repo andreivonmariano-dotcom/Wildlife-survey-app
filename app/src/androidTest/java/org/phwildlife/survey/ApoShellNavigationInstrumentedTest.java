@@ -210,6 +210,92 @@ public final class ApoShellNavigationInstrumentedTest {
         }
     }
 
+
+    private static Activity transition(Class<? extends Activity> type,Runnable trigger){
+        android.app.Instrumentation instrumentation=InstrumentationRegistry.getInstrumentation();
+        android.app.Instrumentation.ActivityMonitor monitor=instrumentation.addMonitor(
+            type.getName(),null,false);
+        try{
+            trigger.run();
+            Activity result=instrumentation.waitForMonitorWithTimeout(monitor,15000);
+            assertNotNull("Route failed: "+type.getSimpleName(),result);
+            idle();
+            assertTrue(type.isInstance(result));
+            return result;
+        }finally{instrumentation.removeMonitor(monitor);}
+    }
+
+    private static void onMain(Runnable action){
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(action);
+        idle();
+    }
+
+    private static void assertRoot(Activity a,String selected){
+        assertNavLabelsFit(a);
+        assertNotNull(nav(a,"home"));
+        for(String key:new String[]{"fieldwork","atlas","map","research","data"})
+            assertEquals("Selected route "+key,selected.equals(key),nav(a,key).isSelected());
+    }
+
+    @Test public void crossWorkspaceRoutesReturnToOneHome(){
+        Intent launch=new Intent(ApplicationProvider.getApplicationContext(),WelcomeActivity.class)
+            .putExtra("show_menu",true);
+        try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(launch)){
+            idle();
+            Activity atlas=transition(LikasLibraryActivity.class,
+                ()->scenario.onActivity(a->select(a,"atlas")));
+            onMain(()->{assertRoot(atlas,"atlas");capture(atlas,"workspace-atlas");});
+            Activity map=transition(ApoOfflineMapActivity.class,
+                ()->onMain(()->select(atlas,"map")));
+            onMain(()->{assertRoot(map,"map");capture(map,"workspace-map");
+                select(map,"map");assertFalse(map.isFinishing());});
+            Activity research=transition(PhLibraryBibliographyActivity.class,
+                ()->onMain(()->select(map,"research")));
+            onMain(()->{assertRoot(research,"research");capture(research,"workspace-research");});
+            onMain(()->research.onBackPressed());
+            scenario.onActivity(a->{
+                assertTrue(hasText(a.getWindow().getDecorView(),"Start Survey"));
+                assertFalse(nav(a,"atlas").isSelected());
+                assertFalse(nav(a,"map").isSelected());
+                assertFalse(nav(a,"research").isSelected());
+                select(a,"data");
+            });
+            idle();
+            scenario.onActivity(a->{assertRoot(a,"data");select(a,"fieldwork");});
+            idle();
+            scenario.onActivity(a->{assertRoot(a,"fieldwork");select(a,"home");});
+            idle();
+            scenario.onActivity(a->assertTrue(hasText(a.getWindow().getDecorView(),"Start Survey")));
+        }
+    }
+
+    @Test public void contextualResearchReturnsToAtlas(){
+        Intent intent=new Intent(ApplicationProvider.getApplicationContext(),LikasLibraryActivity.class);
+        try(ActivityScenario<LikasLibraryActivity> scenario=ActivityScenario.launch(intent)){
+            idle();
+            Activity research=transition(PhLibraryBibliographyActivity.class,
+                ()->scenario.onActivity(a->a.startActivity(new Intent(a,PhLibraryBibliographyActivity.class)
+                    .putExtra("phlibrary_bib_citation","Heaney"))));
+            onMain(()->{
+                assertNull(nav(research,"research"));
+                assertTrue(hasText(research.getWindow().getDecorView(),"Back"));
+                research.onBackPressed();
+            });
+            scenario.onActivity(a->{assertTrue(nav(a,"atlas").isSelected());assertFalse(a.isFinishing());});
+        }
+    }
+
+    @Test public void workspacePageSurvivesRecreation(){
+        Intent launch=new Intent(ApplicationProvider.getApplicationContext(),WelcomeActivity.class)
+            .putExtra("show_menu",true);
+        try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(launch)){
+            idle();scenario.onActivity(a->select(a,"data"));
+            scenario.recreate();idle();
+            scenario.onActivity(a->{assertRoot(a,"data");assertTrue(
+                hasText(a.getWindow().getDecorView(),"Survey history"));});
+        }
+    }
+
     @Test public void sourceFactKeepsAbbreviatedMountainNames(){
         String paragraph="Specimens discussed from Mt. Apo Natural Park in Mindanao. "
             +"The species occurs near forest streams.";

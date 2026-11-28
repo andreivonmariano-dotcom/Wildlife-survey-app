@@ -256,9 +256,11 @@ public class WelcomeActivity extends Activity {
             lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
             main.addView(start,lp);
         }
-        main.addView(ApoHomeUi.module(this,"01","Living Atlas",null,this::openAtlas));
-        main.addView(ApoHomeUi.module(this,"02","Offline Map",null,this::openMap));
-        main.addView(ApoHomeUi.module(this,"03","Research Library",null,this::openResearch));
+        main.addView(ApoHomeUi.section(this,"Explore",null));
+        main.addView(ApoHomeUi.module(this,"01","Living Atlas",
+            "Species and habitats",this::openAtlas));
+        main.addView(ApoHomeUi.shortcutPair(this,"Offline Map",this::openMap,
+            "Research Library",this::openResearch));
         View daily=ApoSpeciesOfDay.createCompact(this,scientific->
             startActivity(new Intent(this,TaxonDetailActivity.class)
                 .putExtra("phlibrary_scientific_name",scientific)));
@@ -332,9 +334,9 @@ public class WelcomeActivity extends Activity {
             activeCard.addView(resume,resumeLp);
             main.addView(activeCard);
         }else{
-            surveyTile(main,"Birds","Counts · Transects",()->setup("Birds"));
-            surveyTile(main,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna"));
-            surveyTile(main,"Mammals","Signs · Stations",()->setup("Mammals"));
+            surveyTile(main,"Birds","Point counts, transects and other bird surveys",()->setup("Birds"));
+            surveyTile(main,"Herpetofauna","Amphibians and reptiles",()->setup("Herpetofauna"));
+            surveyTile(main,"Mammals","Mammal sightings, signs and sampling stations",()->setup("Mammals"));
         }
         UiMotion.enter(this,main);
     }

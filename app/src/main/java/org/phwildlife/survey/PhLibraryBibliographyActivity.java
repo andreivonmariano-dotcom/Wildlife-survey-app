@@ -171,7 +171,7 @@ public final class PhLibraryBibliographyActivity extends Activity {
             TextView detail=PhLibrary2Ui.text(this,full+
                 "\n\nCitation only"+
                 (sourceUrl.startsWith("https://")?
-                    "\nOnline source available":""),16,
+                    "\nInternet required":""),16,
                 PhLibrary2Ui.INK,false,false);
             detail.setPadding(dp(20),dp(15),dp(20),dp(15));
             detail.setTextIsSelectable(true);

@@ -610,3 +610,11 @@ Permanent signing recovery and migration release track deferred; continue app de
 ### 2026-11-28 | Presentation cleanup and build-only artwork separation
 
 Owner requested removal of unnecessary explanations/AI artifacts. Grouped My Data, condensed recorder/map/reference/settings/backup copy while preserving scientific and data safety meaning. Exact historical image scan found two locked original artwork master marker hits; runtime source scan found no use. Preserved originals/metadata and SHA checks; excluded only redundant build-only master files in new APK configuration, retained approved runtime drawables. Source pin b6cff0c, private dev run 46141612382 pending. Prior 583-test run failed three old wording assertions, corrected. No production release or charter change. Preserve authentic scientific provenance, author/source rights and required notices.
+
+
+---
+
+## 2026-11-28 | Concise online reference label and QA correction
+
+- Under existing APO-09–12 and APO-30, keep "Citation only" and use "Internet required" for references with an online source, preserving the "Open online source" action. This is an implementation-level wording correction under the existing owner direction, not a charter amendment.
+- Prior run 46141612382 failed one of 583 source assertions; new code/test pin 37869e59d7b129fda874acfadc9647b522d808c2, private development retry 46151000996. Full build, artwork package check and native verification pending. No production signer, APK or user-data change.

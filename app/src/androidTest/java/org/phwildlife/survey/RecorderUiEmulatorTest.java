@@ -50,6 +50,78 @@ public final class RecorderUiEmulatorTest {
         }
         return null;
     }
+    private View findSpeciesInput(View view){
+        if(view instanceof android.widget.AutoCompleteTextView&&
+            "Species".contentEquals(((android.widget.AutoCompleteTextView)view).getHint()))
+            return view;
+        if(view instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)view;
+            for(int i=0;i<group.getChildCount();i++){
+                View hit=findSpeciesInput(group.getChildAt(i));
+                if(hit!=null)return hit;
+            }
+        }
+        return null;
+    }
+
+    @Test public void keyboardKeepsSurveyActionsReachable() throws Exception {
+        Intent launch=new Intent(ApplicationProvider.getApplicationContext(),MainActivity.class);
+        launch.putExtra("create_new",true);
+        launch.putExtra("start_without_gps",true);
+        launch.putExtra("survey_profile","Birds");
+        launch.putExtra("survey_method","opportunistic");
+        launch.putExtra("project_id","default");
+        try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(launch)){
+            scenario.onActivity(a->{
+                View field=findSpeciesInput(a.getWindow().getDecorView());
+                assertNotNull("Species input is available",field);
+                field.requestFocus();
+                android.view.inputmethod.InputMethodManager ime=
+                    (android.view.inputmethod.InputMethodManager)a.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+                ime.showSoftInput(field,android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+            });
+            boolean visible=false;
+            for(int i=0;i<40&&!visible;i++){
+                final boolean[] shown={false};
+                scenario.onActivity(a->{
+                    android.view.WindowInsets insets=a.getWindow().getDecorView().getRootWindowInsets();
+                    if(insets!=null&&android.os.Build.VERSION.SDK_INT>=30)
+                        shown[0]=insets.isVisible(android.view.WindowInsets.Type.ime());
+                });
+                visible=shown[0];
+                if(!visible)android.os.SystemClock.sleep(150);
+            }
+            assertTrue("Keyboard actually displayed",visible);
+            scenario.onActivity(a->{
+                View root=a.getWindow().getDecorView();
+                android.graphics.Rect viewport=new android.graphics.Rect();
+                root.getWindowVisibleDisplayFrame(viewport);
+                for(String label:new String[]{"Save Observation","End Survey"}){
+                    View control=findText(root,label);
+                    assertNotNull(label,control);
+                    android.graphics.Rect bounds=new android.graphics.Rect();
+                    assertTrue(label+" visible with keyboard",control.getGlobalVisibleRect(bounds));
+                    assertTrue(label+" entire control fits above keyboard",bounds.height()>=control.getHeight()
+                        && bounds.bottom<=viewport.bottom);
+                }
+            });
+            android.graphics.Bitmap screenshot=androidx.test.platform.app.InstrumentationRegistry
+                .getInstrumentation().getUiAutomation().takeScreenshot();
+            assertNotNull("Native keyboard screenshot",screenshot);
+            scenario.onActivity(a->{
+                java.io.File directory=new java.io.File(
+                    a.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"APO_SHELL_REVIEW");
+                assertTrue(directory.isDirectory()||directory.mkdirs());
+                try(java.io.FileOutputStream out=new java.io.FileOutputStream(
+                    new java.io.File(directory,"recorder-keyboard.png"))){
+                    assertTrue(screenshot.compress(Bitmap.CompressFormat.PNG,100,out));
+                }catch(Exception e){throw new AssertionError(e);}
+            });
+            screenshot.recycle();
+        }
+    }
+
     @Test public void recorderHasPersistentSaveReviewAndEndSurvey() throws Exception {
         Intent launch=new Intent(ApplicationProvider.getApplicationContext(),MainActivity.class);
         launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -1,3 +1,9 @@
+## 2026-11-28 | Direct QA preview APK delivered
+
+- Private preview run 46152620198 completed successfully; artifact 15265299664 retrieved into current conversation. Archive SHA-256 matches CI digest 78a18b410f3d54f492ccbff0fddc027d951408a8425b04951fdf0a5a3dfee97b. Extracted APO-RC118-navigation-QA.apk, 139533644 bytes, SHA-256 24ba31d3b0c90a3a7620e038af1d8b7ca5e18e7eccaa1404a5e54b270ccd4df9, matches bundled checksum. APK ZIP integrity and manifest/dex/resources entries verified locally; CI verified package, code, signer and runtime assets. Direct sandbox link delivered in this conversation only. Separate QA package, not production upgrade. Native acceptance still pending at last matrix check. Do not reuse sandbox path in future chat without checking bytes.
+
+---
+
 ## 2026-11-28 | Requested direct APK delivery; private preview build
 
 - Owner requested the updated APK and explicitly asked to continue through direct file delivery. Rechecked two navigation matrix jobs in run 46152239547: both passed 585 source regression tests, media and native photo verification, Android unit/compile/build gates, and package/signature/runtime artwork verification; emulator steps in progress.

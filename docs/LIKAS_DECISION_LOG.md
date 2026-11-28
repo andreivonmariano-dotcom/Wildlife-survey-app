@@ -665,3 +665,10 @@ Owner requested removal of unnecessary explanations/AI artifacts. Grouped My Dat
 ## 2026-11-28 | Native emulator execution repair and all-method coverage
 
 - Owner requested closure of outstanding limitations. Actual runner logs confirm both Android emulators booted after storage cleanup. Fixed subsequent multiline script execution defect with standalone bash invocation. Added all 17 method-profile entries to native QA, flexible method buttons and selected method disclosure, preserving original survey and scientific policies. Exact source pin 40308dc6cffc1c3dfb89be4af7c5622eb440e7df, native run 46156466081. Delivered verified separate QA APK from artifact 15268111205, 139534516 bytes, SHA256 c422b967bfd4ff7a61b377b05c7396100f434585f139b27980b14a0eae5efb0c. Full native and physical-device acceptance still not established; no production signer or charter changes.
+
+
+---
+
+## 2026-11-28 | Evidence-driven native interface repairs
+
+- Owner requested continued improvements after operational emulator testing. Actual run 46156466081 returned 65/76 passing cases, including all 17 method-profile entries on both displays; retrieved and inspected screenshots. Implemented compact recorder/group/picker improvements, explicit Back parity, safe running-export navigation, closure guidance, actual map-dialog and software IME checks, and updated legacy label tests. Exact new source pin 48dd422c71bf2c03205fac1f2a70ee083be29163, native run 46159159129, source/media gates passed and build underway. Preserve original installation, SQLite29 and scientific methods; native acceptance pending. No charter or signer change.

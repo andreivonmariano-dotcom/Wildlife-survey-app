@@ -793,8 +793,8 @@ public class MainActivity extends Activity implements LocationListener {
             Button action=UiKit.button(this,
                 RecorderMethodUiPolicy.actionLabel(profile,method),"secondary");
             action.setContentDescription(
-                "Open existing "+RecorderMethodUiPolicy.actionLabel(profile,method)+
-                " records for this survey; does not automatically record effort");
+                "Open "+RecorderMethodUiPolicy.actionLabel(profile,method)+
+                " records for this survey. Record effort separately.");
             LinearLayout.LayoutParams actionLp=new LinearLayout.LayoutParams(
                 -1,dp(48));
             actionLp.bottomMargin=dp(5);
@@ -2674,7 +2674,7 @@ public class MainActivity extends Activity implements LocationListener {
             timelineRows.setVisibility(timelineOpen?View.VISIBLE:View.GONE);
             if(!timelineOpen)return;
             if(current.recent.isEmpty()){
-                TextView empty=label("No saved observations yet",13,false);
+                TextView empty=label("No saved observations",13,false);
                 empty.setTextColor(UiKit.MUTED);timelineRows.addView(empty);
             }
             for(ObservationTimeline.Item record:current.recent){

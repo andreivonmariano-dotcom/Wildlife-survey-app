@@ -135,7 +135,7 @@ public final class ApoOfflineMapActivity extends Activity {
     private void showPin(Pin pin){
         String message=pin.provenance+"\n"+
             fmt(pin.lat)+"° N, "+fmt(pin.lon)+"° E"+
-            "\nStored only on this device.";
+            "\nSaved locally.";
         AlertDialog.Builder dialog=new AlertDialog.Builder(this)
             .setTitle(pin.name).setMessage(message)
             .setPositiveButton("Close",null);
@@ -171,7 +171,7 @@ public final class ApoOfflineMapActivity extends Activity {
         String project=projectFilter.isEmpty()?"All projects":
             projectNames.containsKey(projectFilter)?
                 projectNames.get(projectFilter):projectFilter;
-        filterAction.setText("Filter · "+type+" · "+project);
+        filterAction.setText("Filter · "+type+(projectFilter.isEmpty()?"":" · "+project));
         filterAction.setContentDescription("Filter map records. "+
             type+". "+project);
         updateSubtitle();surface.invalidate();
@@ -279,14 +279,14 @@ public final class ApoOfflineMapActivity extends Activity {
             locality.setTextSize(12);
         }
         root.addView(controls);
-        filterAction=action("Filter · All records · All projects",this::chooseFilters);
+        filterAction=action("Filter · All records",this::chooseFilters);
         filterAction.setTextSize(ApoVisualSystem.largeText(this)?12:14);
         LinearLayout.LayoutParams filterLp=new LinearLayout.LayoutParams(-1,-2);
         filterLp.topMargin=ApoVisualSystem.dp(this,5);
         root.addView(filterAction,filterLp);
         TextView legend=new TextView(this);
         legend.setText("● Survey GPS   ◆ Saved site\n"+
-            "2026 Q3 provinces · schematic view");
+            "Schematic map · Sources");
         legend.setTextColor(ApoVisualSystem.MUTED);
         legend.setTextSize(ApoVisualSystem.largeText(this)?10:12);
         legend.setPadding(0,ApoVisualSystem.dp(this,8),0,0);

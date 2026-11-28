@@ -1,0 +1,67 @@
+# APO screen refinement audit | 28 November 2026
+
+Scope: all 40 manifest-declared activities, inspected through their screen construction, navigation and UI control excerpts at source da3abdc980c3866c2c4ab58a9b49cc17d6ad1a42. Some activities contain several states, dialogs or child views; the inventory is not a count of every possible rendered page. The audit is a source-level design review, not a claim that all screens were visually rendered or tested. The prior native run failed at emulator startup due to insufficient runner disk space, not an observed app crash. The revised candidate is 8233a4bcfeb9babb89b95373d2a4e23db00f0776. No charter, database schema, scientific source, survey disposition or production signing changes.
+
+## Shared design findings and changes
+
+- Shared page titles previously used one line with ellipsis at normal scale and two lines at large scale. They now wrap intrinsically; accessibility heading semantics apply on API 28+, and row baselines no longer misalign controls. Peer shell headings receive the same heading semantics. Selected My Data tab returns to its root from analysis and utility subpages without duplicating root activities.
+- Species picker: search stays fixed, while identification actions, the optional filter/site panel and results share a scroll. Filters start collapsed but retain their controls, selected settings, habitat shortlist and manual/unidentified path; visible result status continues to identify the shortlist. The search now uses the shared input surface.
+- Camera compass: intrinsic header, bearing display and capture action heights; concise targeting instruction. No camera, compass, permission, pitch or detection-time logic changed.
+- Atlas and bibliography: intrinsic search, tile and action heights; Atlas search stacks on narrower screens; full reference citation details scroll in their dialog without changing citation text or link availability.
+- Field management: history and habitat tabs wrap; backup buttons grow and headings are concise; legacy restore uses the shared scrollable page and correct Settings return label; data quality review removes duplicate text; station progress removes duplicate headings and preserves all explicit visit classifications; research export removes repetitive headings while retaining all-outcome inclusion, privacy and backup distinctions.
+- Comparisons and annotation: increase minimum targets or use intrinsic height for long reference actions. No biological claims, original photographs, rights or annotation data changed.
+
+## Activity-by-activity review
+
+Status key: Direct = activity source changed in the refinement commits; Shared = reviewed with the common header/navigation change affecting it; Review = identified next visual or interaction check without activity-specific code changes.
+
+| Activity / user-facing screen | Source finding / change | Next native check |
+|---|---|---|
+| LikasLaunchActivity / startup | Review: preserve short approved splash and explicit loading state. | Startup with slow/cold assets and Back. |
+| WelcomeActivity / Home, Fieldwork, setup, My Data, analysis, utilities | Shared: root headings and nested My Data tab return. Setup has substantial method-dependent content; no method fields removed. | All three groups, drafts, GPS cancel, tab reselect, keyboard and system Back. |
+| LikasSettingsActivity / Settings | Shared: common header and existing single-column tool layout. | Font scaling, switches, restore and permissions paths. |
+| LikasLibraryActivity / Living Atlas | Direct: variable-height feature cards, responsive search bar. | Search, saved species, hero crop, route tabs. |
+| ApoOfflineMapActivity / Offline Map | Shared: root heading/navigation; map controls and legend can compete for canvas space. | Map canvas at 320dp/200%, filters, coordinate provenance, pin selection. |
+| PhLibraryBibliographyActivity / Research Library | Direct: variable search/bookmark action, scrollable citation dialog. | Long citation, saved-only view, internet-required link. |
+| SurveyGpsActivity / GPS check | Shared: common page header; retain fix accuracy and missing-GPS confirmation. | Permission denied, disabled GPS, valid/stale/missing fix, cancel. |
+| HabitatsSpeciesActivity / habitat and checklist preparation | Shared: common header; method/area/guide evidence remain explicit. | Manual fallback, complete list, prepare and begin. |
+| MainActivity / active survey recorder | Review: existing observation-first form and persistent Save/Review/End dock. Complex method-specific controls require separate native acceptance. | Each method family, draft, interruption, pause, all outcomes, keyboard. |
+| CameraActivity / camera compass | Direct: intrinsic title, bearing and capture controls, short instruction. | Camera permission, preview, sensor accuracy, cancel/result on phone. |
+| SpeciesPickerActivity / field species selection | Direct: filter disclosure, pinned search and scrollable results. | All groups, recent/unidentified, visible shortlist, all-species fallback. |
+| StationProgressActivity / station progress | Direct: one method caption and preserved actual status counts. | Planned/unvisited/complete/incomplete and recorder return. |
+| HistoryActivity / survey history and observations | Direct: variable action heights; existing caller-aware Back and filter restoration. | Empty, populated, excluded, map-owned and live recorder review. |
+| SitesActivity / projects and sites | Shared: header; station search and editor need populated-state review. | Long names, coordinate validation, save/cancel. |
+| HabitatRecordsActivity / site habitats | Direct: content-sized tabs; guide/evidence separation retained. | Toggle guide/records, saved habitats, long labels. |
+| FieldBackupActivity / backup & restore | Direct: shorter section names and flexible action heights. | Empty/nonempty restore guards, cancellation, busy Back, real ZIP roundtrip. |
+| DataManagementActivity / manage saved data | Shared: header; protected destructive operations unchanged. | Empty state, selection and confirmation; no real-data mutations. |
+| AuditActivity / data quality review | Direct: removed repeated description and redundant heading. | Empty/result/error states, read-only check. |
+| ResearchExportActivity / research export | Direct: concise hierarchy, privacy and outcome caveats retained. | ZIP selection/cancel, export completion, original data untouched. |
+| DashboardActivity / survey analysis | Shared: header; scientific counts and denominators preserved. | Real synthetic outcomes and method-specific effort; scroll readability. |
+| ImportActivity / legacy survey restore | Direct: shared page/scroll and accurate Back destination. | Archive picker cancel, invalid/valid archive on empty disposable workspace. |
+| CallLibraryActivity / sound recordings | Shared: header; keep recording/save-aware Back and clip evidence. | Permissions, recording, playback, review/annotation on supported device. |
+| TrapProtocolActivity / trap and camera records | Shared: header; no changes to deployment/check lifecycle. | Empty and populated device records, method return. |
+| FieldProtocolsActivity / field protocols | Shared: header; method-specific controls and evidence preserved. | Each supported method, editable live versus archived read-only states. |
+| StudyProtocolsActivity / study templates | Shared: header; completion threshold and evidence sections retained. | Valid/invalid template, long inputs, saved list. |
+| PhLibraryDirectoryActivity / species atlas search | Direct: variable search/filter row, baseline alignment. | Filter sheet, sorting, saved collection, long common/scientific names. |
+| TaxonDetailActivity / species account | Shared: header; keep source-scoped account and internal reader history. | Long account headings, photo attribution, sources and internal Back. |
+| LivingAtlasExploreActivity / taxonomic connections | Review: reader-specific header and source-linked contextual navigation. | Family matches, evidence distinctions, account/back routes. |
+| HabitatSpeciesEvidenceActivity / habitat atlas | Review: source-scoped habitat reader and contextual species browsing. | Long habitat titles, source passages, filters and Back. |
+| CatalogActivity / legacy species library entry | Shared: common header; legacy routes retained pending reachability checks. | Explicit legacy entry and reference availability. |
+| DiagnosticGuideActivity / field identification | Shared: header; evidence-linked visible character comparison. | Empty/available guide, character selection, cited sources. |
+| Rc7SpeciesLibraryActivity / archived species checklist | Shared: header; existing filters and searchable source data. | Catalog availability, names, filter disclosure, photo actions. |
+| RegionalChecklistActivity / regional evidence | Shared: header; keep record scope and source distinctions. | Region filters, no evidence/available evidence states. |
+| Rc8TraitComparisonActivity / trait comparison | Direct: variable-height spinners with 48dp minimum. | Species A/B, category, habitat mode, sources. |
+| Rc24ConservationDashboardActivity / conservation references | Shared: header; dated assessment and status distinctions retained. | Group/scope filters, long citations, dated labels. |
+| Rc8PhotoComparisonActivity / photograph comparison | Direct: variable-height comparison and annotation entry actions. | A/B selections, original photos, attribution, approved marks. |
+| Rc9DifferentialActivity / similar-species comparison | Direct: source link action no longer fixed to 43dp. | Long trait text, source links and offline behavior. |
+| Rc9PhotoAnnotationReviewActivity / anatomical annotation draft | Direct: variable-height save/share/export actions. | Draft, undo, uncertainty, export on synthetic permitted photo. |
+| LikasDiscoveryActivity / field guides | Shared: header; legacy galleries and lazy hydration unchanged. | Long guide cards, scrolling/search, approved images. |
+| LikasHabitatProfileActivity / habitat profile | Direct: flexible source link height. | Long publisher names, offline source and Back. |
+
+## Validation and release gates
+
+- Prior RC118 source/Android build and package verification passed; previous emulator job 140997411682 failed before app launch: userdata partition required 7372.80 MB and only 6969.56 MB were available.
+- Corrected private runner configuration to 2048M data partition, 2048M RAM, 600-second boot timeout and disk diagnostics, retaining the two Android 14 device presets and full route gates. The documented runner input is disk-size; see https://github.com/ReactiveCircus/android-emulator-runner/blob/main/action.yml and its emulator-manager implementation.
+- Refinements are committed in 7ee3fba, af04a87 and 8233a4b. New source tests verify header wrapping, selected parent route, retained filter controls, scrollable references, camera and survey invariants. Existing picker and navigation native tests extended.
+- Latest private QA run 46154212989 dispatched with both 360×800/100% and 320×720/200% offline presets; status not yet verified. Retain screenshots and logs for actual visual review. Test cases do not prove every screen/state; physical-device and permission/hardware coverage remains outstanding.
+- Source audit and initial UI changes are not a release or full visual acceptance. No production signer adoption, no physical installation, no original field data touched.

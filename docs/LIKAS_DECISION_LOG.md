@@ -654,3 +654,7 @@ Confirmed 578 source regressions, three photo tests, Gradle compilation, package
 ### 2026-11-28 | Desktop reconnected and local signing candidate setup
 
 Second retry 46134121335 stopped at emulator boot timeout. Manually dispatched focused private run 46140128412 after desktop reconnect. Local owner-controlled key setup prepared; syntax and disposable signing utility test passed. Actual candidate not generated, independent backup and adoption pending. No production secret or APK, no original-app change.
+
+### 2026-11-28 | Owner redirects to APO product overhaul
+
+Permanent signing recovery and migration release track deferred; continue app development and isolated native QA. Home Explore and adaptive Map/Research shortcuts, larger primary action and plain-language profile descriptions implemented; source commits 7fac4eb, 47588ac, native tests 371d87a. Private UI-only development run 46140827921 pending. No scientific method or record changes, no new release, original app protected. Charter v1.4 remains.

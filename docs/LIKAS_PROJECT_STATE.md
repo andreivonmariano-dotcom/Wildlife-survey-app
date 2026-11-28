@@ -1,3 +1,9 @@
+## 2026-11-28 | Native interface fixes QA APK delivered
+
+- Run 46159159129, exact app/test pin 48dd422c71bf2c03205fac1f2a70ee083be29163. Both builds passed source, media, Android compile and package verification; native tests running at final check. Artifact 15268348795, archive SHA-256 2a19158edaa808c23dbbd469500f917df805074be4032f6a22befabcb73f536f. Extracted APO-RC118-native-fixes-QA.apk 139535220 bytes, SHA-256 e304505dd2451767eb4742c4e5f8c5bb70e3aad17336dcf5c904354344b3fa4f, verified against bundled checksum and ZIP integrity/mandatory entries. Direct sandbox APK delivered. Separate QA signer/package; preserve legacy installation. Next inspect actual test logs and screenshots; no native acceptance claim yet.
+
+---
+
 ## 2026-11-28 | Native screenshot-driven interface fixes
 
 - Actual native results run 46156466081, exact pin 40308dc6: standard 34/38; compact 31/38; total 65/76. Both actual screenshots/log artifacts retrieved 15268515442/15267943398. All 17 method-profile combinations, GPS preflight, species picker/reader, archive and backup passed both; standard recorder passed; navigation/closure/habitat/compact recorder issues remain. Visually inspected actual Home, Fieldwork, My Data, setup, map, species reader, picker, GPS and all 17 recorder initial viewports per preset. Identified compact count partly below fold, tall herp group buttons, broken Unidentified and Fieldwork text. Exact failure logs distinguished old label assertions and map Espresso focus from actual usability issues.

@@ -68,6 +68,8 @@ public final class ApoShellNavigationInstrumentedTest {
             assertTrue(text.getLineCount()<=2);
             for(int line=0;line<text.getLineCount();line++)
                 assertEquals("Clipped bottom tab "+tags[i],0,text.getLayout().getEllipsisCount(line));
+            assertEquals("Unrendered tab label "+tags[i],text.length(),
+                text.getLayout().getLineEnd(text.getLineCount()-1));
             assertTrue("Target width "+tags[i],text.getWidth()>=ApoVisualSystem.dp(a,48));
         }
     }

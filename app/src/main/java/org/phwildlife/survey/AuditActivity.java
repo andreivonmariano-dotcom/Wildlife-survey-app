@@ -21,7 +21,7 @@ public final class AuditActivity extends Activity{
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16),dp(14),dp(16),dp(12));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Data quality review","Analysis & Exports",this::finish));
+        root.addView(UiKit.navigationHeader(this,"Data quality review","Back",this::finish));
         // Controls and findings share one scroll to keep results reachable under
         // enlarged system fonts and on compact field phones.
         ScrollView scroll=new ScrollView(this);

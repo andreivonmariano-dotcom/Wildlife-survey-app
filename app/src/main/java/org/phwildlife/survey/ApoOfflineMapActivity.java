@@ -142,7 +142,7 @@ public final class ApoOfflineMapActivity extends Activity {
         if("survey".equals(pin.kind))
             dialog.setNeutralButton("View observations",(d,w)->
                 startActivity(new Intent(this,HistoryActivity.class)
-                    .putExtra("event_id",pin.recordId)));
+                    .putExtra("event_id",pin.recordId).putExtra("navigation_origin","map")));
         else
             dialog.setNeutralButton("Manage sites",(d,w)->
                 startActivity(new Intent(this,SitesActivity.class)));

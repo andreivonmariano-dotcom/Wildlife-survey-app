@@ -26,7 +26,7 @@ public final class FieldBackupActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16),dp(12),dp(16),dp(16));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Backup & recovery","Settings",this::finish));
+        root.addView(UiKit.navigationHeader(this,"Backup & restore","Back",this::requestBack));
         ScrollView scroller=new ScrollView(this);
         LinearLayout contents=new LinearLayout(this);
         contents.setOrientation(LinearLayout.VERTICAL);
@@ -88,6 +88,12 @@ public final class FieldBackupActivity extends Activity {
         status.setPadding(dp(5),dp(18),dp(5),dp(8));contents.addView(status);
         setContentView(root);
     }
+    private void requestBack(){
+        if(busy){android.widget.Toast.makeText(this,"Backup operation in progress.",
+            android.widget.Toast.LENGTH_SHORT).show();return;}
+        finish();
+    }
+    @Override public void onBackPressed(){requestBack();}
     private void work(int request,Uri uri){
         if(uri==null||busy)return;
         busy=true;export.setEnabled(false);restore.setEnabled(false);

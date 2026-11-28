@@ -20,6 +20,7 @@ public final class ApoShellBar {
         Intent intent=new Intent(activity,WelcomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("workspace_destination",target);
+        intent.putExtra("show_menu",true);
         activity.startActivity(intent);
         if(!(activity instanceof WelcomeActivity))activity.finish();
     }

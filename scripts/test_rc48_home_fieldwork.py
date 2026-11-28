@@ -29,7 +29,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
             "/** Short status caption",1)[0]
         self.assertIn('FieldVisuals.section(this,"Current survey",null)',hub)
         self.assertNotIn('FieldVisuals.section(this,"New survey",null)',hub)
-        self.assertIn('ApoHomeUi.section(this,"Fieldwork",null)',hub)
+        self.assertIn('ApoShellBar.rootHeader(this,"Fieldwork",this::home)',hub)
         self.assertLess(hub.index('if(unfinished!=null)'),
                         hub.index('FieldVisuals.section(this,"Current survey"'))
         self.assertIn('UiKit.button(this,"Resume Survey","primary")',hub)

@@ -53,12 +53,20 @@ public class HistoryActivity extends Activity {
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
         db=new FieldDb(this);
-        eventFilter=getIntent().getStringExtra("event_id");
+        eventFilter=b==null?getIntent().getStringExtra("event_id"):b.getString("history_event");
+        if(b!=null){outcomeFilter=b.getString("history_outcome","all");
+            surveySearch=b.getString("history_search","");}
         draw();
         long focus=getIntent().getLongExtra("focus_record_id",-1L);
         // Deep links are permitted only within the specified survey event.
         if(focus>0&&eventFilter!=null&&root!=null)
             root.post(()->recordDetail(focus));
+    }
+    @Override protected void onSaveInstanceState(Bundle out){
+        out.putString("history_event",eventFilter);
+        out.putString("history_outcome",outcomeFilter);
+        out.putString("history_search",surveySearch);
+        super.onSaveInstanceState(out);
     }
     @Override protected void onDestroy(){
         searchHandler.removeCallbacksAndMessages(null);
@@ -73,7 +81,7 @@ public class HistoryActivity extends Activity {
             dp(LikasDesignSystem.SPACE_SM));
         root.addView(UiKit.navigationHeader(this,
             eventFilter==null?(largeText()?"History":"Survey history"):"Observations",
-            eventFilter==null?"Field Records":fromRecorder()?"Live survey":"All surveys",
+            eventFilter==null?"My Data":fromRecorder()?"Live survey":fromMap()?"Offline Map":"All surveys",
             this::returnToCaller));
         // Keep only the page header fixed. Filters must scroll on 320dp devices
         // and under 200% font scaling so result rows remain reachable.
@@ -152,8 +160,11 @@ public class HistoryActivity extends Activity {
     private boolean fromRecorder(){
         return "recorder".equals(getIntent().getStringExtra("navigation_origin"));
     }
+    private boolean fromMap(){
+        return "map".equals(getIntent().getStringExtra("navigation_origin"));
+    }
     private void returnToCaller(){
-        if(eventFilter==null||fromRecorder()){
+        if(eventFilter==null||fromRecorder()||fromMap()){
             finish();
             return;
         }

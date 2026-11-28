@@ -31,7 +31,7 @@ class LocalitiesResearchContracts(unittest.TestCase):
         self.assertIn('ApoReferenceBookmarks.setSaved(this,full,!isSaved)',s)
         self.assertIn('savedOnly?"All references"',s)
         self.assertIn('out.putBoolean("saved_only",savedOnly)',s)
-        self.assertIn('Full text: unavailable in this offline edition.',s)
+        self.assertIn('Citation only',s)
         self.assertIn('Online source: connection required.',s)
         self.assertIn('sourceUrl.startsWith("https://")',s)
         self.assertIn('MessageDigest.getInstance("SHA-256")',bookmarks)

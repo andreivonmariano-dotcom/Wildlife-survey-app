@@ -658,3 +658,7 @@ Second retry 46134121335 stopped at emulator boot timeout. Manually dispatched f
 ### 2026-11-28 | Owner redirects to APO product overhaul
 
 Permanent signing recovery and migration release track deferred; continue app development and isolated native QA. Home Explore and adaptive Map/Research shortcuts, larger primary action and plain-language profile descriptions implemented; source commits 7fac4eb, 47588ac, native tests 371d87a. Private UI-only development run 46140827921 pending. No scientific method or record changes, no new release, original app protected. Charter v1.4 remains.
+
+### 2026-11-28 | Presentation cleanup and build-only artwork separation
+
+Owner requested removal of unnecessary explanations/AI artifacts. Grouped My Data, condensed recorder/map/reference/settings/backup copy while preserving scientific and data safety meaning. Exact historical image scan found two locked original artwork master marker hits; runtime source scan found no use. Preserved originals/metadata and SHA checks; excluded only redundant build-only master files in new APK configuration, retained approved runtime drawables. Source pin b6cff0c, private dev run 46141612382 pending. Prior 583-test run failed three old wording assertions, corrected. No production release or charter change. Preserve authentic scientific provenance, author/source rights and required notices.

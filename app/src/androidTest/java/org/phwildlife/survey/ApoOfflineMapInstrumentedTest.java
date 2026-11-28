@@ -120,13 +120,19 @@ public final class ApoOfflineMapInstrumentedTest {
     }
     @Test public void bundledProvinceMapAndStoredFixes(){
         seed();
-        try(ActivityScenario<ApoOfflineMapActivity> screen=ActivityScenario.launch(
-            ApoOfflineMapActivity.class)){
+        android.content.Intent intent=new android.content.Intent(
+            ApplicationProvider.getApplicationContext(),ApoOfflineMapActivity.class)
+            .putExtra(ApoShellBar.ROOT,true);
+        try(ActivityScenario<ApoOfflineMapActivity> screen=ActivityScenario.launch(intent)){
             awaitText(screen,"2 saved coordinates in view");
             screen.onActivity(a->{
-                assertTrue(hasText(a.getWindow().getDecorView(),"2026 Q3"));
-                assertTrue(hasText(a.getWindow().getDecorView(),
-                    "2026 Q3 provinces"));
+                View legend=described(a.getWindow().getDecorView(),
+                    "Map legend and sources. Tap to read details");
+                assertNotNull("Source details remain available",legend);
+                View surface=described(a.getWindow().getDecorView(),
+                    "Offline provincial reference map with saved survey and site coordinates");
+                assertNotNull(surface);
+                assertTrue("Map canvas must remain usable",surface.getHeight()>=120);
                 assertTrue(hasText(a.getWindow().getDecorView(),"Offline Map"));
                 assertNotNull(labelled(a.getWindow().getDecorView(),"Mindanao"));
                 snapshot(a,"offline-map-philippines");
@@ -134,6 +140,14 @@ public final class ApoOfflineMapInstrumentedTest {
                 assertNotNull(button);button.performClick();
             });
             awaitText(screen,"Mindanao view");
+            screen.onActivity(a->described(a.getWindow().getDecorView(),
+                "Map legend and sources. Tap to read details").performClick());
+            androidx.test.espresso.Espresso.onView(androidx.test.espresso.matcher.ViewMatchers.withText(
+                org.hamcrest.Matchers.containsString("PSGC Q3 2026"))).check(
+                androidx.test.espresso.assertion.ViewAssertions.matches(
+                    androidx.test.espresso.matcher.ViewMatchers.isDisplayed()));
+            androidx.test.espresso.Espresso.onView(androidx.test.espresso.matcher.ViewMatchers.withText("Close"))
+                .perform(androidx.test.espresso.action.ViewActions.click());
             screen.onActivity(a->{
                 View map=described(a.getWindow().getDecorView(),
                     "Offline provincial reference map with saved survey and site coordinates");

@@ -35,10 +35,8 @@ public final class FieldBackupActivity extends Activity {
         TextView intro=UiKit.sectionTitle(this,"Full local fieldwork snapshot");
         contents.addView(intro);
         TextView explanation=new TextView(this);
-        explanation.setText("Create a recovery ZIP containing a consistent SQLite database snapshot, "
-            +"field photographs, audio, and local settings. This is not the research CSV export. "
-            +"Keep the ZIP private: it contains field locations and may contain personal information. "
-            +"Only use it from a trusted storage location.");
+        explanation.setText("Back up field records, photographs, audio and settings. "
+            +"Keep this ZIP private. It includes locations and may contain personal information.");
         explanation.setTextColor(UiKit.INK);explanation.setTextSize(15);
         explanation.setPadding(dp(4),dp(7),dp(4),dp(12));
         contents.addView(explanation);
@@ -47,7 +45,7 @@ public final class FieldBackupActivity extends Activity {
         export.setOnClickListener(v->{
             if(busy)return;
             if(FieldBackupArchive.hasActiveSurvey(this)){
-                status.setText("End or finish the active survey before making a snapshot.");
+                status.setText("End the active survey before backing up.");
                 return;
             }
             Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);
@@ -58,10 +56,8 @@ public final class FieldBackupActivity extends Activity {
         });
         contents.addView(UiKit.sectionTitle(this,"Restore on a fresh workspace"));
         TextView note=new TextView(this);
-        note.setText("Restore only into an empty APO workspace with no surveys, stations, "
-            +"custom projects, routes, study templates, or favorites. This operation never merges "
-            +"data or overwrites existing fieldwork. Older recovery archives are checked for compatibility before restoration. "
-            +"The app must restart after restoration.");
+        note.setText("Restore into an empty workspace. APO checks the archive before restoring. "
+            +"Existing records are protected. Restart APO after restoration.");
         note.setTextColor(UiKit.MUTED);note.setTextSize(14);
         note.setPadding(dp(4),dp(4),dp(4),dp(10));contents.addView(note);
         restore=UiKit.button(this,"Check and restore backup ZIP","secondary");
@@ -87,7 +83,7 @@ public final class FieldBackupActivity extends Activity {
                 }).show();
         });
         status=new TextView(this);
-        status.setText("No backup or restore has been run on this device.");
+        status.setText("");
         status.setTextSize(14);status.setTextColor(UiKit.INK);
         status.setPadding(dp(5),dp(18),dp(5),dp(8));contents.addView(status);
         setContentView(root);

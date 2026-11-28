@@ -11,7 +11,7 @@ class ScreenRefinement(unittest.TestCase):
         self.assertIn('if(i==4&&inData&&!"data".equals(screen))',src("ApoShellBar"))
     def test_picker_preserves_filters_and_result_space(self):
         s=src("SpeciesPickerActivity")
-        for item in ("filterPanel.addView(quick)", "filterPanel.addView(shortlistToggle,shortlistSpace)",
+        for item in ("filterPanel.addView(quick)", "scrollBody.addView(shortlistToggle,1,shortlistSpace)",
                      "filterPanel.addView(controls)", "scrollBody.addView(cards)", "scrollBody.addView(status)",
                      'filterPanel.setVisibility(View.GONE)', "UiKit.fieldInput(this,search)",
                      "unknown.setOnClickListener", "refresh()"):

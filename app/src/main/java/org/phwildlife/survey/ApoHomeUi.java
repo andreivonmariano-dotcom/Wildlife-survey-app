@@ -35,7 +35,7 @@ public final class ApoHomeUi {
     public static View header(Activity a,Runnable settings){
         LinearLayout block=new LinearLayout(a);
         block.setOrientation(LinearLayout.VERTICAL);
-        block.setPadding(dp(a,1),dp(a,5),dp(a,1),dp(a,12));
+        block.setPadding(dp(a,1),dp(a,5),dp(a,1),dp(a,16));
         LinearLayout top=new LinearLayout(a);
         top.setGravity(Gravity.CENTER_VERTICAL);
         ImageView emblem=new ImageView(a);
@@ -79,6 +79,49 @@ public final class ApoHomeUi {
         return navigationCard(a,number,title,description,open,false);
     }
 
+    /** A compact, adaptive pair of Home shortcuts. Each child remains a complete
+     * native touch target. At narrow widths or large system text, stack them. */
+    public static View shortcutPair(Activity a,String first,Runnable firstAction,
+            String second,Runnable secondAction) {
+        LinearLayout pair=new LinearLayout(a);
+        android.content.res.Configuration cfg=a.getResources().getConfiguration();
+        boolean stacked=cfg.screenWidthDp<360||cfg.fontScale>=1.3f;
+        pair.setOrientation(stacked?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        View left=shortcut(a,first,firstAction);
+        View right=shortcut(a,second,secondAction);
+        if(stacked){
+            pair.addView(left,new LinearLayout.LayoutParams(-1,-2));
+            LinearLayout.LayoutParams next=new LinearLayout.LayoutParams(-1,-2);
+            next.topMargin=dp(a,8);
+            pair.addView(right,next);
+        }else{
+            pair.addView(left,new LinearLayout.LayoutParams(0,-1,1f));
+            LinearLayout.LayoutParams next=new LinearLayout.LayoutParams(0,-1,1f);
+            next.leftMargin=dp(a,8);
+            pair.addView(right,next);
+        }
+        return pair;
+    }
+
+    private static View shortcut(Activity a,String title,Runnable open){
+        LinearLayout tile=new LinearLayout(a);
+        tile.setOrientation(LinearLayout.VERTICAL);
+        tile.setGravity(Gravity.CENTER_VERTICAL);
+        tile.setMinimumHeight(dp(a,68));
+        tile.setPadding(dp(a,14),dp(a,12),dp(a,14),dp(a,12));
+        tile.setBackground(tapBackground(a,ApoVisualSystem.LEAF_PALE,
+            ApoVisualSystem.BORDER,14));
+        TextView heading=label(a,title,16,ApoVisualSystem.FOREST,true);
+        heading.setBreakStrategy(android.text.Layout.BREAK_STRATEGY_HIGH_QUALITY);
+        tile.addView(heading,new LinearLayout.LayoutParams(-1,-2));
+        tile.setTag("apo_home_shortcut_"+title);
+        tile.setContentDescription("Open "+title);
+        tile.setClickable(true);
+        tile.setFocusable(true);
+        tile.setOnClickListener(v->open.run());
+        return tile;
+    }
+
     /** Smaller card for a secondary, contextual tool. */
     public static View tool(Activity a,String number,String title,String description,Runnable open) {
         return navigationCard(a,number,title,description,open,true);
@@ -114,7 +157,7 @@ public final class ApoHomeUi {
         row.addView(chevron,new LinearLayout.LayoutParams(dp(a,25),-2));
         row.setClickable(true);
         row.setFocusable(true);
-        row.setContentDescription("Open "+title);
+        row.setContentDescription("Open "+title+(description==null||description.trim().isEmpty()?"":". "+description));
         row.setOnClickListener(v->open.run());
         LinearLayout wrapper=new LinearLayout(a);
         wrapper.setOrientation(LinearLayout.VERTICAL);
@@ -149,7 +192,7 @@ public final class ApoHomeUi {
         content.setOrientation(LinearLayout.VERTICAL);
         content.setGravity(Gravity.CENTER_VERTICAL);
         content.setPadding(dp(a,18),dp(a,15),dp(a,18),dp(a,15));
-        content.setMinimumHeight(dp(a,76));
+        content.setMinimumHeight(dp(a,88));
         content.setBackground(new RippleDrawable(ColorStateList.valueOf(0x50FFFFFF),
             ApoVisualSystem.surface(a,ApoVisualSystem.FOREST,Color.TRANSPARENT,18),null));
         content.addView(label(a,title,20,Color.WHITE,true));

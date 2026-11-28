@@ -126,13 +126,13 @@ public final class PhLibraryBibliographyActivity extends Activity {
         search=new EditText(this);search.setSingleLine(true);
         search.setTextSize(16);search.setHint("Search references");
         search.setContentDescription("Search original bibliography by author, title, year or DOI");
-        UiKit.fieldInput(this,search);root.addView(search,new LinearLayout.LayoutParams(-1,dp(56)));
+        UiKit.fieldInput(this,search);root.addView(search,new LinearLayout.LayoutParams(-1,-2));
         savedToggle=PhLibrary2Ui.action(this,"Saved only",()->{
             savedOnly=!savedOnly;
             refresh();
         },false);
         savedToggle.setTextSize(14);
-        LinearLayout.LayoutParams savedLp=new LinearLayout.LayoutParams(-1,dp(50));
+        LinearLayout.LayoutParams savedLp=new LinearLayout.LayoutParams(-1,-2);
         savedLp.topMargin=dp(7);
         root.addView(savedToggle,savedLp);
         count=PhLibrary2Ui.text(this,"",14,PhLibrary2Ui.FOREST,false,true);
@@ -180,8 +180,11 @@ public final class PhLibraryBibliographyActivity extends Activity {
             detail.setTextIsSelectable(true);
             detail.setAutoLinkMask(Linkify.WEB_URLS);
             detail.setMovementMethod(LinkMovementMethod.getInstance());
+            android.widget.ScrollView detailScroll=new android.widget.ScrollView(this);
+            detailScroll.setFillViewport(false);
+            detailScroll.addView(detail);
             AlertDialog.Builder dialog=new AlertDialog.Builder(this).setTitle("Reference details")
-                .setView(detail).setPositiveButton("Close",null)
+                .setView(detailScroll).setPositiveButton("Close",null)
                 .setNegativeButton(isSaved?"Remove saved":"Save reference",(d,w)->{
                     ApoReferenceBookmarks.setSaved(this,full,!isSaved);
                     refresh();

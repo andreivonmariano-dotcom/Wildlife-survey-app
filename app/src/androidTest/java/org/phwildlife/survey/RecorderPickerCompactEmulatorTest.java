@@ -89,8 +89,15 @@ public final class RecorderPickerCompactEmulatorTest {
                 assertNotNull("Search input present",description(root,"Search offline species by"));
                 assertNotNull("Species header",text(root,"Species"));
                 assertNotNull("Unknown ID path",description(root,"Record an unidentified species"));
+                View filter=root.findViewWithTag("apo_picker_filter_disclosure");
+                View panel=root.findViewWithTag("apo_picker_filter_panel");
+                assertNotNull(filter);assertNotNull(panel);
+                assertEquals("Optional filters start collapsed",View.GONE,panel.getVisibility());
+                filter.performClick();
+                assertEquals(View.VISIBLE,panel.getVisibility());
                 assertNotNull("Readable ordering control",text(root,"Order"));
-                assertNotNull("Site conditions control",text(root,"Site"));
+                assertNotNull("Site conditions control",text(root,"Site context"));
+                filter.performClick();assertEquals(View.GONE,panel.getVisibility());
             });
             // The native card query runs asynchronously; do not capture a loading page.
             boolean loaded=false;

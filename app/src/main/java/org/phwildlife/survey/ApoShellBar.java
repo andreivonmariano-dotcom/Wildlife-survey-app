@@ -62,6 +62,8 @@ public final class ApoShellBar {
         TextView heading=new TextView(activity);
         heading.setText(title);
         heading.setTextSize(20);
+        if(android.os.Build.VERSION.SDK_INT>=28)heading.setAccessibilityHeading(true);
+        heading.setBreakStrategy(android.text.Layout.BREAK_STRATEGY_HIGH_QUALITY);
         heading.setTextColor(ApoVisualSystem.INK);
         heading.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
         heading.setPadding(ApoVisualSystem.dp(activity,12),0,0,0);
@@ -95,10 +97,14 @@ public final class ApoShellBar {
             if(i==0||(stacked&&i==3)){
                 row=new LinearLayout(activity);
                 row.setGravity(Gravity.CENTER_VERTICAL);
+                row.setBaselineAligned(false);
                 row.setPadding(0,ApoVisualSystem.dp(activity,4),0,ApoVisualSystem.dp(activity,2));
                 block.addView(row,new LinearLayout.LayoutParams(-1,-2));
             }
             TextView child=tab(activity,labels[i],names[i],tags[i],active[i],actions[i]);
+            // A selected parent tab on a nested data page returns to its root.
+            if(i==4&&inData&&!"data".equals(screen))
+                child.setOnClickListener(v->data.run());
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1f);
             lp.leftMargin=ApoVisualSystem.dp(activity,2);
             lp.rightMargin=ApoVisualSystem.dp(activity,2);

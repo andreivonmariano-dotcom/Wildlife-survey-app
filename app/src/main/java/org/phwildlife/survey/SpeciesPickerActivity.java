@@ -220,7 +220,8 @@ public final class SpeciesPickerActivity extends Activity {
         });
         LinearLayout searchRow=new LinearLayout(this);
         searchRow.setGravity(Gravity.CENTER_VERTICAL);
-        LinearLayout.LayoutParams searchParams=new LinearLayout.LayoutParams(0,dp(54),1f);
+        UiKit.fieldInput(this,search);
+        LinearLayout.LayoutParams searchParams=new LinearLayout.LayoutParams(0,-2,1f);
         searchRow.addView(search,searchParams);
         Button dropdown=UiKit.button(this,"▾","quiet");
         dropdown.setContentDescription("Show species name suggestions");
@@ -231,13 +232,20 @@ public final class SpeciesPickerActivity extends Activity {
         });
         searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(54)));
         root.addView(searchRow);
+        ScrollView scroller=new ScrollView(this);
+        scroller.setFillViewport(true);
+        LinearLayout scrollBody=new LinearLayout(this);
+        scrollBody.setOrientation(LinearLayout.VERTICAL);
+        scrollBody.setPadding(0,0,0,dp(20));
+        scroller.addView(scrollBody);
         // Keep unidentified records visible without taking width from species search.
         LinearLayout unidentifiedRow=new LinearLayout(this);
         unidentifiedRow.setGravity(Gravity.END);
         Button recent=UiKit.button(this,"Recent","quiet");
         recent.setTextSize(13);
         recent.setContentDescription("Search species names from recently saved field records");
-        LinearLayout.LayoutParams recentSpace=new LinearLayout.LayoutParams(-2,dp(48));
+        unidentifiedRow.setBaselineAligned(false);
+        LinearLayout.LayoutParams recentSpace=new LinearLayout.LayoutParams(0,-2,1f);
         recentSpace.topMargin=dp(6);
         recentSpace.rightMargin=dp(7);
         unidentifiedRow.addView(recent,recentSpace);
@@ -245,10 +253,10 @@ public final class SpeciesPickerActivity extends Activity {
         Button unknown=UiKit.button(this,"Unidentified","secondary");
         unknown.setTextSize(13);
         unknown.setContentDescription("Record an unidentified species");
-        LinearLayout.LayoutParams unknownSpace=new LinearLayout.LayoutParams(-2,dp(48));
+        LinearLayout.LayoutParams unknownSpace=new LinearLayout.LayoutParams(0,-2,1f);
         unknownSpace.topMargin=dp(6);
         unidentifiedRow.addView(unknown,unknownSpace);
-        root.addView(unidentifiedRow);
+        scrollBody.addView(unidentifiedRow);
         unknown.setOnClickListener(v->{
             String[] unknowns=Taxa.unknownLabels(currentGroup());
             new AlertDialog.Builder(this).setTitle("Unidentified observation")
@@ -257,16 +265,32 @@ public final class SpeciesPickerActivity extends Activity {
         });
 
         // One ordering control and a separate, explicit reference scope.
+        Button filterDisclosure=UiKit.button(this,"Filters & site context","quiet");
+        filterDisclosure.setTag("apo_picker_filter_disclosure");
+        scrollBody.addView(filterDisclosure,new LinearLayout.LayoutParams(-1,-2));
+        LinearLayout filterPanel=new LinearLayout(this);
+        filterPanel.setTag("apo_picker_filter_panel");
+        filterPanel.setOrientation(LinearLayout.VERTICAL);
+        filterPanel.setVisibility(View.GONE);
+        filterDisclosure.setOnClickListener(v->{
+            boolean expanded=filterPanel.getVisibility()!=View.VISIBLE;
+            filterPanel.setVisibility(expanded?View.VISIBLE:View.GONE);
+            filterDisclosure.setText(expanded?"Hide filters":"Filters & site context");
+            filterDisclosure.setContentDescription(expanded?"Hide species filters and site context":
+                "Show species filters and site context");
+        });
+        filterDisclosure.setContentDescription("Show species filters and site context");
+        scrollBody.addView(filterPanel);
         LinearLayout quick=new LinearLayout(this);
         Button conditions=UiKit.button(this,"Site context","secondary");
-        quick.addView(conditions,new LinearLayout.LayoutParams(-1,dp(52)));
+        quick.addView(conditions,new LinearLayout.LayoutParams(-1,-2));
         conditions.setOnClickListener(v->new AlertDialog.Builder(this)
             .setTitle("Site context")
             .setMessage(siteSummary==null?"":siteSummary.getText().toString())
             .setNegativeButton("Close",null)
             .setPositiveButton("Edit conditions",(dialog,which)->openSiteConditions())
             .show());
-        root.addView(quick);
+        filterPanel.addView(quick);
         shortlistToggle=UiKit.button(this,"Habitat shortlist","pond");
         shortlistToggle.setTextSize(13);
         shortlistToggle.setMinHeight(dp(56));
@@ -274,7 +298,7 @@ public final class SpeciesPickerActivity extends Activity {
         shortlistToggle.setContentDescription("Switch between habitat-guide shortlist and all catalog species");
         LinearLayout.LayoutParams shortlistSpace=new LinearLayout.LayoutParams(-1,-2);
         shortlistSpace.topMargin=dp(5);
-        root.addView(shortlistToggle,shortlistSpace);
+        filterPanel.addView(shortlistToggle,shortlistSpace);
         shortlistToggle.setOnClickListener(v->{
             shortlistEnabled=!shortlistEnabled;
             savePickerSettings();
@@ -323,7 +347,7 @@ public final class SpeciesPickerActivity extends Activity {
             paicCatalogActive?PAIC_VIEWS:VIEWS));
         controls.addView(text("Order",12,true));
         controls.addView(views,new LinearLayout.LayoutParams(-1,dp(54)));
-        root.addView(controls);
+        filterPanel.addView(controls);
         groups.setSelection(savedGroupIndex);
         if(paicCatalogActive&&surveyPreparation!=null&&
             "suggested".equals(surveyPreparation.mode)&&
@@ -341,13 +365,11 @@ public final class SpeciesPickerActivity extends Activity {
         status.setTextColor(UiKit.MUTED);status.setPadding(0,dp(9),0,dp(7));
         status.setContentDescription("Species results and checklist region");
         status.setMinHeight(dp(40));
-        root.addView(status);
-
-        ScrollView scroller=new ScrollView(this);
+        scrollBody.addView(status);
         cards=new LinearLayout(this);
         cards.setOrientation(LinearLayout.VERTICAL);
         cards.setPadding(0,0,0,dp(20));
-        scroller.addView(cards);
+        scrollBody.addView(cards);
         root.addView(scroller,new LinearLayout.LayoutParams(-1,0,1f));
         setContentView(root);
 

@@ -372,6 +372,9 @@ public final class ApoShellNavigationInstrumentedTest {
             childRoute(scenario,"Site habitat records",HabitatRecordsActivity.class);
             childRoute(scenario,"Backup & restore",FieldBackupActivity.class);
             scenario.onActivity(a->clickRoute(a,"Analysis & exports"));idle();
+            scenario.onActivity(a->select(a,"data"));idle();
+            scenario.onActivity(a->{assertTrue(hasText(a.getWindow().getDecorView(),"Survey history"));
+                clickRoute(a,"Analysis & exports");});idle();
             childRoute(scenario,"Survey analysis",DashboardActivity.class);
             childRoute(scenario,"Research ZIP export",ResearchExportActivity.class);
             childRoute(scenario,"Data quality review",AuditActivity.class);

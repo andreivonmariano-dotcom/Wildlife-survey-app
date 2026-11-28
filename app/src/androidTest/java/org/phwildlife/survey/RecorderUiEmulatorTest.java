@@ -75,11 +75,16 @@ public final class RecorderUiEmulatorTest {
             scenario.onActivity(a->{
                 View field=findSpeciesInput(a.getWindow().getDecorView());
                 assertNotNull("Species input is available",field);
-                field.requestFocus();
-                android.view.inputmethod.InputMethodManager ime=
-                    (android.view.inputmethod.InputMethodManager)a.getSystemService(
-                        Activity.INPUT_METHOD_SERVICE);
-                ime.showSoftInput(field,android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+                field.requestRectangleOnScreen(new android.graphics.Rect(0,0,field.getWidth(),field.getHeight()),true);
+                assertTrue(field.requestFocus());
+                field.postDelayed(()->{
+                    android.view.inputmethod.InputMethodManager ime=
+                        (android.view.inputmethod.InputMethodManager)a.getSystemService(
+                            Activity.INPUT_METHOD_SERVICE);
+                    ime.showSoftInput(field,android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+                    if(android.os.Build.VERSION.SDK_INT>=30&&field.getWindowInsetsController()!=null)
+                        field.getWindowInsetsController().show(android.view.WindowInsets.Type.ime());
+                },300);
             });
             boolean visible=false;
             for(int i=0;i<40&&!visible;i++){

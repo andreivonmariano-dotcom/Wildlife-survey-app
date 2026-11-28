@@ -57,7 +57,7 @@ public final class ApoShellNavigationInstrumentedTest {
         String[] tags={"fieldwork","atlas","map","research","data"};
         String[] expected=enlarged?
             new String[]{"Field","Atlas","Map","Papers","Data"}:
-            new String[]{"Fieldwork","Atlas","Map","Research","My Data"};
+            new String[]{"Field","Atlas","Map","Research","My Data"};
         for(int i=0;i<tags.length;i++){
             View view=nav(a,tags[i]);
             assertTrue("Navigation tab missing: "+tags[i],view instanceof TextView);
@@ -357,8 +357,10 @@ public final class ApoShellNavigationInstrumentedTest {
     private static void childRoute(ActivityScenario<WelcomeActivity> scenario,
             String label,Class<? extends Activity> type){
         Activity child=transition(type,()->scenario.onActivity(a->clickRoute(a,label)));
+        idle();
         onMain(()->{assertFalse(child.isFinishing());child.onBackPressed();
             assertTrue("Back failed for "+label,child.isFinishing());});
+        idle();
         scenario.onActivity(a->assertTrue(nav(a,"data").isSelected()));
     }
 

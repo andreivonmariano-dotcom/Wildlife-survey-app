@@ -34,6 +34,8 @@ public final class ApoOfflineMapActivity extends Activity {
     private final ArrayList<Pin> pins=new ArrayList<>();
     private JSONArray provinceFeatures;
     private AlertDialog nearbyChooser;
+    private AlertDialog sourceDialog;
+    AlertDialog activeSourceDialogForQa(){return sourceDialog;}
     private MapSurface surface;
     private TextView subtitle,filterAction;
     private final LinkedHashMap<String,String> projectNames=new LinkedHashMap<>();
@@ -304,7 +306,8 @@ public final class ApoOfflineMapActivity extends Activity {
         legend.setContentDescription("Map legend and sources. Tap to read details");
         legend.setFocusable(true);legend.setClickable(true);
         legend.setMinHeight(ApoVisualSystem.dp(this,48));
-        legend.setOnClickListener(v->new AlertDialog.Builder(this)
+        legend.setOnClickListener(v->{
+            sourceDialog=new AlertDialog.Builder(this)
             .setTitle("Map sources and coordinates")
             .setMessage("Boundaries: Philippine administrative provinces, PSGC Q3 2026, "+
                 "low-resolution simplified polygons. Source: faeldon/philippines-json-maps "+
@@ -313,7 +316,10 @@ public final class ApoOfflineMapActivity extends Activity {
                 "● Survey-start GPS: coordinates recorded at survey start.\n"+
                 "◆ Saved site: field project reference coordinates. "+
                 "Original accuracy and uncertainty remain in the saved record.")
-            .setPositiveButton("Close",null).show());
+            .setPositiveButton("Close",null).create();
+            sourceDialog.setOnDismissListener(dialog->sourceDialog=null);
+            sourceDialog.show();
+        });
         root.addView(legend);
         if(workspaceRoot)root.addView(ApoShellBar.createRoot(this,"map"));
         setContentView(root);

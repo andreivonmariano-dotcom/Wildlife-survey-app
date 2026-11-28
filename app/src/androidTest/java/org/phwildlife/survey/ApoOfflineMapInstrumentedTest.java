@@ -144,12 +144,21 @@ public final class ApoOfflineMapInstrumentedTest {
             awaitText(screen,"Mindanao view · 2 saved coordinates in view");
             screen.onActivity(a->described(a.getWindow().getDecorView(),
                 "Map legend and sources. Tap to read details").performClick());
-            androidx.test.espresso.Espresso.onView(androidx.test.espresso.matcher.ViewMatchers.withText(
-                org.hamcrest.Matchers.containsString("PSGC Q3 2026"))).check(
-                androidx.test.espresso.assertion.ViewAssertions.matches(
-                    androidx.test.espresso.matcher.ViewMatchers.isDisplayed()));
-            androidx.test.espresso.Espresso.onView(androidx.test.espresso.matcher.ViewMatchers.withText("Close"))
-                .perform(androidx.test.espresso.action.ViewActions.click());
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            screen.onActivity(a->{
+                android.app.AlertDialog dialog=a.activeSourceDialogForQa();
+                assertNotNull("Tapping legend opens the real source dialog",dialog);
+                assertTrue(dialog.isShowing());
+                View message=dialog.findViewById(android.R.id.message);
+                assertNotNull(message);
+                assertTrue(message.isShown());
+                assertTrue(hasText(message,"PSGC Q3 2026"));
+                assertTrue(hasText(message,"WGS84"));
+                android.widget.Button close=dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                assertNotNull(close);
+                assertTrue(close.performClick());
+            });
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             screen.onActivity(a->{
                 View map=described(a.getWindow().getDecorView(),
                     "Offline provincial reference map with saved survey and site coordinates");

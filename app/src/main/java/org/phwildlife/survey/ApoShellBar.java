@@ -85,7 +85,7 @@ public final class ApoShellBar {
         android.content.res.Configuration cfg=activity.getResources().getConfiguration();
         boolean stacked=cfg.screenWidthDp<350||cfg.fontScale>=1.3f;
         String[] labels=stacked?new String[]{"Field","Atlas","Map","Papers","Data"}:
-            new String[]{"Fieldwork","Atlas","Map","Research","My Data"};
+            new String[]{"Field","Atlas","Map","Research","My Data"};
         String[] names={"Fieldwork","Living Atlas","Offline Map","Research Library","My Data"};
         String[] tags={"fieldwork","atlas","map","research","data"};
         boolean[] active={"fieldwork".equals(screen),"atlas".equals(screen),

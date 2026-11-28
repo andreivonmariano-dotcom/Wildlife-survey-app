@@ -345,10 +345,14 @@ public class MainActivity extends Activity implements LocationListener {
         // away; station-based and GPS-transect controls stay expanded.
         final boolean compactObservationFirst=!hasStationUnits()&&
             !method.equals("line_transect")&&!method.equals("ves_transect");
-        if(compactObservationFirst)methodRow.setVisibility(View.GONE);
         final Button[] toolsDisclosure={null};
         LinearLayout recorderTools=vertical();
         recorderTools.addView(UiKit.sectionTitle(this,"Sampling session"));
+        if(compactObservationFirst){
+            // Keep the chosen method discoverable without crowding observation entry.
+            content.removeView(methodRow);
+            recorderTools.addView(methodRow);
+        }
         LinearLayout utilityRow=horizontal();
         if(stackSessionControls)utilityRow.setOrientation(LinearLayout.VERTICAL);
         pauseButton=UiKit.button(this,"Pause effort","secondary");

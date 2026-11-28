@@ -169,9 +169,9 @@ public final class PhLibraryBibliographyActivity extends Activity {
             String sourceUrl=matches.get(position).optString("url");
             boolean isSaved=ApoReferenceBookmarks.isSaved(this,full);
             TextView detail=PhLibrary2Ui.text(this,full+
-                "\n\nFull text: unavailable in this offline edition."+
+                "\n\nCitation only"+
                 (sourceUrl.startsWith("https://")?
-                    "\nOnline source: connection required.":""),16,
+                    "\nOnline source available":""),16,
                 PhLibrary2Ui.INK,false,false);
             detail.setPadding(dp(20),dp(15),dp(20),dp(15));
             detail.setTextIsSelectable(true);
@@ -184,7 +184,7 @@ public final class PhLibraryBibliographyActivity extends Activity {
                     refresh();
                 });
             if(sourceUrl.startsWith("https://"))
-                dialog.setNeutralButton("Open source",(d,w)->{
+                dialog.setNeutralButton("Open online source",(d,w)->{
                     try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(sourceUrl)));}
                     catch(Exception ignored){
                         new AlertDialog.Builder(this)

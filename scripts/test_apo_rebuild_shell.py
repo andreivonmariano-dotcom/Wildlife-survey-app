@@ -30,8 +30,11 @@ class ApoRebuildShell(unittest.TestCase):
         self.assertIn('ApoHomeUi.resume(this,',home)
         self.assertIn('this::openAtlas',home)
         self.assertIn('this::openResearch',home)
-        self.assertEqual(home.count('ApoHomeUi.module(this,'),3)
-        self.assertIn('ApoHomeUi.module(this,"02","Offline Map"',home)
+        self.assertEqual(home.count('ApoHomeUi.module(this,'),1)
+        self.assertEqual(home.count('ApoHomeUi.shortcutPair(this,'),1)
+        for title in ('Living Atlas','Offline Map','Research Library'):
+            self.assertEqual(home.count('"'+title+'"'),1)
+        self.assertIn('ApoHomeUi.shortcutPair(this,"Offline Map"',home)
         self.assertNotIn('this::bioToolsHub',home)
         self.assertNotIn('phMapsHub()',welcome)
         self.assertIn('PhLibraryBibliographyActivity.class',welcome)

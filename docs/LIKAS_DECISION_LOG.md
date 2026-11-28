@@ -678,3 +678,10 @@ Owner requested removal of unnecessary explanations/AI artifacts. Grouped My Dat
 
 - Under the owner instruction to overhaul and standardize navigation, implemented a candidate five-peer shell (Fieldwork, Atlas, Map, Research, My Data), separate Home header action, adaptive layout, caller-aware detail Back and same-group survey setup draft restoration. These are implementation decisions under the existing charter, not new governing clauses. No changes to protected field data or survey outcomes.
 - Audit covers the 40 declared activities statically; latest app/test pin 8c0dabd2c0210827e0007793f07beb9475758402, audit docs/APO_NAVIGATION_AUDIT_2026_11_28.md, two offline emulator jobs in private run 46152098370. Native verification and screenshot inspection pending; no production APK or 100% navigation guarantee.
+
+
+---
+
+## 2026-11-28 | Private development APK retention for direct delivery
+
+- Owner requested an updated APK and direct file link. Both navigation emulator build jobs passed 585 source tests and verified compilation, successor package/signature and runtime assets, with emulator acceptance pending. Added opt-in private preview retention workflow (d0a345741b0e0712fed4a36c9f1f81569d1ba23f) at unchanged app/test pin 0c1fb6cf2d9354cb8a1c81a79f59f7edad8c162b; preview run 46152620198. Keeps the original installation and records untouched and uses separate QA package/signature only. The preview is not an approved in-place update; no release or native acceptance claim. Direct delivery requires the actual file and local checksum verification, not an Actions link.

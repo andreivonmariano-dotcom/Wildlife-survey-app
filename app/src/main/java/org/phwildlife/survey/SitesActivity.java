@@ -25,12 +25,14 @@ public class SitesActivity extends Activity {
     private EditText edit(String hint,String value){EditText x=new EditText(this);x.setHint(hint);x.setText(value==null?"":value);x.setSingleLine(true);x.setTextSize(15);UiKit.fieldInput(this,x);return x;}
     private LinearLayout column(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
     @Override public void onCreate(Bundle b){super.onCreate(b);helper=new FieldDb(this);render();}
+    @Override public void onBackPressed(){finish();}
     @Override protected void onDestroy(){super.onDestroy();helper.close();}
     private String selectedProject(){int pos=projectSpinner==null?-1:projectSpinner.getSelectedItemPosition();return pos<0||pos>=pids.size()?"default":pids.get(pos);}
     private void render(){
         LinearLayout root=column();
         root.setPadding(dp(16),dp(12),dp(16),dp(10));
         root.setBackgroundColor(UiKit.BG);
+        root.setFocusableInTouchMode(true);
         root.addView(UiKit.navigationHeader(this,"Projects & sites","Previous screen",this::finish));
         ScrollView scroll=new ScrollView(this);
         scroll.setFillViewport(true);
@@ -59,7 +61,7 @@ public class SitesActivity extends Activity {
         int selectedIndex=pids.indexOf(selected);
         if(selectedIndex>=0)projectSpinner.setSelection(selectedIndex);
         page.addView(UiKit.sectionTitle(this,"Project"));
-        page.addView(projectSpinner,new LinearLayout.LayoutParams(-1,dp(52)));
+        page.addView(projectSpinner,new LinearLayout.LayoutParams(-1,-2));
         Button project=UiKit.button(this,"Create project","primary");
         LinearLayout.LayoutParams projectLp=new LinearLayout.LayoutParams(-1,-2);
         projectLp.topMargin=dp(8);
@@ -89,6 +91,7 @@ public class SitesActivity extends Activity {
             }
         });
         setContentView(root);
+        root.requestFocus();
         renderSites();
     }
     private void renderSites(){

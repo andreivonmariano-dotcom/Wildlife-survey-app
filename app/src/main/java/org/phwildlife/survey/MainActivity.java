@@ -237,8 +237,7 @@ public class MainActivity extends Activity implements LocationListener {
         home.setTextSize(18);
         top.addView(home,new LinearLayout.LayoutParams(dp(48),dp(48)));
         home.setOnClickListener(v->requestLeaveRecorder());
-        String screenTitle=largeText&&"Herpetofauna".equals(profile)?
-            "Herp survey":profile+" Survey";
+        String screenTitle=largeText?("Herpetofauna".equals(profile)?"Herpetofauna":profile):profile+" Survey";
         TextView title=label(screenTitle,largeText?17:19,true);
         title.setGravity(Gravity.CENTER_VERTICAL);
         if(android.os.Build.VERSION.SDK_INT>=28)title.setAccessibilityHeading(true);
@@ -582,7 +581,7 @@ public class MainActivity extends Activity implements LocationListener {
                     "Hide sampling and detection tools":"Show sampling and detection tools");
             });
         }else content.addView(recorderTools);
-        content.addView(FieldVisuals.section(this,"Observation",null));
+        if(!largeText)content.addView(FieldVisuals.section(this,"Observation",null));
         // Field action 1: mark time and an actually qualified observer GPS fix.
         // Keep the mark above identification so the event time is not mistaken
         // for the later Save tap time. Existing station and effort controls remain.
@@ -636,6 +635,7 @@ public class MainActivity extends Activity implements LocationListener {
         taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
         UiKit.fieldInput(this,taxonEntry);
         taxonEntry.setThreshold(2);taxonEntry.setHint("Species");
+        taxonEntry.setContentDescription("Observation species");
         taxonEntry.setSelectAllOnFocus(true);
         speciesRow.addView(taxonEntry,stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
@@ -1013,6 +1013,7 @@ public class MainActivity extends Activity implements LocationListener {
         if(stackDock)endParams.topMargin=dp(LikasDesignSystem.SPACE_SM);
         else endParams.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         footerOptions.addView(endSurveyButton,endParams);
+        footerOptions.setBaselineAligned(false);
         LinearLayout.LayoutParams optionsParams=new LinearLayout.LayoutParams(-1,-2);
         optionsParams.topMargin=dp(LikasDesignSystem.SPACE_SM);
         footer.addView(footerOptions,optionsParams);
@@ -1038,11 +1039,16 @@ public class MainActivity extends Activity implements LocationListener {
             root.getWindowVisibleDisplayFrame(visibleFrame);
             int obscured=getResources().getDisplayMetrics().heightPixels-visibleFrame.bottom;
             boolean keyboardShown=obscured>dp(160);
+            if(android.os.Build.VERSION.SDK_INT>=30&&root.getRootWindowInsets()!=null)
+                keyboardShown=root.getRootWindowInsets().isVisible(android.view.WindowInsets.Type.ime());
             if(inputKeyboardVisible==keyboardShown)return;
             inputKeyboardVisible=keyboardShown;
             top.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
-            if(compactClockView!=null)
+            if(compactClockView!=null){
                 compactClockView.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
+                if(compactGpsView!=null)
+                    compactGpsView.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
+            }else hud.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
             progressView.setVisibility(keyboardShown||
                 progressView.getText().length()==0?View.GONE:View.VISIBLE);
         });
@@ -1616,6 +1622,7 @@ public class MainActivity extends Activity implements LocationListener {
         });
         actions.addView(detailsToggle);
         actions.addView(required);
+        actions.addView(label("Complete checks the protocol, effort and sampling requirements before saving.",12,false));
         // Summarize actual method records without claiming survey completion.
         // The existing closure policy, station and study checks remain decisive.
         MethodCompletionReview.Result methodReview=methodRecordReview();
@@ -1634,7 +1641,7 @@ public class MainActivity extends Activity implements LocationListener {
                 Button fix=UiKit.button(this,methodReview.actionLabel,"secondary");
                 fix.setContentDescription(methodReview.actionLabel+
                     ". Open existing protocol records without changing survey outcome");
-                actions.addView(fix,new LinearLayout.LayoutParams(-1,dp(48)));
+                actions.addView(fix,new LinearLayout.LayoutParams(-1,-2));
                 methodFix[0]=fix;
             }
         }

@@ -245,7 +245,8 @@ public final class SpeciesPickerActivity extends Activity {
         recent.setTextSize(13);
         recent.setContentDescription("Search species names from recently saved field records");
         unidentifiedRow.setBaselineAligned(false);
-        LinearLayout.LayoutParams recentSpace=new LinearLayout.LayoutParams(0,-2,1f);
+        boolean largeActions=getResources().getConfiguration().fontScale>=1.6f;
+        LinearLayout.LayoutParams recentSpace=new LinearLayout.LayoutParams(0,-2,largeActions?0.8f:1f);
         recentSpace.topMargin=dp(6);
         recentSpace.rightMargin=dp(7);
         unidentifiedRow.addView(recent,recentSpace);
@@ -253,7 +254,7 @@ public final class SpeciesPickerActivity extends Activity {
         Button unknown=UiKit.button(this,"Unidentified","secondary");
         unknown.setTextSize(13);
         unknown.setContentDescription("Record an unidentified species");
-        LinearLayout.LayoutParams unknownSpace=new LinearLayout.LayoutParams(0,-2,1f);
+        LinearLayout.LayoutParams unknownSpace=new LinearLayout.LayoutParams(0,-2,largeActions?1.2f:1f);
         unknownSpace.topMargin=dp(6);
         unidentifiedRow.addView(unknown,unknownSpace);
         scrollBody.addView(unidentifiedRow);

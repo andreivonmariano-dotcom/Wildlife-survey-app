@@ -140,6 +140,8 @@ public final class ApoOfflineMapInstrumentedTest {
                 assertNotNull(button);button.performClick();
             });
             awaitText(screen,"Mindanao view");
+            screen.recreate();
+            awaitText(screen,"Mindanao view · 2 saved coordinates in view");
             screen.onActivity(a->described(a.getWindow().getDecorView(),
                 "Map legend and sources. Tap to read details").performClick());
             androidx.test.espresso.Espresso.onView(androidx.test.espresso.matcher.ViewMatchers.withText(

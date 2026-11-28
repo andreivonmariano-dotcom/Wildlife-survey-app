@@ -25,4 +25,20 @@ class ScreenRefinement(unittest.TestCase):
         for label in ("Save Observation","End Survey","Cancel Survey · Not Counted"):
             self.assertIn(label,src("MainActivity"))
         self.assertIn("super(context,NAME,null,29)",src("FieldDb"))
+    def test_field_preflight_and_reference_details(self):
+        gps=src("SurveyGpsActivity")
+        self.assertIn("Settings.ACTION_APPLICATION_DETAILS_SETTINGS",gps)
+        self.assertNotIn("Tap Check current GPS",gps)
+        self.assertIn("GpsFixPolicy.acceptableElapsed(",gps)
+        recorder=src("MainActivity")
+        self.assertIn("favoriteButton.setSelected(starred)",recorder)
+        self.assertIn("countView.setMinWidth(dp(48))",recorder)
+        self.assertIn("countLine.addView(countView,new LinearLayout.LayoutParams(-2,-2))",recorder)
+        self.assertIn("UiKit.fieldInput(this,search)",src("TaxonDetailActivity"))
+    def test_map_retains_scope_and_filters(self):
+        s=src("ApoOfflineMapActivity")
+        for key in ("map_mindanao","map_kind","map_project"):
+            self.assertEqual(s.count('"'+key+'"'),2)
+        self.assertIn("SQLiteDatabase.OPEN_READONLY",s)
+        self.assertNotIn("getWritableDatabase",s)
 if __name__=="__main__": unittest.main()

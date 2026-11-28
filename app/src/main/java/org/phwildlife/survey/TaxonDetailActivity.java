@@ -91,7 +91,8 @@ public final class TaxonDetailActivity extends Activity {
             @Override public boolean enoughToFilter(){return true;}
         };
         search.setSingleLine(true);
-        search.setTextSize(15);
+        search.setTextSize(16);
+        UiKit.fieldInput(this,search);
         search.setThreshold(1);
         search.setHint("Search species");
         search.setContentDescription("Search species by scientific, common or former name");
@@ -102,7 +103,7 @@ public final class TaxonDetailActivity extends Activity {
             search.dismissDropDown();
             lookup(parent.getItemAtPosition(position).toString());
         });
-        searchRow.addView(search,new LinearLayout.LayoutParams(0,dp(52),1f));
+        searchRow.addView(search,new LinearLayout.LayoutParams(0,-2,1f));
         Button dropdown=UiKit.button(this,"▾","quiet");
         dropdown.setContentDescription("Show species suggestions");
         dropdown.setOnClickListener(v->{
@@ -130,11 +131,12 @@ public final class TaxonDetailActivity extends Activity {
         if(stackedSearch){
             searchRow.removeAllViews();
             searchRow.setOrientation(LinearLayout.VERTICAL);
-            searchRow.addView(search,new LinearLayout.LayoutParams(-1,dp(64)));
+            searchRow.addView(search,new LinearLayout.LayoutParams(-1,-2));
             LinearLayout searchActions=new LinearLayout(this);
             searchActions.setOrientation(LinearLayout.HORIZONTAL);
             searchActions.addView(dropdown,new LinearLayout.LayoutParams(dp(60),dp(58)));
-            searchActions.addView(find,new LinearLayout.LayoutParams(0,dp(58),1f));
+            searchActions.setBaselineAligned(false);
+            searchActions.addView(find,new LinearLayout.LayoutParams(0,-2,1f));
             searchRow.addView(searchActions,new LinearLayout.LayoutParams(-1,-2));
         }
         root.addView(searchRow);
@@ -350,7 +352,7 @@ public final class TaxonDetailActivity extends Activity {
             phLibraryBack.setText("Back");
             phLibraryBack.setTextSize(14);
             phLibraryBack.setLayoutParams(new LinearLayout.LayoutParams(
-                dp(getResources().getConfiguration().fontScale>=1.6f?104:68),dp(48)));
+                dp(getResources().getConfiguration().fontScale>=1.6f?104:68),-2));
         }
         if(phLibraryPage!=null)phLibraryPage.setPadding(dp(16),dp(10),dp(16),dp(8));
         searchRow.setVisibility(View.GONE);

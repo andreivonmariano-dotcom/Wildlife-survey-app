@@ -241,7 +241,7 @@ public class MainActivity extends Activity implements LocationListener {
             "Herp survey":profile+" Survey";
         TextView title=label(screenTitle,largeText?17:19,true);
         title.setGravity(Gravity.CENTER_VERTICAL);
-        title.setMaxLines(2);
+        if(android.os.Build.VERSION.SDK_INT>=28)title.setAccessibilityHeading(true);
         title.setPadding(dp(LikasDesignSystem.SPACE_MD),0,dp(LikasDesignSystem.SPACE_SM),0);
         title.setContentDescription(profile+" Survey");
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
@@ -695,6 +695,7 @@ public class MainActivity extends Activity implements LocationListener {
             public void afterTextChanged(Editable e){}
         });
         LinearLayout countLine=horizontal();
+        countLine.setBaselineAligned(false);
         String countBasis=method.equals("track_sign")||method.equals("camera_trap_check")||
             method.equals("live_trap_check")||method.equals("bat_acoustic")||
             method.equals("drift_fence_check")?"Individuals / evidence count":"Individuals";
@@ -704,7 +705,9 @@ public class MainActivity extends Activity implements LocationListener {
         countLine.addView(minus,new LinearLayout.LayoutParams(dp(52),dp(touchDp)));
         countView=label("1",19,true);countView.setGravity(Gravity.CENTER);
         countView.setContentDescription("1 individuals or evidence items");
-        countLine.addView(countView,new LinearLayout.LayoutParams(dp(48),-2));
+        // Four-digit counts must remain legible at enlarged font sizes.
+        countView.setMinWidth(dp(48));
+        countLine.addView(countView,new LinearLayout.LayoutParams(-2,-2));
         Button plus=UiKit.button(this,"+","secondary");
         plus.setContentDescription("Increase individuals or evidence count");
         countLine.addView(plus,new LinearLayout.LayoutParams(dp(52),dp(touchDp)));
@@ -744,7 +747,7 @@ public class MainActivity extends Activity implements LocationListener {
             new String[]{"Visual","Auditory","Both","Sign","Camera"}));
         detectionSpinner.setContentDescription("Choose observation detection type");
         detectionSpinner.setMinimumHeight(dp(56));
-        detectionBlock.addView(detectionSpinner,new LinearLayout.LayoutParams(-1,dp(56)));
+        detectionBlock.addView(detectionSpinner,new LinearLayout.LayoutParams(-1,-2));
         LinearLayout.LayoutParams detectionLp=stackCaptureActions?
             new LinearLayout.LayoutParams(-1,-2):
             new LinearLayout.LayoutParams(0,-2,0.8f);
@@ -1129,6 +1132,8 @@ public class MainActivity extends Activity implements LocationListener {
             starred=c.moveToFirst();
         }catch(Exception ignored){}
         favoriteButton.setText(starred?"★":"☆");
+        favoriteButton.setSelected(starred);
+        favoriteButton.setContentDescription(starred?"Remove favorite species":"Add favorite species");
     }
     private void openSpeciesPicker(){
         if(!active){toast("Start a survey first");return;}

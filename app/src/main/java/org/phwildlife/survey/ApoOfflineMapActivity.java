@@ -227,6 +227,11 @@ public final class ApoOfflineMapActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(ApoVisualSystem.FIELD_BACKGROUND);
         showLocalities=getPreferences(MODE_PRIVATE).getBoolean("show_localities",true);
+        if(state!=null){
+            mindanao=state.getBoolean("map_mindanao",false);
+            kindFilter=state.getString("map_kind","all");
+            projectFilter=state.getString("map_project","");
+        }
         int gutter=ApoVisualSystem.dp(this,14);
         root.setPadding(gutter,gutter,gutter,gutter);
         LinearLayout header=new LinearLayout(this);
@@ -253,8 +258,10 @@ public final class ApoOfflineMapActivity extends Activity {
         root.addView(surface,mapSize);
         LinearLayout controls=new LinearLayout(this);
         controls.setOrientation(LinearLayout.HORIZONTAL);
+        controls.setBaselineAligned(false);
         controls.setPadding(0,ApoVisualSystem.dp(this,10),0,0);
-        TextView scope=action("Mindanao",()->{});
+        TextView scope=action(mindanao?"Philippines":"Mindanao",()->{});
+        scope.setContentDescription(mindanao?"Show all Philippines":"Show Mindanao region");
         scope.setOnClickListener(v->{
             mindanao=!mindanao;
             scope.setText(mindanao?"Philippines":"Mindanao");
@@ -265,6 +272,7 @@ public final class ApoOfflineMapActivity extends Activity {
         controls.addView(scope,new LinearLayout.LayoutParams(0,-2,1f));
         TextView locality=action(showLocalities?"Hide locations":"Show locations",()->{});
         locality.setTag("apo_map_localities_toggle");
+        locality.setContentDescription(showLocalities?"Hide recorded coordinates":"Show recorded coordinates");
         locality.setOnClickListener(v->{
             showLocalities=!showLocalities;
             locality.setText(showLocalities?"Hide locations":"Show locations");
@@ -309,7 +317,7 @@ public final class ApoOfflineMapActivity extends Activity {
         root.addView(legend);
         if(workspaceRoot)root.addView(ApoShellBar.createRoot(this,"map"));
         setContentView(root);
-        updateSubtitle();
+        syncFilterLabel();
         // Boundary geometry parsing and SQLite reads stay off the UI thread.
         new Thread(()->{
             JSONArray features=null;
@@ -330,6 +338,13 @@ public final class ApoOfflineMapActivity extends Activity {
                 if(ready==null)subtitle.setText("Provincial map unavailable. Saved coordinates shown.");
             });
         },"apo-offline-map-loader").start();
+    }
+
+    @Override protected void onSaveInstanceState(Bundle out){
+        out.putBoolean("map_mindanao",mindanao);
+        out.putString("map_kind",kindFilter);
+        out.putString("map_project",projectFilter);
+        super.onSaveInstanceState(out);
     }
 
     private final class MapSurface extends View {

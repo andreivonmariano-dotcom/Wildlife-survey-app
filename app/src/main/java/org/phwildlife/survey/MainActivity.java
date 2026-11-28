@@ -798,8 +798,9 @@ public class MainActivity extends Activity implements LocationListener {
             action.setContentDescription(
                 "Open "+RecorderMethodUiPolicy.actionLabel(profile,method)+
                 " records for this survey. Record effort separately.");
+            // Respect the shared scalable touch target and allow long labels to wrap.
             LinearLayout.LayoutParams actionLp=new LinearLayout.LayoutParams(
-                -1,dp(48));
+                -1,-2);
             actionLp.bottomMargin=dp(5);
             content.addView(action,actionLp);
             action.setOnClickListener(v->{

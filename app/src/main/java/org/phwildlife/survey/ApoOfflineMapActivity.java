@@ -34,6 +34,8 @@ public final class ApoOfflineMapActivity extends Activity {
     private final ArrayList<Pin> pins=new ArrayList<>();
     private JSONArray provinceFeatures;
     private AlertDialog nearbyChooser;
+    private AlertDialog sourceDialog;
+    AlertDialog activeSourceDialogForQa(){return sourceDialog;}
     private MapSurface surface;
     private TextView subtitle,filterAction;
     private final LinkedHashMap<String,String> projectNames=new LinkedHashMap<>();
@@ -135,14 +137,14 @@ public final class ApoOfflineMapActivity extends Activity {
     private void showPin(Pin pin){
         String message=pin.provenance+"\n"+
             fmt(pin.lat)+"° N, "+fmt(pin.lon)+"° E"+
-            "\nStored only on this device.";
+            "\nSaved locally.";
         AlertDialog.Builder dialog=new AlertDialog.Builder(this)
             .setTitle(pin.name).setMessage(message)
             .setPositiveButton("Close",null);
         if("survey".equals(pin.kind))
             dialog.setNeutralButton("View observations",(d,w)->
                 startActivity(new Intent(this,HistoryActivity.class)
-                    .putExtra("event_id",pin.recordId)));
+                    .putExtra("event_id",pin.recordId).putExtra("navigation_origin","map")));
         else
             dialog.setNeutralButton("Manage sites",(d,w)->
                 startActivity(new Intent(this,SitesActivity.class)));
@@ -171,7 +173,7 @@ public final class ApoOfflineMapActivity extends Activity {
         String project=projectFilter.isEmpty()?"All projects":
             projectNames.containsKey(projectFilter)?
                 projectNames.get(projectFilter):projectFilter;
-        filterAction.setText("Filter · "+type+" · "+project);
+        filterAction.setText("Filter · "+type+(projectFilter.isEmpty()?"":" · "+project));
         filterAction.setContentDescription("Filter map records. "+
             type+". "+project);
         updateSubtitle();surface.invalidate();
@@ -227,6 +229,11 @@ public final class ApoOfflineMapActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(ApoVisualSystem.FIELD_BACKGROUND);
         showLocalities=getPreferences(MODE_PRIVATE).getBoolean("show_localities",true);
+        if(state!=null){
+            mindanao=state.getBoolean("map_mindanao",false);
+            kindFilter=state.getString("map_kind","all");
+            projectFilter=state.getString("map_project","");
+        }
         int gutter=ApoVisualSystem.dp(this,14);
         root.setPadding(gutter,gutter,gutter,gutter);
         LinearLayout header=new LinearLayout(this);
@@ -239,7 +246,10 @@ public final class ApoOfflineMapActivity extends Activity {
         heading.setGravity(Gravity.CENTER_VERTICAL);
         heading.setPadding(gutter,0,0,0);
         header.addView(heading,new LinearLayout.LayoutParams(0,-2,1f));
-        root.addView(header);
+        boolean workspaceRoot=getIntent().getBooleanExtra(ApoShellBar.ROOT,false);
+        if(workspaceRoot)root.addView(ApoShellBar.rootHeader(this,"Offline Map",
+            ()->ApoShellBar.workspace(this,"home")));
+        else root.addView(header);
         subtitle=new TextView(this);
         subtitle.setTextSize(13);subtitle.setTextColor(ApoVisualSystem.MUTED);
         subtitle.setPadding(0,ApoVisualSystem.dp(this,9),0,ApoVisualSystem.dp(this,10));
@@ -250,8 +260,10 @@ public final class ApoOfflineMapActivity extends Activity {
         root.addView(surface,mapSize);
         LinearLayout controls=new LinearLayout(this);
         controls.setOrientation(LinearLayout.HORIZONTAL);
+        controls.setBaselineAligned(false);
         controls.setPadding(0,ApoVisualSystem.dp(this,10),0,0);
-        TextView scope=action("Mindanao",()->{});
+        TextView scope=action(mindanao?"Philippines":"Mindanao",()->{});
+        scope.setContentDescription(mindanao?"Show all Philippines":"Show Mindanao region");
         scope.setOnClickListener(v->{
             mindanao=!mindanao;
             scope.setText(mindanao?"Philippines":"Mindanao");
@@ -262,6 +274,7 @@ public final class ApoOfflineMapActivity extends Activity {
         controls.addView(scope,new LinearLayout.LayoutParams(0,-2,1f));
         TextView locality=action(showLocalities?"Hide locations":"Show locations",()->{});
         locality.setTag("apo_map_localities_toggle");
+        locality.setContentDescription(showLocalities?"Hide recorded coordinates":"Show recorded coordinates");
         locality.setOnClickListener(v->{
             showLocalities=!showLocalities;
             locality.setText(showLocalities?"Hide locations":"Show locations");
@@ -279,21 +292,22 @@ public final class ApoOfflineMapActivity extends Activity {
             locality.setTextSize(12);
         }
         root.addView(controls);
-        filterAction=action("Filter · All records · All projects",this::chooseFilters);
+        filterAction=action("Filter · All records",this::chooseFilters);
         filterAction.setTextSize(ApoVisualSystem.largeText(this)?12:14);
         LinearLayout.LayoutParams filterLp=new LinearLayout.LayoutParams(-1,-2);
         filterLp.topMargin=ApoVisualSystem.dp(this,5);
         root.addView(filterAction,filterLp);
         TextView legend=new TextView(this);
         legend.setText("● Survey GPS   ◆ Saved site\n"+
-            "2026 Q3 provinces · schematic view");
+            "Schematic map · Sources");
         legend.setTextColor(ApoVisualSystem.MUTED);
         legend.setTextSize(ApoVisualSystem.largeText(this)?10:12);
         legend.setPadding(0,ApoVisualSystem.dp(this,8),0,0);
         legend.setContentDescription("Map legend and sources. Tap to read details");
         legend.setFocusable(true);legend.setClickable(true);
         legend.setMinHeight(ApoVisualSystem.dp(this,48));
-        legend.setOnClickListener(v->new AlertDialog.Builder(this)
+        legend.setOnClickListener(v->{
+            sourceDialog=new AlertDialog.Builder(this)
             .setTitle("Map sources and coordinates")
             .setMessage("Boundaries: Philippine administrative provinces, PSGC Q3 2026, "+
                 "low-resolution simplified polygons. Source: faeldon/philippines-json-maps "+
@@ -302,10 +316,14 @@ public final class ApoOfflineMapActivity extends Activity {
                 "● Survey-start GPS: coordinates recorded at survey start.\n"+
                 "◆ Saved site: field project reference coordinates. "+
                 "Original accuracy and uncertainty remain in the saved record.")
-            .setPositiveButton("Close",null).show());
+            .setPositiveButton("Close",null).create();
+            sourceDialog.setOnDismissListener(dialog->sourceDialog=null);
+            sourceDialog.show();
+        });
         root.addView(legend);
+        if(workspaceRoot)root.addView(ApoShellBar.createRoot(this,"map"));
         setContentView(root);
-        updateSubtitle();
+        syncFilterLabel();
         // Boundary geometry parsing and SQLite reads stay off the UI thread.
         new Thread(()->{
             JSONArray features=null;
@@ -326,6 +344,13 @@ public final class ApoOfflineMapActivity extends Activity {
                 if(ready==null)subtitle.setText("Provincial map unavailable. Saved coordinates shown.");
             });
         },"apo-offline-map-loader").start();
+    }
+
+    @Override protected void onSaveInstanceState(Bundle out){
+        out.putBoolean("map_mindanao",mindanao);
+        out.putString("map_kind",kindFilter);
+        out.putString("map_project",projectFilter);
+        super.onSaveInstanceState(out);
     }
 
     private final class MapSurface extends View {

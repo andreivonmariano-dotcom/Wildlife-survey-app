@@ -119,17 +119,20 @@ public final class PhLibraryBibliographyActivity extends Activity {
             large?12:14,PhLibrary2Ui.FOREST,false,true);
         navTitle.setGravity(Gravity.CENTER);
         nav.addView(navTitle,new LinearLayout.LayoutParams(0,dp(48),1));
-        root.addView(nav);
+        boolean workspaceRoot=getIntent().getBooleanExtra(ApoShellBar.ROOT,false);
+        if(workspaceRoot)root.addView(ApoShellBar.rootHeader(this,"Research Library",
+            ()->ApoShellBar.workspace(this,"home")));
+        else root.addView(nav);
         search=new EditText(this);search.setSingleLine(true);
         search.setTextSize(16);search.setHint("Search references");
         search.setContentDescription("Search original bibliography by author, title, year or DOI");
-        UiKit.fieldInput(this,search);root.addView(search,new LinearLayout.LayoutParams(-1,dp(56)));
+        UiKit.fieldInput(this,search);root.addView(search,new LinearLayout.LayoutParams(-1,-2));
         savedToggle=PhLibrary2Ui.action(this,"Saved only",()->{
             savedOnly=!savedOnly;
             refresh();
         },false);
         savedToggle.setTextSize(14);
-        LinearLayout.LayoutParams savedLp=new LinearLayout.LayoutParams(-1,dp(50));
+        LinearLayout.LayoutParams savedLp=new LinearLayout.LayoutParams(-1,-2);
         savedLp.topMargin=dp(7);
         root.addView(savedToggle,savedLp);
         count=PhLibrary2Ui.text(this,"",14,PhLibrary2Ui.FOREST,false,true);
@@ -169,22 +172,25 @@ public final class PhLibraryBibliographyActivity extends Activity {
             String sourceUrl=matches.get(position).optString("url");
             boolean isSaved=ApoReferenceBookmarks.isSaved(this,full);
             TextView detail=PhLibrary2Ui.text(this,full+
-                "\n\nFull text: unavailable in this offline edition."+
+                "\n\nCitation only"+
                 (sourceUrl.startsWith("https://")?
-                    "\nOnline source: connection required.":""),16,
+                    "\nInternet required":""),16,
                 PhLibrary2Ui.INK,false,false);
             detail.setPadding(dp(20),dp(15),dp(20),dp(15));
             detail.setTextIsSelectable(true);
             detail.setAutoLinkMask(Linkify.WEB_URLS);
             detail.setMovementMethod(LinkMovementMethod.getInstance());
+            android.widget.ScrollView detailScroll=new android.widget.ScrollView(this);
+            detailScroll.setFillViewport(false);
+            detailScroll.addView(detail);
             AlertDialog.Builder dialog=new AlertDialog.Builder(this).setTitle("Reference details")
-                .setView(detail).setPositiveButton("Close",null)
+                .setView(detailScroll).setPositiveButton("Close",null)
                 .setNegativeButton(isSaved?"Remove saved":"Save reference",(d,w)->{
                     ApoReferenceBookmarks.setSaved(this,full,!isSaved);
                     refresh();
                 });
             if(sourceUrl.startsWith("https://"))
-                dialog.setNeutralButton("Open source",(d,w)->{
+                dialog.setNeutralButton("Open online source",(d,w)->{
                     try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(sourceUrl)));}
                     catch(Exception ignored){
                         new AlertDialog.Builder(this)
@@ -195,6 +201,7 @@ public final class PhLibraryBibliographyActivity extends Activity {
             dialog.show();
         });
         root.addView(list,new LinearLayout.LayoutParams(-1,0,1));
+        if(workspaceRoot)root.addView(ApoShellBar.createRoot(this,"research"));
         setContentView(root);
         originalCitation=saved==null?
             getIntent().getStringExtra("phlibrary_bib_citation"):

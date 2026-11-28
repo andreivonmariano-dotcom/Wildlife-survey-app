@@ -39,7 +39,7 @@ class ApoBioToolsDestinations(unittest.TestCase):
 
     def test_history_outcomes_are_read_only_and_explicit(self):
         s=src("HistoryActivity.java")
-        self.assertIn('eventFilter==null?"Field Records":fromRecorder()?"Live survey":"All surveys"',s)
+        self.assertIn('eventFilter==null?"My Data":fromRecorder()?"Live survey":fromMap()?"Offline Map":"All surveys"',s)
         self.assertIn('"SELECT "+OUTCOME_SQL+",COUNT(*) FROM surveys s GROUP BY "+OUTCOME_SQL',s)
         self.assertIn('"not_counted".equals(state)',s)
         self.assertIn('c.isNull(4)?"Date not recorded"',s)
@@ -62,7 +62,7 @@ class ApoBioToolsDestinations(unittest.TestCase):
         s=src("AuditActivity.java")
         self.assertIn("PRAGMA quick_check",s)
         self.assertIn('new FieldDb(getApplicationContext())',s)
-        self.assertIn('"Data quality review","Analysis & Exports"',s)
+        self.assertIn('"Data quality review","Back"',s)
         self.assertIn("not necessarily unique observations",s)
         self.assertIn("auditWorker.execute(()->",s)
 

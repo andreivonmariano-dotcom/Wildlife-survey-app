@@ -10,7 +10,7 @@ class ApoRc111BrandingAndReadability(unittest.TestCase):
     def test_user_visible_recovery_is_apo_but_backup_format_is_unchanged(self):
         ui=read("FieldBackupActivity.java")
         fmt=read("FieldBackupArchive.java")
-        for expected in ("APO-field-backup.zip","empty APO workspace",
+        for expected in ("APO-field-backup.zip","Restore into an empty workspace",
                          "Close and reopen APO","Close APO","Check and restore backup ZIP"):
             self.assertIn(expected,ui)
         for retired in ("empty LIKAS workspace","Close and reopen LIKAS",

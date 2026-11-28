@@ -41,6 +41,7 @@ public final class UiKit {
     LinearLayout row=new LinearLayout(a);
     row.setOrientation(LinearLayout.HORIZONTAL);
     row.setGravity(Gravity.CENTER_VERTICAL);
+    row.setBaselineAligned(false);
     boolean largeText=a.getResources().getConfiguration().fontScale>=1.30f;
     // One small icon-only Back action, with the full destination spoken to assistive tools.
     Button back=button(a,"‹","quiet");
@@ -57,9 +58,10 @@ public final class UiKit {
     heading.setText(title);
     heading.setTextSize(largeText?17:20);
     heading.setTextColor(INK);
-    heading.setSingleLine(!largeText);
-    if(largeText)heading.setMaxLines(2);
-    else heading.setEllipsize(android.text.TextUtils.TruncateAt.END);
+    // A screen title must remain readable even in a narrow or enlarged layout.
+    heading.setSingleLine(false);
+    heading.setBreakStrategy(android.text.Layout.BREAK_STRATEGY_HIGH_QUALITY);
+    if(android.os.Build.VERSION.SDK_INT>=28)heading.setAccessibilityHeading(true);
     heading.setContentDescription(title);
     heading.setTypeface(null,Typeface.BOLD);
     heading.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);

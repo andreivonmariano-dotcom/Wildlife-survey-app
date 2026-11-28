@@ -44,6 +44,7 @@ public final class StudyProtocolsActivity extends Activity {
         SimpleDateFormat d=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.US);
         d.setTimeZone(TimeZone.getTimeZone("UTC"));return d.format(new Date());
     }
+    @Override public void onBackPressed(){finish();}
     @Override public void onCreate(Bundle state){
         super.onCreate(state);store=new FieldDb(this);draw();
     }

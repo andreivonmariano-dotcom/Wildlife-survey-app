@@ -31,6 +31,7 @@ public final class HabitatRecordsActivity extends Activity {
         value.setPadding(dp(3),dp(5),dp(3),dp(5));
         return value;
     }
+    @Override public void onBackPressed(){finish();}
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         // Opening a reference screen must not inherit an open search keyboard.
@@ -60,11 +61,13 @@ public final class HabitatRecordsActivity extends Activity {
         guideTab.setContentDescription("Habitat reference guide tab");
         recordsTab.setContentDescription("My recorded site habitats tab");
         int tabHeight=FieldLayoutPolicy.actionHeightDp(getResources().getConfiguration().fontScale);
-        tabs.addView(guideTab,new LinearLayout.LayoutParams(0,dp(tabHeight),1));
-        LinearLayout.LayoutParams other=new LinearLayout.LayoutParams(0,dp(tabHeight),1);
+        guideTab.setMinHeight(dp(tabHeight));
+        recordsTab.setMinHeight(dp(tabHeight));
+        tabs.addView(guideTab,new LinearLayout.LayoutParams(0,-2,1));
+        LinearLayout.LayoutParams other=new LinearLayout.LayoutParams(0,-2,1);
         other.leftMargin=dp(8);
         tabs.addView(recordsTab,other);
-        root.addView(tabs,new LinearLayout.LayoutParams(-1,dp(tabHeight)));
+        root.addView(tabs,new LinearLayout.LayoutParams(-1,-2));
         researchToggle=UiKit.button(this,largeText?
             "Research tools  ▾":"Habitat research tools  ▾","secondary");
         researchToggle.setContentDescription("Expand source-linked habitat comparisons and species associations");

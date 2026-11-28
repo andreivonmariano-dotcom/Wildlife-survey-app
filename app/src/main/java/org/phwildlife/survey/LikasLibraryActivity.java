@@ -17,11 +17,7 @@ public final class LikasLibraryActivity extends Activity {
 
     /** Return from Living Atlas to the one canonical workspace without duplicating its state. */
     private void workspace(String target){
-        Intent intent=new Intent(this,WelcomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("workspace_destination",target);
-        startActivity(intent);
-        finish();
+        ApoShellBar.workspace(this,target);
     }
     private void openAtlas(String extra,String filter){
         Intent i=new Intent(this,PhLibraryDirectoryActivity.class);
@@ -33,7 +29,8 @@ public final class LikasLibraryActivity extends Activity {
         v.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
         v.setTextSize(18);
         v.setPadding(dp(18),dp(10),dp(18),dp(10));
-        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,dp(58));
+        v.setMinHeight(dp(58));
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,-2);
         p.bottomMargin=dp(8);body.addView(v,p);
     }
 
@@ -47,7 +44,8 @@ public final class LikasLibraryActivity extends Activity {
         root.setBackgroundColor(PhLibrary2Ui.PAPER);
         root.setPadding(dp(16),dp(8),dp(16),0);
         LinearLayout nav=new LinearLayout(this);nav.setGravity(Gravity.CENTER_VERTICAL);
-        boolean largeText=getResources().getConfiguration().fontScale>=1.6f;
+        boolean largeText=getResources().getConfiguration().fontScale>=1.6f||
+            getResources().getConfiguration().screenWidthDp<350;
         TextView back=PhLibrary2Ui.action(this,"Back",this::finish,false);
         if(largeText){
             back.setTextSize(12);back.setPadding(dp(7),dp(5),dp(7),dp(5));
@@ -58,7 +56,9 @@ public final class LikasLibraryActivity extends Activity {
         title.setGravity(Gravity.CENTER);
         if(getResources().getConfiguration().fontScale>=1.6f)title.setTextSize(12);
         nav.addView(title,new LinearLayout.LayoutParams(0,dp(48),1));
-        root.addView(nav);
+        if(getIntent().getBooleanExtra(ApoShellBar.ROOT,false))
+            root.addView(ApoShellBar.rootHeader(this,"Living Atlas",()->workspace("home")));
+        else root.addView(nav);
         ScrollView scroll=new ScrollView(this);
         scroll.setFillViewport(true);scroll.setVerticalScrollBarEnabled(false);
         LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);
@@ -81,13 +81,13 @@ public final class LikasLibraryActivity extends Activity {
         search.setContentDescription("Search the 715-account species atlas");
         UiKit.fieldInput(this,search);
         bar.addView(search,largeText?
-            new LinearLayout.LayoutParams(-1,dp(58)):
-            new LinearLayout.LayoutParams(0,dp(54),1));
+            new LinearLayout.LayoutParams(-1,-2):
+            new LinearLayout.LayoutParams(0,-2,1));
         TextView go=PhLibrary2Ui.action(this,"Browse species",()->
             openAtlas("phlibrary_query",search.getText().toString().trim()),true);
-        if(largeText){go.setTextSize(12);go.setPadding(dp(9),dp(5),dp(9),dp(5));}
+        if(largeText){go.setPadding(dp(9),dp(8),dp(9),dp(8));}
         LinearLayout.LayoutParams gp=new LinearLayout.LayoutParams(
-            largeText?-1:-2,dp(largeText?56:54));
+            largeText?-1:-2,-2);
         if(largeText)gp.topMargin=dp(7);
         else gp.leftMargin=dp(8);
         bar.addView(go,gp);body.addView(bar);
@@ -102,11 +102,9 @@ public final class LikasLibraryActivity extends Activity {
         body.addView(tileGap,new LinearLayout.LayoutParams(-1,dp(16)));
         tile(body,"Habitat Atlas",()->startActivity(
             new Intent(this,HabitatSpeciesEvidenceActivity.class)));
-        tile(body,"Research Library",()->startActivity(
-            new Intent(this,PhLibraryBibliographyActivity.class)));
+        tile(body,"Research Library",()->workspace("research"));
         tile(body,"Saved species",()->openAtlas("phlibrary_saved_only","true"));
-        tile(body,"Offline Map",()->
-            startActivity(new Intent(this,ApoOfflineMapActivity.class)));
+        tile(body,"Offline Map",()->workspace("map"));
         // Native photos ship inside the signed APK; no photo import is needed.
 
     }

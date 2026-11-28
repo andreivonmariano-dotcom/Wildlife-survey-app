@@ -50,7 +50,7 @@ class GalleryPerf(unittest.TestCase):
         catalog=src("Rc7SpeciesLibraryActivity.java")
         self.assertIn('paicActive?"Mindanao PAIC species":"Philippine species checklist"',catalog)
         self.assertIn('"Library",this::finish',catalog)
-        self.assertIn('"Backup & recovery","Settings",this::finish',src("FieldBackupActivity.java"))
+        self.assertIn('"Backup & restore","Back",this::requestBack',src("FieldBackupActivity.java"))
         self.assertIn('"Manage saved data","Settings",this::finish',src("DataManagementActivity.java"))
         self.assertIn('"Status unverified"',gallery)
         self.assertNotIn('"Priority species"',gallery)

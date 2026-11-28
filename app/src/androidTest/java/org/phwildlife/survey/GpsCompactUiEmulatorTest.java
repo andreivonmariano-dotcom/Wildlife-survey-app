@@ -99,6 +99,14 @@ public final class GpsCompactUiEmulatorTest {
                 String scale=activity.getResources().getConfiguration().fontScale>=1.9f?
                     "200":"160";
                 screenshot(activity,"apo_gps_"+(station?"station":"survey")+"_"+scale+".png");
+                View help=findDescription(root,"Show GPS retry and Android location settings");
+                assertNotNull("GPS troubleshooting available",help);
+                help.performClick();
+                View permissions=findDescription(root,"Open APO app settings to enable precise location");
+                assertNotNull("Direct app permission recovery is available",permissions);
+                assertTrue(permissions.isShown());
+                help.performClick();
+                assertFalse(permissions.isShown());
             });
         }
     }

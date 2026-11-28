@@ -62,7 +62,7 @@ class Rc43ApprovedIconLock(unittest.TestCase):
         self.assertIn('return R.drawable.likas_approved_mammals_rusa_marianna;',ui)
         app=APP.read_text(encoding="utf-8")
         for kind in ("Birds","Herpetofauna","Mammals"):
-            self.assertIn('()->setup("'+kind+'")',app)
+            self.assertIn('()->openSetup("'+kind+'")',app)
         self.assertNotIn('surveyTile(second,"Custom"',app)
         self.assertNotIn('private void customPicker()',app)
         for illegal in ("likas_approved_plants.png","likas_approved_invertebrates.png"):

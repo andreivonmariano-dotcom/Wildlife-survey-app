@@ -30,6 +30,7 @@ public class WelcomeActivity extends Activity {
     private Button setupStartButton;
     private String profile="Birds";
     private String currentScreen="home";
+    private String backDraftProfile;
     private static final int GPS_PERMISSION_REQUEST=71;
     private final Handler gpsHandler=new Handler(Looper.getMainLooper());
     private LocationListener pendingGpsListener;
@@ -77,12 +78,23 @@ public class WelcomeActivity extends Activity {
         getWindow().setNavigationBarColor(BG);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         buildShell();
+        if(state!=null)backDraftProfile=state.getString("setup_back_draft");
         String screen=getPreferences(MODE_PRIVATE).getString("screen","home");
         String rememberedProfile=getPreferences(MODE_PRIVATE).getString("profile","Birds");
         boolean showMenu=getIntent().getBooleanExtra("show_menu",false);
         String destination=getIntent().getStringExtra("workspace_destination");
         if("fieldwork".equals(destination))fieldworkHub();
         else if("data".equals(destination))myDataHub();
+        else if("atlas".equals(destination)){home();openAtlas();}
+        else if("map".equals(destination)){home();openMap();}
+        else if("research".equals(destination)){home();openResearch();}
+        else if(state!=null&&"fieldwork".equals(state.getString("workspace_page")))fieldworkHub();
+        else if(state!=null&&"data".equals(state.getString("workspace_page")))myDataHub();
+        else if(state!=null&&"analysis".equals(state.getString("workspace_page")))analysisHub();
+        else if(state!=null&&"utilities".equals(state.getString("workspace_page")))fieldUtilitiesHub();
+        else if(state!=null&&"setup".equals(state.getString("workspace_page"))&&!isSurveyActive()){
+            setup(rememberedProfile);restoreSetup();
+        }
         else if(showMenu)home();
         else if(screen.equals("setup")&&!isSurveyActive() &&
                 (rememberedProfile.equals("Birds")||rememberedProfile.equals("Herpetofauna")||rememberedProfile.equals("Mammals"))){
@@ -92,6 +104,13 @@ public class WelcomeActivity extends Activity {
         if(destination==null&&!showMenu&&isSurveyActive()&&
             getSharedPreferences("field_resume",MODE_PRIVATE).getString("screen","home").equals("survey"))
             startActivity(new Intent(this,MainActivity.class).putExtra("resume",true));
+        getIntent().removeExtra("workspace_destination");
+    }
+    @Override protected void onSaveInstanceState(Bundle out){
+        persistSetup();
+        out.putString("workspace_page",currentScreen);
+        out.putString("setup_back_draft",backDraftProfile);
+        super.onSaveInstanceState(out);
     }
     @Override protected void onResume(){
         super.onResume();
@@ -116,10 +135,17 @@ public class WelcomeActivity extends Activity {
         String destination=intent.getStringExtra("workspace_destination");
         if("fieldwork".equals(destination))fieldworkHub();
         else if("data".equals(destination))myDataHub();
+        else if("atlas".equals(destination)){home();openAtlas();}
+        else if("map".equals(destination)){home();openMap();}
+        else if("research".equals(destination)){home();openResearch();}
         else home();
+        intent.removeExtra("workspace_destination");
+        intent.putExtra("show_menu",true);
     }
     @Override public void onBackPressed(){
-        if("setup".equals(currentScreen)||"custom".equals(currentScreen)){
+        if("setup".equals(currentScreen)){
+            leaveSetup();
+        }else if("custom".equals(currentScreen)){
             fieldworkHub();
         }else if("analysis".equals(currentScreen)||"utilities".equals(currentScreen)||
                 "records".equals(currentScreen)){
@@ -173,13 +199,16 @@ public class WelcomeActivity extends Activity {
         }
     }
     private void openAtlas(){
-        startActivity(new Intent(this,LikasLibraryActivity.class));
+        if(!homeVisible)home();
+        startActivity(new Intent(this,LikasLibraryActivity.class).putExtra(ApoShellBar.ROOT,true));
     }
     private void openResearch(){
-        startActivity(new Intent(this,PhLibraryBibliographyActivity.class));
+        if(!homeVisible)home();
+        startActivity(new Intent(this,PhLibraryBibliographyActivity.class).putExtra(ApoShellBar.ROOT,true));
     }
     private void openMap(){
-        startActivity(new Intent(this,ApoOfflineMapActivity.class));
+        if(!homeVisible)home();
+        startActivity(new Intent(this,ApoOfflineMapActivity.class).putExtra(ApoShellBar.ROOT,true));
     }
     private void scrollTop(){
         if(shellScroll!=null)shellScroll.post(()->shellScroll.scrollTo(0,0));
@@ -256,9 +285,11 @@ public class WelcomeActivity extends Activity {
             lp.bottomMargin=dp(LikasDesignSystem.SPACE_SM);
             main.addView(start,lp);
         }
-        main.addView(ApoHomeUi.module(this,"01","Living Atlas",null,this::openAtlas));
-        main.addView(ApoHomeUi.module(this,"02","Offline Map",null,this::openMap));
-        main.addView(ApoHomeUi.module(this,"03","Research Library",null,this::openResearch));
+        main.addView(ApoHomeUi.section(this,"Explore",null));
+        main.addView(ApoHomeUi.module(this,"01","Living Atlas",
+            "Species and habitats",this::openAtlas));
+        main.addView(ApoHomeUi.shortcutPair(this,"Offline Map",this::openMap,
+            "Research Library",this::openResearch));
         View daily=ApoSpeciesOfDay.createCompact(this,scientific->
             startActivity(new Intent(this,TaxonDetailActivity.class)
                 .putExtra("phlibrary_scientific_name",scientific)));
@@ -277,8 +308,9 @@ public class WelcomeActivity extends Activity {
     private void myDataHub(){
         showShellPage("data");
         lastHomeActiveSurvey=activeSurvey();
-        main.addView(ApoHomeUi.section(this,"My Data",null));
+        main.addView(ApoShellBar.rootHeader(this,"My Data",this::home));
         main.addView(ApoHomeUi.note(this,savedRecordCounts()));
+        main.addView(ApoHomeUi.section(this,"Records",null));
         main.addView(ApoHomeUi.tool(this,"01","Survey history",
             null,()->
                 startActivity(new Intent(this,HistoryActivity.class))));
@@ -289,10 +321,12 @@ public class WelcomeActivity extends Activity {
             null,()->
                 startActivity(new Intent(this,HabitatRecordsActivity.class)
                     .putExtra("initial_tab","records"))));
+        main.addView(ApoHomeUi.section(this,"Tools",null));
         main.addView(ApoHomeUi.tool(this,"04","Analysis & exports",
             null,this::analysisHub));
         main.addView(ApoHomeUi.tool(this,"05","Field utilities",
             null,this::fieldUtilitiesHub));
+        main.addView(ApoHomeUi.section(this,"Data protection",null));
         main.addView(ApoHomeUi.tool(this,"06","Backup & restore",
             null,()->
                 startActivity(new Intent(this,FieldBackupActivity.class))));
@@ -302,7 +336,7 @@ public class WelcomeActivity extends Activity {
     /** Survey-only workspace; method setup and survey outcomes remain unchanged. */
     private void fieldworkHub(){
         showShellPage("fieldwork");
-        main.addView(ApoHomeUi.section(this,"Fieldwork",null));
+        main.addView(ApoShellBar.rootHeader(this,"Fieldwork",this::home));
         String unfinished=activeSurvey();
         lastHomeActiveSurvey=unfinished;
         if(unfinished!=null){
@@ -332,9 +366,9 @@ public class WelcomeActivity extends Activity {
             activeCard.addView(resume,resumeLp);
             main.addView(activeCard);
         }else{
-            surveyTile(main,"Birds","Counts · Transects",()->setup("Birds"));
-            surveyTile(main,"Herpetofauna","Calls · Encounters",()->setup("Herpetofauna"));
-            surveyTile(main,"Mammals","Signs · Stations",()->setup("Mammals"));
+            surveyTile(main,"Birds","Point counts, transects and other bird surveys",()->openSetup("Birds"));
+            surveyTile(main,"Herpetofauna","Amphibians and reptiles",()->openSetup("Herpetofauna"));
+            surveyTile(main,"Mammals","Mammal sightings, signs and sampling stations",()->openSetup("Mammals"));
         }
         UiMotion.enter(this,main);
     }
@@ -424,6 +458,17 @@ public class WelcomeActivity extends Activity {
             item.setSelected(selected);
         }
     }
+    private void openSetup(String selected){
+        boolean restore=selected.equals(backDraftProfile);
+        backDraftProfile=null;
+        setup(selected);
+        if(restore)restoreSetup();
+    }
+    private void leaveSetup(){
+        persistSetup();
+        backDraftProfile=profile;
+        fieldworkHub();
+    }
     private void setup(String selected){
         homeVisible=false;currentScreen="setup";profile=selected;
         main.removeAllViews();scrollTop();
@@ -431,10 +476,8 @@ public class WelcomeActivity extends Activity {
         setupStartButton.setText("Continue to GPS");
         setupStartButton.setContentDescription("Continue "+profile+" survey setup to GPS preflight");
         setupFooter.setVisibility(View.VISIBLE);
-        main.addView(UiKit.navigationHeader(this,profile+" survey","Surveys",
-            this::fieldworkHub));
-        main.addView(ApoHomeUi.note(this,
-            "Choose a method, project and planned effort. GPS check comes next."));
+        main.addView(UiKit.navigationHeader(this,profile+" survey","Fieldwork",
+            this::leaveSetup));
         choices=SurveyMethods.forProfile(profile);
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){
@@ -620,7 +663,7 @@ public class WelcomeActivity extends Activity {
         templateChoice=new Spinner(this);
         routeOptions.addView(templateChoice);
         setupSpinner(templateChoice,"Choose a repeat monitoring route");
-        templateHint=text("Saved routes reuse permanent stations.",12,false);
+        templateHint=text("Saved routes retain station IDs.",12,false);
         templateHint.setTextColor(MUTED);routeOptions.addView(templateHint);
         saveTemplateChoice=new CheckBox(this);
         saveTemplateChoice.setText("Save this route for future monitoring");
@@ -883,8 +926,7 @@ public class WelcomeActivity extends Activity {
                 if(!GeoChecklistPolicy.canAutoSelect(match.status,match.checklistRegion)){
                     suggested=null;
                     geographicMethod=GeoRegions.BOUNDARY_METHOD;
-                    boundaryMessage.setText("Area uncertain ("+match.status+"). "+
-                        "Select the checklist area manually.");
+                    boundaryMessage.setText("GPS area uncertain. Select the checklist area manually.");
                     return;
                 }
                 // The observer has already requested GPS area selection. No extra dialog.
@@ -974,7 +1016,7 @@ public class WelcomeActivity extends Activity {
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED)
             suggestBoundary();
         else if(boundaryMessage!=null)
-            boundaryMessage.setText("Precise GPS access was not granted. Use the manual geographic checklist choice.");
+            boundaryMessage.setText("Precise GPS unavailable. Select a checklist area.");
     }
     private boolean supportsRoute(String code){return FieldUiPolicy.routeSetup(code);}
     private double spacingMeters(){

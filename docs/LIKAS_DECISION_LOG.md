@@ -574,3 +574,101 @@ All habitat evidence still requiring review is excluded from approved ecological
 ### 2026-11-15 | RC117 clean screens and standardized motion | owner-directed, signed preview
 
 Owner requested removal of redundant interface headings, decorative numbering, repeated explanatory copy and inconsistent screen transitions. Implemented concentrated native UI cleanup in Home, My Data, Fieldwork, recorder, Atlas, map and Research Library, including a 155 ms shared Activity animation theme with system and user reduced-motion checks. Preserved essential GPS/protocol/survey-end messages, access to scientific sources, original signer/application ID, SQLite29, source data, archival records and Complete/Incomplete/Not Counted semantics. Exact Android code177 source `92dbcad6b9f11402e87b5eba7f012af8495170cc` passed full signed CI [43704750113](https://github.com/andreivonmariano-dotcom/Wildlife-survey-app/actions/runs/43704750113), with 566 Python checks, native Android14 at normal/200% text, and signed RC109→RC117 no-data-clear upgrade. Verified owner-preview APK SHA-256 `9ff4a1f6c35db4e454eee26d3e5789af04587e0688bf9ce7e82e07c428e2e69c` (142,455,572 bytes). Draft PR #126, unmerged; public release remains gated by device acceptance, rights review and incomplete charter features. This entry records implementation, not authority to change APO Governing Product Charter v1.2. See `docs/APO_RC117_CLEAN_UI_QA_2026_11_15.md`.
+
+### 2026-11-27 | Atlas accessibility and navigation implementation | Source-only candidate
+
+Owner directed implementation of the design research. Latest verified preview found to be RC117 code177, not RC116. Draft PR #127 on RC117 lineage (b75c4893384237d3fe01583a633d3bce1353557c) contains bounded Atlas navigation and chip accessibility changes, removal of dead recorder helper, and source/native test additions. Nine Python source tests and shell syntax passed in Actions 45984314374; ten independent source checks passed. Native tests and signed APK unverified because original required artifacts return 404. Keep version metadata unchanged for source checks, never distribute candidate as RC117, and keep draft until inputs are restored and signed full QA passes. Approved v1.3 charter and design guidance remain authoritative; no new charter amendment or merge.
+
+### 2026-11-27 | Durable build inputs and protected signing gate
+
+Owner directed recovery of expired inputs. Recovered three exact APKs (RC109, RC110, RC116) from laptop, verified local and private remote archive, and independently rehydrated all nine Commons and 333 gallery images in private preflight 45988896891. RC117 local copy mismatched and was excluded. Private restricted manual full QA staged with durable input hashes, source pin, version guard, restricted original signer secret and original certificate/upgrade gate. Private signer itself is unavailable: cache empty and searched backups/trees/secrets had no match. No replacement key, new signed APK, public media upload, code merge or charter change. Keep PR #127 draft and preserve existing installed app until original-key recovery or specifically authorized data migration.
+
+### 2026-11-27 | Signing-loss recovery preparation, proposed continuity exception
+
+Further targeted search failed to find original private key. Owner directed continued recovery/migration preparation. Read-only backup preflight and ten synthetic tests completed and committed in candidate branch (8099ab909b45ad1d2e53bab64a27faafb0786a4f). Private two-emulator rehearsal 45993005639 passed original hash/certificate and ephemeral QA signer preparation; full native result pending at last check. Proposed APO-31 recorded separately at 68c5247645a3584af5eb16e35ef2225fb71fd1a2. Specific charter approval and new identity adoption remain outstanding. Preserve original package, key requirement, installed records and original app; no new production signer or APK.
+
+### 2026-11-27 | Owner approves APO-31 and successor application ID
+
+Owner's affirmative reply to the explicit approval proposal authorizes exact APO-31 and org.phwildlife.survey.apo. Charter v1.4 canonical and Markdown mirror synchronized and main normalized match verified; AGENTS updated. Production signer adoption and retirement remain separate. First private rehearsal 45993005639 failed before export; retry 45995485087 pending. Optional synthetic-only successor QA mode committed (ffa9912, 44318f9); no compiled or installed successor yet. Original app/data preserved; no permanent signer adopted or generated. No other charter change.
+
+### 2026-11-27 | Synthetic cross-signer recovery passed and RC118 QA compilation passed
+
+Verified private run 45995485087 success including original UI export, signature mismatch rejection, different-signer fresh UI restore and synthetic record/media/prefs checks; second restore refused. Separate package RC118 QA workflow run 46013177198 started via narrow same-private-repo draft PR #1 because laptop offline. Exact reviewed source 8bcda469...; source/scientific regressions, media locks, JVM and both APK builds, package/version/cert and reference checks passed; native Atlas/rollback/side-by-side restoration pending. Photo linkage and comprehensive authorized migration remain unverified. Permanent signer custody plan documented; no production signer created or adopted, no release or original-app change. No further charter change.
+
+### 2026-11-28 | Native RC118 tests passed; launcher ANR migration retry
+
+Confirmed 578 source regressions, three photo tests, Gradle compilation, package/signature verification and seven native tests from private run 46013177198. Final parallel transfer step failed before export due to system Pixel Launcher ANR, without an observed APO crash. Expanded synthetic fixture with linked valid JPEG, coordinates, project/site/favorite and isolated launcher handling. Private retry run 46134121335 initiated, final result pending. No app source change, production key, APK delivery or original installation change. Preserve legacy app and all release gates.
+
+### 2026-11-28 | Desktop reconnected and local signing candidate setup
+
+Second retry 46134121335 stopped at emulator boot timeout. Manually dispatched focused private run 46140128412 after desktop reconnect. Local owner-controlled key setup prepared; syntax and disposable signing utility test passed. Actual candidate not generated, independent backup and adoption pending. No production secret or APK, no original-app change.
+
+### 2026-11-28 | Owner redirects to APO product overhaul
+
+Permanent signing recovery and migration release track deferred; continue app development and isolated native QA. Home Explore and adaptive Map/Research shortcuts, larger primary action and plain-language profile descriptions implemented; source commits 7fac4eb, 47588ac, native tests 371d87a. Private UI-only development run 46140827921 pending. No scientific method or record changes, no new release, original app protected. Charter v1.4 remains.
+
+### 2026-11-28 | Presentation cleanup and build-only artwork separation
+
+Owner requested removal of unnecessary explanations/AI artifacts. Grouped My Data, condensed recorder/map/reference/settings/backup copy while preserving scientific and data safety meaning. Exact historical image scan found two locked original artwork master marker hits; runtime source scan found no use. Preserved originals/metadata and SHA checks; excluded only redundant build-only master files in new APK configuration, retained approved runtime drawables. Source pin b6cff0c, private dev run 46141612382 pending. Prior 583-test run failed three old wording assertions, corrected. No production release or charter change. Preserve authentic scientific provenance, author/source rights and required notices.
+
+
+---
+
+## 2026-11-28 | Concise online reference label and QA correction
+
+- Under existing APO-09–12 and APO-30, keep "Citation only" and use "Internet required" for references with an online source, preserving the "Open online source" action. This is an implementation-level wording correction under the existing owner direction, not a charter amendment.
+- Prior run 46141612382 failed one of 583 source assertions; new code/test pin 37869e59d7b129fda874acfadc9647b522d808c2, private development retry 46151000996. Full build, artwork package check and native verification pending. No production signer, APK or user-data change.
+
+
+---
+
+## 2026-11-28 | Navigation overhaul implementation decision
+
+- Under the owner instruction to overhaul and standardize navigation, implemented a candidate five-peer shell (Fieldwork, Atlas, Map, Research, My Data), separate Home header action, adaptive layout, caller-aware detail Back and same-group survey setup draft restoration. These are implementation decisions under the existing charter, not new governing clauses. No changes to protected field data or survey outcomes.
+- Audit covers the 40 declared activities statically; latest app/test pin 8c0dabd2c0210827e0007793f07beb9475758402, audit docs/APO_NAVIGATION_AUDIT_2026_11_28.md, two offline emulator jobs in private run 46152098370. Native verification and screenshot inspection pending; no production APK or 100% navigation guarantee.
+
+
+---
+
+## 2026-11-28 | Private development APK retention for direct delivery
+
+- Owner requested an updated APK and direct file link. Both navigation emulator build jobs passed 585 source tests and verified compilation, successor package/signature and runtime assets, with emulator acceptance pending. Added opt-in private preview retention workflow (d0a345741b0e0712fed4a36c9f1f81569d1ba23f) at unchanged app/test pin 0c1fb6cf2d9354cb8a1c81a79f59f7edad8c162b; preview run 46152620198. Keeps the original installation and records untouched and uses separate QA package/signature only. The preview is not an approved in-place update; no release or native acceptance claim. Direct delivery requires the actual file and local checksum verification, not an Actions link.
+
+
+---
+
+## 2026-11-28 | Whole-app interface source audit and refinement
+
+- Owner requested review and refinement of every screen. Audited UI construction and navigation excerpts for all 40 manifest activities; detailed ledger docs/APO_SCREEN_REFINEMENT_AUDIT_2026_11_28.md. Scope is source review, not full native rendering or field acceptance.
+- Presentation changes 7ee3fba, af04a87, 8233a4b and 39eac1407 preserve scientific content and survey data/lifecycle. Active habitat shortlist remains directly reversible; less frequent filters collapse. Shared page headings wrap, data child tab returns to parent, camera and reference dialogs and management controls accommodate enlarged text. No charter or production signing changes.
+- Corrected emulator partition allocation after earlier disk-space boot failures; exact source/test pin 73108bf3c8b74adad9729c10668715db843fc43d, matrix run 46154412338. Both source/media gates now passed, Android compilation in progress at check; independent native acceptance and screenshot review remain required. The standard-device build retains a private QA-only APK if package gates pass.
+
+
+---
+
+## 2026-11-28 | Fieldwork-critical UI follow-up
+
+- Owner approved further screen refinement. Direct prior screen-refinement preview delivered from verified artifact 15266494220 (139533940 bytes; SHA-256 c74d2c5b841565dd17ddb163c2bed90c9e42f0b0ce8e6731222938d64a727fc3). No legacy update or permanent signer authorized.
+- Changes ed51fd0 and 73a11f5 address recorder controls, GPS permissions and recovery, species reader search and map recreation. Preserved GPS policy and original data, no charter change. Native QA run 46155096644 dispatched for exact app/test pin 73a11f56d68b65f4cbdb1f97ee64956a264dad21. Native visual acceptance not established.
+
+
+---
+
+## 2026-11-28 | Native verification and actual fieldwork preview delivery
+
+- Owner directed continuation. Fieldwork preview APK from run 46155096644 artifact 15266853397 delivered directly after local archive and APK checksum verification (139534588 bytes, SHA-256 44d6115517b4c1347778770cbd4f122a504c388ee854cf24489884ced1dc53eb). Separate disposable signer; native acceptance pending.
+- Prior emulator partition-size reduction proved insufficient; logs confirmed 7372.80 MB required with less than 7 GB free. New workflow frees disposable hosted runner space after build gates, isolates suites and retains evidence even on failures; new keyboard test and species reader gate. Exact retest 46155745377, test-only pin 1a83a680e18ecc91894aa72c866d12bb734651b5. No scientific, schema, app production code or signing changes.
+
+
+---
+
+## 2026-11-28 | Native emulator execution repair and all-method coverage
+
+- Owner requested closure of outstanding limitations. Actual runner logs confirm both Android emulators booted after storage cleanup. Fixed subsequent multiline script execution defect with standalone bash invocation. Added all 17 method-profile entries to native QA, flexible method buttons and selected method disclosure, preserving original survey and scientific policies. Exact source pin 40308dc6cffc1c3dfb89be4af7c5622eb440e7df, native run 46156466081. Delivered verified separate QA APK from artifact 15268111205, 139534516 bytes, SHA256 c422b967bfd4ff7a61b377b05c7396100f434585f139b27980b14a0eae5efb0c. Full native and physical-device acceptance still not established; no production signer or charter changes.
+
+
+---
+
+## 2026-11-28 | Evidence-driven native interface repairs
+
+- Owner requested continued improvements after operational emulator testing. Actual run 46156466081 returned 65/76 passing cases, including all 17 method-profile entries on both displays; retrieved and inspected screenshots. Implemented compact recorder/group/picker improvements, explicit Back parity, safe running-export navigation, closure guidance, actual map-dialog and software IME checks, and updated legacy label tests. Exact new source pin 48dd422c71bf2c03205fac1f2a70ee083be29163, native run 46159159129, source/media gates passed and build underway. Preserve original installation, SQLite29 and scientific methods; native acceptance pending. No charter or signer change.

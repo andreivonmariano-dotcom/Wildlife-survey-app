@@ -10,7 +10,10 @@ class Rc52HomeTheme(unittest.TestCase):
     def test_home_has_one_primary_action_and_two_reference_routes(self):
         home=source("WelcomeActivity.java").split("private void home(){",1)[1].split("private void bioToolsHub(){",1)[0]
         self.assertIn("ApoHomeUi.header(this,",home)
-        self.assertEqual(home.count("ApoHomeUi.module(this,"),3)
+        self.assertEqual(home.count("ApoHomeUi.module(this,"),1)
+        self.assertEqual(home.count("ApoHomeUi.shortcutPair(this,"),1)
+        for title in ("Living Atlas","Offline Map","Research Library"):
+            self.assertEqual(home.count('"'+title+'"'),1)
         self.assertEqual(home.count("ApoHomeUi.tool(this,"),0)
         self.assertIn('"Offline Map"',home)
         self.assertIn('ApoHomeUi.primary(this,"Start Survey"',home)

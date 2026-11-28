@@ -9,6 +9,7 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
+import android.widget.ListView;
 import android.widget.TextView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -91,6 +92,11 @@ public final class LivingAtlasExplorerInstrumentedTest {
                 assertTrue("Back must remain readable and accessible",
                     back instanceof TextView && back.getHeight()>=
                     ((TextView)back).getLineHeight());
+                View chip=a.getWindow().getDecorView().findViewWithTag("living_atlas_group_All");
+                assertNotNull(chip);
+                int minTouch=Math.round(48*a.getResources().getDisplayMetrics().density);
+                assertTrue("Group target must be at least 48dp high",chip.getHeight()>=minTouch);
+                assertNotNull(a.getWindow().getDecorView().findViewWithTag("living_atlas_full_directory"));
                 capture(a,"explore",0);
                 a.showSpecies("Pithecophaga jefferyi");
             });
@@ -108,6 +114,64 @@ public final class LivingAtlasExplorerInstrumentedTest {
             s.onActivity(a->{
                 assertTrue(hasText(a.getWindow().getDecorView(),"Explore the living atlas"));
                 capture(a,"back-to-explore",0);
+            });
+        }
+    }
+
+    @Test public void bContextualBackReturnsToAccount() {
+        Intent launch=new Intent(ApplicationProvider.getApplicationContext(),
+            LivingAtlasExploreActivity.class);
+        launch.putExtra(LivingAtlasExploreActivity.EXTRA_SCIENTIFIC_NAME,"Pithecophaga jefferyi");
+        try(ActivityScenario<LivingAtlasExploreActivity> s=ActivityScenario.launch(launch)) {
+            settle();
+            s.recreate();
+            settle();
+            s.onActivity(a->{
+                assertTrue(hasText(a.getWindow().getDecorView(),"Philippine Eagle"));
+                View back=a.getWindow().getDecorView().findViewWithTag("living_atlas_back");
+                assertNotNull(back);
+                assertTrue(back.performClick());
+                assertTrue("Contextual Back must close this activity",a.isFinishing());
+            });
+        }
+        try(ActivityScenario<LivingAtlasExploreActivity> s=ActivityScenario.launch(launch)) {
+            settle();
+            s.onActivity(a->{
+                a.onBackPressed();
+                assertTrue("System Back must close the contextual activity",a.isFinishing());
+            });
+        }
+    }
+
+    private static ListView findList(View root) {
+        if(root instanceof ListView)return (ListView)root;
+        if(root instanceof ViewGroup) {
+            ViewGroup group=(ViewGroup)root;
+            for(int i=0;i<group.getChildCount();i++){
+                ListView found=findList(group.getChildAt(i));
+                if(found!=null)return found;
+            }
+        }
+        return null;
+    }
+
+    @Test public void cCanonicalAtlasAllowsFullBrowse() {
+        Intent launch=new Intent(ApplicationProvider.getApplicationContext(),
+            PhLibraryDirectoryActivity.class);
+        try(ActivityScenario<PhLibraryDirectoryActivity> s=ActivityScenario.launch(launch)){
+            settle();
+            s.onActivity(a->{
+                ListView list=findList(a.getWindow().getDecorView());
+                assertNotNull(list);
+                int total=PhLibraryBook01.entries(a).size();
+                assertTrue("Reference must contain all packaged accounts",total>150);
+                assertEquals(total,list.getAdapter().getCount());
+                list.setSelection(total-1);
+            });
+            settle();
+            s.onActivity(a->{
+                ListView list=findList(a.getWindow().getDecorView());
+                assertEquals(list.getAdapter().getCount()-1,list.getLastVisiblePosition());
             });
         }
     }

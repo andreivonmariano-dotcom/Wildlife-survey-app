@@ -4,11 +4,18 @@
 
 ## Owner-approved governing sources
 
+- **Permanent design requirement (APO-30):** APO is approachable by default. Keep every primary screen intuitive, visually uncluttered and usable without specialized technical knowledge. Preserve required scientific inputs, uncertainty, provenance and data integrity; show advanced details when useful. Read `docs/APO_DESIGN_LAYOUT_PLAYBOOK_v1.0.md` and `docs/APO_EVIDENCE_BASED_DESIGN_REFERENCE_v1.0.md` before designing or revising screens. The latter identifies reviewed evidence, actual source findings, and the user-test protocol; treat proposed defaults as hypotheses until tested. Follow APO-16–30 and demonstrate the actual interface and tests; distinguish recommendations, implementation, verification and delivery.
+
 - **Canonical Google Doc:** https://docs.google.com/document/d/1khryohmOO5QsOmuKchv8VWWu7Qxcq7zxVDZX9L3qCJA/edit (inside APO — Governing Documents).
-- **Approved Markdown mirror:** `docs/APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md`, **content version 1.2**. Its filename remains stable for continuity.
+- **Approved Markdown mirror:** `docs/APO_OFFLINE_FIRST_PRODUCT_CHARTER_v1.0.md`, **content version 1.4**. Its filename remains stable for continuity.
 - **Compatible scientific and method standards:** `docs/LIKAS_MASTER_PROJECT_SPEC_v1.0.md`.
 - **Required delivery/continuity controls:** `docs/LIKAS_DIRECT_DOWNLOAD_POLICY.md`, `docs/LIKAS_CROSS_CHAT_CONTINUITY_POLICY.md`, `docs/LIKAS_PROJECT_STATE.md` and `docs/LIKAS_DECISION_LOG.md`.
 - **No unapproved charter changes:** Present the proposed exact amendment to the product owner and obtain explicit approval before updating the Google Doc, Markdown mirror or charter version. Source research and code work do not authorize document amendments. After approval, synchronize documents and record the decision. The Drive folder still inherits anyone-with-link writer access. Do not claim owner-only technical control or alter parent sharing without authorization.
+
+## Owner-approved signing-loss recovery (27 November 2026)
+
+- Charter APO-31 and the successor application ID `org.phwildlife.survey.apo` are approved. The original application ID `org.phwildlife.survey.beta08`, installed records and original signing identity remain protected. A parallel successor may be prepared, but production signer adoption, complete migration acceptance and retirement of the legacy app are separate decisions. Do not uninstall or clear the original. Require independent encrypted signer recovery, verified archive transfer and all release gates. Never treat the disposable emulator signer as the permanent signer.
+- Private durable build inputs and migration rehearsal evidence are described in the latest project state. The first same-package cross-signer rehearsal failed to locate the Start Survey control before export; no restore was tested. Check the corrected run before asserting migration success.
 
 ## Current source and protected history (11 November 2026)
 

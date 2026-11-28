@@ -58,7 +58,7 @@ class Rc106UiContracts(unittest.TestCase):
         self.assertIn('getStringExtra("phlibrary_bib_citation")',s)
         self.assertIn('candidateMode',s)
         self.assertIn('Not verified',s)
-        self.assertIn('Open source',s)
+        self.assertIn('Open online source',s)
         self.assertIn('setEllipsize(TextUtils.TruncateAt.END)',s)
         self.assertIn('setTextIsSelectable(true)',s)
         self.assertNotIn('not yet completely reconciled',s)

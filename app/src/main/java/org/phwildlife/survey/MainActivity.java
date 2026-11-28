@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -202,10 +201,6 @@ public class MainActivity extends Activity implements LocationListener {
         TextView t=new TextView(this);t.setText(text);t.setTextSize(size);t.setTextColor(INK);
         if(bold)t.setTypeface(null,Typeface.BOLD);t.setPadding(dp(2),dp(3),dp(2),dp(3));return t;
     }
-    private Button button(String txt){
-        Button b=new Button(this);b.setText(txt);b.setAllCaps(false);b.setTextColor(Color.WHITE);
-        b.setBackgroundTintList(ColorStateList.valueOf(GREEN));b.setTextSize(14);b.setMinHeight(dp(44));return b;
-    }
     private EditText edit(String hint,int type){
         EditText e=new EditText(this);e.setHint(hint);e.setTextColor(INK);
         e.setTextSize(16);e.setInputType(type);e.setSingleLine(true);
@@ -242,11 +237,10 @@ public class MainActivity extends Activity implements LocationListener {
         home.setTextSize(18);
         top.addView(home,new LinearLayout.LayoutParams(dp(48),dp(48)));
         home.setOnClickListener(v->requestLeaveRecorder());
-        String screenTitle=largeText&&"Herpetofauna".equals(profile)?
-            "Herp survey":profile+" Survey";
+        String screenTitle=largeText?("Herpetofauna".equals(profile)?"Herp survey":profile):profile+" Survey";
         TextView title=label(screenTitle,largeText?17:19,true);
         title.setGravity(Gravity.CENTER_VERTICAL);
-        title.setMaxLines(2);
+        if(android.os.Build.VERSION.SDK_INT>=28)title.setAccessibilityHeading(true);
         title.setPadding(dp(LikasDesignSystem.SPACE_MD),0,dp(LikasDesignSystem.SPACE_SM),0);
         title.setContentDescription(profile+" Survey");
         top.addView(title,new LinearLayout.LayoutParams(0,-2,1));
@@ -350,10 +344,14 @@ public class MainActivity extends Activity implements LocationListener {
         // away; station-based and GPS-transect controls stay expanded.
         final boolean compactObservationFirst=!hasStationUnits()&&
             !method.equals("line_transect")&&!method.equals("ves_transect");
-        if(compactObservationFirst)methodRow.setVisibility(View.GONE);
         final Button[] toolsDisclosure={null};
         LinearLayout recorderTools=vertical();
         recorderTools.addView(UiKit.sectionTitle(this,"Sampling session"));
+        if(compactObservationFirst){
+            // Keep the chosen method discoverable without crowding observation entry.
+            content.removeView(methodRow);
+            recorderTools.addView(methodRow);
+        }
         LinearLayout utilityRow=horizontal();
         if(stackSessionControls)utilityRow.setOrientation(LinearLayout.VERTICAL);
         pauseButton=UiKit.button(this,"Pause effort","secondary");
@@ -583,7 +581,7 @@ public class MainActivity extends Activity implements LocationListener {
                     "Hide sampling and detection tools":"Show sampling and detection tools");
             });
         }else content.addView(recorderTools);
-        content.addView(FieldVisuals.section(this,"Observation",null));
+        if(!largeText)content.addView(FieldVisuals.section(this,"Observation",null));
         // Field action 1: mark time and an actually qualified observer GPS fix.
         // Keep the mark above identification so the event time is not mistaken
         // for the later Save tap time. Existing station and effort controls remain.
@@ -637,6 +635,7 @@ public class MainActivity extends Activity implements LocationListener {
         taxonEntry.setTextSize(16);taxonEntry.setTextColor(INK);taxonEntry.setSingleLine(true);
         UiKit.fieldInput(this,taxonEntry);
         taxonEntry.setThreshold(2);taxonEntry.setHint("Species");
+        taxonEntry.setContentDescription("Observation species");
         taxonEntry.setSelectAllOnFocus(true);
         speciesRow.addView(taxonEntry,stackSpecies?
             new LinearLayout.LayoutParams(-1,dp(fieldControlHeight)):
@@ -700,6 +699,7 @@ public class MainActivity extends Activity implements LocationListener {
             public void afterTextChanged(Editable e){}
         });
         LinearLayout countLine=horizontal();
+        countLine.setBaselineAligned(false);
         String countBasis=method.equals("track_sign")||method.equals("camera_trap_check")||
             method.equals("live_trap_check")||method.equals("bat_acoustic")||
             method.equals("drift_fence_check")?"Individuals / evidence count":"Individuals";
@@ -709,7 +709,9 @@ public class MainActivity extends Activity implements LocationListener {
         countLine.addView(minus,new LinearLayout.LayoutParams(dp(52),dp(touchDp)));
         countView=label("1",19,true);countView.setGravity(Gravity.CENTER);
         countView.setContentDescription("1 individuals or evidence items");
-        countLine.addView(countView,new LinearLayout.LayoutParams(dp(48),-2));
+        // Four-digit counts must remain legible at enlarged font sizes.
+        countView.setMinWidth(dp(48));
+        countLine.addView(countView,new LinearLayout.LayoutParams(-2,-2));
         Button plus=UiKit.button(this,"+","secondary");
         plus.setContentDescription("Increase individuals or evidence count");
         countLine.addView(plus,new LinearLayout.LayoutParams(dp(52),dp(touchDp)));
@@ -749,7 +751,7 @@ public class MainActivity extends Activity implements LocationListener {
             new String[]{"Visual","Auditory","Both","Sign","Camera"}));
         detectionSpinner.setContentDescription("Choose observation detection type");
         detectionSpinner.setMinimumHeight(dp(56));
-        detectionBlock.addView(detectionSpinner,new LinearLayout.LayoutParams(-1,dp(56)));
+        detectionBlock.addView(detectionSpinner,new LinearLayout.LayoutParams(-1,-2));
         LinearLayout.LayoutParams detectionLp=stackCaptureActions?
             new LinearLayout.LayoutParams(-1,-2):
             new LinearLayout.LayoutParams(0,-2,0.8f);
@@ -798,10 +800,11 @@ public class MainActivity extends Activity implements LocationListener {
             Button action=UiKit.button(this,
                 RecorderMethodUiPolicy.actionLabel(profile,method),"secondary");
             action.setContentDescription(
-                "Open existing "+RecorderMethodUiPolicy.actionLabel(profile,method)+
-                " records for this survey; does not automatically record effort");
+                "Open "+RecorderMethodUiPolicy.actionLabel(profile,method)+
+                " records for this survey. Record effort separately.");
+            // Respect the shared scalable touch target and allow long labels to wrap.
             LinearLayout.LayoutParams actionLp=new LinearLayout.LayoutParams(
-                -1,dp(48));
+                -1,-2);
             actionLp.bottomMargin=dp(5);
             content.addView(action,actionLp);
             action.setOnClickListener(v->{
@@ -1010,6 +1013,7 @@ public class MainActivity extends Activity implements LocationListener {
         if(stackDock)endParams.topMargin=dp(LikasDesignSystem.SPACE_SM);
         else endParams.leftMargin=dp(LikasDesignSystem.SPACE_SM);
         footerOptions.addView(endSurveyButton,endParams);
+        footerOptions.setBaselineAligned(false);
         LinearLayout.LayoutParams optionsParams=new LinearLayout.LayoutParams(-1,-2);
         optionsParams.topMargin=dp(LikasDesignSystem.SPACE_SM);
         footer.addView(footerOptions,optionsParams);
@@ -1035,11 +1039,16 @@ public class MainActivity extends Activity implements LocationListener {
             root.getWindowVisibleDisplayFrame(visibleFrame);
             int obscured=getResources().getDisplayMetrics().heightPixels-visibleFrame.bottom;
             boolean keyboardShown=obscured>dp(160);
+            if(android.os.Build.VERSION.SDK_INT>=30&&root.getRootWindowInsets()!=null)
+                keyboardShown=root.getRootWindowInsets().isVisible(android.view.WindowInsets.Type.ime());
             if(inputKeyboardVisible==keyboardShown)return;
             inputKeyboardVisible=keyboardShown;
             top.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
-            if(compactClockView!=null)
+            if(compactClockView!=null){
                 compactClockView.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
+                if(compactGpsView!=null)
+                    compactGpsView.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
+            }else hud.setVisibility(keyboardShown?View.GONE:View.VISIBLE);
             progressView.setVisibility(keyboardShown||
                 progressView.getText().length()==0?View.GONE:View.VISIBLE);
         });
@@ -1050,8 +1059,11 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void showGroups(){
         groupBar.removeAllViews();
-        boolean stackGroups=getResources().getConfiguration().fontScale>=1.6f;
+        android.content.res.Configuration groupConfig=getResources().getConfiguration();
+        boolean compactGroups=groupConfig.fontScale>=1.6f;
+        boolean stackGroups=groupConfig.screenWidthDp<320||groupConfig.fontScale>2.0f;
         groupBar.setOrientation(stackGroups?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        groupBar.setBaselineAligned(false);
         boolean canSwitch=profile.equals("Herpetofauna")&&!method.equals("amphibian_calls");
         groupBar.setVisibility(canSwitch?View.VISIBLE:View.GONE);
         if(!canSwitch)return;
@@ -1060,11 +1072,14 @@ public class MainActivity extends Activity implements LocationListener {
             Button b=UiKit.button(this,name,selected?"pond":"secondary");
             b.setContentDescription(name+" observation group"+(selected?", selected":""));
             b.setSelected(selected);
+            if(compactGroups){
+                b.setTextSize(13);
+                b.setPadding(dp(6),dp(6),dp(6),dp(6));
+                b.setMinHeight(dp(56));
+            }
             LinearLayout.LayoutParams groupLp=stackGroups?
                 new LinearLayout.LayoutParams(-1,-2):
-                new LinearLayout.LayoutParams(0,
-                    dp(FieldLayoutPolicy.actionHeightDp(
-                        getResources().getConfiguration().fontScale)),1);
+                new LinearLayout.LayoutParams(0,-2,compactGroups&&"Amphibians".equals(name)?1.15f:1f);
             if(groupBar.getChildCount()>0){
                 if(stackGroups)groupLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
                 else groupLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
@@ -1134,6 +1149,8 @@ public class MainActivity extends Activity implements LocationListener {
             starred=c.moveToFirst();
         }catch(Exception ignored){}
         favoriteButton.setText(starred?"★":"☆");
+        favoriteButton.setSelected(starred);
+        favoriteButton.setContentDescription(starred?"Remove favorite species":"Add favorite species");
     }
     private void openSpeciesPicker(){
         if(!active){toast("Start a survey first");return;}
@@ -1611,6 +1628,7 @@ public class MainActivity extends Activity implements LocationListener {
         });
         actions.addView(detailsToggle);
         actions.addView(required);
+        actions.addView(label("Complete checks the protocol, effort and sampling requirements before saving.",12,false));
         // Summarize actual method records without claiming survey completion.
         // The existing closure policy, station and study checks remain decisive.
         MethodCompletionReview.Result methodReview=methodRecordReview();
@@ -1629,7 +1647,7 @@ public class MainActivity extends Activity implements LocationListener {
                 Button fix=UiKit.button(this,methodReview.actionLabel,"secondary");
                 fix.setContentDescription(methodReview.actionLabel+
                     ". Open existing protocol records without changing survey outcome");
-                actions.addView(fix,new LinearLayout.LayoutParams(-1,dp(48)));
+                actions.addView(fix,new LinearLayout.LayoutParams(-1,-2));
                 methodFix[0]=fix;
             }
         }
@@ -2679,7 +2697,7 @@ public class MainActivity extends Activity implements LocationListener {
             timelineRows.setVisibility(timelineOpen?View.VISIBLE:View.GONE);
             if(!timelineOpen)return;
             if(current.recent.isEmpty()){
-                TextView empty=label("No saved observations yet",13,false);
+                TextView empty=label("No saved observations",13,false);
                 empty.setTextColor(UiKit.MUTED);timelineRows.addView(empty);
             }
             for(ObservationTimeline.Item record:current.recent){

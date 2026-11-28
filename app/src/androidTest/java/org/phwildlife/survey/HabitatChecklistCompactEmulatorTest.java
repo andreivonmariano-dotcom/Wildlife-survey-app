@@ -83,7 +83,11 @@ public final class HabitatChecklistCompactEmulatorTest {
                 View begin=text(root,"Begin survey");
                 assertNotNull(begin);assertTrue(begin.isShown());
                 assertNotNull(description(root,"Show GPS and elevation context"));
-                assertNotNull(description(root,"Show land-cover source, license and file management"));
+                View source=description(root,"Show land-cover source and license");
+                assertNotNull("Offline source disclosure remains available",source);
+                source.performClick();
+                assertNotNull(description(root,"ESA WorldCover 2020 citation and CC BY 4.0 license"));
+                source.performClick();
                 View site=description(root,"Show GPS and elevation context");
                 site.performClick();
                 assertNotNull(description(root,"Hide GPS and elevation context"));

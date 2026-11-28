@@ -35,6 +35,7 @@ public final class LivingAtlasExploreActivity extends Activity {
     private LinearLayout body;
     private ScrollView scroll;
     private String selectedScientific = "";
+    private boolean openedFromAccount;
     private String filterGroup = "All";
     private String lastQuery = "";
     private LinearLayout searchMatches;
@@ -54,6 +55,8 @@ public final class LivingAtlasExploreActivity extends Activity {
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        String incoming=getIntent().getStringExtra(EXTRA_SCIENTIFIC_NAME);
+        openedFromAccount=incoming!=null&&!incoming.trim().isEmpty();
         getWindow().setStatusBarColor(PhLibrary2Ui.PAPER);
         getWindow().setNavigationBarColor(PhLibrary2Ui.PAPER);
         getWindow().getDecorView().setSystemUiVisibility(
@@ -94,7 +97,7 @@ public final class LivingAtlasExploreActivity extends Activity {
         root.addView(rail,new LinearLayout.LayoutParams(-1,-2));
         scroll=new ScrollView(this);
         scroll.setFillViewport(true);
-        scroll.setVerticalScrollBarEnabled(false);
+        scroll.setVerticalScrollBarEnabled(true);
         body=new LinearLayout(this);
         body.setOrientation(LinearLayout.VERTICAL);
         body.setPadding(0,dp(8),0,dp(35));
@@ -148,7 +151,8 @@ public final class LivingAtlasExploreActivity extends Activity {
         TextView groupLabel=PhLibrary2Ui.eyebrow(this,"WILDLIFE GROUP");
         body.addView(groupLabel,space(8,0));
         HorizontalScrollView chipsScroll=new HorizontalScrollView(this);
-        chipsScroll.setHorizontalScrollBarEnabled(false);
+        chipsScroll.setHorizontalScrollBarEnabled(true);
+        chipsScroll.setContentDescription("Wildlife groups. Swipe horizontally for more groups.");
         LinearLayout chips=new LinearLayout(this);
         chips.setOrientation(LinearLayout.HORIZONTAL);
         chips.setPadding(0,dp(3),dp(2),dp(7));
@@ -157,11 +161,13 @@ public final class LivingAtlasExploreActivity extends Activity {
             TextView chip=text(group,14,active?Color.WHITE:PhLibrary2Ui.FOREST,
                 false,true);
             chip.setPadding(dp(15),dp(10),dp(15),dp(10));
-            chip.setMinHeight(dp(45));
+            chip.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP));
+            chip.setTag("living_atlas_group_"+group);
             chip.setGravity(Gravity.CENTER);
             chip.setBackground(PhLibrary2Ui.touch(this,
                 active?PhLibrary2Ui.FOREST:PhLibrary2Ui.IVORY,
                 active?Color.TRANSPARENT:PhLibrary2Ui.LINE,22));
+            chip.setSelected(active);
             chip.setClickable(true);chip.setFocusable(true);
             chip.setContentDescription(group+" group"+(active?", selected":""));
             chip.setOnClickListener(v->{
@@ -175,6 +181,9 @@ public final class LivingAtlasExploreActivity extends Activity {
         }
         chipsScroll.addView(chips,new HorizontalScrollView.LayoutParams(-2,-2));
         body.addView(chipsScroll);
+        TextView fullAtlas=PhLibrary2Ui.action(this,"Browse Species Atlas",this::openFullAtlas,false);
+        fullAtlas.setTag("living_atlas_full_directory");
+        body.addView(fullAtlas,space(8,2));
         TextView matchTitle=text("Species",24,PhLibrary2Ui.INK,true,false);
         body.addView(matchTitle,space(14,6));
         searchMatches=new LinearLayout(this);
@@ -201,7 +210,7 @@ public final class LivingAtlasExploreActivity extends Activity {
         searchMatches.removeAllViews();
         String q=key(value);
         List<LivingAtlasDataLayer.Taxon> candidates=q.isEmpty()?
-            atlas.taxa():atlas.search(q,150);
+            atlas.taxa():atlas.search(q,atlas.taxa().size());
         int shown=0, total=0;
         for(LivingAtlasDataLayer.Taxon t:candidates) {
             if(!"All".equals(filterGroup)&&!filterGroup.equals(t.group))continue;
@@ -219,9 +228,7 @@ public final class LivingAtlasExploreActivity extends Activity {
             searchMatches.addView(empty,space(6,12));
         }
         if(total>shown) {
-            TextView hint=text(q.isEmpty()?
-                    "Search to explore additional species":
-                    "Refine your search to see more matches",
+            TextView hint=text("Showing "+shown+" of "+total+" matching species",
                 13,PhLibrary2Ui.MUTED,false,false);
             searchMatches.addView(hint,space(2,4));
         }
@@ -328,9 +335,18 @@ public final class LivingAtlasExploreActivity extends Activity {
         scroll.post(()->scroll.scrollTo(0,0));
     }
 
+    private void openFullAtlas() {
+        Intent directory=new Intent(this,PhLibraryDirectoryActivity.class);
+        directory.putExtra("phlibrary_query",lastQuery);
+        if(!"All".equals(filterGroup))directory.putExtra("phlibrary_group",filterGroup);
+        startActivity(directory);
+        finish();
+    }
+
     private void backToAtlas() {
-        if(!selectedScientific.isEmpty())renderExplore();
-        else finish();
+        // Contextual connections return directly to the canonical species account.
+        if(openedFromAccount || selectedScientific.isEmpty())finish();
+        else renderExplore();
     }
 
     @Override public void onBackPressed() {

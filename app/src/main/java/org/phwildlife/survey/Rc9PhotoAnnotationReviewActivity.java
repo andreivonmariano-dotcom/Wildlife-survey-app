@@ -108,14 +108,14 @@ public final class Rc9PhotoAnnotationReviewActivity extends Activity {
         status=text("No review marker selected. Tap directly on the photograph.",12);
         body.addView(status);
         Button save=UiKit.button(this,"Save as unreviewed annotation draft","primary");
-        body.addView(save,new LinearLayout.LayoutParams(-1,dp(52)));
+        body.addView(save,new LinearLayout.LayoutParams(-1,-2));
         save.setOnClickListener(v->saveDraft());
         Button share=UiKit.button(this,"Share drafts for specialist review","secondary");
-        body.addView(share,new LinearLayout.LayoutParams(-1,dp(48)));
+        body.addView(share,new LinearLayout.LayoutParams(-1,-2));
         share.setOnClickListener(v->shareDrafts());
         Button export=UiKit.button(this,"Export JSON backup of review drafts","secondary");
         export.setContentDescription("Save a separate backup of anatomical annotation drafts");
-        body.addView(export,new LinearLayout.LayoutParams(-1,dp(48)));
+        body.addView(export,new LinearLayout.LayoutParams(-1,-2));
         export.setOnClickListener(v->exportDrafts());
         body.addView(text("Review drafts are not included in the survey ZIP backup. Export a JSON copy before clearing app data or changing phones.",12));
         setContentView(root);

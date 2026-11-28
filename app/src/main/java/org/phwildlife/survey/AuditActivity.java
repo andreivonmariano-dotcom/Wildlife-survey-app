@@ -16,12 +16,13 @@ public final class AuditActivity extends Activity{
     private Button refreshButton;
     private boolean auditRunning;
     private int dp(int value){return Math.round(getResources().getDisplayMetrics().density*value);}
+    @Override public void onBackPressed(){finish();}
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16),dp(14),dp(16),dp(12));
         root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Data quality review","Analysis & Exports",this::finish));
+        root.addView(UiKit.navigationHeader(this,"Data quality review","Back",this::finish));
         // Controls and findings share one scroll to keep results reachable under
         // enlarged system fonts and on compact field phones.
         ScrollView scroll=new ScrollView(this);
@@ -32,13 +33,7 @@ public final class AuditActivity extends Activity{
         scroll.addView(body);
         root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         body.addView(ApoHomeUi.section(this,"Record checks",
-            "Review saved effort, location metadata and evidence. These checks " +
-            "do not change the underlying observations."));
-        TextView explanation=new TextView(this);
-        explanation.setText("Read-only checks of recorded effort, location metadata and evidence files. The review does not alter records.");
-        explanation.setTextSize(14);explanation.setTextColor(UiKit.MUTED);
-        explanation.setPadding(0,dp(4),0,dp(12));body.addView(explanation);
-        body.addView(UiKit.sectionTitle(this,"Run checks"));
+            "Read-only review of effort, location metadata and evidence files."));
         refreshButton=UiKit.button(this,"Run quality checks","primary");
         body.addView(refreshButton);
         refreshButton.setOnClickListener(v->scan());

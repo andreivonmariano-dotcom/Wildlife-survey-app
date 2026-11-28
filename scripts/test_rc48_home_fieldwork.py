@@ -15,7 +15,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
         self.assertIn('ApoHomeUi.primary(this,"Start Survey"',home)
         self.assertIn('"Living Atlas"',home)
         self.assertIn('"Research Library"',home)
-        self.assertIn("ApoHomeUi.module(this,\"02\",\"Offline Map\"",home)
+        self.assertIn("ApoHomeUi.shortcutPair(this,\"Offline Map\"",home)
         self.assertNotIn('"BioTools"',home)
         self.assertNotIn("LikasPortalUi.hero(",home)
         self.assertNotIn("LikasPortalUi.tile(",home)
@@ -29,7 +29,7 @@ class Rc48HomeFieldwork(unittest.TestCase):
             "/** Short status caption",1)[0]
         self.assertIn('FieldVisuals.section(this,"Current survey",null)',hub)
         self.assertNotIn('FieldVisuals.section(this,"New survey",null)',hub)
-        self.assertIn('ApoHomeUi.section(this,"Fieldwork",null)',hub)
+        self.assertIn('ApoShellBar.rootHeader(this,"Fieldwork",this::home)',hub)
         self.assertLess(hub.index('if(unfinished!=null)'),
                         hub.index('FieldVisuals.section(this,"Current survey"'))
         self.assertIn('UiKit.button(this,"Resume Survey","primary")',hub)
@@ -48,8 +48,9 @@ class Rc48HomeFieldwork(unittest.TestCase):
         welcome=src("WelcomeActivity.java")
         setup=welcome.split("private void setup(String selected)",1)[1].split(
             "private void refreshStudyTitle()",1)[0]
-        self.assertIn('UiKit.navigationHeader(this,profile+" survey","Surveys"',setup)
-        self.assertIn("this::fieldworkHub",setup)
+        self.assertIn('UiKit.navigationHeader(this,profile+" survey","Fieldwork"',setup)
+        self.assertIn("this::leaveSetup",setup)
+        self.assertIn("persistSetup();\n        backDraftProfile=profile;",welcome)
         self.assertIn("UiKit.fieldInput(this,input)",welcome)
         self.assertIn("styleSetupInput(entry)",setup)
         self.assertIn("UiKit.CONTROL_BORDER",welcome)

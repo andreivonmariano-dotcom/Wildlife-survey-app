@@ -77,13 +77,13 @@ public final class SurveyGpsActivity extends Activity {
         return Math.round(value*getResources().getDisplayMetrics().density);
     }
     private void setStatus(String message){
-        if(status!=null)status.setText(message);
+        if(status!=null&&!message.contentEquals(status.getText()))status.setText(message);
     }
     private void setStatusDetails(String message){
         if(statusDetails!=null)statusDetails.setText(message);
     }
     private void setQuality(String message){
-        if(qualitySummary!=null)qualitySummary.setText(message);
+        if(qualitySummary!=null&&!message.contentEquals(qualitySummary.getText()))qualitySummary.setText(message);
     }
     private void needsGpsHelp(){
         if(helpToggle!=null&&helpPanel!=null&&helpPanel.getVisibility()!=View.VISIBLE)
@@ -106,8 +106,8 @@ public final class SurveyGpsActivity extends Activity {
         LinearLayout content=new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
         TextView intro=UiKit.caption(this,stationMode?
-            "Waiting for a fresh station GPS fix. Verified coordinates continue automatically.":
-            "GPS checks automatically. A fresh fix under 10 m continues to the next step.");
+            "A verified station GPS fix starts the visit automatically.":
+            "A verified GPS fix continues automatically.");
         intro.setTextSize(LikasDesignSystem.TEXT_BODY);
         intro.setPadding(dp(4),dp(4),dp(4),dp(10));
         content.addView(intro);
@@ -181,6 +181,12 @@ public final class SurveyGpsActivity extends Activity {
         settings.setOnClickListener(v->
             startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
         addAction(helpPanel,settings);
+        Button permissions=UiKit.button(this,"App permissions","secondary");
+        permissions.setContentDescription("Open APO app settings to enable precise location");
+        permissions.setOnClickListener(v->startActivity(new Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            android.net.Uri.fromParts("package",getPackageName(),null))));
+        addAction(helpPanel,permissions);
         helpPanel.setVisibility(View.GONE);
         helpToggle=UiKit.button(this,"GPS troubleshooting","quiet");
         helpToggle.setContentDescription("Show GPS retry and Android location settings");
@@ -261,7 +267,7 @@ public final class SurveyGpsActivity extends Activity {
     }
     private void ensureReceiver(){
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
-            status.setText("Grant PRECISE location, not approximate-only location.");
+            setStatus("Precise location permission required");
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION},REQUEST_FINE);
             return;
@@ -272,11 +278,11 @@ public final class SurveyGpsActivity extends Activity {
         }
         if(!TrackService.isRunning()){
             if(TrackService.wasStopped(this)&&(stationMode||receiverStartedInThisScreen)){
-                status.setText("GPS was stopped. Tap Check current GPS again to restart.");
+                setStatus("GPS receiver stopped. Open troubleshooting and tap Retry GPS.");
                 return;
             }
             try{TrackService.startGnss(this);receiverStartedInThisScreen=true;}
-            catch(Exception e){status.setText("Continuous GPS could not start: "+e.getClass().getSimpleName());}
+            catch(Exception e){setStatus("GPS could not start. Open troubleshooting and tap Retry GPS.");needsGpsHelp();}
         }
         if(Build.VERSION.SDK_INT>=33 &&
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED &&

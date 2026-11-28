@@ -21,7 +21,8 @@ class RecorderPickerRC85(unittest.TestCase):
         self.assertLess(s.index('content.addView(countLine)'),s.index('content.addView(speciesActions)'))
         self.assertLess(s.index('content.addView(photoRow)'),s.index('content.addView(birdQuick)'))
         self.assertIn('content.removeView(recorderTools)',s)
-        self.assertIn('compactObservationFirst)methodRow.setVisibility(View.GONE)',s)
+        self.assertIn('content.removeView(methodRow)',s)
+        self.assertIn('recorderTools.addView(methodRow)',s)
         self.assertIn('confidenceSpinner.getSelectedItemPosition()==1?',s)
         self.assertIn('"Field-identified (not expert verified)"',s) # canonical saved label
         self.assertNotIn('"Field-identified (not expert verified)","Probable"',s)

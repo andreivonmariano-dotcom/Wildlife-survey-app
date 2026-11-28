@@ -39,5 +39,29 @@ class AtlasSingleEntryTest(unittest.TestCase):
         self.assertIn('EXPECTED_COUNT=715',source("PhLibraryBook01.java"))
         self.assertIn('super(context,NAME,null,29)',source("FieldDb.java"))
 
+    def test_contextual_back_and_full_directory_access(self):
+        explorer=source("LivingAtlasExploreActivity.java")
+        self.assertIn('openedFromAccount=incoming!=null&&!incoming.trim().isEmpty()',explorer)
+        self.assertIn('if(openedFromAccount || selectedScientific.isEmpty())finish()',explorer)
+        self.assertIn('new Intent(this,PhLibraryDirectoryActivity.class)',explorer)
+        self.assertIn('directory.putExtra("phlibrary_query",lastQuery)',explorer)
+        self.assertIn('directory.putExtra("phlibrary_group",filterGroup)',explorer)
+        self.assertIn('atlas.search(q,atlas.taxa().size())',explorer)
+        self.assertNotIn('atlas.search(q,150)',explorer)
+        self.assertIn('chip.setMinHeight(dp(LikasDesignSystem.MIN_TOUCH_DP))',explorer)
+        self.assertIn('chip.setSelected(active)',explorer)
+
+    def test_canonical_directory_preserves_all_accounts_and_recorder_dock(self):
+        directory=source("PhLibraryDirectoryActivity.java")
+        self.assertIn('for(JSONObject r:PhLibraryBook01.entries(this))',directory)
+        self.assertIn('matches.add(r)',directory)
+        self.assertIn('list=new ListView(this)',directory)
+        self.assertIn('list.setAdapter(adapter)',directory)
+        recorder=source("MainActivity.java")
+        self.assertNotIn('private Button button(String txt)',recorder)
+        self.assertIn('UiKit.button(this,"End Survey","outline-danger")',recorder)
+        self.assertIn('UiKit.button(this,"Save Observation","primary")',recorder)
+        self.assertIn('MIN_TOUCH_DP=48',source("LikasDesignSystem.java"))
+
 if __name__=="__main__":
     unittest.main()

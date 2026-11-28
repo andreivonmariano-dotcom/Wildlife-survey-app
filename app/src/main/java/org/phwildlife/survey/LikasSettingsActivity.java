@@ -26,6 +26,7 @@ public final class LikasSettingsActivity extends Activity {
         parent.addView(ApoHomeUi.tool(this,"",second,secondHint,
             ()->startActivity(new Intent(this,secondTarget))));
     }
+    @Override public void onBackPressed(){finish();}
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         getWindow().setStatusBarColor(UiKit.BG);
@@ -62,9 +63,8 @@ public final class LikasSettingsActivity extends Activity {
                 version=pkg.versionName;
             }catch(Exception ignored){}
             new AlertDialog.Builder(this).setTitle("APO")
-                .setMessage("Version "+version+"\n\nPhilippine biodiversity toolkit. "+
-                    "Survey records and offline research stay on this device. "+
-                    "References are separate from field records.")
+                .setMessage("Version "+version+"\n\nPhilippine biodiversity toolkit.\n"+
+                    "Field records are stored locally. Export and backup files may be shared.")
                 .setPositiveButton("Close",null).show();
         });
         body.addView(about);

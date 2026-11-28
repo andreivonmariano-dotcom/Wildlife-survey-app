@@ -113,7 +113,7 @@ public final class Rc9DifferentialActivity extends Activity {
                 if(!source.startsWith("https://"))continue;
                 if(field.equals("sourceB")&&source.equals(trait.optString("sourceA")))continue;
                 Button open=UiKit.button(this,"Read published source","quiet");
-                card.addView(open,new LinearLayout.LayoutParams(-1,dp(43)));
+                card.addView(open,new LinearLayout.LayoutParams(-1,-2));
                 open.setOnClickListener(v->startActivity(
                     new Intent(Intent.ACTION_VIEW,Uri.parse(source))));
             }

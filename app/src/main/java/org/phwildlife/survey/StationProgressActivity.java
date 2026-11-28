@@ -35,10 +35,7 @@ public final class StationProgressActivity extends Activity {
    String back="history".equals(origin)?"Observations":
        "recorder".equals(origin)?"Live survey":"Previous screen";
    root.addView(UiKit.navigationHeader(this,"Station progress",back,this::finish));
-   root.addView(ApoHomeUi.section(this,"Survey sampling progress",
-       SurveyMethods.displayLabel(profile,method)));
-   root.addView(ApoHomeUi.note(this,
-       "Completed, incomplete and unvisited sampling units remain separate."));
+   root.addView(ApoHomeUi.note(this,SurveyMethods.displayLabel(profile,method)));
    if(outcome.equals("not_counted")){
      TextView note=label("NOT COUNTED. Visits remain archived but excluded from analysis.",13);
      note.setTextColor(Color.rgb(188,40,38));root.addView(note);

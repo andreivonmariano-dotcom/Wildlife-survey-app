@@ -99,6 +99,25 @@ public final class Rc95BioToolsNavigationInstrumentedTest {
             }
         }finally{cleanup(event);}
     }
+    @Test public void mapObservationBackReturnsToMap(){
+        String event=fixture("opportunistic","Birds");
+        try{
+            Intent intent=new Intent(app(),HistoryActivity.class)
+                .putExtra("event_id",event).putExtra("navigation_origin","map");
+            try(ActivityScenario<HistoryActivity> screen=ActivityScenario.launch(intent)){
+                screen.recreate();
+                screen.onActivity(a->{
+                    assertTrue(hasText(a.getWindow().getDecorView(),"Observations"));
+                    tapBack(a,"Offline Map");
+                    assertTrue("Map-owned observations must close to their caller",a.isFinishing());
+                });
+            }
+            try(ActivityScenario<HistoryActivity> screen=ActivityScenario.launch(intent)){
+                screen.onActivity(a->{a.onBackPressed();assertTrue(a.isFinishing());});
+            }
+        }finally{cleanup(event);}
+    }
+
     @Test public void cEmptyDeviceSurveyStaysDiscoverable(){
         String event=fixture("camera_trap_check","Mammals");
         try{

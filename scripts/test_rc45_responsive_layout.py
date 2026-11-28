@@ -33,10 +33,10 @@ class Rc45LayoutContract(unittest.TestCase):
         picker=source("SpeciesPickerActivity.java")
         self.assertIn("searchRow.addView(dropdown,new LinearLayout.LayoutParams(dp(48),dp(54)))",picker)
         self.assertIn("unidentifiedRow.addView(unknown,unknownSpace)",picker)
-        self.assertIn("root.addView(unidentifiedRow)",picker)
+        self.assertIn("scrollBody.addView(unidentifiedRow)",picker)
         self.assertIn('Button unknown=UiKit.button(this,"Unidentified","secondary")',picker)
         self.assertLess(picker.index("root.addView(searchRow)"),
-                        picker.index("root.addView(unidentifiedRow)"))
+                        picker.index("scrollBody.addView(unidentifiedRow)"))
         self.assertNotIn("searchRow.addView(unknown,unknownSpace)",picker)
 
     def test_gallery_slots_are_shorter_and_lazy_hydration_is_preserved(self):
@@ -50,8 +50,9 @@ class Rc45LayoutContract(unittest.TestCase):
 
     def test_header_wraps_at_large_text_and_touch_sizes_scale(self):
         ui=source("UiKit.java")
-        self.assertIn("heading.setSingleLine(!largeText)",ui)
-        self.assertIn("if(largeText)heading.setMaxLines(2)",ui)
+        self.assertIn("heading.setSingleLine(false)",ui)
+        self.assertIn("heading.setAccessibilityHeading(true)",ui)
+        self.assertNotIn("heading.setEllipsize(",ui)
         self.assertIn("back.setPadding(0,0,0,0)",ui)
         self.assertIn("row.setMinimumHeight(dp(a,largeText?64:52))",ui)
         recorder=source("MainActivity.java")

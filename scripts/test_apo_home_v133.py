@@ -24,14 +24,15 @@ class ApoHomeContracts(unittest.TestCase):
     def test_shared_accessible_components_and_approved_mark(self):
         s=(JAVA/"ApoHomeUi.java").read_text()
         self.assertIn("setContentDescription",s)
-        self.assertIn("setMinimumHeight(dp(a,76))",s)
+        self.assertIn("setMinimumHeight(dp(a,88))",s)
+        self.assertIn("setMinimumHeight(dp(a,68))",s)
         self.assertIn("setFocusable(true)",s)
         self.assertIn("R.drawable.apo_splash_mark",s)
         self.assertNotIn("likas_natator_frog",s)
 
     def test_offline_map_has_one_real_destination_and_no_duplicate_hub(self):
         s=(JAVA/"WelcomeActivity.java").read_text()
-        self.assertIn('ApoHomeUi.module(this,"02","Offline Map"',s)
+        self.assertIn('ApoHomeUi.shortcutPair(this,"Offline Map"',s)
         self.assertIn('ApoOfflineMapActivity.class',s)
         self.assertNotIn("private void phMapsHub()",s)
         self.assertNotIn("private void bioDiscoverHub()",s)

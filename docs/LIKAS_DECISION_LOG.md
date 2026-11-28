@@ -658,3 +658,10 @@ Owner requested removal of unnecessary explanations/AI artifacts. Grouped My Dat
 
 - Owner directed continuation. Fieldwork preview APK from run 46155096644 artifact 15266853397 delivered directly after local archive and APK checksum verification (139534588 bytes, SHA-256 44d6115517b4c1347778770cbd4f122a504c388ee854cf24489884ced1dc53eb). Separate disposable signer; native acceptance pending.
 - Prior emulator partition-size reduction proved insufficient; logs confirmed 7372.80 MB required with less than 7 GB free. New workflow frees disposable hosted runner space after build gates, isolates suites and retains evidence even on failures; new keyboard test and species reader gate. Exact retest 46155745377, test-only pin 1a83a680e18ecc91894aa72c866d12bb734651b5. No scientific, schema, app production code or signing changes.
+
+
+---
+
+## 2026-11-28 | Native emulator execution repair and all-method coverage
+
+- Owner requested closure of outstanding limitations. Actual runner logs confirm both Android emulators booted after storage cleanup. Fixed subsequent multiline script execution defect with standalone bash invocation. Added all 17 method-profile entries to native QA, flexible method buttons and selected method disclosure, preserving original survey and scientific policies. Exact source pin 40308dc6cffc1c3dfb89be4af7c5622eb440e7df, native run 46156466081. Delivered verified separate QA APK from artifact 15268111205, 139534516 bytes, SHA256 c422b967bfd4ff7a61b377b05c7396100f434585f139b27980b14a0eae5efb0c. Full native and physical-device acceptance still not established; no production signer or charter changes.

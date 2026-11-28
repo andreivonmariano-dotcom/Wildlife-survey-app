@@ -303,7 +303,7 @@ public class HistoryActivity extends Activity {
                     String changed=changes.isNull(1)?"":changes.getString(1);
                     int records=changes.getInt(2);
                     Button audit=UiKit.button(this,"Closure details","quiet");
-                    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():46));
+                    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
                     rows.addView(audit,lp);
                     audit.setOnClickListener(v->new AlertDialog.Builder(this)
                         .setTitle("Survey closure audit")
@@ -322,7 +322,7 @@ public class HistoryActivity extends Activity {
         boolean field=FieldProtocolPolicy.supported(surveyMethod);
         if(birdOrHerp){
             Button sounds=UiKit.button(this,"Sound recordings","secondary");
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
             lp.topMargin=dp(5);rows.addView(sounds,lp);
             sounds.setOnClickListener(v->startActivity(new Intent(this,CallLibraryActivity.class)
                 .putExtra("event_id",event)
@@ -330,7 +330,7 @@ public class HistoryActivity extends Activity {
         }
         if(trap||field){
             Button evidence=UiKit.button(this,trap?"Device checks & captures":"Method effort & evidence","secondary");
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
             lp.topMargin=dp(5);rows.addView(evidence,lp);
             final Class<?> destination=trap?TrapProtocolActivity.class:FieldProtocolsActivity.class;
             evidence.setOnClickListener(v->startActivity(new Intent(this,destination)
@@ -339,7 +339,7 @@ public class HistoryActivity extends Activity {
         }
         if("point_count".equals(surveyMethod)||SurveyMethods.timedInterval(surveyMethod)){
             Button progress=UiKit.button(this,"Station & effort progress","quiet");
-            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(largeText()?actionDp():48));
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
             lp.topMargin=dp(5);rows.addView(progress,lp);
             progress.setOnClickListener(v->startActivity(new Intent(this,StationProgressActivity.class)
                 .putExtra("event_id",event)

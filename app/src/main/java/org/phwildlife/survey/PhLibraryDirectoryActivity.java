@@ -424,7 +424,7 @@ public final class PhLibraryDirectoryActivity extends Activity {
         search.setTextSize(16);search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         search.setContentDescription("Search names, taxonomy and source text");
         UiKit.fieldInput(this,search);
-        root.addView(search,new LinearLayout.LayoutParams(-1,dp(56)));
+        root.addView(search,new LinearLayout.LayoutParams(-1,-2));
         HorizontalScrollView chips=new HorizontalScrollView(this);
         chips.setHorizontalScrollBarEnabled(true);
         chips.setContentDescription("Wildlife groups. Swipe horizontally for additional groups.");
@@ -444,9 +444,10 @@ public final class PhLibraryDirectoryActivity extends Activity {
             filterButton.setPadding(dp(6),dp(5),dp(6),dp(5));
             sortButton.setPadding(dp(6),dp(5),dp(6),dp(5));
         }
-        LinearLayout.LayoutParams fl=new LinearLayout.LayoutParams(0,dp(48),1);
+        tools.setBaselineAligned(false);
+        LinearLayout.LayoutParams fl=new LinearLayout.LayoutParams(0,-2,1);
         tools.addView(filterButton,fl);
-        LinearLayout.LayoutParams sl=new LinearLayout.LayoutParams(0,dp(48),1);
+        LinearLayout.LayoutParams sl=new LinearLayout.LayoutParams(0,-2,1);
         sl.leftMargin=dp(8);tools.addView(sortButton,sl);
         tools.setPadding(0,dp(2),0,0);root.addView(tools);
 

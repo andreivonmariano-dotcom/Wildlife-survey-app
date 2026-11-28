@@ -22,14 +22,13 @@ public class ImportActivity extends Activity {
     private FieldDb helper;private TextView status;
     @Override public void onCreate(Bundle b){
         super.onCreate(b);helper=new FieldDb(this);
-        LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(25,25,25,25);root.setBackgroundColor(UiKit.BG);
-        root.addView(UiKit.navigationHeader(this,"Legacy survey restore","Home",this::finish));
+        LinearLayout body=new LinearLayout(this);
+        LinearLayout root=UiKit.page(this,"Legacy survey restore","Settings",this::finish,body);
         status=new TextView(this);status.setTextSize(15);status.setTextColor(UiKit.INK);
         status.setText("Restore survey records from a Wildlife Survey Beta v0.7 ZIP. Requires an empty survey database. Keep your original archive until you have checked the restored records.");
-        status.setPadding(10,20,10,28);root.addView(status);
+        status.setPadding(0,ApoVisualSystem.dp(this,8),0,ApoVisualSystem.dp(this,16));body.addView(status);
         Button select=UiKit.button(this,"Choose backup ZIP","primary");
-        root.addView(select);select.setOnClickListener(v->choose());
+        body.addView(select);select.setOnClickListener(v->choose());
         
         setContentView(root);
     }

@@ -32,7 +32,7 @@ public final class FieldBackupActivity extends Activity {
         contents.setOrientation(LinearLayout.VERTICAL);
         scroller.addView(contents);
         root.addView(scroller,new LinearLayout.LayoutParams(-1,0,1f));
-        TextView intro=UiKit.sectionTitle(this,"Full local fieldwork snapshot");
+        TextView intro=UiKit.sectionTitle(this,"Create backup");
         contents.addView(intro);
         TextView explanation=new TextView(this);
         explanation.setText("Back up field records, photographs, audio and settings. "
@@ -41,7 +41,7 @@ public final class FieldBackupActivity extends Activity {
         explanation.setPadding(dp(4),dp(7),dp(4),dp(12));
         contents.addView(explanation);
         export=UiKit.button(this,"Create recoverable ZIP","primary");
-        contents.addView(export,new LinearLayout.LayoutParams(-1,dp(56)));
+        contents.addView(export,new LinearLayout.LayoutParams(-1,-2));
         export.setOnClickListener(v->{
             if(busy)return;
             if(FieldBackupArchive.hasActiveSurvey(this)){
@@ -54,14 +54,14 @@ public final class FieldBackupActivity extends Activity {
             i.putExtra(Intent.EXTRA_TITLE,"APO-field-backup.zip");
             startActivityForResult(i,CREATE);
         });
-        contents.addView(UiKit.sectionTitle(this,"Restore on a fresh workspace"));
+        contents.addView(UiKit.sectionTitle(this,"Restore backup"));
         TextView note=new TextView(this);
         note.setText("Restore into an empty workspace. APO checks the archive before restoring. "
             +"Existing records are protected. Restart APO after restoration.");
         note.setTextColor(UiKit.MUTED);note.setTextSize(14);
         note.setPadding(dp(4),dp(4),dp(4),dp(10));contents.addView(note);
         restore=UiKit.button(this,"Check and restore backup ZIP","secondary");
-        contents.addView(restore,new LinearLayout.LayoutParams(-1,dp(56)));
+        contents.addView(restore,new LinearLayout.LayoutParams(-1,-2));
         restore.setOnClickListener(v->{
             if(busy)return;
             if(!FieldBackupArchive.canRestore(this)){

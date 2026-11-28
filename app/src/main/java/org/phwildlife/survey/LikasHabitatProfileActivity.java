@@ -101,7 +101,7 @@ public final class LikasHabitatProfileActivity extends Activity {
                     if(url.startsWith("https://"))button.setOnClickListener(v->
                         startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url))));
                     else button.setEnabled(false);
-                    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(62));
+                    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
                     lp.bottomMargin=dp(7);content.addView(button,lp);
                     break;
                 }

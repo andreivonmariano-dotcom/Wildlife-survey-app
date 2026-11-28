@@ -100,7 +100,7 @@ public final class Rc8PhotoComparisonActivity extends Activity {
         body.addView(text("Photographic reference B",15));body.addView(taxonB);
         body.addView(text("Select photo B",12));body.addView(photoB);
         Button same=UiKit.button(this,"Compare another photograph of species A","quiet");
-        body.addView(same,new LinearLayout.LayoutParams(-1,dp(45)));
+        body.addView(same,new LinearLayout.LayoutParams(-1,-2));
         same.setOnClickListener(v->{taxonB.setSelection(taxonA.getSelectedItemPosition());
             if(photoB.getAdapter()!=null&&photoB.getAdapter().getCount()>1)photoB.setSelection(1);});
         panels=new LinearLayout(this);
@@ -161,7 +161,7 @@ public final class Rc8PhotoComparisonActivity extends Activity {
         if("dreidrei".equalsIgnoreCase(selected.optString("observer"))&&
             "owner_direct_private_research_permission".equals(selected.optString("rightsBasis"))){
             Button editor=UiKit.button(this,"Draft anatomical photo annotation","quiet");
-            column.addView(editor,new LinearLayout.LayoutParams(-1,dp(47)));
+            column.addView(editor,new LinearLayout.LayoutParams(-1,-2));
             editor.setOnClickListener(v->startActivity(
                 new android.content.Intent(this,Rc9PhotoAnnotationReviewActivity.class)
                     .putExtra("scientific_name",scientific)

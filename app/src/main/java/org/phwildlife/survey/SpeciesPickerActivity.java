@@ -298,7 +298,8 @@ public final class SpeciesPickerActivity extends Activity {
         shortlistToggle.setContentDescription("Switch between habitat-guide shortlist and all catalog species");
         LinearLayout.LayoutParams shortlistSpace=new LinearLayout.LayoutParams(-1,-2);
         shortlistSpace.topMargin=dp(5);
-        filterPanel.addView(shortlistToggle,shortlistSpace);
+        // Keep an active habitat shortlist directly reversible above the optional filters.
+        scrollBody.addView(shortlistToggle,1,shortlistSpace);
         shortlistToggle.setOnClickListener(v->{
             shortlistEnabled=!shortlistEnabled;
             savePickerSettings();

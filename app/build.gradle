@@ -10,6 +10,13 @@ if (successorQa && (!successorQaKey || !file(successorQaKey).isFile())) {
 android {
     namespace 'org.phwildlife.survey'
     compileSdk 35
+    // Locked artwork masters are verified build inputs, not runtime resources.
+    // Preserve original files and provenance; package only the approved drawables.
+    androidResources {
+        ignoreAssetsPatterns.addAll(['!.svn', '!.git', '!.ds_store', '!*.scc',
+            '.*', '<dir>_*', '!CVS', '!thumbs.db', '!picasa.ini', '!*~',
+            'apo_official_master.png', 'apo_compact_launcher_master.png'])
+    }
     defaultConfig {
         applicationId 'org.phwildlife.survey.beta08'
         minSdk 26

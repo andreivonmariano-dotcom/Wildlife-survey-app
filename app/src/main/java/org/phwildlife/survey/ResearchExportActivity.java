@@ -33,7 +33,7 @@ public final class ResearchExportActivity extends Activity {
             View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         LinearLayout body=new LinearLayout(this);
         LinearLayout root=UiKit.page(this,"Research export","Analysis & Exports",
-            this::finish,body);
+            this::leaveExport,body);
         body.addView(UiKit.sectionTitle(this,"Records on this device"));
         body.addView(ApoHomeUi.note(this,recordSummary()));
         body.addView(UiKit.sectionTitle(this,"What will be included"));
@@ -61,6 +61,15 @@ public final class ResearchExportActivity extends Activity {
         setContentView(root);
         UiMotion.enter(this,body);
     }
+
+    private void leaveExport(){
+        if(exporting){
+            status.setText("Preparing research ZIP… Keep this screen open until export finishes.");
+            return;
+        }
+        finish();
+    }
+    @Override public void onBackPressed(){leaveExport();}
 
     private String recordSummary(){
         try(FieldDb db=new FieldDb(this)){

@@ -31,6 +31,7 @@ public final class HabitatRecordsActivity extends Activity {
         value.setPadding(dp(3),dp(5),dp(3),dp(5));
         return value;
     }
+    @Override public void onBackPressed(){finish();}
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         // Opening a reference screen must not inherit an open search keyboard.

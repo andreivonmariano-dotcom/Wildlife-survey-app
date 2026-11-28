@@ -26,6 +26,7 @@ public final class LikasSettingsActivity extends Activity {
         parent.addView(ApoHomeUi.tool(this,"",second,secondHint,
             ()->startActivity(new Intent(this,secondTarget))));
     }
+    @Override public void onBackPressed(){finish();}
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         getWindow().setStatusBarColor(UiKit.BG);

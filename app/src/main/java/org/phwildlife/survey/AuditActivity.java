@@ -16,6 +16,7 @@ public final class AuditActivity extends Activity{
     private Button refreshButton;
     private boolean auditRunning;
     private int dp(int value){return Math.round(getResources().getDisplayMetrics().density*value);}
+    @Override public void onBackPressed(){finish();}
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);

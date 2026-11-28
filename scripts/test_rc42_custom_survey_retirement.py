@@ -7,10 +7,11 @@ SRC=ROOT/"app/src/main/java/org/phwildlife/survey"
 
 class CustomSurveyRetirement(unittest.TestCase):
     def test_only_three_supported_creation_tiles(self):
+        self.assertIn("setup(selected);", (ROOT/"app/src/main/java/org/phwildlife/survey/WelcomeActivity.java").read_text(encoding="utf-8"))
         src=(SRC/"WelcomeActivity.java").read_text(encoding="utf-8")
         for group in ("Birds","Herpetofauna","Mammals"):
             self.assertIn('surveyTile(',src)
-            self.assertIn('()->setup("'+group+'")',src)
+            self.assertIn('()->openSetup("'+group+'")',src)
         self.assertNotIn('surveyTile(second,"Custom"',src)
         self.assertNotIn('private void customPicker()',src)
         self.assertNotIn('heading("Custom survey"',src)

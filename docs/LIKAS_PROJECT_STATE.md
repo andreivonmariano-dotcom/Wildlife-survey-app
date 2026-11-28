@@ -1,3 +1,11 @@
+## 2026-11-28 | Requested direct APK delivery; private preview build
+
+- Owner requested the updated APK and explicitly asked to continue through direct file delivery. Rechecked two navigation matrix jobs in run 46152239547: both passed 585 source regression tests, media and native photo verification, Android unit/compile/build gates, and package/signature/runtime artwork verification; emulator steps in progress.
+- Existing workflow deliberately deletes APKs after QA and retained only private synthetic screenshots. Added an explicitly selected preview-only private retention path (workflow commit d0a345741b0e0712fed4a36c9f1f81569d1ba23f) without changing source app pin 0c1fb6cf2d9354cb8a1c81a79f59f7edad8c162b or signing policy. Run 46152620198, job 141002318515, compiles and verifies same source as matrix then retains APK, SHA256SUMS and explicit QA note in a private artifact. Preview package org.phwildlife.survey.apo, code 178, 0.27.4-rc118-migration-qa, separate disposable signer. Preview is not an in-place upgrade, production signing remains deferred, no field records changed. Emulator acceptance is not certified by preview-only job.
+- Preview run passed source/media checks; build in progress at check. Artifact absent so far. Once artifact exists, download through authorized connector and verify exact bytes in current runtime before providing direct sandbox link. No user-facing release claim.
+
+---
+
 ## 2026-11-28 | Five-destination navigation overhaul; two offline emulator gates
 
 - Owner requested drastic UI/navigation overhaul, consistency audit and emulator validation. Reverified main 32deae092b8f4abe07b0a40905817aff0ec89133 and draft candidate 2cb1c7b2b32f1068c14c1d4d20799ff729f8c949. Read existing design guidance and primary screen sources; statically inventoried all 40 manifest Activity declarations and explicit Intent edges. See candidate docs/APO_NAVIGATION_AUDIT_2026_11_28.md (79baee2dbbd00165b37596a35d683ff33731fc8f).

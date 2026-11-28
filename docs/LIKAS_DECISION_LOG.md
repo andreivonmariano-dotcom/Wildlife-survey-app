@@ -702,3 +702,11 @@ Owner requested removal of unnecessary explanations/AI artifacts. Grouped My Dat
 
 - Owner approved further screen refinement. Direct prior screen-refinement preview delivered from verified artifact 15266494220 (139533940 bytes; SHA-256 c74d2c5b841565dd17ddb163c2bed90c9e42f0b0ce8e6731222938d64a727fc3). No legacy update or permanent signer authorized.
 - Changes ed51fd0 and 73a11f5 address recorder controls, GPS permissions and recovery, species reader search and map recreation. Preserved GPS policy and original data, no charter change. Native QA run 46155096644 dispatched for exact app/test pin 73a11f56d68b65f4cbdb1f97ee64956a264dad21. Native visual acceptance not established.
+
+
+---
+
+## 2026-11-28 | Native verification and actual fieldwork preview delivery
+
+- Owner directed continuation. Fieldwork preview APK from run 46155096644 artifact 15266853397 delivered directly after local archive and APK checksum verification (139534588 bytes, SHA-256 44d6115517b4c1347778770cbd4f122a504c388ee854cf24489884ced1dc53eb). Separate disposable signer; native acceptance pending.
+- Prior emulator partition-size reduction proved insufficient; logs confirmed 7372.80 MB required with less than 7 GB free. New workflow frees disposable hosted runner space after build gates, isolates suites and retains evidence even on failures; new keyboard test and species reader gate. Exact retest 46155745377, test-only pin 1a83a680e18ecc91894aa72c866d12bb734651b5. No scientific, schema, app production code or signing changes.

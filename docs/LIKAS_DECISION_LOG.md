@@ -618,3 +618,11 @@ Owner requested removal of unnecessary explanations/AI artifacts. Grouped My Dat
 
 - Under existing APO-09–12 and APO-30, keep "Citation only" and use "Internet required" for references with an online source, preserving the "Open online source" action. This is an implementation-level wording correction under the existing owner direction, not a charter amendment.
 - Prior run 46141612382 failed one of 583 source assertions; new code/test pin 37869e59d7b129fda874acfadc9647b522d808c2, private development retry 46151000996. Full build, artwork package check and native verification pending. No production signer, APK or user-data change.
+
+
+---
+
+## 2026-11-28 | Navigation overhaul implementation decision
+
+- Under the owner instruction to overhaul and standardize navigation, implemented a candidate five-peer shell (Fieldwork, Atlas, Map, Research, My Data), separate Home header action, adaptive layout, caller-aware detail Back and same-group survey setup draft restoration. These are implementation decisions under the existing charter, not new governing clauses. No changes to protected field data or survey outcomes.
+- Audit covers the 40 declared activities statically; latest app/test pin 8c0dabd2c0210827e0007793f07beb9475758402, audit docs/APO_NAVIGATION_AUDIT_2026_11_28.md, two offline emulator jobs in private run 46152098370. Native verification and screenshot inspection pending; no production APK or 100% navigation guarantee.

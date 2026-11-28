@@ -45,7 +45,7 @@ class ApoBioToolsV134(unittest.TestCase):
             self.assertIn(target,s)
         for screen in ('"fieldwork"','"data"','"analysis"','"utilities"'):
             self.assertIn(screen,s)
-        self.assertIn('UiKit.navigationHeader(this,profile+" survey","Surveys"',s)
+        self.assertIn('UiKit.navigationHeader(this,profile+" survey","Fieldwork"',s)
         self.assertNotIn("field_tools_open",s)
 
     def test_export_is_independent_and_uses_canonical_writer(self):

@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.lang.reflect.Method;
 import static org.junit.Assert.*;
 
 /** Actual Android shell navigation, access, Back and large-font screenshot coverage. */
@@ -164,13 +163,9 @@ public final class ApoShellNavigationInstrumentedTest {
             .putExtra("show_menu",true);
         try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(launch)){
             idle();
-            scenario.onActivity(a->{
-                try{
-                    Method method=a.getClass().getDeclaredMethod("setup",String.class);
-                    method.setAccessible(true);
-                    method.invoke(a,"Birds");
-                }catch(Exception ex){throw new AssertionError(ex);}
-            });
+            scenario.onActivity(a->select(a,"fieldwork"));
+            idle();
+            scenario.onActivity(a->clickRoute(a,"Birds"));
             idle();
             scenario.onActivity(a->{
                 View navbar=a.getWindow().getDecorView().findViewWithTag(
@@ -295,6 +290,105 @@ public final class ApoShellNavigationInstrumentedTest {
             scenario.recreate();idle();
             scenario.onActivity(a->{assertRoot(a,"data");assertTrue(
                 hasText(a.getWindow().getDecorView(),"Survey history"));});
+        }
+    }
+
+    private static View described(View root,String prefix){
+        if(root.isClickable()&&String.valueOf(root.getContentDescription()).startsWith(prefix))
+            return root;
+        if(root instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)root;
+            for(int i=0;i<group.getChildCount();i++){
+                View child=described(group.getChildAt(i),prefix);
+                if(child!=null)return child;
+            }
+        }
+        return null;
+    }
+    private static void clickRoute(Activity a,String name){
+        View target=described(a.getWindow().getDecorView(),"Open "+name);
+        assertNotNull("Missing route "+name,target);
+        target.requestRectangleOnScreen(new android.graphics.Rect(0,0,target.getWidth(),target.getHeight()),true);
+        assertTrue(target.isShown()&&target.isEnabled());
+        target.performClick();
+    }
+    private static android.widget.EditText observer(View root){
+        if(root instanceof android.widget.EditText&&"Observer (optional)".contentEquals(
+                ((android.widget.EditText)root).getHint()==null?"":((android.widget.EditText)root).getHint()))
+            return (android.widget.EditText)root;
+        if(root instanceof ViewGroup){
+            ViewGroup group=(ViewGroup)root;
+            for(int i=0;i<group.getChildCount();i++){
+                android.widget.EditText result=observer(group.getChildAt(i));
+                if(result!=null)return result;
+            }
+        }
+        return null;
+    }
+
+    @Test public void setupBackRetainsDraftAndAllThreeGroupRoutes(){
+        Intent launch=new Intent(ApplicationProvider.getApplicationContext(),WelcomeActivity.class)
+            .putExtra("show_menu",true);
+        try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(launch)){
+            idle();scenario.onActivity(a->select(a,"fieldwork"));idle();
+            for(String group:new String[]{"Birds","Herpetofauna","Mammals"}){
+                scenario.onActivity(a->clickRoute(a,group));idle();
+                scenario.onActivity(a->{
+                    View root=a.getWindow().getDecorView();
+                    assertTrue(hasText(root,group+" survey"));
+                    assertTrue(hasText(root,"Continue to GPS"));
+                    android.widget.EditText entry=observer(root);assertNotNull(entry);
+                    entry.setText("Synthetic setup "+group);
+                    a.onBackPressed();
+                });
+                idle();
+                scenario.onActivity(a->clickRoute(a,group));idle();
+                scenario.onActivity(a->{
+                    assertEquals("Synthetic setup "+group,observer(a.getWindow().getDecorView()).getText().toString());
+                    View back=described(a.getWindow().getDecorView(),"Back to Fieldwork");
+                    assertNotNull(back);back.performClick();
+                });
+                idle();
+                scenario.onActivity(a->assertRoot(a,"fieldwork"));
+            }
+        }
+    }
+
+    private static void childRoute(ActivityScenario<WelcomeActivity> scenario,
+            String label,Class<? extends Activity> type){
+        Activity child=transition(type,()->scenario.onActivity(a->clickRoute(a,label)));
+        onMain(()->{assertFalse(child.isFinishing());child.onBackPressed();
+            assertTrue("Back failed for "+label,child.isFinishing());});
+        scenario.onActivity(a->assertTrue(nav(a,"data").isSelected()));
+    }
+
+    @Test public void myDataAndUtilityRoutesReturnToTheirCaller(){
+        Intent launch=new Intent(ApplicationProvider.getApplicationContext(),WelcomeActivity.class)
+            .putExtra("show_menu",true);
+        try(ActivityScenario<WelcomeActivity> scenario=ActivityScenario.launch(launch)){
+            idle();scenario.onActivity(a->select(a,"data"));idle();
+            childRoute(scenario,"Survey history",HistoryActivity.class);
+            childRoute(scenario,"Projects & sites",SitesActivity.class);
+            childRoute(scenario,"Site habitat records",HabitatRecordsActivity.class);
+            childRoute(scenario,"Backup & restore",FieldBackupActivity.class);
+            scenario.onActivity(a->clickRoute(a,"Analysis & exports"));idle();
+            childRoute(scenario,"Survey analysis",DashboardActivity.class);
+            childRoute(scenario,"Research ZIP export",ResearchExportActivity.class);
+            childRoute(scenario,"Data quality review",AuditActivity.class);
+            scenario.onActivity(a->a.onBackPressed());idle();
+            scenario.onActivity(a->clickRoute(a,"Field utilities"));idle();
+            childRoute(scenario,"Sound recordings",CallLibraryActivity.class);
+            childRoute(scenario,"Trap & camera records",TrapProtocolActivity.class);
+            childRoute(scenario,"Field protocols",FieldProtocolsActivity.class);
+            childRoute(scenario,"Study templates",StudyProtocolsActivity.class);
+            scenario.onActivity(a->a.onBackPressed());idle();
+            scenario.onActivity(a->{assertRoot(a,"data");select(a,"home");});idle();
+            Activity settings=transition(LikasSettingsActivity.class,()->scenario.onActivity(a->{
+                View button=described(a.getWindow().getDecorView(),"Open settings");
+                assertNotNull(button);button.performClick();
+            }));
+            onMain(()->settings.onBackPressed());
+            scenario.onActivity(a->assertTrue(hasText(a.getWindow().getDecorView(),"Start Survey")));
         }
     }
 

@@ -48,8 +48,9 @@ class Rc48HomeFieldwork(unittest.TestCase):
         welcome=src("WelcomeActivity.java")
         setup=welcome.split("private void setup(String selected)",1)[1].split(
             "private void refreshStudyTitle()",1)[0]
-        self.assertIn('UiKit.navigationHeader(this,profile+" survey","Surveys"',setup)
-        self.assertIn("this::fieldworkHub",setup)
+        self.assertIn('UiKit.navigationHeader(this,profile+" survey","Fieldwork"',setup)
+        self.assertIn("this::leaveSetup",setup)
+        self.assertIn("persistSetup();\n        backDraftProfile=profile;",welcome)
         self.assertIn("UiKit.fieldInput(this,input)",welcome)
         self.assertIn("styleSetupInput(entry)",setup)
         self.assertIn("UiKit.CONTROL_BORDER",welcome)

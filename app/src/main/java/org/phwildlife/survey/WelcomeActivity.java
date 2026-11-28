@@ -30,6 +30,7 @@ public class WelcomeActivity extends Activity {
     private Button setupStartButton;
     private String profile="Birds";
     private String currentScreen="home";
+    private String backDraftProfile;
     private static final int GPS_PERMISSION_REQUEST=71;
     private final Handler gpsHandler=new Handler(Looper.getMainLooper());
     private LocationListener pendingGpsListener;
@@ -77,6 +78,7 @@ public class WelcomeActivity extends Activity {
         getWindow().setNavigationBarColor(BG);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         buildShell();
+        if(state!=null)backDraftProfile=state.getString("setup_back_draft");
         String screen=getPreferences(MODE_PRIVATE).getString("screen","home");
         String rememberedProfile=getPreferences(MODE_PRIVATE).getString("profile","Birds");
         boolean showMenu=getIntent().getBooleanExtra("show_menu",false);
@@ -107,6 +109,7 @@ public class WelcomeActivity extends Activity {
     @Override protected void onSaveInstanceState(Bundle out){
         persistSetup();
         out.putString("workspace_page",currentScreen);
+        out.putString("setup_back_draft",backDraftProfile);
         super.onSaveInstanceState(out);
     }
     @Override protected void onResume(){
@@ -140,7 +143,9 @@ public class WelcomeActivity extends Activity {
         intent.putExtra("show_menu",true);
     }
     @Override public void onBackPressed(){
-        if("setup".equals(currentScreen)||"custom".equals(currentScreen)){
+        if("setup".equals(currentScreen)){
+            leaveSetup();
+        }else if("custom".equals(currentScreen)){
             fieldworkHub();
         }else if("analysis".equals(currentScreen)||"utilities".equals(currentScreen)||
                 "records".equals(currentScreen)){
@@ -361,9 +366,9 @@ public class WelcomeActivity extends Activity {
             activeCard.addView(resume,resumeLp);
             main.addView(activeCard);
         }else{
-            surveyTile(main,"Birds","Point counts, transects and other bird surveys",()->setup("Birds"));
-            surveyTile(main,"Herpetofauna","Amphibians and reptiles",()->setup("Herpetofauna"));
-            surveyTile(main,"Mammals","Mammal sightings, signs and sampling stations",()->setup("Mammals"));
+            surveyTile(main,"Birds","Point counts, transects and other bird surveys",()->openSetup("Birds"));
+            surveyTile(main,"Herpetofauna","Amphibians and reptiles",()->openSetup("Herpetofauna"));
+            surveyTile(main,"Mammals","Mammal sightings, signs and sampling stations",()->openSetup("Mammals"));
         }
         UiMotion.enter(this,main);
     }
@@ -453,6 +458,17 @@ public class WelcomeActivity extends Activity {
             item.setSelected(selected);
         }
     }
+    private void openSetup(String selected){
+        boolean restore=selected.equals(backDraftProfile);
+        backDraftProfile=null;
+        setup(selected);
+        if(restore)restoreSetup();
+    }
+    private void leaveSetup(){
+        persistSetup();
+        backDraftProfile=profile;
+        fieldworkHub();
+    }
     private void setup(String selected){
         homeVisible=false;currentScreen="setup";profile=selected;
         main.removeAllViews();scrollTop();
@@ -460,10 +476,8 @@ public class WelcomeActivity extends Activity {
         setupStartButton.setText("Continue to GPS");
         setupStartButton.setContentDescription("Continue "+profile+" survey setup to GPS preflight");
         setupFooter.setVisibility(View.VISIBLE);
-        main.addView(UiKit.navigationHeader(this,profile+" survey","Surveys",
-            this::fieldworkHub));
-        main.addView(ApoHomeUi.note(this,
-            "Choose a method, project and planned effort. GPS check comes next."));
+        main.addView(UiKit.navigationHeader(this,profile+" survey","Fieldwork",
+            this::leaveSetup));
         choices=SurveyMethods.forProfile(profile);
         methodChoices=new RadioGroup(this);methodChoices.setOrientation(RadioGroup.VERTICAL);
         for(int i=0;i<choices.length;i++){

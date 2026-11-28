@@ -685,3 +685,12 @@ Owner requested removal of unnecessary explanations/AI artifacts. Grouped My Dat
 ## 2026-11-28 | Private development APK retention for direct delivery
 
 - Owner requested an updated APK and direct file link. Both navigation emulator build jobs passed 585 source tests and verified compilation, successor package/signature and runtime assets, with emulator acceptance pending. Added opt-in private preview retention workflow (d0a345741b0e0712fed4a36c9f1f81569d1ba23f) at unchanged app/test pin 0c1fb6cf2d9354cb8a1c81a79f59f7edad8c162b; preview run 46152620198. Keeps the original installation and records untouched and uses separate QA package/signature only. The preview is not an approved in-place update; no release or native acceptance claim. Direct delivery requires the actual file and local checksum verification, not an Actions link.
+
+
+---
+
+## 2026-11-28 | Whole-app interface source audit and refinement
+
+- Owner requested review and refinement of every screen. Audited UI construction and navigation excerpts for all 40 manifest activities; detailed ledger docs/APO_SCREEN_REFINEMENT_AUDIT_2026_11_28.md. Scope is source review, not full native rendering or field acceptance.
+- Presentation changes 7ee3fba, af04a87, 8233a4b and 39eac1407 preserve scientific content and survey data/lifecycle. Active habitat shortlist remains directly reversible; less frequent filters collapse. Shared page headings wrap, data child tab returns to parent, camera and reference dialogs and management controls accommodate enlarged text. No charter or production signing changes.
+- Corrected emulator partition allocation after earlier disk-space boot failures; exact source/test pin 73108bf3c8b74adad9729c10668715db843fc43d, matrix run 46154412338. Both source/media gates now passed, Android compilation in progress at check; independent native acceptance and screenshot review remain required. The standard-device build retains a private QA-only APK if package gates pass.

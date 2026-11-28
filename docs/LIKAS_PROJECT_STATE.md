@@ -1,3 +1,11 @@
+## 2026-11-28 | Presentation cleanup regression corrected; build verification pending
+
+- Verified main HEAD 4fa22d01e53d7e13b7e32198514e13c8d7043d56 and draft PR #127 candidate HEAD 3d7397a57e455cbac01b6c0be45ca925956d419b before editing. Private run 46141612382 job 140968574737 completed with 582/583 source tests passing. The remaining bibliography assertion expected the former exact phrase "Online source: connection required."; Android build, artwork packaging and native UI tests were skipped.
+- Corrected the citation-only reference dialog to show "Internet required" for its HTTPS source action (f09371e21703b6bfe418115944536d305754cd37), updated the test to require this label and "Open online source" (37869e59d7b129fda874acfadc9647b522d808c2). Re-fetched both files at the exact pin and verified the label, citation-only distinction, action and assertions. Full test execution remains pending. No scientific reference or bookmark behavior changed.
+- Private development workflow pin updated at ed3053375d9846235cdd358f95c7eee538649934; dispatched run 46151000996 job 140997411682. Private guard passed; checkout underway at last check. Next inspect source regression, build, runtime artwork exclusion and native UI results, then review screenshots before further UX changes. Signing recovery remains deferred. No production APK, physical-device installation, governing charter amendment or user record changes.
+
+---
+
 ## 2026-11-28 | Product presentation cleanup and redundant master packaging exclusion
 
 - Owner requested continued overhaul and removal of AI metadata, explanatory clutter and unnecessary information. Kept permanent signing/release recovery deferred. Prior Home/Fieldwork source regression rerun 46140962180 passed scientific/source, Gradle, artwork/photo/reference gates; native emulator still in progress at final check. Previous run 46140827921 failed seven layout-specific source assertions; corrected to check one Atlas route + adaptive Map/Research pair, unique destinations and minimum touch heights, without relaxing survey invariants.

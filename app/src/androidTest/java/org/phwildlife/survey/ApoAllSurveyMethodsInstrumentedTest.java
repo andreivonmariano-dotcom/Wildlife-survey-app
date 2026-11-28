@@ -113,8 +113,13 @@ public final class ApoAllSurveyMethodsInstrumentedTest {
                     View end=exact(root,"End Survey");
                     assertFits(a,end,label+" End");
                     assertTrue("End remains enabled",end.isEnabled());
-                    assertNotNull("Actual selected method is shown",exact(root,method.label));
                     shot(a,label+"-recorder");
+                    if(exact(root,method.label)==null){
+                        View disclosure=exact(root,"Field tools");
+                        assertNotNull("Compact method disclosure is accessible",disclosure);
+                        disclosure.performClick();
+                    }
+                    assertNotNull("Actual selected method is discoverable",exact(root,method.label));
                     String action=RecorderMethodUiPolicy.actionLabel(profile,method.code);
                     if(!action.isEmpty()){
                         View control=exact(root,action);

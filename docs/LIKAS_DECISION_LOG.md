@@ -642,3 +642,11 @@ Owner requested removal of unnecessary explanations/AI artifacts. Grouped My Dat
 - Owner requested review and refinement of every screen. Audited UI construction and navigation excerpts for all 40 manifest activities; detailed ledger docs/APO_SCREEN_REFINEMENT_AUDIT_2026_11_28.md. Scope is source review, not full native rendering or field acceptance.
 - Presentation changes 7ee3fba, af04a87, 8233a4b and 39eac1407 preserve scientific content and survey data/lifecycle. Active habitat shortlist remains directly reversible; less frequent filters collapse. Shared page headings wrap, data child tab returns to parent, camera and reference dialogs and management controls accommodate enlarged text. No charter or production signing changes.
 - Corrected emulator partition allocation after earlier disk-space boot failures; exact source/test pin 73108bf3c8b74adad9729c10668715db843fc43d, matrix run 46154412338. Both source/media gates now passed, Android compilation in progress at check; independent native acceptance and screenshot review remain required. The standard-device build retains a private QA-only APK if package gates pass.
+
+
+---
+
+## 2026-11-28 | Fieldwork-critical UI follow-up
+
+- Owner approved further screen refinement. Direct prior screen-refinement preview delivered from verified artifact 15266494220 (139533940 bytes; SHA-256 c74d2c5b841565dd17ddb163c2bed90c9e42f0b0ce8e6731222938d64a727fc3). No legacy update or permanent signer authorized.
+- Changes ed51fd0 and 73a11f5 address recorder controls, GPS permissions and recovery, species reader search and map recreation. Preserved GPS policy and original data, no charter change. Native QA run 46155096644 dispatched for exact app/test pin 73a11f56d68b65f4cbdb1f97ee64956a264dad21. Native visual acceptance not established.

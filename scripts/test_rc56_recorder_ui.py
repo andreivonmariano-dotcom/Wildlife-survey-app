@@ -20,7 +20,8 @@ class Rc56RecorderLayout(unittest.TestCase):
         self.assertIn('TextView detectionLabel=label("Detection type"',block)
         self.assertIn('lineRow=vertical()',block)
         self.assertIn('Transect magnetic bearing (0–359°)',block)
-        self.assertIn('"Herp survey":profile+" Survey"',block)
+        self.assertIn('largeText?("Herpetofauna".equals(profile)?"Herp survey":profile):profile+" Survey"',block)
+        self.assertIn('if(!largeText)content.addView(FieldVisuals.section(this,"Observation",null))',block)
         self.assertIn('title.setContentDescription(profile+" Survey")',block)
 
     def test_count_and_selected_group_accessibility(self):
@@ -31,6 +32,8 @@ class Rc56RecorderLayout(unittest.TestCase):
             'countView.setContentDescription(count+" individuals or evidence items")',
             'b.setContentDescription(name+" observation group"+(selected?", selected":""))',
             'b.setSelected(selected)',
+            'groupConfig.screenWidthDp<320||groupConfig.fontScale>2.0f',
+            'b.setMinHeight(dp(56))',
             'changeObservationGroup(name)',
             'sessionToggle.setContentDescription("Show optional haptic interval alert")',
             'evidenceToggle.setContentDescription("Show other evidence capture tools")'

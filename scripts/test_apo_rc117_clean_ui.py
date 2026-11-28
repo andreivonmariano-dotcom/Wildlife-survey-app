@@ -22,7 +22,7 @@ class ApoCleanUi(unittest.TestCase):
             self.assertEqual(home.count('"'+title+'"'),1)
         self.assertEqual(home.count('ApoHomeUi.section(this,"Explore"'),1)
         self.assertNotIn('End Survey is available while recording or paused.',welcome)
-        self.assertIn('new String[]{"Fieldwork","Atlas","Map","Research","My Data"}',source("ApoShellBar.java"))
+        self.assertIn('new String[]{"Field","Atlas","Map","Research","My Data"}',source("ApoShellBar.java"))
         atlas=source("LikasLibraryActivity.java")
         self.assertEqual(atlas.count('tile(body,"Species Atlas"'),0)
         self.assertIn('"Browse species"',atlas)

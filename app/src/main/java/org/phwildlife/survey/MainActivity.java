@@ -237,7 +237,7 @@ public class MainActivity extends Activity implements LocationListener {
         home.setTextSize(18);
         top.addView(home,new LinearLayout.LayoutParams(dp(48),dp(48)));
         home.setOnClickListener(v->requestLeaveRecorder());
-        String screenTitle=largeText?("Herpetofauna".equals(profile)?"Herpetofauna":profile):profile+" Survey";
+        String screenTitle=largeText?("Herpetofauna".equals(profile)?"Herp survey":profile):profile+" Survey";
         TextView title=label(screenTitle,largeText?17:19,true);
         title.setGravity(Gravity.CENTER_VERTICAL);
         if(android.os.Build.VERSION.SDK_INT>=28)title.setAccessibilityHeading(true);
@@ -1059,8 +1059,11 @@ public class MainActivity extends Activity implements LocationListener {
     }
     private void showGroups(){
         groupBar.removeAllViews();
-        boolean stackGroups=getResources().getConfiguration().fontScale>=1.6f;
+        android.content.res.Configuration groupConfig=getResources().getConfiguration();
+        boolean compactGroups=groupConfig.fontScale>=1.6f;
+        boolean stackGroups=groupConfig.screenWidthDp<320||groupConfig.fontScale>2.0f;
         groupBar.setOrientation(stackGroups?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        groupBar.setBaselineAligned(false);
         boolean canSwitch=profile.equals("Herpetofauna")&&!method.equals("amphibian_calls");
         groupBar.setVisibility(canSwitch?View.VISIBLE:View.GONE);
         if(!canSwitch)return;
@@ -1069,11 +1072,14 @@ public class MainActivity extends Activity implements LocationListener {
             Button b=UiKit.button(this,name,selected?"pond":"secondary");
             b.setContentDescription(name+" observation group"+(selected?", selected":""));
             b.setSelected(selected);
+            if(compactGroups){
+                b.setTextSize(13);
+                b.setPadding(dp(6),dp(6),dp(6),dp(6));
+                b.setMinHeight(dp(56));
+            }
             LinearLayout.LayoutParams groupLp=stackGroups?
                 new LinearLayout.LayoutParams(-1,-2):
-                new LinearLayout.LayoutParams(0,
-                    dp(FieldLayoutPolicy.actionHeightDp(
-                        getResources().getConfiguration().fontScale)),1);
+                new LinearLayout.LayoutParams(0,-2,compactGroups&&"Amphibians".equals(name)?1.15f:1f);
             if(groupBar.getChildCount()>0){
                 if(stackGroups)groupLp.topMargin=dp(LikasDesignSystem.SPACE_SM);
                 else groupLp.leftMargin=dp(LikasDesignSystem.SPACE_SM);
